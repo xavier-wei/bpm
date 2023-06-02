@@ -1,0 +1,48 @@
+/* 列印時隱藏MENU */
+.sidenav, .sidenav-button {
+    display: none !important;
+}
+
+/* 列印時讓 */
+.web{
+    overflow: visible !important;
+}
+
+.web {
+    display: block;
+}
+.web .wrapper{
+    display: block;
+}
+.web>.wrapper>.content {
+    display: block;
+}
+.web>.wrapper>.content>.page{
+    display: block;
+}
+.web>.wrapper>.content>.page>.main{
+    display: block;
+}
+
+#main{
+    overflow: visible !important;
+    padding: inherit !important;
+
+}
+
+.infoarea {
+    position: static !important;
+}
+
+.table-responsive table tbody tr td, .table-responsive table thead tr th{
+    page-break-inside: avoid;
+}
+
+fieldset{
+    padding: inherit !important;
+}
+
+/* FOR IE */
+.web > .wrapper > .content {
+    position: static !important;
+}

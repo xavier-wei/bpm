@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Configuration status="ERROR">
+    <Properties>
+        <!--不同模組改這邊Start-->
+        <Property name="logSuffix">${sys:logSuffix:-host}</Property>
+        <Property name="fileName">/log/aplog/eip/eip_eip_${map:logSuffix}.log</Property>
+        <Property name="jndiName">java:comp/env/jdbc/eipDS</Property>
+        <!--不同模組改這邊End-->
+    </Properties>
+    <Appenders>
+        <Console name="A1" target="SYSTEM_OUT">
+            <PatternLayout pattern="%5p %d{yyyy-MM-dd HH:mm:ss,SSS} -[%c{1}]: %m%n"/>
+        </Console>
+        <RollingFile name="A2" fileName="${map:fileName}" filePattern="${map:fileName}.%d{yyyy-MM-dd}">
+            <PatternLayout pattern="[%d][%p][%C.%M] %m%n" charset="UTF-8"/>
+            <TimeBasedTriggeringPolicy/>
+        </RollingFile>
+        <JDBC name="DB" tableName="JAVA_LOG">
+            <ThresholdFilter level="ERROR" onMatch="ACCEPT" onMismatch="DENY"/>
+            <DataSource jndiName="${map:jndiName}"/>
+            <Column name="SEQNO" literal="FORMAT (getdate(), 'yyyyMMddHHmmss') + RIGHT(REPLICATE('0', 6) + CAST(NEXT VALUE FOR EIP_COMMON as NVARCHAR), 6)"/>
+            <Column name="TARGET_CLASS" pattern="%C"/>
+            <Column name="TARGET_METHOD" pattern="%M"/>
+            <Column name="LOG_LEVEL" pattern="%p"/>
+            <Column name="LOG_TIME" pattern="%d{yyyyMMddHHmmssSSS}"/>
+            <Column name="USER_ID" pattern="%X{userId}"/>
+            <Column name="LOG_HOST" pattern="${map:logSuffix}"/>
+            <Column name="MESSAGE" pattern="%m"/>
+        </JDBC>
+    </Appenders>
+    <Loggers>
+        <Root level="${filter.log4jLevel}">
+            <AppenderRef ref="A1"/>
+            <AppenderRef ref="A2"/>
+            <AppenderRef ref="DB"/>
+        </Root>
+        <logger name="org.apache.commons" level="ERROR"/>
+        <logger name="org.apache.commons.digester.Digester" level="ERROR"/>
+        <logger name="org.springframework.util.ClassUtils" level="ERROR"/>
+        <logger name="org.springframework.web.servlet.mvc.support.DefaultHandlerExceptionResolver" level="ERROR"/>
+        <logger name="org.springframework.web.servlet.DispatcherServlet" level="WARN"/>
+    </Loggers>
+</Configuration>

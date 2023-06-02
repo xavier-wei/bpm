@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<taglib version="2.0" xmlns="http://java.sun.com/xml/ns/j2ee" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://java.sun.com/xml/ns/j2ee http://java.sun.com/xml/ns/j2ee/web-jsptaglibrary_2_0.xsd">
+
+    <description>Framework Common Function Tag Library</description>
+    <display-name>Framework Common Function Taglib</display-name>
+    <tlib-version>1.0</tlib-version>
+    <short-name>func</short-name>
+    <uri>https://www.pcc.gov.tw/common-func</uri>
+
+    <tag>
+        <description>Get now chinese datetime string</description>
+        <name>nowDateTime</name>
+        <tag-class>tw.gov.pcc.common.tag.func.NowDateTimeTag</tag-class>
+        <body-content>JSP</body-content>
+        <attribute>
+            <name>chtType</name>
+            <rtexprvalue>true</rtexprvalue>
+        </attribute>
+    </tag>
+
+    <tag>
+        <description>Get PID and Server Name</description>
+        <name>serverInfo</name>
+        <tag-class>tw.gov.pcc.common.tag.func.ServerInfoTag</tag-class>
+        <body-content>empty</body-content>
+    </tag>
+    
+    <tag>
+        <description>Minguo date formater</description>
+        <name>minguo</name>
+        <tag-class>tw.gov.pcc.common.tag.func.MinguoDateFormaterTag</tag-class>
+        <body-content>empty</body-content>
+        <attribute>
+            <name>value</name>
+            <required>true</required>
+            <rtexprvalue>true</rtexprvalue>
+        </attribute>
+        <attribute>
+            <name>pattern</name>
+            <required>false</required>
+            <rtexprvalue>true</rtexprvalue>
+            <type>java.lang.String</type>
+        </attribute>
+    </tag>
+    <tag>
+        <description>apno formater</description>
+        <name>apno</name>
+        <tag-class>tw.gov.pcc.common.tag.func.ApnoFmtTag</tag-class>
+        <body-content>empty</body-content>
+        <attribute>
+            <name>value</name>
+            <required>true</required>
+            <rtexprvalue>true</rtexprvalue>
+        </attribute>
+    </tag>
+
+    <tag>
+        <description>codeToString</description>
+        <name>code</name>
+        <tag-class>tw.gov.pcc.common.tag.func.CodenameTag</tag-class>
+        <body-content>empty</body-content>
+        <attribute>
+            <name>codekind</name>
+            <required>true</required>
+            <rtexprvalue>true</rtexprvalue>
+        </attribute>
+        <attribute>
+            <name>codeno</name>
+            <required>true</required>
+            <rtexprvalue>true</rtexprvalue>
+        </attribute>
+    </tag>
+
+</taglib>

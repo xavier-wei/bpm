@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:mvc="http://www.springframework.org/schema/mvc"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="
+           http://www.springframework.org/schema/beans
+           http://www.springframework.org/schema/beans/spring-beans.xsd
+           http://www.springframework.org/schema/context
+           http://www.springframework.org/schema/context/spring-context.xsd
+           http://www.springframework.org/schema/mvc
+           http://www.springframework.org/schema/mvc/spring-mvc.xsd">
+
+    <context:component-scan base-package="tw.gov.pcc.eip, tw.gov.pcc.common" use-default-filters="false">
+        <context:include-filter type="annotation"
+                                expression="org.springframework.stereotype.Controller" />
+    </context:component-scan>
+
+    <mvc:annotation-driven validator="validator">
+        <mvc:message-converters register-defaults="true">
+            <bean class="org.springframework.http.converter.json.MappingJackson2HttpMessageConverter">
+                <property name="objectMapper">
+                    <bean class="tw.gov.pcc.eip.framework.json.CustomObjectMapper" />
+                </property>
+            </bean>
+        </mvc:message-converters>
+    </mvc:annotation-driven>
+
+    <mvc:resources location="/images/" mapping="/images/**" />
+    <mvc:resources location="/js/" mapping="/js/**" />
+    <mvc:resources location="/css/" mapping="/css/**" />
+    <mvc:resources location="/html/" mapping="/html/**" />
+
+    <bean name="validator" class="org.springframework.validation.beanvalidation.LocalValidatorFactoryBean">
+        <property name="validationMessageSource">
+            <ref bean="messageSource" />
+        </property>
+    </bean>
+
+    <mvc:interceptors>
+        <mvc:interceptor>
+            <mvc:mapping path="/*.action" />
+            <bean class="tw.gov.pcc.eip.framework.spring.interceptor.SafeUploadInterceptor" />
+        </mvc:interceptor>
+
+        <mvc:interceptor>
+            <mvc:mapping path="/*.action" />
+            <bean class="tw.gov.pcc.eip.framework.spring.interceptor.BindingResultInterceptor" />
+        </mvc:interceptor>
+        
+        <mvc:interceptor>
+            <mvc:mapping path="/*.action" />
+            <bean class="tw.gov.pcc.eip.framework.spring.interceptor.DoubleSubmitInterceptor" />
+        </mvc:interceptor>
+    </mvc:interceptors>
+
+    <bean id="viewResolver" class="org.springframework.web.servlet.view.InternalResourceViewResolver">
+        <property name="viewClass" value="org.springframework.web.servlet.view.JstlView" />
+        <property name="prefix" value="/WEB-INF/jsp" />
+        <property name="suffix" value=".jsp" />
+        <property name="redirectHttp10Compatible" value="false" />
+    </bean>
+    
+    <bean id="multipartResolver" class="org.springframework.web.multipart.support.StandardServletMultipartResolver">
+    </bean>
+</beans>

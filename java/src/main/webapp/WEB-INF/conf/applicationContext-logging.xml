@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:aop="http://www.springframework.org/schema/aop"
+       xsi:schemaLocation="
+           http://www.springframework.org/schema/beans
+           http://www.springframework.org/schema/beans/spring-beans.xsd
+           http://www.springframework.org/schema/aop
+           http://www.springframework.org/schema/aop/spring-aop.xsd">
+
+    <aop:config proxy-target-class="true">
+        <aop:pointcut id="queryLogPointcut" expression="execution(* tw.gov.pcc.eip.dao..*.*(..)) and !execution(* tw.gov.pcc.eip.dao..*.insert*(..)) and !execution(* tw.gov.pcc.eip.dao..*.update*(..)) and !execution(* tw.gov.pcc.eip.dao..*.delete*(..))" />
+        <aop:pointcut id="insertLogPointcut" expression="execution(* tw.gov.pcc.eip.dao..*.insert*(..))" />
+        <aop:pointcut id="updateLogPointcut" expression="execution(* tw.gov.pcc.eip.dao..*.update*(..))" />
+        <aop:pointcut id="deleteLogPointcut" expression="execution(* tw.gov.pcc.eip.dao..*.delete*(..))" />
+
+        <aop:aspect id="queryLog" ref="queryLogBeforeAdvice">
+            <aop:before method="doQueryLog" pointcut-ref="queryLogPointcut" />
+            <aop:after-returning method="doQueryResultLog" pointcut-ref="queryLogPointcut" returning="result" />
+        </aop:aspect>
+
+        <aop:aspect id="insertLog" ref="insertLogAfterAdvice">
+            <aop:after-returning method="doInsertLog" pointcut-ref="insertLogPointcut" />
+        </aop:aspect>
+
+        <aop:aspect id="updateLog" ref="updateLogAroundAdvice">
+            <aop:around method="doUpdateLog" pointcut-ref="updateLogPointcut" />
+        </aop:aspect>
+
+        <aop:aspect id="deleteLog" ref="deleteLogBeforeAdvice">
+            <aop:before method="doDeleteLog" pointcut-ref="deleteLogPointcut" />
+        </aop:aspect>
+    </aop:config>
+
+    <bean id="queryLogBeforeAdvice" class="tw.gov.pcc.common.aop.QueryLogBeforeAdvice">
+        <property name="loggingService" ref="loggingService" />
+    </bean>
+
+    <bean id="insertLogAfterAdvice" class="tw.gov.pcc.common.aop.InsertLogAfterAdvice" />
+    <bean id="updateLogAroundAdvice" class="tw.gov.pcc.common.aop.UpdateLogAroundAdvice" />
+    <bean id="deleteLogBeforeAdvice" class="tw.gov.pcc.common.aop.DeleteLogBeforeAdvice" />
+
+</beans>
