@@ -1,13 +1,12 @@
 package tw.gov.pcc.eip.services;
 
 import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.hibernate.validator.internal.constraintvalidators.bv.EmailValidator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
-import org.springframework.web.multipart.commons.CommonsMultipartFile;
 import tw.gov.pcc.common.util.DateUtil;
 import tw.gov.pcc.eip.common.cases.*;
 import tw.gov.pcc.eip.dao.OrclassDao;
@@ -18,14 +17,12 @@ import tw.gov.pcc.eip.domain.*;
 import tw.gov.pcc.eip.framework.domain.UserBean;
 import tw.gov.pcc.eip.report.Eip00w420L00;
 import tw.gov.pcc.eip.report.Eip00w420L02;
-import tw.gov.pcc.eip.util.BeanUtility;
-import tw.gov.pcc.eip.util.DateUtility;
+import tw.gov.pcc.eip.util.*;
 
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.IOException;
+import java.io.*;
 import java.math.BigDecimal;
 import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.chrono.MinguoChronology;
@@ -70,8 +67,8 @@ public class Eip00w420Service extends OnlineRegService {
     public void initCombobox(Eip00w420Case caseData) {
         Map<Long,String>orccodeMap = orclassDao.getAll().stream()
                 .collect(Collectors.toMap(Orclass::getOrccode, Orclass::getOrcname));//TODO 如果有要按照順序排列需要再調整
-        caseData.setStatusCombobox(getStatusMap());
-        caseData.setRegstatusCombobox(getRegStatusMap());
+        caseData.setStatusCombobox(getOrstatus());
+        caseData.setRegstatusCombobox(getRegstatus());
         if (StringUtils.defaultString(caseData.getMode()).matches("A|U")) {
             caseData.setRegisqualCheckboxU(getRegisqualDept());
             caseData.setRegisqualCheckboxE1(getRegisqualE1());
@@ -79,6 +76,9 @@ public class Eip00w420Service extends OnlineRegService {
             caseData.setRegisqualCheckboxE3(getRegisqualE3());
             caseData.setRegisqualCheckboxE4(getRegisqualE4());
             caseData.setOrccodeCombobox(orccodeMap);
+        }
+        if ("M".equals(caseData.getMode())) {
+            caseData.setDegreenCombobox(getDegreen());
         }
     }
 
@@ -89,7 +89,8 @@ public class Eip00w420Service extends OnlineRegService {
     public void getOrlist(Eip00w420Case caseData, boolean isSearch) {
         Map<Long, String> orclassMap = orclassDao.getAll().stream()
                 .collect(Collectors.toMap(Orclass::getOrccode, Orclass::getOrcname));
-        Map<String, String> statusMap = getStatusMap();
+        Map<String, String> statusMap = getOrstatus();
+        Map<String, String> deptMap = getRegisqualDept();
         List<Orformdata> orformdataList = new ArrayList<>();
         if (isSearch) {
             Orformdata orformdata = new Orformdata();
@@ -110,22 +111,32 @@ public class Eip00w420Service extends OnlineRegService {
             // 開放的報名資格LIST
             List<String> regisqualList =
                     eipcodeDao.findByCodeKindAndList("REGISQUAL",Arrays.asList(StringUtils.split(t.getRegisqual(),",")));
-            Map<String, String> actualappnumMap = new LinkedHashMap<>();
-            Map<String, String> passnumMap = new LinkedHashMap<>();
+            Map<String, Integer> actualappnumMap = new LinkedHashMap<>();
+            Map<String, Integer> passnumMap = new LinkedHashMap<>();
             orCase.setOrformno(t.getOrformno());
             orCase.setTopicname(t.getTopicname());
             orCase.setOrcname(orclassMap.get(t.getOrccode()));
             orCase.setStatus(statusMap.get(t.getStatus()));
             orCase.setStatusVal(t.getStatus());
             orCase.setAcceptappnum(t.getAcceptappnum());
-            actualappnumMap = resultList.stream()
-                    .collect(Collectors.groupingBy(
-                            Orresult::getDept,
-                            Collectors.collectingAndThen(
-                                    Collectors.counting(),
-                                    count -> String.valueOf(count))));
+            resultList.forEach(r->{
+                if (deptMap.containsValue(r.getDept())) {
+                    if (!actualappnumMap.containsKey(r.getDept())) {
+                        actualappnumMap.put(r.getDept(),1);
+                    } else {
+                        actualappnumMap.computeIfPresent(r.getDept(), (key, value) -> value + 1);
+                    }
+                } else {
+                    if (!actualappnumMap.containsKey(r.getJogtitle())) {
+                        actualappnumMap.put(r.getJogtitle(),1);
+                    } else {
+                        actualappnumMap.computeIfPresent(r.getJogtitle(), (key, value) -> value + 1);
+                    }
+                }
+            });
+            //loop有勾選的報名資格
             for (String str : regisqualList) {
-                if (ObjectUtils.isNotEmpty(actualappnumMap.get(str))) {
+                if (actualappnumMap.containsKey(str)) {
                     actualsb.append(str+":"+actualappnumMap.get(str)+"人");
                 } else {
                     actualsb.append(str+":0人");
@@ -134,12 +145,21 @@ public class Eip00w420Service extends OnlineRegService {
             }
             orCase.setActualappnumAbbr(actualsb.toString());
             orCase.setActualappnum(t.getActualappnum());// 讀結果檔的報名人數
-            passnumMap = resultPassList.stream()
-                    .collect(Collectors.groupingBy(
-                            Orresult::getDept,
-                            Collectors.collectingAndThen(
-                                    Collectors.counting(),
-                                    count -> String.valueOf(count))));
+            resultPassList.forEach(r->{
+                if (deptMap.containsValue(r.getDept())) {
+                    if (!passnumMap.containsKey(r.getDept())) {
+                        passnumMap.put(r.getDept(),1);
+                    } else {
+                        passnumMap.computeIfPresent(r.getDept(), (key, value) -> value + 1);
+                    }
+                } else {
+                    if (!passnumMap.containsKey(r.getJogtitle())) {
+                        passnumMap.put(r.getJogtitle(),1);
+                    } else {
+                        passnumMap.computeIfPresent(r.getJogtitle(), (key, value) -> value + 1);
+                    }
+                }
+            });
             for (String str : regisqualList) {
                 if (ObjectUtils.isNotEmpty(passnumMap.get(str))) {
                     passsb.append(str+":"+passnumMap.get(str)+"人");
@@ -410,7 +430,7 @@ public class Eip00w420Service extends OnlineRegService {
             eip00w420VerifyCase.setCompany(t.getCompany());
             eip00w420VerifyCase.setDept(t.getDept());
             eip00w420VerifyCase.setIsPass(t.getIspass());
-            eip00w420VerifyCase.setIsPay(ObjectUtils.defaultIfNull(t.getIspay(),""));
+            eip00w420VerifyCase.setIsPay(t.getIspay());
             eip00w420VerifyCase.setIsNotify(t.getIsnotify());
             return eip00w420VerifyCase;
         }).collect(Collectors.toList());
@@ -561,6 +581,203 @@ public class Eip00w420Service extends OnlineRegService {
         eip00w420L02.addHeader(orclass, orformdata, list);
         eip00w420L02.addContent(list);
         return eip00w420L02.getOutputStream();
+    }
+
+    /**
+     * 人工報名-單筆
+     * @param caseData
+     */
+    public void manualRegSingle(Eip00w420ManualCase caseData) {
+        //先進行重複檢查
+        checkRepeatRegister(caseData.getOrformno(), caseData.getRegisidn());
+        //再開始新增報名資料
+        Orresult orresult = new Orresult();
+        orresult.setOrformno(caseData.getOrformno());
+        orresult.setSeqno(orresultDao.getMaximumSeqno(caseData.getOrformno()));
+        orresult.setRegisway(caseData.getRegisway());
+        orresult.setRegisname(caseData.getRegisname());
+        orresult.setRegisidn(caseData.getRegisidn());
+        orresult.setRegissex(caseData.getRegissex());
+        orresult.setRegisbrth(DateUtility.changeDateTypeToWestDate(caseData.getRegisbrth()));
+        orresult.setRegisemail(caseData.getRegisemail());
+        orresult.setRegisphone(caseData.getRegisphone());
+        orresult.setJogtitle(caseData.getJogtitle());
+        orresult.setDegreen(Integer.valueOf(caseData.getDegreen()));
+        orresult.setDept(caseData.getDept());
+        orresult.setRegisaddres(StringUtils.defaultIfEmpty(caseData.getRegisaddres(), null));
+        orresult.setMealstatus(caseData.getMealstatus());
+        orresult.setCredt(LocalDateTime.now());
+        orresult.setCreuser(userData.getUserId());
+        orresult.setRegisdt(orresult.getCredt());
+        orresultDao.insertData(orresult);
+    }
+
+    /**
+     * 人工報名-批次
+     * @param caseData
+     */
+    public void manualRegBatch(Eip00w420ManualCase caseData) throws IOException {
+        List<List<String>> csvData = new ArrayList<>();
+        try (InputStreamReader inputStreamReader = new InputStreamReader(caseData.getFile().getInputStream(), StandardCharsets.UTF_8);
+             BufferedReader reader = new BufferedReader(inputStreamReader)) {
+            String line;
+            Orresult orresult = new Orresult();
+            int index = 0;
+            while ((line = reader.readLine()) != null) {
+                List<String> rowData = new ArrayList<>(Arrays.asList(line.split(",")));
+                if (index == 0){
+                    index++;
+                    continue;
+                }
+                //先進行重複檢查
+                checkRepeatRegister(caseData.getOrformno(), checkAndConvertCsvData(rowData.get(0), "idn", index));
+                //再開始新增報名資料
+                orresult.setOrformno(caseData.getOrformno());
+                orresult.setSeqno(orresultDao.getMaximumSeqno(caseData.getOrformno()));
+                orresult.setRegisway(caseData.getRegisway());
+                orresult.setRegisidn(checkAndConvertCsvData(rowData.get(0), "idn", index));
+                orresult.setRegisname(checkAndConvertCsvData(rowData.get(1),"name", index));
+                orresult.setRegisbrth(checkAndConvertCsvData(rowData.get(2),"birth", index));
+                orresult.setRegisemail(checkAndConvertCsvData(rowData.get(3),"mail", index));
+                orresult.setRegissex(checkAndConvertCsvData(rowData.get(4),"sex", index));
+                orresult.setRegisphone(checkAndConvertCsvData(rowData.get(5),"phone", index));
+                orresult.setFax(checkAndConvertCsvData(rowData.get(6),"fax", index));
+                orresult.setJogtitle(checkAndConvertCsvData(rowData.get(7),"jogtitle", index));
+                orresult.setCompany(checkAndConvertCsvData(rowData.get(8),"company", index));
+                orresult.setDept(checkAndConvertCsvData(rowData.get(9),"dept", index));
+                orresult.setRegisaddres(checkAndConvertCsvData(rowData.get(10),"address", index));
+                orresult.setDegreen(6);
+                orresult.setMealstatus(checkAndConvertCsvData(rowData.get(14),"mealstatus", index));
+                orresult.setCredt(LocalDateTime.now());
+                orresult.setCreuser(userData.getUserId());
+                orresult.setRegisdt(orresult.getCredt());
+                orresultDao.insertData(orresult);
+                index++;
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+            throw e;
+        }
+    }
+
+    /**
+     * 重複報名就取消報名舊的報名資料
+     * @param orformno
+     * @param idno
+     */
+    private void checkRepeatRegister(String orformno, String idno) {
+        Orresult chkOrresult = orresultDao.getDataByOrformnoAndIdno(orformno, idno);
+        if (chkOrresult != null) {
+            chkOrresult.setIspass("D");
+            chkOrresult.setUpddt(LocalDateTime.now());
+            chkOrresult.setUpduser(userData.getUserId());
+            orresultDao.updateData(chkOrresult, orformno, chkOrresult.getSeqno());
+        }
+    }
+
+    /**
+     * 人工報名-下載範本
+     * @return
+     */
+    public ByteArrayOutputStream downloadCsv() {
+        ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream(0);
+        InputStream input = Eip00w420Service.class.getResourceAsStream("/report/batch_reg_example.csv");
+        try (input;byteArrayOutputStream) {
+            byte[] buffer = new byte[1024];
+            int bytesRead;
+            while ((bytesRead = input.read(buffer)) != -1) {
+                byteArrayOutputStream.write(buffer, 0, bytesRead);
+            }
+        } catch (IOException e) {
+            log.error(ExceptionUtility.getStackTrace(e));
+            return null;
+        }
+        return byteArrayOutputStream;
+    }
+
+    /**
+     * 檢核並轉換csv資料，如有錯誤拋出IllegalArgumentException供上層catch
+     * @param data
+     * @param columName
+     * @param index
+     * @return
+     */
+    private String checkAndConvertCsvData(String data, String columName, int index) {
+        if ("idn".equals(columName)) {
+            if (StringUtils.isBlank(data) || !ValidateUtility.isValidIdnoOrPassportNo(data)) {
+                log.debug("csv身分證號格式不正確:");
+                throw new IllegalArgumentException(String.format("第%s列身分證號格式不正確", index));
+            }
+        }
+        if ("name".equals(columName)) {
+            if (StringUtils.isBlank(data) || data.length() > 33) {
+                log.debug("csv姓名格式不正確:"+data);
+                throw new IllegalArgumentException(String.format("第%s列姓名格式不正確", index));
+            }
+        }
+        if ("birth".equals(columName)) {
+            if (StringUtils.isBlank(data) || data.length()!=7 || !DateUtil.isValidDate(data,true)) {
+                log.debug("csv生日格式不正確:"+data);
+                throw new IllegalArgumentException(String.format("第%s列生日格式不正確", index));
+            }
+            return DateUtility.changeDateTypeToWestDate(data);
+        }
+        if ("mail".equals(columName)) {
+            EmailValidator ev = new EmailValidator();
+            if (StringUtils.isBlank(data) || !ev.isValid(data,null) || data.length() > 51) {
+                log.debug("csv email格式不正確:"+data);
+                throw new IllegalArgumentException(String.format("第%s列email格式不正確", index));
+            }
+        }
+        if ("sex".equals(columName)) {
+            if (StringUtils.isBlank(data) || !data.matches("G|F") || data.length() > 1) {
+                log.debug("csv性別格式不正確:"+data);
+                throw new IllegalArgumentException(String.format("第%s列性別格式不正確", index));
+            }
+        }
+        if ("phone".equals(columName)) {
+            if (StringUtils.isBlank(data) || data.length() > 20) {
+                log.debug("csv電話格式不正確:"+data);
+                throw new IllegalArgumentException(String.format("第%s列電話格式不正確", index));
+            }
+        }
+        if ("fax".equals(columName)) {
+            if (data.length() > 20) {
+                log.debug("csv傳真格式不正確:"+data);
+                throw new IllegalArgumentException(String.format("第%s列傳真格式不正確", index));
+            }
+        }
+        if ("jogtitle".equals(columName)) {
+            if (StringUtils.isBlank(data) || data.length() > 33) {
+                log.debug("csv職稱格式不正確:"+data);
+                throw new IllegalArgumentException(String.format("第%s列職稱格式不正確", index));
+            }
+        }
+        if ("company".equals(columName)) {
+            if (data.length() > 33) {
+                log.debug("csv公司格式不正確:"+data);
+                throw new IllegalArgumentException(String.format("第%s列公司格式不正確", index));
+            }
+        }
+        if ("dept".equals(columName)) {
+            if (StringUtils.isBlank(data) || data.length() > 33) {
+                log.debug("csv部門格式不正確:"+data);
+                throw new IllegalArgumentException(String.format("第%s列部門格式不正確", index));
+            }
+        }
+        if ("address".equals(columName)) {
+            if (data.length() > 66) {
+                log.debug("csv地址格式不正確:"+data);
+                throw new IllegalArgumentException(String.format("第%s列地址格式不正確", index));
+            }
+        }
+        if ("mealstatus".equals(columName)) {
+            if (StringUtils.isBlank(data) || !data.matches("N|M|V") || data.length() > 1) {
+                log.debug("csv用餐狀況格式不正確:"+data);
+                throw new IllegalArgumentException(String.format("第%s列用餐狀況格式不正確", index));
+            }
+        }
+        return data;
     }
 
 }

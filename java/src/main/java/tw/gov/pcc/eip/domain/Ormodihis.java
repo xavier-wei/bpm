@@ -20,23 +20,23 @@ import java.time.LocalDateTime;
 public class Ormodihis {
   @PkeyField("ORFORMNO")
   @LogField("ORFORMNO")
-  private String orformno;
+  private String orformno;//表單編號
   @PkeyField("SEQNO")
   @LogField("SEQNO")
-  private String seqno;
+  private String seqno;//流水號
   @LogField("CHGTYPE")
-  private String chgtype;
+  private String chgtype;//變更動作
   @LogField("USERINFO")
-  private String userinfo;
+  private String userinfo;//操作者
   @LogField("USERDEPT")
-  private String userdept;
+  private String userdept;//操作者當時所屬部門
   @LogField("CREUSER")
-  private String creuser;
+  private String creuser;//建立人員
   @LogField("CREDT")
-  private LocalDateTime credt;
+  private LocalDateTime credt;//建立時間
   @LogField("UPDUSER")
-  private String upduser;
+  private String upduser;//更新人員
   @LogField("UPDDT")
-  private LocalDateTime upddt;
+  private LocalDateTime upddt;//更新時間
 
 }

@@ -13,6 +13,25 @@
             margin-left: -15px;
             margin-right: -15px;
         }
+        .nav-link{
+            border-radius: 8px 8px 0px 0px;
+            padding: 4px;
+            background-color: #8fd4ce;
+            background-image: linear-gradient(to bottom, #c0dad5, #c0dad5);
+            border: 1px solid #107db0;
+            /*box-shadow: inset 0 1px 0 #eeeeee, inset 0 -1px 0 #eeeeee, inset 0 0 0 1px #eeeeee, 0 2px 4px rgba(0, 0, 0, 0.2);*/
+            color: white;
+        }
+
+        .nav-link.font-weight-bold.active {
+            border-radius: 8px 8px 0px 0px;
+            padding: 4px;
+            background-color: #ffffff;
+            background-image: linear-gradient(to bottom, #fdd9a1, #fdd9a1);
+            border: 1px solid #b2784e;
+            box-shadow: inset 0 1px 0 #fdd9a1, inset 0 -1px 0 #fdd9a1, inset 0 0 0 1px #fdd9a1, 0 2px 4px rgba(0, 0, 0, 0.2);
+            color: white;
+        }
 </style>
 </jsp:attribute>
 <jsp:attribute name="contents">

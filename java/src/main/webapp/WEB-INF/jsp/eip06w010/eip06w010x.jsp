@@ -1,6 +1,6 @@
 <%@ page language="java" pageEncoding="UTF-8" %>
 <%@ include file="/WEB-INF/jsp/includes/include.jsp" %>
-<%-- 各類參數維護作業：決行層級參數檔 --%>
+<%-- 會議室查詢/維護作業 明細畫面 --%>
 <!doctype html>
 <spring:eval var="caseKey" expression="T(tw.gov.pcc.eip.common.controllers.Eip06w010Controller).CASE_KEY" />
 <c:set var="caseData" value="${requestScope[caseKey]}" />
@@ -9,7 +9,7 @@
 	    <tags:button id="btnBack">返回<i class="fas fa-reply"></i></tags:button>
     </jsp:attribute>
     <jsp:attribute name="contents">
-        <tags:fieldset>
+        <tags:fieldset legend="會議明細">
             <form:form id="eip06w010Form" name="eip06w010Form" modelAttribute="${caseKey}" method="POST">
                 <tags:form-row>
                     <div class="col-md-3">
@@ -101,7 +101,6 @@
                 <form:hidden path="itemIds" />
                 <form:hidden path="foodId_Qty"/>
                 <form:hidden path="food_Qty"/>
-                <form:hidden path="selectedRoomId"/>
                 <form:hidden path="meetingId"/>
                 <form:hidden path="admin"/>
             </form:form>

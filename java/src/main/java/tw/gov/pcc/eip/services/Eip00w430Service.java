@@ -4,7 +4,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.servlet.ModelAndView;
 import tw.gov.pcc.eip.common.cases.Eip00w430Case;
 import tw.gov.pcc.eip.dao.OrformdataDao;
 import tw.gov.pcc.eip.dao.OrresultDao;
@@ -14,7 +13,6 @@ import tw.gov.pcc.eip.framework.domain.UserBean;
 import tw.gov.pcc.eip.util.ExceptionUtility;
 
 import java.io.*;
-import java.lang.reflect.Array;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.time.LocalDateTime;
@@ -45,8 +43,10 @@ public class Eip00w430Service extends OnlineRegService {
      * @param caseData
      */
     public void getAllList(Eip00w430Case caseData) {
-        Map<String,String> regstatusMap = getRegStatusMap();
-        List<Eip00w430Case.RegCase> list = orformdataDao.getDataByStatus(Arrays.asList(new String[]{"P", "A"})).stream().map(t -> {
+        Map<String,String> regstatusMap = getRegstatus();
+        //TODO 目前userdata還沒有職稱，未來需要補
+        String deptno = getRegisqualDept().containsKey(userData.getDeptId()) ? userData.getDeptId() : userData.getEmpNo();
+            List<Eip00w430Case.RegCase> list = orformdataDao.getDataByStatus(Arrays.asList("P", "A"), deptno).stream().map(t -> {
             Eip00w430Case.RegCase regCase = new Eip00w430Case.RegCase();
             Orresult orresult = orresultDao.getDataByPerson(t.getOrformno(),userData.getUserId());
             List<Orresult>resultList = orresultDao.getDataByOrformno(t.getOrformno(),"D");
@@ -64,7 +64,7 @@ public class Eip00w430Service extends OnlineRegService {
             regCase.setStatusVal(StringUtils.defaultIfEmpty(regstatusMap.get(regCase.getRegresult()),"未報名"));//畫面上的報名結果
             return regCase;
         }).collect(Collectors.toList());
-        List<Eip00w430Case.RegCase> hislist = orformdataDao.getDataByStatus(Arrays.asList(new String[]{"I", "C", "D"})).stream().map(t -> {
+        List<Eip00w430Case.RegCase> hislist = orformdataDao.getDataByStatus(Arrays.asList("I", "C", "D"), deptno).stream().map(t -> {
             Eip00w430Case.RegCase regCase = new Eip00w430Case.RegCase();
             Orresult orresult = orresultDao.getDataByPerson(t.getOrformno(),userData.getUserId());
             regCase.setTopicname(t.getTopicname());
@@ -143,7 +143,8 @@ public class Eip00w430Service extends OnlineRegService {
         orresult.setRegissex("");
         orresult.setRegisbrth("");
         orresult.setRegisemail("");
-        orresult.setDept(userData.getDeptId());
+        //取不到dept名稱就直接exception
+        orresult.setDept(eipcodeDao.findByCodeKindCodeNo("REGISQUAL", userData.getDeptId()).get().getCodename());
         orresult.setDegreen(6);
         orresult.setCreuser(userData.getUserId());
         orresult.setCredt(LocalDateTime.now());

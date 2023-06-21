@@ -115,7 +115,7 @@
                                     </td>
                                     <td class="text-center align-middle">
                                         <label class="mb-0">
-                                            <form:radiobutton path="verList[${status.index}].isPay" data-ispass="${item.isPass}" value="" cssClass="mr-1"/>
+                                            <form:radiobutton path="verList[${status.index}].isPay" data-ispass="${item.isPass}" value="F" cssClass="mr-1"/>
                                             <span class="font-weight-bold mr-2">免費</span>
                                         </label>
                                     </td>
@@ -183,7 +183,7 @@ $(function(){
             } else if (last === '4') {
                 $("input[name$='isPay'][value='N']").prop("checked",true);
             } else if (last === '5') {
-                $("input[name$='isPay'][value='']").prop("checked",true);
+                $("input[name$='isPay'][value='F']").prop("checked",true);
             } else if (last === '6') {
                 $("input[name$='isNotify'][value='Y']").prop("checked",true);
             } else if (last === '7') {
@@ -203,7 +203,7 @@ $(function(){
         $("#selectAll3").prop("checked",true);
     } else if ($("input[name$='isPay'][value='N']:checked").length === $("input[name$='isPay'][value='N']").length){
         $("#selectAll4").prop("checked",true);
-    } else if ($("input[name$='isPay'][value='']:checked").length === $("input[name$='isPay'][value='']").length){
+    } else if ($("input[name$='isPay'][value='F']:checked").length === $("input[name$='isPay'][value='F']").length){
         $("#selectAll5").prop("checked",true);
     }
     if ($("input[name$='isNotify'][value='Y']:checked").length === $("input[name$='isNotify'][value='Y']").length){

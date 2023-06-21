@@ -16,6 +16,9 @@
 
 <script src='<c:url value="/js/bootstrap-datepicker.js"/>'></script>
 <script src='<c:url value="/js/bootstrap-datepicker-zh-TW.min.js"/>'></script>
+
+<script src='https://pcictw.pcc.gov.tw/WebIme/cmexwebime.js'></script>
+<script src="https://pcictw.pcc.gov.tw/WebFont/cmexwebfont.js"></script>
 <%--websocket--%>
 <script>
     $(function () {
@@ -115,54 +118,43 @@
     });
 </script>
 
-
-<%--float button--%>
+<%-- 全字庫輸入法 --%>
 <script>
-    function reposIEButton(e) {
-        var offset = e.data.offset;
-        var nav = e.data.nav;
-        var tmp = e.data.tmp;
-        var navParent = e.data.navParent;
+    let webImeLoaded = false;
 
-        var nheight = nav.height();
-        var pstop = navParent.scrollTop();
-        var crossTop = pstop + nheight;
-        var diff = navParent.width() - nav.width() + parseInt(nav.css('margin-right').replace('px', ''), 10) - parseInt(navParent.css('padding-right').replace('px', ''), 10);
+    function hardmode(id, obj) {
+        if (!webImeLoaded) {
+            webImeLoaded = true;
+            loadWebImeScript(() => {
+                createWebIme('.web-ime-load', {showWordType: false, onlyExt: false});
+            });
+        }
 
-        if (crossTop > offset.top && nav.css('position') !== 'absolute') {
-            nav.css('position', 'absolute');
-            nav.css('right', diff + 'px');
-            tmp.show();
-        } else if (crossTop <= offset.top && (nav.css('position') === 'absolute' || tmp.is(":visible"))) {
-            tmp.hide();
-            nav.css('position', '');
-            nav.css('right', '');
+        let $input = $('#' + id);
+        if ($input.prop('disabled')) {
+            $input.val($('.web-ime-' + id).val());
+        } else {
+            $('.web-ime-' + id).val($input.val());
+        }
+        let $_input = $('#' + '_' + id);
+        if ($input.is(':visible')) {
+            $input.hide().prop('disabled', true);
+            $_input.show().prop('disabled', false);
+            $(obj).text('關閉').prev('img').show();
+        } else {
+            $input.show().prop('disabled', false);
+            $_input.hide().prop('disabled', true);
+            $(obj).text('難字').prev('img').hide();
         }
     }
 
-
-    <%-- for ie --%>
     $(function () {
-        try {
-            var nu = navigator.userAgent;
-            var is_ie = nu.indexOf("MSIE ") > -1 || nu.indexOf("Trident/") > -1;
-            if (is_ie && $('.formButtonDiv').length > 0) {
-                var nav = $('.formButtonDiv:eq(0)');
-                var navParent = nav.parent()
-                var offset = navParent.offset();
-
-                var obj = {
-                    offset: offset,
-                    nav: nav,
-                    navParent: navParent,
-                    tmp: $('<div id="_tmp"></div>').hide()
-                };
-                $(obj.tmp).height(nav.height()).css('margin-top', nav.css('margin-top')).insertAfter(nav);
-
-                navParent.on('scroll', null, obj, reposIEButton);
-            }
-        } catch (e) {
-            console.log('Floating Button error');
-        }
+        $('.web-ime').each(function () {
+            let id = $(this).attr('id');
+            let $newInput = $(this).clone().attr('id', '_' + id).addClass('web-ime-' + id).css('display', 'none').addClass('web-ime-load').prop('disabled', true);
+            $(this).after($newInput);
+            let $button = $('<button type="button" class="btn btn-outline-be" onclick="hardmode(\`' + id + '\`, this)">難字</button>').attr('id', '_' + id + '_button');
+            $($newInput).after($button);
+        });
     });
 </script>

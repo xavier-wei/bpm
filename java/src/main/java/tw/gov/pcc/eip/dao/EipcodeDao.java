@@ -83,4 +83,12 @@ public interface EipcodeDao {
      * @return
      */
     public List<String> findByCodeKindAndList(String codeKind, List<String>list);
+
+    /**
+     * 依傳入codekind並排除傳入scodekind進行查詢
+     * @param codeKind
+     * @param scodekind
+     * @return
+     */
+    public List<Eipcode> findByCodeKindAndExcludeScodekind(String codeKind, String scodekind);
 }

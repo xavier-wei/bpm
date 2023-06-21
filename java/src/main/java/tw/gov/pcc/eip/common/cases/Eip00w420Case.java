@@ -49,6 +49,8 @@ public class Eip00w420Case implements Serializable {
 
     private Map<String,String> regisqualCheckboxE4;
 
+    private Map<String,String> degreenCombobox;
+
     private String mode;
 
     private String orformno;
@@ -60,6 +62,8 @@ public class Eip00w420Case implements Serializable {
     private String isPass;
 
     private String cKeyword;
+
+    private String topicname;
 
     @Data
     public static class OrCase {

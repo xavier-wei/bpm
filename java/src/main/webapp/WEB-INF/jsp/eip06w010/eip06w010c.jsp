@@ -12,7 +12,7 @@
 	    <tags:button id="btnBack">返回<i class="fas fa-reply"></i></tags:button>
     </jsp:attribute>
     <jsp:attribute name="contents">
-        <tags:fieldset>
+        <tags:fieldset legend="會議編輯">
             <form:form id="eip06w010Form" name="eip06w010Form" modelAttribute="${caseKey}" method="POST">
                 <tags:form-row>
                     <div class="col-md-3 d-flex">

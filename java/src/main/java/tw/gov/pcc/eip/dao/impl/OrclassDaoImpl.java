@@ -96,7 +96,7 @@ public class OrclassDaoImpl extends BaseDao<Orclass> implements OrclassDao {
     @Override
     public Long getOrccode() {
         StringBuilder sql = new StringBuilder();
-        sql.append("select MAX(orccode)+1 maxOrccode FROM orclass");
+        sql.append("select ISNULL(MAX(orccode)+1,1) maxOrccode FROM orclass");
         SqlParameterSource params = new MapSqlParameterSource();
         return getNamedParameterJdbcTemplate().queryForObject(
                 sql.toString(), params, Long.class);

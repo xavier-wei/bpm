@@ -10,7 +10,7 @@ import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import tw.gov.pcc.eip.common.cases.Eip06w010Case;
-import tw.gov.pcc.eip.common.services.Eip06w010Service;
+import tw.gov.pcc.eip.services.Eip06w010Service;
 import tw.gov.pcc.eip.dao.MeetingDao;
 import tw.gov.pcc.eip.domain.Meeting;
 import tw.gov.pcc.eip.domain.MeetingCode;
@@ -294,6 +294,7 @@ public class Eip06w010Controller extends BaseController {
         eip06w010Service.deleteMeeting(caseData);
         caseData.clear();
         eip06w010Service.initSelectList(caseData);
+        setSystemMessage(getDeleteSuccessMessage());
         if(caseData.isAdmin()){
             return QUERY_ADMIN_PAGE;
         }else {

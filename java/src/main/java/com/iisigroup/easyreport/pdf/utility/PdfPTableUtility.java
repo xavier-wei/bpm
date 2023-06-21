@@ -1,5 +1,12 @@
 package com.iisigroup.easyreport.pdf.utility;
 
+import java.util.Arrays;
+
+import org.apache.commons.lang3.StringUtils;
+
+import com.iisigroup.easyreport.pdf.ReportBase;
+import com.iisigroup.easyreport.pdf.enums.CNS11643;
+import com.itextpdf.text.Chunk;
 import com.itextpdf.text.Element;
 import com.itextpdf.text.Font;
 import com.itextpdf.text.Image;
@@ -7,7 +14,6 @@ import com.itextpdf.text.Phrase;
 import com.itextpdf.text.Rectangle;
 import com.itextpdf.text.pdf.FontSelector;
 import com.itextpdf.text.pdf.PdfPCell;
-import org.apache.commons.lang3.StringUtils;
 
 /**
  * Utility for <code>PdfPTable</code>
@@ -41,7 +47,22 @@ public class PdfPTableUtility {
      * @return <code>PdfPCell</code> 物件，若傳入的 <code>str</code> 是 <code>null</code> 則會回傳一個無內容的 <code>PdfPCell</code> 物件
      */
     public static PdfPCell createPdfPCell(int colspan, int rowspan, String str, Font font, float borderWidth, int borderType, int hAlignment, int vAlignment, int lineSpace) {
-        PdfPCell cell = new PdfPCell(new Phrase(StringUtils.defaultString(str), font));
+        PdfPCell cell;
+        CNS11643 targetFontfamily = null;
+        if (Arrays.stream(font.getBaseFont().getFullFontName())
+                .anyMatch(x -> Arrays.stream(x).anyMatch(y -> StringUtils.containsIgnoreCase(y, "楷")))) {
+            targetFontfamily = CNS11643.KAI;
+        } else if (Arrays.stream(font.getBaseFont().getFullFontName())
+                .anyMatch(x -> Arrays.stream(x).anyMatch(y -> StringUtils.containsIgnoreCase(y, "宋")))) {
+            targetFontfamily = CNS11643.SUNG;
+        }
+        if (targetFontfamily != null) {
+            cell = new PdfPCell(ReportBase
+                    .getFontSelector(targetFontfamily, Math.round(font.getSize()), Math.round(font.getStyle()))
+                    .process(StringUtils.defaultString(str)));
+        } else {
+            cell = new PdfPCell(new Phrase(new Chunk(StringUtils.defaultString(str), font).setCharacterSpacing(-0.1f)));
+        }
 
         cell.setUseDescender(true);
 
@@ -152,25 +173,4 @@ public class PdfPTableUtility {
         return cell;
     }
 
-    /**
-     * 依傳入的參數建立 <code>PdfPCell</code><br>
-     * 用於內容是文字時
-     * BF增加，懶得畫格子直接指定方框高度，直接畫文字框
-     *
-     * @param colspan Column Span （若不指定請傳入 <code>PdfPTableUtility.SPAN_UNDEFINED</code>）
-     * @param rowspan Row Span （若不指定請傳入 <code>PdfPTableUtility.SPAN_UNDEFINED</code>）
-     * @param str 欄位內容字串
-     * @param font 字體
-     * @param borderWidth 框線的寬度
-     * @param borderType 框線的樣式 （若不指定請傳入 <code>Rectangle.UNDEFINED</code>）
-     * @param hAlignment 水平對齊方式 （若不指定請傳入 <code>Element.ALIGN_UNDEFINED</code>）
-     * @param vAlignment 垂直對齊方式 （若不指定請傳入 <code>Element.ALIGN_UNDEFINED</code>）
-     * @param lineSpace 行距 （若不指定請設定 <code>PdfPTableUtility.LINESPACE_UNDEFINED</code>）
-     * @return <code>PdfPCell</code> 物件，若傳入的 <code>str</code> 是 <code>null</code> 則會回傳一個無內容的 <code>PdfPCell</code> 物件
-     */
-    public static PdfPCell createPdfPCell(int colspan, int rowspan, String str, Font font, float borderWidth, int borderType, int hAlignment, int vAlignment, int lineSpace, int height) {
-        PdfPCell cell = createPdfPCell(colspan, rowspan, str, font, borderWidth, borderType, hAlignment, vAlignment, lineSpace);
-        cell.setFixedHeight(height);
-        return cell;
-    }
 }

@@ -261,16 +261,16 @@ public abstract class BaseDao<T> {
 		StringBuilder conditions = new StringBuilder();
 		Arrays.asList(t.getClass().getDeclaredFields()).stream().filter(field -> field.isAnnotationPresent(LogField.class)).forEach(field -> {
 			String columnName = field.getAnnotationsByType(LogField.class)[0].value();
-			columns.append("T.").append(columnName.toUpperCase()).append(" = ").append(":").append(columnName.toLowerCase()).append(",");
+			columns.append(columnName.toUpperCase()).append(" = ").append(":").append(columnName.toLowerCase()).append(",");
 		});
 		Arrays.asList(t.getClass().getDeclaredFields()).stream().filter(field -> field.isAnnotationPresent(PkeyField.class)).forEach(field -> {
 			String columnName = field.getAnnotationsByType(PkeyField.class)[0].value();
-			conditions.append("T.").append(columnName.toUpperCase()).append(" = ").append(":").append(columnName.toLowerCase()).append(" AND ");
+			conditions.append(columnName.toUpperCase()).append(" = ").append(":").append(columnName.toLowerCase()).append(" AND ");
 		});
 		columns.setLength(columns.length() - 1);
 		conditions.setLength(conditions.length() - 5);
 		paramsAllEmptyThrowException(t, conditions.toString());
-		sql.append(" UPDATE ").append(tableName).append(" T SET ").append(columns.toString()).append(" WHERE ").append(conditions.toString());
+		sql.append(" UPDATE ").append(tableName).append(" SET ").append(columns.toString()).append(" WHERE ").append(conditions.toString());
 		log.debug(sql.toString());
 		SqlParameterSource params = new BeanPropertySqlParameterSource(t);
 		return getNamedParameterJdbcTemplate().update(sql.toString(), params);
@@ -318,11 +318,11 @@ public abstract class BaseDao<T> {
 		StringBuilder conditions = new StringBuilder();
 		Arrays.asList(t.getClass().getDeclaredFields()).stream().filter(field -> field.isAnnotationPresent(PkeyField.class)).forEach(field -> {
 			String columnName = field.getAnnotationsByType(PkeyField.class)[0].value();
-			conditions.append("T.").append(columnName.toUpperCase()).append(" = ").append(":").append(columnName.toLowerCase()).append(" AND ");
+			conditions.append(columnName.toUpperCase()).append(" = ").append(":").append(columnName.toLowerCase()).append(" AND ");
 		});
 		conditions.setLength(conditions.length() - 5);
 		paramsAllEmptyThrowException(t, conditions.toString());
-		sql.append(" DELETE ").append(tableName).append(" T ");
+		sql.append(" DELETE ").append(tableName);
 		sql.append(" WHERE ");
 		sql.append(conditions.toString());
 		log.debug(sql.toString());

@@ -1,13 +1,9 @@
 package tw.gov.pcc.eip.dao;
 
 import tw.gov.pcc.eip.common.cases.Eip06w010Case;
-import tw.gov.pcc.eip.domain.Code;
-import tw.gov.pcc.eip.domain.Eip06w040Report;
-import tw.gov.pcc.eip.domain.Meeting;
-import tw.gov.pcc.eip.domain.MeetingItemAndMeetingCode;
+import tw.gov.pcc.eip.domain.*;
 
 import java.util.List;
-import java.util.Optional;
 
 /**
  * 會議主檔(MEETING)
@@ -47,5 +43,16 @@ public interface MeetingDao {
      * @param meetingdt
      * @return
      */
-    public List<Eip06w040Report> selectDataByMeetingdt(String meetingdt);
+    public List<Eip06w040Report> selectValidMeetingByMeetingdt(String meetingdt);
+
+    /**
+     * 依儲存時間查詢所有受影響會議
+     * @param dateList
+     * @param using
+     * @param roomId
+     * @return
+     */
+    public List<Meeting> findExistedMeeting(List<String> dateList, String using, String roomId);
+
+
 }

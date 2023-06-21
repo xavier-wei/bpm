@@ -124,5 +124,4 @@ $(function () {
     inputFieldFocus();
     //dataTable轉中文設定
     $.extend($.fn.dataTable.defaults, getDataTablesConfig());
-    // $('.num_only, .float_only, .num_eng_only, .idn, .tel, .date, .birth, .apno').prop('type', 'tel');
 });

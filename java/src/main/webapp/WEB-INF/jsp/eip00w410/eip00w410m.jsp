@@ -19,7 +19,7 @@
 </jsp:attribute>
 
 <jsp:attribute name="contents">
-    <tags:fieldset legend="線上報名分類管理">
+    <tags:fieldset legend="線上報名分類列表">
     <form:form id="eip00w410Form" name="eip00w410Form" modelAttribute="${caseKey}" method="POST">
         <tags:form-row>
             <div class="table-responsive">
@@ -64,7 +64,6 @@
 $(function(){
     // dataTable 設定
     let config = getDataTablesConfig();
-    config.info = false; //不顯示 筆數資訊..
     $('#tb1').DataTable(config);
 	$('#btnInsert').click(function(e){
         e.preventDefault();

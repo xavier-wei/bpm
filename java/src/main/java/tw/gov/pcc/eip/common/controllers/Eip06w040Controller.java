@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.ModelAndView;
 import tw.gov.pcc.eip.common.cases.Eip06w040Case;
-import tw.gov.pcc.eip.common.services.Eip06w040Service;
+import tw.gov.pcc.eip.services.Eip06w040Service;
 import tw.gov.pcc.eip.framework.spring.controllers.BaseController;
 import tw.gov.pcc.eip.framework.spring.support.FileOutputView;
 import tw.gov.pcc.eip.util.DateUtility;

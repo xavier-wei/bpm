@@ -1,15 +1,30 @@
 package com.iisigroup.easyreport.pdf;
 
+import java.io.ByteArrayOutputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
 import com.iisigroup.easyreport.pdf.Helper.EnvHelper;
 import com.iisigroup.easyreport.pdf.enums.CNS11643;
 import com.iisigroup.easyreport.pdf.exception.ReportException;
 import com.iisigroup.easyreport.pdf.utility.PdfPTableUtility;
 import com.itextpdf.text.BadElementException;
+import com.itextpdf.text.Chunk;
 import com.itextpdf.text.Document;
 import com.itextpdf.text.Element;
 import com.itextpdf.text.Font;
 import com.itextpdf.text.Image;
 import com.itextpdf.text.PageSize;
+import com.itextpdf.text.Phrase;
 import com.itextpdf.text.Rectangle;
 import com.itextpdf.text.pdf.Barcode39;
 import com.itextpdf.text.pdf.BaseFont;
@@ -23,16 +38,6 @@ import com.itextpdf.text.pdf.PdfPCellEvent;
 import com.itextpdf.text.pdf.PdfPTable;
 import com.itextpdf.text.pdf.PdfTemplate;
 import com.itextpdf.text.pdf.PdfWriter;
-import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-import java.io.ByteArrayOutputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 /**
  * 所有報表繼承之 Base Class
@@ -127,7 +132,7 @@ public class ReportBase {
     private static List<BaseFont> cnsKaiBaseFontList = null;
 
     private Map<String, Font> fontMap = new HashMap<String, Font>();
-    private Map<String, FontSelector> fontSelectorMap = new HashMap<String, FontSelector>();
+    private static Map<String, FontSelector> fontSelectorMap = new HashMap<String, FontSelector>();
 
     /**
      * 以預設參數建立報表: <br>
@@ -337,6 +342,9 @@ public class ReportBase {
      */
     protected void initFont(String fontName) throws ReportException {
         try {
+            cnsSungBaseFontList = EnvHelper.getCnsSungBaseFontList();
+            cnsKaiBaseFontList = EnvHelper.getCnsKaiBaseFontList();
+
             initFont(EnvHelper.getFontPath(), fontName);
         }
         catch (Exception e) {
@@ -434,7 +442,7 @@ public class ReportBase {
      * @param fontStyle 字體樣式，可為 <code>Font.NORMAL</code>、<code>Font.BOLD</code>、<code>Font.BOLDITALIC</code>、<code>Font.ITALIC</code>、<code>Font.STRIKETHRU</code>、<code>Font.UNDERLINE</code>
      * @return
      */
-    private FontSelector getFontSelector(CNS11643 cnsFont, int fontSize, int fontStyle) {
+    public static FontSelector getFontSelector(CNS11643 cnsFont, int fontSize, int fontStyle) {
         String fontKey = "";
 
         if (fontStyle == Font.BOLD)
@@ -3616,48 +3624,30 @@ public class ReportBase {
         if (str == null)
             str = "";
 
-        Font font = getFont(fontSize);
-        BaseFont baseFont = font.getCalculatedBaseFont(false);
 
-        PdfContentByte canvas = getPdfContetByteUnder();
-        canvas.saveState();
-        canvas.beginText();
-        canvas.setFontAndSize(baseFont, fontSize);
+        CNS11643 targetFontfamily = null;
+        Font font = getFont(fontSize,fontStyle);
 
-        if (fontStyle == Font.BOLD || fontStyle == Font.BOLDITALIC) {
-            canvas.setTextRenderingMode(PdfContentByte.TEXT_RENDER_MODE_FILL_STROKE);
-            canvas.setLineWidth(0.5f);
+        Phrase phrase;
+        if (Arrays.stream(font.getBaseFont().getFullFontName())
+                .anyMatch(ix -> Arrays.stream(ix).anyMatch(iy -> StringUtils.containsIgnoreCase(iy, "楷")))) {
+            targetFontfamily = CNS11643.KAI;
+        } else if (Arrays.stream(font.getBaseFont().getFullFontName())
+                .anyMatch(ix -> Arrays.stream(ix).anyMatch(iy -> StringUtils.containsIgnoreCase(iy, "宋")))) {
+            targetFontfamily = CNS11643.SUNG;
+        }
+        if (targetFontfamily != null) {
+            phrase =ReportBase
+                    .getFontSelector(targetFontfamily, Math.round(font.getSize()), Math.round(font.getStyle()))
+                    .process(StringUtils.defaultString(str));
+        } else {
+            phrase = new Phrase(new Chunk(StringUtils.defaultString(str), font).setCharacterSpacing(-0.1f));
         }
 
-        if (fontStyle == Font.ITALIC || fontStyle == Font.BOLDITALIC) {
-            canvas.setTextMatrix(1, 0, 0.25f, 1, x, y);
-            canvas.showText(str);
-        }
-        else {
-            // 非斜體相關樣式
-            canvas.showTextAligned(hAlignment, str, x, y, 0);
-        }
-
-        canvas.endText();
-
-        if (fontStyle == Font.UNDERLINE) {
-            canvas.setRGBColorStroke(0, 0, 0);
-            canvas.setLineWidth(0.5f);
-            canvas.moveTo(x + baseFont.getWidthPoint(str, fontSize), y - 2);
-            canvas.lineTo(x, y - 2);
-            canvas.stroke();
-        }
-
-        if (fontStyle == Font.STRIKETHRU) {
-            canvas.setRGBColorStroke(0, 0, 0);
-            canvas.setLineWidth(0.5f);
-            canvas.moveTo(x + baseFont.getWidthPoint(str, fontSize), (y + (fontSize / 2) - 2));
-            canvas.lineTo(x, (y + (fontSize / 2) - 2));
-            canvas.stroke();
-        }
-
-        canvas.restoreState();
+        PdfContentByte canvas = writer.getDirectContent();
+        ColumnText.showTextAligned(canvas, hAlignment, phrase, x, y, 0);
     }
+
     /**
      * 相對位置加入字段
      *
@@ -3670,16 +3660,25 @@ public class ReportBase {
     protected void drawString(String str, int x, int y, Font font, int hAlignment) {
         if (str == null)
             str = "";
+        CNS11643 targetFontfamily = null;
+        Phrase phrase;
+        if (Arrays.stream(font.getBaseFont().getFullFontName())
+                .anyMatch(ix -> Arrays.stream(ix).anyMatch(iy -> StringUtils.containsIgnoreCase(iy, "楷")))) {
+            targetFontfamily = CNS11643.KAI;
+        } else if (Arrays.stream(font.getBaseFont().getFullFontName())
+                .anyMatch(ix -> Arrays.stream(ix).anyMatch(iy -> StringUtils.containsIgnoreCase(iy, "宋")))) {
+            targetFontfamily = CNS11643.SUNG;
+        }
+        if (targetFontfamily != null) {
+            phrase =ReportBase
+                    .getFontSelector(targetFontfamily, Math.round(font.getSize()), Math.round(font.getStyle()))
+                    .process(StringUtils.defaultString(str));
+        } else {
+            phrase = new Phrase(new Chunk(StringUtils.defaultString(str), font).setCharacterSpacing(-0.1f));
+        }
 
-        BaseFont baseFont = font.getCalculatedBaseFont(false);
-
-        PdfContentByte canvas = getPdfContetByteUnder();
-        canvas.saveState();
-        canvas.beginText();
-        canvas.setFontAndSize(baseFont, font.getSize());
-        canvas.showTextAligned(hAlignment, str, x, y, 0);
-        canvas.endText();
-        canvas.restoreState();
+        PdfContentByte canvas = writer.getDirectContent();
+        ColumnText.showTextAligned(canvas, Element.ALIGN_LEFT, phrase, x, y, 0);
     }
 
     /**

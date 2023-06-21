@@ -59,4 +59,27 @@ public class ValidateUtility {
         }
         return isValid;
     }
+
+    /**
+     * 身分證與護照號碼有效字元檢查
+     *
+     * @param idNo
+     * @return
+     */
+    public static boolean isValidIdnoOrPassportNo(String idNo) {
+        if (StringUtils.length(idNo) != 10) return false;
+        String sIDN = "ABCDEFGHJKLMNPQRSTUVXYWZIO#";
+        String sNUM = "0123456789";
+        // 首碼不是英文字母或#
+        if (StringUtils.indexOf(sIDN, idNo.charAt(0)) == -1) {
+            return false;
+        }
+        // 其餘各碼須為數字
+        for (int i = 2; i < idNo.length(); i++) {
+            if (StringUtils.indexOf(sNUM, idNo.charAt(i)) == -1) {
+                return false;
+            }
+        }
+        return true;
+    }
 }

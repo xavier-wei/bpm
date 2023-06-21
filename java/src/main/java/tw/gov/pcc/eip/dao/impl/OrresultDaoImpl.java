@@ -130,4 +130,19 @@ public class OrresultDaoImpl extends BaseDao<Orresult> implements OrresultDao {
         return getNamedParameterJdbcTemplate().queryForObject(
                 sql.toString(), params, String.class);
     }
+
+    @Override
+    public Orresult getDataByOrformnoAndIdno(String orformno, String idno) {
+        StringBuilder sql = new StringBuilder();
+        sql.append("SELECT ");
+        sql.append(ALL_COLUMNS_SQL);
+        sql.append("  FROM " + TABLE_NAME );
+        sql.append(" WHERE orformno = :orformno ");
+        sql.append("   AND regisidn = :idno AND ISNULL(ispass,'X') <> 'D' ");
+        sql.append(" ORDER BY seqno desc");
+        SqlParameterSource params = new MapSqlParameterSource("orformno", orformno).addValue("idno", idno);
+        List<Orresult> list = getNamedParameterJdbcTemplate().query(sql.toString(), params,
+                BeanPropertyRowMapper.newInstance(Orresult.class));
+        return CollectionUtils.isEmpty(list) ? null : list.get(0);
+    }
 }

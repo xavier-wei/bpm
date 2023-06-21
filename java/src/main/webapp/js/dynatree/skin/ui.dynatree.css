@@ -10,6 +10,7 @@ div.ui-dynatree-container
 	
 	background-color: white;
 	border: 1px dotted gray;
+	margin: 10px 0px;
 }
 
 /* Style, when control is disabled */

@@ -354,7 +354,6 @@
                             <filtering>true</filtering>
                             <includes>
                                 <include>WEB-INF/web.xml</include>
-                                <include>WEB-INF/keycloak.json</include>
                                 <include>WEB-INF/tags/layout.tag</include>
                                 <include>WEB-INF/conf/applicationContext-mail.xml</include>
                             </includes>

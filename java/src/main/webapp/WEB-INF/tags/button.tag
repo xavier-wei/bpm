@@ -6,5 +6,5 @@
 
 <button <%=TagUtil.getAttributes((Map<String, Object>) jspContext.getAttribute("dynamicAttributesVar"))%>
 	type="button" class="btn btn-outline-be <%=HtmlUtils.htmlEscape(Objects.toString(jspContext.getAttribute("cssClass"), "")) %>">
-	<jsp:doBody/>
+	<span class="btn-txt"><jsp:doBody/></span>
 </button>

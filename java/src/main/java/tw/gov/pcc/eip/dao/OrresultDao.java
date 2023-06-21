@@ -50,4 +50,10 @@ public interface OrresultDao {
      * @return
      */
     public String getMaximumSeqno(String orformno);
+
+    /**
+     * 取得本月最大序號
+     * @return
+     */
+    public Orresult getDataByOrformnoAndIdno(String orformno,String idno);
 }

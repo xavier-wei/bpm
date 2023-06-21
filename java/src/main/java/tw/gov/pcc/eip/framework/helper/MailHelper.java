@@ -1,5 +1,6 @@
 package tw.gov.pcc.eip.framework.helper;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.core.io.ClassPathResource;
@@ -7,18 +8,24 @@ import org.springframework.core.io.InputStreamSource;
 import org.springframework.mail.javamail.JavaMailSenderImpl;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.mail.javamail.MimeMessagePreparator;
+import org.springframework.stereotype.Component;
 import org.springframework.util.StreamUtils;
 import tw.gov.pcc.common.helper.EnvFacadeHelper;
+import tw.gov.pcc.eip.dao.EipcodeDao;
+import tw.gov.pcc.eip.util.BeanUtility;
+import tw.gov.pcc.eip.util.ExceptionUtility;
+import tw.gov.pcc.eip.util.ObjectUtility;
 
 import javax.mail.internet.InternetAddress;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
+import java.util.Properties;
 
 /**
  * Email 輔助類別
- *
- * @author Goston
  */
+@Component
+@Slf4j
 public class MailHelper {
 
     private static final String MAIL_ENCODING = "UTF-8";
@@ -27,10 +34,28 @@ public class MailHelper {
     private static final String DEFAULT_SENDER_TEMPLATE = "pcc-%s@ms.pcc.gov.tw";
     private final JavaMailSenderImpl mailSender;
 
-    public MailHelper(String host, String defaultEncoding) {
+    private final EipcodeDao eipcodeDao;
+
+    public MailHelper(EipcodeDao eipcodeDao) {
+        this.eipcodeDao = eipcodeDao;
         mailSender = new JavaMailSenderImpl();
-        mailSender.setHost(host);
-        mailSender.setDefaultEncoding(defaultEncoding);
+        mailSender.setDefaultEncoding("UTF-8");
+        Properties props = mailSender.getJavaMailProperties();
+        props.put("mail.transport.protocol", "smtp");
+        props.put("mail.smtp.auth", "true");
+        props.put("mail.smtp.starttls.enable", "true");
+        props.put("mail.smtp.starttls.required", "true");
+        props.put("mail.debug", "true");
+        props.put("mail.smtp.ssl.trust", "210.69.177.66");
+
+        try {
+            eipcodeDao.findByCodeKind("SYS_SMTP")
+                    .forEach(x -> BeanUtility.setBeanProperty(mailSender,
+                            ObjectUtility.normalizeObject(StringUtils.lowerCase(x.getScodekind())),
+                            ObjectUtility.normalizeObject(x.getCodename())));
+        } catch (Exception e) {
+            log.error("MailHelper 初始化失敗 {}", ExceptionUtility.getStackTrace(e));
+        }
     }
 
 
@@ -72,8 +97,6 @@ public class MailHelper {
             try (InputStream is = new ClassPathResource(String.format("mailTemplate/%s", template)).getInputStream()) {
                 templateString = StreamUtils.copyToString(is, StandardCharsets.UTF_8);
             }
-            //File templateFile = ResourceUtils.getFile(String.format("classpath:mailTemplate/%s", template));
-            //templateString = FileUtils.readFileToString(templateFile, StandardCharsets.UTF_8);
             String htmlContent = StringUtils.replace(templateString, "${message}", mailContent);
 
             message.setText(htmlContent, true);
@@ -117,8 +140,6 @@ public class MailHelper {
             try (InputStream is = new ClassPathResource(String.format("mailTemplate/%s", "SimpleMessage.html")).getInputStream()) {
                 templateString = StreamUtils.copyToString(is, StandardCharsets.UTF_8);
             }
-            // File templateFile = ResourceUtils.getFile("classpath:mailTemplate/SimpleMessage.html");
-            // String template = FileUtils.readFileToString(templateFile, StandardCharsets.UTF_8);
             String htmlContent = StringUtils.replace(templateString, "${message}", mailContent);
 
             message.setText(htmlContent, true);

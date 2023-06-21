@@ -43,33 +43,4 @@
             <type>java.lang.String</type>
         </attribute>
     </tag>
-    <tag>
-        <description>apno formater</description>
-        <name>apno</name>
-        <tag-class>tw.gov.pcc.common.tag.func.ApnoFmtTag</tag-class>
-        <body-content>empty</body-content>
-        <attribute>
-            <name>value</name>
-            <required>true</required>
-            <rtexprvalue>true</rtexprvalue>
-        </attribute>
-    </tag>
-
-    <tag>
-        <description>codeToString</description>
-        <name>code</name>
-        <tag-class>tw.gov.pcc.common.tag.func.CodenameTag</tag-class>
-        <body-content>empty</body-content>
-        <attribute>
-            <name>codekind</name>
-            <required>true</required>
-            <rtexprvalue>true</rtexprvalue>
-        </attribute>
-        <attribute>
-            <name>codeno</name>
-            <required>true</required>
-            <rtexprvalue>true</rtexprvalue>
-        </attribute>
-    </tag>
-
 </taglib>

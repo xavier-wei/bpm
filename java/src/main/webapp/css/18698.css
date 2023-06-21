@@ -59,7 +59,8 @@
 .list-box-wrapper .list-box-item .search-box input {
     border: none;
     padding: .5rem 1rem;
-    width: 100%
+    width: 100%;
+	
 }
 
 .list-box-wrapper .list-box-item .search-box .clear-search {
@@ -183,15 +184,16 @@
     border: 0;
     color: #000;
     font-size: 19px;
+	font-weight:bold;
     letter-spacing: .125rem;
     line-height: 28px;
-    opacity: .45;
+    opacity: 1;
     padding: .6rem;
     width: 50%
 }
 
 .btn-secondary:not(:disabled):not(.disabled).active {
-    background: #1aa4b7
+    background-color: darkcyan;
 }
 
 .description-wrapper,

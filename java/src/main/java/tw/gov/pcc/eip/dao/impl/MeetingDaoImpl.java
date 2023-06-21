@@ -12,6 +12,7 @@ import tw.gov.pcc.eip.common.cases.Eip06w010Case;
 import tw.gov.pcc.eip.dao.MeetingDao;
 import tw.gov.pcc.eip.domain.Eip06w040Report;
 import tw.gov.pcc.eip.domain.Meeting;
+import tw.gov.pcc.eip.domain.MeetingCode;
 import tw.gov.pcc.eip.domain.MeetingItemAndMeetingCode;
 
 import java.util.HashMap;
@@ -205,7 +206,7 @@ public class MeetingDaoImpl extends BaseDao<Meeting> implements MeetingDao{
     }
 
     @Override
-    public List<Eip06w040Report> selectDataByMeetingdt(String meetingdt) {
+    public List<Eip06w040Report> selectValidMeetingByMeetingdt(String meetingdt) {
         StringBuilder sql = new StringBuilder();
         sql.append("    SELECT d.ITEMNAME as roomName, a.MEETINGID as meetingId, a.MEETINGBEGIN as meetingBegin, ");
         sql.append("           a.MEETINGNAME as meetingName, a.CHAIRMAN as chairman, a.ORGANIZERID as organizerId, ");
@@ -216,11 +217,29 @@ public class MeetingDaoImpl extends BaseDao<Meeting> implements MeetingDao{
         sql.append(" LEFT JOIN MEETINGCODE c on b.ITEMID = c.ITEMID ");
         sql.append(" LEFT JOIN MEETINGCODE d on a.ROOMID = d.ITEMID ");
         sql.append("     WHERE a.MEETINGDT = :meetingdt ");
+        sql.append("       AND a.STATUS = 'A' ");
         sql.append("  ORDER BY orders, roomName, meetingBegin, meetingId, itemId ");
 
         SqlParameterSource params = new MapSqlParameterSource("meetingdt", meetingdt);
 
         return getNamedParameterJdbcTemplate().query(sql.toString(), params,
                 BeanPropertyRowMapper.newInstance(Eip06w040Report.class));
+    }
+
+    @Override
+    public List<Meeting> findExistedMeeting(List<String> dateList, String using, String roomId) {
+        StringBuilder sql = new StringBuilder();
+        sql.append("    SELECT ");
+        sql.append(ALL_COLUMNS_SQL);
+        sql.append("      FROM MEETING T ");
+        sql.append("     WHERE T.MEETINGDT  in (:dateList) ");
+        sql.append("       AND T.ROOMID = :roomId     ");
+        sql.append("       AND (SELECT dbo.usp_check(USING, :using) AS RTN) = 'Y'     ");
+        sql.append("  ORDER BY T.MEETINGID     ");
+
+        SqlParameterSource params = new MapSqlParameterSource("dateList", dateList).addValue("using", using).addValue("roomId", roomId);
+        System.out.println(sql);
+        return getNamedParameterJdbcTemplate().query(sql.toString(), params,
+                BeanPropertyRowMapper.newInstance(Meeting.class));
     }
 }

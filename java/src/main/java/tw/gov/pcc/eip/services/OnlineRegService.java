@@ -3,16 +3,11 @@ package tw.gov.pcc.eip.services;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import tw.gov.pcc.eip.common.cases.Eip00w420Case;
 import tw.gov.pcc.eip.dao.EipcodeDao;
-import tw.gov.pcc.eip.dao.OrformdataDao;
 import tw.gov.pcc.eip.domain.Eipcode;
-import tw.gov.pcc.eip.framework.domain.UserBean;
 
 import java.io.File;
-import java.time.format.DateTimeFormatter;
 import java.util.*;
-import java.util.stream.Collectors;
 
 /**
  * 線上報名共用Service
@@ -24,42 +19,6 @@ public class OnlineRegService {
     @Autowired
     EipcodeDao eipcodeDao;
     private static final org.slf4j.Logger log = org.slf4j.LoggerFactory.getLogger(OnlineRegService.class);
-    private static Map<String, String> statusMap;//活動狀態
-    private static Map<String, String> signformMap;//簽到表類型
-    private static Map<String, String> regstatusMap;//報名狀態
-
-    static {
-        statusMap = new LinkedHashMap<>();
-        statusMap.put("N", "已建檔");
-        statusMap.put("P", "上架中");
-        statusMap.put("A", "報名中");
-        statusMap.put("I", "進行中");
-        statusMap.put("C", "已結束");
-        statusMap.put("D", "停辦");
-
-        signformMap = new LinkedHashMap<>();
-        signformMap.put("A", "活動");
-        signformMap.put("C", "課程");
-        signformMap.put("M", "會議");
-
-        regstatusMap = new LinkedHashMap<>();
-        regstatusMap.put("Y", "通過");
-        regstatusMap.put("N", "未通過");
-        regstatusMap.put("E", "未審");
-        regstatusMap.put("D", "取消報名");
-    }
-
-    public Map<String, String> getStatusMap() {
-        return statusMap;
-    }
-
-    public Map<String, String> getSignformMap() {
-        return signformMap;
-    }
-
-    public Map<String, String> getRegStatusMap() {
-        return regstatusMap;
-    }
 
     /**
      * 取得全部報名資格
@@ -77,6 +36,17 @@ public class OnlineRegService {
      * @return map
      */
     public Map<String,String> getRegisqualDept() {
+        List<Eipcode>list = eipcodeDao.findByCodekindScodekindOrderByCodeno("REGISQUAL","U");
+        Map<String, String> map = new LinkedHashMap<>();
+        list.forEach(t -> map.put(t.getCodeno(), StringUtils.isEmpty(t.getCodename()) ? "" : t.getCodename()));
+        return map;
+    }
+
+    /**
+     * 取得所有職稱列表
+     * @return map
+     */
+    public Map<String,String> getRegisqualJobTitle() {
         List<Eipcode>list = eipcodeDao.findByCodekindScodekindOrderByCodeno("REGISQUAL","U");
         Map<String, String> map = new LinkedHashMap<>();
         list.forEach(t -> map.put(t.getCodeno(), StringUtils.isEmpty(t.getCodename()) ? "" : t.getCodename()));
@@ -174,5 +144,49 @@ public class OnlineRegService {
         String apDirectory = System.getProperty("user.dir");
         String serverDrive = apDirectory.substring(0, apDirectory.indexOf(File.separator));
         return serverDrive + "/eip/uploadfile/";
+    }
+
+    /**
+     * 取得學位提供畫面使用
+     * @return map
+     */
+    public Map<String,String> getDegreen() {
+        List<Eipcode>list = eipcodeDao.findByCodekindOrderByCodeno("DEGREEN");
+        Map<String, String> map = new LinkedHashMap<>();
+        list.forEach(t -> map.put(t.getCodeno(), StringUtils.isEmpty(t.getCodename()) ? "" : t.getCodename()));
+        return map;
+    }
+
+    /**
+     * 取得活動狀態
+     * @return
+     */
+    public Map<String,String> getOrstatus() {
+        List<Eipcode>list = eipcodeDao.findByCodeKind("ORSTATUS");
+        Map<String, String> map = new LinkedHashMap<>();
+        list.forEach(t -> map.put(t.getScodekind(), StringUtils.isEmpty(t.getCodename()) ? "" : t.getCodename()));
+        return map;
+    }
+
+    /**
+     * 取得簽到表格式
+     * @return
+     */
+    public Map<String,String> getSignform() {
+        List<Eipcode>list = eipcodeDao.findByCodeKind("SIGNFORM");
+        Map<String, String> map = new LinkedHashMap<>();
+        list.forEach(t -> map.put(t.getScodekind(), StringUtils.isEmpty(t.getCodename()) ? "" : t.getCodename()));
+        return map;
+    }
+
+    /**
+     * 取得報名狀態
+     * @return
+     */
+    public Map<String,String> getRegstatus() {
+        List<Eipcode>list = eipcodeDao.findByCodeKind("REGSTATUS");
+        Map<String, String> map = new LinkedHashMap<>();
+        list.forEach(t -> map.put(t.getScodekind(), StringUtils.isEmpty(t.getCodename()) ? "" : t.getCodename()));
+        return map;
     }
 }

@@ -73,7 +73,7 @@
             <div class="nav ${filter.bannerClass}">
                 <a href="<c:url value='/LoginForward.action' />" class="clickDiv"></a>
                 <div class="sys_info">
-                    <div class="row flex-row-reverse mb-1 mt-auto">
+                    <div class="row flex-row-reverse m-auto">
                             <div class="col-md-3 top_3">
                                 <a href="<c:url value='/Common_sitemap.action' />">
                                     <img src="./images/top_icon2.png" alt="" class="d-inline-block align-middle">

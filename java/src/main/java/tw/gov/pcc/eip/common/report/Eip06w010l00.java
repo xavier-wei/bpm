@@ -1,14 +1,11 @@
 package tw.gov.pcc.eip.common.report;
 
 import org.apache.poi.xwpf.usermodel.*;
-import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTFonts;
-import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTRPr;
 import tw.gov.pcc.eip.common.cases.Eip06w010Case;
 import tw.gov.pcc.eip.util.DateUtility;
 
-import javax.servlet.ServletContext;
+
 import java.io.*;
-import java.math.BigInteger;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;

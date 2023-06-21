@@ -97,7 +97,7 @@
                                         <form:option value="E1">匯出學習時數</form:option>
                                         <form:option value="E2">匯出報名資料</form:option>
                                     </form:select>
-                                    <tags:button id="btnExcute">執行</tags:button>
+                                    <tags:button data-topicname="${item.topicname}">執行</tags:button>
                                 </td>
                             </tr>
                         </c:forEach>
@@ -107,6 +107,7 @@
         </tags:form-row>
         <form:hidden path="mode"/>
         <form:hidden path="orformno"/>
+        <form:hidden path="topicname"/>
     </form:form>
     <tags:form-note>
     <tags:form-note-item>操作區選單允許執行與否根據活動狀態決定。</tags:form-note-item>
@@ -223,6 +224,9 @@ $(function(){
         $('#orformno').val($(this).prev().data('orformno'));
         if ($(this).prev().val() === 'U') {
             $('#eip00w420Form').attr('action', '<c:url value="/Eip00w420_selectInsertUpdate.action" />').submit();
+        } else if ($(this).prev().val() === 'M') {
+            $('#topicname').val($(this).data('topicname'));
+            $('#eip00w420Form').attr('action', '<c:url value="/Eip00w420_manualReg.action" />').submit();
         } else if ($(this).prev().val() === 'C') {
             $('#eip00w420Form').attr('action', '<c:url value="/Eip00w420_copy.action" />').submit();
         } else if ($(this).prev().val() === 'H') {

@@ -61,5 +61,5 @@ public interface OrformdataDao {
      * @param statusList
      * @return
      */
-    public List<Orformdata> getDataByStatus(List<String>statusList);
+    public List<Orformdata> getDataByStatus(List<String>statusList, String deptno);
 }

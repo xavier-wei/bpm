@@ -8,12 +8,12 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.ModelAndView;
 import tw.gov.pcc.eip.common.cases.Eip00w420Case;
+import tw.gov.pcc.eip.common.cases.Eip00w420ManualCase;
 import tw.gov.pcc.eip.common.cases.Eip00w420ModifyCase;
 import tw.gov.pcc.eip.framework.domain.UserBean;
 import tw.gov.pcc.eip.framework.spring.controllers.BaseController;
 import tw.gov.pcc.eip.framework.spring.support.FileOutputView;
 import tw.gov.pcc.eip.services.Eip00w420Service;
-import tw.gov.pcc.eip.util.DateUtility;
 import tw.gov.pcc.eip.util.ExceptionUtility;
 import tw.gov.pcc.eip.util.FilenameUtility;
 
@@ -27,12 +27,14 @@ import java.io.ByteArrayOutputStream;
 public class Eip00w420Controller extends BaseController {
     public static final String CASE_KEY = "_eip00w420Controller_caseData";
     public static final String MODIFY_CASE_KEY = "_eip00w420Controller_modifyCaseData";
+    public static final String MANUAL_CASE_KEY = "_eip00w420Controller_manualCaseData";
     private static final org.slf4j.Logger log = org.slf4j.LoggerFactory.getLogger(Eip00w420Controller.class);
     private static final String MAIN_PAGE = "/eip00w420/eip00w420m";//主頁
     private static final String MODIFY_PAGE = "/eip00w420/eip00w420x";//新增修改頁
     private static final String HISTORY_PAGE = "/eip00w420/eip00w424x";//修改歷程
     private static final String VERIFY_PAGE = "/eip00w420/eip00w422x";//審核
     private static final String CERTIFIED_PAGE = "/eip00w420/eip00w423x";//時數認證
+    private static final String MANUAL_PAGE = "/eip00w420/eip00w421x";//人工報名
     @Autowired
     private UserBean userData;
 
@@ -48,6 +50,9 @@ public class Eip00w420Controller extends BaseController {
     public Eip00w420ModifyCase getEip00w420ModifyCase() {
         return new Eip00w420ModifyCase();
     }
+
+    @ModelAttribute(MANUAL_CASE_KEY)
+    public Eip00w420ManualCase getEip00w420ManualCase() { return new Eip00w420ManualCase(); }
 
     @RequestMapping("/Eip00w420_enter.action")
     public String enter() {
@@ -109,7 +114,6 @@ public class Eip00w420Controller extends BaseController {
             String msg = "A".equals(caseData.getMode()) ? getSaveSuccessMessage() : getUpdateSuccessMessage();
             eip00w420Service.initCombobox(caseData);
             if (result.hasErrors()) {
-//                modifyCaseData.setFiles(modifyCaseData.getFiles());
                 return MODIFY_PAGE;
             }
             eip00w420Service.insertUpdateOrfData(modifyCaseData, caseData.getMode());
@@ -326,4 +330,80 @@ public class Eip00w420Controller extends BaseController {
         return new ModelAndView(MAIN_PAGE);
     }
 
+    @RequestMapping("/Eip00w420_manualReg.action")
+    public String manualReg(@ModelAttribute(CASE_KEY) Eip00w420Case caseData, @ModelAttribute(MANUAL_CASE_KEY) Eip00w420ManualCase manualCase) {
+        try {
+            log.debug("導向 人工報名");
+            eip00w420Service.initCombobox(caseData);
+        } catch (Exception e) {
+            log.error(ExceptionUtility.getStackTrace(e));
+            setSystemMessage(getQueryFailMessage());
+            return MAIN_PAGE;
+        }
+        return MANUAL_PAGE;
+    }
+
+    @RequestMapping("/Eip00w420_manualRegSingle.action")
+    public String manualRegSingle(@ModelAttribute(CASE_KEY) Eip00w420Case caseData, @Validated({Eip00w420ManualCase.Single.class}) @ModelAttribute(MANUAL_CASE_KEY) Eip00w420ManualCase manualCaseData,
+                          BindingResult result) {
+        try {
+            log.debug("人工報名-單筆");
+            eip00w420Service.initCombobox(caseData);
+            if (result.hasErrors()) {
+                return MANUAL_PAGE;
+            }
+            eip00w420Service.manualRegSingle(manualCaseData);
+            eip00w420Service.getOrlist(caseData, false);
+            setSystemMessage("人工報名成功!");
+        } catch (Exception e) {
+            log.error(ExceptionUtility.getStackTrace(e));
+            setSystemMessage("人工報名失敗!");
+            return MANUAL_PAGE;
+        }
+        return MAIN_PAGE;
+    }
+    @RequestMapping("/Eip00w420_manualRegBatch.action")
+    public String manualRegBatch(@ModelAttribute(CASE_KEY) Eip00w420Case caseData, @Validated({Eip00w420ManualCase.Batch.class}) @ModelAttribute(MANUAL_CASE_KEY) Eip00w420ManualCase manualCaseData,
+                                   BindingResult result) {
+        try {
+            log.debug("人工報名-批次");
+            eip00w420Service.initCombobox(caseData);
+            if (result.hasErrors()) {
+                return MANUAL_PAGE;
+            }
+            eip00w420Service.manualRegBatch(manualCaseData);
+            eip00w420Service.getOrlist(caseData, false);
+            setSystemMessage("人工報名成功!");
+        } catch (IllegalArgumentException ie) {
+            setSystemMessage(ie.getMessage()+"，請確認資料正確後再進行上傳!");
+            return MANUAL_PAGE;
+        } catch (Exception e) {
+            log.error(ExceptionUtility.getStackTrace(e));
+            setSystemMessage("人工報名失敗!");
+            return MANUAL_PAGE;
+        }
+        return MAIN_PAGE;
+    }
+
+    @RequestMapping("/Eip00w420_downloadExample.action")
+    public ModelAndView downloadExample(@ModelAttribute(CASE_KEY) Eip00w420Case caseData, @ModelAttribute(MANUAL_CASE_KEY) Eip00w420ManualCase manualCaseData) {
+        ByteArrayOutputStream baos = new ByteArrayOutputStream(0);
+        try {
+            log.debug("下載範本");
+            baos = eip00w420Service.downloadCsv();
+            if (baos == null) {
+                log.debug("查無CSV範本資料");
+                setSystemMessage(getQueryEmptyMessage());
+                eip00w420Service.getOrlist(caseData, false);
+                return new ModelAndView(MAIN_PAGE);
+            }
+            String filename = "批次報名匯入檔案範本.csv";
+            return new ModelAndView(new FileOutputView(baos, filename, FileOutputView.GENERAL_FILE));
+        } catch (Exception e) {
+            log.error(ExceptionUtility.getStackTrace(e));
+            eip00w420Service.getOrlist(caseData, false);
+            setSystemMessage(getReportErrorMessage());
+        }
+        return new ModelAndView(MAIN_PAGE);
+    }
 }

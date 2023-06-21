@@ -75,6 +75,10 @@
 		    	}
 			});
 		},
+		//身分證號與護照
+		idn_passport: ($src) => {
+			$src.val($src.val().replace(/[^0-9a-zA-Z#]/g, '').toUpperCase());
+		},
 		//日期
 	    date: ($src, e) => {
 			$src.val($src.val().replace(/\D/g, ''));
@@ -166,10 +170,6 @@
 	
 	const autotab = ($src, e) => {
 		if ($src.is(":not(:disabled,[readonly])")) {
-			
-			if($src.data('apno12autotab')){
-				apno12autotab(e);
-			}
 			
 			if (($src.is(":text") || $src.is("textarea")) && ($src.val().length != $src.attr("maxlength") && !e.forceJump) 
 			    || $src.attr("type") == "search"

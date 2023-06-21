@@ -458,6 +458,23 @@ function checkStringMaxLength(str, max) {
     return isValid;
 }
 
+function showMessageByMessageType(message) {
+    if (message.startsWith(('A'))) {
+        showAlert(message, null);
+    } else {
+        $('#msgarea').addClass('newheight');
+        $('.infoword').text(message);
+    }
+}
+
+function showMessageWhenAjaxFail(xhr) {
+    let message = xhr.getResponseHeader('errors');
+    if (message) {
+        message = decodeURIComponent(message);
+        showAlert(message, null);
+    }
+}
+
 // ]
 // for 文數字處理
 
@@ -1094,12 +1111,6 @@ function chkIdRp(TId) {
     return true;
 }
 
-function isIE() {
-    let ua = window.navigator.userAgent;
-    return ua.indexOf('MSIE ') > 0 || ua.indexOf('Trident/') > 0
-        || ua.indexOf('Edge/') > 0;
-}
-
 //=====全選===========================================================
 function checkall(){
     var group = $(this).data('checkall');
@@ -1109,11 +1120,5 @@ function checkall(){
         }else{
             $("input:checkbox:enabled[data-check="+group+"]:checked").click();
         }
-    }
-}
-
-function apno12autotab(e){
-    if($(e.target).val().length>=15 && e.key === ' '){
-        e.forceJump = true;
     }
 }

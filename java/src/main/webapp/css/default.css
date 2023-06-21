@@ -152,7 +152,7 @@ body {
 
 /* 表頭區 */
 .fieldset {
-	border-bottom: red 1px solid;
+	border-bottom: #cccccc 1px solid;
 	display: flex;
 	justify-content: space-between;
 	margin-bottom: 10px;
@@ -178,18 +178,20 @@ legend {
 	padding: 0 6px;
 	font-size: 14pt;
 	font-weight: 900;
+	color:#095c57;
 }
 
 .timeword { /*網頁下載時間*/
 	font-size: 11pt;
 	align-self: flex-end;
+	padding: 4px;
 }
 
 /* 訊息區 */
 .TframeDiv {
 	height: 25px;
 	margin-left: -30px;
-	color: blue;
+	color:inherit;
 	bottom: 0;
 	position: fixed;
 	width: 100vw;
@@ -217,7 +219,7 @@ legend {
 .ifon {
 	padding-left: 25px;
 	font-size: 12pt;
-	background-image: linear-gradient(to right, #4facfe 0%, #4facfe 100%);
+	background-image: linear-gradient(to right, #fdd9a1 0%, #fdd9a1 100%);
 }
 
 /* 訊息文字 */
@@ -247,7 +249,7 @@ legend {
 
 /* dataTable */
 .dataTables_wrapper {
-	background-color: #b0ded4;
+	background-color: #eeeeee;
 	/*overflow-x: auto;*/
 }
 
@@ -403,7 +405,23 @@ legend {
 	flex: none;
 	width: auto;
 }
-
+label {
+    margin: 0px 0px 12px 8px;
+}
+input{
+	margin: 2px;
+}
+a {
+    color: #0071bc!important;
+}
+.btn:hover{
+	color:white;
+	background-color:#187f90; 
+	
+}
+.card {
+	    border: 1px solid #fff;
+}
 @media (min-width: 576px) {
 	.col-form-label, .col-label {
 		min-width: 120px;
@@ -456,10 +474,13 @@ legend {
 }
 
 .btn-outline-be {
-	border-color: #6c757d;
-	background-color: #ffffff;
+	background-color:#17a2b8;
+	color: white;
 }
 
+.btn-txt{
+	padding-right: 5px;
+}
 /* 表格顯示 */
 .table {
 	text-align: center;
@@ -474,12 +495,12 @@ legend {
 }
 
 .table th, .table td {
-	border: #a8a8a8 1px solid;
+	border: #eeeeee 1px solid;
 	padding: 2px 4px;
 }
 
 .table thead {
-	background-color:#b0ded4;
+	background-color:#8fd4ce;
 }
 
 .table tbody > tr:nth-child(odd) {
@@ -487,11 +508,11 @@ legend {
 }
 
 .table tbody > tr:nth-child(even) {
-	background-color:#e8e8e8;
+	background-color:#e3f4f3;
 }
 
 .table tbody > tr:hover{
-	background-color:#c3e6cb;
+	background-color:#b5e2de;
 }
 
 .table-responsive {
@@ -506,7 +527,7 @@ legend {
 	background-color: #42b0e3;
 	background-image: linear-gradient(to bottom, #42b0e3, #2ba9e3);
 	border: 1px solid #107db0;
-	box-shadow: inset 0 1px 0 #7cd4fc, inset 0 -1px 0 #2696c9, inset 0 0 0 1px #59b7e3, 0 2px 4px rgba(0, 0, 0, 0.2);
+	/*box-shadow: inset 0 1px 0 #eeeeee, inset 0 -1px 0 #eeeeee, inset 0 0 0 1px #eeeeee, 0 2px 4px rgba(0, 0, 0, 0.2);*/
 	color: white;
 }
 
@@ -588,9 +609,11 @@ legend {
 }
 
 .title_02 {
-	font-size: 1.0em;
-	color: #327300;
-	font-weight: 500;
+	font-size: 1.3em;
+	color: #e7671d;
+	font-weight:bold;
+	font-family: Gotham, "Helvetica Neue", Helvetica, Arial, "sans-serif";
+	font-weight: 800;
 }
 
 .title_03 {
@@ -605,7 +628,7 @@ legend {
 
 .pc {
 	display: block;
-	background: #16949a;
+	background: #c7e9e6;
 }
 
 
@@ -775,8 +798,4 @@ legend {
 
 .carousel-control-prev-icon {
 	background-image: url(../images/prev.svg);
-}
-
-.datepicker th, td {
-	cursor: pointer;
 }

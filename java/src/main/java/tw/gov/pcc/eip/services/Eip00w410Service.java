@@ -34,7 +34,7 @@ public class Eip00w410Service extends OnlineRegService {
      * @param caseData
      */
     public void getOrclassList(Eip00w410Case caseData) {
-        Map<String, String> signformMap = getSignformMap();
+        Map<String, String> signformMap = getSignform();
         List<Eip00w410Case.OrcCase> list = orclassDao.getAll().stream().map(t -> {
             Eip00w410Case.OrcCase orcCase = new Eip00w410Case.OrcCase();
             orcCase.setOrccode(t.getOrccode());

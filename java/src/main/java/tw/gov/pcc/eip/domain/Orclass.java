@@ -20,20 +20,20 @@ import java.time.LocalDateTime;
 public class Orclass {
   @PkeyField
   @LogField("ORCCODE")
-  private Long orccode;
+  private Long orccode;//分類代碼
   @LogField("ORCNAME")
-  private String orcname;
+  private String orcname;//分類名稱
   @LogField("ISCOURSE")
-  private String iscourse;
+  private String iscourse;//是否為課程
   @LogField("SIGNFORM")
-  private String signform;
+  private String signform;//簽到表格式
   @LogField("CREUSER")
-  private String creuser;
+  private String creuser;//建立人員
   @LogField("CREDT")
-  private LocalDateTime credt;
+  private LocalDateTime credt;//建立時間
   @LogField("UPDUSER")
-  private String upduser;
+  private String upduser;//更新人員
   @LogField("UPDDT")
-  private LocalDateTime upddt;
+  private LocalDateTime upddt;//更新時間
 
 }

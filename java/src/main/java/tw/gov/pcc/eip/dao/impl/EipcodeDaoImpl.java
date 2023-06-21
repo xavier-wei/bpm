@@ -258,4 +258,15 @@ public class EipcodeDaoImpl extends BaseDao<Eipcode> implements EipcodeDao {
                 .query(sql.toString(), params,BeanPropertyRowMapper.newInstance(Eipcode.class));
         return eiplist.stream().map(t->t.getCodename()).collect(Collectors.toList());
     }
+
+    @Override
+    public List<Eipcode> findByCodeKindAndExcludeScodekind(String codeKind, String scodekind) {
+        StringBuilder sql = new StringBuilder();
+        sql.append(" SELECT " + ALL_COLUMNS_SQL);
+        sql.append(" FROM " + TABLE_NAME + " T where T.CODEKIND = :codekind and T.SCODEKIND <> :scodekind");
+
+        SqlParameterSource params = new MapSqlParameterSource("codekind", codeKind).addValue("scodekind",scodekind);
+        return getNamedParameterJdbcTemplate()
+                .query(sql.toString(), params,BeanPropertyRowMapper.newInstance(Eipcode.class));
+    }
 }
