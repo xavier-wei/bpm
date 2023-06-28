@@ -19,5 +19,9 @@ public interface RolesDao {
     Roles selectByKey(String sys_id, String dept_id, String role_id);
 
 	List<Roles> selectDataList(String role_id);
+	
+	public int insert(Roles roles);
+
+	int deleteByKey(Roles roles);
 
 }

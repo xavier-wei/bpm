@@ -68,19 +68,19 @@
             });
             
             $('#btnSearch').click(function() {
-           		$('#eip00w070Form').attr('action', '<c:url value="/Eip00w070_enter.action" />').submit();
+           		$('#eip00w070Form').attr('action', '<c:url value="/Eip00w070_query.action" />').submit();
             });
         });
         
         function editMenu(roleid,roledesc) {
             $('#role_id').val(roleid);
             $('#role_desc').val(roledesc);
-            $('#eip00w070Form').attr('action', '<c:url value="/Eip00w070_editmenu.action" />').submit();
+            $('#eip00w070Form').attr('action', '<c:url value="/Eip00w070_editMenu.action" />').submit();
         }
         function editMember(roleid,roledesc) {
             $('#role_id').val(roleid);
             $('#role_desc').val(roledesc);
-            $('#eip00w070Form').attr('action', '<c:url value="/Eip00w070_editmember.action" />').submit();
+            $('#eip00w070Form').attr('action', '<c:url value="/Eip00w070_editMember.action" />').submit();
         }
 </script>
 </jsp:attribute>

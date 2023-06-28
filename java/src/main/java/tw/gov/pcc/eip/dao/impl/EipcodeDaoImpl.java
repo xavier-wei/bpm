@@ -1,6 +1,5 @@
 package tw.gov.pcc.eip.dao.impl;
 
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
@@ -13,7 +12,7 @@ import tw.gov.pcc.common.framework.dao.BaseDao;
 import tw.gov.pcc.eip.dao.EipcodeDao;
 import tw.gov.pcc.eip.domain.Eipcode;
 
-import java.util.LinkedHashMap;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -268,5 +267,25 @@ public class EipcodeDaoImpl extends BaseDao<Eipcode> implements EipcodeDao {
         SqlParameterSource params = new MapSqlParameterSource("codekind", codeKind).addValue("scodekind",scodekind);
         return getNamedParameterJdbcTemplate()
                 .query(sql.toString(), params,BeanPropertyRowMapper.newInstance(Eipcode.class));
+    }
+
+    @Override
+    public List<Eipcode> getRelevantDepByAttr(String attr) {
+        StringBuilder sql = new StringBuilder();
+        sql.append(" SELECT CODENO,  ");
+        sql.append("        CODENAME  ");
+        sql.append("   FROM EIPCODE C  ");
+        sql.append("  WHERE CODEKIND = 'DEPT'  ");
+        sql.append("    AND CODENO <> '0'  ");
+        sql.append("    AND CODENO IN (SELECT DISTINCT A.CONTACTUNIT ");
+        sql.append("                     FROM MSGDATA A, ");
+        sql.append("                          MSGAVAILDEP B ");
+        sql.append("                    WHERE A.FSEQ = B.FSEQ  ");
+        sql.append("                      AND A.ATTRIBUTYPE = :attr) ");
+        sql.append(" ORDER BY CAST(CODENO AS INT) ");
+        Map<String, Object> params = new HashMap<>();
+        params.put("attr", attr);
+        return getNamedParameterJdbcTemplate().query(sql.toString(), params,
+                BeanPropertyRowMapper.newInstance(Eipcode.class));
     }
 }

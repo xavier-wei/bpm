@@ -27,5 +27,11 @@ public interface MsgdepositDao {
 
     public Msgdeposit findbyfseq(String fseq, String seq, String filetype);
 
-    public List<Msgdeposit> findbyfseqfiletype1(String fseq);
+    /**
+     * 取得檔案清單
+     * 
+     * @param fseq
+     * @return
+     */
+    public List<Msgdeposit> findbyfseqfiletype1(List<String> fseq);
 }

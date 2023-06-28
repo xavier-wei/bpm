@@ -9,4 +9,6 @@ import java.util.List;
 public interface PortalMenuAclDao {
 
     List<CursorDeptAcl> findDeptAcl(String sysId, String deptId);
+
+	List<CursorDeptAcl> findRoleAcl(String sysId, String roleid, String deptid);
 }

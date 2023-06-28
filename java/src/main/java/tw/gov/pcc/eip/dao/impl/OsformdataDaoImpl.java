@@ -1,5 +1,6 @@
 package tw.gov.pcc.eip.dao.impl;
 
+import org.apache.commons.lang3.ObjectUtils;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
@@ -8,6 +9,7 @@ import org.springframework.util.CollectionUtils;
 import tw.gov.pcc.common.annotation.DaoTable;
 import tw.gov.pcc.common.framework.dao.BaseDao;
 import tw.gov.pcc.eip.dao.OsformdataDao;
+import tw.gov.pcc.eip.domain.Orformdata;
 import tw.gov.pcc.eip.domain.Osformdata;
 
 import java.util.ArrayList;
@@ -30,7 +32,7 @@ public class OsformdataDaoImpl extends BaseDao<Osformdata> implements Osformdata
         StringBuilder sql = new StringBuilder();
         sql.append(" SELECT ");
         sql.append(ALL_COLUMNS_SQL);
-        sql.append(" FROM " + TABLE_NAME + " where ORFORMNO = :osformno" );
+        sql.append(" FROM " + TABLE_NAME + " where OSFORMNO = :osformno" );
 
         SqlParameterSource params = new MapSqlParameterSource("osformno", osformdata.getOsformno());
 
@@ -65,9 +67,14 @@ public class OsformdataDaoImpl extends BaseDao<Osformdata> implements Osformdata
 
     @Override
     public List<Osformdata> getAll() {
-
-
-        return new ArrayList<>();
+        StringBuilder sql = new StringBuilder();
+        sql.append(" SELECT ");
+        sql.append(ALL_COLUMNS_SQL);
+        sql.append("   FROM " + TABLE_NAME + " t");
+        sql.append(" ORDER BY osformno");
+        List<Osformdata> list = getNamedParameterJdbcTemplate().query(sql.toString(),
+                BeanPropertyRowMapper.newInstance(Osformdata.class));
+        return CollectionUtils.isEmpty(list) ? new ArrayList<>() : list;
     }
 
     @Override
@@ -83,7 +90,7 @@ public class OsformdataDaoImpl extends BaseDao<Osformdata> implements Osformdata
         sql.append(" SELECT SUBSTRING(MAX(osformno), 8, 4)+1 ");
         sql.append("   FROM osformdata ");
         sql.append("  WHERE osformno LIKE :ym ");
-        SqlParameterSource params = new MapSqlParameterSource("ym", "OR" + ym + "%");
+        SqlParameterSource params = new MapSqlParameterSource("ym", "OS" + ym + "%");
         return getNamedParameterJdbcTemplate().queryForObject(
                 sql.toString(), params, String.class);
     }

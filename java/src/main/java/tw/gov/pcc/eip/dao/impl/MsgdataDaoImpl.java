@@ -267,4 +267,20 @@ public class MsgdataDaoImpl extends BaseDao<Msgdata> implements MsgdataDao {
                 .findFirst().orElse(null);
     }
 
+    @Override
+    public List<Msgdata> getMcontentWithStatus4(String attr, String dept) {
+        StringBuilder sql = new StringBuilder();
+        sql.append(" SELECT FSEQ, ");
+        sql.append("        MCONTENT ");
+        sql.append("   FROM MSGDATA A ");
+        sql.append("  WHERE ATTRIBUTYPE = :attr ");
+        sql.append("    AND A.STATUS = '4' ");
+        sql.append("    AND CONTACTUNIT = :dept ");
+        Map<String, Object> params = new HashMap<>();
+        params.put("attr", attr);
+        params.put("dept", dept);
+        return getNamedParameterJdbcTemplate().query(sql.toString(), params,
+                BeanPropertyRowMapper.newInstance(Msgdata.class));
+    }
+
 }

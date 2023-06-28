@@ -20,7 +20,7 @@ public class EnvHelper {
 
     private static Log log = LogFactory.getLog(EnvHelper.class);
 
-    private static final String FONT_PATH_KY = "default.pdf.font.path";
+    public static final String FONT_PATH_KY = "default.pdf.font.path";
     private static final String FONT_NAME_KY = "default.pdf.font.name";
     private static final String CNS11643_FONT_PATH_KY = "default.pdf.cns11643.font.path";
     private static final String CNS11643_SUNG_FONT_NAME_KY = "default.pdf.cns11643.sung.font.name";

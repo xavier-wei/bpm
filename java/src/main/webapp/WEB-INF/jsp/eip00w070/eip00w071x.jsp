@@ -61,7 +61,7 @@
 			$('#eip00w070Form').attr('action', '<c:url value="/Eip00w070_enter.action" />').submit();
 		})
 		$('#btnEdit').click(function(){
-// 			$('#eip00w070Form').attr('action', '<c:url value="/Eip00w070_update.action" />').submit();
+ 			$('#eip00w070Form').attr('action', '<c:url value="/Eip00w070_updMember.action" />').submit();
 		})
 	})
 </script>

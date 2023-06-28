@@ -17,13 +17,15 @@ import tw.gov.pcc.eip.domain.Users;
 public class Eip00w070Case implements Serializable {
 
 	private static final long serialVersionUID = 1L;
-	
 	private List<Roles> rolesList;
-	
 	private String role_id;
-	
-	private String role_desc;
-		
+	private String role_desc;	
 	private List<Users> usersList;
 
+    private String item_id;
+    private String item_name;
+    private String hyperlink;
+    private String sub_link;
+    private String open_window;
+    private List<String> selectedIdlist;
 }

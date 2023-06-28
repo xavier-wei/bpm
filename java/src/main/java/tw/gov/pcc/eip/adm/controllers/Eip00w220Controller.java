@@ -76,16 +76,17 @@ public class Eip00w220Controller extends BaseController {
     private String findMenuItem(MenuItem x) {
         StringBuilder sb = new StringBuilder();
         if (CollectionUtils.isEmpty(x.getSub())) {
+            String url = StringUtils.removeStart(x.getUrl(), "/");
             if (x.getLevelNo()
                     .equals("2")) {
 
                 if (StringUtils.isNotEmpty(x.getUrl())) {
-                    sb.append(String.format(templateL1, x.getFunctionName(), String.format(templateL3, x.getUrl(), x.getFunctionName())));
+                    sb.append(String.format(templateL1, x.getFunctionName(), String.format(templateL3, url, x.getFunctionName())));
                 } else {
                     sb.append(String.format(templateL1, x.getFunctionName(), ""));
                 }
             } else {
-                sb.append(String.format(templateL3, x.getUrl(), x.getFunctionName()));
+                sb.append(String.format(templateL3, url, x.getFunctionName()));
             }
         } else {
             sb.append(String.format(templateL1, x.getFunctionName(), findMenuList(x.getSub())));

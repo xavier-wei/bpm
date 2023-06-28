@@ -96,4 +96,13 @@ public interface MsgdataDao {
      * @return
      */
     public Eip01w050Case.Detail getEip01w050Detail(String fseq);
+
+    /**
+     * 取得已上架的文章
+     * 
+     * @param attr 6:單位簡介 7:業務資訊
+     * @param dept 登入者部門 聯絡人
+     * @return
+     */
+    public List<Msgdata> getMcontentWithStatus4(String attr, String dept);
 }

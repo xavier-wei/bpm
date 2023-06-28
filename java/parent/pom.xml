@@ -46,6 +46,7 @@
         <commons-net.version>3.8.0</commons-net.version>
         <jstl.version>1.2</jstl.version>
         <spring-data-jpa.version>2.6.3</spring-data-jpa.version>
+        <report-fonts.version>1.0.0</report-fonts.version>
     </properties>
 
 
@@ -294,6 +295,14 @@
             <version>${commons-net.version}</version>
         </dependency>
 
+        <dependency>
+            <groupId>gov.pcc.pwc</groupId>
+            <artifactId>report-fonts</artifactId>
+            <version>${report-fonts.version}</version>
+            <systemPath>${basedir}/lib/report-fonts-1.0.0.jar</systemPath>
+            <scope>system</scope>
+        </dependency>
+
     </dependencies>
 
     <build>
@@ -349,6 +358,13 @@
                         <addMavenDescriptor>false</addMavenDescriptor>
                     </archive>
                     <webResources>
+                        <resource>
+                            <directory>lib</directory>
+                            <targetPath>WEB-INF/lib</targetPath>
+                            <includes>
+                                <include>**/*.jar</include>
+                            </includes>
+                        </resource>
                         <resource>
                             <directory>src/main/webapp</directory>
                             <filtering>true</filtering>

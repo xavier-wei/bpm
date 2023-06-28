@@ -63,7 +63,7 @@
 
     <filter>
         <filter-name>Keycloak Filter</filter-name>
-        <filter-class>tw.gov.pcc.common.filter.DevN5000UserCASFilter</filter-class>
+        <filter-class>org.keycloak.adapters.servlet.KeycloakOIDCFilter</filter-class>
         <init-param>
             <param-name>keycloak.config.skipPattern</param-name>
             <param-value>^/(unauthorized.jsp|redirect.jsp).*</param-value>

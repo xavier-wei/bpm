@@ -71,7 +71,7 @@
     <body>
         <div class="web frameDiv">
             <div class="nav ${filter.bannerClass}">
-                <a href="<c:url value='/LoginForward.action' />" class="clickDiv"></a>
+                <a href="<c:url value='/LoginForward.action' />" class="clickDiv" title="返回首頁"></a>
                 <div class="sys_info">
                     <div class="row flex-row-reverse m-auto">
                             <div class="col-md-3 top_3">

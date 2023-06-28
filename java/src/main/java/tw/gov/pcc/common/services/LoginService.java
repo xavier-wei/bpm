@@ -57,7 +57,7 @@ public class LoginService {
             log.debug("檢核使用者 Portal 登入狀態及使用者物件初始化 開始...");
         }
         HttpSession session = request.getSession();
-        String userId = session.getAttribute(KeycloakSecurityContext.class.getName()).toString(); // 使用者代碼
+        String userId = ""; // 使用者代碼
         String userName = ""; // 使用者名稱
         String deptId = ""; // 部門代碼
         String empNo = ""; // 員工編號

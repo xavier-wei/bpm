@@ -4,6 +4,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,7 +12,7 @@ import org.springframework.stereotype.Service;
 
 import lombok.extern.slf4j.Slf4j;
 import tw.gov.pcc.eip.dao.MsgdataDao;
-import tw.gov.pcc.eip.dao.impl.MsgdepositDaoImpl;
+import tw.gov.pcc.eip.dao.MsgdepositDao;
 import tw.gov.pcc.eip.domain.Msgdeposit;
 import tw.gov.pcc.eip.msg.cases.Eip01w050Case;
 import tw.gov.pcc.eip.util.ExceptionUtility;
@@ -29,7 +30,7 @@ public class Eip01w050Service {
     @Autowired
     private MsgdataDao msgdataDao;
     @Autowired
-    private MsgdepositDaoImpl msgdepositDaoImpl;
+    private MsgdepositDao msgdepositDao;
 
     /**
      * 取得輿情專區初始資料 (依登入者部門查詢)
@@ -50,7 +51,7 @@ public class Eip01w050Service {
     public Eip01w050Case.Detail query(String fseq) {
         Eip01w050Case.Detail detail = msgdataDao.getEip01w050Detail(fseq);
         if (detail != null) {
-            detail.setFile(msgdepositDaoImpl.findbyfseqfiletype1(fseq).stream()
+            detail.setFile(msgdepositDao.findbyfseqfiletype1(Arrays.asList(fseq)).stream()
                     .collect(Collectors.toMap(Msgdeposit::getSeq, Msgdeposit::getAttachfile)));
         }
         return detail;

@@ -6,9 +6,12 @@
 <tags:layout>
 <jsp:attribute name="buttons">    
     <tags:button id="btnEdit">
-    	新增<i class="fas fa-edit"></i>
+    	修改<i class="fas fa-edit"></i>
+    </tags:button>    
+    <tags:button id="btnDel">
+    	刪除<i class="fas fa-trash-alt"></i>
     </tags:button>
-        <tags:button id="btnBack">
+    <tags:button id="btnBack">
     	取消<i class="fas fa-reply"></i>
     </tags:button>
 </jsp:attribute>
@@ -24,6 +27,12 @@
 	                <tags:form-row>
 						<tags:text-item label="角色說明"><c:out value="${caseData.role_desc}"/></tags:text-item>
 	                </tags:form-row>
+	                <form:hidden path="item_id"/>
+	                <form:hidden path="item_name"/>
+	                <form:hidden path="hyperlink"/>
+	                <form:hidden path="sub_link"/>
+	                <form:hidden path="open_window"/>
+	                <form:hidden path="selectedIdlist"/>
 		        </form:form>
         	</div>
         	<div class="col-6 col-md-6">
@@ -50,7 +59,7 @@
 
     function initTree() {
         $("#dynaTree").dynatree({
-            selectMode: 1, //1:single, 2:multi, 3:multi-hier
+            selectMode: 2, //1:single, 2:multi, 3:multi-hier
             checkbox: true,
             classNames: {checkbox: "ui-dynatree-checkbox"},
             minExpandLevel: 2,
@@ -65,36 +74,39 @@
                 ajaxItemData(dnode.data.key);
             },
             onSelect: function (flag, dnode) {
+            	let idlist = [];
                 let selectedNodes = dnode.tree.getSelectedNodes();
                 $.map(selectedNodes, function (node) {
                     ajaxItemData(node.data.key);
+                    idlist.push(node.data.key);
                 });
+                $('#selectedIdlist').val(idlist);
             },
             onDblClick: function (dnode, event) {
                 dnode.toggleSelect();
             }
         });
     }
-//     function ajaxItemData(item_id) {
-//         $('#action_type').val('edit');
-//         $('#pid').val(item_id);
-//         let data = {};
-//         data['item_id'] = item_id;
-//         $.ajax({
-//             url: "adm0w070_info.action",
-//             type: "POST",
-//             dataType: "json",
-//             contentType: "application/json",
-//             data: JSON.stringify(data),
-//             success: function (json) {
-//                 edit(json);
-//             },
-//             error: function (xhr, ajaxOptions, thrownError) {
-//                 alert(xhr.status);
-//                 alert(thrownError);
-//             }
-//         });
-//     }
+    function ajaxItemData(item_id) {
+        $('#action_type').val('edit');
+        $('#pid').val(item_id);
+        let data = {};
+        data['item_id'] = item_id;
+        $.ajax({
+            url: "Eip00w070_info.action",
+            type: "POST",
+            dataType: "json",
+            contentType: "application/json",
+            data: JSON.stringify(data),
+            success: function (json) {
+                edit(json);
+            },
+            error: function (xhr, ajaxOptions, thrownError) {
+                alert(xhr.status);
+                alert(thrownError);
+            }
+        });
+    }
 
     function edit(json) {
         nullValue($('#item_id'), json.item_id);
@@ -145,7 +157,10 @@
 			$('#eip00w070Form').attr('action', '<c:url value="/Eip00w070_enter.action" />').submit();
 		})
 		$('#btnEdit').click(function(){
-			$('#eip00w070Form').attr('action', '<c:url value="/Eip00w070_update.action" />').submit();
+			$('#eip00w070Form').attr('action', '<c:url value="/Eip00w070_editCharacter.action" />').submit();
+		})
+		$('#btnDel').click(function(){
+			$('#eip00w070Form').attr('action', '<c:url value="/Eip00w070_delCharacter.action" />').submit();
 		})
 		initTree();
 	})

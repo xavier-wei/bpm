@@ -42,9 +42,9 @@
                                 <td class="text-left align-middle"><c:out value="${item.orcname}" /></td>
                                 <td class="text-center align-middle"><c:out value="${item.iscourse}" /></td>
                                 <td class="text-left align-middle"><c:out value="${item.signform}" /></td>
-                                <td data-orccode="${item.orccode}" class="text-center align-middle">
+                                <v data-orccode="${item.orccode}" class="text-center align-middle">
                                     <tags:button>修改</tags:button>
-                                </td>
+                                </v>
                             </tr>
                         </c:forEach>
                     </tbody>

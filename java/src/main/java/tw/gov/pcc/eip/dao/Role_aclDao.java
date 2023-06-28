@@ -26,4 +26,9 @@ public interface Role_aclDao {
     List<Role_acl> findByItemAndExcludeAdmin(String itemId);
 
     List<Role_acl> findByItem(String itemId);
+
+	int deleteByRoleid(Role_acl role_id);
+
+	List<Role_acl> findByRoleId(String role_id);
+
 }

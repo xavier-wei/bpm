@@ -14,6 +14,7 @@ import tw.gov.pcc.eip.dao.Role_aclDao;
 import tw.gov.pcc.eip.dao.RolesDao;
 import tw.gov.pcc.eip.domain.Role_acl;
 import tw.gov.pcc.eip.domain.Roles;
+import tw.gov.pcc.eip.domain.Users;
 
 /**
  * 單位角色權限資料 DaoImpl
@@ -76,6 +77,35 @@ public class RolesDaoImpl extends BaseDao<Roles> implements RolesDao {
         return list;
     }
 
+    /**
+     * 新增一筆資料
+     *
+     * @param roles 新增資料
+     */
+    @Override
+    public int insert(Roles roles) {
+        return getNamedParameterJdbcTemplate().update(" INSERT INTO " + TABLE_NAME +
+                        "(" +
+                        " SYS_ID, DEPT_ID, ROLE_ID, ROLE_DESC, CREATE_USER_ID, CREATE_TIMESTAMP, MODIFY_USER_ID, MODIFY_TIMESTAMP " +
+                        ")" +
+                        " VALUES ( " +
+                        " :sys_id, :dept_id, :role_id, :role_desc, :create_user_id, :create_timestamp, :modify_user_id, :modify_timestamp " +
+                        ")",
+                new BeanPropertySqlParameterSource(roles));
+    }
+    
+    /**
+     * 根據key刪除資料
+     *
+     * @param roles 條件
+     * @return 異動筆數
+     */
+    @Override
+    public int deleteByKey(Roles roles) {
+        return getNamedParameterJdbcTemplate().update(" DELETE FROM " + TABLE_NAME +
+                        " WHERE ROLE_ID = :role_id  ",
+                new BeanPropertySqlParameterSource(roles));
+    }
 
 
 }

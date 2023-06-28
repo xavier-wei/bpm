@@ -7,7 +7,7 @@
             driverClassName="com.microsoft.sqlserver.jdbc.SQLServerDriver"
             username="eip"
             password="eip"
-            url="jdbc:sqlserver://;servername=localhost;databaseName=EIP;encrypt=false;"
+            url="jdbc:sqlserver://;servername=192.168.50.10;databaseName=EIP;encrypt=false;"
             minIdle="2"
             maxTotal="10"/>
 </Context>

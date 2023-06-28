@@ -127,4 +127,27 @@ public class Role_aclDaoImpl extends BaseDao<Role_acl> implements Role_aclDao {
                 BeanPropertyRowMapper.newInstance(Role_acl.class));
         return list;
     }
+    
+    /**
+     * 根據key刪除資料
+     *
+     * @param role_acl 條件
+     * @return 異動筆數
+     */
+    @Override
+    public int deleteByRoleid(Role_acl role_id) {
+        return getNamedParameterJdbcTemplate().update(" DELETE FROM " + TABLE_NAME +
+                        " WHERE ROLE_ID = :role_id ",
+                new BeanPropertySqlParameterSource(role_id));
+    }
+    
+    @Override
+    public List<Role_acl> findByRoleId(String role_id) {
+        String sql = "SELECT * FROM ROLE_ACL WHERE ROLE_ID = :role_id " +
+                " ORDER BY DEPT_ID ";
+        SqlParameterSource params = new MapSqlParameterSource("role_id", role_id);
+        List<Role_acl> list = getNamedParameterJdbcTemplate().query(sql, params,
+                BeanPropertyRowMapper.newInstance(Role_acl.class));
+        return list;
+    }
 }

@@ -9,6 +9,7 @@ import java.io.IOException;
 import java.time.chrono.MinguoChronology;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Locale;
@@ -114,7 +115,7 @@ public class Eip01w030Service {
     public Eip01w030Case.Detail query(String fseq) {
         Eip01w030Case.Detail detail = msgdataDao.getEip01w030Detail(fseq);
         if (detail != null) {
-            detail.setFile(msgdepositDaoImpl.findbyfseqfiletype1(fseq).stream()
+            detail.setFile(msgdepositDaoImpl.findbyfseqfiletype1(Arrays.asList(fseq)).stream()
                     .collect(Collectors.toMap(Msgdeposit::getSeq, Msgdeposit::getAttachfile)));
         }
         return detail;
