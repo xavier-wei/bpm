@@ -8,8 +8,8 @@
     <groupId>tw.gov.pcc</groupId>
     <artifactId>bpm</artifactId>
     <version>0.0.1-SNAPSHOT</version>
-    <packaging>jar</packaging>
-    <name>Bpm</name>
+    <packaging>war</packaging>
+    <name>bpm</name>
     <description>Description for bpm</description>
 
     <repositories>
@@ -80,7 +80,7 @@
         <checksum-maven-plugin.version>1.11</checksum-maven-plugin.version>
         <maven-antrun-plugin.version>3.1.0</maven-antrun-plugin.version>
         <git-commit-id-plugin.version>5.0.0</git-commit-id-plugin.version>
-        <modernizer-maven-plugin.version>2.4.0</modernizer-maven-plugin.version>
+        <modernizer-maven-plugin.version>2.3.0</modernizer-maven-plugin.version>
         <jacoco-maven-plugin.version>0.8.8</jacoco-maven-plugin.version>
         <jib-maven-plugin.version>3.2.1</jib-maven-plugin.version>
         <jib-maven-plugin.image>eclipse-temurin:11-jre-focal</jib-maven-plugin.image>
@@ -213,6 +213,16 @@
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-web</artifactId>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.springframework.boot</groupId>
+                    <artifactId>spring-boot-starter-tomcat</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>ch.qos.logback</groupId>
+                    <artifactId>logback-classic</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
@@ -247,10 +257,10 @@
             <groupId>org.zalando</groupId>
             <artifactId>problem-spring-web</artifactId>
         </dependency>
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-undertow</artifactId>
-        </dependency>
+<!--        <dependency>-->
+<!--            <groupId>org.springframework.boot</groupId>-->
+<!--            <artifactId>spring-boot-starter-undertow</artifactId>-->
+<!--        </dependency>-->
         <dependency>
             <groupId>io.jsonwebtoken</groupId>
             <artifactId>jjwt-api</artifactId>
@@ -892,6 +902,10 @@
             <dependencies>
                 <dependency>
                     <groupId>org.springframework.boot</groupId>
+                    <artifactId>spring-boot-starter-undertow</artifactId>
+                </dependency>
+                <dependency>
+                    <groupId>org.springframework.boot</groupId>
                     <artifactId>spring-boot-devtools</artifactId>
                     <optional>true</optional>
                 </dependency>
@@ -998,6 +1012,11 @@
         <profile>
             <id>prod</id>
             <dependencies>
+                <dependency>
+                    <groupId>org.springframework.boot</groupId>
+                    <artifactId>spring-boot-starter-undertow</artifactId>
+                    <scope>provided</scope>
+                </dependency>
                 <dependency>
                     <groupId>org.testcontainers</groupId>
                     <artifactId>mssqlserver</artifactId>

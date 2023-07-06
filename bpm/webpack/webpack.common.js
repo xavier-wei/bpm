@@ -24,6 +24,7 @@ module.exports = async (env, options) => {
       },
       output: {
         path: resolve('target/classes/static/'),
+        publicPath: '/bpm/'
       },
       resolve: {
         extensions: ['.ts', '.js', '.vue', '.json'],
@@ -99,7 +100,7 @@ module.exports = async (env, options) => {
           SERVER_API_URL: JSON.stringify(config.serverApiUrl),
         }),
         new HtmlWebpackPlugin({
-          base: '/',
+          base: '/bpm/',
           template: './src/main/webapp/index.html',
         }),
         new VueLoaderPlugin(),
