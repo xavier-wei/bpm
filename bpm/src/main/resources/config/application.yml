@@ -161,7 +161,7 @@ server:
     session:
       cookie:
         http-only: true
-
+    context-path: /bpm
 springdoc:
   show-actuator: true
 
