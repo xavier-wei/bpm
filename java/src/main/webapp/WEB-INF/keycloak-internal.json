@@ -1,10 +1,8 @@
 {
   "realm": "sso",
-  "auth-server-url": "http://192.168.50.10:8888/",
+  "auth-server-url": "http://127.0.0.1:18080/auth/",
   "ssl-required": "external",
   "resource": "eip",
-  "credentials": {
-    "secret": "6gsfivfliyOHMWS8vrq8bTzqNoAWbFnX"
-  },
+  "public-client": true,
   "confidential-port": 0
 }
