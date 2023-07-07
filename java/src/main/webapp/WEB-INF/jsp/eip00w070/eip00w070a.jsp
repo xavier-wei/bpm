@@ -34,7 +34,6 @@
 	                <form:hidden path="item_name"/>
 	                <form:hidden path="hyperlink"/>
 	                <form:hidden path="sub_link"/>
-	                <form:hidden path="open_window"/>
 	                <form:hidden path="selectedIdlist"/>
 		        </form:form>
         	</div>
@@ -107,8 +106,8 @@
                 edit(json);
             },
             error: function (xhr, ajaxOptions, thrownError) {
-                alert(xhr.status);
-                alert(thrownError);
+				showAlert("網路發生錯誤");
+				console.log(xhr.status + " " + thrownError);
             }
         });
     }
@@ -118,12 +117,6 @@
         nullValue($('#item_name'), json.item_name);
         nullValue($('#hyperlink'), json.hyperlink);
         nullValue($('#sub_link'), json.sub_link);
-        nullValue($('#open_window'), json.open_window);
-        $.each($('input[name="openWindow"]'), function () {
-            if ($(this).val() === json.openWindow) {
-                $(this).attr("checked", 'checked');
-            }
-        });
         nullValue($('#sort_order'), json.sort);
         $.each($('input[name="disable"]'), function () {
             if ($(this).val() === json.disable || ($(this).val() === '' && json.disable === 'null')) {

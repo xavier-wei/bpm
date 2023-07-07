@@ -68,10 +68,7 @@
             <param-name>keycloak.config.skipPattern</param-name>
             <param-value>^/(unauthorized.jsp|redirect.jsp).*</param-value>
         </init-param>
-        <init-param>
-            <param-name>keycloak.config.path</param-name>
-            <param-value>/WEB-INF/keycloak-${environment}.json</param-value>
-        </init-param>
+        <!-- 由於工程會端要求修改，這裡不分區，移除所有PROFILE，分區由工程會端處理 -->
     </filter>
     <filter-mapping>
         <filter-name>Keycloak Filter</filter-name>

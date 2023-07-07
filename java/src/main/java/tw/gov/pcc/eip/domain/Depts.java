@@ -83,9 +83,9 @@ public class Depts implements Serializable {
     private LocalDateTime modify_timestamp;
     
     /**
-     * fromhr
+     * from_hr
      */
     @LogField
-    private String fromhr;
+    private String from_hr;
 
 }

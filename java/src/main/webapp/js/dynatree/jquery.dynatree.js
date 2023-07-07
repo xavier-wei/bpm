@@ -670,15 +670,12 @@ var DTNodeStatus_Ok      = 0;
 		},
 
 		select: function(sel) {
-			// Select - but not focus - this node.
-//		this.tree.logDebug("dtnode.select(%o) - %o", sel, this);
 			if( this.data.unselectable )
 				return this.bSelected;
 			return this._select(sel!=false, true, true);
 		},
 
 		toggleSelect: function() {
-//		this.tree.logDebug("dtnode.toggleSelect() - %o", this);
 			return this.select(!this.bSelected);
 		},
 

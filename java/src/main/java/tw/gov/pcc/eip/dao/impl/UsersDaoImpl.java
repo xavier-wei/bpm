@@ -23,7 +23,7 @@ public class UsersDaoImpl extends BaseDao<Users> implements UsersDao {
 
     static {
         ALL_COLUMNS_SQL = " t.USER_ID, t.ACNT_IS_VALID, t.CREATE_TIMESTAMP, t.CREATE_USER_ID, t.DEPT_ID, t.EMAIL, t.EMP_ID, t.LAST_LOGIN_DATE, t.LAST_LOGIN_IP, t.LDAP_ID, " +
-                " t.MODIFY_USER_ID, t.MODIFY_TIMESTAMP, t.USER_NAME, t.TEL1, t.TEL2, t.TITLE_ID, t.LINE_TOKEN ";
+                " t.MODIFY_USER_ID, t.MODIFY_TIMESTAMP, t.USER_NAME, t.TEL1, t.TEL2, t.TITLE_ID, t.LINE_TOKEN, t.FROM_HR ";
     }
 
     /**

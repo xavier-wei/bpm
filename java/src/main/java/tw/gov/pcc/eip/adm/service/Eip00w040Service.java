@@ -1,13 +1,11 @@
 package tw.gov.pcc.eip.adm.service;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
 import org.keycloak.common.util.CollectionUtil;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.cglib.core.Local;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.BindingResult;
 
@@ -64,7 +62,7 @@ public class Eip00w040Service {
 
     public void validDelete(Eip00w040Case eipadm0w040Case, BindingResult bindingResult) {
     	Depts depts = queryDepts(eipadm0w040Case.getQueryDepts().getDept_id()).get(0);
-    	if(StringUtils.equals(depts.getFromhr(), "Y")) {
+    	if(StringUtils.equals(depts.getFrom_hr(), "Y")) {
     		bindingResult.reject(null, "此部門不可刪除");
     	}
     }

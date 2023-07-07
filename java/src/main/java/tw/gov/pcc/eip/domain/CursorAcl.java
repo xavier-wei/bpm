@@ -6,7 +6,7 @@ import lombok.NoArgsConstructor;
 
 @NoArgsConstructor
 @Data
-public class CursorDeptAcl {
+public class CursorAcl {
     private static final long serialVersionUID = -1638791944601576476L;
 
     private String itemNo;
@@ -17,9 +17,9 @@ public class CursorDeptAcl {
     private String itemName;
     private String url;
     private String isDisable;
-    private String deptId;
     private String isLeaf;
     private String sortOrder;
     private String funcId;
+    private String isChecked;
 
 }

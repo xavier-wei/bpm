@@ -197,6 +197,13 @@
             <version>${slf4j-api.version}</version>
         </dependency>
 
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>jul-to-slf4j</artifactId>
+            <version>${slf4j-api.version}</version>
+        </dependency>
+
+
         <!--iText-->
         <dependency>
             <groupId>com.itextpdf</groupId>
@@ -307,29 +314,6 @@
 
     <build>
         <finalName>${artifactId}</finalName>
-        <filters>
-            <filter>src/main/filters/${environment}.properties</filter>
-        </filters>
-        <resources>
-            <resource>
-                <directory>src/main/resources</directory>
-                <filtering>false</filtering>
-                <excludes>
-                    <exclude>**/*.json</exclude>
-                    <exclude>**/*.properties</exclude>
-                    <exclude>**/*.xml</exclude>
-                </excludes>
-            </resource>
-            <resource>
-                <directory>src/main/resources</directory>
-                <filtering>true</filtering>
-                <includes>
-                    <include>**/*.json</include>
-                    <include>**/*.properties</include>
-                    <include>**/*.xml</include>
-                </includes>
-            </resource>
-        </resources>
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -380,63 +364,5 @@
         </plugins>
     </build>
 
-    <repositories>
-        <repository>
-            <id>repo.jenkins-ci.org</id>
-            <url>https://repo.jenkins-ci.org/public/</url>
-            <releases>
-                <enabled>true</enabled>
-            </releases>
-            <snapshots>
-                <enabled>true</enabled>
-            </snapshots>
-        </repository>
-
-        <!-- jhipster-needle-maven-repository -->
-        <repository>
-            <id>google-maven-central</id>
-            <url>https://maven-central.storage.googleapis.com</url>
-            <releases>
-                <enabled>true</enabled>
-            </releases>
-            <snapshots>
-                <enabled>true</enabled>
-                <updatePolicy>interval:60</updatePolicy>
-            </snapshots>
-        </repository>
-    </repositories>
-
-
-    <profiles>
-        <!-- 開發環境 -->
-        <profile>
-            <id>dev</id>
-            <properties>
-                <environment>dev</environment>
-            </properties>
-        </profile>
-        <!-- 測試環境 -->
-        <profile>
-            <id>test</id>
-            <properties>
-                <environment>test</environment>
-            </properties>
-        </profile>
-        <!-- 正式環境 -->
-        <profile>
-            <id>prod</id>
-            <properties>
-                <environment>prod</environment>
-            </properties>
-        </profile>
-        <profile>
-            <id>internal</id>
-            <activation>
-                <activeByDefault>true</activeByDefault>
-            </activation>
-            <properties>
-                <environment>internal</environment>
-            </properties>
-        </profile>
-    </profiles>
+    <!-- 由於工程會端要求修改，這裡不分區，移除所有PROFILE，分區由工程會端處理 -->
 </project>

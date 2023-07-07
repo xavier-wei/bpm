@@ -39,7 +39,7 @@ public interface OsformdataDao {
      * 刪除所選表單
      * @param osformno
      */
-    public int deleteCheckedForm(List<String> osformno);
+    public int deleteByOsformnoList(List<String> osformno);
 
     /**
      * 將表單更新為指定狀態

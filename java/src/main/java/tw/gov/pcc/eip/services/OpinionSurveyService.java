@@ -109,7 +109,7 @@ public class OpinionSurveyService {
      * @return map
      */
     public Map<String,String> getMail() {
-        List<Eipcode>list = eipcodeDao.findByCodeKind("OSMAIL");
+        List<Eipcode>list = eipcodeDao.findByCodeKind("MAIL");
         Map<String, String> map = new LinkedHashMap<>();
         list.forEach(t -> map.put(t.getCodeno(), StringUtils.isEmpty(t.getCodename()) ? "" : t.getCodename()));
         return map;

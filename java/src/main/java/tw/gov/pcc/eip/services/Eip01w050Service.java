@@ -51,7 +51,7 @@ public class Eip01w050Service {
     public Eip01w050Case.Detail query(String fseq) {
         Eip01w050Case.Detail detail = msgdataDao.getEip01w050Detail(fseq);
         if (detail != null) {
-            detail.setFile(msgdepositDao.findbyfseqfiletype1(Arrays.asList(fseq)).stream()
+            detail.setFile(msgdepositDao.findbyfseq(Arrays.asList(fseq)).stream()
                     .collect(Collectors.toMap(Msgdeposit::getSeq, Msgdeposit::getAttachfile)));
         }
         return detail;

@@ -1,11 +1,13 @@
 package tw.gov.pcc.common.domain;
 
+import lombok.Data;
+
 import java.io.Serializable;
-import java.util.Objects;
 
 /**
  * @author swho
  */
+@Data
 public class KeycloakUser implements Serializable {
     private static final long serialVersionUID = 1600459774261048770L;
     /**
@@ -24,107 +26,74 @@ public class KeycloakUser implements Serializable {
      * 部門代碼
      */
     private String deptId;
-
-    public KeycloakUser() {
-    }
-
     /**
-     * 使用者代碼
+     * 電話
      */
-    public String getUserId() {
-        return this.userId;
-    }
-
+    private String tel1;
     /**
-     * 使用者代碼
+     * 分機
      */
-    public void setUserId(final String userId) {
-        this.userId = userId;
-    }
-
+    private String tel2;
     /**
-     * 使用者名稱
+     * 職稱代號
      */
-    public String getUserName() {
-        return this.userName;
-    }
-
+    private String titleId;
     /**
-     * 使用者名稱
+     * LINE TOKEN
      */
-    public void setUserName(final String userName) {
-        this.userName = userName;
-    }
-
+    private String lineToken;
     /**
-     * 員工編號
+     * 電子信箱
      */
-    public String getEmpId() {
-        return this.empId;
+    private String email;
+
+
+    public String getTel1() {
+        return tel1;
     }
 
-    /**
-     * 員工編號
-     */
-    public void setEmpId(final String empId) {
-        this.empId = empId;
+
+    public void setTel1(String tel1) {
+        this.tel1 = tel1;
     }
 
-    /**
-     * 部門代碼
-     */
-    public String getDeptId() {
-        return this.deptId;
+
+    public String getTel2() {
+        return tel2;
     }
 
-    /**
-     * 部門代碼
-     */
-    public void setDeptId(final String deptId) {
-        this.deptId = deptId;
+
+    public void setTel2(String tel2) {
+        this.tel2 = tel2;
     }
 
-    @Override
-    public boolean equals(final Object o) {
-        if (o == this) return true;
-        if (!(o instanceof KeycloakUser)) return false;
-        final KeycloakUser other = (KeycloakUser) o;
-        if (!other.canEqual(this)) return false;
-        final Object this$userId = this.getUserId();
-        final Object other$userId = other.getUserId();
-        if (!Objects.equals(this$userId, other$userId)) return false;
-        final Object this$userName = this.getUserName();
-        final Object other$userName = other.getUserName();
-        if (!Objects.equals(this$userName, other$userName)) return false;
-        final Object this$empId = this.getEmpId();
-        final Object other$empId = other.getEmpId();
-        if (!Objects.equals(this$empId, other$empId)) return false;
-        final Object this$deptId = this.getDeptId();
-        final Object other$deptId = other.getDeptId();
-        return Objects.equals(this$deptId, other$deptId);
+
+    public String getTitleId() {
+        return titleId;
     }
 
-    protected boolean canEqual(final Object other) {
-        return other instanceof KeycloakUser;
+
+    public void setTitleId(String titleId) {
+        this.titleId = titleId;
     }
 
-    @Override
-    public int hashCode() {
-        final int PRIME = 59;
-        int result = 1;
-        final Object $userId = this.getUserId();
-        result = result * PRIME + ($userId == null ? 43 : $userId.hashCode());
-        final Object $userName = this.getUserName();
-        result = result * PRIME + ($userName == null ? 43 : $userName.hashCode());
-        final Object $empId = this.getEmpId();
-        result = result * PRIME + ($empId == null ? 43 : $empId.hashCode());
-        final Object $deptId = this.getDeptId();
-        result = result * PRIME + ($deptId == null ? 43 : $deptId.hashCode());
-        return result;
+
+    public String getLineToken() {
+        return lineToken;
     }
 
-    @Override
-    public String toString() {
-        return "KeycloakUser(userId=" + this.getUserId() + ", userName=" + this.getUserName() + ", empId=" + this.getEmpId() + ", deptId=" + this.getDeptId() + ")";
+
+    public void setLineToken(String lineToken) {
+        this.lineToken = lineToken;
+    }
+
+
+    public String getEmail() {
+        return email;
+    }
+
+
+    public void setEmail(String email) {
+        this.email = email;
     }
 }

@@ -1,11 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Configuration status="ERROR">
     <Properties>
-        <!--不同模組改這邊Start-->
-        <Property name="logSuffix">${sys:logSuffix:-host}</Property>
-        <Property name="fileName">/log/aplog/eip/eip_eip_${map:logSuffix}.log</Property>
+        <Property name="fileName">/apdata/aplog/eip_eip_${hostName}.log</Property>
         <Property name="jndiName">java:comp/env/jdbc/eipDS</Property>
-        <!--不同模組改這邊End-->
     </Properties>
     <Appenders>
         <Console name="A1" target="SYSTEM_OUT">
@@ -29,7 +26,8 @@
         </JDBC>
     </Appenders>
     <Loggers>
-        <Root level="${filter.log4jLevel}">
+        <!-- 由於工程會端要求修改，這裡不分區，移除所有PROFILE，分區由工程會端處理 -->
+        <Root level="DEBUG"> 
             <AppenderRef ref="A1"/>
             <AppenderRef ref="A2"/>
             <AppenderRef ref="DB"/>

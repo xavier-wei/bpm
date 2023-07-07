@@ -1,28 +1,39 @@
 package tw.gov.pcc.eip.framework.listener;
 
-import javax.servlet.ServletContext;
+import lombok.extern.slf4j.Slf4j;
+import org.keycloak.adapters.servlet.KeycloakOIDCFilter;
+import org.slf4j.bridge.SLF4JBridgeHandler;
+
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
+import java.io.IOException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
+/**
+ * 初始化作業
+ * 1. 轉換keycloak的log到slf4j
+ *
+ * @author swho
+ */
+@Slf4j
 public class InitialListener implements ServletContextListener {
-    private static final org.slf4j.Logger log = org.slf4j.LoggerFactory.getLogger(InitialListener.class);
-
     public void contextInitialized(ServletContextEvent event) {
-        ServletContext ctx = event.getServletContext();
-        /*
-        // SecureToken 相關
         try {
-            log.info("正在初始化  SecureToken.....");
-
-            DataSource ds = (DataSource) SpringHelper.getBeanById(Global.DATASOURCE_ID);
-            SecureToken.initail(ds, Global.SYS_ID);
-
-            log.info("SecureToken 初始化完成.....");
+            initKeycloakLogRedirect(); //for keycloak
+            initSlf4jBridge();
+        } catch (IOException ignored) {
         }
-        catch (Exception e) {
-            log.error("SecureToken 初始化失敗, 原因: {}", ExceptionUtility.getStackTrace(e));
-        }
-        */
+    }
+
+    private void initSlf4jBridge() {
+        SLF4JBridgeHandler.removeHandlersForRootLogger();
+        SLF4JBridgeHandler.install();
+    }
+
+    private void initKeycloakLogRedirect() throws IOException {
+        Logger logger = Logger.getLogger(String.valueOf(KeycloakOIDCFilter.class));
+        logger.setLevel(Level.FINE);
     }
 
     public void contextDestroyed(ServletContextEvent event) {

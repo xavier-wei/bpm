@@ -1,8 +1,6 @@
 package tw.gov.pcc.common.domain;
 
 import java.io.Serializable;
-import java.math.BigDecimal;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -38,7 +36,7 @@ public class FrameworkUserInfoBean implements UserInfo, Serializable {
     /**
      * 員工編號
      */
-    private String empNo;
+    private String empId;
     /**
      * 使用者 IP
      */
@@ -67,6 +65,27 @@ public class FrameworkUserInfoBean implements UserInfo, Serializable {
      * for Framework Logging, 使用者目前執行的功能的 頁面程式代號 - 螢幕編號
      */
     private String progId;
+    /**
+     * 電話
+     */
+    private String tel1;
+    /**
+     * 分機
+     */
+    private String tel2;
+    /**
+     * 職稱代號
+     */
+    private String titleId;
+    /**
+     * LINE TOKEN
+     */
+    private String lineToken;
+    /**
+     * 電子信箱
+     */
+    private String email;
+
     /**
      * 登入日期
      */

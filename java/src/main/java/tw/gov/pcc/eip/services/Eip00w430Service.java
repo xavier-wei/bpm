@@ -45,7 +45,7 @@ public class Eip00w430Service extends OnlineRegService {
     public void getAllList(Eip00w430Case caseData) {
         Map<String,String> regstatusMap = getRegstatus();
         //TODO 目前userdata還沒有職稱，未來需要補
-        String deptno = getRegisqualDept().containsKey(userData.getDeptId()) ? userData.getDeptId() : userData.getEmpNo();
+        String deptno = getRegisqualDept().containsKey(userData.getDeptId()) ? userData.getDeptId() : userData.getEmpId();
             List<Eip00w430Case.RegCase> list = orformdataDao.getDataByStatus(Arrays.asList("P", "A"), deptno).stream().map(t -> {
             Eip00w430Case.RegCase regCase = new Eip00w430Case.RegCase();
             Orresult orresult = orresultDao.getDataByPerson(t.getOrformno(),userData.getUserId());

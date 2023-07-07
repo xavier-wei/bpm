@@ -104,7 +104,6 @@ public class LoggingService {
         queryLog.setTermEd(userData.getLoginIP()); // 終端機位址
         queryLog.setQyCode(ConstantKey.ACCESS_TYPE_QUERY); // 查詢代號
         queryLog.setQyCondition(xmlData); // 查詢條件
-        queryLog.setIdNo(StringUtils.defaultString(queryMap.get("IDNO"))); // 證號
         queryLog.setMemo(""); // 備註
 
         queryLog.setSno(genSno()); // 編號 (MMACCESSLG.SNO)
@@ -169,7 +168,6 @@ public class LoggingService {
         apLog.setField(field); // 異動欄位
         apLog.setBefImg(befImg); // 改前內容
         apLog.setAftImg(aftImg); // 改後內容
-        apLog.setIdNo(ModifyAdviceHelper.catchFieldString("IDNO", pkField)); // 證號
         apLog.setMemo(""); // 備註
         apLog.setSno(genSno()); // 編號 (MMACCESSLG.SNO)
         mmaplogDao.insertData(apLog);
@@ -194,7 +192,6 @@ public class LoggingService {
         apLogList.forEach(apLog -> {
             apLog.setChgTime(date); // 異動時間
             apLog.setSno(genSno()); // 編號 (MMACCESSLG.SNO)ted
-            apLog.setIdNo(ModifyAdviceHelper.catchFieldString("IDNO", pkField)); //身分證號
         });
         mmaplogDao.insertData(apLogList);
     }

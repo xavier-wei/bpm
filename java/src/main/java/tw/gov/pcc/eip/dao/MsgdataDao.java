@@ -105,4 +105,8 @@ public interface MsgdataDao {
      * @return
      */
     public List<Msgdata> getMcontentWithStatus4(String attr, String dept);
+
+    public List<Msgdata> getbyDefaultPath(String dept, String defaultPath);
+
+    public List<Msgdata> getbyKeyword(String dept, String keyword);
 }

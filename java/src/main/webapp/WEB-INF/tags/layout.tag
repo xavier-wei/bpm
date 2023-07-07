@@ -70,7 +70,7 @@
 
     <body>
         <div class="web frameDiv">
-            <div class="nav ${filter.bannerClass}">
+            <div class="nav bg">
                 <a href="<c:url value='/LoginForward.action' />" class="clickDiv" title="返回首頁"></a>
                 <div class="sys_info">
                     <div class="row flex-row-reverse m-auto">
@@ -105,7 +105,7 @@
                     </div>
                 </div>
                 <div class="sys_info">
-                    <div>員工編號：<c:out value="${frameworkUserData.empNo}"/></div>
+                    <div>登入帳號：<c:out value="${frameworkUserData.userId}"/></div>
                     <div> 部門：<c:out value="${frameworkUserData.deptId}"/></div>
                     <div> 登入日期：<c:out value="${frameworkUserData.loginDateString}"/></div>
                     <div>登入時間：<c:out value="${frameworkUserData.loginTimeString}"/></div>

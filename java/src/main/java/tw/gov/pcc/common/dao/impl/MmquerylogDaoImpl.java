@@ -52,7 +52,6 @@ public class MmquerylogDaoImpl extends BaseDao<Mmquerylog> implements Mmquerylog
         + "    TERMED, "
         + "    QYCODE, "
         + "    QYCONDITION, "
-        + "    IDNO, "
         + "    MEMO, "
         + "    SNO "
         + ") VALUES ( "
@@ -65,7 +64,6 @@ public class MmquerylogDaoImpl extends BaseDao<Mmquerylog> implements Mmquerylog
         + "    :termEd, "
         + "    :qyCode, "
         + "    :qyCondition, "
-        + "    :idNo, "
         + "    :memo, "
         + "    :sno "
         + ")";

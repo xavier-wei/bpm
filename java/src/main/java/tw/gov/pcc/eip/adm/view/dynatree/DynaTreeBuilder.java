@@ -9,12 +9,6 @@ import java.util.List;
 
 public class DynaTreeBuilder {
 
-    public static final String FOLDER_STYLE = "folder";
-    public static final String ACTIVE_STYLE = "active";
-    public static final String ACTIVE_FOCUSED_STYLE = "active focused";
-    public static final String EXPANDED_STYLE = "expanded";
-    public static final String UNAVAILABLE_STYLE = "unavailable";
-
     public static List<String> build(List<Tree> trees) {
         List<String> list = new ArrayList<String>();
 
@@ -22,7 +16,7 @@ public class DynaTreeBuilder {
 
         int level = 1;
         for (Tree tree : trees) {
-            StringBuffer buff = new StringBuffer();
+            StringBuilder buff = new StringBuilder();
 
             buff.append("<li id='")
                     .append(tree.getId())
@@ -32,22 +26,14 @@ public class DynaTreeBuilder {
                 buff.append(" title='")
                         .append(tree.getTitle())
                         .append("'");
-
-            buff.append(" class='")
-                    .append(tree.getCssClass());
             if (tree.isChecked()) {
-                buff.append(" selected");
+                buff.append(" class='selected expanded'");
             }
-            buff.append("'");
-
             if (tree.getChild() != null) {
                 Child child = tree.getChild();
                 String data = " data=\"";
                 if (StringUtils.isNotEmpty(child.getIcon())) {
                     data += " icon:'" + child.getIcon() + "',";
-                }
-                if (StringUtils.isNotEmpty(child.getCssClass())) {
-                    data += " addClass:'" + child.getCssClass() + "',";
                 }
                 if (child.isHideCheckbox()) {
                     data += " hideCheckbox:true,";
@@ -55,9 +41,7 @@ public class DynaTreeBuilder {
                 if (child.isUnselectable()) {
                     data += " unselectable:true,";
                 }
-                if (data.length() > 1) {
-                    data = data.substring(0, data.length() - 1);
-                }
+                data = StringUtils.removeEnd(data, ",");
                 buff.append(data)
                         .append("\"");
             }

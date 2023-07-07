@@ -67,36 +67,6 @@ public class Items implements Serializable {
     private String disable;
 
     /**
-     * 是否檢查憑證
-     */
-    @LogField
-    private String check_cert;
-
-    /**
-     * 登入方式
-     */
-    @LogField
-    private String login_type;
-
-    /**
-     * 保護頁面
-     */
-    @LogField
-    private String page_protect;
-
-    /**
-     * 是否開啟新視窗
-     */
-    @LogField
-    private String is_openwindow;
-
-    /**
-     * ITEM_NO
-     */
-    @LogField
-    private BigDecimal item_no;
-
-    /**
      * CREATE_USER_ID
      */
     @LogField

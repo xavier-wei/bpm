@@ -49,7 +49,7 @@ public class QuartzConfig {
 		CronTriggerFactoryBean cronTriggerFactoryBean = new CronTriggerFactoryBean();
 		cronTriggerFactoryBean.setJobDetail(executeProcedureJobDetail);
 		JobDataMap jobDataMap = new JobDataMap();
-		jobDataMap.put("procedureName", "sp_eipdaily");
+		jobDataMap.put("procedureName", "USP_EIPDAILY");
 		jobDataMap.put("procedureParams", Arrays.asList(null, null, null));
 		cronTriggerFactoryBean.setJobDataMap(jobDataMap);
 		cronTriggerFactoryBean.setCronExpression("0 0 0 ? * *"); // 每日 00:00 時整

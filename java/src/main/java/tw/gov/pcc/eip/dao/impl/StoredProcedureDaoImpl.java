@@ -32,14 +32,14 @@ public class StoredProcedureDaoImpl extends BaseDao<Object> implements StoredPro
     @Override
     @SkipLog
     public Map<String, Object> getJobno() {
-        SimpleJdbcCall jdbcSpCall = new SimpleJdbcCall(getJdbcTemplate()).withProcedureName("SP_GET_JOBNO");
+        SimpleJdbcCall jdbcSpCall = new SimpleJdbcCall(getJdbcTemplate()).withProcedureName("USP_GET_JOBNO");
         SqlParameterSource in = new MapSqlParameterSource().addValue("p_jobno", "");
         return jdbcSpCall.execute(String.class, "");
     }
 
     /**
      * 紀錄執行批次作業 LOG
-     * 
+     *
      * @param jobno    流水號
      * @param jobid    程式編號
      * @param jobname  程式中文名稱
@@ -103,7 +103,7 @@ public class StoredProcedureDaoImpl extends BaseDao<Object> implements StoredPro
         sql.append(" SELECT ")
 			.append(" T.CODEKIND as codekind,T.CODENO as codeno,T.SCODEKIND as scodekind,T.SCODENO as scodeno,T.CODENAME as codename,T.STAFF as staff,")
             .append(" T.PRCDAT as prcdat,T.REMARK as remark")
-            .append(" FROM FN_GET_EIPCODE(:codekind) T" );
+            .append(" FROM UFN_GET_EIPCODE(:codekind) T" );
 
         SqlParameterSource params = new MapSqlParameterSource("codekind", codeKind);
 

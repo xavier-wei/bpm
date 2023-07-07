@@ -234,7 +234,7 @@ public class MeetingDaoImpl extends BaseDao<Meeting> implements MeetingDao{
         sql.append("      FROM MEETING T ");
         sql.append("     WHERE T.MEETINGDT  in (:dateList) ");
         sql.append("       AND T.ROOMID = :roomId     ");
-        sql.append("       AND (SELECT dbo.usp_check(USING, :using) AS RTN) = 'Y'     ");
+        sql.append("       AND (SELECT dbo.UFN_CHECK(USING, :using) AS RTN) = 'Y'     ");
         sql.append("  ORDER BY T.MEETINGID     ");
 
         SqlParameterSource params = new MapSqlParameterSource("dateList", dateList).addValue("using", using).addValue("roomId", roomId);

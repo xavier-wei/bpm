@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -60,12 +61,13 @@ public class Eip01w070Service {
         List<String> fseqList = result.stream().map(m -> m.getFseq()).collect(Collectors.toCollection(ArrayList::new));
         List<String> contentList = result.stream().map(m -> m.getMcontent())
                 .collect(Collectors.toCollection(ArrayList::new));
-
-        Map<String, String> map = msgdepositDao.findbyfseqfiletype1(fseqList).stream()
-                .collect(Collectors.toMap(Msgdeposit::getSeq, Msgdeposit::getAttachfile));
-
         caseData.setMsgs(contentList);
-        caseData.setFiles(map);
+
+        if (!CollectionUtils.isEmpty(fseqList)) {
+            Map<String, String> filesMap = msgdepositDao.findbyfseq(fseqList).stream()
+                    .collect(Collectors.toMap(Msgdeposit::getSeq, Msgdeposit::getAttachfile));
+            caseData.setFiles(filesMap);
+        }
         return caseData;
     }
 }

@@ -1,7 +1,6 @@
 package tw.gov.pcc.eip.adm.service;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
@@ -15,8 +14,7 @@ import tw.gov.pcc.eip.dao.Role_aclDao;
 import tw.gov.pcc.eip.dao.RolesDao;
 import tw.gov.pcc.eip.dao.User_rolesDao;
 import tw.gov.pcc.eip.dao.UsersDao;
-import tw.gov.pcc.eip.domain.CursorDeptAcl;
-import tw.gov.pcc.eip.domain.Items;
+import tw.gov.pcc.eip.domain.CursorAcl;
 import tw.gov.pcc.eip.domain.Role_acl;
 import tw.gov.pcc.eip.domain.Roles;
 import tw.gov.pcc.eip.domain.User_roles;
@@ -39,7 +37,7 @@ public class Eip00w070Service {
     @Autowired
     PortalMenuAclDao portalMenuAclDao;
     @Autowired
-    User_rolesDao userrolesDao;
+    User_rolesDao user_rolesDao;
     @Autowired
     UsersDao usersDao;
     @Autowired
@@ -69,13 +67,13 @@ public class Eip00w070Service {
      * 查詢角色功能清單
      *
      */
-    public List<CursorDeptAcl> findRoleMenu(Eip00w070Case eipadm0w070Case){
-    	return portalMenuAclDao.findRoleAcl(SYS_ID, eipadm0w070Case.getRole_id(), userData.getDeptId());
+    public List<CursorAcl> findRoleMenu(Eip00w070Case eipadm0w070Case){
+    	return portalMenuAclDao.findRoleAcl(SYS_ID, eipadm0w070Case.getRole_id());
     }
     
     public void findMember(Eip00w070Case eipadm0w070Case){
     	
-    	List<User_roles> rsList = userrolesDao.selectDataByRoleId(eipadm0w070Case.getRole_id());
+    	List<User_roles> rsList = user_rolesDao.selectDataByRoleId(eipadm0w070Case.getRole_id());
     	List<Users> usersList = usersDao.selectAll();
     	
     	for(Users u:usersList) {
@@ -107,7 +105,7 @@ public class Eip00w070Service {
         			addUserRoles.setRole_id(roleId);
         			addUserRoles.setCreate_user_id(userData.getUserId());
         			addUserRoles.setCreate_timestamp(nowldt);
-        			userrolesDao.insert(addUserRoles);
+        			user_rolesDao.insert(addUserRoles);
     			}
     			
     		}else {
@@ -116,7 +114,7 @@ public class Eip00w070Service {
     			delUserRoles.setSys_id(SYS_ID);
     			delUserRoles.setDept_id(users.getDept_id());
     			delUserRoles.setRole_id(roleId);
-    			userrolesDao.deleteByKey(delUserRoles);
+    			user_rolesDao.deleteByKey(delUserRoles);
     		}
     	}
     }
@@ -190,6 +188,6 @@ public class Eip00w070Service {
     }
     
     private boolean exsistUserRoles(String user_id, String sys_id, String dept_id, String role_id) {
-    	return userrolesDao.selectByKey(user_id, sys_id, dept_id, role_id) != null ? true: false;
+    	return user_rolesDao.selectByKey(user_id, sys_id, dept_id, role_id) != null ? true: false;
     }
 }

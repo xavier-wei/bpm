@@ -22,7 +22,7 @@ import org.springframework.stereotype.Service;
 import lombok.extern.slf4j.Slf4j;
 import tw.gov.pcc.eip.dao.EipcodeDao;
 import tw.gov.pcc.eip.dao.MsgdataDao;
-import tw.gov.pcc.eip.dao.impl.MsgdepositDaoImpl;
+import tw.gov.pcc.eip.dao.MsgdepositDao;
 import tw.gov.pcc.eip.domain.Eipcode;
 import tw.gov.pcc.eip.domain.Msgdeposit;
 import tw.gov.pcc.eip.msg.cases.Eip01w030Case;
@@ -44,7 +44,7 @@ public class Eip01w030Service {
     @Autowired
     private MsgdataDao msgdataDao;
     @Autowired
-    private MsgdepositDaoImpl msgdepositDaoImpl;
+    private MsgdepositDao msgdepositDao;
 
     DateTimeFormatter minguoformatter = DateTimeFormatter.ofPattern("yyy/MM/dd HH:mm")
             .withChronology(MinguoChronology.INSTANCE).withLocale(Locale.TAIWAN);
@@ -115,7 +115,7 @@ public class Eip01w030Service {
     public Eip01w030Case.Detail query(String fseq) {
         Eip01w030Case.Detail detail = msgdataDao.getEip01w030Detail(fseq);
         if (detail != null) {
-            detail.setFile(msgdepositDaoImpl.findbyfseqfiletype1(Arrays.asList(fseq)).stream()
+            detail.setFile(msgdepositDao.findbyfseq(Arrays.asList(fseq)).stream()
                     .collect(Collectors.toMap(Msgdeposit::getSeq, Msgdeposit::getAttachfile)));
         }
         return detail;

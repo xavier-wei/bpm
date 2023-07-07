@@ -261,6 +261,11 @@
     </tags:form-note>
     <form:hidden path="mode"/>
     <form:hidden path="osformno"/>
+    <form:hidden path="status"/>
+    <form:hidden path="creuser"/>
+    <form:hidden path="credt"/>
+    <form:hidden path="upduser"/>
+    <form:hidden path="upddt"/>
 </form:form>
 </tags:fieldset>
 </jsp:attribute>
