@@ -302,14 +302,18 @@
             <version>${commons-net.version}</version>
         </dependency>
 
-<!--        <dependency>-->
-<!--            <groupId>gov.pcc.pwc</groupId>-->
-<!--            <artifactId>report-fonts</artifactId>-->
-<!--            <version>${report-fonts.version}</version>-->
-<!--            <systemPath>${basedir}/lib/report-fonts-1.0.0.jar</systemPath>-->
-<!--            <scope>system</scope>-->
-<!--        </dependency>-->
-
+        <!--        <dependency>-->
+        <!--            <groupId>gov.pcc.pwc</groupId>-->
+        <!--            <artifactId>report-fonts</artifactId>-->
+        <!--            <version>${report-fonts.version}</version>-->
+        <!--            <systemPath>${basedir}/lib/report-fonts-1.0.0.jar</systemPath>-->
+        <!--            <scope>system</scope>-->
+        <!--        </dependency>-->
+        <dependency>
+            <groupId>com.microsoft.sqlserver</groupId>
+            <artifactId>mssql-jdbc</artifactId>
+            <version>12.2.0.jre11</version>
+        </dependency>
     </dependencies>
 
     <build>
