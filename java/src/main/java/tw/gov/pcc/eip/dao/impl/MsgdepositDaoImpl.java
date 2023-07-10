@@ -38,7 +38,7 @@ public class MsgdepositDaoImpl extends BaseDao<Msgdeposit> implements Msgdeposit
     }
 
     @Override
-    public Msgdeposit findbyfseq(String fseq, String seq, String filetype) {
+    public Msgdeposit findbyPk(String fseq, String seq, String filetype) {
         Msgdeposit m = new Msgdeposit();
         m.setFseq(fseq);
         m.setSeq(seq);
@@ -52,13 +52,12 @@ public class MsgdepositDaoImpl extends BaseDao<Msgdeposit> implements Msgdeposit
     }
 
     @Override
-    public List<Msgdeposit> findbyfseqfiletype1(List<String> fseq) {
+    public List<Msgdeposit> findbyfseq(List<String> fseq) {
         StringBuilder sql = new StringBuilder();
         sql.append(" SELECT SEQ, ");
         sql.append("        ATTACHFILE ");
         sql.append("   FROM MSGDEPOSIT ");
         sql.append("  WHERE FSEQ in ( :fseq )");
-        sql.append("    AND FILETYPE = '1' ");
         sql.append("  ORDER BY SEQ; ");
         Map<String, Object> params = new HashMap<>();
         params.put("fseq", fseq);

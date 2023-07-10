@@ -1,6 +1,7 @@
 package tw.gov.pcc.eip.common.cases;
 
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
 /**
@@ -11,6 +12,7 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 public class Eipxx0w030Case {
+    @EqualsAndHashCode.Exclude
     private String closed;
     private String entryListOrder;
 }

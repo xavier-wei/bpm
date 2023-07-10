@@ -96,7 +96,7 @@ public class OsformdataDaoImpl extends BaseDao<Osformdata> implements Osformdata
     }
 
     @Override
-    public int deleteCheckedForm(List<String> osformno) {
+    public int deleteByOsformnoList(List<String> osformno) {
         StringBuilder sql = new StringBuilder();
         sql.append("delete from osformdata where osformno in (:osformno)");
         Map<String, Object> params = new HashMap<>();

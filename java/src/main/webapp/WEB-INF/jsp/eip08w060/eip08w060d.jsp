@@ -14,7 +14,7 @@
     	刪除<i class="fas fa-user-plus"></i>
     </tags:button>
 
-	<tags:button id="btPrint">
+	<tags:button id="btnPrint">
     	列印<i class="fas fa-user-plus"></i>
     </tags:button>
 
@@ -50,15 +50,29 @@
 			 </tr>
 			 </thead>
 			 <tbody>
-			 <c:forEach items="${caseData.eip08w060CaseList}" var="caseData" varStatus="status">
-				 <tr>
-				<td class="text-center align-middle"><c:out value="${status.index+1}" /></td>
-				 <td cssClass="text-center align-middle"><form:input  path="eip08w060CaseList[${status.index}].item"/></td>
-				 <td cssClass="text-center align-middle"><form:input  path="eip08w060CaseList[${status.index}].desc_memo"/></td>
-				 <td cssClass="text-center align-middle"><form:input  path="eip08w060CaseList[${status.index}].cnt"/></td>
-				 <td cssClass="text-center align-middle"><form:input  path="eip08w060CaseList[${status.index}].unit"/></td>
-				 </tr>
-			 </c:forEach>
+			<c:if test="${caseData.save == 'N'}">
+				<c:forEach items="${caseData.eip08w060CaseList}" var="caseData" varStatus="status">
+				 	<tr>
+						 <td class="text-center align-middle"><c:out value="${status.index+1}" /></td>
+						 <td cssClass="text-center align-middle"><form:input id="item" path="eip08w060CaseList[${status.index}].item" cssClass="form-control" data-apno12autotab="true" size="18" maxlength="100" disabled="true"/></td>
+						 <td cssClass="text-center align-middle"><form:input id="desc_memo"  path="eip08w060CaseList[${status.index}].desc_memo" cssClass="form-control" data-apno12autotab="true" size="18" maxlength="200" disabled="true"/></td>
+				 		 <td cssClass="text-center align-middle"><form:input id="cnt"  path="eip08w060CaseList[${status.index}].cnt" cssClass="form-control" data-apno12autotab="true" size="18" maxlength="18" onkeyup="value=value.replace(/[^(\d)]/g,'')" disabled="true"/></td>
+						 <td cssClass="text-center align-middle"><form:input id="unit"  path="eip08w060CaseList[${status.index}].unit" cssClass="form-control" data-apno12autotab="true" size="7" maxlength="7" disabled="true"/></td>
+				 	</tr>
+			 	</c:forEach>
+			</c:if>
+			<c:if test="${caseData.save == 'Y'}">
+				<c:forEach items="${caseData.eip08w060CaseList}" var="caseData" varStatus="status">
+					<tr>
+						 <td class="text-center align-middle"><c:out value="${status.index+1}" /></td>
+						 <td cssClass="text-center align-middle"><form:input id="item" path="eip08w060CaseList[${status.index}].item" cssClass="form-control" data-apno12autotab="true" size="18" maxlength="100" /></td>
+						 <td cssClass="text-center align-middle"><form:input id="desc_memo"  path="eip08w060CaseList[${status.index}].desc_memo" cssClass="form-control" data-apno12autotab="true" size="18" maxlength="200" /></td>
+				 		 <td cssClass="text-center align-middle"><form:input id="cnt"  path="eip08w060CaseList[${status.index}].cnt" cssClass="form-control" data-apno12autotab="true" size="18" maxlength="18" onkeyup="value=value.replace(/[^(\d)]/g,'')" /></td>
+						 <td cssClass="text-center align-middle"><form:input id="unit"  path="eip08w060CaseList[${status.index}].unit" cssClass="form-control" data-apno12autotab="true" size="7" maxlength="7" /></td>
+					</tr>
+				 </c:forEach>
+			</c:if>
+
 			 </tbody>
 		 </table>
 	 </div>
@@ -83,7 +97,7 @@
             });
 
 			$('#btnPrint').click(function() {
-				$('#Eip08w060xForm').attr('action', '<c:url value="/Eip08w060_enter.action" />').submit();
+				$('#Eip08w060xForm').attr('action', '<c:url value="/Eip08w060_print.action" />').submit();
 			});
 
 			$('#btBack').click(function() {
@@ -105,6 +119,10 @@
 			if(save == 'Y'){
 				$("#btUpdate").show();
 				$("#btDelete").show();
+				// $("#item").removeAttr("disabled");
+				// $("#desc_memo").removeAttr("disabled");
+				// $("#cnt").removeAttr("disabled");
+				// $("#unit").removeAttr("disabled");
 			} else {
 				$("#btUpdate").hide();
 				$("#btDelete").hide()

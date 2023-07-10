@@ -4,12 +4,10 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 import tw.gov.pcc.eip.dao.ItemsDao;
 import tw.gov.pcc.eip.dao.Role_aclDao;
-import tw.gov.pcc.eip.domain.CursorDeptAcl;
+import tw.gov.pcc.eip.domain.CursorAcl;
 import tw.gov.pcc.eip.domain.Items;
-import tw.gov.pcc.eip.domain.Role_acl;
 
 import java.math.BigDecimal;
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -21,12 +19,12 @@ public class ItemService {
 
     private final Role_aclDao roleAclDao;
 
-    public ItemService(ItemsDao itemsDao, Role_aclDao roleAclDao) {
+    public ItemService(ItemsDao itemsDao, Role_aclDao role_aclDao) {
         this.itemsDao = itemsDao;
-        this.roleAclDao = roleAclDao;
+        this.roleAclDao = role_aclDao;
     }
 
-    public String getNewItemIdByLevel(List<CursorDeptAcl> cursor, BigDecimal level,
+    public String getNewItemIdByLevel(List<CursorAcl> cursor, BigDecimal level,
                                       String pid) {
         String newId;
         String maxId = getMaxIdByLevelAndType(cursor, level, pid);
@@ -44,10 +42,10 @@ public class ItemService {
     }
 
 
-    private String getMaxIdByLevelAndType(List<CursorDeptAcl> cursor,
+    private String getMaxIdByLevelAndType(List<CursorAcl> cursor,
                                           BigDecimal level, String pid) {
         String maxId = "";
-        for (CursorDeptAcl c : cursor) {
+        for (CursorAcl c : cursor) {
             if (Objects.equals(c.getLevelv(), level.toString())
                     && StringUtils.equals(pid,
                     c.getItemId()
@@ -70,25 +68,6 @@ public class ItemService {
                         (i) -> itemsDao.updateByKey(item),
                         () -> itemsDao.insert(item)
                 );
-
-
-        //todo: 這裡開發用先將授權一併授權
-        // select role_acl where user_id = 'n5000'
-        roleAclDao.findByItem(item.getItem_id())
-                .stream()
-                .filter(x -> "EIP_ALL".equals(x.getRole_id()))
-                .findAny()
-                .ifPresentOrElse((i) -> {
-                }, () -> {
-                    Role_acl roleAcl = new Role_acl();
-                    roleAcl.setItem_id(item.getItem_id());
-                    roleAcl.setRole_id("EIP_ALL");
-                    roleAcl.setSys_id("EI");
-                    roleAcl.setDept_id("iisi");
-                    roleAcl.setCreate_user_id("TMP");
-                    roleAcl.setCreate_timestamp(LocalDateTime.now());
-                    roleAclDao.insert(roleAcl);
-                });
     }
 
     public void deleteItemsAndRoleAcls(List<Items> items) {

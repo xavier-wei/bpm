@@ -89,7 +89,6 @@ public class MmaplogDaoImpl extends BaseDao<Mmaplog> implements MmaplogDao {
         + "    FIELD, "
         + "    BEFIMG, "
         + "    AFTIMG, "
-        + "    IDNO, "
         + "    MEMO, "
         + "    SNO "
         + ") VALUES ( "
@@ -105,7 +104,6 @@ public class MmaplogDaoImpl extends BaseDao<Mmaplog> implements MmaplogDao {
         + "    :field, "
         + "    :befImg, "
         + "    :aftImg, "
-        + "    :idNo, "
         + "    :memo, "
         + "    :sno "
         + ")";

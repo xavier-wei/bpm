@@ -4,16 +4,16 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
-import tw.gov.pcc.common.domain.Announce;
 import tw.gov.pcc.common.helper.UserSessionHelper;
 import tw.gov.pcc.common.services.LoginService;
+import tw.gov.pcc.eip.dao.MsgdataDao;
 import tw.gov.pcc.eip.framework.domain.UserBean;
 import tw.gov.pcc.eip.framework.spring.controllers.BaseController;
+import tw.gov.pcc.eip.msg.cases.Eip01w030Case;
 import tw.gov.pcc.eip.util.DateUtility;
 import tw.gov.pcc.eip.util.ExceptionUtility;
 
 import javax.servlet.http.HttpServletRequest;
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -29,10 +29,13 @@ public class LoginController extends BaseController {
     private static final String LOGOUT_PAGE = "/logout";
     private static final String MSG_AUTO_LOGIN = "msg.framework.autoReLogin";
     private final LoginService loginService;
+    private final MsgdataDao msgdataDao;
     private final UserBean userData;
 
-    public LoginController(LoginService loginService, UserBean userData) {
+
+    public LoginController(LoginService loginService, MsgdataDao msgdataDao, UserBean userData) {
         this.loginService = loginService;
+        this.msgdataDao = msgdataDao;
         this.userData = userData;
     }
 
@@ -80,57 +83,8 @@ public class LoginController extends BaseController {
     }
 
 
-    @ModelAttribute("announce")
-    public List<Announce> getAnnounce() {
-        List<Announce> list = new ArrayList<>();
-        list.add(Announce.builder()
-                .sno("1")
-                .date("20230515")
-                .kind("系統公告")
-                .context("帳號相關功能操作說明")
-                .url("#")
-                .dept("資訊推動小組")
-                .build());
-        list.add(Announce.builder()
-                .sno("2")
-                .date("20230515")
-                .kind("系統公告")
-                .context("行政支援系統操作說明")
-                .url("#")
-                .dept("資訊推動小組")
-                .build());
-        list.add(Announce.builder()
-                .sno("3")
-                .date("20230515")
-                .kind("系統公告")
-                .context("test1")
-                .url("#")
-                .dept("資訊推動小組")
-                .build());
-        list.add(Announce.builder()
-                .sno("4")
-                .date("20230515")
-                .kind("系統公告")
-                .context("test1")
-                .url("#")
-                .dept("資訊推動小組")
-                .build());
-        list.add(Announce.builder()
-                .sno("5")
-                .date("20230515")
-                .kind("系統公告")
-                .context("test1")
-                .url("#")
-                .dept("資訊推動小組")
-                .build());
-        list.add(Announce.builder()
-                .sno("6")
-                .date("20230515")
-                .kind("系統公告")
-                .context("test1")
-                .url("#")
-                .dept("資訊推動小組")
-                .build());
-        return list;
+    @ModelAttribute("msgdata")
+    public List<Eip01w030Case.Detail> getMsgdata() {
+        return msgdataDao.getEip01w030LatestDataList();
     }
 }

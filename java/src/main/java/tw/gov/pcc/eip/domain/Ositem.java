@@ -29,8 +29,8 @@ public class Ositem {
     private Integer qseqno;
     @LogField("ITEMSEQ")
     private Integer itemseq;
-    @LogField("DESC")
-    private String desc;
+    @LogField("ITEMDESC")
+    private String itemdesc;
     @LogField("ISADDTEXT")
     private String isaddtext;
     @LogField("CREUSER")

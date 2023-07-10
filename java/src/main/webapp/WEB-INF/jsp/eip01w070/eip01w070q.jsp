@@ -37,19 +37,21 @@
                             if (data == '') {
                                 showAlert('查無資料!');
                             } else {
+                                var title = '';
                                 var msg = '';
                                 var str = '';
-                                $.each(data.msgs, function(i, e) {
+                                title = !$('select[name="dept"] option').length ? '' : $('select[name="dept"] :selected').html();
+                                $.each(data.msgs, function(i, e) { // 串接內容
                                     msg += '　　' + (i + 1) + '.' + e + '<br>';
                                 });
-                                $.each(data.file, function(i, e) {
+                                $.each(data.file, function(i, e) { // 串接檔名
                                     str +=
                                         '<a href="javascript:;" class="alink" id=' +
                                         i + '>' +
                                         e + '</a>' + '　';
                                 });
                                 $('.msg').html('');
-                                $('.msg').html($('select[name="dept"] :selected').html() +
+                                $('.msg').html(title +
                                     '<br>' + msg +
                                     '<br>附檔下載：' + str);
                             }

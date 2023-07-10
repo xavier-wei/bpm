@@ -18,6 +18,7 @@ import org.apache.commons.lang3.StringUtils;
  */
 public class PdfReportBase extends ReportBase {
 
+
     public PdfReportBase() throws ReportException {
         super();
     }

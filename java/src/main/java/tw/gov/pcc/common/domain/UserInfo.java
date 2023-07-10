@@ -30,9 +30,9 @@ public interface UserInfo extends Serializable {
 
     void setDeptId(String deptId);
 
-    String getEmpNo();
+    String getEmpId();
 
-    void setEmpNo(String empNo);
+    void setEmpId(String empId);
 
     String getLoginIP();
 
@@ -45,5 +45,26 @@ public interface UserInfo extends Serializable {
     String getLoginTime();
 
     void setLoginTime(String loginTime);
+
+    String getTel1();
+
+    void setTel1(String tel1);
+
+    String getTel2();
+
+    void setTel2(String tel2);
+
+    String getTitleId();
+
+    void setTitleId(String titleId);
+
+    String getLineToken();
+
+    void setLineToken(String lineToken);
+
+    String getEmail();
+
+    void setEmail(String email);
+
 
 }

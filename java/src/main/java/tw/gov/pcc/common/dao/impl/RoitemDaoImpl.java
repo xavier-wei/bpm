@@ -85,6 +85,7 @@ public class RoitemDaoImpl extends BaseDao<Roitem> implements RoitemDao {
         StringBuilder sql = new StringBuilder();
         sql.append(" select DISTINCT ITEMID from roitem r  ");
         sql.append(" WHERE r.apply_date =:time ");
+        sql.append(" order BY ITEMID desc ");
         SqlParameterSource params = new MapSqlParameterSource("time",time);
         return getNamedParameterJdbcTemplate().query(sql.toString(),params, BeanPropertyRowMapper.newInstance(Roitem.class));
     }

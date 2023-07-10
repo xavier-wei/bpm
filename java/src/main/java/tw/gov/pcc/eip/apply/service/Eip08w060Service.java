@@ -6,11 +6,14 @@ import tw.gov.pcc.common.dao.RoitemDao;
 import tw.gov.pcc.common.domain.Roitem;
 import tw.gov.pcc.eip.adm.cases.Eip00w010Case;
 import tw.gov.pcc.eip.apply.cases.Eip08w060Case;
+import tw.gov.pcc.eip.apply.report.Eip08w060l00;
 import tw.gov.pcc.eip.dao.User_rolesDao;
 import tw.gov.pcc.eip.dao.UsersDao;
 import tw.gov.pcc.eip.domain.User_roles;
 import tw.gov.pcc.eip.framework.domain.UserBean;
+import tw.gov.pcc.eip.util.DateUtility;
 
+import java.io.ByteArrayOutputStream;
 import java.util.List;
 
 /**
@@ -44,7 +47,15 @@ public class Eip08w060Service {
 //		String sysDate = sysDateTime.substring(0, 8);
 		//計算流水號
 		List<Roitem> count =roitemDao.count(caseData.getApply_date());
-		String number = "0"+String.valueOf(count.size()+1);
+		String number = "01";
+		if (!count.isEmpty()){
+		int	size=Integer.valueOf(count.get(0).getItemid().substring(10));
+			if (size<9){
+				number = "0"+String.valueOf(size+1);
+			}else{
+				number = String.valueOf(size+1);
+			}
+		}
 
 		int itemNO =0;
 		for (Eip08w060Case eip08W060Case :caseData.getEip08w060CaseList()) {
@@ -60,7 +71,7 @@ public class Eip08w060Service {
 			roitem.setUnit(eip08W060Case.getUnit());
 			roitem.setApply_type(caseData.getApplyTpNm().substring(0,1));//修字串 caseData.getApplyTpNm()
 			roitem.setApply_staff(caseData.getUser());
-			roitem.setApply_date(caseData.getApplyDate());
+			roitem.setApply_date(DateUtility.changeDateType(caseData.getApplyDate()));
 			roitem.setTempmk(caseData.getSave());
 			roitem.setCre_user(caseData.getUser());
 			roitem.setCre_datetime(caseData.getCre_datetime());
@@ -79,8 +90,10 @@ public class Eip08w060Service {
 	 * @param caseData
 	 */
 	public Eip08w060Case quary(Eip08w060Case caseData) throws Exception{
-	caseData.setEip08w060QuaryList(roitemDao.quaryItemId(caseData));
-	return caseData;
+		caseData.setApplyDate(DateUtility.changeDateType(caseData.getApplyDate()));
+		caseData.setEip08w060QuaryList(roitemDao.quaryItemId(caseData));
+		caseData.setApplyDate(DateUtility.changeDateType(caseData.getApplyDate()));
+		return caseData;
 	}
 
 
@@ -112,6 +125,17 @@ public class Eip08w060Service {
 	public void update(Eip08w060Case caseData) throws Exception{
 		roitemDao.updateRoitem(caseData);
 	}
+
+	/**
+	 * 呼叫報表
+	 *
+	 * @param caseData
+	 */
+	public ByteArrayOutputStream print(Eip08w060Case caseData) throws Exception {
+		Eip08w060l00 pdf = new Eip08w060l00();
+		pdf.createEip08w060DataPdf(caseData);
+		return pdf.getOutputStream();
+	};
 
 
     

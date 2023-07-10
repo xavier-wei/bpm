@@ -26,6 +26,5 @@ public class Eip00w070Case implements Serializable {
     private String item_name;
     private String hyperlink;
     private String sub_link;
-    private String open_window;
     private List<String> selectedIdlist;
 }

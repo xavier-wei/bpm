@@ -21,18 +21,8 @@ body {
 	color: white;
 }
 
-.bg_prod {
-	background-image: url(../images/background-prod.png);
-	background-repeat: no-repeat;
-}
-
-.bg_development {
-	background-image: url(../images/background-dev.png);
-	background-repeat: no-repeat;
-}
-
-.nav.bg_test {
-	background-image: url(../images/background-test.png);
+.bg {
+	background-image: url(../images/background.png);
 	background-repeat: no-repeat;
 }
 

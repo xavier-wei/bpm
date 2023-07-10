@@ -1,5 +1,6 @@
 package tw.gov.pcc.eip.apply.controllers;
 
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
@@ -12,17 +13,21 @@ import org.springframework.web.servlet.ModelAndView;
 
 import tw.gov.pcc.common.util.DateUtil;
 import tw.gov.pcc.eip.apply.cases.Eip08w060Case;
+import tw.gov.pcc.eip.apply.service.Eip08w060CaseValidator;
 import tw.gov.pcc.eip.apply.service.Eip08w060Service;
 import tw.gov.pcc.eip.framework.domain.UserBean;
 import tw.gov.pcc.eip.framework.spring.controllers.BaseController;
+import tw.gov.pcc.eip.framework.spring.support.FileOutputView;
+import tw.gov.pcc.eip.util.DateUtility;
 import tw.gov.pcc.eip.util.ExceptionUtility;
 import tw.gov.pcc.eip.util.ObjectUtility;
 
+import java.io.ByteArrayOutputStream;
 import java.util.ArrayList;
 import java.util.List;
 
 /**
- * 設定系統管理員
+ * 物品請購/修繕請修單
  *
  * @author York
  */
@@ -42,6 +47,9 @@ public class Eip08w060Controller extends BaseController {
     @Autowired
     private UserBean userData;
 
+    @Autowired
+    private Eip08w060CaseValidator eip08w060CaseValidator;
+
     @ModelAttribute(CASE_KEY)
     public Eip08w060Case getEip08W060Case() {
         Eip08w060Case caseData = new Eip08w060Case();
@@ -57,9 +65,9 @@ public class Eip08w060Controller extends BaseController {
     public ModelAndView enter(@ModelAttribute(CASE_KEY) Eip08w060Case caseData) {
         log.debug("導向 adm0w010_enter 設定系統管理員");
         caseData.setUser(userData.getUserId());
-        caseData.setApplyTpNm("I-物品請購");
+        caseData.setApplyTpNm("I-物品請購單");
         caseData.setSave("N");
-        caseData.setApplyDate(DateUtil.getNowWestDateTime(true).substring(0, 8));
+        caseData.setApplyDate(DateUtil.getNowChineseDate());
         List<Eip08w060Case> newList =new ArrayList<Eip08w060Case>();
         caseData.setEip08w060QuaryList(newList);
         caseData.setEip08w060CaseList(newList);
@@ -79,11 +87,9 @@ public class Eip08w060Controller extends BaseController {
     public String query(@Validated @ModelAttribute(CASE_KEY) Eip08w060Case caseData, BindingResult result) {
 
         log.debug("導向   eip08W060Q   物品請購/修繕請修查詢作業");
-
         if (result.hasErrors()) {
             return QUERY_PAGE;
         }
-
 
         try {
 
@@ -126,9 +132,13 @@ public class Eip08w060Controller extends BaseController {
      * @return
      */
     @RequestMapping("/Eip08w060_inster.action")
-    public String inster(@Validated @ModelAttribute(CASE_KEY) Eip08w060Case caseData, BindingResult result) {
+    public String inster(@Validated(Eip08w060Case.Query.class) @ModelAttribute(CASE_KEY) Eip08w060Case caseData, BindingResult result) {
 
         log.debug("導向   eip08W060Q   物品請購/修繕請修新增作業");
+        eip08w060CaseValidator.validate(caseData,result);
+        if (result.hasErrors()) {
+            return ADD_APGE;
+        }
         try {
 
             String sysDateTime = DateUtil.getNowWestDateTime(true);
@@ -141,11 +151,14 @@ public class Eip08w060Controller extends BaseController {
             log.error("新增失敗，原因:{}", ExceptionUtility.getStackTrace(e));
             return ADD_APGE;
         }
-        //list初始化
-        List<Eip08w060Case> newList =new ArrayList<Eip08w060Case>();
-        caseData.setEip08w060QuaryList(newList);
-        caseData.setEip08w060CaseList(newList);
-          return QUERY_PAGE;
+        ArrayList<Eip08w060Case> arrayList = new ArrayList<Eip08w060Case>();
+        for (Eip08w060Case data:caseData.getEip08w060CaseList()) {
+            if (StringUtils.isNotBlank(data.getItem())){
+                arrayList.add(data);
+            }
+        }
+        caseData.setEip08w060CaseList(arrayList);
+          return Details_DATA_APGE;
     }
 
     @RequestMapping("/Eip08w060_updatePage.action")
@@ -183,7 +196,10 @@ public class Eip08w060Controller extends BaseController {
     }
     @RequestMapping("/Eip08w060_update.action")
     public String update(@Validated @ModelAttribute(CASE_KEY) Eip08w060Case caseData, BindingResult result) {
-
+        eip08w060CaseValidator.validate(caseData,result);
+        if (result.hasErrors()) {
+            return Details_DATA_APGE;
+        }
         log.debug("導向   eip08W060Q   物品請購/修繕申請修改作業");
         try {
             for (Eip08w060Case upData:caseData.getEip08w060CaseList()) {
@@ -202,6 +218,22 @@ public class Eip08w060Controller extends BaseController {
         caseData.setEip08w060CaseList(newList);
 
         return QUERY_PAGE;
+    }
+
+    /**
+     * 判別入帳日期(起)是否小於(迄)
+     */
+    @RequestMapping("/Eip08w060_print.action")
+    public ModelAndView doPrint(@Validated @ModelAttribute(CASE_KEY) Eip08w060Case caseData, BindingResult bindrs) {
+        log.info("執行 PDF列印   作業 Eip08w060 caseData");
+        try {
+
+            ByteArrayOutputStream baoOutput = eip08W060Service.print(caseData);
+            return new ModelAndView(new FileOutputView(baoOutput, "XPAV0W600.pdf", FileOutputView.PDF_FILE));
+        } catch (Exception e) {
+            log.error("查詢部門名稱失敗原因", ExceptionUtility.getStackTrace(e));
+            return null;
+        }
     }
 
 }

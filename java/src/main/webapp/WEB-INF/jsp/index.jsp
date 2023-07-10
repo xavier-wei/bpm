@@ -7,9 +7,10 @@
     <link rel="stylesheet" href="<c:url value='/css/18698.css' />"/>
     </jsp:attribute>
     <jsp:attribute name="contents">
+                        <c:set var="listOrder" value="${sessionScope[caseKey].entryListOrder}"/>
         <c:choose>
             <c:when test="${empty sessionScope[caseKey].entryListOrder}">
-                <c:set var="listOrder" value="drag1,drag2,drag3,drag4"/>
+                <c:set var="listOrder" value="drag2,drag3,drag4"/>
             </c:when>
             <c:otherwise>
                 <c:set var="listOrder" value="${sessionScope[caseKey].entryListOrder}"/>
@@ -30,32 +31,7 @@
                         </button>
                     </div>
                 </nav>
-                <div class="pc">
-                    <div class="row flex-row-reverse">
-                        <div class="col-md-3">
-                            <div class="top_4">
-                                <a href="javascript:confirm('將開啟公文系統視窗')" style="text-decoration:none;">
-                                    <div class="d-inline-block align-middle text-center">
-                                        <div class="title_01">XXX數量</div>
-                                        <span class="title_02">1</span>
-                                        <span class="title_03">件</span>
-                                    </div>
-                                </a>
-                            </div>
-                        </div>
-                        <div class="col-md-3">
-                            <div class="top_4">
-                                <a href="javascript:confirm('將開啟差勤系統視窗')" style="text-decoration:none;">
-                                    <div class="d-inline-block align-middle text-center">
-                                        <div class="title_01">XXX數量</div>
-                                        <span class="title_02">1</span>
-                                        <span class="title_03">件</span>
-                                    </div>
-                                </a>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+                <!-- 這裡預計要放其他團隊的IFRAME內容 -->
             </div>                        
                 </c:when>
                 <c:when test="${item eq 'drag3'}">
@@ -77,9 +53,9 @@
                 <div id="nav-tabContent" class="tab-content">
                     <div id="nav-infrom" role="tabpanel" aria-labelledby="nav-infrom-tab"
                          class="tab-pane fade active show">
-                        <section class="container pt-2">
+                        <section class="container pt-2 pl-0 pr-0">
                             <div class="card">
-                                <div class="card-body">
+                                <div class="card-body p-0">
                                     <div id="collapse-5" class="px-1 py-1 collapse show">
                                         <div class="card test-table table-sm table-hover">
                                             <div class="card-body m-0 p-0">
@@ -89,21 +65,24 @@
                                                         <thead data-orderable="true">
                                                             <tr>
                                                                 <th class="text-center">序號</th>
-                                                                <th class="text-center">公告日期</th>
+                                                                <th class="text-center">主題</th>
                                                                 <th class="text-center">類別</th>
-                                                                <th class="text-center">內文</th>
-                                                                <th class="text-center">公告單位</th>
+                                                                <th class="text-center">發布時間</th>
+                                                                <th class="text-center">發布單位</th>
+                                                                <th class="text-center">操作區</th>
                                                             </tr>
                                                         </thead>
                                                         <tbody>
-					    	<c:forEach items="${announce}" var="data" varStatus="status">
+					    	<c:forEach items="${msgdata}" var="item" varStatus="status">
 						        <tr>
-                                    <td class="text-left"><c:out value="${data.sno}"/></td>
-                                    <td class="text-left"><func:minguo value="${data.date}"/></td>
-                                    <td class="text-left"><c:out value="${data.kind}"/></td>
-                                    <td class="text-left"><a href="<c:out value="data.url" />"><c:out
-                                            value="${data.context}"/></a></td>
-                                    <td class="text-left"><c:out value="${data.dept}"/></td>
+                                    <td class="text-left"><c:out value="${status.index + 1}"/></td>
+                                    <td class="text-left"><c:out value="${item.subject}"/></td>
+                                    <td class="text-left"><c:out value="${item.msgtype}"/></td>
+                                    <td class="text-left"><func:minguo value="${item.releasedt}"/></td>
+                                    <td class="text-left"><c:out value="${item.contactunit}"/></td>
+                                    <td class="text-center" data-fseq="${item.fseq}">
+                                        <tags:button id="btnDetail">明細<i class="fas fa-list-alt"></i></tags:button>
+                                    </td>
                                 </tr>
 					        </c:forEach>
                                                         </tbody>
@@ -138,7 +117,7 @@
                     <div class="ct">
                         <div class="in">
                             <div class="group base-wrapper" data-index="3" data-type="3" data-child="3">
-  
+
                             </div>
                         </div>
                     </div>
@@ -150,6 +129,24 @@
                 </c:otherwise>
             </c:choose>
         </c:forEach>
+                <div id="popModal" class="modal fade" tabindex="-1" role="dialog">
+                    <div class="modal-dialog modal-lg" role="document">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title">公告事項</h5>
+                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                    <span aria-hidden="true">&times;</span>
+                                </button>
+                            </div>
+                            <div class="modal-body">
+
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
     </jsp:attribute>
     <jsp:attribute name="footers">
         <script type="text/javascript">
@@ -238,11 +235,48 @@
             })
             $(function () {
                 let config = getDataTablesConfig();
-                config.searching=true;
+                config.searching = true;
                 config.dom = "<'pagination'pli>tf";
-                config.lengthChange=true;
-                config.lengthMenu=[[5,25,50,-1],[5,25,50,'全部']];
+                config.lengthChange = true;
+                config.lengthMenu = [[5, 25, 50, -1], [5, 25, 50, '全部']];
                 let table = $('#listTable').DataTable(config);
+
+
+                $('#btnDetail').click(function () {
+                    $.ajax({
+                        type: "POST",
+                        url: '<c:url value="/Eip01w030_getDetail.action" />',
+                        data: {
+                            'fseq': $(this).parent('td').data('fseq')
+                        },
+                        timeout: 100000,
+                        success: function (data) {
+                            if (data === '') {
+                                showAlert('查無資料!');
+                            } else {
+                                let str = '';
+                                $.each(data.file, function (i, e) {
+                                    str +=
+                                        '<a href="javascript:;" class="alink" id=' +
+                                        i + '>' +
+                                        e + '</a>' + '　';
+                                });
+                                $('.modal-body').html('公告事項：' + data.msgtype +
+                                    '<br>發佈單位：' + data.contactunit +
+                                    '<br>主　　題：' + data.subject +
+                                    '<br>　　　　　' + data.mcontent +
+                                    '<br>附加檔案：' + str +
+                                    '<br>更新日期：' + data.upddt +
+                                    '<br>聯絡人　：' + data.contactperson +
+                                    '<br>聯絡電話：' + data.contacttel);
+                                $('#popModal').modal('show');
+                            }
+                        },
+                        error: function (e) {
+                            showAlert("取得資料發生錯誤");
+                        }
+                    });
+                });
             });
         </script>
     </jsp:attribute>

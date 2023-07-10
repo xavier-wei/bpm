@@ -15,6 +15,9 @@
         .btntd4 {
             min-width: 105px;
         }
+        .dateCol {
+            min-width: 135px;
+        }
     </style>
 </jsp:attribute>
 <jsp:attribute name="buttons">
@@ -43,13 +46,13 @@
                         <tr>
                             <th data-orderable="false" class="text-center align-middle"><input type="checkbox" id="selectAll"/><label class="d-inline" for="selectAll">全選</label></th>
                             <th class="text-center align-middle">項次</th>
-                            <th class="text-center align-middle">主題代編</th>
+<%--                            <th class="text-center align-middle">主題代編</th>--%>
                             <th class="text-center align-middle">主題名稱</th>
-                            <th class="text-center align-middle">投票<br>開始/結束日期</th>
+                            <th class="text-center align-middle dateCol">投票<br>開始/結束日期</th>
                             <th class="text-center align-middle">狀態</th>
                             <th class="text-center align-middle" colspan="2">統計表</th>
-                            <th class="text-center align-middle" data-orderable="false">填寫內容</th>
-                            <th class="text-center align-middle" colspan="3">部分列表</th>
+                            <th class="text-center align-middle" colspan="3">填寫內容</th>
+                            <th class="text-center align-middle" data-orderable="false">部分列表</th>
                             <th class="text-center align-middle" colspan="4">操作區</th>
                             <th style="display: none"></th>
                         </tr>
@@ -57,10 +60,10 @@
                     <tbody>
                         <c:forEach items="${caseData.osList}" var="item" varStatus="status">
                             <tr>
-                                <td class="text-center align-middle"><form:checkbox path="osformnoList[${status.index}]" data-status="${item.statusVal}" value="${item.osformno}"/></td>
+                                <td class="text-center align-middle"><form:checkbox path="osformnoList[${status.index}]" data-status="${item.statusVal}" data-topicname="${item.topicname}" value="${item.osformno}"/></td>
                                 <td class="text-center align-middle"><c:out value="${status.index+1}"/></td>
-                                <td class="text-center align-middle"><c:out value="${item.osformno}"/></td>
-                                <td class="text-left align-middle"><c:out value="${item.topicname}"/></td>
+<%--                                <td class="text-center align-middle"><c:out value="${item.osformno}"/></td>--%>
+                                <td class="text-left align-middle"><c:out value="${item.topicname}" escapeXml="false"/></td>
                                 <td class="text-center align-middle"><c:out value="${item.osfmdt}"/><br><c:out value="${item.osendt}" /></td>
                                 <td class="text-center align-middle btntd2"><c:out value="${item.status}"/></td>
                                 <td class="text-center align-middle btntd2"><tags:button data-action="1">檢視</tags:button></td>
@@ -128,7 +131,7 @@ $(function(){
     $('#tb1 button').click(function(e){
         e.preventDefault();
         let action = $(this).data('action');
-        $('#osformno').val($(this).parent().siblings().eq(0).find(':first-child').val());
+            $('#osformno').val($(this).parent().siblings().eq(0).find(':first-child').val());
         if (action === 1) {
 
         } else if (action === 2) {
@@ -140,16 +143,17 @@ $(function(){
         } else if (action === 5) {
 
         } else if (action === 6) {
-
+            $('#topicname').val($(this).parent().siblings().eq(0).find(':first-child').data('topicname'));
+            $('#eip00w520Form').attr('action', '<c:url value="/Eip00w520_partList.action" />').submit();
         } else if (action === 7) {
 
         } else if (action === 8) {
             $('#mode').val('U');
             $('#eip00w520Form').attr('action', '<c:url value="/Eip00w520_selectInsertUpdate.action" />').submit();
         } else if (action === 9) {
-
+            $('#eip00w520Form').attr('action', '<c:url value="/Eip00w520_put.action" />').submit();
         } else if (action === 10) {
-
+            $('#eip00w520Form').attr('action', '<c:url value="/Eip00w520_off.action" />').submit();
         }
     });
 

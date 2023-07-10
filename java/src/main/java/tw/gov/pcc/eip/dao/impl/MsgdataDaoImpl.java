@@ -283,4 +283,56 @@ public class MsgdataDaoImpl extends BaseDao<Msgdata> implements MsgdataDao {
                 BeanPropertyRowMapper.newInstance(Msgdata.class));
     }
 
+    @Override
+    public List<Msgdata> getbyDefaultPath(String dept, String defaultPath) {
+        StringBuilder sql = new StringBuilder();
+        sql.append(" SELECT C.FSEQ, ");
+        sql.append("        C.SUBJECT, ");
+        sql.append("        ISNULL(C.UPDDT, C.CREATDT) UPDDT ");
+        sql.append("   FROM MSGDATA C ");
+        sql.append("  WHERE C.FSEQ IN ");
+        sql.append("         (SELECT A.FSEQ   ");
+        sql.append("            FROM MSGDEPOSIT A, ");
+        sql.append("                 MSGAVAILDEP B ");
+        sql.append("           WHERE A.FSEQ = B.FSEQ ");
+        sql.append("             AND B.AVAILABLEDEP = :dept  ");
+        sql.append("             AND C.ATTRIBUTYPE  = '4') ");
+        sql.append("    AND C.INDIR = :defaultPath ");
+        sql.append("    AND C.STATUS = '4' ");
+        sql.append("    AND C.ATTRIBUTYPE = '4' ");
+        sql.append("  ORDER BY C.SHOWORDER, C.CREATDT DESC; ");
+        Map<String, Object> params = new HashMap<>();
+        params.put("dept", dept);
+        params.put("defaultPath", defaultPath);
+        return getNamedParameterJdbcTemplate().query(sql.toString(), params,
+                BeanPropertyRowMapper.newInstance(Msgdata.class));
+    }
+    
+    @Override
+    public List<Msgdata> getbyKeyword(String dept, String keyword) {
+        StringBuilder sql = new StringBuilder();
+        sql.append(" SELECT C.FSEQ, ");
+        sql.append("        C.SUBJECT, ");
+        sql.append("        ISNULL(C.UPDDT, C.CREATDT) UPDDT ");
+        sql.append("   FROM MSGDATA C ");
+        sql.append("  WHERE C.FSEQ IN ");
+        sql.append("        (SELECT A.FSEQ   ");
+        sql.append("           FROM MSGDEPOSIT A, ");
+        sql.append("                MSGAVAILDEP B ");
+        sql.append("          WHERE A.FSEQ = B.FSEQ ");
+        sql.append("            AND B.AVAILABLEDEP = :dept  ");
+        sql.append("            AND C.ATTRIBUTYPE  = '4') ");
+        sql.append("    AND C.STATUS = '4' ");
+        sql.append("    AND C.ATTRIBUTYPE = '4' ");
+        sql.append("    AND (C.SUBJECT LIKE '%' + :keyword + '%' ");
+        sql.append("     OR C.MCONTENT LIKE '%' + :keyword + '%') ");
+        sql.append("  ORDER BY C.SHOWORDER, C.CREATDT DESC; ");
+        Map<String, Object> params = new HashMap<>();
+        params.put("dept", dept);
+        params.put("keyword", keyword);
+        return getNamedParameterJdbcTemplate().query(sql.toString(), params,
+                BeanPropertyRowMapper.newInstance(Msgdata.class));
+    }
+
+
 }

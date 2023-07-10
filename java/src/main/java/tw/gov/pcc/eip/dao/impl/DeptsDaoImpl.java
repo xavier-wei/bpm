@@ -28,7 +28,7 @@ public class DeptsDaoImpl extends BaseDao<Depts> implements DeptsDao {
 
     static {
         ALL_COLUMNS_SQL = " t.DEPT_ID, t.DEPT_NAME, t.SORT_ORDER, t.DEPT_DESC, t.IS_VALID, t.DEPT_ID_P, t.CREATE_USER_ID, "
-        		          + " t.CREATE_TIMESTAMP, t.MODIFY_USER_ID, t.MODIFY_TIMESTAMP, t.FROMHR ";
+        		          + " t.CREATE_TIMESTAMP, t.MODIFY_USER_ID, t.MODIFY_TIMESTAMP, t.FROM_HR ";
     }
 
     /**
@@ -66,11 +66,11 @@ public class DeptsDaoImpl extends BaseDao<Depts> implements DeptsDao {
         return getNamedParameterJdbcTemplate().update(" INSERT INTO " + TABLE_NAME +
                         "(" +
                         " DEPT_ID, DEPT_NAME, SORT_ORDER, DEPT_DESC, IS_VALID, DEPT_ID_P, CREATE_USER_ID, " +
-      		            " CREATE_TIMESTAMP, MODIFY_USER_ID, MODIFY_TIMESTAMP, FROMHR " +
+      		            " CREATE_TIMESTAMP, MODIFY_USER_ID, MODIFY_TIMESTAMP, FROM_HR " +
                         ")" +
                         " VALUES ( " +
                         " :dept_id, :dept_name, :sort_order, :dept_desc, :is_valid, :dept_id_p, :create_user_id, " +
-                        " :create_timestamp, :modify_user_id, :modify_timestamp, :fromhr " +
+                        " :create_timestamp, :modify_user_id, :modify_timestamp, :from_hr " +
                         ")",
                 new BeanPropertySqlParameterSource(depts));
     }
@@ -86,7 +86,7 @@ public class DeptsDaoImpl extends BaseDao<Depts> implements DeptsDao {
         return getNamedParameterJdbcTemplate().update(" UPDATE " + TABLE_NAME + " SET " +
         		" DEPT_NAME = :dept_name, SORT_ORDER = :sort_order, DEPT_DESC = :dept_desc, IS_VALID = :is_valid, "
         		+ " DEPT_ID_P = :dept_id_p, CREATE_USER_ID = :create_user_id, "
-        		+ " CREATE_TIMESTAMP = :create_timestamp, MODIFY_USER_ID = :modify_user_id, MODIFY_TIMESTAMP  = :modify_timestamp, FROMHR = :fromhr "
+        		+ " CREATE_TIMESTAMP = :create_timestamp, MODIFY_USER_ID = :modify_user_id, MODIFY_TIMESTAMP  = :modify_timestamp, FROM_HR = :from_hr "
         		+ " WHERE DEPT_ID = :dept_id ",
                 new BeanPropertySqlParameterSource(depts));
     }

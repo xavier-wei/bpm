@@ -16,15 +16,15 @@
     <tags:fieldset>
 		<form:form id="eip00w020Form" name="eip00w020Form" modelAttribute="${caseKey}" method="POST">
 			<tags:form-row>
-                 <form:label path="userid" cssClass="col-form-label">員工編號：</form:label>
+                 <form:label path="user_id" cssClass="col-form-label">員工編號：</form:label>
                     <div class="col-6 col-md form-inline">
-                        <form:input path="userid" cssClass="form-control eng_num_only" size="20" maxlength="20"/>
+                        <form:input path="user_id" cssClass="form-control eng_num_only" size="20" maxlength="20"/>
                     </div>
             </tags:form-row>
             <tags:form-row>
-                 <form:label path="deptid" cssClass="col-form-label">部門代號：</form:label>
+                 <form:label path="dept_id" cssClass="col-form-label">部門代號：</form:label>
                     <div class="col-6 col-md form-inline">
-                        <form:input path="deptid" cssClass="form-control eng_num_only" size="20" maxlength="20"/>
+                        <form:input path="dept_id" cssClass="form-control eng_num_only" size="20" maxlength="20"/>
                     </div>
             </tags:form-row>
         </form:form>
@@ -34,7 +34,7 @@
 					<table class="table" id="listTable">
 						<thead data-orderable="true">
 							<tr>
-								<th class="text-center">員工編號</th>
+								<th class="text-center">使用者代號</th>
 								<th class="text-center">姓名</th>
 								<th class="text-center">電子信箱</th>
 								<th class="text-center">分機</th>
@@ -73,8 +73,8 @@
        
     });
     function doEdit(userid,deptid) {
-       $('#userid').val(userid);
-       $('#deptid').val(deptid);
+       $('#user_id').val(userid);
+       $('#dept_id').val(deptid);
        $('#eip00w020Form').attr('action', '<c:url value="/Eip00w020_edit.action" />').submit();
    }
 </script>

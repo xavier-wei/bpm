@@ -51,10 +51,6 @@ public class Mmquerylog implements Serializable {
      */
     private String qyCondition;
     /**
-     * 證號
-     */
-    private String idNo;
-    /**
      * 備註
      */
     private String memo;

@@ -78,9 +78,10 @@ public class Eip00w020Controller extends BaseController {
         try {
         	Users users = eip00w020Service.findUser(caseData);
         	if(users != null) {
-        		//caseData.settingCase(users);
-        		caseData.setUsers(users);
+        		caseData.settingCase(users);
         		caseData.setUserStatus(users.getAcnt_is_valid());
+        		caseData.setTitleidList(eip00w020Service.findTitleIdList());//職稱代號下拉式選單datalist
+        		caseData.setDeptList(eip00w020Service.findDeptIdList());//部門代號下拉式選單datalist
         		return new ModelAndView(EDIT_PAGE);
         	}else {
         		super.setSystemMessage(getQueryEmptyMessage());

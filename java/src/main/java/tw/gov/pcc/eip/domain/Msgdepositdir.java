@@ -44,8 +44,8 @@ public class Msgdepositdir implements Serializable {
     @LogField("FILENAME")
     private String filename;
     /** 是否啟用 */
-    @LogField("DISABEL")
-    private String disabel; // NULL:啟用中，Y:資料夾失效
+    @LogField("DISABLE")
+    private String disable; // NULL:啟用中，Y:資料夾失效
     /** 建立人員 */
     @LogField("CREATID")
     private String creatid;

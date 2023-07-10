@@ -643,7 +643,6 @@ public class FrameworkLogUtil {
         apLog.setField(field); // 異動欄位
         apLog.setBefImg(StringUtils.defaultString(befImg)); // 改前內容
         apLog.setAftImg(StringUtils.defaultString(aftImg)); // 改後內容
-        apLog.setIdNo(""); // 證號
         apLog.setMemo(""); // 備註
         // apLog.setSno(sno); // 編號 - Service 處理
         return apLog;

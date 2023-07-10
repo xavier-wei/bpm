@@ -20,6 +20,16 @@ public interface OsitemDao {
 
     public int deleteData(String osformno, Integer iseqno);
 
+    public int deleteDataByQseqno(String osformno, Integer qseqno);
+
+    public int deleteByOsformnoList(List<String> osformnoList);
+
+    /**
+     * 刪除所選選項
+     * @param osformno
+     */
+    public int deleteByOsformnoAndIseqnoList(String osformno, List<String> iseqno);
+
     /**
      * 取得全部資料
      * @return
@@ -31,4 +41,10 @@ public interface OsitemDao {
      * @return
      */
     public String getMaximumIseqno(String osformno);
+
+    /**
+     * 依表單編號及問題流水號取得資料
+     * @return
+     */
+    public List<Ositem> getItemsByOsformnoAndQseqno(String osformno, String qseqno);
 }

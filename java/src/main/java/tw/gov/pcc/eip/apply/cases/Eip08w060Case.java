@@ -2,7 +2,10 @@ package tw.gov.pcc.eip.apply.cases;
 
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.springframework.validation.annotation.Validated;
+import tw.gov.pcc.eip.framework.validation.NotEmpty;
 
+import javax.validation.Valid;
 import java.io.Serializable;
 import java.util.List;
 
@@ -34,18 +37,22 @@ public class Eip08w060Case implements Serializable {
 	/**
 	 * 品名及規格
 	 */
+
 	private String item;
 	/**
 	 * 用途說明
 	 */
+
 	private String desc_memo;
 	/**
 	 * 數量
 	 */
+
 	private String cnt;
 	/**
 	 * 單位
 	 */
+
 	private String unit;
 
 	/**
@@ -104,4 +111,8 @@ public class Eip08w060Case implements Serializable {
 	 * 處理類型 新:A 刪:D 修:U 查:Q
 	 */
 	private String processTy;
+
+
+	public interface Query {
+	}
 }

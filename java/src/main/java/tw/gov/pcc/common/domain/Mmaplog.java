@@ -65,10 +65,6 @@ public class Mmaplog implements Serializable {
      */
     private String aftImg;
     /**
-     * 證號
-     */
-    private String idNo;
-    /**
      * 備註
      */
     private String memo;

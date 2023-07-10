@@ -9,17 +9,45 @@ import  java.util.List;
  */
 public interface MeetingCodeDao {
 	public static final String TABLE_NAME = "MEETINGCODE";
-	public List<MeetingCode> selectAllData();
-	public int insertData(MeetingCode data);
-	public int updateData(MeetingCode data);
-	public int deleteData(MeetingCode data);
+	public List<MeetingCode> selectAllData();//查詢全部
+	public MeetingCode findByPK(String itemId);
 
+
+	public int insertData(MeetingCode data);
+
+	/**
+	 * 查詢 itemId 筆數
+	 * @param itemId
+	 * @return
+	 */
+	public int findByitemId(String itemId);
+
+	/**
+	 * 查詢 itemId 使用
+	 * @param itemId
+	 * @return
+	 */
+	public int findItemIdByMeetingItem(String itemId);
+
+
+	/**
+	 * 查詢 itemName 筆數
+	 * @param itemName
+	 * @return
+	 */
+	public int findByitemName(String itemName);
+
+
+	public int updateData(MeetingCode data, String itemId);
+
+	public int deleteData(String itemId);
 	/**
 	 * 查詢by ItemType
 	 * @param itemtyp
 	 * @return
 	 */
-	public List<MeetingCode> selectDataByItemType(String itemtyp);
+	public List<MeetingCode> selectDataByItemType(String itemtyp);//查詢類別
+	public List<MeetingCode> selectDataByItemTypeF(String itemtyp);//查詢類別(包含會議室啟用+禁用)
 
 	/**
 	 * 查詢by itemId

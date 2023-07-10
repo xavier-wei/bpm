@@ -24,8 +24,8 @@ public class ItemsDaoImpl extends BaseDao<Items> implements ItemsDao {
     private static final String ALL_COLUMNS_SQL;
 
     static {
-        ALL_COLUMNS_SQL = " t.ITEM_ID, t.SORT_ORDER, t.ITEM_ID_P, t.ITEM_NAME, t.HYPERLINK, t.SUB_LINK, t.DISABLE, t.CHECK_CERT, t.LOGIN_TYPE, t.PAGE_PROTECT, " +
-                " t.IS_OPENWINDOW, t.ITEM_NO, t.CREATE_USER_ID, t.CREATE_TIMESTAMP, t.MODIFY_USER_ID, t.MODIFY_TIMESTAMP ";
+        ALL_COLUMNS_SQL = " t.ITEM_ID, t.SORT_ORDER, t.ITEM_ID_P, t.ITEM_NAME, t.HYPERLINK, t.SUB_LINK, t.DISABLE, " +
+                " t.CREATE_USER_ID, t.CREATE_TIMESTAMP, t.MODIFY_USER_ID, t.MODIFY_TIMESTAMP ";
     }
 
     /**
@@ -78,8 +78,8 @@ public class ItemsDaoImpl extends BaseDao<Items> implements ItemsDao {
     public int updateByKey(Items items) {
         return getNamedParameterJdbcTemplate().update(" UPDATE " + TABLE_NAME + " SET " +
                         " SORT_ORDER = :sort_order, ITEM_ID_P = :item_id_p, ITEM_NAME = :item_name, HYPERLINK = :hyperlink, SUB_LINK = :sub_link, " +
-                        " DISABLE = :disable, CHECK_CERT = :check_cert, LOGIN_TYPE = :login_type, PAGE_PROTECT = :page_protect, IS_OPENWINDOW = :is_openwindow, " +
-                        " ITEM_NO = :item_no, CREATE_USER_ID = :create_user_id, CREATE_TIMESTAMP = :create_timestamp, MODIFY_USER_ID = :modify_user_id, MODIFY_TIMESTAMP = :modify_timestamp" +
+                        " DISABLE = :disable, " +
+                        " CREATE_USER_ID = :create_user_id, CREATE_TIMESTAMP = :create_timestamp, MODIFY_USER_ID = :modify_user_id, MODIFY_TIMESTAMP = :modify_timestamp" +
                         " WHERE ITEM_ID = :item_id ",
                 new BeanPropertySqlParameterSource(items));
     }
@@ -93,12 +93,12 @@ public class ItemsDaoImpl extends BaseDao<Items> implements ItemsDao {
     public int insert(Items items) {
         return getNamedParameterJdbcTemplate().update(" INSERT INTO " + TABLE_NAME +
                         "(" +
-                        " ITEM_ID, SORT_ORDER, ITEM_ID_P, ITEM_NAME, HYPERLINK, SUB_LINK, DISABLE, CHECK_CERT, LOGIN_TYPE, PAGE_PROTECT, " +
-                        " IS_OPENWINDOW, ITEM_NO, CREATE_USER_ID, CREATE_TIMESTAMP, MODIFY_USER_ID, MODIFY_TIMESTAMP" +
+                        " ITEM_ID, SORT_ORDER, ITEM_ID_P, ITEM_NAME, HYPERLINK, SUB_LINK, DISABLE, " +
+                        " CREATE_USER_ID, CREATE_TIMESTAMP, MODIFY_USER_ID, MODIFY_TIMESTAMP" +
                         ")" +
                         " VALUES ( " +
-                        " :item_id, :sort_order, :item_id_p, :item_name, :hyperlink, :sub_link, :disable, :check_cert, :login_type, :page_protect, " +
-                        " :is_openwindow, :item_no, :create_user_id, :create_timestamp, :modify_user_id, :modify_timestamp" +
+                        " :item_id, :sort_order, :item_id_p, :item_name, :hyperlink, :sub_link, :disable, " +
+                        " :create_user_id, :create_timestamp, :modify_user_id, :modify_timestamp" +
                         ")",
                 new BeanPropertySqlParameterSource(items));
     }

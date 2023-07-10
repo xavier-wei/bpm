@@ -1,12 +1,12 @@
 <%@ page language="java" pageEncoding="UTF-8" %>
 <%@ include file="/WEB-INF/jsp/includes/include.jsp" %>
 <!doctype html>
-<spring:eval var="caseKey" expression="T(tw.gov.pcc.eip.adm.controllers.Eip00w070Controller).CASE_KEY" />
-<c:set var="caseData" value="${sessionScope[caseKey]}" />
+<spring:eval var="caseKey" expression="T(tw.gov.pcc.eip.adm.controllers.Eip00w070Controller).CASE_KEY"/>
+<c:set var="caseData" value="${sessionScope[caseKey]}"/>
 <tags:layout>
 <jsp:attribute name="buttons">    
     <tags:button id="btnEdit">
-    	修改<i class="fas fa-edit"></i>
+    	儲存<i class="fas fa-save"></i>
     </tags:button>    
     <tags:button id="btnDel">
     	刪除<i class="fas fa-trash-alt"></i>
@@ -16,7 +16,7 @@
     </tags:button>
 </jsp:attribute>
 
-<jsp:attribute name="contents">
+    <jsp:attribute name="contents">
     <tags:fieldset legend="編輯角色">
     	<div class="col-12 d-flex">
             <div class="col-6 col-md-6">
@@ -31,31 +31,49 @@
 	                <form:hidden path="item_name"/>
 	                <form:hidden path="hyperlink"/>
 	                <form:hidden path="sub_link"/>
-	                <form:hidden path="open_window"/>
 	                <form:hidden path="selectedIdlist"/>
 		        </form:form>
-        	</div>
-        	<div class="col-6 col-md-6">
+            </div>
+            <div class="col-6 col-md-6">
                 <div class="container-title">
                     <div class="text-right">
                         <tags:button id="open" cssClass="btn-sm">展開<i class="fas fa-expand"></i></tags:button>
                         <tags:button id="close" cssClass="btn-sm">收合<i class="fas fa-compress"></i></tags:button>
-                        <tags:button id="create" cssClass="btn-sm">新增子項<i class="fas fa-plus"></i></tags:button>
                     </div>
                 </div>
-		        <div id="treeBlock">
-		            <div id="dynaTree" class="dynatree">
+                <div id="treeBlock">
+                    <div id="dynaTree" class="dynatree">
 						<c:forEach var="items" items="${items}">
 							<c:out value="${items}" escapeXml="false"/>
 						</c:forEach>
-		            </div>
-		        </div>
-		 	</div>
+                    </div>
+                </div>
+            </div>
         </div>
     </tags:fieldset>
 </jsp:attribute>
-<jsp:attribute name="footers">
+    <jsp:attribute name="footers">
 <script>
+
+    let suppressOnSelect = false;
+
+    function lookup(x, isSel) {
+        if (x != null && isSel && x.getLevel() > 1) {
+            console.log('up:' + x);
+            x.select();
+            lookup(x.parent, isSel);
+        }
+    }
+
+    function lookdown(x, isSel) {
+        if (x != null) {
+            console.log('down:' + x);
+            x.select(isSel);
+            $(x.childList).each((i, o) => {
+                lookdown(o, isSel);
+            });
+        }
+    }
 
     function initTree() {
         $("#dynaTree").dynatree({
@@ -67,62 +85,24 @@
             autoCollapse: false,
             activeVisible: true,
             cookie: false,
-            onActivate: function (dnode) {
-                if (dnode.hasChildren())
-                    dnode.toggleExpand();
-                dnode.toggleSelect();
-                ajaxItemData(dnode.data.key);
-            },
+            idPrefix: 'TREE_',
             onSelect: function (flag, dnode) {
-            	let idlist = [];
-                let selectedNodes = dnode.tree.getSelectedNodes();
-                $.map(selectedNodes, function (node) {
-                    ajaxItemData(node.data.key);
-                    idlist.push(node.data.key);
-                });
-                $('#selectedIdlist').val(idlist);
-            },
-            onDblClick: function (dnode, event) {
-                dnode.toggleSelect();
-            }
-        });
-    }
-    function ajaxItemData(item_id) {
-        $('#action_type').val('edit');
-        $('#pid').val(item_id);
-        let data = {};
-        data['item_id'] = item_id;
-        $.ajax({
-            url: "Eip00w070_info.action",
-            type: "POST",
-            dataType: "json",
-            contentType: "application/json",
-            data: JSON.stringify(data),
-            success: function (json) {
-                edit(json);
-            },
-            error: function (xhr, ajaxOptions, thrownError) {
-                alert(xhr.status);
-                alert(thrownError);
-            }
-        });
-    }
-
-    function edit(json) {
-        nullValue($('#item_id'), json.item_id);
-        nullValue($('#item_name'), json.item_name);
-        nullValue($('#hyperlink'), json.hyperlink);
-        nullValue($('#sub_link'), json.sub_link);
-        nullValue($('#open_window'), json.open_window);
-        $.each($('input[name="openWindow"]'), function () {
-            if ($(this).val() === json.openWindow) {
-                $(this).attr("checked", 'checked');
-            }
-        });
-        nullValue($('#sort_order'), json.sort);
-        $.each($('input[name="disable"]'), function () {
-            if ($(this).val() === json.disable || ($(this).val() === '' && json.disable === 'null')) {
-                $(this).attr("checked", 'checked');
+                if (suppressOnSelect) {
+                    return;
+                }
+                try {
+                    suppressOnSelect = true;
+                    let idlist = [];
+                    lookup(dnode, dnode.isSelected());
+                    lookdown(dnode, dnode.isSelected());
+                    let selectedNodes = dnode.tree.getSelectedNodes();
+                    $.map(selectedNodes, function (node) {
+                        idlist.push(node.data.key);
+                    });
+                    $('#selectedIdlist').val(idlist);
+                } finally {
+                    suppressOnSelect = false;
+                }
             }
         });
     }
@@ -135,35 +115,32 @@
         }
     }
 
-    function validate() {
-        return $('#item_name').val() !== '' && $('#sortOrder').val() !== '';
-    }
+    $(function () {
 
-    function rebuildTree(data) {
-        $("#treeBlock").html("<div id='dynaTree' class='dynatree'></div>");
 
-        if (data.indexOf("{status:") >= 0) {
-            var info = data.substring(data.indexOf("{status:"));
-            $("#dynaTree").html(data.substring(0, data.indexOf("{status:")));
-            initTree();
-            $.bli.information.explain(info);
-        } else {
-            $("#dynaTree").html(data);
-            initTree();
-        }
-    }
-    $(function(){            
-		$('#btnBack').click(function(){
-			$('#eip00w070Form').attr('action', '<c:url value="/Eip00w070_enter.action" />').submit();
-		})
-		$('#btnEdit').click(function(){
-			$('#eip00w070Form').attr('action', '<c:url value="/Eip00w070_editCharacter.action" />').submit();
-		})
-		$('#btnDel').click(function(){
-			$('#eip00w070Form').attr('action', '<c:url value="/Eip00w070_delCharacter.action" />').submit();
-		})
-		initTree();
-	})
+        $('#open').click(function () {
+            $("#dynaTree").dynatree("getRoot").visit(function (dtnode) {
+                dtnode.expand(true);
+            });
+        });
+
+        $('#close').click(function () {
+            $("#dynaTree").dynatree("getRoot").visit(function (dtnode) {
+                dtnode.expand(false);
+            });
+        });
+
+        $('#btnBack').click(function () {
+            $('#eip00w070Form').attr('action', '<c:url value="/Eip00w070_enter.action" />').submit();
+        })
+        $('#btnEdit').click(function () {
+            $('#eip00w070Form').attr('action', '<c:url value="/Eip00w070_editCharacter.action" />').submit();
+        })
+        $('#btnDel').click(function () {
+            $('#eip00w070Form').attr('action', '<c:url value="/Eip00w070_delCharacter.action" />').submit();
+        })
+        initTree();
+    })
 </script>
 </jsp:attribute>
 </tags:layout>

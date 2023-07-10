@@ -124,7 +124,15 @@ public class Users implements Serializable {
      */
     @LogField
     private String line_token;
+    
+    /**
+     * from_hr
+     */
+    @LogField
+    private String from_hr;
 
     private boolean checkbox;
+    
+    
 
 }

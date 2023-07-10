@@ -33,7 +33,7 @@
 			<ol>
                 <li>
                     <label class="label">顯示名稱：</label>
-                    <form:input path="item_name" id="item_name" cssClass="form-control"  size="30" maxlength="40"/>
+                    <form:input path="item_name" id="item_name" cssClass="form-control" size="30" maxlength="40"/>
                 </li>
                 <li>
                     <label class="label">連結路徑：</label>
@@ -41,11 +41,12 @@
                 </li>
                 <li>
                     <label class="label">排序：</label>
-                    <form:input path="sort_order" id="sort_order" cssClass="form-control"  size="5" maxlength="10" value="0"/>
+                    <form:input path="sort_order" id="sort_order" cssClass="form-control" size="5" maxlength="10"
+                                value="0"/>
                 </li>
                 <li>
                     <label class="label">功能編號：</label>
-                    <form:input path="sub_link" id="sub_link" cssClass="form-control"  size="30" maxlength="20"/>
+                    <form:input path="sub_link" id="sub_link" cssClass="form-control" size="30" maxlength="20"/>
                 </li>
                 <li>
                     <label class="label">啟用/停用：</label>
@@ -83,34 +84,34 @@
 </jsp:attribute>
     <jsp:attribute name="footers">
 <script type="text/javascript">
-
-
+    let te;
     function initTree() {
-        $("#dynaTree").dynatree({
-            selectMode: 1, //1:single, 2:multi, 3:multi-hier
-            checkbox: true,
-            classNames: {checkbox: "ui-dynatree-radio"},
-            minExpandLevel: 2,
-            persist: false,
-            autoCollapse: false,
-            activeVisible: true,
-            cookie: false,
-            onActivate: function (dnode) {
-                if (dnode.hasChildren())
-                    dnode.toggleExpand();
-                dnode.toggleSelect();
-                ajaxItemData(dnode.data.key);
-            },
-            onSelect: function (flag, dnode) {
-                let selectedNodes = dnode.tree.getSelectedNodes();
-                $.map(selectedNodes, function (node) {
-                    ajaxItemData(node.data.key);
-                });
-            },
-            onDblClick: function (dnode, event) {
-                dnode.toggleSelect();
+        te = $("#dynaTree").dynatree(
+            {
+                selectMode: 1, //1:single, 2:multi, 3:multi-hier
+                checkbox: true,
+                classNames: {checkbox: "ui-dynatree-radio"},
+                minExpandLevel: 2,
+                persist: false,
+                autoCollapse: false,
+                activeVisible: true,
+                cookie: false,
+                idPrefix: 'TREE_',
+                onSelect: function (flag, dnode) {
+                    let selectedNodes = dnode.tree.getSelectedNodes();
+                    $.map(selectedNodes, function (node) {
+                        ajaxItemData(node.data.key);
+                    });
+                },
+                onDblClick: function (dnode, event) {
+                    dnode.toggleSelect();
+                }
             }
-        });
+        );
+        let dynatree = $(te).dynatree('getSelectedNodes');
+        if(dynatree && dynatree.length > 0){
+            dynatree[0].makeVisible();
+        }
     }
 
     function ajaxItemData(item_id) {
@@ -119,7 +120,7 @@
         let data = {};
         data['item_id'] = item_id;
         $.ajax({
-            url: "Eip00w050_info.action",
+            url: '<c:url value="Eip00w050_info.action"/>',
             type: "POST",
             dataType: "json",
             contentType: "application/json",
@@ -128,8 +129,8 @@
                 edit(json);
             },
             error: function (xhr, ajaxOptions, thrownError) {
-                alert(xhr.status);
-                alert(thrownError);
+                showAlert("網路發生錯誤");
+                console.log(xhr.status + " " + thrownError);
             }
         });
     }
@@ -139,12 +140,6 @@
         nullValue($('#item_name'), json.item_name);
         nullValue($('#hyperlink'), json.hyperlink);
         nullValue($('#sub_link'), json.sub_link);
-        nullValue($('#open_window'), json.open_window);
-        $.each($('input[name="openWindow"]'), function () {
-            if ($(this).val() === json.openWindow) {
-                $(this).attr("checked", 'checked');
-            }
-        });
         nullValue($('#sort_order'), json.sort);
         $.each($('input[name="disable"]'), function () {
             if ($(this).val() === json.disable || ($(this).val() === '' && json.disable === 'null')) {
@@ -158,24 +153,6 @@
             obj.val(value);
         } else {
             obj.val('');
-        }
-    }
-
-    function validate() {
-        return $('#item_name').val() !== '' && $('#sortOrder').val() !== '';
-    }
-
-    function rebuildTree(data) {
-        $("#treeBlock").html("<div id='dynaTree' class='dynatree'></div>");
-
-        if (data.indexOf("{status:") >= 0) {
-            var info = data.substring(data.indexOf("{status:"));
-            $("#dynaTree").html(data.substring(0, data.indexOf("{status:")));
-            initTree();
-            $.bli.information.explain(info);
-        } else {
-            $("#dynaTree").html(data);
-            initTree();
         }
     }
 
@@ -193,25 +170,21 @@
                 return node.data.key;
             });
             if (selKeys === '' || selKeys === 'undefined' || selKeys.length === 0) {
-                alert('請先挑選功能');
+                showAlert('請先挑選功能');
             } else {
-                showConfirm("刪除功能若包含子節點以及相關授權會一併刪除，確定刪除？",()=>{
+                showConfirm("刪除功能若包含子節點以及相關授權會一併刪除，確定刪除？", () => {
                     $("#item_id").val(selKeys);
                     $('#eip00w050Form').attr('action', '<c:url value="/Eip00w050_delete.action"/>').submit();
                 });
-             }
+            }
         });
         $('#save').click(function () {
             let selNodes = $("#dynaTree").dynatree("getSelectedNodes");
             let selKeys = $.map(selNodes, function (node) {
                 return node.data.key;
             });
-
             if (selKeys === '' || selKeys === 'undefined' || selKeys.length === 0) {
                 showAlert('請先挑選功能');
-                return false;
-            } else if (!validate()) {
-                showAlert('欄位尚未填寫!!');
                 return false;
             } else {
                 let url;
@@ -220,20 +193,8 @@
                 } else {
                     url = '<c:url value="/Eip00w050_save.action"/>';
                 }
-                selNodes[0].toggleSelect();
-
-                $.ajax({
-                    type: "POST",
-                    url: url,
-                    data: $('form#eip00w050Form').serialize(),
-                    async: false,
-                    cache: false
-                }).done(function (data) {
-                    rebuildTree(data);
-                    clean();
-                });
+                $('#eip00w050Form').attr('action', url).submit();
             }
-            $('#eip00w050Form').attr('action', '<c:url value="/Eip00w050_list.action"/>').submit();
         });
 
         $('#btnBack').click(function () {
@@ -253,14 +214,13 @@
         });
 
         $('#create').click(function () {
-            console.log('456');
 
             let selNodes = $("#dynaTree").dynatree("getSelectedNodes");
             let selKeys = $.map(selNodes, function (node) {
                 return node.data.key;
             });
             if (selKeys === '' || selKeys === 'undefined' || selKeys.length === 0) {
-                alert('請先挑選功能');
+                showAlert('請先挑選功能');
             } else {
                 clean();
                 $('#pid').val(selKeys);
@@ -270,14 +230,10 @@
 
 
         function clean() {
-            $('form#eip00w050Form').each(function () {
-                this.reset();
-            });
+            $('#eip00w050Form input:text:enabled:visible').val('');
+            $('#sort_order').val('0');
         }
-
-
         initTree();
-
     });
 </script>
 </jsp:attribute>
