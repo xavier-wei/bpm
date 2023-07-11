@@ -14,5 +14,3 @@ spring:
         useServerPrepStmts: true
 flowable:
   database-schema-update: true
-  process-definition-location-prefix: class
-  deployment-name:
