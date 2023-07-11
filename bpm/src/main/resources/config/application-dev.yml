@@ -34,7 +34,7 @@ spring:
     type: com.zaxxer.hikari.HikariDataSource
     url: jdbc:sqlserver://localhost:1433;database=eip;encrypt=false
     username: sa
-    password: 1qaz@WSX
+    password: iisi@D1993
     hikari:
       poolName: Hikari
       auto-commit: false

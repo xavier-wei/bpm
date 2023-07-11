@@ -3,7 +3,6 @@
 import Vue from 'vue';
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
 import { setupAxiosInterceptors } from '@/shared/config/axios-interceptor';
-
 import App from './app.vue';
 import Vue2Filters from 'vue2-filters';
 import { ToastPlugin } from 'bootstrap-vue';
@@ -23,6 +22,7 @@ import UserManagementService from './admin/user-management/user-management.servi
 import LoginService from './account/login.service';
 import AccountService from './account/account.service';
 import AlertService from './shared/alert/alert.service';
+
 
 import '../content/scss/global.scss';
 import '../content/scss/vendor.scss';
