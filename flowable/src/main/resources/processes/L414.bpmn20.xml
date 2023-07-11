@@ -7,49 +7,49 @@
     <userTask id="chiefSign" name="科長簽核" flowable:assignee="${sectionChief}"/>
     <exclusiveGateway id="chiefGateWay"/>
     <userTask id="directorSign" name="主管簽核" flowable:assignee="${director}"/>
-    <serviceTask id="chiefRejectMail" flowable:exclusive="true"/>
+    <serviceTask id="chiefRejectMail" flowable:exclusive="true" flowable:class="tw.gov.pcc.flowable.act.Temp"/>
     <endEvent id="rejectEndEvent"/>
     <exclusiveGateway id="sid-4bf1326d-ee7f-4890-82aa-c49ba38c1e92"/>
-    <serviceTask id="directorRejectMail" flowable:exclusive="true"/>
+    <serviceTask id="directorRejectMail" flowable:exclusive="true"  flowable:class="tw.gov.pcc.flowable.act.Temp"/>
     <userTask id="infoUndertaker" name="資推小組承辦人員" flowable:candidateUsers="${infoGroup}"/>
     <sequenceFlow id="sid-f2e4bd36-e58d-47ca-b556-d08a7bfb238c" sourceRef="applierConfirm" targetRef="chiefSign"/>
     <sequenceFlow id="sid-adf2e3e0-2e3d-4a13-a318-2285ba8de519" sourceRef="chiefSign" targetRef="chiefGateWay"/>
     <sequenceFlow id="sid-a82d4d53-8343-4943-9229-b17d95f6ad3e" sourceRef="chiefGateWay" targetRef="chiefRejectMail">
-      <conditionExpression xsi:type="tFormalExpression"><![CDATA[${chiefDecision="0"}]]></conditionExpression>
+      <conditionExpression xsi:type="tFormalExpression"><![CDATA[${chiefDecision=="0"}]]></conditionExpression>
     </sequenceFlow>
     <sequenceFlow id="sid-b474bb4b-bcd9-4b21-8786-c78d97d47533" sourceRef="chiefGateWay" targetRef="directorSign">
-      <conditionExpression xsi:type="tFormalExpression"><![CDATA[${chiefDecision="1"}]]></conditionExpression>
+      <conditionExpression xsi:type="tFormalExpression"><![CDATA[${chiefDecision=="1"}]]></conditionExpression>
     </sequenceFlow>
     <sequenceFlow id="sid-475da72a-c724-4397-8fa1-adf49066b0da" sourceRef="chiefGateWay" targetRef="applierConfirm">
-      <conditionExpression xsi:type="tFormalExpression"><![CDATA[${chiefDecision="2"}]]></conditionExpression>
+      <conditionExpression xsi:type="tFormalExpression"><![CDATA[${chiefDecision=="2"}]]></conditionExpression>
     </sequenceFlow>
     <sequenceFlow id="sid-ca1c0dd4-ff15-4554-9239-ac93e3a6fffe" sourceRef="directorSign" targetRef="sid-4bf1326d-ee7f-4890-82aa-c49ba38c1e92"/>
     <sequenceFlow id="sid-5acd1457-8dc3-4e20-a376-d305bec9906d" sourceRef="chiefRejectMail" targetRef="rejectEndEvent"/>
     <sequenceFlow id="sid-d4f1580f-b85b-47fc-a6a7-e6a40c48df91" sourceRef="sid-4bf1326d-ee7f-4890-82aa-c49ba38c1e92" targetRef="directorRejectMail">
-      <conditionExpression xsi:type="tFormalExpression"><![CDATA[${directorDecision="0"}]]></conditionExpression>
+      <conditionExpression xsi:type="tFormalExpression"><![CDATA[${directorDecision=="0"}]]></conditionExpression>
     </sequenceFlow>
     <sequenceFlow id="sid-1d2a31ab-d4cf-44e2-989c-7857b02de82b" sourceRef="sid-4bf1326d-ee7f-4890-82aa-c49ba38c1e92" targetRef="infoUndertaker">
-      <conditionExpression xsi:type="tFormalExpression"><![CDATA[${directorDecision="1"}]]></conditionExpression>
+      <conditionExpression xsi:type="tFormalExpression"><![CDATA[${directorDecision=="1"}]]></conditionExpression>
     </sequenceFlow>
     <sequenceFlow id="sid-60edbb9e-8d1f-4001-83d6-f91e31bb270e" sourceRef="sid-4bf1326d-ee7f-4890-82aa-c49ba38c1e92" targetRef="applierConfirm">
-      <conditionExpression xsi:type="tFormalExpression"><![CDATA[${directorDecision="2"}]]></conditionExpression>
+      <conditionExpression xsi:type="tFormalExpression"><![CDATA[${directorDecision=="2"}]]></conditionExpression>
     </sequenceFlow>
     <sequenceFlow id="sid-a3b0317d-0b47-465f-88be-86307b0e95da" sourceRef="directorRejectMail" targetRef="rejectEndEvent"/>
     <sequenceFlow id="sid-f4bc83e3-2dbc-407b-9673-2d1eb66b1235" sourceRef="infoUndertaker" targetRef="seniorTechSpecialistSign"/>
     <userTask id="seniorTechSpecialistSign" name="簡任技正/科長簽核" flowable:assignee="${seniorTechSpecialist}"/>
     <exclusiveGateway id="sid-33c0400d-ddf4-4c58-aa18-89595f34b830"/>
     <sequenceFlow id="sid-1099a18e-c73a-4708-a10f-4d5cadb21d13" sourceRef="seniorTechSpecialistSign" targetRef="sid-33c0400d-ddf4-4c58-aa18-89595f34b830"/>
-    <serviceTask id="infoGroupRejectMail" flowable:exclusive="true"/>
+    <serviceTask id="infoGroupRejectMail" flowable:exclusive="true"  flowable:class="tw.gov.pcc.flowable.act.Temp"/>
     <userTask id="serverRoomOperatorSetting" name="機房操作人員" flowable:candidateUsers="${serverRoomOperator}"/>
     <userTask id="reviewStaff" name="複核人員" flowable:candidateUsers="${reviewStaff}"/>
     <userTask id="serverRoomManager" name="機房管理人員" flowable:candidateUsers="${serverRoomManager}"/>
-    <serviceTask id="applySuccess" flowable:exclusive="true" name="寄送申請成功通知"/>
+    <serviceTask id="applySuccess" flowable:exclusive="true" name="寄送申請成功通知" flowable:class="tw.gov.pcc.flowable.act.Temp"/>
     <sequenceFlow id="sid-db00b7a9-0867-4881-88d9-ce10375d8da9" sourceRef="infoGroupRejectMail" targetRef="rejectEndEvent"/>
     <sequenceFlow id="sid-28a118ce-22c1-478f-8db2-2ae6b71e3dee" sourceRef="sid-33c0400d-ddf4-4c58-aa18-89595f34b830" targetRef="infoGroupRejectMail">
-      <conditionExpression xsi:type="tFormalExpression"><![CDATA[${seniorTechSpecialistDecision="0"}]]></conditionExpression>
+      <conditionExpression xsi:type="tFormalExpression"><![CDATA[${seniorTechSpecialistDecision=="0"}]]></conditionExpression>
     </sequenceFlow>
     <sequenceFlow id="sid-fb4cee9d-7c60-4d82-9e27-24555df8750d" sourceRef="sid-33c0400d-ddf4-4c58-aa18-89595f34b830" targetRef="serverRoomOperatorSetting">
-      <conditionExpression xsi:type="tFormalExpression"><![CDATA[${seniorTechSpecialistDecision="1"}]]></conditionExpression>
+      <conditionExpression xsi:type="tFormalExpression"><![CDATA[${seniorTechSpecialistDecision=="1"}]]></conditionExpression>
     </sequenceFlow>
     <sequenceFlow id="sid-4ae6d9cb-6c24-4227-8f58-2e49071b99b6" sourceRef="serverRoomOperatorSetting" targetRef="reviewStaff"/>
     <sequenceFlow id="sid-0d1941a9-7488-4fbd-b5df-bcd660b13451" sourceRef="reviewStaff" targetRef="serverRoomManager"/>
