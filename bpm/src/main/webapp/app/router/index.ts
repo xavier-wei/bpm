@@ -10,8 +10,6 @@ import Router, { RouteConfig } from 'vue-router';
 const Home = () => import('../componet/home.vue');
 const Deal = () => import('../componet/deal.vue');
 const Deal2 = () => import('../componet/deal2.vue');
-const Deal3 = () => import('../componet/deal3.vue');
-const Deal4 = () => import('../componet/deal4.vue');
 import account from './account';
 import admin from './admin';
 import entities from './entities';
@@ -24,8 +22,14 @@ const router = new Router({
   routes: [
     {
       path: '/',
-      name: 'deal4',
-      component: Deal4,
+      name: 'deal',
+      component: Deal,
+      props: true
+    },
+    {
+      path: '/deal2',
+      name: 'deal2',
+      component: Deal2,
       props: true
     },
     {
@@ -46,24 +50,7 @@ const router = new Router({
       component: Error,
       props: true
     },
-    {
-      path: '/Deal',
-      name: 'deal',
-      component: Deal,
-      props: true
-    },
-    {
-      path: '/Deal2',
-      name: 'deal2',
-      component: Deal2,
-      props: true
-    },
-    {
-      path: '/Deal3',
-      name: 'deal3',
-      component: Deal3,
-      props: true
-    },
+
     
     ...account,
     ...admin,
