@@ -14,34 +14,19 @@
         <router-link to="/deal3">通知</router-link>
       </li>
       <li>
-        <router-link to="/contact">申請</router-link>
+        <router-link to="/">申請</router-link>
       </li>
       <li>
-        <router-link to="/contact">處理中</router-link>
+        <router-link to="/deal2">處理中</router-link>
       </li>
       <li>
-        <router-link to="/">處理過</router-link>
+        <router-link to="/deal3">處理過</router-link>
       </li>
     </ul>
-    <!-- <ul>
-      <li>
-        <router-link class="list-group-item" active-class="active" to="/searchLog">批次服務查詢</router-link>
-      </li>
-     
-      <li>
-        <router-link class="list-group-item" active-class="active" to="/iwg-host-list">註冊監控主機</router-link>
-      </li>
-      <li>
-        <router-link class="list-group-item" active-class="active" to="/iwg-host-target">主機監控設定</router-link>
-      </li>
-     
-    </ul> -->
   </div>
 </template>
 
 <script lang="ts">
-import { ref, toRef, Ref, toRefs } from 'vue';
-
 export default {
   name: 'home',
 };

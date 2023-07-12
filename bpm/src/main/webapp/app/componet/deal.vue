@@ -13,36 +13,55 @@
           </div>
         </div>
         <div class="card-body">
-          <b-form inline>
-            <b-form-group class="col-6" label-cols="2" content-cols="4" label="部門:" label-for="seqNo">
-              <b-form-input v-model="formDefault.hostname" id="seqNo"></b-form-input>
+          <b-form inline class="mb-3">
+            <b-form-group class="col-6" label-cols="3" content-cols="4" label="部門:">
+              <b-form-select v-model="formDefault.deaprtmant">
+                <template #first>
+                  <option value="">請選擇</option>
+                </template></b-form-select
+              >
             </b-form-group>
-            <b-form-group class="col-6" label-cols="2" content-cols="4" label="申請者：" label-for="usrMail">
-              <b-form-input v-model="formDefault.usrMail" id="usrMail"></b-form-input>
-            </b-form-group>
-          </b-form>
-
-          <b-form inline>
-            <b-form-group class="col-6" label-cols="2" content-cols="4" label="表單:" label-for="seqNo">
-              <b-form-input v-model="formDefault.seqNo" id="seqNo"></b-form-input>
-            </b-form-group>
-            <b-form-group class="col-6" label-cols="2" content-cols="4" label="處理狀況：" label-for="usrMail">
-              <b-form-input v-model="formDefault.usrMail" id="usrMail"></b-form-input>
-            </b-form-group>
-          </b-form>
-          <b-form inline>
-            <b-form-group class="col-6" label-cols="2" content-cols="4" label="表單分類：" label-for="usrMail">
-              <b-form-input v-model="formDefault.usrMail" id="usrMail"></b-form-input>
+            <b-form-group class="col-6" label-cols="3" content-cols="4" label="申請者：">
+              <b-form-select v-model="formDefault.usrMail">
+                <template #first>
+                  <option value="">請選擇</option>
+                </template></b-form-select
+              >
             </b-form-group>
           </b-form>
 
+          <b-form inline class="mb-3">
+            <b-form-group class="col-6" label-cols="3" content-cols="4" label="表單:">
+              <b-form-select v-model="formDefault.seqNo">
+                <template #first>
+                  <option value="">請選擇</option>
+                </template></b-form-select
+              >
+            </b-form-group>
+            <b-form-group class="col-6" label-cols="3" content-cols="4" label="處理狀況：">
+              <b-form-select v-model="formDefault.status" :options="queryOptions.city">
+                <template #first>
+                  <option value="">請選擇</option>
+                </template></b-form-select
+              >
+            </b-form-group>
+          </b-form>
+          <b-form inline class="mb-3">
+            <b-form-group class="col-6" label-cols="3" content-cols="4" label="表單分類：">
+              <b-form-select v-model="formDefault.usrMail">
+                <template #first>
+                  <option value="">請選擇</option>
+                </template></b-form-select
+              >
+            </b-form-group>
+          </b-form>
           <!-- 填表日期 -->
-          <b-form>
+          <b-form inline class="mb-3">
             <b-form-group
-              :label="'填表日期'"
-              class="col-sm-12"
-              label-cols-md="2"
-              content-cols-md="7"
+              :label="'期間:'"
+              class="col-12"
+              label-cols-md="3"
+              content-cols-md="9"
               :dual1="formDefault.seqDate"
               :dual2="formDefault.seqDateEnd"
             >
@@ -56,26 +75,25 @@
 
           <div class="text-center pt-5">
             <b-button class="ml-2" style="background-color: #1aa4b7" @click="toQuery()">查詢</b-button>
-            <b-button class="ml-2" style="background-color: #1aa4b7" @click="rest">清除</b-button>
+            <b-button class="ml-2" style="background-color: #1aa4b7" @click="rest()">清除</b-button>
           </div>
         </div>
-
-        <!-- <section class="pt-5" v-if="stepVisible">
-        <div>
-          <b-table striped hover :items="paginatedItems" :fields="table.fields"> -->
-        <!-- <template #cell(index)="row">
+      </div>
+    </section>
+    <section class="pt-5" v-if="stepVisible">
+      <div>
+        <b-table striped hover :items="mockdata" :fields="table.fields">
+          <!-- <template #cell(index)="row">
               {{ row.index + 1 }}
             </template> -->
-        <!-- <template #cell(active)="row">
+          <!-- <template #cell(active)="row">
               {{ row.item.active === 'Y' ? '是' : '否' }}
             </template> -->
-        <!-- <template #cell(action)="row">
-              <b-button class="ml-2" style="background-color: #1aa4b7" @click="toEdit(row.item)">編輯</b-button>
-            </template> -->
-        <!-- </b-table> -->
-        <!-- <b-pagination v-model="page" :total-rows="table.data.length" :per-page="perPage" align="center" /> -->
-        <!-- </div>
-      </section> -->
+          <template #cell(action)="row">
+            <b-button class="ml-2" style="background-color: #1aa4b7" @click="toEdit(row.item)">編輯</b-button>
+          </template>
+        </b-table>
+        <b-pagination v-model="page" :total-rows="table.totalItems" :per-page="perPage" align="center" />
       </div>
     </section>
   </div>
@@ -84,12 +102,11 @@
 <script lang="ts">
 import axios from 'axios';
 import { ref, reactive, computed, toRefs, defineComponent } from '@vue/composition-api';
-import { BButton } from 'bootstrap-vue';
-
+import IDatePicker from '../shared/i-date-picker/i-date-picker.vue';
 export default defineComponent({
   name: 'deal',
   components: {
-    BButton,
+    IDatePicker,
   },
   setup() {
     const stepVisible = ref(true);
@@ -109,24 +126,24 @@ export default defineComponent({
     });
 
     const formDefault = {
-      hostname: '',
+      deaprtmant: '',
       result: 'N',
       seqNo: '',
       usrMail: '',
-      usrMaster: '',
-      seqDate: '',
-      seqDateEnd: '',
+      status: '',
+      seqDate: undefined,
+      seqDateEnd: undefined,
     };
 
     const form = reactive(Object.assign({}, formDefault));
 
     // 表單物件驗證規則
     const rules = ref({
-      hostname: {},
+      deaprtmant: {},
       result: {},
       seqNo: {},
       usrMail: {},
-      usrMaster: {},
+      status: {},
       seqDate: {},
       seqDateEnd: {},
     });
@@ -183,7 +200,7 @@ export default defineComponent({
         },
       ],
       data: [],
-      totalItems: 0,
+      totalItems: 5,
     });
 
     const mockdata = [
@@ -234,8 +251,19 @@ export default defineComponent({
       },
     ];
 
+    // 下拉選單選項
+    const queryOptions = reactive({
+      city: [
+        { value: '0', text: '申請' },
+        { value: '1', text: '處理中' },
+        { value: '2', text: '處理過' },
+      ],
+      city1: [],
+    });
+
     const toQuery = () => {
       stepVisible.value = true;
+      console.log('formDefault', formDefault);
       // axios;
       // .post('/find/iwgHosts', formDefault)
       // .then(data => {
@@ -252,7 +280,7 @@ export default defineComponent({
     };
 
     const rest = () => {
-      formDefault.hostname = '';
+      // formDefault.hostname = '';
     };
 
     return {
@@ -266,6 +294,8 @@ export default defineComponent({
       perPage,
       page,
       form,
+      mockdata,
+      queryOptions,
     };
   },
 });

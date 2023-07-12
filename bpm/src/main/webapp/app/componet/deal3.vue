@@ -7,7 +7,7 @@
             <div class="col-sm-11 p-0">
               <h5 class="m-0">
                 <font-awesome-icon icon="search" />
-                查詢條件2
+                查詢條件3
               </h5>
             </div>
           </div>
@@ -104,7 +104,7 @@ import axios from 'axios';
 import { ref, reactive, computed, toRefs, defineComponent } from '@vue/composition-api';
 import IDatePicker from '../shared/i-date-picker/i-date-picker.vue';
 export default defineComponent({
-  name: 'deal2',
+  name: 'deal3',
   components: {
     IDatePicker,
   },

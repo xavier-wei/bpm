@@ -10,6 +10,7 @@ import Router, { RouteConfig } from 'vue-router';
 const Home = () => import('../componet/home.vue');
 const Deal = () => import('../componet/deal.vue');
 const Deal2 = () => import('../componet/deal2.vue');
+const Deal3 = () => import('../componet/deal3.vue');
 import account from './account';
 import admin from './admin';
 import entities from './entities';
@@ -30,6 +31,12 @@ const router = new Router({
       path: '/deal2',
       name: 'deal2',
       component: Deal2,
+      props: true
+    },
+    {
+      path: '/deal3',
+      name: 'deal3',
+      component: Deal3,
       props: true
     },
     {

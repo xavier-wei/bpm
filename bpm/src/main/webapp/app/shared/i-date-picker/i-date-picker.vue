@@ -24,14 +24,14 @@
 </template>
 
 <script>
-import { formatDate, parseRocDate } from '@/shared/date/minguo-calendar-utils';
-import { validateState } from '@/shared/form';
+import { formatDate, parseRocDate } from '../date/minguo-calendar-utils';
+import { validateState } from '../form/validations';
 import { computed, reactive, ref, watch, onMounted } from '@vue/composition-api';
 import DatePicker from 'vue2-datepicker';
 import 'vue2-datepicker/index.css';
 import { LANG } from './lang';
 import { includes as _includes, keys as _keys, trim as _trim, isDate as _isDate, forEach as _forEach, replace as _replace } from 'lodash';
-import { disabledDateFrom, disabledDateTo, dealWithYearPanel, dealWithMonthPanel } from '@/shared/i-date-picker/share-func';
+import { disabledDateFrom, disabledDateTo, dealWithYearPanel, dealWithMonthPanel } from './share-func';
 import $ from 'jquery';
 
 export default {
