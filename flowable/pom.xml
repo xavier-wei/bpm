@@ -49,10 +49,21 @@
             <scope>test</scope>
         </dependency>
         <!-- https://mvnrepository.com/artifact/org.flowable/flowable-spring-boot-starter-rest -->
+<!--        <dependency>-->
+<!--            <groupId>org.flowable</groupId>-->
+<!--            <artifactId>flowable-spring-boot-starter-process-rest</artifactId>-->
+<!--            <version>${flowable.version}</version>-->
+<!--        </dependency>-->
         <dependency>
             <groupId>org.flowable</groupId>
-            <artifactId>flowable-spring-boot-starter-process-rest</artifactId>
+            <artifactId>flowable-spring-boot-starter</artifactId>
             <version>${flowable.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.google.code.gson</groupId>
+            <artifactId>gson</artifactId>
+            <version>2.10</version>
         </dependency>
     </dependencies>
 
