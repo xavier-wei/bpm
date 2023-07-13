@@ -1,6 +1,6 @@
 <template>
   <div>
-    <section class="container mt-3">
+    <section class="container mt-2">
       <div class="card">
         <div class="card-header py-1 text-left">
           <div class="row align-items-center">
@@ -12,8 +12,8 @@
             </div>
           </div>
         </div>
-        <div class="card-body">
-          <b-form inline class="mb-3">
+        <div class="card-body clo-12">
+          <b-form-row>
             <b-form-group class="col-6" label-cols="3" content-cols="4" label="部門:">
               <b-form-select v-model="formDefault.deaprtmant">
                 <template #first>
@@ -28,9 +28,9 @@
                 </template></b-form-select
               >
             </b-form-group>
-          </b-form>
+          </b-form-row>
 
-          <b-form inline class="mb-3">
+          <b-form-row>
             <b-form-group class="col-6" label-cols="3" content-cols="4" label="表單:">
               <b-form-select v-model="formDefault.seqNo">
                 <template #first>
@@ -45,8 +45,8 @@
                 </template></b-form-select
               >
             </b-form-group>
-          </b-form>
-          <b-form inline class="mb-3">
+          </b-form-row>
+          <b-form-row>
             <b-form-group class="col-6" label-cols="3" content-cols="4" label="表單分類：">
               <b-form-select v-model="formDefault.usrMail">
                 <template #first>
@@ -54,12 +54,12 @@
                 </template></b-form-select
               >
             </b-form-group>
-          </b-form>
+          </b-form-row>
           <!-- 填表日期 -->
-          <b-form inline class="mb-3">
+          <b-form-row>
             <b-form-group
               :label="'期間:'"
-              class="col-12"
+              class="col-6"
               label-cols-md="3"
               content-cols-md="9"
               :dual1="formDefault.seqDate"
@@ -71,7 +71,7 @@
                 <i-date-picker v-model="formDefault.seqDateEnd" placeholder="yyy/MM/dd"></i-date-picker>
               </b-input-group>
             </b-form-group>
-          </b-form>
+          </b-form-row>
 
           <div class="text-center pt-5">
             <b-button class="ml-2" style="background-color: #1aa4b7" @click="toQuery()">查詢</b-button>
@@ -90,7 +90,7 @@
               {{ row.item.active === 'Y' ? '是' : '否' }}
             </template> -->
           <template #cell(action)="row">
-            <b-button class="ml-2" style="background-color: #1aa4b7" @click="toEdit(row.item)">編輯</b-button>
+            <b-button class="ml-2" style="background-color: #1aa4b7" @click="toEdit(row.item)">處理</b-button>
           </template>
         </b-table>
         <b-pagination v-model="page" :total-rows="table.totalItems" :per-page="perPage" align="center" />
@@ -301,9 +301,4 @@ export default defineComponent({
 </script>
 
 <style scoped>
-/* .container {
-  min-height: 100%;
-  display: flex;
-  flex-direction: column;
-} */
 </style>
