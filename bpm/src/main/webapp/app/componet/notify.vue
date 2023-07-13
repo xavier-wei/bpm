@@ -53,6 +53,7 @@
               >
             </b-form-group>
           </b-form-row>
+          <b-form-row> </b-form-row>
           <!-- 填表日期 -->
           <b-form-row>
             <b-form-group
@@ -93,6 +94,9 @@
           <template #cell(action)="row">
             <b-button class="ml-2" style="background-color: #17a2b8" @click="toEdit(row.item)">處理</b-button>
           </template>
+          <template #cell(action2)="row">
+            <b-button class="ml-2" style="background-color: #17a2b8" @click="toEdit(row.item)">刪除</b-button>
+          </template>
         </i-table>
       </div>
     </section>
@@ -106,7 +110,7 @@ import IDatePicker from '../shared/i-date-picker/i-date-picker.vue';
 import ITable from '../shared/i-table/i-table.vue';
 
 export default defineComponent({
-  name: 'deal2',
+  name: 'notify',
   components: {
     IDatePicker,
     ITable,
@@ -120,7 +124,7 @@ export default defineComponent({
       result: 'N',
       seqNo: '',
       usrMail: '',
-      usrMaster: '',
+      status: '',
       seqDate: undefined,
       seqDateEnd: undefined,
     };
@@ -133,7 +137,7 @@ export default defineComponent({
       result: {},
       seqNo: {},
       usrMail: {},
-      usrMaster: {},
+      status: {},
       seqDate: {},
       seqDateEnd: {},
     });
@@ -142,6 +146,14 @@ export default defineComponent({
       fields: [
         {
           key: 'action',
+          label: '',
+          sortable: false,
+          thStyle: 'width:20%',
+          thClass: 'text-center',
+          tdClass: 'text-center align-middle',
+        },
+        {
+          key: 'action2',
           label: '',
           sortable: false,
           thStyle: 'width:20%',
@@ -253,6 +265,7 @@ export default defineComponent({
 
     const toQuery = () => {
       stepVisible.value = true;
+      console.log('formDefault', formDefault);
       // axios;
       // .post('/find/iwgHosts', formDefault)
       // .then(data => {

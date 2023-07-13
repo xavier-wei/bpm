@@ -2,10 +2,10 @@
   <div>
     <section class="container mt-2">
       <div class="card">
-        <div class="card-header py-1 text-left" style="background-color:#008b8b">
-          <div class="row align-items-center"  >
+        <div class="card-header py-1 text-left" style="background-color: #008b8b">
+          <div class="row align-items-center">
             <div class="col-sm-11 p-0">
-              <h5 class="m-0" >
+              <h5 class="m-0">
                 <font-awesome-icon icon="search" />
                 查詢條件
               </h5>
@@ -14,14 +14,14 @@
         </div>
         <div class="card-body clo-12" style="background-color: #8fd4ce">
           <b-form-row>
-            <b-form-group class="col-6" label-cols="3" content-cols="4" label="部門:">
+            <b-form-group class="col-4" label-cols="4" content-cols="8" label="部門:">
               <b-form-select v-model="formDefault.deaprtmant">
                 <template #first>
                   <option value="">請選擇</option>
                 </template></b-form-select
               >
             </b-form-group>
-            <b-form-group class="col-6" label-cols="3" content-cols="4" label="申請者：">
+            <b-form-group class="col-4" label-cols="4" content-cols="8" label="申請者：">
               <b-form-select v-model="formDefault.usrMail">
                 <template #first>
                   <option value="">請選擇</option>
@@ -31,23 +31,21 @@
           </b-form-row>
 
           <b-form-row>
-            <b-form-group class="col-6" label-cols="3" content-cols="4" label="表單:">
+            <b-form-group class="col-4" label-cols="4" content-cols="8" label="表單:">
               <b-form-select v-model="formDefault.seqNo">
                 <template #first>
                   <option value="">請選擇</option>
                 </template></b-form-select
               >
             </b-form-group>
-            <b-form-group class="col-6" label-cols="3" content-cols="4" label="處理狀況：">
+            <b-form-group class="col-4" label-cols="4" content-cols="8" label="處理狀況：">
               <b-form-select v-model="formDefault.status" :options="queryOptions.city">
                 <template #first>
                   <option value="">請選擇</option>
                 </template></b-form-select
               >
             </b-form-group>
-          </b-form-row>
-          <b-form-row>
-            <b-form-group class="col-6" label-cols="3" content-cols="4" label="表單分類：">
+            <b-form-group class="col-4" label-cols="4" content-cols="8" label="表單分類：">
               <b-form-select v-model="formDefault.usrMail">
                 <template #first>
                   <option value="">請選擇</option>
@@ -55,13 +53,14 @@
               >
             </b-form-group>
           </b-form-row>
+          <b-form-row> </b-form-row>
           <!-- 填表日期 -->
           <b-form-row>
             <b-form-group
               :label="'期間:'"
-              class="col-6"
-              label-cols-md="3"
-              content-cols-md="9"
+              class="col-4"
+              label-cols-md="4"
+              content-cols-md="8"
               :dual1="formDefault.seqDate"
               :dual2="formDefault.seqDateEnd"
             >
@@ -74,8 +73,8 @@
           </b-form-row>
 
           <div class="text-center pt-5">
-            <b-button class="ml-2" style="background-color: #1aa4b7" @click="toQuery()">查詢</b-button>
-            <b-button class="ml-2" style="background-color: #1aa4b7" @click="rest()">清除</b-button>
+            <b-button class="ml-2" style="background-color: #17a2b8" @click="toQuery()">查詢</b-button>
+            <b-button class="ml-2" style="background-color: #17a2b8" @click="rest()">清除</b-button>
           </div>
         </div>
       </div>
@@ -93,7 +92,7 @@
           @changePagination="handlePaginationChanged($event)"
         >
           <template #cell(action)="row">
-            <b-button class="ml-2" style="background-color: #1aa4b7" @click="toEdit(row.item)">處理</b-button>
+            <b-button class="ml-2" style="background-color: #17a2b8" @click="toEdit(row.item)">處理</b-button>
           </template>
         </i-table>
       </div>

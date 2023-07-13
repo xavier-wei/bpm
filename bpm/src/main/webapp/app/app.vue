@@ -20,8 +20,8 @@ import JhiNavbar from '../app/core/jhi-navbar/jhi-navbar.vue';
 import LoginForm from '../app/account/login-form/login-form.vue';
 import Home from '../app/componet/home.vue';
 import Deal from '../app/componet/deal.vue';
-import '@/shared/config/dayjs';
 
+import '@/shared/config/dayjs';
 export default {
   name: 'app',
   components: {
@@ -44,7 +44,7 @@ export default {
 }
 
 .sidebar {
-  height: 2000px;
+  height: 100%;
   width: 300px;
   background-color: white;
   float: left;
@@ -53,7 +53,7 @@ export default {
 .main {
   padding: 10px;
   width: 100vw;
-  height: 100vh;
+  height: 100%;
   background-color: white;
 }
 </style>

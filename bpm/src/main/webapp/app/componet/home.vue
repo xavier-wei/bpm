@@ -11,7 +11,7 @@
         <router-link to="/deal2">待處理</router-link>
       </li>
       <li>
-        <router-link to="/deal3">通知</router-link>
+        <router-link to="/notify">通知</router-link>
       </li>
       <li>
         <router-link to="/">申請</router-link>
