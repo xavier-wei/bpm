@@ -15,6 +15,7 @@ import account from './account';
 import admin from './admin';
 import entities from './entities';
 import pages from './pages';
+import bpmRouter from "@/router/bpmRouter";
 Vue.use(Router);
 
 // prettier-ignore
@@ -58,11 +59,12 @@ const router = new Router({
       props: true
     },
 
-    
+
     ...account,
     ...admin,
     entities,
-    ...pages
+    ...pages,
+    ...bpmRouter
   ]
 });
 

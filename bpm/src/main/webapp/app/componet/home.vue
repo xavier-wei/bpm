@@ -22,6 +22,9 @@
       <li>
         <router-link to="/deal3">處理過</router-link>
       </li>
+      <li>
+        <router-link to="/l414Apply">新增</router-link>
+      </li>
     </ul>
   </div>
 </template>
