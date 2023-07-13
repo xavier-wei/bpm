@@ -6,8 +6,8 @@
             type="javax.sql.DataSource"
             driverClassName="com.microsoft.sqlserver.jdbc.SQLServerDriver"
             username="sa"
-            password="iisi@D1993"
-            url="jdbc:sqlserver://localhost:1433;databaseName=EIP;encrypt=false;"
+            password="iisi@123"
+            url="jdbc:sqlserver://localhost:1433;databaseName=eip;encrypt=false;"
             minIdle="2"
             maxTotal="10"/>
 </Context>

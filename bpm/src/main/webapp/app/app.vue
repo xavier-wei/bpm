@@ -44,7 +44,7 @@ export default {
 }
 
 .sidebar {
-  height: 100vh;
+  height: 2000px;
   width: 300px;
   background-color: white;
   float: left;

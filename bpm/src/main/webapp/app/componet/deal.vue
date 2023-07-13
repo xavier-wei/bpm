@@ -2,17 +2,17 @@
   <div>
     <section class="container mt-2">
       <div class="card">
-        <div class="card-header py-1 text-left">
-          <div class="row align-items-center">
+        <div class="card-header py-1 text-left" style="background-color:#008b8b">
+          <div class="row align-items-center"  >
             <div class="col-sm-11 p-0">
-              <h5 class="m-0">
+              <h5 class="m-0" >
                 <font-awesome-icon icon="search" />
                 查詢條件
               </h5>
             </div>
           </div>
         </div>
-        <div class="card-body clo-12">
+        <div class="card-body clo-12" style="background-color: #8fd4ce">
           <b-form-row>
             <b-form-group class="col-6" label-cols="3" content-cols="4" label="部門:">
               <b-form-select v-model="formDefault.deaprtmant">
@@ -292,3 +292,4 @@ export default defineComponent({
 
 <style scoped>
 </style>
+
