@@ -27,6 +27,11 @@
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-web</artifactId>
         </dependency>
+        <!-- https://mvnrepository.com/artifact/org.springframework.boot/spring-boot-starter-json -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-json</artifactId>
+        </dependency>
 
         <dependency>
             <groupId>com.microsoft.sqlserver</groupId>
@@ -49,10 +54,27 @@
             <scope>test</scope>
         </dependency>
         <!-- https://mvnrepository.com/artifact/org.flowable/flowable-spring-boot-starter-rest -->
-        <dependency>
+            <dependency>
             <groupId>org.flowable</groupId>
-            <artifactId>flowable-spring-boot-starter-process-rest</artifactId>
+            <artifactId>flowable-spring-boot-starter</artifactId>
             <version>${flowable.version}</version>
+        </dependency>
+         <dependency>
+            <groupId>com.google.code.gson</groupId>
+            <artifactId>gson</artifactId>
+            <version>2.10</version>
+        </dependency>
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-api</artifactId>
+            <version>1.7.21</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-log4j12</artifactId>
+            <version>1.7.21</version>
+            <scope>provided</scope>
         </dependency>
     </dependencies>
 

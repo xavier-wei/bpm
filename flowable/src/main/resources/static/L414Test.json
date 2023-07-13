@@ -1,0 +1,21 @@
+[{
+  "formName": "L414",
+  "variables": {
+    "applier": "ApplyTester",
+    "applierConfirm": "temp",
+    "sectionChief": "ChiefTester"
+  }
+},
+{
+  "formName": "L414",
+  "variables": {
+    "applier": "ApplyTester",
+    "applierConfirm": "confirm",
+    "sectionChief": "ChiefTester"
+  }
+},
+  {
+    "processInstanceId": "",
+    "taskId": ""
+  }
+]
