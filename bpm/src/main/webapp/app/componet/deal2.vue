@@ -80,20 +80,21 @@
         </div>
       </div>
     </section>
-    <section class="pt-5" v-if="stepVisible">
-      <div>
-        <b-table striped hover :items="mockdata" :fields="table.fields">
-          <!-- <template #cell(index)="row">
-              {{ row.index + 1 }}
-            </template> -->
-          <!-- <template #cell(active)="row">
-              {{ row.item.active === 'Y' ? '是' : '否' }}
-            </template> -->
+    <section class="mt-2">
+      <div class="container">
+        <i-table
+          ref="iTable"
+          :itemsUndefinedBehavior="'loading'"
+          :items="mockdata"
+          :fields="table.fields"
+          :totalItems="table.totalItems"
+          :is-server-side-paging="true"
+          @changePagination="handlePaginationChanged($event)"
+        >
           <template #cell(action)="row">
             <b-button class="ml-2" style="background-color: #1aa4b7" @click="toEdit(row.item)">處理</b-button>
           </template>
-        </b-table>
-        <b-pagination v-model="page" :total-rows="table.totalItems" :per-page="perPage" align="center" />
+        </i-table>
       </div>
     </section>
   </div>
@@ -109,21 +110,8 @@ export default defineComponent({
     IDatePicker,
   },
   setup() {
+    const iTable = ref(null);
     const stepVisible = ref(true);
-    const page = ref(1); //當前頁面
-    const perPage = ref(20); //每頁顯示的資料
-
-    // 根據當前頁碼和每頁顯示的資料數，計算當前頁面顯示的資料
-    const paginatedItems = computed(() => {
-      const start = (page.value - 1) * perPage.value;
-      const end = start + perPage.value;
-      return table.data.slice(start, end);
-    });
-
-    // 計算總頁數
-    const totalPages = computed(() => {
-      return Math.ceil(table.data.length / perPage.value);
-    });
 
     const formDefault = {
       deaprtmant: '',
@@ -288,10 +276,6 @@ export default defineComponent({
       toQuery,
       rest,
       table,
-      paginatedItems,
-      totalPages,
-      perPage,
-      page,
       form,
       mockdata,
       queryOptions,
