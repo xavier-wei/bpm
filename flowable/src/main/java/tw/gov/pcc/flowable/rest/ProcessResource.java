@@ -6,16 +6,16 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import tw.gov.pcc.flowable.domain.*;
-import tw.gov.pcc.flowable.service.ProcessService;
+import tw.gov.pcc.flowable.service.ProcessFlowService;
 
 import java.util.List;
 
 @RestController
 @RequestMapping("/process")
 public class ProcessResource {
-    private final ProcessService service;
+    private final ProcessFlowService service;
 
-    public ProcessResource(ProcessService service) {
+    public ProcessResource(ProcessFlowService service) {
         this.service = service;
     }
 

@@ -1,7 +1,9 @@
 package tw.gov.pcc.flowable.service;
 
+import org.flowable.engine.HistoryService;
 import org.flowable.engine.RuntimeService;
 import org.flowable.engine.TaskService;
+import org.flowable.engine.history.HistoricProcessInstance;
 import org.flowable.engine.runtime.ProcessInstance;
 import org.flowable.task.api.Task;
 import org.springframework.stereotype.Service;
@@ -13,17 +15,18 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 @Service
-public class ProcessService {
+public class ProcessFlowService {
     private final Integer[] SIGNATURE_STATUS = {1,0};
     public final String[] MESSAGE = {"完成","無此簽核任務"};
-    private RuntimeService runtimeService;
+    private final RuntimeService runtimeService;
 
-    private TaskService taskService;
+    private final TaskService taskService;
+    private final HistoryService historyService;
 
-    public ProcessService(RuntimeService runtimeService, TaskService taskService) {
+    public ProcessFlowService(RuntimeService runtimeService, TaskService taskService, HistoryService historyService) {
         this.runtimeService = runtimeService;
-
         this.taskService = taskService;
+        this.historyService = historyService;
     }
 
     // 開啟流程，並且在applierConfirm為confirm的狀態，直接跳過申請者確認進到下個步驟，若為temp則需進行確認
@@ -63,8 +66,15 @@ public class ProcessService {
                 .taskCandidateOrAssigned(id)
                 .list()
                 .stream()
-                .map(task -> new TaskDTO(task))
+                .map((Task task) -> new TaskDTO(task,isProcessComplete(task.getProcessInstanceId())))
                 .collect(Collectors.toList());
     }
 
+    public boolean isProcessComplete(String processInstanceId) {
+        HistoricProcessInstance historicProcessInstance = historyService
+                                                          .createHistoricProcessInstanceQuery()
+                                                          .processInstanceId(processInstanceId)
+                                                          .singleResult();
+        return (historicProcessInstance != null && historicProcessInstance.getEndTime() != null);
+    }
 }

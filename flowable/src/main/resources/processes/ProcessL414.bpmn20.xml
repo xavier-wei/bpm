@@ -5,7 +5,7 @@
     <startEvent id="startEvent" name="提出申請"/>
     <userTask id="applierConfirm" name="申請人確認" flowable:assignee="${applier}" />
     <sequenceFlow id="startToApplierConfirm" sourceRef="startEvent" targetRef="applierConfirm"/>
-    <userTask id="chiefSign" name="科長簽核" flowable:assignee="${sectionChief}"/>
+    <userTask id="chiefSign" name="科長簽核" flowable:candidateUsers="${sectionChief}"/>
     <exclusiveGateway id="chiefGateWay"/>
     <userTask id="directorSign" name="主管簽核" flowable:assignee="${director}"/>
     <serviceTask id="chiefRejectMail" flowable:exclusive="true" flowable:class="tw.gov.pcc.flowable.act.Temp"/>
