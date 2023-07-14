@@ -13,38 +13,335 @@
         </b-row>
       </div>
 
-      <section class="container mt-2" >
-        <div class="card" style="background-color: #8fd4ce">
+      <b-container>
+        <section class="container mt-2">
+          <div class="card" style="background-color: #8fd4ce">
 
-          <b-form-row>
-            <i-form-group-check
-              label-cols="5"
-              content-cols="7"
-              :label="'申請日期:'"
-              :item="[$v.startOpenDate, $v.endOpenDate]"
-            >
-              <i-dual-date-picker :dual1.sync="$v.startOpenDate.$model" :dual2.sync="$v.endOpenDate.$model"/>
-            </i-form-group-check>
+            <b-form-row>
+              <i-form-group-check class="col-sm-4" label-cols="5" content-cols="7" :label="'申請日期:'"
+                                  :item="$v.applyDate">
+                <!--申請日期-->
+                <i-date-picker
+                  placeholder="yyy/MM/dd"
+                  v-model="$v.applyDate.$model"
+                  :state="validateState($v.applyDate)"
+                  lazy
+                  trim
+                ></i-date-picker>
+              </i-form-group-check>
 
-            <i-form-group-check :label="`結訓日期：`" :item="[$v.startCloseDate, $v.endCloseDate]">
-              <b-form-input v-model="$v.openType.$model"/>
-            </i-form-group-check>
-          </b-form-row>
-        </div>
-      </section>
+              <i-form-group-check class="col-sm-4" label-cols="5" content-cols="7" :label="`表單編號：`"
+                                  :item="$v.formId">
+                <!--                表單編號-->
+                <b-form-input v-model="$v.formId.$model"/>
+              </i-form-group-check>
 
+              <i-form-group-check class="col-sm-4" label-cols="5" content-cols="7" :label="`註：`">
+                <span class="text-danger">*</span>
+                <p style="margin-top: 10px">為申請必填欄位</p>
+              </i-form-group-check>
+            </b-form-row>
+
+            <b-form-row>
+              <i-form-group-check class="col-sm-4" label-cols="5" content-cols="7" :label="'填表人：員工編號：'"
+                                  :item="$v.filEmpid">
+                <!--                填表人員工編號-->
+                <b-form-input v-model="$v.filEmpid.$model"/>
+              </i-form-group-check>
+
+              <i-form-group-check class="col-sm-4" label-cols="5" content-cols="7" :label="`姓名：`"
+                                  :item="$v.filName">
+                <!--                填表人姓名-->
+                <b-form-input v-model="$v.filName.$model"/>
+              </i-form-group-check>
+
+              <i-form-group-check class="col-sm-4" label-cols="5" content-cols="7" :label="`單位：`"
+                                  :item="$v.filUnit">
+                <!--                填表人單位名稱-->
+                <b-form-select v-model="$v.filUnit.$model" :options="options.filUnitOptions">
+                  <template #first>
+                    <b-form-select-option value="null" disabled>請選擇</b-form-select-option>
+                    <b-form-select-option value="">全部</b-form-select-option>
+                  </template>
+                </b-form-select>
+              </i-form-group-check>
+            </b-form-row>
+
+            <b-form-row>
+              <i-form-group-check class="col-sm-4" label-cols="5" content-cols="7" :label="'申請人：員工編號：'"
+                                  :item="$v.appEmpid">
+                <!--                申請人員工編號-->
+                <b-form-input v-model="$v.appEmpid.$model"/>
+              </i-form-group-check>
+
+              <i-form-group-check class="col-sm-4" label-cols="5" content-cols="7" :label="`姓名：`"
+                                  :item="$v.appName">
+                <!--                申請人姓名-->
+                <b-form-input v-model="$v.appName.$model"/>
+              </i-form-group-check>
+
+              <i-form-group-check class="col-sm-4" label-cols="5" content-cols="7" :label="`單位：`"
+                                  :item="$v.appUnit">
+                <!--                申請人單位名稱-->
+                <b-form-select v-model="$v.appUnit.$model" :options="options.appUnitOptions">
+                  <template #first>
+                    <b-form-select-option value="null" disabled>請選擇</b-form-select-option>
+                    <b-form-select-option value="">全部</b-form-select-option>
+                  </template>
+                </b-form-select>
+              </i-form-group-check>
+            </b-form-row>
+
+            <b-form-row>
+              <i-form-group-check label-star class="col-sm-4" label-cols="5" content-cols="7" :label="`是否暫存：`"
+                                  :item="$v.isSubmit">
+                <!--                是否暫存、送出-->
+                <b-form-select v-model="$v.isSubmit.$model">
+                  <template #first>
+                    <b-form-select-option value="null" disabled>請選擇</b-form-select-option>
+                    <b-form-select-option value="0">暫存</b-form-select-option>
+                    <b-form-select-option value="1">送出</b-form-select-option>
+                  </template>
+                </b-form-select>
+              </i-form-group-check>
+            </b-form-row>
+
+            <b-row>
+              <b-col class="col-sm-4">
+                <i-form-group-check class="col-12" label-cols="5" content-cols="7" :label="`規則：`"
+                                    :item="$v.isEnable">
+                  <!--                  規則-->
+                  <b-form-radio-group
+                    v-model="$v.isEnable.$model"
+                    :options="[
+                    { value: '1', text: '啟用' },
+                    { value: '0', text: '停用' },
+                  ]"
+                  />
+                </i-form-group-check>
+
+                <i-form-group-check
+                  class="col-12"
+                  label-cols="5"
+                  content-cols="7"
+                  :label="`使用時段：`"
+                  :item="$v.enableTime"
+                >
+                  <!--                  使用時段-->
+                  <b-form-radio-group v-model="$v.enableTime.$model">
+
+                    <b-form-radio value="1">
+                      <div style="height: 34px;">每日24小時</div>
+                    </b-form-radio>
+
+                    <b-form-radio value="2">
+                      <div style="height: 34px;">每周一至周五</div>
+                    </b-form-radio>
+
+                    <b-form-radio value="3">
+                      <div style="height: 34px;">特殊時段 :</div>
+                      <!--                      使用特殊時段內容-->
+                      <b-form-input v-model="$v.otherEnableTime.$model"/>
+                    </b-form-radio>
+
+                  </b-form-radio-group>
+
+                </i-form-group-check>
+              </b-col>
+              <b-col>
+                <i-form-group-check
+                  class="col-sm-12"
+                  label-cols="2"
+                  content-cols="10"
+                  :label="`啟用期間：`"
+                  :item="[$v.sDate, $v.eDate]"
+                >
+                  <!--                  啟用期間類別-->
+                  <b-form-radio-group v-model="$v.selecteDate.$model">
+                    <b-form-radio value="1">
+                      <!--                      啟用期間開始時間、啟用期間結束時間-->
+                      <i-dual-date-picker :dual1.sync="$v.sDate.$model" :dual2.sync="$v.eDate.$model"/>
+                    </b-form-radio>
+                    <b-form-radio value="2">
+                      <!--                      職務異動止說明-->
+                      <b-form-input class="d-inline col-5" v-model="$v.othereDate.$model"/>
+                      <span class="d-inline col-7">職務異動止</span>
+                    </b-form-radio>
+                    <b-form-radio value="3">
+                      <div style="height: 34px;">永久使用(僅電腦機房可勾選)</div>
+                    </b-form-radio>
+                  </b-form-radio-group>
+
+                </i-form-group-check>
+
+                <i-form-group-check
+                  class="col-sm-12"
+                  label-cols="2"
+                  content-cols="10"
+                  :label="`停用期間：`"
+                  :item="$v.selecteDate"
+                >
+                  <!--                  啟用期間類別-->
+                  <b-form-radio-group v-model="$v.selecteDate.$model">
+
+                    <b-form-radio value="4">
+                      <!--                      刪除規則時間-->
+                      <i-date-picker
+                        placeholder="yyy/MM/dd"
+                        v-model="$v.delEnableDate.$model"
+                        :state="validateState($v.delEnableDate)"
+                        lazy
+                        trim
+                      ></i-date-picker>
+                    </b-form-radio>
+                    <div><span class="text-danger">*</span>註：申請使用期限最長一年</div>
+                  </b-form-radio-group>
+
+                </i-form-group-check>
+
+              </b-col>
+            </b-row>
+
+
+            <b-form-row>
+              <i-form-group-check class="col-sm-4" label-cols="5" content-cols="7" :label="'來源IP：'"
+                                  :item="$v.sourceIp">
+                <!--來源IP-->
+                <b-form-input v-model="$v.sourceIp.$model"/>
+              </i-form-group-check>
+
+              <i-form-group-check class="col-sm-4" label-cols="5" content-cols="7" :label="`目的IP：`"
+                                  :item="$v.targetIp">
+                <!--                目的IP-->
+                <b-form-input v-model="$v.targetIp.$model"/>
+              </i-form-group-check>
+            </b-form-row>
+
+            <b-form-row>
+              <i-form-group-check class="col-sm-10" label-cols="2" content-cols="10" :label="'用途說明：'"
+                                  :item="$v.instructions">
+                <!--用途說明-->
+                <b-form-textarea v-model="$v.instructions.$model" rows="3" maxlength="2000" trim lazy/>
+              </i-form-group-check>
+            </b-form-row>
+
+            <b-form-row>
+              <i-form-group-check class="col-sm-3" label-cols="12" content-cols="0" :label="'以下由資訊推動小組填寫'">
+              </i-form-group-check>
+            </b-form-row>
+
+            <b-form-row>
+              <!--                  處理意見-->
+              <i-form-group-check class="col-sm-10"
+                                  label-cols="2"
+                                  content-cols="10" :label="'處理意見：'">
+                <b-form-radio-group v-model="$v.agreeType.$model">
+
+                  <b-form-radio class="col-12" value="1">
+
+                    <div>同意設定 : 預定完成日期 :</div>
+                    <i-date-picker
+                      placeholder="yyy/MM/dd"
+                      v-model="$v.scheduleDate.$model"
+                      :state="validateState($v.scheduleDate)"
+                      lazy
+                      trim
+                    ></i-date-picker>
+
+                  </b-form-radio>
+
+                  <b-form-radio class="col-12" value="2">
+
+                    <div>部分同意設定 : 原因 :</div>
+                    <b-form-textarea v-model="$v.partialAgreeReason.$model" rows="3" maxlength="2000" trim lazy/>
+                  </b-form-radio>
+
+                  <b-form-radio class="col-12" value="3">
+
+                    <div>不同意設定 : 原因 :</div>
+                    <b-form-textarea v-model="$v.notAgreeReason.$model" rows="3" maxlength="2000" trim lazy/>
+                  </b-form-radio>
+
+                </b-form-radio-group>
+              </i-form-group-check>
+            </b-form-row>
+
+            <b-form-row>
+              <i-form-group-check class="col-sm-4" label-cols="5" content-cols="7" :label="`規則：`">
+                <!--                  是否為外部防火牆-->
+                <b-form-checkbox class="col-12" v-model="$v.isExternalFirewall.$model" value="Y" unchecked-value="N">
+                  是否為外部防火牆
+                </b-form-checkbox>
+                <!--                  變更設備：是否為內部防火牆-->
+                <b-form-checkbox class="col-12" v-model="$v.isInternalFirewall.$model" value="Y" unchecked-value="N">
+                  是否為外部防火牆
+                </b-form-checkbox>
+
+              </i-form-group-check>
+            </b-form-row>
+
+            <b-form-row>
+
+              <i-form-group-check class="col-sm-4" label-cols="5" content-cols="7" :label="'實際完成日期:'"
+                                  :item="$v.finishDatetime">
+                <!--實際完成日期-->
+                <i-date-picker
+                  placeholder="yyy/MM/dd"
+                  v-model="$v.finishDatetime.$model"
+                  :state="validateState($v.finishDatetime)"
+                  lazy
+                  trim
+                ></i-date-picker>
+              </i-form-group-check>
+            </b-form-row>
+
+            <div class="m-5">
+              <P>
+                備註：
+              </P>
+              <P>
+                網路服務連結申請經審核通過後，申請人應隨時注意使用期間(時段)之必要性，遇有系統續用、調整、停用或使用屆期時，應主動申請網路服務續用、調整或撤銷。
+              </P>
+
+            </div>
+
+
+            <b-form-row>
+              <b-col cols="4" offset="6">
+                <b-button style="background-color: #17a2b8" size="sm" variant="outline-secondary" @click="toApply()">申請</b-button>
+              </b-col>
+            </b-form-row>
+
+          </div>
+        </section>
+      </b-container>
     </div>
+
+
 
   </div>
 </template>
 
 <script lang="ts">
 
-import {BRow, BFormRow,BFormInput} from 'bootstrap-vue';
+import {
+  BRow,
+  BFormRow,
+  BFormInput,
+  BFormRadioGroup,
+  BFormRadio,
+  BContainer,
+  BCol,
+  BFormTextarea,
+  BFormCheckbox,
+  BButton
+} from 'bootstrap-vue';
 import IDualDatePicker from '@/shared/i-date-picker/i-dual-date-picker.vue';
 import {reactive} from '@vue/composition-api';
-import {useValidation} from '@/shared/form';
+import {useValidation, validateState} from '@/shared/form';
 import IFormGroupCheck from '@/shared/form/i-form-group-check.vue';
+import {required} from '@/shared/validators';
+import IDatePicker from '@/shared/i-date-picker/i-date-picker.vue';
 
 export default {
   name: "l414Apply",
@@ -52,50 +349,104 @@ export default {
     'b-row': BRow,
     'i-form-group-check': IFormGroupCheck,
     'i-dual-date-picker': IDualDatePicker,
+    'i-date-picker': IDatePicker,
     'b-form-row': BFormRow,
     'b-form-input': BFormInput,
+    'b-form-radio-group': BFormRadioGroup,
+    'b-form-radio': BFormRadio,
+    'b-container': BContainer,
+    'b-col': BCol,
+    'b-form-textarea': BFormTextarea,
+    BFormCheckbox,
+    BButton
   },
   setup() {
 
     const formDefault = {
-      startOpenDate: new Date(new Date().getFullYear(), 0, 1),
-      endOpenDate: new Date(new Date().getFullYear(), 11, 31),
-      className: '',
-      reviewStatus2: '',
-      unitIsValid: 'Y',
-      qtClassIsValid: '',
-      qtyCodeList: [],
-      qtClassKind: '',
-      timeSession: '',
-      openType: '',
-      projectState: '',
-      startCloseDate: null,
-      endCloseDate: null,
-      projectCodes: [],
+      formId: '',//表單編號
+      applyDate: new Date(new Date().getFullYear(), 0, 1),//	申請日期
+      filEmpid: '',//	填表人員工編號
+      filName: '',//	填表人姓名
+      filUnit: '',//	填表人單位名稱
+      appEmpid: '',//	申請人員工編號
+      appName: '',//	申請人姓名
+      appUnit: '',//	申請人單位名稱
+      isSubmit: '',//	是否暫存、送出
+      isEnable: '1',//	規則
+      enableTime: '',//使用時段
+      otherEnableTime: '',//使用特殊時段內容
+      selecteDate: '',//	啟用期間類別
+      sDate: new Date(new Date().getFullYear(), 0, 1),//啟用期間開始時間
+      eDate: new Date(new Date().getFullYear(), 0, 1),//啟用期間結束時間
+      othereDate: '',//職務異動止說明
+      delEnableDate: '',//刪除規則時間
+      sourceIp: '',//來源 ip
+      targetIp: '',//目的 ip
+      port: '',//	使用協定(port)
+      isTcp: '',//	傳輸模式是否為tcp
+      isUdp: '',//	傳輸模式是否為udp
+      instructions: '',//	用途說明
+      agreeType: '',//	處理意見
+      scheduleDate: '',//預定完成日期
+      partialAgreeReason: '',//	部分同意設定原因
+      notAgreeReason: '',//不同意設定原因
+      isExternalFirewall: '',//	變更設備：是否為外部防火牆
+      isInternalFirewall: '',//	變更設備：是否為內部防火牆
+      firewallContent: '',//	設定內容
+      finishDatetime: '',//	實際完成日期
     };
     const form = reactive(Object.assign({}, formDefault));
     const rules = {
-      startOpenDate: {},
-      endOpenDate: {},
-      className: {},
-      reviewStatus2: {},
-      unitIsValid: {},
-      qtClassIsValid: {},
-      qtyCodeList: {},
-      qtClassKind: {},
-      timeSession: {},
-      openType: {},
-      projectState: {},
-      startCloseDate: {},
-      endCloseDate: {},
-      projectCodes: {},
+      formId: {},
+      applyDate: {},
+      filEmpid: {},
+      filName: {},
+      filUnit: {},
+      appEmpid: {},
+      appName: {},
+      appUnit: {},
+      isSubmit: {},
+      isEnable: {},
+      enableTime: {},
+      otherEnableTime: {},
+      selecteDate: {},
+      sDate: {},
+      eDate: {},
+      othereDate: {},
+      delEnableDate: {},
+      sourceIp: {},
+      targetIp: {},
+      port: {},
+      isTcp: {},
+      isUdp: {},
+      instructions: {},
+      agreeType: {},
+      scheduleDate: {},
+      partialAgreeReason: {},
+      notAgreeReason: {},
+      isExternalFirewall: {},
+      isInternalFirewall: {},
+      firewallContent: {},
+      finishDatetime: {},
     };
     const {$v, checkValidity, reset} = useValidation(rules, form, formDefault);
+
+    const options = reactive({
+      filUnitOptions: [],
+      appUnitOptions: [],
+    });
+
+    function toApply() {
+
+    }
 
     return {
       $v,
       form,
       checkValidity,
+      validateState,
+      options,
+      toApply
     }
   }
 }
