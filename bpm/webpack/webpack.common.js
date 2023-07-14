@@ -40,12 +40,14 @@ module.exports = async (env, options) => {
         port: 9060,
         proxy: [
           {
-            context: ['/bpm','/api', '/services', '/management', '/v3/api-docs', '/h2-console', '/auth'],
+            context: ['/bpm/api','/api', '/services', '/management', '/v3/api-docs', '/h2-console', '/auth'],
             target: 'http://localhost:8080',
             secure: false,
           },
         ],
-        historyApiFallback: true,
+        historyApiFallback: {
+          index: '/bpm/index.html',
+        },
       },
       cache: {
         // 1. Set cache type to filesystem

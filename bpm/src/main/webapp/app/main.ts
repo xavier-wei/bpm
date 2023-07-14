@@ -3,8 +3,8 @@
 import Vue from 'vue';
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
 import { setupAxiosInterceptors } from '@/shared/config/axios-interceptor';
-
 import App from './app.vue';
+import BootstrapVue from 'bootstrap-vue';
 import Vue2Filters from 'vue2-filters';
 import { ToastPlugin } from 'bootstrap-vue';
 import router from './router';
@@ -23,6 +23,8 @@ import UserManagementService from './admin/user-management/user-management.servi
 import LoginService from './account/login.service';
 import AccountService from './account/account.service';
 import AlertService from './shared/alert/alert.service';
+import VueCompositionAPI from '@vue/composition-api'
+import Hooks from'@u3u/vue-hooks'
 
 import '../content/scss/global.scss';
 import '../content/scss/vendor.scss';
@@ -35,8 +37,11 @@ Vue.config.productionTip = false;
 config.initVueApp(Vue);
 config.initFortAwesome(Vue);
 bootstrapVueConfig.initBootstrapVue(Vue);
+Vue.use(BootstrapVue);
+Vue.use(Hooks);
 Vue.use(Vue2Filters);
 Vue.use(ToastPlugin);
+Vue.use(VueCompositionAPI)
 Vue.component('font-awesome-icon', FontAwesomeIcon);
 Vue.component('jhi-item-count', JhiItemCountComponent);
 Vue.component('jhi-sort-indicator', JhiSortIndicatorComponent);
