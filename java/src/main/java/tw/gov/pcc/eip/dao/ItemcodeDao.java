@@ -6,7 +6,6 @@ import org.springframework.stereotype.Repository;
 
 import tw.gov.pcc.common.annotation.DaoTable;
 import tw.gov.pcc.eip.domain.Itemcode;
-import tw.gov.pcc.eip.domain.Users;
 
 /**
  *  Dao
@@ -30,4 +29,6 @@ public interface ItemcodeDao {
     public int deleteByKey(Itemcode itemcode);
     
     public int updateByKey(Itemcode itemcode);
+    
+    public Itemcode getItemname(String itemno);
 }

@@ -6,12 +6,12 @@
 <tags:layout>
 <jsp:attribute name="buttons">
 <!-- 選擇頁 -->
-	  <tags:button id="btnInster">
-    	新增<i class="fas fa-user-plus"></i>
+	  <tags:button id="btnSelect">
+    	確認<i class="fas fa-user-plus"></i>
       </tags:button>
 
-	  <tags:button id="btnBack">
-    	回主畫面<i class="fas fa-user-plus"></i>
+	  <tags:button id="btnClearn">
+    	回上一頁<i class="fas fa-user-plus"></i>
       </tags:button>
 
 </jsp:attribute>
@@ -19,94 +19,103 @@
 	<jsp:attribute name="contents">
     <tags:fieldset>
 		<form:form id="eip07w010Form" name="eip07w010Form" modelAttribute="${caseKey}" method="POST">
-    	<tags:form-row>
-			<label class="col-form-label text-left star">駕駛人姓名:</label>
-		       	<div>
-					<form:input id="name"  name="name"  path="name" cssClass="form-control" size="7" maxlength="6"/>
-				</div>
-			<label class="col-form-label text-left">職稱:</label>
-		       	<div>
-					<form:input id="title"  name="title"  path="title" cssClass="form-control" size="7" maxlength="6"/>
-				</div>
-			<label class="col-form-label text-left star">手機號碼:</label>
-		       	<div>
-					<form:input id="cellphone"  name="cellphone"  path="cellphone" cssClass="form-control" size="7" maxlength="6"/>
-				</div>
+		<div class="table-responsive" id="div1">
+			<table class="table" id="driver">
+				<thead data-orderable="true">
+				<tr>
+					<th class="text-center align-middle">序號</th>
+					<th class="text-center align-middle">駕駛人姓名</th>
+					<th class="text-center align-middle">手機號碼</th>
+					<th class="text-center align-middle">職稱</th>
+					<th class="text-center align-middle">在職註記</th>
+					<th class="text-center align-middle">預定保管車號</th>
+					<th class="text-center align-middle"></th>
 
-		</tags:form-row>
+				</tr>
+				</thead>
+				<tbody>
+				<c:forEach items="${caseData.eip07w010QueryDataList}" var="item" varStatus="status">
+                                <tr class="text-left">
+									<td class="text-center">
+										<c:out value='${status.count}'/>
+									</td>
+									<td id="name">
+										<c:out value='${item.name}'/>
+									</td>
+									<td id="cellphone">
+										<c:out value='${item.cellphone}'/>
+									</td>
+									<td id="title">
+										<c:out value='${item.title}'/>
+									</td>
+									<td id="stillWork">
+										<c:out value='${item.stillWork}'/>
+									</td>
+									<td id="carno1">
+										<c:out value='${item.carno1}'/>-
+										<c:out value='${item.carno2}'/>
+									</td>
+									<td class="text-left" >
+										<tags:button onclick="printDetailReport('${item.driverid}','${item.stillWork}')"  >明細</tags:button>
+									</td>
+								</tr>
+                            </c:forEach>
+				</tbody>
+			</table>
+		</div>
 
-		<tags:form-row>
-			<label class="col-form-label text-left">連絡電話:</label>
-		       	<div>
-					<form:input id="phone"  name="phone"  path="phone" cssClass="form-control" size="7" maxlength="6"/>
-				</div>
-			<label class="col-form-label text-left">員工編號:</label>
-		       	<div>
-					<form:input id="staffno"  name="staffno"  path="staffno" cssClass="form-control" size="7" maxlength="6"/>
-				</div>
-			<label class="col-form-label text-left star">身分證號(駕照證號):</label>
-		       	<div>
-					<form:input id="id"  name="id"  path="id" cssClass="form-control" size="7" maxlength="6"/>
-				</div>
-		</tags:form-row>
+			<table class="table" id="car">
+				<thead data-orderable="true">
+				<tr>
+					<th class="text-center align-middle">序號</th>
+					<th class="text-center align-middle">車牌號碼</th>
+					<th class="text-center align-middle">車輛種類</th>
+					<th class="text-center align-middle">首長專用</th>
+					<th class="text-center align-middle">財產編號</th>
+					<th class="text-center align-middle">保險公司</th>
+					<th class="text-center align-middle">保險期間(起)~(迄)</th>
+					<th class="text-center align-middle"></th>
 
-		<tags:form-row>
-			<label class="col-form-label text-left star">出生日期:</label>
-		       	<div>
-					<form:input id="brdte"  name="brdte"  path="brdte" cssClass="form-control" size="7" maxlength="6"/>
-				</div>
-		</tags:form-row>
-
-		<tags:form-row>
-			<label class="col-form-label text-left star">在職註記:</label>
-		       	<div>
-					<form:input id="stillWork"  name="stillWork"  path="stillWork" cssClass="form-control" size="7" maxlength="6"/>
-				</div>
-			<label class="col-form-label text-left ">到職日期:</label>
-		       	<div>
-					<form:input id="startworkDate"  name="startworkDate"  path="startworkDate" cssClass="form-control" size="7" maxlength="6"/>
-				</div>
-				<label class="col-form-label text-left">離職日期:</label>
-		       	<div>
-					<form:input id="endworkDate"  name="endworkDate"  path="endworkDate" cssClass="form-control" size="7" maxlength="6"/>
-				</div>
-		</tags:form-row>
-
-		<tags:form-row>
-			<label class="col-form-label text-left">駕照到期日:</label>
-		       	<div>
-					<form:input id="licenceExpireDate"  name="licenceExpireDate"  path="licenceExpireDate" cssClass="form-control" size="7" maxlength="6"/>
-				</div>
-			<label class="col-form-label text-left">駕照種類:</label>
-		       	<div>
-					<form:input id="licenceCarType"  name="licenceCarType"  path="licenceCarType" cssClass="form-control" size="7" maxlength="6"/>
-				</div>
-		</tags:form-row>
-
-		<tags:form-row>
-			<label class="col-form-label text-left star">預定保管車號:</label>
-		       	<div class="col-4">
-					<table>
-						<tr>
-							<td><form:input id="carno1" name="carno1"  path="carno1" cssClass="form-control" size="9" maxlength="8"/></td>
-							<td>-</td>
-							<td><form:input id="carno2" name="carno2"  path="carno2" cssClass="form-control" size="7" maxlength="6"/></td>
-						</tr>
-					</table>
-				</div>
-		</tags:form-row>
-
-		<tags:form-row>
-
-			<label class="col-form-label text-left">代理人:</label>
-		       	<div>
-					<form:input id="tempStaff"  name="tempStaff"  path="tempStaff" cssClass="form-control" size="7" maxlength="6"/>
-				</div>
-		</tags:form-row>
+				</tr>
+				</thead>
+				<tbody>
+				<c:forEach items="${caseData.eip07w010CarDataList}" var="item" varStatus="status">
+                                <tr class="text-left">
+									<td class="text-center">
+										<c:out value='${status.count}'/>
+									</td>
+									<td id="carno">
+										<c:out value='${item.carno1}'/>-
+										<c:out value='${item.carno2}'/>
+									</td>
+									<td id="carType">
+										<c:out value='${item.carType}'/>
+									</td>
+									<td id="bossMk">
+										<c:out value='${item.bossMk}'/>
+									</td>
+									<td id="owned">
+										<c:out value='${item.owned}'/>
+									</td>
+									<td id="insuranceCompany">
+										<c:out value='${item.insuranceCompany}'/>
+									</td>
+									<td id="date">
+										<c:out value='${item.insuranceStart}'/>~
+										<c:out value='${item.InsuranceEnd}'/>
+									</td>
+									<td class="text-left" >
+										<tags:button onclick="printDetailReport('${item.driverid}','${item.stillWork}')"  >明細</tags:button>
+									</td>
+								</tr>
+                            </c:forEach>
+				</tbody>
+			</table>
+		</div>
 
 
-
-			<%--		<form:hidden id="processTy" path="processTy" />--%>
+		<form:hidden id="driveridDetail" path="driveridDetail" />
+		<form:hidden id="stillWork" path="stillWork" />
         </form:form>
     </tags:fieldset>
 </jsp:attribute>
@@ -114,18 +123,41 @@
 <script>
 
         $(function() {
+			controlBt();
+			var config = getDataTablesConfig();
+            var table = $('#listTable').DataTable(config);
 
-            $('#btnInster').click(function() {
-           		$('#eip07w010Form').attr('action', '<c:url value="/Eip07w010_inster.action" />').submit();
+            $('#btnSelect').click(function() {
+				$('#eip07w010Form').attr('action', '<c:url value="/Eip07w010_query.action" />').submit();
             });
 
-			$('#btnBack').click(function() {
+			$('#btnClearn').click(function() {
 				$('#eip07w010Form').attr('action', '<c:url value="/Eip07w010_enter.action" />').submit();
 			});
 
+			$('input[id=processTy]:radio').change(function(e) {
+				controlBt();
+			});
+
+			function controlBt(){
+				var processTy=$("input[id=processTy]:checked").val();
+				if(processTy == 'D'){
+					$("#driver").show();
+					$("#car").hide();
+				} else {
+					$("#car").show();
+					$("#driver").hide();
+				}
+			}
          });
 
-
+		function printDetailReport(driverid,stillWork){
+			console.log(driverid)
+			var fun = '<c:url value="/Eip07w010_detail.action" />';
+			$('input[id="driveridDetail"]').val(driverid);
+			$('input[id="stillWork"]').val(stillWork);
+			$('#eip07w010Form').attr('action', fun).submit();
+		}
 </script>
 </jsp:attribute>
 </tags:layout>

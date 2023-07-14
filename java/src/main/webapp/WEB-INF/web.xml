@@ -82,7 +82,7 @@
         <filter-class>tw.gov.pcc.common.filter.AuthorizeFilter</filter-class>
         <async-supported>true</async-supported>
         <init-param>
-            <param-name>casAutoReLoginUrl</param-name>
+            <param-name>ssoAutoReLoginUrl</param-name>
             <param-value>/Login.action?reLogin=true</param-value>
         </init-param>
         <init-param>

@@ -13,12 +13,15 @@ import java.util.Locale;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipOutputStream;
 
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import lombok.extern.slf4j.Slf4j;
+import tw.gov.pcc.eip.dao.EipcodeDao;
 import tw.gov.pcc.eip.dao.MsgdataDao;
 import tw.gov.pcc.eip.dao.MsgdepositDao;
 import tw.gov.pcc.eip.dao.MsgdepositdirDao;
@@ -26,6 +29,8 @@ import tw.gov.pcc.eip.domain.Msgdata;
 import tw.gov.pcc.eip.domain.Msgdeposit;
 import tw.gov.pcc.eip.domain.Msgdepositdir;
 import tw.gov.pcc.eip.msg.cases.Eip01w040Case;
+import tw.gov.pcc.eip.msg.cases.Eip01wPopCase;
+import tw.gov.pcc.eip.util.DateUtility;
 import tw.gov.pcc.eip.util.ExceptionUtility;
 
 /**
@@ -39,6 +44,8 @@ import tw.gov.pcc.eip.util.ExceptionUtility;
 public class Eip01w040Service {
 
     @Autowired
+    private EipcodeDao eipcodeDao;
+    @Autowired
     private MsgdataDao msgdataDao;
     @Autowired
     private MsgdepositDao msgdepositDao;
@@ -46,40 +53,6 @@ public class Eip01w040Service {
     private MsgdepositdirDao msgdepositdirDao;
     DateTimeFormatter minguoformatter = DateTimeFormatter.ofPattern("yyy/MM/dd")
             .withChronology(MinguoChronology.INSTANCE).withLocale(Locale.TAIWAN);
-
-//    private void getTree(Eip01w040Case caseData, String deptId) {
-//        deptId = "8";
-//        List<Msgdepositdir> tree = msgdepositdirDao.getTree(deptId); // 取第一筆資料為預設路徑
-//        v1
-//        String jsonStr = tree.stream().map(m -> {
-//            return "{ \"title\": \"" + m.getFilename() + "\", \"key\": \"" + StringUtils.trim(m.getExisthier())
-//                    + "\", \"isFolder\":\"true\" }";
-//        }).collect(Collectors.joining(",", "[", "]"));
-//        caseData.setTreenode(jsonStr);
-//        v2
-//        String jsonStr = "";
-//        List<Node> treelist = new ArrayList<>();
-//        for (int i = 0; i < tree.size(); i++) {
-//            Msgdepositdir m = tree.get(i);
-//            Node node = new Node();
-//            node.setTitle(m.getFilename());
-//            node.setKey(StringUtils.trim(m.getExisthier()));
-//            node.setIsFolder("true");
-//            // 巢狀node ???
-//            treelist.add(node);
-//        }
-//        try {
-//            jsonStr = new ObjectMapper().writeValueAsString(treelist); // 物件 title key isFolder ..
-//        } catch (JsonProcessingException e) {
-//            // TODO Auto-generated catch block
-//            e.printStackTrace();
-//        }
-//        System.out.println("json:" + jsonStr);
-//        caseData.setTreenode(jsonStr);
-//        System.out.println(jsonStr);
-//        String defaultpath = tree.stream().findFirst().map(m -> m.getFilepath()).orElse("");
-//        caseData.setPath(defaultpath);
-//    }
 
     /**
      * 取得樹
@@ -111,7 +84,6 @@ public class Eip01w040Service {
                     j += 1;
                 } else if (next.length() == current.length()) { // 同層
                     treeStr.add("<li id=\"" + current + "\" class=\"folder\">" + tree.get(i).getFilename());
-                    treeStr.add("<li id=\"" + next + "\" class=\"folder\">" + tree.get(i + 1).getFilename());
                 } else {
                     treeStr.add("<li id=\"" + current + "\" class=\"folder\">" + tree.get(i).getFilename());
                     treeStr.add("</ul>");
@@ -120,7 +92,7 @@ public class Eip01w040Service {
             }
         }
         while (j > 0) {
-            treeStr.add("</ul>\n");
+            treeStr.add("</ul>");
             j--;
         }
         String key = caseData.getKey(); // 紀錄上一次選中路徑
@@ -157,8 +129,8 @@ public class Eip01w040Service {
      */
     public void defaultQuery(Eip01w040Case caseData, String deptId) {
         deptId = "8";
-        List<Eip01w040Case.Detail> qryList = msgdataDao.getbyDefaultPath(deptId, "/人事室/訓練專區/體能訓練/重訓課程"/*caseData.getPath()*/).stream().map(m -> {
-            Eip01w040Case.Detail data = new Eip01w040Case.Detail();
+        List<Eip01wPopCase> qryList = msgdataDao.getbyPath(deptId, caseData.getPath()).stream().map(m -> {
+            Eip01wPopCase data = new Eip01wPopCase();
             data.setFseq(m.getFseq());
             data.setSubject(m.getSubject());
             data.setUpddt(m.getUpddt() == null ? "" : m.getUpddt().format(minguoformatter));
@@ -176,10 +148,10 @@ public class Eip01w040Service {
     public void pathQuery(Eip01w040Case caseData, String deptId) {
         deptId = "8";
         String path = msgdepositdirDao.getTree(deptId).stream()
-                .filter(f -> StringUtils.equals(caseData.getKey(), StringUtils.trim(f.getExisthier()))).map(m -> m.getFilepath())
-                .findAny().orElse("");
-        List<Eip01w040Case.Detail> qryList = msgdataDao.getbyDefaultPath(deptId, path).stream().map(m -> {
-            Eip01w040Case.Detail data = new Eip01w040Case.Detail();
+                .filter(f -> StringUtils.equals(caseData.getKey(), StringUtils.trim(f.getExisthier())))
+                .map(m -> m.getFilepath()).findAny().orElse("");
+        List<Eip01wPopCase> qryList = msgdataDao.getbyPath(deptId, path).stream().map(m -> {
+            Eip01wPopCase data = new Eip01wPopCase();
             data.setFseq(m.getFseq());
             data.setSubject(m.getSubject());
             data.setUpddt(m.getUpddt() == null ? "" : m.getUpddt().format(minguoformatter));
@@ -196,14 +168,19 @@ public class Eip01w040Service {
      */
     public void keywordQuery(Eip01w040Case caseData, String deptId) {
         deptId = "8";
-        List<Eip01w040Case.Detail> qryList = msgdataDao.getbyKeyword(deptId, caseData.getKeyword()).stream().map(m -> {
-            Eip01w040Case.Detail data = new Eip01w040Case.Detail();
-            data.setFseq(m.getFseq());
-            data.setSubject(m.getSubject());
-            data.setUpddt(m.getUpddt() == null ? "" : m.getUpddt().format(minguoformatter));
-            return data;
-        }).collect(Collectors.toCollection(ArrayList::new));
-        caseData.setQryList(qryList);
+        String keyword = caseData.getKeyword();
+        if (!"".equals(keyword)) {
+            List<Eip01wPopCase> qryList = msgdataDao.getbyKeyword(deptId, keyword).stream().map(m -> {
+                Eip01wPopCase data = new Eip01wPopCase();
+                data.setFseq(m.getFseq());
+                data.setSubject(m.getSubject());
+                data.setUpddt(m.getUpddt() == null ? "" : m.getUpddt().format(minguoformatter));
+                return data;
+            }).collect(Collectors.toCollection(ArrayList::new));
+            caseData.setQryList(qryList);
+        } else {
+            pathQuery(caseData, deptId);
+        }
     }
 
     /**
@@ -212,19 +189,24 @@ public class Eip01w040Service {
      * @param fseq
      * @return
      */
-    public Eip01w040Case.Detail getDetail(String fseq) {
-        Eip01w040Case.Detail detail = new Eip01w040Case.Detail();
+    public Eip01wPopCase getDetail(String fseq) {
+        Eip01wPopCase detail = new Eip01wPopCase();
         Msgdata m = msgdataDao.findbyfseq(fseq);
         if (m != null) {
             detail.setFseq(m.getFseq());
+            detail.setMsgtype(eipcodeDao.findByCodeKindCodeNo("MESSAGETYPE", m.getMsgtype()).get().getCodename());
+            detail.setContactunit(m.getContactunit());
             detail.setSubject(m.getSubject());
+            detail.setMcontent(m.getMcontent());
             detail.setUpddt(m.getUpddt() == null ? "" : m.getUpddt().format(minguoformatter));
             detail.setFile(msgdepositDao.findbyfseq(Arrays.asList(fseq)).stream()
                     .collect(Collectors.toMap(Msgdeposit::getSeq, Msgdeposit::getAttachfile)));
+            detail.setContactperson(m.getContactperson());
+            detail.setContacttel(m.getContacttel());
         }
         return detail;
     }
-    
+
     /**
      * 公告事項 檔案下載
      * 
@@ -232,22 +214,68 @@ public class Eip01w040Service {
      * @return
      */
     public ByteArrayOutputStream getFile(Eip01w040Case caseData) {
-        File file = null;
-        if (!file.exists()) {
-            return null;
-        }
-        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-        try (FileInputStream inputStream = new FileInputStream(file); outputStream) {
-
-            byte[] buffer = new byte[1024];
-            int bytesRead;
-            while ((bytesRead = inputStream.read(buffer)) != -1) {
-                outputStream.write(buffer, 0, bytesRead);
+        String dir = eipcodeDao.findByCodeKindCodeNo("FILEDIR", "1").get().getCodename() + "\\"; // 檔案所在資料夾
+        String seq = caseData.getSeq();
+        if (StringUtils.contains(seq, ",")) { // 多檔
+            ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+            ZipOutputStream zipStream = new ZipOutputStream(outputStream);
+            List<Msgdeposit> files = msgdepositDao.findbyFseqSeq(caseData.getFseq(), Arrays.asList(seq.split(",")));
+            int emptyCnt = 0;
+            try (outputStream; zipStream) {
+                for (Msgdeposit origin : files) {
+                    File file = new File(dir + origin.getRealfilename());
+                    if (!file.exists()) {
+                        emptyCnt++;
+                        continue;
+                    }
+                    ByteArrayOutputStream fileOutputStream = new ByteArrayOutputStream();
+                    try (FileInputStream inputStream = new FileInputStream(file); fileOutputStream) {
+                        byte[] buffer = new byte[1024];
+                        int bytesRead;
+                        while ((bytesRead = inputStream.read(buffer)) != -1) {
+                            fileOutputStream.write(buffer, 0, bytesRead);
+                        }
+                        if (fileOutputStream != null) {
+                            ZipEntry zipEntry = new ZipEntry(origin.getAttachfile());
+                            zipStream.putNextEntry(zipEntry);
+                            zipStream.write(fileOutputStream.toByteArray());
+                            zipStream.closeEntry();
+                        }
+                    } catch (IOException e) {
+                        log.error(origin.getRealfilename() + " 取檔異常: " + ExceptionUtility.getStackTrace(e));
+                    }
+                }
+            } catch (IOException e) {
+                log.error(" 壓縮檔產製異常: " + ExceptionUtility.getStackTrace(e));
+                return null;
             }
-        } catch (IOException e) {
-            log.error(ExceptionUtility.getStackTrace(e));
-            return null;
+            if (emptyCnt == files.size()) {
+                return null;
+            }
+            caseData.setFilename(caseData.getSubject() + "_" + DateUtility.getNowChineseDate() + ".zip");
+            return outputStream;
+        } else { // 單檔
+            Msgdeposit origin = msgdepositDao.findbyFseqSeq(caseData.getFseq(), Arrays.asList(seq)).get(0);
+            if (origin == null) {
+                return null;
+            }
+            File file = new File(dir + origin.getRealfilename()); // 格式化檔名
+            if (!file.exists()) {
+                return null;
+            }
+            ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+            try (FileInputStream inputStream = new FileInputStream(file); outputStream) {
+                byte[] buffer = new byte[1024];
+                int bytesRead;
+                while ((bytesRead = inputStream.read(buffer)) != -1) {
+                    outputStream.write(buffer, 0, bytesRead);
+                }
+            } catch (IOException e) {
+                log.error(origin.getRealfilename() + " 取檔異常: " + ExceptionUtility.getStackTrace(e));
+                return null;
+            }
+            caseData.setFilename(origin.getAttachfile()); // 原始檔名
+            return outputStream;
         }
-        return outputStream;
     }
 }

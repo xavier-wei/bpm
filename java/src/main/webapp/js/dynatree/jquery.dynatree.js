@@ -1946,7 +1946,7 @@ var DTNodeStatus_Ok      = 0;
 	 */
 	$.ui.dynatree.nodedatadefaults = {
 		title: null, // (required) Displayed name of the node (html is allowed here)
-		key: null, // May be used with activate(), select(), find(), ...
+		// key: null, // May be used with activate(), select(), find(), ...
 		isFolder: false, // Use a folder icon. Also the node is expandable but not selectable.
 		isLazy: false, // Call onLazyRead(), when the node is expanded for the first time to allow for delayed creation of children.
 		tooltip: null, // Show this popup text.

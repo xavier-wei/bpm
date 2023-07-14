@@ -1,7 +1,5 @@
 package tw.gov.pcc.eip.adm.controllers;
 
-import java.util.List;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
@@ -13,7 +11,7 @@ import org.springframework.web.servlet.ModelAndView;
 
 import tw.gov.pcc.eip.MessageKey;
 import tw.gov.pcc.eip.adm.cases.Eip00w030Case;
-import tw.gov.pcc.eip.adm.service.Eip00w030Service;
+import tw.gov.pcc.eip.services.Eip00w030Service;
 import tw.gov.pcc.eip.domain.Systems;
 import tw.gov.pcc.eip.framework.domain.UserBean;
 import tw.gov.pcc.eip.framework.spring.controllers.BaseController;

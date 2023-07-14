@@ -12,12 +12,14 @@ import tw.gov.pcc.common.util.DateUtil;
 import tw.gov.pcc.common.util.FrameworkLogUtil;
 import tw.gov.pcc.common.util.HttpUtil;
 import tw.gov.pcc.common.util.StrUtil;
+import tw.gov.pcc.eip.dao.User_rolesDao;
 
 import javax.servlet.http.HttpServletRequest;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Optional;
 
 /**
  * 檢核使用者 Portal 登入狀態並取得使用者相關資料及權限
@@ -30,11 +32,13 @@ public class LoginService {
     private final PortalDao portalDao;
     private final PortalLogDao portalLogDao;
     private final SysfuncService sysfuncService;
+    private final User_rolesDao user_rolesDao;
 
-    public LoginService(PortalDao portalDao, PortalLogDao portalLogDao, SysfuncService sysfuncService) {
+    public LoginService(PortalDao portalDao, PortalLogDao portalLogDao, SysfuncService sysfuncService, User_rolesDao userRolesDao) {
         this.portalDao = portalDao;
         this.portalLogDao = portalLogDao;
         this.sysfuncService = sysfuncService;
+        user_rolesDao = userRolesDao;
     }
 
     /**
@@ -48,7 +52,7 @@ public class LoginService {
         if (log.isDebugEnabled()) {
             log.debug("檢核使用者 Portal 登入狀態及使用者物件初始化 開始...");
         }
-        String userId = StringUtils.EMPTY; // 使用者代碼
+        String userId; // 使用者代碼
         String userName; // 使用者名稱
         String deptId; // 部門代碼
         String empId; // 員工編號
@@ -59,6 +63,7 @@ public class LoginService {
         String email;
         String titleId;
         String lineToken;
+        String orgId;
 
         if (request.getAttribute(KeycloakSecurityContext.class.getName()) != null) {
 
@@ -68,6 +73,8 @@ public class LoginService {
 
             userId = keycloakSecurityContext.getToken()
                     .getPreferredUsername();
+        } else {
+            userId = StringUtils.EMPTY;
         }
         if (StringUtils.isBlank(userId)) return false;
         KeycloakUser keyCloakUser = portalDao.selectCasUser(userId);
@@ -82,6 +89,7 @@ public class LoginService {
         email = StringUtils.defaultString(keyCloakUser.getEmail());
         titleId = StringUtils.defaultString(keyCloakUser.getTitleId());
         lineToken = StringUtils.defaultString(keyCloakUser.getLineToken());
+        orgId = StringUtils.defaultString(keyCloakUser.getOrgId());
 
         // 沒有 使用者代碼 及 檢查資訊 Token 一切免談
         if (StringUtils.isBlank(userId) || StringUtils.isBlank(token)) return false;
@@ -92,6 +100,10 @@ public class LoginService {
         String loginDateTime = DateUtil.getNowChineseDateTime(false);
         // 取得使用者功能選單資料
         List<HashMap<String, String>> menuMapList = portalDao.selectCasUserMenu(EnvFacadeHelper.getSystemId(), userId, deptId);
+        Optional.ofNullable(user_rolesDao.selectByKey(userId, EnvFacadeHelper.getSystemId(), User_rolesDao.SYSTEM_ADMIN_DEPT_ID, User_rolesDao.SYSTEM_ADMIN_ROLE_ID))
+                .ifPresent(x -> {
+                    log.info("系統管理者登入：{}", userId);
+                });
         // 設定 Framework 使用者資料
         FrameworkUserInfoBean frameworkUserInfoBean = new FrameworkUserInfoBean();
         frameworkUserInfoBean.setUserId(userId);
@@ -99,6 +111,12 @@ public class LoginService {
         frameworkUserInfoBean.setDeptId(deptId);
         frameworkUserInfoBean.setEmpId(empId);
         frameworkUserInfoBean.setLoginIP(loginIP);
+        frameworkUserInfoBean.setEmail(email);
+        frameworkUserInfoBean.setTel1(tel1);
+        frameworkUserInfoBean.setTel2(tel2);
+        frameworkUserInfoBean.setLineToken(lineToken);
+        frameworkUserInfoBean.setTitleId(titleId);
+        frameworkUserInfoBean.setOrgId(orgId);
         frameworkUserInfoBean.setToken(token);
         frameworkUserInfoBean.setLoginDate(DateUtil.splitChineseDateTime(loginDateTime, true));
         frameworkUserInfoBean.setLoginTime(DateUtil.splitChineseDateTime(loginDateTime, false));
@@ -115,6 +133,7 @@ public class LoginService {
         userData.setTel2(tel2);
         userData.setLineToken(lineToken);
         userData.setTitleId(titleId);
+        userData.setOrgId(orgId);
         userData.setLoginDate(DateUtil.splitChineseDateTime(loginDateTime, true));
         userData.setLoginTime(DateUtil.splitChineseDateTime(loginDateTime, false));
         if (log.isDebugEnabled()) {

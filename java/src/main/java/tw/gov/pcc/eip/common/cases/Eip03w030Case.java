@@ -3,9 +3,7 @@ package tw.gov.pcc.eip.common.cases;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import tw.gov.pcc.eip.domain.Eipcode;
-import tw.gov.pcc.eip.domain.KeepTrkMst;
 
-import java.io.ByteArrayOutputStream;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;

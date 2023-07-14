@@ -53,10 +53,10 @@ public interface KeepTrkDtlDao {
     public List<KeepTrkDtl> selectDataByTrkIDAndTrkObj(String trkID, @Nullable String trkObj);
 
     /**
-     * 依PK更新資料
+     * 解除列管
      * @param ktd
      */
-    public void updateByTrkIDAndTrkObj(KeepTrkDtl ktd);
+    public void closeByTrkIDAndTrkObj(KeepTrkDtl ktd);
 
     /**
      * 查詢除目前此筆外，是否還有未解列案件
@@ -64,4 +64,27 @@ public interface KeepTrkDtlDao {
      * @return
      */
     public int selectDoingCase(String trkID);
+
+
+    /**
+     * 列管事項編號新取號
+     * @param today
+     * @return
+     */
+    public String getNextTrkIDNumber(String today);
+
+
+    /**
+     * 依PK更新資料
+     * @param ktd
+     */
+    public void updateByTrkIDAndTrkObj(KeepTrkDtl ktd);
+
+    /**
+     * 依PK刪除資料
+     * @param trkID
+     * @param trkObj
+     * @return
+     */
+    public int deleteByTrkIDAndTrkObj(String trkID,  @Nullable String trkObj);
 }

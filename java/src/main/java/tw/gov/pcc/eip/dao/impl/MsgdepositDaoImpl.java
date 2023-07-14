@@ -38,11 +38,10 @@ public class MsgdepositDaoImpl extends BaseDao<Msgdeposit> implements Msgdeposit
     }
 
     @Override
-    public Msgdeposit findbyPk(String fseq, String seq, String filetype) {
+    public Msgdeposit findbyPk(String fseq, String seq) {
         Msgdeposit m = new Msgdeposit();
         m.setFseq(fseq);
         m.setSeq(seq);
-        m.setFiletype(filetype);
         return this.selectDataByPrimaryKey(m);
     }
 
@@ -54,13 +53,27 @@ public class MsgdepositDaoImpl extends BaseDao<Msgdeposit> implements Msgdeposit
     @Override
     public List<Msgdeposit> findbyfseq(List<String> fseq) {
         StringBuilder sql = new StringBuilder();
-        sql.append(" SELECT SEQ, ");
-        sql.append("        ATTACHFILE ");
+        sql.append(" SELECT * ");
         sql.append("   FROM MSGDEPOSIT ");
         sql.append("  WHERE FSEQ in ( :fseq )");
         sql.append("  ORDER BY SEQ; ");
         Map<String, Object> params = new HashMap<>();
         params.put("fseq", fseq);
+        return getNamedParameterJdbcTemplate().query(sql.toString(), params,
+                BeanPropertyRowMapper.newInstance(Msgdeposit.class));
+    }
+
+    @Override
+    public List<Msgdeposit> findbyFseqSeq(String fseq, List<String> seq) {
+        StringBuilder sql = new StringBuilder();
+        sql.append(" SELECT * ");
+        sql.append("   FROM MSGDEPOSIT ");
+        sql.append("  WHERE FSEQ = :fseq ");
+        sql.append(" AND SEQ IN ( :seq ) ");
+        sql.append("  ORDER BY SEQ; ");
+        Map<String, Object> params = new HashMap<>();
+        params.put("fseq", fseq);
+        params.put("seq", seq);
         return getNamedParameterJdbcTemplate().query(sql.toString(), params,
                 BeanPropertyRowMapper.newInstance(Msgdeposit.class));
     }

@@ -1,19 +1,18 @@
 package tw.gov.pcc.common.services;
 
+import org.apache.commons.lang3.StringUtils;
+import org.springframework.stereotype.Service;
+import tw.gov.pcc.common.domain.SystemFunction;
+import tw.gov.pcc.common.helper.EnvFacadeHelper;
+import tw.gov.pcc.common.util.ExceptionUtil;
+import tw.gov.pcc.eip.util.StringUtility;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
-import org.apache.commons.lang3.StringUtils;
-import org.springframework.stereotype.Service;
-import tw.gov.pcc.eip.util.StringUtility;
-import tw.gov.pcc.common.dao.PortalDao;
-import tw.gov.pcc.common.dao.SysfuncDao;
-import tw.gov.pcc.common.domain.SystemFunction;
-import tw.gov.pcc.common.helper.EnvFacadeHelper;
-import tw.gov.pcc.common.util.ExceptionUtil;
 
 /**
  * Framework 初始化用的 Service
@@ -23,19 +22,12 @@ import tw.gov.pcc.common.util.ExceptionUtil;
 @Service
 public class SysfuncService {
     private static final org.slf4j.Logger log = org.slf4j.LoggerFactory.getLogger(SysfuncService.class);
-    private final SysfuncDao sysfuncDao;
-    private final PortalDao portalDao;
-
-    public SysfuncService(SysfuncDao sysfuncDao, PortalDao portalDao) {
-        this.sysfuncDao = sysfuncDao;
-        this.portalDao = portalDao;
-    }
 
     /**
      * 建立系統功能 url pattern map，讓原本底層檢核程式使用
      *
      * @param menuMapList 選單MAP(key = url)
-     * @return
+     * @return map
      */
     public Map<String, SystemFunction> buildSystemFunctionMap(List<HashMap<String, String>> menuMapList) {
         // non-portal functions
@@ -72,7 +64,7 @@ public class SysfuncService {
                 if (StringUtils.contains(systemFunction.getUrl(), "_") && StringUtils.contains(systemFunction.getUrl(), ".action")) {
                     urlRegex = StringUtils.substringBeforeLast(urlRegex, "_") + "_*." + StringUtils.substringAfterLast(urlRegex, ".");
                 }
-                urlRegex = "^" + StringUtils.replaceEach(urlRegex, new String[] {"/", "*", "."}, new String[] {"\\/", "[a-zA-Z0-9]*", "\\."}) + "$";
+                urlRegex = "^" + StringUtils.replaceEach(urlRegex, new String[]{"/", "*", "."}, new String[]{"\\/", "[a-zA-Z0-9]*", "\\."}) + "$";
                 urlRegex = StringUtility.normalizeString(urlRegex);
                 Pattern urlPattern = Pattern.compile(urlRegex, Pattern.CASE_INSENSITIVE);
                 systemFunction.setUrlPattern(urlPattern);
@@ -82,9 +74,11 @@ public class SysfuncService {
         } catch (Exception e) {
             log.error("讀取Portal功能項錯誤:" + ExceptionUtil.getStackTrace(e));
         }
-        return list.stream().filter(x -> StringUtils.isNotBlank(x.getUrl())).collect(Collectors.toMap(sf -> sf.getUrl(), x -> x, (fun1, fun2) -> {
-            log.info(String.format("功能出現重複定義Function ID(%s): %s <-> %s ", fun1.getItemId(), fun1.getItemName(), fun1.getItemName()));
-            return fun1;
-        }));
+        return list.stream()
+                .filter(x -> StringUtils.isNotBlank(x.getUrl()))
+                .collect(Collectors.toMap(SystemFunction::getUrl, x -> x, (fun1, fun2) -> {
+                    log.info(String.format("功能出現重複定義Function ID(%s): %s <-> %s ", fun1.getItemId(), fun1.getItemName(), fun1.getItemName()));
+                    return fun1;
+                }));
     }
 }

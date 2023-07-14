@@ -21,6 +21,7 @@ public class UserBean implements UserInfo, Serializable {
     private String titleId; //職稱
     private String lineToken; //LineToken
     private String email; //EMAIL
+    private String orgId; //機關代碼
 
     /**
      * 取得登入日期格式化字串

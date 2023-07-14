@@ -9,7 +9,7 @@ public interface PortalDao {
 
 
     /**
-     * CAS 登入時, 取得使用者所能執行的系統項目代碼
+     * 登入時, 取得使用者所能執行的系統項目代碼
      *
      * @param systemId 應用系統代號
      * @param userId   使用者代碼
@@ -18,7 +18,7 @@ public interface PortalDao {
     List<String> selectCasUserItemList(String systemId, String userId, String deptId);
 
     /**
-     * CAS 登入時, 取得使用者功能選單
+     * 登入時, 取得使用者功能選單
      *
      * @param systemId 應用系統代號
      * @param userId   使用者代碼
@@ -27,7 +27,7 @@ public interface PortalDao {
     List<HashMap<String, String>> selectCasUserMenu(String systemId, String userId, String deptId);
 
     /**
-     * CAS 登入時, 取得使用者資料
+     * 登入時, 取得使用者資料
      *
      * @param userId 使用者代碼
      * @return <code>CasUser</code> 物件

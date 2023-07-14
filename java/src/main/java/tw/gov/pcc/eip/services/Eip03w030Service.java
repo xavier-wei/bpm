@@ -37,7 +37,7 @@ public class Eip03w030Service {
     @Autowired
     private EipcodeDao eipcodeDao;
     public void initDataList(Eip03w030Case caseData) {
-        List<Eip03w030Case> keepTrkMstList = keepTrkMstDao.selectByColumns(null,null,null,null, "1", "2");
+        List<Eip03w030Case> keepTrkMstList = keepTrkMstDao.selectByColumnsForCaclControl(null,null,null,null, "1", "2");
         List<Eipcode> trkStsList = eipcodeDao.findByCodeKind("TRKSTS");
 
         // 替換 trkSts 為中文字
@@ -69,7 +69,7 @@ public class Eip03w030Service {
 
         caseData.setAllStDtSt(caseData.getAllStDtSt() != null ? DateUtility.changeDateTypeToWestDate(caseData.getAllStDtSt()) : "");
         caseData.setAllStDtEnd(caseData.getAllStDtEnd() != null ? DateUtility.changeDateTypeToWestDate(caseData.getAllStDtEnd()) : "");
-        List<Eip03w030Case> resultList = keepTrkMstDao.selectByColumns(caseData.getTrkID(),caseData.getTrkCont(),caseData.getAllStDtSt(),
+        List<Eip03w030Case> resultList = keepTrkMstDao.selectByColumnsForCaclControl(caseData.getTrkID(),caseData.getTrkCont(),caseData.getAllStDtSt(),
                                                                        caseData.getAllStDtEnd(), caseData.getTrkSts(), caseData.getPrcSts());
         List<Eipcode> trkStsList = eipcodeDao.findByCodeKind("TRKSTS");
 
@@ -146,6 +146,7 @@ public class Eip03w030Service {
             Map<String,String> innerMap = new HashMap<>();
             innerMap.put("trkID", list.get(0).getTrkID());      //列管事項編號
             innerMap.put("trkObj", list.get(0).getTrkObj());     //列管對象 (處室)
+//            innerMap.put("trkObj", eipcodeDao.findByCodeKindCodeNo("TRKOBJ",list.get(0).getTrkObj()).get().getCodename());     //列管對象 (處室)
             innerMap.put("prcSts", eipcodeDao.findByCodeKindCodeNo("TRKPRCSTS", list.get(0).getPrcSts()).get().getCodename());    //處理狀態：1-待處理 2-待解列 3-已解列
             innerMap.put("stDt", list.get(0).getStDt());   //列管起日
             innerMap.put("endDt", list.get(0).getEndDt());     //列管迄日
@@ -175,7 +176,8 @@ public class Eip03w030Service {
             }
             innerMap.put("supDt", supDt);      //回應日期時間
 
-            doubleMap.put(a.getTrkObj(), innerMap);
+            a.setTrkObj(a.getTrkObj() + "-" + eipcodeDao.findByCodeKindCodeNo("TRKOBJ",a.getTrkObj()).get().getCodename());
+            doubleMap.put(a.getTrkObj().split("-")[0], innerMap);
         });
         mixCase.setDoubleMap(doubleMap);
     }
@@ -198,7 +200,7 @@ public class Eip03w030Service {
                     ktd.setSupDept(userData.getDeptId());
                     ktd.setSupUser(userData.getUserId());
                     ktd.setSupDt(DateUtility.getNowDateTimeAsTimestamp().toLocalDateTime());
-                    keepTrkDtlDao.updateByTrkIDAndTrkObj(ktd);
+                    keepTrkDtlDao.closeByTrkIDAndTrkObj(ktd);
 
                     if (innerMap.get("supAgree").equals("Y")) {
                         int num = keepTrkDtlDao.selectDoingCase(mixCase.getTrkID());
@@ -210,7 +212,7 @@ public class Eip03w030Service {
                             ktm.setUpdDept(userData.getDeptId());
                             ktm.setUpdUser(userData.getUserId());
                             ktm.setUpdDt(DateUtility.getNowDateTimeAsTimestamp().toLocalDateTime());
-                            keepTrkMstDao.updateByTrkID(ktm);
+                            keepTrkMstDao.closeByTrkID(ktm);
                         }
                     }
                 }

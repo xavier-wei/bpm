@@ -1,5 +1,7 @@
 package tw.gov.pcc.eip.services;
 
+import static org.apache.commons.lang3.StringUtils.trimToNull;
+
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
@@ -10,13 +12,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import lombok.extern.slf4j.Slf4j;
+import tw.gov.pcc.eip.dao.DeptsDao;
 import tw.gov.pcc.eip.dao.EipcodeDao;
 import tw.gov.pcc.eip.dao.MsgdataDao;
+import tw.gov.pcc.eip.dao.UsersDao;
 import tw.gov.pcc.eip.domain.Eipcode;
 import tw.gov.pcc.eip.msg.cases.Eip01w020Case;
 import tw.gov.pcc.eip.msg.cases.Eip01w020PageCase;
-
-import static org.apache.commons.lang3.StringUtils.trimToNull;
 
 /**
  * 訊息篇數統計
@@ -32,6 +34,10 @@ public class Eip01w020Service {
     private EipcodeDao eipCodeDao;
     @Autowired
     private MsgdataDao msgdataDao;
+    @Autowired
+    private DeptsDao deptsDao;
+    @Autowired
+    private UsersDao usersDao;
 
     /**
      * 初始下拉選單
@@ -48,21 +54,27 @@ public class Eip01w020Service {
                     option.setCodename(m.getCodename());
                     return option;
                 }).collect(Collectors.toCollection(ArrayList::new));
+        caseData.setMsgtypes(msgtypes);
         // 聯絡單位
-        List<Eip01w020Case.Option> contactunits = eipCodeDao.findByCodeKind("DEPT").stream()
-                .sorted((o1, o2) -> {
-                    if (Integer.parseInt(o1.getCodeno()) > Integer.parseInt(o2.getCodeno()))
-                        return 1;
-                    else
-                        return -1;
-                }).map(m -> {
+        List<Eip01w020Case.Option> contactunits = deptsDao.getEip01wDepts().stream()
+                .filter(f -> !"00".equals(f.getDept_id())).map(m -> {
                     Eip01w020Case.Option option = new Eip01w020Case.Option();
-                    option.setCodeno(m.getCodeno());
-                    option.setCodename(m.getCodename());
+                    option.setCodeno(m.getDept_id());
+                    option.setCodename(m.getDept_name());
                     return option;
                 }).collect(Collectors.toCollection(ArrayList::new));
-        caseData.setMsgtypes(msgtypes);
         caseData.setContactunits(contactunits);
+        // 建立人員
+        List<Eip01w020Case.Option> users = usersDao.selectAll().stream().filter(f -> "Y".equals(f.getAcnt_is_valid()))
+                .map(m -> {
+                    Eip01w020Case.Option option = new Eip01w020Case.Option();
+                    option.setCodeno(m.getUser_id());
+                    option.setCodename(m.getUser_name());
+                    return option;
+                }).collect(Collectors.toCollection(ArrayList::new));
+        caseData.setCreators(users);
+        // 更新人員
+        caseData.setUpdaters(users);
     }
 
     /**

@@ -8,7 +8,7 @@ import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 import tw.gov.pcc.eip.adm.cases.Eip00w070Case;
-import tw.gov.pcc.eip.adm.service.Eip00w070Service;
+import tw.gov.pcc.eip.services.Eip00w070Service;
 import tw.gov.pcc.eip.adm.view.dynatree.DynaTreeBuilder;
 import tw.gov.pcc.eip.adm.view.dynatree.parser.ItemParser;
 import tw.gov.pcc.eip.dao.ItemsDao;
@@ -132,7 +132,7 @@ public class Eip00w070Controller extends BaseController {
     @ResponseBody
     public Map<String, String> info(@RequestBody Eip00w070Case caseData) throws IOException {
         Items item = itemsDao.selectByKey(caseData.getItem_id());
-        return Map.of(
+        return ObjectUtility.normalizeObject(Map.of(
                 "item_id", StringUtils.defaultString(item.getItem_id()),
                 "item_name", StringUtils.defaultString(item.getItem_name()),
                 "hyperlink", StringUtils.defaultString(item.getHyperlink()),
@@ -140,7 +140,7 @@ public class Eip00w070Controller extends BaseController {
                 "sort", StringUtils.defaultString(item.getSort_order()
                         .toString()),
                 "disable", StringUtils.defaultString(item.getDisable())
-        );
+        ));
     }
 
     /**

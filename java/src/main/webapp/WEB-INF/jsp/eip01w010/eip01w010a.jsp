@@ -27,6 +27,81 @@
             .tmp-label {
                 min-width: 85px;
             }
+
+            .img-box {
+                margin: 10px;
+                display: inline-block;
+                position: relative;
+            }
+
+            .myimage {
+                max-width: 150px;
+                min-width: 150px;
+            }
+
+            .image-remove {
+                --background-color: white;
+                font-size: 28px;
+                width: 20px;
+                height: 20px;
+                text-align: center;
+                border-radius: 100%;
+                transform: rotate(45deg);
+                cursor: pointer;
+                opacity: 0.5;
+                top: 2px;
+                right: 2px;
+                display: flex;
+                position: absolute;
+                align-items: center;
+                justify-content: center;
+            }
+
+            .image-remove:hover {
+                font-weight: 700;
+                opacity: 1;
+            }
+
+            .textblock {
+                padding-left: 175px;
+            }
+
+            .imgblock {
+                padding-left: 170px;
+            }
+
+            .text-box {
+                margin: 7px;
+                padding-right: 25px;
+                display: inline-block;
+                position: relative;
+            }
+
+            .text-remove {
+                padding-bottom: 4px;
+                background-color: black;
+                font-size: 23px;
+                width: 18px;
+                height: 18px;
+                color: white;
+                text-align: center;
+                border-radius: 100%;
+                transform: rotate(135deg);
+                cursor: pointer;
+                opacity: 0.3;
+                top: 2px;
+                right: 0px;
+                display: flex;
+                position: absolute;
+                align-items: center;
+                justify-content: center;
+            }
+
+            .text-remove:hover {
+                background-color: red;
+                font-weight: 800;
+                opacity: 0.6;
+            }
         </style>
     </jsp:attribute>
     <jsp:attribute name="buttons">
@@ -108,18 +183,11 @@
                     <form:label cssClass="col-form-label star" path="locatearea">顯示位置：</form:label>
                     <div class="col-sm-6 d-flex my-auto">
                         <c:forEach var="item" items="${caseData.locateareas}" varStatus="status">
-                            <label class="mb-0 d-inline-flex" style="margin-left: 2px;">
+                            <label class="mb-0 d-inline-flex">
                                 <form:radiobutton path="locatearea" value="${item.codeno }" cssClass="mr-1" />
                                 <span class="mr-2">${item.codename }</span>
                             </label>
                         </c:forEach>
-                        <!--                             <div class="d-inline-flex mt-2"> -->
-                        <%--                                 <form:checkbox path="locatearea" value="${item.codeno }" --%>
-                        <%--                                     id="${item.codeno }${item.codename }" cssClass="d-flex form-check" /> --%>
-                        <%--                                 <label class="ml-1" for="${item.codeno }${item.codename }" --%>
-                        <%--                                     style="margin-bottom: 2px;">${item.codename --%>
-                        <%--                                     }</label> --%>
-                        <!--                             </div> -->
                     </div>
                 </tags:form-row>
                 <tags:form-row>
@@ -139,11 +207,11 @@
                 <tags:form-row>
                     <div class="col-3 col-md d-flex align-items-center">
                         <form:label cssClass="col-form-label star" path="issearch">是否提供外部查詢：</form:label>
-                        <label class="mb-0 d-flex" style="margin-left: 2px;">
+                        <label class="mb-0 d-flex">
                             <form:radiobutton path="issearch" value="1" cssClass="mr-1" />
                             <span class="mr-2">是</span>
                         </label>
-                        <label class="mb-0 d-flex" style="margin-left: 2px;">
+                        <label class="mb-0 d-flex">
                             <form:radiobutton path="issearch" value="2" cssClass="mr-1" />
                             <span class="mr-2">否</span>
                         </label>
@@ -220,13 +288,21 @@
                         <label class="custom-file-label" for="images" style="margin-left: 2px;">Choose images</label>
                     </div>
                 </tags:form-row>
+                <c:if test="${not empty caseData.imageFileNameMap }">
+                    <tags:form-row cssClass="textblock">
+                        <c:forEach var="item" items="${caseData.imageFileNameMap}">
+                            <div class="text-box"> ${item.value }<span class="text-remove" id="${item.key }">+</span>
+                            </div>
+                        </c:forEach>
+                    </tags:form-row>
+                </c:if>
                 <tags:form-row cssClass="imgblock">
 
                 </tags:form-row>
                 <tags:form-row>
                     <form:label cssClass="col-form-label" path="indir">存放目錄：</form:label>
                     <div class="col-sm-6 d-flex">
-                        <form:input path="indir" cssClass="form-control" size="40" maxlength="0" />
+                        <form:input path="indir" cssClass="form-control" maxlength="0" size="50" />
                         <tags:button cssClass="ml-2" id="btnPath">選取目錄</tags:button>
                     </div>
                 </tags:form-row>
@@ -238,6 +314,14 @@
                         <label class="custom-file-label" for="files" style="margin-left: 2px;">Choose files</label>
                     </div>
                 </tags:form-row>
+                <c:if test="${not empty caseData.fileNameMap }">
+                    <tags:form-row cssClass="textblock">
+                        <c:forEach var="item" items="${caseData.fileNameMap}">
+                            <div class="text-box">${item.value }<span class="text-remove" id="${item.key }">+</span>
+                            </div>
+                        </c:forEach>
+                    </tags:form-row>
+                </c:if>
                 <tags:form-row>
                     <form:label cssClass="col-form-label star" path="releasedt">上架時間：</form:label>
                     <div class="col-sm-6">
@@ -267,7 +351,14 @@
                 <tags:form-row>
                     <form:label cssClass="col-form-label star" path="contactperson">聯絡人：</form:label>
                     <div class="col-sm-6">
-                        <form:input path="contactperson" cssClass="form-control" size="10" maxlength="10" />
+                        <form:select path="contactperson" cssClass="form-control">
+                            <c:forEach var="item" items="${caseData.contactpersons}" varStatus="status">
+                                <form:option value="${item.codeno}">
+                                    <c:out value="${item.codename}" />
+                                </form:option>
+                            </c:forEach>
+                        </form:select>
+                        <%-- <form:input path="contactperson" cssClass="form-control" size="10" maxlength="10" /> --%>
                     </div>
                 </tags:form-row>
                 <tags:form-row>
@@ -322,19 +413,19 @@
                 <form:hidden path="mode" />
                 <form:hidden path="fseq" />
                 <form:hidden path="keep" />
-                <form:hidden path="imagesDecode" />
                 <form:hidden path="tmpPath" />
                 <form:hidden path="p1id" />
                 <form:hidden path="p1page" />
                 <form:hidden path="p1title" />
-                <%--                 <form:hidden path="imagesMap"/> --%>
+                <form:hidden path="seq" />
             </form:form>
 
-            <div id="popModal1" class="modal fade" tabindex="-1" role="dialog">
+            <div id="preViewModal" class="modal fade" tabindex="-1" role="dialog">
+                <!-- 預覽modal -->
                 <div class="modal-dialog modal-lg" role="document">
                     <div class="modal-content">
                         <div class="modal-header">
-                            <h5 class="modal-title">預覽</h5>
+                            <h5 class="modal-title"></h5>
                             <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                                 <span aria-hidden="true">&times;</span>
                             </button>
@@ -349,6 +440,7 @@
                 </div>
             </div>
             <div id="popModal" class="modal fade" tabindex="-1" role="dialog">
+                <!-- 選取目錄modal -->
                 <div class="modal-dialog modal-lg" role="document">
                     <div class="modal-content">
                         <div class="modal-header">
@@ -380,22 +472,7 @@
                                     </div>
                                 </div>
                                 <div class="col-6" id="dynaTree">
-                                    <!--  <ul> -->
-                                    <!--      <li id="H" class="folder expanded">人事室 -->
-                                    <!--          <ul> -->
-                                    <!--              <li id="HB" class="folder">訓練專區 -->
-                                    <!--                  <ul> -->
-                                    <!--                      <li id="HBA" class="folder">職能訓練 -->
-                                    <!--                          <ul> -->
-                                    <!--                              <li id="HBAA" class="folder">公文 -->
-                                    <!--                          </ul> -->
-                                    <!--                      <li id="HBB" class="folder">體能訓練 -->
-                                    <!--                          <ul> -->
-                                    <!--                              <li id="HBBB" class="folder">重訓課程 -->
-                                    <!--                          </ul> -->
-                                    <!--                  </ul> -->
-                                    <!--          </ul> -->
-                                    <!--  </ul> -->
+
                                 </div>
                             </div>
                         </div>
@@ -413,6 +490,8 @@
         <script type="text/javascript">
             $(function() {
                 //$("#datepicker").datepicker({});
+                let config = getDataTablesConfig();
+                var table = $("#querylistTable").DataTable(config);
                 var gnodeKey; // 紀錄當前活動節點
                 var seq = 0; // 新資料夾流水號
                 let tmp = '新資料夾';
@@ -526,17 +605,43 @@
                 });
                 // 預覽
                 $("#btnPreview").click(function(e) {
-                    //                             $('#popModal1').modal('show');
-                    //                     let size = localStorage.length;
-                    //                     var filelist = [];
-                    //                     for (var i = 0; i < size; i++) {
-                    //                         filelist.push(localStorage.getItem(localStorage.key(i)));
-                    //                     }
-                    //                     $('#imagesDecode').val(filelist);
-                    //console.log(Object.getPrototypeOf($('#images')[0].files));
-                    //Object.getPrototypeOf($('#images')[0].files) = filelist;
-                    localStorage.clear();
+                    $.ajax({
+                        type: "POST",
+                        url: '<c:url value="/Eip01w010_getDetail.action" />',
+                        data: {
+                            'fseq': $('#fseq').val()
+                        },
+                        timeout: 100000,
+                        success: function(data) {
+                            if (data == '') {
+                                showAlert('查無資料!');
+                            } else {
+                                var str = '';
+                                $.each(data.file, function(i, e) {
+                                    str +=
+                                        '<a href="javascript:;" class="alink" id=' +
+                                        i + '>' +
+                                        e + '</a>' + '　';
+                                    //str += '<button type="button" class="btn btn-outline-info mr-3 mb-2" id='+i+'>'+e+'</button>';
+                                });
+                                $('.modal-title').html(data.attributype);
+                                $('.modal-body').html(
+                                    '主　　題：' + data.subject +
+                                    '<br>訊息文字：' + data.mcontent +
+                                    '<br>發布單位：' + data.contactunit +
+                                    '<br>附加檔案：' + str +
+                                    '<br>更新日期：' + data.upddt +
+                                    '<br>聯絡人　：' + data.contactperson +
+                                    '<br>聯絡電話：' + data.contacttel);
+                                $('#preViewModal').modal('show');
+                            }
+                        },
+                        error: function(e) {
+                            showAlert("取得資料發生錯誤");
+                        }
+                    });
                 });
+                // 字數計算
                 $('#word-count').hide();
                 $('#mcontent').on('keydown keyup keypress change', function(e) {
                     let count = $(this).val().length;
@@ -621,46 +726,76 @@
                 });
                 $('#attributype').trigger('change');
                 // 選擇檔案
-                $(".custom-file-input").on("change", function() {
-                    //console.log($(this));
-                    //console.log($(this)[0].files);
-                    $('.imgblock').html('');
+                $("#files").on("change", function() {
                     let counts = $(this)[0].files.length;
-                    if (counts > 10) {
+                    if (counts > 20) {
+                        $("#files").val('');
                         alert('超過檔案數量 請重新選擇!');
-                        return;
+                        $(this).next('.custom-file-label').html('Choose files');
+                        return false;
+                    } else if (counts > 0 && counts < 20) {
+                        var files = [];
+                        for (var i = 0; i < counts; i++) {
+                            files.push($(this)[0].files[i].name);
+                        }
+                        $(this).next('.custom-file-label').html(files.join(', '));
+                    } else {
+                        $(this).next('.custom-file-label').html('Choose files');
                     }
-                    var files = [];
-                    for (var i = 0; i < counts; i++) {
-                        console.log($(this)[0].files[i]);
-                        files.push($(this)[0].files[i].name);
-                        getBase64($(this)[0].files[i], $(this)[0].files[i].name);
+                });
+                // 選擇圖檔
+                $('.imgblock').hide();
+                $("#images").on("change", function() {
+                    $('.imgblock').html('');
+                    $('.imgblock').hide();
+                    let counts = $(this)[0].files.length;
+                    if (counts > 20) {
+                        $("#images").val('');
+                        alert('超過檔案數量 請重新選擇!');
+                        $(this).next('.custom-file-label').html('Choose images');
+                        return false;
+                    } else if (counts > 0 && counts < 20) {
+                        var files = [];
+                        for (var i = 0; i < counts; i++) {
+                            files.push($(this)[0].files[i].name);
+                            getBase64($(this)[0].files[i]);
+                        }
+                        $(this).next('.custom-file-label').html(files.join(', '));
+                    } else {
+                        $(this).next('.custom-file-label').html('Choose images');
                     }
-                    $(this).next('.custom-file-label').html(files.join(', '));
-                    //                     $('.imgblock').append(
-                    //                         '<div class="d-flex col-2"><span class="imgbtn">按鈕</span></div>');
                 });
-                $('.imgbtn').on('click', function(e) {
-                    alert('!');
-                });
-
-                function getBase64(file, filename) {
+                // 預覽圖
+                function getBase64(file) {
                     var reader = new FileReader();
                     reader.readAsDataURL(file);
                     reader.onload = function() {
-                        //console.log(reader.result);
-                        localStorage.setItem(filename, filename + ',' + reader.result);
-                        //$('.imgblock').append(
-                        //'<div class="d-flex col-2"><label><input type="checkbox" value="' +
-                        //filename + '"/>' + filename + '</label></div>');
+                        $('.imgblock').show();
                         $('.imgblock').append(
-                            '<div class="d-flex col-xxl-2 col-xl-3 col-lg-4 col-md-6 col-sm-8"><img style="max-width: 200px;max-height: 170px;" src="' +
-                            reader.result + '"/></div>');
+                            '<div class="img-box"><img class="myimage" src="' +
+                            reader.result +
+                            '"/></div>'
+                        ); // <span class="image-remove" @click="removeImage(index)">+</span> 
                     };
                     reader.onerror = function(error) {
                         console.log('Error: ', error);
                     };
                 }
+                // 附檔清單 X按鈕
+                $('.text-remove').click(function() {
+                    showConfirm('確定要刪除附檔？', () => {
+                        $('#seq').val(this.id);
+                        $('#eip01w010Form').attr('action',
+                                '<c:url value="/Eip01w010_delFile.action" />')
+                            .submit();
+                    });
+                });
+            });
+            // 檔案下載連結
+            $(document).on('click', '.alink', function(e) {
+                $('#seq').val($(this).attr('id'));
+                $('#eip01w010Form').attr('action', '<c:url value="/Eip01w010_getFile.action" />')
+                    .submit();
             });
         </script>
     </jsp:attribute>

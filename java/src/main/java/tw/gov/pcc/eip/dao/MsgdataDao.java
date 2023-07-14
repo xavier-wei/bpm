@@ -7,8 +7,7 @@ import org.springframework.stereotype.Repository;
 import tw.gov.pcc.common.annotation.DaoTable;
 import tw.gov.pcc.eip.domain.Msgdata;
 import tw.gov.pcc.eip.msg.cases.Eip01w020PageCase;
-import tw.gov.pcc.eip.msg.cases.Eip01w030Case;
-import tw.gov.pcc.eip.msg.cases.Eip01w050Case;
+import tw.gov.pcc.eip.msg.cases.Eip01wPopCase;
 
 /**
  * 訊息上稿
@@ -62,7 +61,7 @@ public interface MsgdataDao {
      * 
      * @return
      */
-    public List<Eip01w030Case.Detail> getEip01w030LatestDataList();
+    public List<Eip01wPopCase> getEip01w030LatestDataList();
 
     /**
      * 取得畫面條件 查詢的公告事項
@@ -71,7 +70,7 @@ public interface MsgdataDao {
      * @param subject
      * @return
      */
-    public List<Eip01w030Case.Detail> getEip01w030DataList(String msgtype, String subject);
+    public List<Eip01wPopCase> getEip01w030DataList(String msgtype, String subject);
 
     /**
      * 取得單筆公告事項明細
@@ -79,7 +78,7 @@ public interface MsgdataDao {
      * @param fseq
      * @return
      */
-    public Eip01w030Case.Detail getEip01w030Detail(String fseq);
+    public Eip01wPopCase getEip01w030Detail(String fseq);
 
     /**
      * 取得輿情專區初始資料 (依登入者部門查詢)
@@ -87,7 +86,7 @@ public interface MsgdataDao {
      * @param dept
      * @return
      */
-    public List<Eip01w050Case.Detail> getEip01w050DataList(String dept);
+    public List<Eip01wPopCase> getEip01w050DataList(String dept);
 
     /**
      * 取得單筆輿情資料明細
@@ -95,7 +94,7 @@ public interface MsgdataDao {
      * @param fseq
      * @return
      */
-    public Eip01w050Case.Detail getEip01w050Detail(String fseq);
+    public Eip01wPopCase getEip01w050Detail(String fseq);
 
     /**
      * 取得已上架的文章
@@ -106,7 +105,21 @@ public interface MsgdataDao {
      */
     public List<Msgdata> getMcontentWithStatus4(String attr, String dept);
 
-    public List<Msgdata> getbyDefaultPath(String dept, String defaultPath);
+    /**
+     * 下載專區 - 路徑查詢
+     * 
+     * @param dept
+     * @param path
+     * @return
+     */
+    public List<Msgdata> getbyPath(String dept, String path);
 
+    /**
+     * 下載專區 - 依關鍵字查詢
+     * 
+     * @param dept
+     * @param keyword
+     * @return
+     */
     public List<Msgdata> getbyKeyword(String dept, String keyword);
 }

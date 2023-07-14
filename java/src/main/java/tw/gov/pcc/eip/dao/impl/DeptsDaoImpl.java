@@ -103,4 +103,22 @@ public class DeptsDaoImpl extends BaseDao<Depts> implements DeptsDao {
                         " WHERE DEPT_ID = :dept_id ",
                 new BeanPropertySqlParameterSource(depts));
     }
+
+    
+    @Override
+    public Depts findByPk(String dept_id) {
+        Depts d = new Depts();
+        d.setDept_id(dept_id);
+        return this.selectDataByPrimaryKey(d);
+    }
+
+    @Override
+    public List<Depts> getEip01wDepts() {
+        StringBuilder sql = new StringBuilder();
+        sql.append(" SELECT '00' DEPT_ID, '全會人員' DEPT_NAME ");
+        sql.append(" UNION ");
+        sql.append(" SELECT DEPT_ID,DEPT_NAME FROM DEPTS WHERE IS_VALID ='Y' ");
+        return getNamedParameterJdbcTemplate().query(sql.toString(), 
+                BeanPropertyRowMapper.newInstance(Depts.class));
+    }
 }

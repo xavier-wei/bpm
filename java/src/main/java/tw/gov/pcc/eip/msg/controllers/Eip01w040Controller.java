@@ -12,11 +12,15 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
 import lombok.extern.slf4j.Slf4j;
+import tw.gov.pcc.eip.MessageKey;
 import tw.gov.pcc.eip.framework.domain.UserBean;
 import tw.gov.pcc.eip.framework.spring.controllers.BaseController;
 import tw.gov.pcc.eip.framework.spring.support.FileOutputView;
 import tw.gov.pcc.eip.msg.cases.Eip01w040Case;
+import tw.gov.pcc.eip.msg.cases.Eip01wFileCase;
+import tw.gov.pcc.eip.msg.cases.Eip01wPopCase;
 import tw.gov.pcc.eip.services.Eip01w040Service;
+import tw.gov.pcc.eip.services.Eip01wFileService;
 import tw.gov.pcc.eip.util.ExceptionUtility;
 import tw.gov.pcc.eip.util.ObjectUtility;
 
@@ -37,6 +41,8 @@ public class Eip01w040Controller extends BaseController {
     private UserBean userData;
     @Autowired
     private Eip01w040Service eip01w040Service;
+    @Autowired
+    private Eip01wFileService eip01wFileService;
 
     /**
      * 進入 下載專區
@@ -47,9 +53,32 @@ public class Eip01w040Controller extends BaseController {
      */
     @RequestMapping("/Eip01w040_enter.action")
     public String enter(@ModelAttribute(CASE_KEY) Eip01w040Case caseData, ModelMap m) {
-        log.debug("導向 Eip01w040_enter 下載專區 畫面初始");
-        m.put("items", eip01w040Service.getTree(caseData, userData.getDeptId()));
-        eip01w040Service.defaultQuery(caseData, userData.getDeptId());
+        try {
+            m.put("items", eip01w040Service.getTree(caseData, userData.getDeptId()));
+            eip01w040Service.defaultQuery(caseData, userData.getDeptId());
+        } catch (Exception e) {
+            log.error("下載專區 - 預設查詢 " + ExceptionUtility.getStackTrace(e));
+            setSystemMessage(MessageKey.MSG_QUERY_FAIL);
+        }
+        return MAIN_PAGE;
+    }
+
+    /**
+     * (點選資料夾)路徑查詢
+     * 
+     * @param caseData
+     * @param m
+     * @return
+     */
+    @RequestMapping("/Eip01w040_path.action")
+    public String path(@ModelAttribute(CASE_KEY) Eip01w040Case caseData, ModelMap m) {
+        try {
+            m.put("items", eip01w040Service.getTree(caseData, userData.getDeptId()));
+            eip01w040Service.pathQuery(caseData, userData.getDeptId());
+        } catch (Exception e) {
+            log.error("下載專區 - 路徑查詢 " + ExceptionUtility.getStackTrace(e));
+            setSystemMessage(MessageKey.MSG_QUERY_FAIL);
+        }
         return MAIN_PAGE;
     }
 
@@ -60,26 +89,15 @@ public class Eip01w040Controller extends BaseController {
      * @param m
      * @return
      */
-    @RequestMapping("/Eip01w040_query.action")
-    public String query(@ModelAttribute(CASE_KEY) Eip01w040Case caseData, ModelMap m) {
-        log.debug("導向 Eip01w040_enter 下載專區 關鍵字查詢");
-        m.put("items", eip01w040Service.getTree(caseData, userData.getDeptId()));
-        eip01w040Service.keywordQuery(caseData, userData.getDeptId());
-        return MAIN_PAGE;
-    }
-
-    /**
-     * 路徑查詢
-     * 
-     * @param caseData
-     * @param m
-     * @return
-     */
-    @RequestMapping("/Eip01w040_pathQuery.action")
-    public String path(@ModelAttribute(CASE_KEY) Eip01w040Case caseData, ModelMap m) {
-        log.debug("導向 Eip01w040_detail 下載專區 路徑查詢");
-        m.put("items", eip01w040Service.getTree(caseData, userData.getDeptId()));
-        eip01w040Service.pathQuery(caseData, userData.getDeptId());
+    @RequestMapping("/Eip01w040_keyword.action")
+    public String keyword(@ModelAttribute(CASE_KEY) Eip01w040Case caseData, ModelMap m) {
+        try {
+            m.put("items", eip01w040Service.getTree(caseData, userData.getDeptId()));
+            eip01w040Service.keywordQuery(caseData, userData.getDeptId());
+        } catch (Exception e) {
+            log.error("下載專區 - 關鍵字查詢 " + ExceptionUtility.getStackTrace(e));
+            setSystemMessage(MessageKey.MSG_QUERY_FAIL);
+        }
         return MAIN_PAGE;
     }
 
@@ -91,7 +109,7 @@ public class Eip01w040Controller extends BaseController {
      */
     @RequestMapping("/Eip01w040_detail.action")
     @ResponseBody
-    public Eip01w040Case.Detail detail(@RequestParam("fseq") String fseq) {
+    public Eip01wPopCase detail(@RequestParam("fseq") String fseq) {
         log.debug("導向 Eip01w040_detail 下載專區 明細查詢");
         return ObjectUtility.normalizeObject(eip01w040Service.getDetail(fseq));
     }
@@ -105,13 +123,15 @@ public class Eip01w040Controller extends BaseController {
      */
     @RequestMapping("/Eip01w040_getFile.action")
     public ModelAndView download(@ModelAttribute(CASE_KEY) Eip01w040Case caseData, ModelMap m) {
-        log.debug("導向 Eip01w040_getFile 下載專區 附檔下載");
-        m.put("items", eip01w040Service.getTree(caseData, userData.getDeptId()));
         try {
-            ByteArrayOutputStream baos = null;
-            baos = eip01w040Service.getFile(caseData);
+            m.put("items", eip01w040Service.getTree(caseData, userData.getDeptId()));
+            Eip01wFileCase filecase = new Eip01wFileCase();
+            filecase.setFseq(caseData.getFseq());
+            filecase.setSeq(caseData.getSeq());
+            filecase.setSubject(caseData.getSubject());
+            ByteArrayOutputStream baos = eip01wFileService.getFile(filecase);
             if (baos != null) {
-                return new ModelAndView(new FileOutputView(baos, caseData.getFilename(), FileOutputView.GENERAL_FILE));
+                return new ModelAndView(new FileOutputView(baos, filecase.getFilename(), FileOutputView.GENERAL_FILE));
             } else {
                 setSystemMessage("查無下載檔案");
             }

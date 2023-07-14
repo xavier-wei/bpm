@@ -26,6 +26,7 @@ import tw.gov.pcc.eip.dao.MsgdepositDao;
 import tw.gov.pcc.eip.domain.Eipcode;
 import tw.gov.pcc.eip.domain.Msgdeposit;
 import tw.gov.pcc.eip.msg.cases.Eip01w030Case;
+import tw.gov.pcc.eip.msg.cases.Eip01wPopCase;
 import tw.gov.pcc.eip.util.DateUtility;
 import tw.gov.pcc.eip.util.ExceptionUtility;
 
@@ -72,8 +73,8 @@ public class Eip01w030Service {
      * @param caseData
      */
     public void getLatestData(Eip01w030Case caseData) {
-        List<Eip01w030Case.Detail> qryList = msgdataDao.getEip01w030LatestDataList().stream().map(m -> {
-            Eip01w030Case.Detail dataCase = new Eip01w030Case.Detail();
+        List<Eip01wPopCase> qryList = msgdataDao.getEip01w030LatestDataList().stream().map(m -> {
+            Eip01wPopCase dataCase = new Eip01wPopCase();
             dataCase.setFseq(m.getFseq());
             dataCase.setSubject(m.getSubject());
             dataCase.setMsgtype(m.getMsgtype());
@@ -93,8 +94,8 @@ public class Eip01w030Service {
     public void query(Eip01w030Case caseData) {
         String msgtype = trimToNull(caseData.getMsgtype());
         String subject = trimToNull(caseData.getTheme());
-        List<Eip01w030Case.Detail> qryList = msgdataDao.getEip01w030DataList(msgtype, subject).stream().map(m -> {
-            Eip01w030Case.Detail dataCase = new Eip01w030Case.Detail();
+        List<Eip01wPopCase> qryList = msgdataDao.getEip01w030DataList(msgtype, subject).stream().map(m -> {
+            Eip01wPopCase dataCase = new Eip01wPopCase();
             dataCase.setFseq(m.getFseq());
             dataCase.setSubject(m.getSubject());
             dataCase.setMsgtype(m.getMsgtype());
@@ -112,8 +113,8 @@ public class Eip01w030Service {
      * @param fseq
      * @return
      */
-    public Eip01w030Case.Detail query(String fseq) {
-        Eip01w030Case.Detail detail = msgdataDao.getEip01w030Detail(fseq);
+    public Eip01wPopCase query(String fseq) {
+        Eip01wPopCase detail = msgdataDao.getEip01w030Detail(fseq);
         if (detail != null) {
             detail.setFile(msgdepositDao.findbyfseq(Arrays.asList(fseq)).stream()
                     .collect(Collectors.toMap(Msgdeposit::getSeq, Msgdeposit::getAttachfile)));

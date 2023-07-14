@@ -9,8 +9,7 @@ import org.springframework.web.bind.annotation.SessionAttributes;
 import org.springframework.web.servlet.ModelAndView;
 
 import tw.gov.pcc.eip.adm.cases.Eip00w010Case;
-import tw.gov.pcc.eip.adm.service.Eip00w010Service;
-import tw.gov.pcc.eip.framework.domain.UserBean;
+import tw.gov.pcc.eip.services.Eip00w010Service;
 import tw.gov.pcc.eip.framework.spring.controllers.BaseController;
 import tw.gov.pcc.eip.util.ExceptionUtility;
 import tw.gov.pcc.eip.util.ObjectUtility;

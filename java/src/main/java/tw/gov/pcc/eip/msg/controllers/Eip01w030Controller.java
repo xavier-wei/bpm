@@ -1,7 +1,6 @@
 package tw.gov.pcc.eip.msg.controllers;
 
 import java.io.ByteArrayOutputStream;
-import java.io.FileNotFoundException;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,7 +16,10 @@ import tw.gov.pcc.eip.framework.domain.UserBean;
 import tw.gov.pcc.eip.framework.spring.controllers.BaseController;
 import tw.gov.pcc.eip.framework.spring.support.FileOutputView;
 import tw.gov.pcc.eip.msg.cases.Eip01w030Case;
+import tw.gov.pcc.eip.msg.cases.Eip01wFileCase;
+import tw.gov.pcc.eip.msg.cases.Eip01wPopCase;
 import tw.gov.pcc.eip.services.Eip01w030Service;
+import tw.gov.pcc.eip.services.Eip01wFileService;
 import tw.gov.pcc.eip.util.ExceptionUtility;
 import tw.gov.pcc.eip.util.ObjectUtility;
 
@@ -38,6 +40,8 @@ public class Eip01w030Controller extends BaseController {
     private UserBean userData;
     @Autowired
     private Eip01w030Service eip01w030Service;
+    @Autowired
+    private Eip01wFileService eip01wFileService;
 
     /**
      * 
@@ -83,7 +87,7 @@ public class Eip01w030Controller extends BaseController {
      */
     @RequestMapping("/Eip01w030_getDetail.action")
     @ResponseBody
-    public Eip01w030Case.Detail getDetail(@RequestParam("fseq") String fseq) {
+    public Eip01wPopCase getDetail(@RequestParam("fseq") String fseq) {
         log.debug("導向 Eip01w030_getDetail 公告事項 明細查詢");
         return ObjectUtility.normalizeObject(eip01w030Service.query(fseq));
     }
@@ -95,19 +99,22 @@ public class Eip01w030Controller extends BaseController {
      * @return
      */
     @RequestMapping("/Eip01w030_getFile.action")
-    public ModelAndView download(@ModelAttribute(CASE_KEY) Eip01w030Case caseData) throws FileNotFoundException {
+    public ModelAndView download(@ModelAttribute(CASE_KEY) Eip01w030Case caseData) {
         log.debug("導向 Eip01w030_getFile 公告事項 檔案下載");
         try {
             eip01w030Service.initOptions(caseData);
-            ByteArrayOutputStream baos = null;
-            baos = eip01w030Service.getFile(caseData);
+            Eip01wFileCase filecase = new Eip01wFileCase();
+            filecase.setFseq(caseData.getFseq());
+            filecase.setSeq(caseData.getSeq());
+            filecase.setSubject(caseData.getSubject());
+            ByteArrayOutputStream baos = eip01wFileService.getFile(filecase);
             if (baos != null) {
-                return new ModelAndView(new FileOutputView(baos, caseData.getFilename(), FileOutputView.GENERAL_FILE));
+                return new ModelAndView(new FileOutputView(baos, filecase.getFilename(), FileOutputView.GENERAL_FILE));
             } else {
                 setSystemMessage("查無下載檔案");
             }
         } catch (Exception e) {
-            log.error("公告事項 檔案下載 - " + ExceptionUtility.getStackTrace(e));
+            log.error("公告事項 附檔下載 - " + ExceptionUtility.getStackTrace(e));
             setSystemMessage("檔案下載失敗");
         }
         return new ModelAndView(MAIN_PAGE);

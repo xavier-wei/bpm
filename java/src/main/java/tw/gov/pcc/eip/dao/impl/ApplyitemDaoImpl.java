@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
@@ -27,8 +28,8 @@ public class ApplyitemDaoImpl extends BaseDao<Applyitem> implements ApplyitemDao
 	public Applyitem selectByKey(String applyno,String seqno,String itemkind,String itemno) {
         StringBuilder sql=new StringBuilder();
         sql.append(" SELECT  * ");
-        sql.append(" FROM " + TABLE_NAME + " T WHERE  t.APPLYNO=:applyno and t.SEQNO=:seqno and  ");
-        sql.append(" t.ITEMKIND=:itemkind and t.ITEMNO = :itemno ");
+        sql.append(" FROM " + TABLE_NAME + " T WHERE  APPLYNO=:applyno and SEQNO=:seqno and  ");
+        sql.append(" ITEMKIND=:itemkind and ITEMNO = :itemno ");
         SqlParameterSource params = new MapSqlParameterSource("applyno", applyno);
 
         List<Applyitem> list = getNamedParameterJdbcTemplate().query(sql.toString(), params,
@@ -56,20 +57,20 @@ public class ApplyitemDaoImpl extends BaseDao<Applyitem> implements ApplyitemDao
 
     @Override
     public int updateByKey(Applyitem applyitem) {
-        return getNamedParameterJdbcTemplate().update(" UPDATE " + TABLE_NAME + " t SET " +
-                " t.APPLYNO = :applyno, t.SEQNO = :seqno, t.ITEMKIND = :itemkind, t.ITEMNO = :itemno, t.APPLY_USER = :apply_user, " +
-                " t.APPLY_DATE = :apply_date, t.APPLY_DEPT = :apply_dept, t.APPLY_MEMO = :apply_memo, t.WITHHOLD_CNT_B = :withhold_cnt_b, t.WITHHOLD_CNT_A = :withhold_cnt_a, " +
-                " t.BOOK_CNT_B = :book_cnt_b, t.BOOK_CNT_A = :book_cnt_a, t.APPLY_CNT = :apply_cnt, t.UNIT = :unit, t.APPROVE_CNT = :approve_cnt, " +
-                " t.PROCESS_STATUS = :process_status, t.RECONFIRM_MK = :reconfirm_mk, t.RECONFIRM_USER = :reconfirm_user, t.RECONFIRM_DATE = :reconfirm_date, t.CRE_USER = :cre_user, " +
-                " t.CRE_DATETIME = :cre_datetime, t.UPD_USER = :upd_user, t.UPD_DATETIME = :upd_datetime" +
-                " WHERE t.",
+        return getNamedParameterJdbcTemplate().update(" UPDATE " + TABLE_NAME + "  SET " +
+                " APPLYNO = :applyno, SEQNO = :seqno, ITEMKIND = :itemkind, ITEMNO = :itemno, APPLY_USER = :apply_user, " +
+                " APPLY_DATE = :apply_date, APPLY_DEPT = :apply_dept, APPLY_MEMO = :apply_memo, WITHHOLD_CNT_B = :withhold_cnt_b, WITHHOLD_CNT_A = :withhold_cnt_a, " +
+                " BOOK_CNT_B = :book_cnt_b, BOOK_CNT_A = :book_cnt_a, APPLY_CNT = :apply_cnt, UNIT = :unit, APPROVE_CNT = :approve_cnt, " +
+                " PROCESS_STATUS = :process_status, RECONFIRM_MK = :reconfirm_mk, RECONFIRM_USER = :reconfirm_user, RECONFIRM_DATE = :reconfirm_date, CRE_USER = :cre_user, " +
+                " CRE_DATETIME = :cre_datetime, UPD_USER = :upd_user, UPD_DATETIME = :upd_datetime" +
+                " WHERE APPLYNO = :applyno and SEQNO = :seqno",
         new BeanPropertySqlParameterSource(applyitem));
     }
 
     @Override
     public int deleteByKey(Applyitem applyitem) {
         return getNamedParameterJdbcTemplate().update(" DELETE FROM " + TABLE_NAME +
-                " t WHERE ",
+                "  WHERE applyno= :applyno ",
         new BeanPropertySqlParameterSource(applyitem));
     }
 
@@ -85,10 +86,91 @@ public class ApplyitemDaoImpl extends BaseDao<Applyitem> implements ApplyitemDao
 		Map<String, String> params = new HashMap<>();
 		params.put("nowDate", DateUtility.getNowWestDate()+"%");
 
-		StringBuilder sql = new StringBuilder().append(" select applyno from Applyitem where apply_date like :nowDate  ");
+		StringBuilder sql = new StringBuilder().append(" select applyno from Applyitem where apply_date like :nowDate order by applyno desc ");
 		List<Applyitem> list = getNamedParameterJdbcTemplate().query(sql.toString(), params,
 				BeanPropertyRowMapper.newInstance(Applyitem.class));
 		return CollectionUtils.isEmpty(list) ? null : list.get(0);
 	}
+
+
+	@Override
+	public List<Applyitem> selectByApplyUserAndApply_deptAndapplyDate(String apply_user, String apply_dept,
+			String apply_date) {
+        StringBuilder sql=new StringBuilder();
+        sql.append(" SELECT  * ");
+        sql.append(" FROM " + TABLE_NAME + " WHERE    ");
+        sql.append(" apply_user = :apply_user  and seqno ='1' ");
+        
+        if(StringUtils.isNoneEmpty(apply_dept)) {
+        	sql.append(" and  apply_dept = :apply_dept ");
+        }
+        
+        if(StringUtils.isNoneEmpty(apply_date)) {
+        	sql.append(" and  apply_date = :apply_date ");
+        }
+        
+        
+        SqlParameterSource params = new MapSqlParameterSource("apply_user", apply_user)
+        		.addValue("apply_dept", apply_dept).addValue("apply_date", apply_date);
+
+        List<Applyitem> list = getNamedParameterJdbcTemplate().query(sql.toString(), params,
+                BeanPropertyRowMapper.newInstance(Applyitem.class));
+
+        return CollectionUtils.isEmpty(list) ? null : list;
+	}
+
+
+	@Override
+	public List<Applyitem> selectByApplyno(String applyno) {
+        StringBuilder sql=new StringBuilder();
+        sql.append(" SELECT  * ");
+        sql.append(" FROM " + TABLE_NAME + " WHERE    ");
+        sql.append(" applyno = :applyno ");
+        
+        SqlParameterSource params = new MapSqlParameterSource("applyno", applyno);
+
+        List<Applyitem> list = getNamedParameterJdbcTemplate().query(sql.toString(), params,
+                BeanPropertyRowMapper.newInstance(Applyitem.class));
+
+        return CollectionUtils.isEmpty(list) ? null : list;
+	}
+
+
+	@Override
+	public List<Applyitem> selectByApply_dateAndProcess_status(String apply_dateStart, String apply_dateEnd) {
+        StringBuilder sql=new StringBuilder();
+        sql.append(" SELECT  * ");
+        sql.append(" FROM " + TABLE_NAME + " WHERE    ");
+        sql.append(" apply_date >= :apply_dateStart ");
+        sql.append(" And apply_date <= :apply_dateEnd ");
+        sql.append(" And process_status=1 ");
+        sql.append(" And seqno = '1' ");
+        
+        SqlParameterSource params = new MapSqlParameterSource("apply_dateStart", DateUtility.changeDateType(apply_dateStart))
+        		.addValue("apply_dateEnd", DateUtility.changeDateType(apply_dateEnd));
+
+        List<Applyitem> list = getNamedParameterJdbcTemplate().query(sql.toString(), params,
+                BeanPropertyRowMapper.newInstance(Applyitem.class));
+
+        return CollectionUtils.isEmpty(list) ? null : list;
+	}
+	
+
+	@Override
+	public List<Applyitem> selectReconfirm_mkNData(List<String>applynos) {
+        StringBuilder sql=new StringBuilder();
+        sql.append(" Select itemkind, itemno, sum(withhold_cnt_a) withhold_cnt_a from " + TABLE_NAME  );
+        sql.append(" Where applyno in (:applynos) ");
+        sql.append(" AND reconfirm_mk='N' ");
+        sql.append(" Group by itemkind, itemno ");
+        
+        SqlParameterSource params = new MapSqlParameterSource("applynos", applynos);
+
+        List<Applyitem> list = getNamedParameterJdbcTemplate().query(sql.toString(), params,
+                BeanPropertyRowMapper.newInstance(Applyitem.class));
+
+        return CollectionUtils.isEmpty(list) ? null : list;
+	}
+
 
 }

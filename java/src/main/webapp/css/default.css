@@ -789,3 +789,8 @@ a {
 .carousel-control-prev-icon {
 	background-image: url(../images/prev.svg);
 }
+
+#pageTitle{
+	font-size: 1rem;
+	letter-spacing: normal;
+}

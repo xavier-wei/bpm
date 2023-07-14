@@ -3,6 +3,7 @@ package tw.gov.pcc.eip.dao;
 import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Repository;
 import tw.gov.pcc.common.annotation.DaoTable;
+import tw.gov.pcc.eip.common.cases.Eip03w010Case;
 import tw.gov.pcc.eip.common.cases.Eip03w030Case;
 import tw.gov.pcc.eip.domain.KeepTrkMst;
 
@@ -29,7 +30,7 @@ public interface KeepTrkMstDao {
     public int delete(KeepTrkMst keepTrkMst);
 
     /**
-     * 查詢所有重要列管事項+處理狀態筆數
+     * 查詢所有重要列管事項+處理狀態筆數(for 解除列管)
      *
      * @param trkID
      * @param trkCont
@@ -39,15 +40,43 @@ public interface KeepTrkMstDao {
      * @param prcSts  全部/待處理/待解列/已解列
      * @return
      */
-    public List<Eip03w030Case> selectByColumns(@Nullable String trkID, @Nullable String trkCont,
+    public List<Eip03w030Case> selectByColumnsForCaclControl(@Nullable String trkID, @Nullable String trkCont,
                                                @Nullable String allStDtSt, @Nullable String allStDtEnd,
                                                @Nullable String trkSts, @Nullable String prcSts);
 
     /**
-     * 均已解列，可結案
-     * @param ktm
+     * 查詢所有重要列管事項+處理狀態筆數(for 重要列管事項維護)
+     *
+     * @param trkID
+     * @param trkCont
+     * @param allStDtSt
+     * @param allStDtEnd
+     * @param trkSts  全部/未完成/結案/作廢
      * @return
      */
-    public int updateByTrkID(KeepTrkMst ktm);
+    public List<Eip03w010Case> selectByColumns(@Nullable String trkID, @Nullable String trkCont,
+                                               @Nullable String allStDtSt, @Nullable String allStDtEnd,
+                                               @Nullable String trkSts);
+
+    /**
+     * 均已解列，可結案
+     *
+     * @param ktm
+     */
+    public void closeByTrkID(KeepTrkMst ktm);
+
+    /**
+     * 更新KeepTrkMst
+     *
+     * @param ktm
+     */
+    public void updateByTrkID(KeepTrkMst ktm);
+
+    /**
+     * 刪除KeepTrkMst
+     *
+     * @param trkID
+     */
+    public int deleteByTrkID(String trkID);
 
     }

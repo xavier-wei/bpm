@@ -49,13 +49,27 @@
                 <tags:form-row>
                     <form:label cssClass="col-form-label" path="creatid">建立人員：</form:label>
                     <div class="col-12 col-md">
-                        <form:input path="creatid" cssClass="form-control num_eng_only" size="10" maxlength="10" />
+                        <form:select path="creatid" cssClass="form-control">
+                            <option value="" selected>請選擇</option>
+                            <c:forEach var="item" items="${caseData.creators}" varStatus="status">
+                                <form:option value="${item.codeno}">
+                                    <c:out value="${item.codename}" />
+                                </form:option>
+                            </c:forEach>
+                        </form:select>
                     </div>
                 </tags:form-row>
                 <tags:form-row>
                     <form:label cssClass="col-form-label" path="updid">更新人員：</form:label>
                     <div class="col-12 col-md">
-                        <form:input path="updid" cssClass="form-control num_eng_only" size="10" maxlength="10" />
+                        <form:select path="updid" cssClass="form-control">
+                            <option value="" selected>請選擇</option>
+                            <c:forEach var="item" items="${caseData.updaters}" varStatus="status">
+                                <form:option value="${item.codeno}">
+                                    <c:out value="${item.codename}" />
+                                </form:option>
+                            </c:forEach>
+                        </form:select>
                     </div>
                 </tags:form-row>
                 <tags:form-note>

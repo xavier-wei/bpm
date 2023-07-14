@@ -26,78 +26,16 @@ import java.util.Optional;
 
 /**
  * Framework 權限控管 Filter<br>
- * <br>
- * 欲使用 Framework 提供之權限控管功能, 須於 <code>web.xml</code> 定義此 Filter<br>
- * <code><pre>
- *  &lt;filter&gt;
- *      &lt;filter-name&gt;AuthorizeFilter&lt;/filter-name&gt;
- *      &lt;filter-class&gt;tw.gov.pcc.common.filter.AuthorizeFilter&lt;/filter-class&gt;
- *      &lt;init-param&gt;
- *          &lt;param-name&gt;casAutoReLoginUrl&lt;/param-name&gt;
- *          &lt;param-value&gt;/login.do&lt;/param-value&gt;
- *      &lt;/init-param&gt;
- *      &lt;init-param&gt;
- *          &lt;param-name&gt;undefineUrlControl&lt;/param-name&gt;
- *          &lt;param-value&gt;true&lt;/param-value&gt;
- *      &lt;/init-param&gt;
- *      &lt;init-param&gt;
- *          &lt;param-name&gt;loginUrl&lt;/param-name&gt;
- *          &lt;param-value&gt;login.jsp,login.do&lt;/param-value&gt;
- *      &lt;/init-param&gt;
- *      &lt;init-param&gt;
- *          &lt;param-name&gt;unauthorizedUrl&lt;/param-name&gt;
- *          &lt;param-value&gt;/unauthorized.jsp&lt;/param-value&gt;
- *      &lt;/init-param&gt;
- *      &lt;init-param&gt;
- *          &lt;param-name&gt;undefineFunctionUrl&lt;/param-name&gt;
- *          &lt;param-value&gt;/undefined.jsp&lt;/param-value&gt;
- *      &lt;/init-param&gt;
- *      &lt;init-param&gt;
- *          &lt;param-name&gt;buttonControl&lt;/param-name&gt;
- *          &lt;param-value&gt;true&lt;/param-value&gt;
- *      &lt;/init-param&gt;
- *      &lt;init-param&gt;
- *          &lt;param-name&gt;buttonHide&lt;/param-name&gt;
- *          &lt;param-value&gt;true&lt;/param-value&gt;
- *      &lt;/init-param&gt;
- *  &lt;/filter&gt;
- * <p>
- *  &lt;filter-mapping&gt;
- *      &lt;filter-name&gt;AuthorizeFilter&lt;/filter-name&gt;
- *      &lt;url-pattern&gt;*.do&lt;/url-pattern&gt;
- *  &lt;/filter-mapping&gt;
- * <p>
- *  &lt;filter-mapping&gt;
- *      &lt;filter-name&gt;AuthorizeFilter&lt;/filter-name&gt;
- *      &lt;url-pattern&gt;*.jsp&lt;/url-pattern&gt;
- *  &lt;/filter-mapping&gt;
- * <code>&lt;param-name&gt;casAutoReLoginUrl&lt;/param-name&gt;</code> 啟用 CAS Login 時, 若 CAS 沒 Timeout 但系統 Timeout 要用來處理自動重新登入之 Url, 若不指定則會導到「沒有權限之訊息頁面」<br>
- * <br>
- * <code>&lt;param-name&gt;undefineUrlControl&lt;/param-name&gt;</code> 用於設定是否管控未被定義於系統功能清單之功能:<br>
- * <code>true</code> - 執行未定義的功能時, 將被導到「沒有權限之訊息頁面」<br>
- * <code>false</code> - 執行未定義的功能時, 將不進行管控<br>
- * <br>
- * <code>&lt;param-name&gt;loginUrl&lt;/param-name&gt;</code> 用來設定系統登入/登出頁面或用來處理登入資訊的 Action URL, 若有多個請用逗號隔開<br>
- * <br>
- * <code>&lt;param-name&gt;unauthorizedUrl&lt;/param-name&gt;</code> 用來設定「沒有權限之訊息頁面」的位址<br>
- * <br>
- * <code>&lt;param-name&gt;buttonControl&lt;/param-name&gt;</code> 用來設定「是否控管 Button」, true: 控管 false: 不控管<br>
- * <br>
- * <code>&lt;param-name&gt;buttonHide&lt;/param-name&gt;</code> 用來設定「啟動 Button 控管時, 對於沒有權限的 Button 是否隱藏」, true: 隱藏 false: 沒權限的 Button 會被 disable<br>
- *
- * @author Goston
  */
 public class AuthorizeFilter implements Filter {
     private static final org.slf4j.Logger log = org.slf4j.LoggerFactory.getLogger(AuthorizeFilter.class);
-    private static final String CAS_AUTO_RE_LOGIN_URL = "casAutoReLoginUrl"; // 啟用 CAS Login 時, 若 CAS 沒 Timeout 但系統 Timeout 要用來處理自動重新登入之 Url - <init-param> 之 <param-name>
+    private static final String SSO_AUTO_RE_LOGIN_URL = "ssoAutoReLoginUrl"; // 啟用 SSO Login 時, 若 SSO 沒 Timeout 但系統 Timeout 要用來處理自動重新登入之 Url - <init-param> 之 <param-name>
     private static final String UNDEFINE_URL_CONTROL = "undefineUrlControl"; // 是否管控未被定義於系統功能清單之功能 - <init-param> 之 <param-name>
     private static final String LOGIN_URL = "loginUrl"; // 系統登入頁面或用來處理登入資訊的 Action URL - <init-param> 之 <param-name>
     private static final String UNAUTHORIZED_URL = "unauthorizedUrl"; // 「沒有權限之訊息頁面」的位址 - <init-param> 之 <param-name>
     private static final String UNDEFINE_FUNCTION_URL = "undefineFunctionUrl"; // 「未定義之功能訊息頁面」的位址 - <init-param> 之 <param-name>
     private static final String REDIRECT_URL = "redirectUrl"; // 「重新導向頁面」的位址 - <init-param> 之 <param-name>
-    private static final String BUTTON_CONTROL = "buttonControl"; // 是否控管 Button - <init-param> 之 <param-name>
-    private static final String BUTTON_HIDE = "buttonHide"; // 啟動 Button 控管時, 對於沒有權限的 Button 是否隱藏 - <init-param> 之 <param-name>
-    private String casAutoReLoginUrl = null; // 啟用 CAS Login 時, 若 CAS 沒 Timeout 但系統 Timeout 要用來處理自動重新登入之 Url
+    private String ssoAutoReLoginUrl = null; // 啟用 SSO Login 時, 若 SSO 沒 Timeout 但系統 Timeout 要用來處理自動重新登入之 Url
     private boolean undefineUrlControl = true; // 是否管控未被定義於系統功能清單之功能
     private ArrayList<String> loginUrl = new ArrayList<String>(); // 系統登入頁面或用來處理登入資訊的 Action URL
     private String unauthorizedUrl = null; // 「沒有權限之訊息頁面」的位址
@@ -150,13 +88,13 @@ public class AuthorizeFilter implements Filter {
 
                 if (userData == null && session.getAttribute(KeycloakSecurityContext.class.getName()) != null) {
                     // 如果有定義自動重新登入之位址則自動重新登入
-                    if (StringUtils.isNotBlank(casAutoReLoginUrl)) {
-                        if (StringUtils.indexOf(casAutoReLoginUrl, "http://") != 0 && StringUtils.indexOf(casAutoReLoginUrl, "https://") != 0) {
-                            String reurl = casAutoReLoginUrl;
+                    if (StringUtils.isNotBlank(ssoAutoReLoginUrl)) {
+                        if (StringUtils.indexOf(ssoAutoReLoginUrl, "http://") != 0 && StringUtils.indexOf(ssoAutoReLoginUrl, "https://") != 0) {
+                            String reurl = ssoAutoReLoginUrl;
                             redirect(req, res, reurl);
                             return;
                         } else {
-                            redirect(req, res, casAutoReLoginUrl);
+                            redirect(req, res, ssoAutoReLoginUrl);
                             return;
                         }
                     } else {
@@ -234,11 +172,11 @@ public class AuthorizeFilter implements Filter {
     }
 
     public void init(FilterConfig filterConfig) throws ServletException {
-        // 啟用 CAS Login 時, 若 CAS 沒 Timeout 但系統 Timeout 要用來處理自動重新登入之 Url
+        // 啟用 SSO Login 時, 若 SSO 沒 Timeout 但系統 Timeout 要用來處理自動重新登入之 Url
 
-        String sCasAutoReLoginUrl = filterConfig.getInitParameter(CAS_AUTO_RE_LOGIN_URL);
-        if (StringUtils.isNotBlank(sCasAutoReLoginUrl)) {
-            casAutoReLoginUrl = sCasAutoReLoginUrl;
+        String sSsoAutoReLoginUrl = filterConfig.getInitParameter(SSO_AUTO_RE_LOGIN_URL);
+        if (StringUtils.isNotBlank(sSsoAutoReLoginUrl)) {
+            ssoAutoReLoginUrl = sSsoAutoReLoginUrl;
         }
 
         // 是否管控未被定義於系統功能清單之功能

@@ -37,6 +37,10 @@ public class Eip01w020Case implements Serializable {
     private List<Option> msgtypes = new ArrayList<>(); // 分類名稱 訊息類別選單
 
     private List<Option> contactunits = new ArrayList<>(); // 聯絡單位選單
+    
+    private List<Option> creators = new ArrayList<>(); // 建立人員選單
+    
+    private List<Option> updaters = new ArrayList<>(); // 更新人員選單
 
     /** 畫面選單用 */
     @Data

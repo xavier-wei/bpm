@@ -1,3 +1,6 @@
+<%@ tag import="org.apache.commons.io.FilenameUtils" %>
+<%@ tag import="org.apache.commons.lang3.StringUtils" %>
+<%@ tag import="org.springframework.web.util.HtmlUtils" %>
 <%@ tag language="java" pageEncoding="UTF-8" description="HTML佈局標籤" %>
 <%@ attribute name="heads" fragment="true" required="false" %>
 <%@ attribute name="buttons" fragment="true" required="false" %>
@@ -8,6 +11,7 @@
 <%@ attribute name="pgcode" rtexprvalue="true" required="false" %>
 
 <%@ include file="/WEB-INF/jsp/includes/include.jsp" %>
+
 <!DOCTYPE html>
 <html>
     <head>
@@ -33,6 +37,7 @@
         <meta http-equiv="Expires" content="0"/>
         <link rel="stylesheet" href="<c:url value='/css/web-fonts-with-css/css/fontawesome-all.css' />"/>
         <link rel="stylesheet" href="<c:url value='/css/bootstrap.min.css' />"/>
+        <link rel="stylesheet" href="<c:url value='/css/bootstrap-select.min.css' />" />
         <link rel="stylesheet" href="<c:url value='/css/rowGroup.dataTables.min.css' />"/>
         <link rel="stylesheet" href="<c:url value='/css/buttons.dataTables.min.css' />"/>
         <link rel="stylesheet" href="<c:url value='/css/noty.css' />"/>
@@ -139,7 +144,7 @@
                                         <nav aria-label="breadcrumb">
                                             <ol class="breadcrumb p-1 breadcrumb2 m-0" id="menuPath">
                                                 <li class="breadcrumb-item align-middle">
-                                                    <a href="LoginForward.action">
+                                                    <a href="<c:url value='/LoginForward.action' />">
                                                         <svg aria-hidden="true" focusable="false" data-prefix="fas"
                                                              data-icon="home" role="img"
                                                              xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512"
@@ -149,6 +154,16 @@
                                                                   class=""></path>
                                                         </svg>
                                                         行政支援系統</a></li>
+
+                                                <%
+                                                    String pageName = FilenameUtils.getBaseName(StringUtils.upperCase(StringUtils.defaultString(application.getRealPath(request.getServletPath()))));
+                                                    String pageNameForMultiple = StringUtils.upperCase(StringUtils.substringBeforeLast( StringUtils.substringAfterLast((String) request.getAttribute("javax.servlet.forward.request_uri"),"/") ,"_")) + StringUtils.substring( FilenameUtils.getBaseName(StringUtils.upperCase(StringUtils.defaultString(application.getRealPath(request.getServletPath())))), -1);
+                                                    tw.gov.pcc.common.domain.FrameworkUserInfoBean frameworkUserData = tw.gov.pcc.common.helper.UserSessionHelper.getFrameworkUserData(request);
+                                                    if (StringUtils.length(pageNameForMultiple) == 10){
+                                                        pageName = pageNameForMultiple;
+                                                    }
+                                                    pageName = StringUtils.defaultIfBlank((String)jspContext.getAttribute("pgcode"), pageName);
+                                                %>
                                             </ol>
                                         </nav>
                                     </div>
@@ -220,7 +235,7 @@
                         } else {
                             return '<li class=\"breadcrumb-item align-middle p-0 \"> ' + item.text + ' <\/li>';
                         }
-                    }).reverse().slice(1).join(''));
+                    }).reverse().slice(1).join('')).find('li:last a').append('<span id="pageTitle"><%= HtmlUtils.htmlEscape(pageName) %></span>');
                     if (names.length && !$('#pageTitle').text()) {
                         $('#pageTitle').text(names[0]);
                     }

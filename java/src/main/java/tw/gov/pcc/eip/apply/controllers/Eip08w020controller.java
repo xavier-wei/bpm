@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
@@ -33,13 +34,15 @@ import tw.gov.pcc.eip.util.ObjectUtility;
  * @author Ivy
  */
 @Controller
-@SessionAttributes({ Eip08w020controller.CASE_KEY })
-public class Eip08w020controller extends BaseController {
+@SessionAttributes({ Eip08w020Controller.CASE_KEY })
+public class Eip08w020Controller extends BaseController {
 	public static final String CASE_KEY = "_Eip08w020_caseData";
-	private static final org.slf4j.Logger log = org.slf4j.LoggerFactory.getLogger(Eip08w020controller.class);
+	private static final org.slf4j.Logger log = org.slf4j.LoggerFactory.getLogger(Eip08w020Controller.class);
 	private static final String QUERY_PAGE = "/eip08w020/eip08w020q";// 選擇頁
 	private static final String ADD_APGE = "/eip08w020/eip08w020x";// 新增頁
-	
+	private static final String DATA_PAGE = "/eip08w020/eip08w220x";// 查詢頁
+	private static final String DETAIL_PAGE = "/eip08w020/eip08w230x";// 明細頁
+
 	@Autowired
 	private UserBean userData;
 	@Autowired
@@ -80,14 +83,14 @@ public class Eip08w020controller extends BaseController {
 		log.debug("導向   Eip08w020   領物單申請作業畫面-新增作業");
 		if (result.hasErrors()) {
 			return QUERY_PAGE;
-			}
+		}
 		eip08w020Service.setCaseData(caseData);
 		return ADD_APGE;
 	}
 
-	
 	/**
 	 * AJAX以品名大類取得品名
+	 * 
 	 * @param caseData
 	 * @return list
 	 */
@@ -99,23 +102,24 @@ public class Eip08w020controller extends BaseController {
 		List<Itemcode> list = eip08w020Service.getItemCodekind(caseData);
 		return ObjectUtility.normalizeObject(list);
 	}
-	
+
 	/**
 	 * AJAX以品名取得庫存數量
+	 * 
 	 * @param caseData
 	 * @return integer
 	 */
 	@RequestMapping(path = "/Eip08w020_getWithholdCnt.action", produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
 	@ResponseBody
-	public Map<String,Integer> getWithhold_cnt(@RequestBody Eip08w020Case caseData) {
+	public Map<String, Integer> getWithhold_cnt(@RequestBody Eip08w020Case caseData) {
 		log.debug("AJAX以品名取得庫存數量");
-		Itemcode data = eip08w020Service.getWithhold_cntAndBook_cnt(caseData.getItemkind(),caseData.getItemno());
-		Map<String,Integer> map = new HashMap<>();
-		map.put("book_cnt", data.getBook_cnt()==null? 0 : data.getBook_cnt());
-		map.put("withhold_cnt", data.getWithhold_cnt()==null? 0 : data.getWithhold_cnt());
+		Itemcode data = eip08w020Service.getWithhold_cntAndBook_cnt(caseData.getItemkind(), caseData.getItemno());
+		Map<String, Integer> map = new HashMap<>();
+		map.put("book_cnt", data.getBook_cnt() == null ? 0 : data.getBook_cnt());
+		map.put("withhold_cnt", data.getWithhold_cnt() == null ? 0 : data.getWithhold_cnt());
 		return map;
 	}
-	
+
 	/**
 	 * 領物單申請作業畫面 - 新增作業
 	 *
@@ -124,24 +128,110 @@ public class Eip08w020controller extends BaseController {
 	 * @return
 	 */
 	@RequestMapping("/Eip08w020_insert.action")
-	public String insertData(@Validated(Eip08w020Case.Insert.class) @ModelAttribute(CASE_KEY) Eip08w020Case caseData, BindingResult result) {
+	public String insertData(@Validated(Eip08w020Case.Insert.class) @ModelAttribute(CASE_KEY) Eip08w020Case caseData,
+			BindingResult result) {
 		log.debug("導向   Eip08w020 ");
-		if(result.hasErrors()) {
+		eip08w020Service.validateCnt(caseData, result);
+		if (result.hasErrors()) {
 			return ADD_APGE;
 		}
-		
+
 		try {
 			eip08w020Service.insertApplyItem(caseData);
 			setSystemMessage("申請成功");
-		} catch(Exception e) {
-			log.error("Eip08w020Controller新增Applyitem失敗"+ ExceptionUtility.getStackTrace(e));
+		} catch (Exception e) {
+			log.error("Eip08w020Controller新增Applyitem失敗" + ExceptionUtility.getStackTrace(e));
 			setSystemMessage("申請失敗");
 			return ADD_APGE;
 		}
-		
+
 		return QUERY_PAGE;
 	}
-	
-	
-	
+
+	/**
+	 * 領物單申請作業畫面 - 查詢更正作業
+	 *
+	 * @param caseData
+	 * @param result
+	 * @return
+	 */
+	@RequestMapping("/Eip08w020_query.action")
+	public String queryAndCorrect(@Validated @ModelAttribute(CASE_KEY) Eip08w020Case caseData, BindingResult result) {
+		log.debug("導向   Eip08w020   領物單申請作業畫面-查詢更正作業");
+		if (result.hasErrors()) {
+			return QUERY_PAGE;
+		}
+
+		try {
+			
+			eip08w020Service.getApplyItem(caseData);
+			if (CollectionUtils.isEmpty(caseData.getApplyitemList())) {
+				setSystemMessage("查無資料");
+				return QUERY_PAGE;
+			} else if (caseData.getApplyitemList().size() == 1) {
+				caseData.setApplyno(caseData.getApplyitemList().get(0).getApplyno());
+				eip08w020Service.getApplyItemByApplyno(caseData);
+
+				return DETAIL_PAGE;
+			}
+			
+		} catch (Exception e) {
+			log.error("Eip08w020Controller查詢Applyitem失敗" + ExceptionUtility.getStackTrace(e));
+			setSystemMessage("查詢失敗");
+			return QUERY_PAGE;
+		}
+
+		return DATA_PAGE;
+
+	}
+
+	/**
+	 * 領物單申請作業畫面 - 明細畫面
+	 *
+	 * @param caseData
+	 * @param result
+	 * @return
+	 */
+	@RequestMapping("/Eip08w020_detail.action")
+	public String detail(@Validated @ModelAttribute(CASE_KEY) Eip08w020Case caseData, BindingResult result) {
+		log.debug("導向   Eip08w020   領物單申請作業畫面-查詢更正作業");
+		if (result.hasErrors()) {
+			return DATA_PAGE;
+		}
+
+		try {
+			eip08w020Service.getApplyItemByApplyno(caseData);
+		} catch (Exception e) {
+			log.error("Eip08w020Controller查詢Applyitem失敗" + ExceptionUtility.getStackTrace(e));
+			setSystemMessage("查詢失敗");
+			return DATA_PAGE;
+		}
+
+		return DETAIL_PAGE;
+	}
+
+	/**
+	 * 刪除申請單
+	 *
+	 * @param caseData
+	 * @param result
+	 * @return
+	 */
+	@RequestMapping("/Eip08w020_delete.action")
+	public String delete(@Validated @ModelAttribute(CASE_KEY) Eip08w020Case caseData, BindingResult result) {
+		log.debug("導向   Eip08w020   領物單申請作業畫面-刪除功能");
+		if (result.hasErrors()) {
+			return DATA_PAGE;
+		}
+		try {
+			eip08w020Service.deleteByApplyno(caseData);
+		} catch (Exception e) {
+			log.error("Eip08w020Controller刪除Applyitem失敗" + ExceptionUtility.getStackTrace(e));
+			setSystemMessage("刪除失敗");
+		}
+		
+		setSystemMessage("刪除成功");
+		return DETAIL_PAGE;
+	}
+
 }

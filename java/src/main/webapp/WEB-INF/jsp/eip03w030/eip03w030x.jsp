@@ -97,7 +97,7 @@
                         <c:forEach items="${mixData.kdList}" var="item" varStatus="status">
                             <tr class="text-left">
                                 <td class="text-center"><c:out value='${status.count}'/></td>
-                                <td class="text-center"><a class="clickDept" href="#" data-obj="${item.trkObj}" data-prc="${item.prcSts}"><c:out value="${item.trkObj }" /></a></td>
+                                <td class="text-center"><a class="clickDept" href="#" data-obj="${item.trkObj.split('-')[0]}" data-prc="${item.prcSts}"><c:out value="${item.trkObj.split('-')[1]}" /></a></td>
                                 <td class="text-center"><c:out value='${item.prcSts}'/></td>
                                 <td class="text-center"><func:minguo value="${item.stDt}"/></td>
                                 <td class="text-center"><func:minguo value="${item.endDt}"/></td>

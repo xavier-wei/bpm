@@ -72,6 +72,8 @@
                 <form:hidden path="mode" />
                 <form:hidden path="fseq" />
                 <form:hidden path="keep" />
+                <form:hidden path="seq" />
+                <form:hidden path="pageNum" />
             </tags:fieldset>
             <c:if test="${(caseData.mode == 'Q' || caseData.mode == 'D' ) && not empty caseData.queryList }">
                 <tags:fieldset legend="查詢結果">
@@ -143,7 +145,7 @@
             <div class="modal-dialog modal-lg" role="document">
                 <div class="modal-content">
                     <div class="modal-header">
-                        <h5 class="modal-title">公告事項</h5>
+                        <h5 class="modal-title"></h5>
                         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                             <span aria-hidden="true">&times;</span>
                         </button>
@@ -162,6 +164,8 @@
     <jsp:attribute name="footers">
         <script type="text/javascript">
             $(function() {
+                let config = getDataTablesConfig();
+                var table = $("#querylistTable").DataTable(config);
                 // 新增
                 $('#btnInsert').click(function() {
                     $('#mode').val('I');
@@ -188,7 +192,42 @@
                 });
                 // 預覽
                 $('#querylistTable #btnPreview').click(function() {
-                    //                     $('#popModal').modal('show');
+                    $('#fseq').val($(this).parent('td').data('fseq'));
+                    $.ajax({
+                        type: "POST",
+                        url: '<c:url value="/Eip01w010_getDetail.action" />',
+                        data: {
+                            'fseq': $(this).parent('td').data('fseq')
+                        },
+                        timeout: 100000,
+                        success: function(data) {
+                            if (data == '') {
+                                showAlert('查無資料!');
+                            } else {
+                                var str = '';
+                                $.each(data.file, function(i, e) {
+                                    str +=
+                                        '<a href="javascript:;" class="alink" id=' +
+                                        i + '>' +
+                                        e + '</a>' + '　';
+                                    //str += '<button type="button" class="btn btn-outline-info mr-3 mb-2" id='+i+'>'+e+'</button>';
+                                });
+                                $('.modal-title').html(data.attributype);
+                                $('.modal-body').html(
+                                    '主　　題：' + data.subject +
+                                    '<br>訊息文字：' + data.mcontent +
+                                    '<br>發布單位：' + data.contactunit +
+                                    '<br>附加檔案：' + str +
+                                    '<br>更新日期：' + data.upddt +
+                                    '<br>聯絡人　：' + data.contactperson +
+                                    '<br>聯絡電話：' + data.contacttel);
+                                $('#popModal').modal('show');
+                            }
+                        },
+                        error: function(e) {
+                            showAlert("取得資料發生錯誤");
+                        }
+                    });
                 });
                 // 上稿
                 $('#btnUpload').click(function() {
@@ -197,9 +236,8 @@
                 });
                 // 刪除
                 $('#btnDelete').click(function() {
-                    var aa = $('input:checkbox').length > 1;
-                    var bb = $('input:checkbox:checked').length > 0;
-                    if (aa && bb) {
+                    if ($('input:checkbox').length > 1 && $('input:checkbox:checked').length >
+                        0) { // 有顯示checkbox且至少勾選一個
                         showConfirm('確定要刪除資料？', () => {
                             $('#eip01w010Form').attr('action',
                                     '<c:url value="/Eip01w010_btndel.action" />')
@@ -213,6 +251,9 @@
                 // 返回
                 $('#btnBack').click(function() {
                     $('#mode').val('');
+                    $('#fseq').val('');
+                    $('#seq').val('');
+                    $('#pageNum').val('');
                     $('#eip01w010Form').attr('action', '<c:url value="/Eip01w010_enter.action" />')
                         .submit();
                 });
@@ -225,6 +266,18 @@
                 $checks.change(function(e) {
                     $checkAll.prop("checked", !$checks.is(':not(:checked)'));
                 });
+                // 檔案下載_回到當前頁碼
+                var pageNum = '<c:out value="${caseData.pageNum}" />';
+                if (pageNum != '') {
+                    $('.paginate_input').val(pageNum).trigger('keyup');
+                }
+            });
+            // 檔案下載連結
+            $(document).on('click', '.alink', function(e) {
+                $('#pageNum').val($('.paginate_input').val()); // 紀錄當前頁碼
+                $('#seq').val($(this).attr('id'));
+                $('#eip01w010Form').attr('action', '<c:url value="/Eip01w010_getFile.action" />')
+                    .submit();
             });
         </script>
     </jsp:attribute>

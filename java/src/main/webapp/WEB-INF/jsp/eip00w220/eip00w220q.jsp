@@ -2,7 +2,7 @@
 <%@ include file="/WEB-INF/jsp/includes/include.jsp" %>
 <spring:eval var="caseKey" expression="T(tw.gov.pcc.eip.adm.controllers.Eip00w220Controller).CASE_KEY"/>
 <c:set var="caseData" value="${requestScope[caseKey]}"/>
-<tags:layout pgcode="WEBMAP">
+<tags:layout pgcode="SITEMAP">
     <jsp:attribute name="heads">
         <style>
             .card-header {

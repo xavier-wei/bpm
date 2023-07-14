@@ -65,6 +65,9 @@ public interface UserInfo extends Serializable {
     String getEmail();
 
     void setEmail(String email);
-
-
+    
+    String getOrgId();
+    
+    void setOrgId(String orgId);
+    
 }

@@ -10,6 +10,7 @@ import tw.gov.pcc.common.annotation.SkipLog;
 import tw.gov.pcc.common.dao.PortalDao;
 import tw.gov.pcc.common.domain.KeycloakUser;
 import tw.gov.pcc.common.framework.dao.FrameworkBaseDao;
+import tw.gov.pcc.eip.dao.User_rolesDao;
 
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -32,7 +33,7 @@ public class PortalDaoImpl extends FrameworkBaseDao implements PortalDao {
             "    FROM user_roles u" +
             "    INNER JOIN role_acl r ON u.sys_id = r.sys_id AND u.role_id = r.role_id" +
             "    WHERE u.user_id = :userId AND u.sys_id = :systemId AND " +
-            "            u.dept_id <> 'ADMIN' " +
+            "            u.dept_id <> '"+ User_rolesDao.SYSTEM_ADMIN_DEPT_ID +"' " +
             "    " +
             ")" +
             ", CTE_items_hierarchy AS (" +
@@ -50,6 +51,10 @@ public class PortalDaoImpl extends FrameworkBaseDao implements PortalDao {
             "    FROM CTE_items i" +
             "    INNER JOIN CTE_items_hierarchy h ON i.item_id_p = h.item_id" +
             "    WHERE i.item_id IN (SELECT item_id FROM CTE_user_roles)" +
+            "    OR EXISTS(select 1 from USER_ROLES ur where ur.USER_ID = :userId" +
+            "    AND ur.SYS_ID = :systemId" +
+            "    AND ur.DEPT_ID = '"+User_rolesDao.SYSTEM_ADMIN_DEPT_ID+"'" +
+            "    AND ur.ROLE_ID = '"+User_rolesDao.SYSTEM_ADMIN_ROLE_ID+"') "+
             ")" +
             "SELECT FUNC_ID as \"itemId\" "
             + "FROM   CTE_items_hierarchy "
@@ -68,7 +73,7 @@ public class PortalDaoImpl extends FrameworkBaseDao implements PortalDao {
             "    FROM user_roles u" +
             "    INNER JOIN role_acl r ON u.sys_id = r.sys_id AND u.role_id = r.role_id" +
             "    WHERE u.user_id = :userId AND u.sys_id = :systemId AND " +
-            "            u.dept_id <> 'ADMIN' " +
+            "            u.dept_id <> '"+User_rolesDao.SYSTEM_ADMIN_DEPT_ID+"' " +
             ")" +
             ", CTE_items_hierarchy AS (" +
             "    SELECT i.item_id, i.item_id_p, i.item_name, i.url, i.is_disabled, i.sort_order," +
@@ -85,6 +90,10 @@ public class PortalDaoImpl extends FrameworkBaseDao implements PortalDao {
             "    FROM CTE_items i" +
             "    INNER JOIN CTE_items_hierarchy h ON i.item_id_p = h.item_id" +
             "    WHERE i.item_id IN (SELECT item_id FROM CTE_user_roles)" +
+            "    OR EXISTS(select 1 from USER_ROLES ur where ur.USER_ID = :userId" +
+            "    AND ur.SYS_ID = :systemId" +
+            "    AND ur.DEPT_ID = '"+User_rolesDao.SYSTEM_ADMIN_DEPT_ID+"'" +
+            "    AND ur.ROLE_ID = '"+User_rolesDao.SYSTEM_ADMIN_ROLE_ID+"') "+
             ")" +
             "SELECT ITEM_ID as \"itemId\", "
             + "       ITEM_ID_P as \"itemIdP\", "
@@ -106,12 +115,13 @@ public class PortalDaoImpl extends FrameworkBaseDao implements PortalDao {
             + "       A.TEL1 as \"tel1\", "
             + "       A.TEL2 as \"tel2\", "
             + "       A.TITLE_ID as \"titleId\", "
-            + "       A.LINE_TOKEN as \"lineToken\" "
+            + "       A.LINE_TOKEN as \"lineToken\", "
+            + "       A.ORG_ID as \"orgId\" "
             + "FROM   USERS A "
             + "WHERE  A.USER_ID = :userId";
 
     /**
-     * CAS 登入時, 取得使用者所能執行的系統項目代碼
+     * 登入時, 取得使用者所能執行的系統項目代碼
      *
      * @param systemId 應用系統代號
      * @param userId   使用者代碼
@@ -120,11 +130,6 @@ public class PortalDaoImpl extends FrameworkBaseDao implements PortalDao {
     @SkipLog
     @Override
     public List<String> selectCasUserItemList(String systemId, String userId, String deptId) {
-
-        if (StringUtils.equals(systemId, "PO")) {
-            deptId = "ADMIN";
-        }
-
         SqlParameterSource namedParameters = new MapSqlParameterSource("systemId", systemId)
                 .addValue("userId", userId)
                 .addValue("deptId", deptId);
@@ -132,7 +137,7 @@ public class PortalDaoImpl extends FrameworkBaseDao implements PortalDao {
     }
 
     /**
-     * CAS 登入時, 取得使用者功能選單
+     * 登入時, 取得使用者功能選單
      *
      * @param systemId 應用系統代號
      * @param userId   使用者代碼
@@ -193,7 +198,7 @@ public class PortalDaoImpl extends FrameworkBaseDao implements PortalDao {
     }
 
     /**
-     * CAS 登入時, 取得使用者資料
+     * 登入時, 取得使用者資料
      *
      * @param userId 使用者代碼
      * @return <code>CasUser</code> 物件

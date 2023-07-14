@@ -1,15 +1,15 @@
 <%@ page language="java" pageEncoding="UTF-8" %>
 <%@ include file="/WEB-INF/jsp/includes/include.jsp" %>
 <!doctype html>
-<spring:eval var="caseKey" expression="T(tw.gov.pcc.eip.apply.controllers.Eip08w020controller).CASE_KEY" />
+<spring:eval var="caseKey" expression="T(tw.gov.pcc.eip.apply.controllers.Eip08w020Controller).CASE_KEY" />
 <c:set var="caseData" value="${sessionScope[caseKey]}" />
 <tags:layout>
 <jsp:attribute name="buttons">
     <tags:button id="btnConfirm">
-    	確認<i class="fas fa-user-plus"></i>
+    	確認<i class="fas fa-user-check"></i>
     </tags:button>          
     <tags:button id="btnClear">
-    	清除<i class="fas fa-trash-alt"></i>
+    	清除<i class="fas fa-eraser"></i>
     </tags:button>
 </jsp:attribute>
 
@@ -58,6 +58,8 @@
             $('#btnConfirm').click(function() {
             	if($("input[name='SelectType']")[0].checked){            		
            			$('#eip08w020Form').attr('action', '<c:url value="/Eip08w020_add.action" />').submit();
+            	}else{
+            		$('#eip08w020Form').attr('action', '<c:url value="/Eip08w020_query.action" />').submit();
             	}
             });
             

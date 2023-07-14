@@ -31,7 +31,6 @@ public class Msgdeposit implements Serializable {
     @LogField("SEQ")
     private String seq; // 自1開紿編號
     /** 檔案種類 */
-    @PkeyField("FILETYPE")
     @LogField("FILETYPE")
     private String filetype; // 1:附檔 2:內文圖檔
     /** 附加檔案名稱 */

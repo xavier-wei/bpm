@@ -14,7 +14,6 @@ import tw.gov.pcc.common.framework.dao.BaseDao;
 import tw.gov.pcc.eip.dao.ItemcodeDao;
 import tw.gov.pcc.eip.dao.ItemsDao;
 import tw.gov.pcc.eip.domain.Itemcode;
-import tw.gov.pcc.eip.domain.Users;
 
 /**
  * 選單項目資料 DaoImpl
@@ -26,8 +25,8 @@ public class ItemcodeDaoImpl extends BaseDao<Itemcode> implements ItemcodeDao {
     private static final String ALL_COLUMNS_SQL;
 
     static {
-        ALL_COLUMNS_SQL = " t.ITEMKIND, t.ITEMNO, t.ITEMNAME, t.PURCHASE_CNT, t.RETURN_CNT, t.FINAL_CNT, t.WITHHOLD_CNT, "
-        		          + " t.BOOK_CNT, t.CRE_USER, t.CRE_DATETIME, t.UPD_USER, t.UPD_DATETIME ";
+        ALL_COLUMNS_SQL = " ITEMKIND, ITEMNO, ITEMNAME, PURCHASE_CNT, RETURN_CNT, FINAL_CNT, WITHHOLD_CNT, "
+        		          + " BOOK_CNT, CRE_USER, CRE_DATETIME, UPD_USER, UPD_DATETIME ";
     }
 
     /**
@@ -40,7 +39,7 @@ public class ItemcodeDaoImpl extends BaseDao<Itemcode> implements ItemcodeDao {
     public Itemcode selectDataByPrimaryKey(Itemcode itemcode) {
         String sql = "SELECT " +
                 ALL_COLUMNS_SQL +
-                " FROM " + TABLE_NAME + " t WHERE t.ITEMKIND = :itemkind AND t.ITEMNO = :itemno ";
+                " FROM " + TABLE_NAME + " t WHERE ITEMKIND = :itemkind AND ITEMNO = :itemno ";
         List<Itemcode> list = getNamedParameterJdbcTemplate().query(sql, new BeanPropertySqlParameterSource(itemcode), BeanPropertyRowMapper.newInstance(Itemcode.class));
         return CollectionUtils.isEmpty(list) ? null : list.get(0);
     }
@@ -55,7 +54,7 @@ public class ItemcodeDaoImpl extends BaseDao<Itemcode> implements ItemcodeDao {
 	public List<Itemcode>selectAllData(Itemcode itemcode){
         String sql = "SELECT " +
                 ALL_COLUMNS_SQL +
-                " FROM " + TABLE_NAME + " t WHERE t.ITEMKIND = :ITEMKIND ";
+                " FROM " + TABLE_NAME + " t WHERE ITEMKIND = :ITEMKIND ";
         SqlParameterSource params = new MapSqlParameterSource("ITEMKIND", itemcode.getItemkind());
         List<Itemcode> list = getNamedParameterJdbcTemplate().query(sql, params,BeanPropertyRowMapper.newInstance(Itemcode.class));
         return list;
@@ -76,7 +75,7 @@ public class ItemcodeDaoImpl extends BaseDao<Itemcode> implements ItemcodeDao {
     public List<Itemcode> selectDataListByKey(Itemcode itemcode) {
         String sql = "SELECT " +
                 ALL_COLUMNS_SQL +
-                " FROM " + TABLE_NAME + " t WHERE t.ITEMKIND = :itemkind AND t.ITEMNO = ISNULL(:itemno, t.ITEMNO) ";
+                " FROM " + TABLE_NAME + " t WHERE ITEMKIND = :itemkind AND ITEMNO = ISNULL(:itemno, ITEMNO) ";
         return getNamedParameterJdbcTemplate().query(sql, new BeanPropertySqlParameterSource(itemcode), BeanPropertyRowMapper.newInstance(Itemcode.class));
 
     }
@@ -121,10 +120,21 @@ public class ItemcodeDaoImpl extends BaseDao<Itemcode> implements ItemcodeDao {
      */
     @Override
     public int updateByKey(Itemcode itemcode) {
-        return getNamedParameterJdbcTemplate().update(" UPDATE " + TABLE_NAME + " t SET " +
+        return getNamedParameterJdbcTemplate().update(" UPDATE " + TABLE_NAME + "  SET " +
                 " ITEMNAME = :itemname, PURCHASE_CNT = :purchase_cnt, RETURN_CNT = :return_cnt, FINAL_CNT = :final_cnt, WITHHOLD_CNT = :withhold_cnt, " +
                 " BOOK_CNT = :book_cnt, CRE_USER = :cre_user, CRE_DATETIME = :cre_datetime, UPD_USER = :upd_user, UPD_DATETIME = :upd_datetime" +
                 " WHERE ITEMKIND = :itemkind AND ITEMNO = :itemno ",
                 new BeanPropertySqlParameterSource(itemcode));
     }
+
+	@Override
+	public Itemcode getItemname(String itemno) {
+        String sql = " SELECT itemname ,"+
+  		  " (select itemname from itemcode where itemkind = 'MAIN' and itemno = a.itemkind ) as itemkind "+
+  		  " FROM ITEMCODE a "+
+  		  " where itemno=:itemno ";
+		  SqlParameterSource params = new MapSqlParameterSource("itemno", itemno); 
+		  List<Itemcode> list = getNamedParameterJdbcTemplate().query(sql, params,BeanPropertyRowMapper.newInstance(Itemcode.class));
+		  return CollectionUtils.isEmpty(list)? null : list.get(0);
+	}
 }

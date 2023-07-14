@@ -15,6 +15,7 @@ import tw.gov.pcc.eip.dao.MsgdataDao;
 import tw.gov.pcc.eip.dao.MsgdepositDao;
 import tw.gov.pcc.eip.domain.Msgdeposit;
 import tw.gov.pcc.eip.msg.cases.Eip01w050Case;
+import tw.gov.pcc.eip.msg.cases.Eip01wPopCase;
 import tw.gov.pcc.eip.util.ExceptionUtility;
 
 /**
@@ -48,8 +49,8 @@ public class Eip01w050Service {
      * @param fseq
      * @return
      */
-    public Eip01w050Case.Detail query(String fseq) {
-        Eip01w050Case.Detail detail = msgdataDao.getEip01w050Detail(fseq);
+    public Eip01wPopCase query(String fseq) {
+        Eip01wPopCase detail = msgdataDao.getEip01w050Detail(fseq);
         if (detail != null) {
             detail.setFile(msgdepositDao.findbyfseq(Arrays.asList(fseq)).stream()
                     .collect(Collectors.toMap(Msgdeposit::getSeq, Msgdeposit::getAttachfile)));

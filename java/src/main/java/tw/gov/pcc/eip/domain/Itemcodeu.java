@@ -1,7 +1,6 @@
 package tw.gov.pcc.eip.domain;
 
 import java.io.Serializable;
-import java.math.BigDecimal;
 
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -73,31 +72,31 @@ public class Itemcodeu implements Serializable {
      * PURCHASE_CNT
      */
     @LogField
-    private BigDecimal purchase_cnt;
+    private Integer purchase_cnt;
         
     /**
      * RETURN_CNT
      */
     @LogField
-    private BigDecimal return_cnt;
+    private Integer return_cnt;
         
     /**
      * FINAL_CNT
      */
     @LogField
-    private BigDecimal final_cnt;
+    private Integer final_cnt;
         
     /**
      * WITHHOLD_CNT
      */
     @LogField
-    private BigDecimal withhold_cnt;
+    private Integer withhold_cnt;
         
     /**
      * BOOK_CNT
      */
     @LogField
-    private BigDecimal book_cnt;
+    private Integer book_cnt;
         
     /**
      * CRE_USER

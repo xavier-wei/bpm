@@ -16,7 +16,6 @@ import java.util.Map;
 public class Eip06w050Case implements Serializable {
     private static final long serialVersionUID = 1L;
     private List<String> meetingCodeList;//畫面所選表單編號列表
-//    private Long meetingCode;
 
     @RequiredString(label = "類別")
     private String  itemTyp; //物件類別  A：餐點  B：物品  D：預約天數  F：會議室  FX：會議室(禁用)
@@ -30,7 +29,6 @@ public class Eip06w050Case implements Serializable {
 
     public String mode;//A、新增 U修改 Q查詢畫面
 
-//    public String itemIdIsUse;//是否被使用
 
     @Data
     public static class MeetingCodeCase {

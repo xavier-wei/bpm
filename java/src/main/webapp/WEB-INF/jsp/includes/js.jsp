@@ -2,7 +2,9 @@
 <script src='<c:url value="/js/noty.min.js"/>'></script>
 <script src='<c:url value="/js/datatables.min.js"/>?a=<%=tw.gov.pcc.eip.util.DateUtility.getNowChineseDateTime(true)%>'></script>
 
+<script src='<c:url value="/js/popper.min.js"/>'></script>
 <script src='<c:url value="/js/bootstrap.min.js"/>'></script>
+<script src='<c:url value="/js/bootstrap-select.min.js"/>'></script>
 
 <script src='<c:url value="/js/stomp.min.js"/>'></script>
 <script src='<c:url value="/js/function.js"/>?a=<%=tw.gov.pcc.eip.util.DateUtility.getNowChineseDateTime(true)%>'></script>

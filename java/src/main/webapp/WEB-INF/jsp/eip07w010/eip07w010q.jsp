@@ -39,14 +39,14 @@
 			<tags:form-row>
 				<label class="col-form-label text-left ">駕駛人姓名:</label>
 				<div class="col-sm-2">
-					<form:input id="name" name="name" path="name" cssClass="form-control"   size="12"
+					<form:input id="name" name="name" path="eip07w010QueryDataList[0].name" cssClass="form-control"   size="12"
 								maxlength="12" />
 				</div>
 			</tags:form-row>
 			<tags:form-row>
 				<label class="col-form-label text-left star">在職註記:</label>
                 <div>
-                    <form:select id="stillWork" path="stillWork" cssClass="form-control">
+                    <form:select id="stillWork" path="eip07w010QueryDataList[0].stillWork" cssClass="form-control">
                     	<form:option value="Y">是</form:option>
                     	<form:option value="N">否</form:option>
 						<form:option value="A">全部</form:option>
@@ -61,9 +61,9 @@
 				<div class="col-4">
 					<table>
 						<tr>
-							<td><form:input id="carno1" name="carno1"  path="carno1" cssClass="form-control" size="9" maxlength="8"/></td>
+							<td><form:input id="carno1" name="carno1"  path="eip07w010QueryDataList[0].carno1" cssClass="form-control" size="9" maxlength="8"/></td>
 							<td>-</td>
-							<td><form:input id="carno2" name="carno2"  path="carno2" cssClass="form-control" size="7" maxlength="6"/></td>
+							<td><form:input id="carno2" name="carno2"  path="eip07w010QueryDataList[0].carno2" cssClass="form-control" size="7" maxlength="6"/></td>
 							</tr>
 					</table>
 				</div>
@@ -82,7 +82,12 @@
             var table = $('#listTable').DataTable(config);
 
             $('#btnSelect').click(function() {
-           		$('#eip07w010Form').attr('action', '<c:url value="/Eip07w010_query.action" />').submit();
+				var processTy =$("input[id=processTy]:checked").val();
+				if (processTy == 'D'){
+					$('#eip07w010Form').attr('action', '<c:url value="/Eip07w010_query.action" />').submit();
+				}else {
+					$('#eip07w010Form').attr('action', '<c:url value="/Eip07w010_queryCar.action" />').submit();
+				}
             });
 
 			$('#btnClearn').click(function() {

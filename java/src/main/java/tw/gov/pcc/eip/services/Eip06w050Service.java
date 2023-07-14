@@ -125,13 +125,13 @@ public class Eip06w050Service extends OnlineRegService {
     }
 
     /**
-     * 物件類別下拉式選單內容
+     * 物件類別下拉式選單內容(全部)
      *
      * @param caseData;
      * @return
      */
 
-    public Map<String, String> initializeOption(Eip06w050Case caseData) {
+    public Map<String, String> initializeOptionAll(Eip06w050Case caseData) {
         Map<String, String> itemTyp = new HashMap<>();
         itemTyp.put("A","會議餐點");
         itemTyp.put("D","預約天數");
@@ -140,6 +140,19 @@ public class Eip06w050Service extends OnlineRegService {
         itemTyp.put("FX","會議室");
         caseData.setItemTypMap(itemTyp);
         return itemTyp;
+    }
+
+    /**
+     * 物件類別下拉式選單內容(會議室包含F、FX)
+     *
+     * @param caseData;
+     * @return
+     */
+
+    public Map<String, String> initializeOption(Eip06w050Case caseData) {
+        Map<String, String> map =  initializeOptionAll(caseData);
+        map.entrySet().removeIf(entry -> entry.getKey().equals("FX"));
+        return map;
     }
 
     /**
@@ -162,7 +175,7 @@ public class Eip06w050Service extends OnlineRegService {
     public String deleteClass(Eip06w050Case caseData) {
         int itemId=meetingCodeDao.findItemIdByMeetingItem(caseData.getItemId());
         if (itemId == 1) {
-            log.debug("參數使用中，刪除失敗");
+            log.debug("參數使用中，無法刪除");
             return "N";
         }else{
             meetingCodeDao.deleteData(caseData.getItemId());

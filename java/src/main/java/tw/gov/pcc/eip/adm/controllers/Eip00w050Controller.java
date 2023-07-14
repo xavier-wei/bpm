@@ -8,9 +8,12 @@ import org.springframework.ui.ModelMap;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.ObjectError;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
 import tw.gov.pcc.eip.adm.cases.Eip00w050Case;
-import tw.gov.pcc.eip.adm.service.ItemService;
+import tw.gov.pcc.eip.services.ItemService;
 import tw.gov.pcc.eip.adm.view.dynatree.DynaTreeBuilder;
 import tw.gov.pcc.eip.adm.view.dynatree.parser.ItemParser;
 import tw.gov.pcc.eip.dao.ItemsDao;
@@ -99,7 +102,7 @@ public class Eip00w050Controller extends BaseController {
     @ResponseBody
     public Map<String, String> info(@RequestBody Eip00w050Case caseData) throws IOException {
         Items item = itemsDao.selectByKey(caseData.getItem_id());
-        return Map.of(
+        return ObjectUtility.normalizeObject(Map.of(
                 "item_id", StringUtils.defaultString(item.getItem_id()),
                 "item_name", StringUtils.defaultString(item.getItem_name()),
                 "hyperlink", StringUtils.defaultString(item.getHyperlink()),
@@ -107,7 +110,7 @@ public class Eip00w050Controller extends BaseController {
                 "sort", StringUtils.defaultString(item.getSort_order()
                         .toString()),
                 "disable", StringUtils.defaultString(item.getDisable())
-        );
+        ));
     }
 
 
@@ -173,10 +176,11 @@ public class Eip00w050Controller extends BaseController {
                          ModelMap m, @ModelAttribute(CASE_KEY) Eip00w050Case caseData, BindingResult bindingResult) {
         try {
             List<Items> items = itemsDao.findItemAndChild(item_id);
-            if(items.stream().anyMatch(x->StringUtils.equals(x.getItem_id_p(),"root"))){
+            if (items.stream()
+                    .anyMatch(x -> StringUtils.equals(x.getItem_id_p(), "root"))) {
                 bindingResult.addError(new ObjectError("item_id", "最高層功能無法刪除"));
             }
-            if(bindingResult.hasErrors()){
+            if (bindingResult.hasErrors()) {
                 return list(caseData, m);
             }
             this.itemService.deleteItemsAndRoleAcls(items);

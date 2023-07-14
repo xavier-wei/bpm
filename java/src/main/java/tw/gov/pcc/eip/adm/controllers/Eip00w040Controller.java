@@ -1,7 +1,6 @@
 package tw.gov.pcc.eip.adm.controllers;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
@@ -12,9 +11,8 @@ import org.springframework.web.servlet.ModelAndView;
 
 import tw.gov.pcc.eip.MessageKey;
 import tw.gov.pcc.eip.adm.cases.Eip00w040Case;
-import tw.gov.pcc.eip.adm.service.Eip00w040Service;
+import tw.gov.pcc.eip.services.Eip00w040Service;
 import tw.gov.pcc.eip.domain.Depts;
-import tw.gov.pcc.eip.domain.Items;
 import tw.gov.pcc.eip.framework.spring.controllers.BaseController;
 import tw.gov.pcc.eip.util.ExceptionUtility;
 import tw.gov.pcc.eip.util.ObjectUtility;

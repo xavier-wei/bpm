@@ -80,7 +80,7 @@
                 </c:if>
                 <form:hidden path="fseq" />
                 <form:hidden path="seq" />
-                <form:hidden path="filename" />
+                <form:hidden path="subject" />
             </form:form>
         </tags:fieldset>
 
@@ -88,7 +88,7 @@
             <div class="modal-dialog modal-lg" role="document">
                 <div class="modal-content">
                     <div class="modal-header">
-                        <h5 class="modal-title">公告事項</h5>
+                        <h5 class="modal-title"></h5>
                         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                             <span aria-hidden="true">&times;</span>
                         </button>
@@ -127,17 +127,37 @@
                                 showAlert('查無資料!');
                             } else {
                                 var str = '';
-                                $.each(data.file, function(i, e) {
+                                var count = Object.keys(data.file).length;
+                                if (count == 1) {
+                                    var key = Object.keys(data.file);
                                     str +=
-                                        '<a href="javascript:;" class="alink" id=' +
-                                        i + '>' +
-                                        e + '</a>' + '　';
-                                });
-                                $('.modal-body').html('公告事項：' + data.msgtype +
-                                    '<br>發佈單位：' + data.contactunit +
-                                    '<br>主　　題：' + data.subject +
-                                    '<br>　　　　　' + data.mcontent +
-                                    '<br>附加檔案：' + str +
+                                        '附加檔案：<a href="javascript:;" class="alink" id=' +
+                                        key + '>' +
+                                        data.file[key] + '</a>';
+                                } else {
+                                    str +=
+                                        '<div style="display: flex;">' +
+                                        '<div style="flex: none;">附加檔案：</div><div>';
+                                    $.each(data.file, function(key, value) {
+                                        str +=
+                                            '<div class="d-inline-flex mr-3">' +
+                                            '<input type="checkbox" id="' +
+                                            key +
+                                            '" name="filelist"><a href="javascript:;" class="alink" id=' +
+                                            key + '>' + value + '</a></div>';
+                                    });
+                                    str +=
+                                        '</div></div>' +
+                                        '<button type="button" class="btn btn-outline-be btn-sm mr-1" ' +
+                                        'style="margin-left: 80px;" id="zipDownload">下載</button>';
+                                }
+                                $('#subject').val(data.subject);
+                                $('.modal-title').html('公告事項－' + data.msgtype);
+                                $('.modal-body').html(
+                                    '主　　題：' + data.subject +
+                                    '<br>訊息文字：' + data.mcontent +
+                                    '<br>發布單位：' + data.contactunit +
+                                    '<br>' + str +
                                     '<br>更新日期：' + data.upddt +
                                     '<br>聯絡人　：' + data.contactperson +
                                     '<br>聯絡電話：' + data.contacttel);
@@ -150,10 +170,22 @@
                     });
                 });
             });
+            // 檔案下載按鈕
+            $(document).on('click', '#zipDownload', function(e) {
+                var checkedList = $('input:checkbox[name="filelist"]:checked');
+                if (checkedList.length) {
+                    var idArray = [];
+                    checkedList.each(function() {
+                        idArray.push(this.id);
+                    });
+                    $('#seq').val(idArray.join(','));
+                    $('#eip01w030Form').attr('action', '<c:url value="/Eip01w030_getFile.action" />')
+                        .submit();
+                }
+            });
             // 檔案下載連結
             $(document).on('click', '.alink', function(e) {
                 $('#seq').val($(this).attr('id'));
-                $('#filename').val($(this).html());
                 $('#eip01w030Form').attr('action', '<c:url value="/Eip01w030_getFile.action" />')
                     .submit();
             });

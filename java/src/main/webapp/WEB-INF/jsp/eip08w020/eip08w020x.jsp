@@ -1,7 +1,7 @@
 <%@ page language="java" pageEncoding="UTF-8" %>
 <%@ include file="/WEB-INF/jsp/includes/include.jsp" %>
 <!doctype html>
-<spring:eval var="caseKey" expression="T(tw.gov.pcc.eip.apply.controllers.Eip08w020controller).CASE_KEY" />
+<spring:eval var="caseKey" expression="T(tw.gov.pcc.eip.apply.controllers.Eip08w020Controller).CASE_KEY" />
 <c:set var="caseData" value="${sessionScope[caseKey]}" />
 <tags:layout>
 <jsp:attribute name="buttons">
@@ -42,7 +42,7 @@
 	                        <tr class="dataRow">
 	                        	<td>${num+1}</td>
 	                        	<td>
-	                        	<form:select   path="allData[${numstatus.index}].itemkind" class="itemkind form-control mr-2" data-width="300px"> 
+	                        	<form:select  path="allData[${numstatus.index}].itemkind" class="itemkind form-control mr-2" data-width="300px"> 
 									<form:option value="">請選擇</form:option>
 									<c:forEach items="${caseData.itemList}" var="item" varStatus="status">
 										<form:option value="${item.itemno}">${item.itemno}-${item.itemname}</form:option>
@@ -53,11 +53,11 @@
 			                    <form:select path="allData[${numstatus.index}].itemno" class="itemno form-control mr-2" data-width="300px"> 	
 			                    	<form:option value="">請選擇</form:option>
 			                    </form:select>
-			                    
+			                    <form:hidden path="allData[${numstatus.index}].keepitemno" class="keepitemno"/>
 	                        	</td>
 	                        	<td>
-	                        	<form:input path="allData[${numstatus.index}].withhold_cnt" cssClass="withhold_cnt form-control num_only" readonly="true"/>
-	                        	<form:hidden path="allData[${numstatus.index}].book_cnt" class="book_cnt"/>
+	                        	<form:input path="allData[${numstatus.index}].book_cnt" cssClass="book_cnt form-control num_only" readonly="true"/>
+	                        	<form:hidden path="allData[${numstatus.index}].withhold_cnt" class="withhold_cnt"/>
 	                        	</td>
 	                        	<td><form:input path="allData[${numstatus.index}].apply_cnt" cssClass="apply_cnt form-control num_only"/></td>
 	                        	<td><form:input path="allData[${numstatus.index}].unit"  cssClass="unit form-control" maxlength="4"/></td>
@@ -71,15 +71,21 @@
 </jsp:attribute>
 <jsp:attribute name="footers">
 <script>
+	$(document).ready(function(){
+// 		$(".itemkind").each(function(index,el){
+// 			console.log("xxx"+e.value);
+// // 			if(item.val()!==''){
+// // 				getItemno(index,$('.itemkind').eq(index).val(),item.val());
+// // 			}
+// 		});
+		for(var i=0; i<15; i++){
+			if($('.keepitemno').eq(i).val()!==''){
+				console.log("xxx="+$('.keepitemno').eq(i).val());
+				getItemno(i,$('.itemkind').eq(i).val(),$('.keepitemno').eq(i).val());
+			}
+		}
+	});
 
-		$(window).on('load', function() {
-			$(".itemno").each(function(e){
-				var index = $('.itemno').index(this);
-				if($(".itemno").val()!==''){
-					getItemno(index,$('.itemkind').eq(index).val(),$('.itemno').eq(index).val());
-				}
-			})
-		});
 	
         $(function() {
 
@@ -167,9 +173,10 @@
 	    				dataType : 'json',
 	    				timeout : 100000,
 	    				success : function(data) {
-	    					$(".withhold_cnt").eq(index).val(data.withhold_cnt);
+	    					$(".keepitemno").eq(index).val(itemno);
 	    					$(".book_cnt").eq(index).val(data.book_cnt);
-	    					if(data.withhold_cnt==0){
+	    					$(".withhold_cnt").eq(index).val(data.withhold_cnt);
+	    					if(data.book_cnt==0){
 	    						$('.apply_cnt').eq(index).attr("disabled",true);
 	    						$('.unit').eq(index).attr("disabled",true);
 	    					}
@@ -182,20 +189,12 @@
 	    		
 	        });
 		        
-	        $('.apply_cnt').change(function(){
-	        	var index=$('.apply_cnt').index(this);
-	        	if($('.apply_cnt').eq(index).val()>$('.withhold_cnt').eq(index).val()){
-	        		showAlert("申請數量不可大於庫存數量");
-	        	}
-	        });
-	        
 
 	        function getItemno(index,itemkind,itemno){
 	        	var data = {};
     			data["itemkind"] = itemkind;
     			data["itemno"] = itemno;
     			var url = '<c:url value='/Eip08w020_getItemCodekind.action' />';
-    			
     			$.ajax({
     				type : "POST",
     				contentType : "application/json",
@@ -208,6 +207,9 @@
     				
    					   let countyList = [];
    					   for (var i = 0; i < data.length; i++) {
+   						if(i==0){
+      						countyList.push("<option value=''>"+"請選擇"+ "</option>")
+      					}
    					    countyList.push("<option value='" + data[i].itemno + "'>"
 	    					      + data[i].itemno + "-" + data[i].itemname+ "</option>")
    					   }

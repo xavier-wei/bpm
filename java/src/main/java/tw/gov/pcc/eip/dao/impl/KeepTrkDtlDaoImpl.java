@@ -24,7 +24,7 @@ import java.util.Optional;
  * @author 2201009
  *
  */
-@DaoTable(MsgdataDao.TABLE_NAME)
+@DaoTable(KeepTrkDtlDao.TABLE_NAME)
 @Repository
 public class KeepTrkDtlDaoImpl extends BaseDao<KeepTrkDtl> implements KeepTrkDtlDao {
 
@@ -33,8 +33,9 @@ public class KeepTrkDtlDaoImpl extends BaseDao<KeepTrkDtl> implements KeepTrkDtl
         StringBuilder sql = new StringBuilder();
         sql.append(" SELECT * ");
         sql.append(" FROM " + TABLE_NAME + " T WHERE T.TRKID = :TRKID");
+        sql.append("                             AND T.TRKOBJ = :TRKOBJ");
 
-        SqlParameterSource params = new MapSqlParameterSource("TRKID", keepTrkDtl.getTrkID());
+        SqlParameterSource params = new MapSqlParameterSource("TRKID", keepTrkDtl.getTrkID()).addValue("TRKOBJ", keepTrkDtl.getTrkObj());
 
         List<KeepTrkDtl> list = getNamedParameterJdbcTemplate().query(sql.toString(), params,
                 BeanPropertyRowMapper.newInstance(KeepTrkDtl.class));
@@ -118,7 +119,7 @@ public class KeepTrkDtlDaoImpl extends BaseDao<KeepTrkDtl> implements KeepTrkDtl
     }
 
     @Override
-    public void updateByTrkIDAndTrkObj(KeepTrkDtl ktd) {
+    public void closeByTrkIDAndTrkObj(KeepTrkDtl ktd) {
         StringBuilder sql = new StringBuilder();
         Map<String, Object> params = new HashMap<>();
 
@@ -156,6 +157,63 @@ public class KeepTrkDtlDaoImpl extends BaseDao<KeepTrkDtl> implements KeepTrkDtl
 
         params.put("trkID", trkID);
 
-        return Optional.ofNullable(getNamedParameterJdbcTemplate().queryForObject(sql.toString(), params, Integer.class)).orElse(0);    }
+        return Optional.ofNullable(getNamedParameterJdbcTemplate().queryForObject(sql.toString(), params, Integer.class)).orElse(0);
+    }
 
+    @Override
+    public String getNextTrkIDNumber(String today) {
+        StringBuilder sql = new StringBuilder();
+        Map<String, Object> params = new HashMap<>();
+
+        sql.append("   SELECT (MAX(SUBSTRING(TrkID,9,2))+1) AS TrkID ");
+        sql.append("     FROM KeepTrkDtl ");
+        sql.append("    WHERE SUBSTRING(TrkID,1,7) = :nowDate ");
+
+        params.put("nowDate", today);
+
+        String currentTrkID = Optional.ofNullable(getNamedParameterJdbcTemplate().queryForObject(sql.toString(), params, String.class)).orElse(null);
+        if (currentTrkID != null) {
+            if(currentTrkID.length() < 2){
+                return today + "-0" + currentTrkID;
+            }
+            return today + "-" + currentTrkID;
+        } else {
+            return today + "-01";
+        }
+    }
+
+    @Override
+    public void updateByTrkIDAndTrkObj(KeepTrkDtl ktd) {
+        StringBuilder sql = new StringBuilder();
+        Map<String, Object> params = new HashMap<>();
+
+        sql.append(" UPDATE KeepTrkDtl ");
+        sql.append("    SET StDt = :stDt, ");
+        sql.append("        EndDt = :endDt ");
+        sql.append("  WHERE TrkID = :trkID AND TrkObj = :trkObj ");
+
+        params.put("trkID", ktd.getTrkID());
+        params.put("trkObj", ktd.getTrkObj());
+        params.put("stDt", ktd.getStDt());
+        params.put("endDt", ktd.getEndDt());
+
+        getNamedParameterJdbcTemplate().update(sql.toString(), params);
+    }
+
+    @Override
+    public int deleteByTrkIDAndTrkObj(String trkID, String trkObj) {
+
+        StringBuilder sql = new StringBuilder();
+
+        sql.append(" DELETE FROM ");
+        sql.append(TABLE_NAME);
+        sql.append("  WHERE TrkID = :trkID ");
+        if(StringUtils.isNotBlank(trkObj)){
+            sql.append("    AND TrkObj = :trkObj ");
+        }
+
+        SqlParameterSource params =
+                new MapSqlParameterSource("trkID", trkID).addValue("trkObj", trkObj);
+        return getNamedParameterJdbcTemplate().update(sql.toString(), params);
+    }
 }

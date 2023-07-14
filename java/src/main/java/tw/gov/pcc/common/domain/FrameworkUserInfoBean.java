@@ -85,6 +85,10 @@ public class FrameworkUserInfoBean implements UserInfo, Serializable {
      * 電子信箱
      */
     private String email;
+    /**
+     * 機關代碼
+     */
+    private String orgId;
 
     /**
      * 登入日期

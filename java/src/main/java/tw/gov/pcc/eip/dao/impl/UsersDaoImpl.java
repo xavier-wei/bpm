@@ -23,7 +23,7 @@ public class UsersDaoImpl extends BaseDao<Users> implements UsersDao {
 
     static {
         ALL_COLUMNS_SQL = " t.USER_ID, t.ACNT_IS_VALID, t.CREATE_TIMESTAMP, t.CREATE_USER_ID, t.DEPT_ID, t.EMAIL, t.EMP_ID, t.LAST_LOGIN_DATE, t.LAST_LOGIN_IP, t.LDAP_ID, " +
-                " t.MODIFY_USER_ID, t.MODIFY_TIMESTAMP, t.USER_NAME, t.TEL1, t.TEL2, t.TITLE_ID, t.LINE_TOKEN, t.FROM_HR ";
+                " t.MODIFY_USER_ID, t.MODIFY_TIMESTAMP, t.USER_NAME, t.TEL1, t.TEL2, t.TITLE_ID, t.LINE_TOKEN, t.FROM_HR, t.ORG_ID ";
     }
 
     /**
@@ -79,7 +79,7 @@ public class UsersDaoImpl extends BaseDao<Users> implements UsersDao {
                         " ACNT_IS_VALID = :acnt_is_valid, CREATE_TIMESTAMP = :create_timestamp, CREATE_USER_ID = :create_user_id, DEPT_ID = :dept_id, EMAIL = :email, " +
                         " EMP_ID = :emp_id, LAST_LOGIN_DATE = :last_login_date, LAST_LOGIN_IP = :last_login_ip, LDAP_ID = :ldap_id, MODIFY_USER_ID = :modify_user_id, " +
                         " MODIFY_TIMESTAMP = :modify_timestamp, USER_NAME = :user_name, TEL1 = :tel1, TEL2 = :tel2, TITLE_ID = :title_id, " +
-                        " LINE_TOKEN = :line_token" +
+                        " LINE_TOKEN = :line_token, ORG_ID = :org_id" +
                         " WHERE USER_ID = :user_id ",
                 new BeanPropertySqlParameterSource(users));
     }
@@ -94,11 +94,11 @@ public class UsersDaoImpl extends BaseDao<Users> implements UsersDao {
         return getNamedParameterJdbcTemplate().update(" INSERT INTO " + TABLE_NAME +
                         "(" +
                         " USER_ID, ACNT_IS_VALID, CREATE_TIMESTAMP, CREATE_USER_ID, DEPT_ID, EMAIL, EMP_ID, LAST_LOGIN_DATE, LAST_LOGIN_IP, LDAP_ID, " +
-                        " MODIFY_USER_ID, MODIFY_TIMESTAMP, USER_NAME, TEL1, TEL2, TITLE_ID, LINE_TOKEN" +
+                        " MODIFY_USER_ID, MODIFY_TIMESTAMP, USER_NAME, TEL1, TEL2, TITLE_ID, LINE_TOKEN, ORG_ID" +
                         ")" +
                         " VALUES ( " +
                         " :user_id, :acnt_is_valid, :create_timestamp, :create_user_id, :dept_id, :email, :emp_id, :last_login_date, :last_login_ip, :ldap_id, " +
-                        " :modify_user_id, :modify_timestamp, :user_name, :tel1, :tel2, :title_id, :line_token" +
+                        " :modify_user_id, :modify_timestamp, :user_name, :tel1, :tel2, :title_id, :line_token, :org_id" +
                         ")",
                 new BeanPropertySqlParameterSource(users));
     }

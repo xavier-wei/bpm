@@ -25,7 +25,7 @@ public interface MsgdepositDao {
 
     public int delete(Msgdeposit m);
 
-    public Msgdeposit findbyPk(String fseq, String seq, String filetype);
+    public Msgdeposit findbyPk(String fseq, String seq);
 
     /**
      * 取得檔案清單
@@ -34,4 +34,13 @@ public interface MsgdepositDao {
      * @return
      */
     public List<Msgdeposit> findbyfseq(List<String> fseq);
+
+    /**
+     * 取得檔案清單
+     * 
+     * @param fseq
+     * @param seq
+     * @return
+     */
+    public List<Msgdeposit> findbyFseqSeq(String fseq, List<String> seq);
 }

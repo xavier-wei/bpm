@@ -23,8 +23,8 @@ public class ItemcodeuDaoImpl extends BaseDao<Itemcodeu> implements ItemcodeuDao
 
     static {
         ALL_COLUMNS_SQL = new StringBuilder()
-                .append(" t.ITEMKIND, t.ITEMNO, t.ITEMNAME, t.U_DATE, t.U_TIME, t.U_USER, t.COCD, t.PURCHASE_CNT, t.RETURN_CNT, t.FINAL_CNT, ")
-                .append(" t.WITHHOLD_CNT, t.BOOK_CNT, t.CRE_USER, t.CRE_DATETIME, t.UPD_USER, t.UPD_DATETIME ")
+                .append(" ITEMKIND, ITEMNO, ITEMNAME, U_DATE, U_TIME, U_USER, COCD, PURCHASE_CNT, RETURN_CNT, FINAL_CNT, ")
+                .append(" WITHHOLD_CNT, BOOK_CNT, CRE_USER, CRE_DATETIME, UPD_USER, UPD_DATETIME ")
                 .toString();
     }
 
@@ -39,7 +39,7 @@ public class ItemcodeuDaoImpl extends BaseDao<Itemcodeu> implements ItemcodeuDao
         StringBuilder sql = new StringBuilder();
         sql.append("SELECT ");
         sql.append(ALL_COLUMNS_SQL);
-        sql.append("FROM " + TABLE_NAME + " t WHERE t.ITEMKIND = :itemkind AND t.ITEMNO = :itemno AND t.U_DATE = :u_date AND t.U_TIME = :u_time AND t.U_USER = :u_user ");
+        sql.append("FROM " + TABLE_NAME + " t WHERE ITEMKIND = :itemkind AND ITEMNO = :itemno AND U_DATE = :u_date AND U_TIME = :u_time AND U_USER = :u_user ");
         List<Itemcodeu> list = getNamedParameterJdbcTemplate().query(sql.toString(), new BeanPropertySqlParameterSource(itemcodeu), BeanPropertyRowMapper.newInstance(Itemcodeu.class));
         return CollectionUtils.isEmpty(list) ? null : list.get(0);
     }
@@ -74,7 +74,7 @@ public class ItemcodeuDaoImpl extends BaseDao<Itemcodeu> implements ItemcodeuDao
     @Override
     public int deleteByKey(Itemcodeu itemcodeu) {
         return getNamedParameterJdbcTemplate().update(" DELETE FROM " + TABLE_NAME +
-                        " t WHERE t.ITEMKIND = :itemkind AND t.ITEMNO = :itemno AND t.U_DATE = :u_date AND t.U_TIME = :u_time AND t.U_USER = :u_user ",
+                        " t WHERE ITEMKIND = :itemkind AND ITEMNO = :itemno AND U_DATE = :u_date AND U_TIME = :u_time AND U_USER = :u_user ",
                 new BeanPropertySqlParameterSource(itemcodeu));
     }
 
@@ -86,11 +86,11 @@ public class ItemcodeuDaoImpl extends BaseDao<Itemcodeu> implements ItemcodeuDao
      */
     @Override
     public int updateByKey(Itemcodeu itemcodeu) {
-        return getNamedParameterJdbcTemplate().update(" UPDATE " + TABLE_NAME + " t SET " +
-                        " t.ITEMNAME = :itemname, t.COCD = :cocd, t.PURCHASE_CNT = :purchase_cnt, t.RETURN_CNT = :return_cnt, t.FINAL_CNT = :final_cnt, " +
-                        " t.WITHHOLD_CNT = :withhold_cnt, t.BOOK_CNT = :book_cnt, t.CRE_USER = :cre_user, t.CRE_DATETIME = :cre_datetime, t.UPD_USER = :upd_user, " +
-                        " t.UPD_DATETIME = :upd_datetime" +
-                        " WHERE t.ITEMKIND = :itemkind AND ITEMNO = :itemno AND U_DATE = :u_date AND U_TIME = :u_time AND U_USER = :u_user ",
+        return getNamedParameterJdbcTemplate().update(" UPDATE " + TABLE_NAME + "  SET " +
+                        " ITEMNAME = :itemname, COCD = :cocd, PURCHASE_CNT = :purchase_cnt, RETURN_CNT = :return_cnt, FINAL_CNT = :final_cnt, " +
+                        " WITHHOLD_CNT = :withhold_cnt, BOOK_CNT = :book_cnt, CRE_USER = :cre_user, CRE_DATETIME = :cre_datetime, UPD_USER = :upd_user, " +
+                        " UPD_DATETIME = :upd_datetime" +
+                        " WHERE ITEMKIND = :itemkind AND ITEMNO = :itemno AND U_DATE = :u_date AND U_TIME = :u_time AND U_USER = :u_user ",
                 new BeanPropertySqlParameterSource(itemcodeu));
     }
 

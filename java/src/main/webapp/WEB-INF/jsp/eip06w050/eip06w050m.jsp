@@ -70,12 +70,13 @@
         <form:hidden path="itemId"/>
         <tags:form-note>
             <tags:form-note-item>參數已使用，將無法刪除。</tags:form-note-item>
-            <tags:form-note-item>[查詢]時，[類別]為必填。</tags:form-note-item>
+            <tags:form-note-item>查詢時，類別為必填。</tags:form-note-item>
         </tags:form-note>
     </form:form>
     </tags:fieldset>
 </jsp:attribute>
 <jsp:attribute name="footers">
+
 <script>
 $(function(){
     // dataTable 設定
@@ -92,13 +93,35 @@ $(function(){
         $('#mode').val('Q');
         $('#eip06w050Form').attr('action', '<c:url value="/Eip06w050_query.action" />').submit();
     })
-    $('#tb1 button[name=deleteButton]').click(function(e){
-            e.preventDefault();
-            showConfirm('確定刪除嗎?',()=>{
-                $('#itemId').val($(this).parent().data('itemid'));
-                $('#eip06w050Form').attr('action', '<c:url value="/Eip06w050_delete.action" />').submit();
-            });
-    })
+
+    $('#tb1 button[name=deleteButton]').click(function(e) {
+        e.preventDefault();
+        var url = '<c:url value="/Eip06w050_showAlert.action" />';
+        var itemId = $(this).parent().data('itemid');
+        var data = { itemId: itemId };
+
+        $.ajax({
+            type: "POST",
+            contentType: "application/json",
+            url: url,
+            data: JSON.stringify(data),
+            dataType: 'json',
+            timeout: 100000
+        }).done(function(data) {
+            if (data.itemIdIsUse === "N") {
+                showAlert("參數使用中，無法刪除");
+                // 清空系統資訊
+                $('#footer .prog.infoword').text('')
+                return;
+            } else {
+                showConfirm('確定刪除嗎?', () => {
+                    $('#itemId').val(itemId);
+                    $('#eip06w050Form').attr('action', '<c:url value="/Eip06w050_delete.action" />').submit();
+                });
+            }
+        });
+    });
+
 
     $('#tb1 button[name=modifyButton]').click(function(e){
         e.preventDefault();

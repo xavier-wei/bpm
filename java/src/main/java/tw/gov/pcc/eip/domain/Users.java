@@ -131,6 +131,11 @@ public class Users implements Serializable {
     @LogField
     private String from_hr;
 
+    /**
+     * org_id
+     */
+    private String org_id;
+    
     private boolean checkbox;
     
     

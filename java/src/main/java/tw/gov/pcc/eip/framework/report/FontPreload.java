@@ -13,9 +13,7 @@ import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
 import org.springframework.stereotype.Component;
 import tw.gov.pcc.eip.util.ExceptionUtility;
 
-import java.io.File;
-import java.io.IOException;
-import java.io.UncheckedIOException;
+import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -63,7 +61,10 @@ public class FontPreload implements InitializingBean {
             for (Resource resource : resources) {
                 Path destPath = destDirPath.resolve(Paths.get(Objects.requireNonNull(resource.getFilename()))
                         .getFileName());
-                IOUtils.copy(resource.getInputStream(), Files.newOutputStream(destPath));
+                OutputStream os = Files.newOutputStream(destPath);
+                try (InputStream rs = resource.getInputStream(); ) {
+                    IOUtils.copy(rs, os);
+                }
             }
 
             FileUtils.writeStringToFile(chkFile, String.valueOf(totalSize), StandardCharsets.UTF_8);

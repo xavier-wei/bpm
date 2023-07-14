@@ -2,8 +2,7 @@ package tw.gov.pcc.eip.services;
 
 import static org.apache.commons.lang3.StringUtils.trim;
 
-import java.io.FileOutputStream;
-import java.io.IOException;
+import java.io.File;
 import java.time.LocalDateTime;
 import java.time.chrono.MinguoChronology;
 import java.time.format.DateTimeFormatter;
@@ -13,7 +12,10 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Optional;
+import java.util.function.Function;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -22,14 +24,21 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import lombok.extern.slf4j.Slf4j;
+import tw.gov.pcc.eip.dao.DeptsDao;
 import tw.gov.pcc.eip.dao.EipcodeDao;
 import tw.gov.pcc.eip.dao.MsgavaildepDao;
 import tw.gov.pcc.eip.dao.MsgdataDao;
+import tw.gov.pcc.eip.dao.MsgdepositDao;
 import tw.gov.pcc.eip.dao.MsgdepositdirDao;
+import tw.gov.pcc.eip.dao.UsersDao;
+import tw.gov.pcc.eip.domain.Depts;
 import tw.gov.pcc.eip.domain.Eipcode;
 import tw.gov.pcc.eip.domain.Msgavaildep;
 import tw.gov.pcc.eip.domain.Msgdata;
+import tw.gov.pcc.eip.domain.Msgdeposit;
 import tw.gov.pcc.eip.domain.Msgdepositdir;
+import tw.gov.pcc.eip.domain.Users;
+import tw.gov.pcc.eip.framework.domain.UserBean;
 import tw.gov.pcc.eip.msg.cases.Eip01w010Case;
 import tw.gov.pcc.eip.util.DateUtility;
 import tw.gov.pcc.eip.util.ExceptionUtility;
@@ -48,12 +57,20 @@ public class Eip01w010Service {
     @Autowired
     private EipcodeDao eipCodeDao;
     @Autowired
+    private DeptsDao deptsDao;
+    @Autowired
+    private UsersDao usersDao;
+    @Autowired
     private MsgdataDao msgdataDao;
     @Autowired
     private MsgavaildepDao msgavaildepDao;
     @Autowired
+    private MsgdepositDao msgdepositDao;
+    @Autowired
     private MsgdepositdirDao msgdepositdirDao;
-    DateTimeFormatter minguoformatter = DateTimeFormatter.ofPattern("yyy/MM/dd HH:mm:ss")
+    DateTimeFormatter minguoDateTimeformatter = DateTimeFormatter.ofPattern("yyy/MM/dd HH:mm:ss")
+            .withChronology(MinguoChronology.INSTANCE).withLocale(Locale.TAIWAN);
+    DateTimeFormatter minguoDateformatter = DateTimeFormatter.ofPattern("yyy/MM/dd")
             .withChronology(MinguoChronology.INSTANCE).withLocale(Locale.TAIWAN);
 
     /**
@@ -126,16 +143,33 @@ public class Eip01w010Service {
         caseData.setLocateareas(locateareas);
 
         // 分眾
-        List<Eip01w010Case.Option> availabledeps = eipCodeDao.findByCodeKind("DEPT").stream().sorted(customComparator)
+        List<Depts> depts = deptsDao.getEip01wDepts();
+        List<Eip01w010Case.Option> availabledeps = depts.stream().map(m -> {
+            Eip01w010Case.Option option = new Eip01w010Case.Option();
+            option.setCodeno(m.getDept_id());
+            option.setCodename(m.getDept_name());
+            return option;
+        }).collect(Collectors.toCollection(ArrayList::new));
+        caseData.setAvailabledeps(availabledeps);
+
+        // 聯絡單位
+        List<Eip01w010Case.Option> contactunits = depts.stream().filter(f -> !"00".equals(f.getDept_id())).map(m -> {
+            Eip01w010Case.Option option = new Eip01w010Case.Option();
+            option.setCodeno(m.getDept_id());
+            option.setCodename(m.getDept_name());
+            return option;
+        }).collect(Collectors.toCollection(ArrayList::new));
+        caseData.setContactunits(contactunits);
+
+        // 聯絡人
+        List<Eip01w010Case.Option> users = usersDao.selectAll().stream().filter(f -> "Y".equals(f.getAcnt_is_valid()))
                 .map(m -> {
                     Eip01w010Case.Option option = new Eip01w010Case.Option();
-                    option.setCodeno(m.getCodeno());
-                    option.setCodename(m.getCodename());
+                    option.setCodeno(m.getUser_id());
+                    option.setCodename(m.getUser_name());
                     return option;
                 }).collect(Collectors.toCollection(ArrayList::new));
-        caseData.setAvailabledeps(availabledeps);
-        // 聯絡單位
-        caseData.setContactunits(availabledeps);
+        caseData.setContactpersons(users);
     }
 
     /**
@@ -156,7 +190,7 @@ public class Eip01w010Service {
      * 
      * @param caseData
      */
-    public void setDefaultValue(Eip01w010Case caseData) {
+    public void setDefaultValue(Eip01w010Case caseData, UserBean userData) {
         String mode = caseData.getMode();
         if ("".equals(mode)) {
             caseData.setCreatid(""); // 建立人員
@@ -170,6 +204,7 @@ public class Eip01w010Service {
             caseData.setAvailabledep("");
             caseData.setIstop("2");
             caseData.setIsfront("2");
+            caseData.setContactperson(userData.getUserId());
         }
     }
 
@@ -220,7 +255,7 @@ public class Eip01w010Service {
         caseData.setAttributype(msgdata.getAttributype()); // 屬性
         caseData.setMsgtype(msgdata.getMsgtype()); // 訊息類別
         caseData.setLocatearea(msgdata.getLocatearea()); // 顯示位置
-//        availabledep
+        // 分眾
         String ava = msgavaildepDao.findbyfseq(fseq).stream().map(m -> StringUtils.trim(m.getAvailabledep()))
                 .collect(Collectors.joining(","));
         caseData.setAvailabledep(ava);
@@ -233,23 +268,36 @@ public class Eip01w010Service {
         caseData.setIndir(msgdata.getIndir()); // 存放目錄
 
         caseData.setOplink(msgdata.getOplink()); // 是否需要另開視窗
-        caseData.setReleasedt(DateUtility.changeDateTypeToChineseDate(StringUtils.trimToNull(msgdata.getReleasedt()))); // 上架時間
-                                                                                                                        // (只有日期)
-        caseData.setOfftime(DateUtility.changeDateTypeToChineseDate(StringUtils.trimToNull(msgdata.getOfftime()))); // 下架時間
-                                                                                                                    // (只有日期)
+        caseData.setReleasedt(DateUtility.changeDateTypeToChineseDate(StringUtils.trimToNull(msgdata.getReleasedt()))); // 上架日期
+        caseData.setOfftime(DateUtility.changeDateTypeToChineseDate(StringUtils.trimToNull(msgdata.getOfftime()))); // 下架日期
         caseData.setContactunit(trim(msgdata.getContactunit())); // 連絡單位
         caseData.setContactperson(trim(msgdata.getContactperson())); // 聯絡人
         caseData.setContacttel(trim(msgdata.getContacttel())); // 連絡電話
         caseData.setMemo(msgdata.getMemo()); // 備註
         caseData.setOffreason(msgdata.getOffreason()); // 下架原因
-        caseData.setCreatid(trim(msgdata.getCreatid())); // 建立人員
-        caseData.setCreatdt(msgdata.getCreatdt() == null ? "" : msgdata.getCreatdt().format(minguoformatter)); // 建立時間
-        caseData.setUpdid(trim(msgdata.getUpdid())); // 更新人員
-        caseData.setUpddt(msgdata.getUpddt() == null ? "" : msgdata.getUpddt().format(minguoformatter)); // 更新時間
-//        System.out.println(String.format("%s %s ; %s %s", msgdata.getCreatdt(), 
-//                msgdata.getCreatdt().format(minguoformatter),
-//                msgdata.getUpddt(),
-//                msgdata.getUpddt() == null ? "" : msgdata.getUpddt().format(minguoformatter)));
+
+        Function<String, String> userName = (userId) -> {
+            if (userId != "") {
+                Optional<Users> opt = Optional.ofNullable(usersDao.selectByKey(userId));
+                if (opt.isPresent()) {
+                    return opt.get().getUser_name();
+                }
+            }
+            return "";
+        };
+
+        caseData.setCreatid(userName.apply(trim(msgdata.getCreatid()))); // 建立人員
+        caseData.setCreatdt(msgdata.getCreatdt() == null ? "" : msgdata.getCreatdt().format(minguoDateTimeformatter)); // 建立時間
+        caseData.setUpdid(userName.apply(trim(msgdata.getUpdid()))); // 更新人員
+        caseData.setUpddt(msgdata.getUpddt() == null ? "" : msgdata.getUpddt().format(minguoDateTimeformatter)); // 更新時間
+        // 取得附檔清單
+        List<Msgdeposit> fileList = msgdepositDao.findbyfseq(Arrays.asList(msgdata.getFseq()));
+        Map<String, String> image = fileList.stream().filter(f -> "2".equals(f.getFiletype()))
+                .collect(Collectors.toMap(Msgdeposit::getSeq, Msgdeposit::getAttachfile));
+        Map<String, String> file = fileList.stream().filter(f -> "1".equals(f.getFiletype()))
+                .collect(Collectors.toMap(Msgdeposit::getSeq, Msgdeposit::getAttachfile));
+        caseData.setImageFileNameMap(image);
+        caseData.setFileNameMap(file);
     }
 
     /**
@@ -302,9 +350,6 @@ public class Eip01w010Service {
             treeStr.add("</ul>");
             j--;
         }
-//        for(String s : treeStr) {
-//            System.out.println(s);
-//        }
         return treeStr;
     }
 
@@ -343,7 +388,7 @@ public class Eip01w010Service {
         m.setOplink(caseData.getOplink()); // 是否需要另開視窗
         m.setIndir(caseData.getIndir()); // 存放目錄
 
-        // 16. 附加檔案：存入MSGDEPOSIT
+        // 存放目錄
         insertMsgdepositdir(caseData.getAttributype(), caseData.getTmpPath(), caseData.getIndir());
 
         m.setReleasedt(DateUtility.changeDateTypeToWestDate(caseData.getReleasedt())); // 上架時間
@@ -355,13 +400,15 @@ public class Eip01w010Service {
         m.setOffreason(caseData.getOffreason()); // 下架原因
 
         m.setCreatid(userId); // 建立人員
-        m.setCreatdt(LocalDateTime.now()); // 建立時間
+        LocalDateTime ldt = LocalDateTime.now();
+        m.setCreatdt(ldt); // 建立時間
         m.setUpdid(""); // 更新人員
         m.setUpddt(null); // 更新時間
         msgdataDao.insert(m);
 
-        caseData.setCreatdt(userId);
-        caseData.setCreatdt(m.getCreatdt().format(minguoformatter));
+        Users user = usersDao.selectByKey(userId);
+        caseData.setCreatid(user == null ? "" : user.getUser_name());
+        caseData.setCreatdt(ldt.format(minguoDateTimeformatter));
     }
 
     /**
@@ -469,7 +516,7 @@ public class Eip01w010Service {
         m.setOplink(caseData.getOplink()); // 是否需要另開視窗
         m.setIndir(caseData.getIndir()); // 存放目錄
 
-        // 16. 附加檔案：存入MSGDEPOSIT
+        // 存放目錄
         insertMsgdepositdir(caseData.getAttributype(), caseData.getTmpPath(), caseData.getIndir());
 
         m.setReleasedt(DateUtility.changeDateTypeToWestDate(caseData.getReleasedt())); // 上架時間
@@ -481,9 +528,13 @@ public class Eip01w010Service {
         m.setOffreason(caseData.getOffreason()); // 下架原因
 
         m.setUpdid(userId); // 更新人員
-        m.setUpddt(LocalDateTime.now()); // 更新時間
-        caseData.setUpddt(LocalDateTime.now().format(minguoformatter));
+        LocalDateTime ldt = LocalDateTime.now();
+        m.setUpddt(ldt); // 更新時間
         msgdataDao.update(m, fseq);
+
+        Users user = usersDao.selectByKey(userId);
+        caseData.setUpdid(user == null ? "" : user.getUser_name());
+        caseData.setUpddt(ldt.format(minguoDateTimeformatter));
     }
 
     /**
@@ -530,41 +581,102 @@ public class Eip01w010Service {
         return addNum ? status + "-" + statusText : statusText;
     }
 
-    public String uploadImg(Eip01w010Case caseData) {
-        MultipartFile[] files = caseData.getImages();
-        List<MultipartFile> filesList = Arrays.stream(files)
+    /**
+     * 新增&上傳附檔
+     * 
+     * @param caseData
+     */
+    public void insertDataUploadFiles(Eip01w010Case caseData) {
+        String fseq = caseData.getFseq();
+        int seq = msgdepositDao.findbyfseq(Arrays.asList(fseq)).stream()
+                .sorted(Comparator.comparing(Msgdeposit::getSeq).reversed()).findFirst()
+                .map(m -> Integer.valueOf(m.getSeq())).orElse(0);
+        String dir = eipCodeDao.findByCodeKindCodeNo("FILEDIR", "1").get().getCodename() + "\\"; // 檔案所在資料夾
+        MultipartFile[] images = caseData.getImages();
+        MultipartFile[] files = caseData.getFiles();
+        // concat
+        List<MultipartFile> filesList = Stream.concat(Arrays.stream(images), Arrays.stream(files))
                 .filter(f -> StringUtils.isNotBlank(f.getOriginalFilename())).collect(Collectors.toList());
-        filesList.forEach(f -> {
+        for (MultipartFile f : filesList) {
+            String originFileName = f.getOriginalFilename();
+            String fileExtension = StringUtils.substring(originFileName, originFileName.indexOf(".") + 1,
+                    originFileName.length());
+            seq++;
+            String formatFileName = fseq + "_" + seq + "_" + originFileName;
+            Msgdeposit m = new Msgdeposit();
+            m.setFseq(fseq);
+            m.setSeq(String.valueOf(seq));
+            m.setFiletype(StringUtils.contains(f.getContentType(), "image") ? "2" : "1");
+            m.setAttachfile(originFileName); // 原始檔名
+            m.setAttachtype(fileExtension); // 副檔名
+            m.setRealfilename(formatFileName); // 格式化檔名
+            msgdepositDao.insert(m);
             try {
-                String originName = f.getOriginalFilename();
-                String newFileName = originName;
-                String destFile = "D:/EIP檔案上傳區/" + newFileName;
-
-                byte[] bytes = f.getBytes();
-                FileOutputStream fos = new FileOutputStream(destFile);
-                fos.write(bytes, 0, bytes.length);
-                fos.close();
-            } catch (IOException e) {
-                log.error("檔案上傳失敗", ExceptionUtility.getStackTrace(e));
+                File file = new File(dir + formatFileName);
+                f.transferTo(file);
+            } catch (Exception e) {
+                log.error(dir + formatFileName + "檔案上傳失敗", ExceptionUtility.getStackTrace(e));
             }
-        });
-//        String[] images = caseData.getImagesDecode();
-//        try {
-//            for (int i = 0; i < images.length; i += 3) {
-//                String originName = images[i];
-//                String newFileName = i + originName;
-//                String destFile = "D:/EIP檔案上傳區/" + newFileName;
-//
-//                String base64Image = images[i + 2]; // [1]不能用
-//
-//                byte[] bytes = Base64.decodeBase64(base64Image);
-//                FileOutputStream fos = new FileOutputStream(destFile);
-//                fos.write(bytes, 0, bytes.length);
-//                fos.close();
-//            }
-//        } catch (IOException e) {
-//            log.error("檔案上傳失敗", ExceptionUtility.getStackTrace(e));
-//        }
-        return "";
+        }
+        // 取得附檔清單
+        List<Msgdeposit> fileList = msgdepositDao.findbyfseq(Arrays.asList(fseq));
+        Map<String, String> image = fileList.stream().filter(f -> "2".equals(f.getFiletype()))
+                .collect(Collectors.toMap(Msgdeposit::getSeq, Msgdeposit::getAttachfile));
+        Map<String, String> file = fileList.stream().filter(f -> "1".equals(f.getFiletype()))
+                .collect(Collectors.toMap(Msgdeposit::getSeq, Msgdeposit::getAttachfile));
+        caseData.setImageFileNameMap(image);
+        caseData.setFileNameMap(file);
+    }
+
+    /**
+     * 刪除附檔
+     * 
+     * @param fseq
+     * @param seq
+     */
+    public void deleteFile(String fseq, String seq) {
+        Msgdeposit origin = msgdepositDao.findbyPk(fseq, seq);
+        String dir = eipCodeDao.findByCodeKindCodeNo("FILEDIR", "1").get().getCodename() + "\\"; // 檔案所在資料夾
+        File file = new File(dir + origin.getRealfilename());
+        file.delete();
+
+        Msgdeposit m = new Msgdeposit();
+        m.setFseq(fseq);
+        m.setSeq(seq);
+        msgdepositDao.delete(m);
+    }
+
+    /**
+     * 取得預覽資料
+     * 
+     * @param fseq
+     * @return
+     */
+    public Eip01w010Case.preView query(String fseq) {
+        Msgdata m = msgdataDao.findbyfseq(fseq);
+        if (m != null) {
+            Eip01w010Case.preView detail = new Eip01w010Case.preView();
+            String attr = "";
+            Optional<Eipcode> opt = eipCodeDao.findByCodeKindCodeNo("ATTRIBUTYPE", m.getAttributype());
+            if (opt.isPresent()) {
+                attr = opt.get().getCodename();
+            }
+            detail.setAttributype(attr);
+            detail.setSubject(m.getSubject());
+            detail.setMcontent(m.getMcontent());
+            Depts dept = deptsDao.findByPk(trim(m.getContactunit()));
+            detail.setContactunit(dept == null ? "" : dept.getDept_name());
+            detail.setUpddt(m.getUpddt() == null ? "" : m.getUpddt().format(minguoDateformatter));
+            Users user = usersDao.selectByKey(trim(m.getContactperson()));
+            detail.setContactperson(user == null ? "" : user.getUser_name());
+            detail.setContacttel(trim(m.getContacttel()));
+            // 附檔
+            List<Msgdeposit> files = msgdepositDao.findbyfseq(Arrays.asList(fseq));
+            if (!CollectionUtils.isEmpty(files)) {
+                detail.setFile(files.stream().collect(Collectors.toMap(Msgdeposit::getSeq, Msgdeposit::getAttachfile)));
+            }
+            return detail;
+        }
+        return null;
     }
 }

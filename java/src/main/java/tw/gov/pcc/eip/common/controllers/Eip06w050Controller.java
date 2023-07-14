@@ -6,13 +6,16 @@ import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
 import tw.gov.pcc.eip.common.cases.Eip06w050Case;
 import tw.gov.pcc.eip.framework.spring.controllers.BaseController;
 import tw.gov.pcc.eip.services.Eip06w050Service;
 import tw.gov.pcc.eip.util.ExceptionUtility;
 import tw.gov.pcc.eip.util.ObjectUtility;
 
+import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -45,8 +48,7 @@ public class Eip06w050Controller extends BaseController {
     @RequestMapping("/Eip06w050_initQuery.action")
     public String initQuery(@ModelAttribute(CASE_KEY) Eip06w050Case caseData) {
         try {
-            Map<String, String> map =  eip06w050Service.initializeOption(caseData);
-            map.entrySet().removeIf(entry -> entry.getKey().equals("FX"));
+            eip06w050Service.initializeOption(caseData);
             eip06w050Service.getMeetingCodeList(caseData);
         } catch (Exception e) {
             log.error(ExceptionUtility.getStackTrace(e));
@@ -58,8 +60,7 @@ public class Eip06w050Controller extends BaseController {
     @RequestMapping("/Eip06w050_query.action")
     public String query(@ModelAttribute(CASE_KEY) Eip06w050Case caseData) {
         try {
-            Map<String, String> map =  eip06w050Service.initializeOption(caseData);
-            map.entrySet().removeIf(entry -> entry.getKey().equals("FX"));
+            eip06w050Service.initializeOption(caseData);
             eip06w050Service.getMeetingCodeAndItemTypList(caseData);
         } catch (Exception e) {
             log.error(ExceptionUtility.getStackTrace(e));
@@ -75,7 +76,7 @@ public class Eip06w050Controller extends BaseController {
         try {
             log.debug("新增 會議室參數維護");
             //新增時移除D(預約天數)、FX(會議室取消)，已包含於F(會議室邏輯)
-            Map<String, String> map =  eip06w050Service.initializeOption(caseData);
+            Map<String, String> map =  eip06w050Service.initializeOptionAll(caseData);
             map.entrySet().removeIf(entry -> entry.getKey().equals("D")|| entry.getKey().equals("FX"));
         } catch (Exception e) {
             log.error(ExceptionUtility.getStackTrace(e));
@@ -89,30 +90,39 @@ public class Eip06w050Controller extends BaseController {
     public String modifyClass(@ModelAttribute(CASE_KEY) Eip06w050Case caseData) {
         try {
             log.debug("修改 會議室參數維護");
-            eip06w050Service.initializeOption(caseData);
+            eip06w050Service.initializeOptionAll(caseData);
             eip06w050Service.getSingleClass(caseData);
         } catch (Exception e) {
             log.error(ExceptionUtility.getStackTrace(e));
             setSystemMessage(getUpdateFailMessage());
         }
-        setSystemMessage(getUpdateSuccessMessage());
         return MODIFY_PAGE;
     }
+
+    /**
+     * 提示確認視窗
+     * @param caseData
+     * @return alert相關資訊
+     */
+
+    @RequestMapping("/Eip06w050_showAlert.action")
+    @ResponseBody
+    public Map<String, String> showAlert(@RequestBody Eip06w050Case caseData) {
+        Map<String, String> map = new HashMap<>();
+        String itemIdIsUse = eip06w050Service.deleteClass(caseData);
+        map.put("itemIdIsUse", itemIdIsUse);
+        return ObjectUtility.normalizeObject(map);
+    }
+
 
     @RequestMapping("/Eip06w050_delete.action")
     public String deleteClass(@ModelAttribute(CASE_KEY) Eip06w050Case caseData) {
         try {
             log.debug("刪除 會議室參數維護");
-            String result = eip06w050Service.deleteClass(caseData);
-            if ("N".equals(result)){
-                setSystemMessage("參數使用中，刪除失敗");
-                eip06w050Service.getMeetingCodeList(caseData);
-            }else{
-                eip06w050Service.getMeetingCodeList(caseData);
-                setSystemMessage(getDeleteSuccessMessage());
-            }
-            Map<String, String> map =  eip06w050Service.initializeOption(caseData);
-            map.entrySet().removeIf(entry -> entry.getKey().equals("FX"));
+            eip06w050Service.getMeetingCodeList(caseData);
+            setSystemMessage(getDeleteSuccessMessage());
+            eip06w050Service.initializeOption(caseData);
+
         } catch (Exception e) {
             log.error(ExceptionUtility.getStackTrace(e));
             setSystemMessage(getDeleteFailMessage());

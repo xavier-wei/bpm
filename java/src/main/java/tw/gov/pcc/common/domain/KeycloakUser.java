@@ -46,54 +46,8 @@ public class KeycloakUser implements Serializable {
      * 電子信箱
      */
     private String email;
-
-
-    public String getTel1() {
-        return tel1;
-    }
-
-
-    public void setTel1(String tel1) {
-        this.tel1 = tel1;
-    }
-
-
-    public String getTel2() {
-        return tel2;
-    }
-
-
-    public void setTel2(String tel2) {
-        this.tel2 = tel2;
-    }
-
-
-    public String getTitleId() {
-        return titleId;
-    }
-
-
-    public void setTitleId(String titleId) {
-        this.titleId = titleId;
-    }
-
-
-    public String getLineToken() {
-        return lineToken;
-    }
-
-
-    public void setLineToken(String lineToken) {
-        this.lineToken = lineToken;
-    }
-
-
-    public String getEmail() {
-        return email;
-    }
-
-
-    public void setEmail(String email) {
-        this.email = email;
-    }
+    /**
+     * 機關代碼
+     */
+    private String orgId;
 }

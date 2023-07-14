@@ -10,7 +10,10 @@ import tw.gov.pcc.eip.framework.domain.UserBean;
 import tw.gov.pcc.eip.framework.spring.controllers.BaseController;
 import tw.gov.pcc.eip.services.ProfileService;
 import tw.gov.pcc.eip.util.BeanUtility;
+import tw.gov.pcc.eip.util.ExceptionUtility;
 import tw.gov.pcc.eip.util.ObjectUtility;
+
+import java.util.Arrays;
 
 /**
  * Ajax Controller
@@ -38,19 +41,27 @@ public class SettingController extends BaseController {
         eipxx0w030Case.setEntryListOrder(ObjectUtils.defaultIfNull(profileService.readProfileMap(userData.getUserId())
                         .get(ProfileService.ENTRY_LIST_ORDER_KEY), ENTRY_LIST_ORDER)
                 .toString());
-        return eipxx0w030Case;
+        return ObjectUtility.normalizeObject(eipxx0w030Case);
     }
 
     @RequestMapping(value = {"/*_saveSetting.action"}, method = RequestMethod.POST)
     @ResponseBody
     public void saveSetting(@RequestBody Eipxx0w030Case bfxx0w030Case, @ModelAttribute(SETTING) Eipxx0w030Case sessionCaseData) {
-        Eipxx0w030Case cloneCase = new Eipxx0w030Case();
-        BeanUtility.copyProperties(cloneCase, sessionCaseData);
-        sessionCaseData.setClosed(ObjectUtility.normalizeObject(StringUtils.defaultIfBlank(bfxx0w030Case.getClosed(), sessionCaseData.getClosed())));
-        sessionCaseData.setEntryListOrder(ObjectUtility.normalizeObject(StringUtils.defaultIfBlank(bfxx0w030Case.getEntryListOrder(),
-                StringUtils.defaultIfBlank(sessionCaseData.getEntryListOrder(), ENTRY_LIST_ORDER))));
-        if (!cloneCase.equals(sessionCaseData)) { //避免頻繁寫入，不同才寫
-            profileService.saveProfile(userData.getUserId(), ProfileService.ENTRY_LIST_ORDER_KEY, sessionCaseData.getEntryListOrder());
+        try {
+            Eipxx0w030Case cloneCase = new Eipxx0w030Case();
+            BeanUtility.copyProperties(cloneCase, sessionCaseData);
+            sessionCaseData.setClosed(ObjectUtility.normalizeObject(StringUtils.defaultIfBlank(bfxx0w030Case.getClosed(), sessionCaseData.getClosed())));
+            String entryListOrder = ObjectUtility.normalizeObject(StringUtils.defaultIfBlank(bfxx0w030Case.getEntryListOrder(),
+                    StringUtils.defaultIfBlank(sessionCaseData.getEntryListOrder(), ENTRY_LIST_ORDER)));
+            sessionCaseData.setEntryListOrder(entryListOrder);
+            boolean valid = Arrays.stream(StringUtils.split(entryListOrder, ","))
+                    .distinct()
+                    .count() == StringUtils.split(ENTRY_LIST_ORDER, ",").length;
+            if (valid && !cloneCase.equals(sessionCaseData)) { //避免頻繁寫入，不同才寫
+                profileService.saveProfile(userData.getUserId(), ProfileService.ENTRY_LIST_ORDER_KEY, sessionCaseData.getEntryListOrder());
+            }
+        } catch (Exception e) {
+            log.warn("saving profile failed. {}", ExceptionUtility.getStackTrace(e));
         }
     }
 }

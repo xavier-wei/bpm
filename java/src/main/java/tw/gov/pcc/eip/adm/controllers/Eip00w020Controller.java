@@ -2,15 +2,13 @@ package tw.gov.pcc.eip.adm.controllers;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.SessionAttributes;
 import org.springframework.web.servlet.ModelAndView;
 
-import tw.gov.pcc.eip.adm.cases.Eip00w010Case;
 import tw.gov.pcc.eip.adm.cases.Eip00w020Case;
-import tw.gov.pcc.eip.adm.service.Eip00w020Service;
+import tw.gov.pcc.eip.services.Eip00w020Service;
 import tw.gov.pcc.eip.domain.Users;
 import tw.gov.pcc.eip.framework.spring.controllers.BaseController;
 import tw.gov.pcc.eip.util.ExceptionUtility;

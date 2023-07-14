@@ -1,5 +1,6 @@
 package tw.gov.pcc.eip.msg.controllers;
 
+import java.io.ByteArrayOutputStream;
 import java.util.List;
 import java.util.Map;
 
@@ -19,9 +20,12 @@ import com.cronutils.utils.StringUtils;
 import lombok.extern.slf4j.Slf4j;
 import tw.gov.pcc.eip.framework.domain.UserBean;
 import tw.gov.pcc.eip.framework.spring.controllers.BaseController;
+import tw.gov.pcc.eip.framework.spring.support.FileOutputView;
 import tw.gov.pcc.eip.msg.cases.Eip01w010Case;
 import tw.gov.pcc.eip.msg.cases.Eip01w010Case.Detail;
+import tw.gov.pcc.eip.msg.cases.Eip01wFileCase;
 import tw.gov.pcc.eip.services.Eip01w010Service;
+import tw.gov.pcc.eip.services.Eip01wFileService;
 import tw.gov.pcc.eip.util.ExceptionUtility;
 import tw.gov.pcc.eip.util.ObjectUtility;
 
@@ -43,6 +47,8 @@ public class Eip01w010Controller extends BaseController {
     private UserBean userData;
     @Autowired
     private Eip01w010Service eip01w010Service;
+    @Autowired
+    private Eip01wFileService eip01wFileService;
 
     /**
      * 進入頁面
@@ -53,7 +59,7 @@ public class Eip01w010Controller extends BaseController {
     public ModelAndView enter(@ModelAttribute(CASE_KEY) Eip01w010Case caseData) {
         log.debug("導向 Eip01w010_enter 訊息上稿");
         eip01w010Service.initOptions(caseData);
-        eip01w010Service.setDefaultValue(caseData);
+        eip01w010Service.setDefaultValue(caseData, userData);
         return new ModelAndView(MAIN_PAGE);
     }
 
@@ -80,7 +86,7 @@ public class Eip01w010Controller extends BaseController {
     public ModelAndView edit(@ModelAttribute(CASE_KEY) Eip01w010Case caseData) {
         log.debug("導向 Eip01w010_enter 訊息上稿 新增/修改");
         eip01w010Service.initOptions(caseData);
-        eip01w010Service.setDefaultValue(caseData);
+        eip01w010Service.setDefaultValue(caseData, userData);
         return new ModelAndView(EDIT_PAGE);
     }
 
@@ -149,7 +155,7 @@ public class Eip01w010Controller extends BaseController {
             } else {
                 eip01w010Service.update(caseData, userData.getUserId());
             }
-//            eip01w010Service.uploadImg(caseData);
+            eip01w010Service.insertDataUploadFiles(caseData);
             setSystemMessage(isNewCase ? getSaveSuccessMessage() : getUpdateSuccessMessage());
             return new ModelAndView(EDIT_PAGE);
         } catch (Exception e) {
@@ -230,6 +236,26 @@ public class Eip01w010Controller extends BaseController {
     }
 
     /**
+     * 刪除附檔
+     * 
+     * @param caseData
+     * @return
+     */
+    @RequestMapping("/Eip01w010_delFile.action")
+    public ModelAndView deleteFile(@ModelAttribute(CASE_KEY) Eip01w010Case caseData) {
+        log.debug("導向 Eip01w010_delFile 訊息上稿 刪除附檔");
+        eip01w010Service.initOptions(caseData);
+        try {
+            eip01w010Service.deleteFile(caseData.getFseq(), caseData.getSeq());
+            eip01w010Service.getOne(caseData);
+        } catch (Exception e) {
+            log.error("訊息上稿 - " + ExceptionUtility.getStackTrace(e));
+            setSystemMessage(getDeleteFailMessage());
+        }
+        return new ModelAndView(EDIT_PAGE);
+    }
+
+    /**
      * 取得樹
      * 
      * @param attr
@@ -239,5 +265,46 @@ public class Eip01w010Controller extends BaseController {
     @ResponseBody
     public List<String> getTree(@RequestParam("attr") String attr) {
         return ObjectUtility.normalizeObject(eip01w010Service.getTree(attr));
+    }
+
+    /**
+     * 透過ajax 查詢預覽資料
+     * 
+     * @param fseq 項次
+     * @return
+     */
+    @RequestMapping("/Eip01w010_getDetail.action")
+    @ResponseBody
+    public Eip01w010Case.preView getDetail(@RequestParam("fseq") String fseq) {
+        log.debug("導向 Eip01w010_getDetail 訊息上稿 預覽查詢");
+        return ObjectUtility.normalizeObject(eip01w010Service.query(fseq));
+    }
+
+    /**
+     * 訊息上稿 檔案下載
+     * 
+     * @param caseData
+     * @return
+     */
+    @RequestMapping("/Eip01w010_getFile.action")
+    public ModelAndView download(@ModelAttribute(CASE_KEY) Eip01w010Case caseData) {
+        log.debug("導向 Eip01w010_getFile 訊息上稿 檔案下載");
+        try {
+            eip01w010Service.initOptions(caseData);
+            Eip01wFileCase filecase = new Eip01wFileCase();
+            filecase.setFseq(caseData.getFseq());
+            filecase.setSeq(caseData.getSeq());
+            filecase.setSubject("");
+            ByteArrayOutputStream baos = eip01wFileService.getFile(filecase);
+            if (baos != null) {
+                return new ModelAndView(new FileOutputView(baos, filecase.getFilename(), FileOutputView.GENERAL_FILE));
+            } else {
+                setSystemMessage("查無下載檔案");
+            }
+        } catch (Exception e) {
+            log.error("訊息上稿 附檔下載 - " + ExceptionUtility.getStackTrace(e));
+            setSystemMessage("檔案下載失敗");
+        }
+        return new ModelAndView("Q".equals(caseData.getMode()) ? MAIN_PAGE : EDIT_PAGE);
     }
 }

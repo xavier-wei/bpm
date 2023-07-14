@@ -45,7 +45,7 @@ public class ValidationMessageTag extends TagSupport {
                         idList = (List<String>) ObjectUtils.defaultIfNull(session.getAttribute(VALIDATION_ID_SESSION_KEY), new ArrayList<>()); //20220418, BF收到NPE，所以加上defaultIfNull
                         session.removeAttribute(VALIDATION_ID_SESSION_KEY);
                     }
-                    out.print(Encode.forHtml(String.format("%s%s%s", idList.stream().collect(Collectors.joining(",", ",", ",")), VALIDATION_MESSAGE_ID_SEPERATOR, StringUtility.normalizeString(StringUtils.replaceAll(str.toString(), "\r\n", VALIDATION_MESSAGE_SEPERATOR)))));
+                    out.print(Encode.forHtml(String.format("%s%s%s", idList.stream().collect(Collectors.joining(",", ",", ",")), VALIDATION_MESSAGE_ID_SEPERATOR, StringUtility.normalizeString(StringUtils.replace(str.toString(), "\r\n", VALIDATION_MESSAGE_SEPERATOR)))));
                 }
             }
         } catch (Exception e) {

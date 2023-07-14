@@ -4,51 +4,52 @@
 <spring:eval var="caseKey" expression="T(tw.gov.pcc.eip.msg.controllers.Eip01w040Controller).CASE_KEY" />
 <c:set var="caseData" value="${requestScope[caseKey]}" />
 <tags:layout>
+    <jsp:attribute name="heads">
+        <style>
+            .col-form-label {
+                min-width: 100px;
+            }
 
+            #btnQuery {
+                height: 90%;
+                margin-top: 2.5px;
+                padding-top: 6px;
+                padding-bottom: 6px;
+                padding-left: 8px;
+                padding-right: 8px;
+            }
+        </style>
+    </jsp:attribute>
     <jsp:attribute name="contents">
         <tags:fieldset legend="查詢條件">
             <form:form id="eip01w040Form" modelAttribute="${caseKey}">
-                <!--         <a href="#" id="btnExpandAll">Expand all</a> - -->
-                <!-- 		<a href="#" id="btnCollapseAll">Collapse all</a> - -->
-                <!-- 		<a href="#" id="btnToggleExpand">Toggle expand</a> -->
-                <!-- 		<br> -->
                 <div id="dynaTree">
                     <ul>
                         <c:forEach var="items" items="${items}">
                             <c:out value="${items}" escapeXml="false" />
                         </c:forEach>
-                        <!--             <li id="H" class="folder expanded active">人事室 -->
-                        <!--                 <ul> -->
-                        <!--                     <li id="HB" class="folder">訓練專區 -->
-                        <!--                         <ul> -->
-                        <!--                             <li id="HBA" class="folder">職能訓練 -->
-                        <!--                                 <ul> -->
-                        <!--                                     <li id="HBAA" class="folder">公文 -->
-                        <!--                                 </ul> -->
-                        <!--                             <li id="HBB" class="folder">體能訓練 -->
-                        <!--                                 <ul> -->
-                        <!--                                     <li id="HBBB" class="folder">重訓課程 -->
-                        <!--                                 </ul> -->
-                        <!--                         </ul> -->
-                        <!--                 </ul> -->
                     </ul>
                 </div>
-                <!-- <button id="btnAddCode">Add nodes programmatically</button> -->
-                <!-- <button id="btnActiveNode">Activate item id4.3.2</button> -->
-                <!-- <button id="btnRemoveNode">Remove Node</button> -->
-<!--                 關鍵字查詢 -->
-                <c:if test="${not empty caseData.qryList }">
-                    <div class="table-responsive mt-4">
-                        <table class="table" id="qryListTable">
-                            <thead>
-                                <tr>
-                                    <th class="text-center">序號</th>
-                                    <th class="text-center">主題</th>
-                                    <th class="text-center">更新日期</th>
-                                    <th class="text-center">操作區</th>
-                                </tr>
-                            </thead>
-                            <tbody>
+                <tags:form-row>
+                    <form:label cssClass="col-form-label" path="keyword">關鍵字搜尋：</form:label>
+                    <div class="col-12 col-md d-flex">
+                        <form:input path="keyword" cssClass="form-control" size="40" maxlength="800" />
+                        <tags:button cssClass="ml-2" id="btnQuery">搜尋<i class="fas fa-search"></i></tags:button>
+                    </div>
+                </tags:form-row>
+
+                <div class="table-responsive mt-4">
+                    <table class="table" id="qryListTable">
+                        <thead>
+                            <tr>
+                                <th class="text-center">序號</th>
+                                <th class="text-center">主題</th>
+                                <th class="text-center">更新日期</th>
+                                <th data-orderable="false" class="text-center">操作區</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <c:if test="${not empty caseData.qryList }">
                                 <c:forEach items="${caseData.qryList}" var="item" varStatus="status">
                                     <tr data-seq="${status.index + 1 }">
                                         <td class="text-center">
@@ -68,15 +69,14 @@
                                         </td>
                                     </tr>
                                 </c:forEach>
-                            </tbody>
-                        </table>
-                    </div>
-                </c:if>
+                            </c:if>
+                        </tbody>
+                    </table>
+                </div>
                 <form:hidden path="fseq" />
                 <form:hidden path="seq" />
-                <form:hidden path="filename" />
-                <form:hidden path="treenode" />
                 <form:hidden path="key" />
+                <form:hidden path="subject" />
             </form:form>
         </tags:fieldset>
 
@@ -103,129 +103,42 @@
     <jsp:attribute name="footers">
         <script type="text/javascript">
             $(function() {
-                var gnodeKey;
+                let config = getDataTablesConfig();
+                //config.searching = true;
+                //config.dom = "<'pagination'pli>tf"; // or <input type="search" id="keyword">
+                //config.orderable = true;
+                //config.lengthChange = true;
+                //config.pageLength = 5; // default 5
+                var table = $("#qryListTable").DataTable(config);
                 $("#dynaTree").dynatree({
                     selectMode: 1, //1:single, 2:multi, 3:multi-hier
-                    //checkbox: true,
-                    //classNames: {checkbox: "ui-dynatree-radio"},
-                    minExpandLevel: 1, // *** 從哪個階層開始展開收合
+                    minExpandLevel: 1,
                     persist: false,
                     autoCollapse: false,
                     activeVisible: true,
                     cookie: false,
                     onActivate: function(node) {
-                        //  console.log($("#dynaTree").dynatree("getRoot"))
-                        //  $("#dynaTree").dynatree("getRoot").visit(function(dtnode, data){
-                        //      console.log(dtnode);
-                        //  });
-//                         alert('parnet: ' + node.parent.data.title + ' ; key: ' + node.data.key);
-//                         console.log(node);
-                        //                          alert(node.data.key);
-                        gnodeKey = node.data.key;
-                        $('#key').val(gnodeKey);
-                        ajaxGetList(node.data.key);
+                        // 路徑查詢
+                        $('#key').val(node.data.key);
+                        $('#eip01w040Form').attr('action',
+                                '<c:url value="/Eip01w040_path.action" />')
+                            .submit();
                     }
-                    // children: JSON.parse($('#treenode').val())
-                    // [ // Pass an array of nodes. .replace(/&#034;/g, '\"')
-                    //     {title: "Folder 2", key:"A", isFolder: true,
-                    //         children: [
-                    //             {title: "Sub-item 2.1", key:"AA",isFolder: true,
-                    //            	 children: [
-                    //            		 {title:"xxx", key:"AAA"}
-                    //                 ]},
-                    //             {title: "Sub-item 2.2", key:"AB"}
-                    //         ]
-                    //     },
-                    //     {title: "Item 3", key:"B"}
-                    // ]
                 });
-
-                function ajaxGetList(key) {
-                    $('#eip01w040Form').attr('action', '<c:url value="/Eip01w040_pathQuery.action" />')
-                    .submit();
-//                     $.ajax({
-//                         type: "POST",
-//                         url: '<c:url value="/Eip01w040_pathQuery.action" />',
-//                         data: {
-//                             'key': key
-//                         },
-//                         timeout: 100000,
-//                         success: function(data) {
-//                             if (data == '') {
-//                                 // showAlert('查無資料!');
-//                                 $('.prog').html('查無資料');
-//                                 $("#msgarea").toggleClass("newheight");
-//                             } else {
-//                                 $.each(data, function(i, e) {
-//                                     console.log(i + ' ' + e.fseq + ' ' + e.subject + ' ' + e
-//                                         .upddt);
-//                                 });
-//                             }
-//                         },
-//                         error: function(e) {
-//                             // showAlert("取得資料發生錯誤");
-//                             $('.prog').html('取得資料發生錯誤');
-//                             $("#msgarea").toggleClass("newheight");
-//                         }
-//                     });
-                }
-                $("#btnToggleExpand").click(function() {
-                    $("#dynaTree").dynatree("getRoot").visit(function(dtnode) {
-                        dtnode.toggleExpand();
-                    });
-                    return false;
+                // 關鍵字查詢
+                $('input#keyword').on('keyup', function(e) {
+                    if (e.key === 'Enter' || e.keyCode === 13) {
+                        $('#eip01w040Form').attr('action',
+                                '<c:url value="/Eip01w040_keyword.action" />')
+                            .submit();
+                    }
+                    //table
+                    //.columns(1)
+                    //.search(this.value)
+                    //.draw();
                 });
-                $("#btnCollapseAll").click(function() {
-                    $("#dynaTree").dynatree("getRoot").visit(function(dtnode) {
-                        dtnode.expand(false);
-                    });
-                    return false;
-                });
-                $("#btnExpandAll").click(function() {
-                    $("#dynaTree").dynatree("getRoot").visit(function(dtnode) {
-                        dtnode.expand(true);
-                    });
-                    return false;
-                });
-                $("#btnAddCode").click(function() {
-                    // Sample: add an hierarchic branch using code.
-                    // This is how we would add tree nodes programatically
-                    var rootNode = $("#dynaTree").dynatree("getRoot");
-                    var childNode = rootNode.addChild({
-                        title: "Programatically addded nodes",
-                        tooltip: "This folder and all child nodes were added programmatically.",
-                        isFolder: true
-                    });
-                    childNode.addChild({
-                        title: "Document using a custom icon",
-                        icon: "customdoc1.gif"
-                    });
-                    return false;
-                });
-                $('#btnRemoveNode').click(function(e) {
-                    e.preventDefault();
-                    var node = $("#dynaTree").dynatree("getTree").getNodeByKey(gnodeKey);
-                    node.remove();
-                })
-                $("#btnActiveNode").click(function(e) {
-                    e.preventDefault();
-                    // var node = $("#dynaTree").dynatree("getTree").getNodeByKey("xxx");
-                    // node.addChild({title: "New Node", key: "3333"});
-                    // node.data.isFolder = true;
-                    // node.render();
-                    alert(gnodeKey);
-                    var node = $("#dynaTree").dynatree("getTree").getNodeByKey(gnodeKey);
-                    node.addChild({
-                        title: "New Node",
-                        key: "3333"
-                    });
-                    node.data.isFolder = true;
-                    node.render();
-                    $("#dynaTree").dynatree("getTree").getNodeByKey("yyy").select();
-                });
-                // 查詢
                 $('#btnQuery').click(function() {
-                    $('#eip01w040Form').attr('action', '<c:url value="/Eip01w040_query.action" />')
+                    $('#eip01w040Form').attr('action', '<c:url value="/Eip01w040_keyword.action" />')
                         .submit();
                 });
                 // 明細
@@ -243,17 +156,36 @@
                                 showAlert('查無資料!');
                             } else {
                                 var str = '';
-                                $.each(data.file, function(i, e) {
+                                var count = Object.keys(data.file).length;
+                                if (count == 1) {
+                                    var key = Object.keys(data.file);
                                     str +=
-                                        '<a href="javascript:;" class="alink" id=' +
-                                        i + '>' +
-                                        e + '</a>' + '　';
-                                });
-                                $('.modal-body').html('公告事項：' + data.msgtype +
-                                    '<br>發佈單位：' + data.contactunit +
-                                    '<br>主　　題：' + data.subject +
-                                    '<br>　　　　　' + data.mcontent +
-                                    '<br>附加檔案：' + str +
+                                        '附加檔案：<a href="javascript:;" class="alink" id=' +
+                                        key + '>' +
+                                        data.file[key] + '</a>';
+                                } else {
+                                    str +=
+                                        '<div style="display: flex;">' +
+                                        '<div style="flex: none;">附加檔案：</div><div>';
+                                    $.each(data.file, function(key, value) {
+                                        str +=
+                                            '<div class="d-inline-flex mr-3">' +
+                                            '<input type="checkbox" id="' +
+                                            key +
+                                            '" name="filelist"><a href="javascript:;" class="alink" id=' +
+                                            key + '>' + value + '</a></div>';
+                                    });
+                                    str +=
+                                        '</div></div>' +
+                                        '<button type="button" class="btn btn-outline-be btn-sm mr-1" ' +
+                                        'style="margin-left: 80px;" id="zipDownload">下載</button>';
+                                }
+                                $('#subject').val(data.subject);
+                                $('.modal-body').html(
+                                    '主　　題：' + data.subject +
+                                    '<br>訊息文字：' + data.mcontent +
+                                    '<br>發布單位：' + data.contactunit +
+                                    '<br>' + str +
                                     '<br>更新日期：' + data.upddt +
                                     '<br>聯絡人　：' + data.contactperson +
                                     '<br>聯絡電話：' + data.contacttel);
@@ -266,10 +198,22 @@
                     });
                 });
             });
+            // 檔案下載按鈕
+            $(document).on('click', '#zipDownload', function(e) {
+                var checkedList = $('input:checkbox[name="filelist"]:checked');
+                if (checkedList.length) {
+                    var idArray = [];
+                    checkedList.each(function() {
+                        idArray.push(this.id);
+                    });
+                    $('#seq').val(idArray.join(','));
+                    $('#eip01w040Form').attr('action', '<c:url value="/Eip01w040_getFile.action" />')
+                        .submit();
+                }
+            });
             // 檔案下載連結
             $(document).on('click', '.alink', function(e) {
                 $('#seq').val($(this).attr('id'));
-                $('#filename').val($(this).html());
                 $('#eip01w040Form').attr('action', '<c:url value="/Eip01w040_getFile.action" />')
                     .submit();
             });

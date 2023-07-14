@@ -14,8 +14,8 @@ import tw.gov.pcc.eip.dao.MsgdataDao;
 import tw.gov.pcc.eip.domain.Msgdata;
 import tw.gov.pcc.eip.msg.cases.Eip01w020PageCase;
 import tw.gov.pcc.eip.msg.cases.Eip01w030Case;
-import tw.gov.pcc.eip.msg.cases.Eip01w030Case.Detail;
 import tw.gov.pcc.eip.msg.cases.Eip01w050Case;
+import tw.gov.pcc.eip.msg.cases.Eip01wPopCase;
 
 /**
  * 訊息上稿
@@ -114,20 +114,20 @@ public class MsgdataDaoImpl extends BaseDao<Msgdata> implements MsgdataDao {
     public List<Eip01w020PageCase> getEip01w020DataList(String msgtype, String attributype, String subject,
             String contactunit, String creatid, String updid, String releasedts, String releasedte) {
         StringBuilder sql = new StringBuilder();
-        sql.append(" SELECT B.CODENO, B.CODENAME AS DEPTNAME, COUNT(A.FSEQ) AS COUNT ");
-        sql.append("   FROM MSGDATA A, EIPCODE B ");
-        sql.append("  WHERE A.CONTACTUNIT = B.CODENO ");
-        sql.append("    AND B.CODEKIND = 'DEPT' ");
-        sql.append("    AND A.MSGTYPE = ISNULL(:msgtype ,A.MSGTYPE) ");
-        sql.append("    AND A.ATTRIBUTYPE = ISNULL(:attributype ,A. ATTRIBUTYPE) ");
-        sql.append("    AND A.SUBJECT LIKE '%' + ISNULL(:subject , A.SUBJECT)+ '%' ");
-        sql.append("    AND A.CONTACTUNIT = ISNULL(:contactunit,A.CONTACTUNIT) ");
+        sql.append(" SELECT B.DEPT_ID, B.DEPT_NAME AS DEPTNAME, COUNT(A.FSEQ) AS COUNT ");
+        sql.append("   FROM MSGDATA A, DEPTS B ");
+        sql.append("  WHERE A.CONTACTUNIT = B.DEPT_ID");
+        sql.append("    AND B.IS_VALID = 'Y' ");
+        sql.append("    AND A.MSGTYPE = ISNULL(:msgtype, A.MSGTYPE) ");
+        sql.append("    AND A.ATTRIBUTYPE = ISNULL(:attributype, A.ATTRIBUTYPE) ");
+        sql.append("    AND A.SUBJECT LIKE '%' + ISNULL(:subject, A.SUBJECT)+ '%' ");
+        sql.append("    AND A.CONTACTUNIT = ISNULL(:contactunit, A.CONTACTUNIT) ");
         sql.append("    AND A.CREATID = ISNULL(:creatid, A.CREATID) ");
-        sql.append("    AND A.UPDID = ISNULL(:updid,A.UPDID) ");
+        sql.append("    AND A.UPDID = ISNULL(:updid, A.UPDID) ");
         sql.append(
-                "    AND A.RELEASEDT >= ISNULL(:releasedts, A.RELEASEDT) AND  A.RELEASEDT <= ISNULL(:releasedte, A.RELEASEDT) ");
-        sql.append("  GROUP BY CODENO, CODENAME ");
-        sql.append("  ORDER BY CODENO; ");
+                "    AND A.RELEASEDT >= ISNULL(:releasedts, A.RELEASEDT) AND A.RELEASEDT <= ISNULL(:releasedte, A.RELEASEDT) ");
+        sql.append("  GROUP BY DEPT_ID, DEPT_NAME ");
+        sql.append("  ORDER BY DEPT_ID ");
         Map<String, Object> params = new HashMap<>();
         params.put("msgtype", msgtype);
         params.put("attributype", attributype);
@@ -142,7 +142,7 @@ public class MsgdataDaoImpl extends BaseDao<Msgdata> implements MsgdataDao {
     }
 
     @Override
-    public List<Detail> getEip01w030LatestDataList() {
+    public List<Eip01wPopCase> getEip01w030LatestDataList() {
         StringBuilder sql = new StringBuilder();
         sql.append(" SELECT A.FSEQ, A.SUBJECT, C.CODENAME  MSGTYPE,  ");
         sql.append("         RELEASEDT,  ");
@@ -158,11 +158,11 @@ public class MsgdataDaoImpl extends BaseDao<Msgdata> implements MsgdataDao {
         sql.append("    AND C.SCODEKIND = '1' ");
         sql.append("    AND C.CODENO = A.MSGTYPE ");
         return getNamedParameterJdbcTemplate().query(sql.toString(),
-                BeanPropertyRowMapper.newInstance(Eip01w030Case.Detail.class));
+                BeanPropertyRowMapper.newInstance(Eip01wPopCase.class));
     }
 
     @Override
-    public List<Detail> getEip01w030DataList(String msgtype, String subject) {
+    public List<Eip01wPopCase> getEip01w030DataList(String msgtype, String subject) {
         StringBuilder sql = new StringBuilder();
         sql.append(" SELECT A.FSEQ, ");
         sql.append("        A.SUBJECT, ");
@@ -186,11 +186,11 @@ public class MsgdataDaoImpl extends BaseDao<Msgdata> implements MsgdataDao {
         params.put("msgtype", msgtype);
         params.put("subject", subject);
         return getNamedParameterJdbcTemplate().query(sql.toString(), params,
-                BeanPropertyRowMapper.newInstance(Eip01w030Case.Detail.class));
+                BeanPropertyRowMapper.newInstance(Eip01wPopCase.class));
     }
 
     @Override
-    public Eip01w030Case.Detail getEip01w030Detail(String fseq) {
+    public Eip01wPopCase getEip01w030Detail(String fseq) {
         StringBuilder sql = new StringBuilder();
         sql.append(" SELECT B.CODENAME MSGTYPE, ");
         sql.append("        C.CODENAME CONTACTUNIT, ");
@@ -213,12 +213,12 @@ public class MsgdataDaoImpl extends BaseDao<Msgdata> implements MsgdataDao {
         Map<String, Object> params = new HashMap<>();
         params.put("fseq", fseq);
         return getNamedParameterJdbcTemplate()
-                .query(sql.toString(), params, BeanPropertyRowMapper.newInstance(Eip01w030Case.Detail.class)).stream()
+                .query(sql.toString(), params, BeanPropertyRowMapper.newInstance(Eip01wPopCase.class)).stream()
                 .findFirst().orElse(null);
     }
 
     @Override
-    public List<Eip01w050Case.Detail> getEip01w050DataList(String dept) {
+    public List<Eip01wPopCase> getEip01w050DataList(String dept) {
         StringBuilder sql = new StringBuilder();
         sql.append(" SELECT A.FSEQ, ");
         sql.append("        A.SUBJECT, ");
@@ -237,18 +237,18 @@ public class MsgdataDaoImpl extends BaseDao<Msgdata> implements MsgdataDao {
         Map<String, Object> params = new HashMap<>();
         params.put("dept", dept);
         return getNamedParameterJdbcTemplate().query(sql.toString(), params,
-                BeanPropertyRowMapper.newInstance(Eip01w050Case.Detail.class));
+                BeanPropertyRowMapper.newInstance(Eip01wPopCase.class));
     }
 
     @Override
-    public Eip01w050Case.Detail getEip01w050Detail(String fseq) {
+    public Eip01wPopCase getEip01w050Detail(String fseq) {
         StringBuilder sql = new StringBuilder();
         sql.append(" SELECT A.SUBJECT, ");
         sql.append("        A.MCONTENT, ");
-        sql.append("        C.CODENAME DEPNAME, ");
+        sql.append("        C.CODENAME CONTACTUNIT, ");
         sql.append("        A.CONTACTPERSON, ");
         sql.append("        A.CONTACTTEL, ");
-        sql.append("        B.CODENAME , ");
+        sql.append("        B.CODENAME MSGTYPE, ");
         sql.append(
                 "        CAST(CAST(DATEPART(YEAR, A.UPDDT) AS NUMERIC(4))-1911 AS VARCHAR(3))+'/' + CONVERT(CHAR(5), A.UPDDT, 1) UPDDT ");
         sql.append("   FROM MSGDATA A, ");
@@ -263,7 +263,7 @@ public class MsgdataDaoImpl extends BaseDao<Msgdata> implements MsgdataDao {
         Map<String, Object> params = new HashMap<>();
         params.put("fseq", fseq);
         return getNamedParameterJdbcTemplate()
-                .query(sql.toString(), params, BeanPropertyRowMapper.newInstance(Eip01w050Case.Detail.class)).stream()
+                .query(sql.toString(), params, BeanPropertyRowMapper.newInstance(Eip01wPopCase.class)).stream()
                 .findFirst().orElse(null);
     }
 
@@ -284,7 +284,7 @@ public class MsgdataDaoImpl extends BaseDao<Msgdata> implements MsgdataDao {
     }
 
     @Override
-    public List<Msgdata> getbyDefaultPath(String dept, String defaultPath) {
+    public List<Msgdata> getbyPath(String dept, String path) {
         StringBuilder sql = new StringBuilder();
         sql.append(" SELECT C.FSEQ, ");
         sql.append("        C.SUBJECT, ");
@@ -297,13 +297,13 @@ public class MsgdataDaoImpl extends BaseDao<Msgdata> implements MsgdataDao {
         sql.append("           WHERE A.FSEQ = B.FSEQ ");
         sql.append("             AND B.AVAILABLEDEP = :dept  ");
         sql.append("             AND C.ATTRIBUTYPE  = '4') ");
-        sql.append("    AND C.INDIR = :defaultPath ");
+        sql.append("    AND C.INDIR = :path ");
         sql.append("    AND C.STATUS = '4' ");
         sql.append("    AND C.ATTRIBUTYPE = '4' ");
         sql.append("  ORDER BY C.SHOWORDER, C.CREATDT DESC; ");
         Map<String, Object> params = new HashMap<>();
         params.put("dept", dept);
-        params.put("defaultPath", defaultPath);
+        params.put("path", path);
         return getNamedParameterJdbcTemplate().query(sql.toString(), params,
                 BeanPropertyRowMapper.newInstance(Msgdata.class));
     }

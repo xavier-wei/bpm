@@ -24,5 +24,12 @@ public interface DeptsDao {
 	public int updateByKey(Depts depts);
 
 	public int deleteByKey(Depts depts);
+	
+	public Depts findByPk(String dept_id);
+	/**
+	 * 取得訊息上稿 分眾 下拉選單內容
+	 * @return
+	 */
+	public List<Depts> getEip01wDepts();
 
 }
