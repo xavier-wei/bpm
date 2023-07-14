@@ -11,13 +11,13 @@ public class TaskDTO {
     private String taskId; // 任務ID
     private String taskName; // 任務名稱
     private String createdTime; // 任務創建時間
-
-    public TaskDTO(Task task) {
+    private boolean isProcessComplete; // 判斷此任務完成後流程是否結束
+    public TaskDTO(Task task,Boolean isProcessComplete) {
         this.taskId = task.getId();
         this.taskName = task.getName();
         this.processInstanceId = task.getProcessInstanceId();
         this.createdTime = CovertTimeZone.convertTimezoneTaipei(task.getCreateTime());
-
+        this.isProcessComplete = isProcessComplete;
     }
 
 }
