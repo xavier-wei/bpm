@@ -25,6 +25,8 @@ import AccountService from './account/account.service';
 import AlertService from './shared/alert/alert.service';
 import VueCompositionAPI from '@vue/composition-api'
 import Hooks from'@u3u/vue-hooks'
+import { BootstrapVueIcons, ModalPlugin, VBTooltipPlugin } from 'bootstrap-vue';
+
 
 import '../content/scss/global.scss';
 import '../content/scss/vendor.scss';
@@ -42,6 +44,9 @@ Vue.use(Hooks);
 Vue.use(Vue2Filters);
 Vue.use(ToastPlugin);
 Vue.use(VueCompositionAPI)
+Vue.use(BootstrapVueIcons);
+Vue.use(ModalPlugin);
+Vue.use(VBTooltipPlugin);
 Vue.component('font-awesome-icon', FontAwesomeIcon);
 Vue.component('jhi-item-count', JhiItemCountComponent);
 Vue.component('jhi-sort-indicator', JhiSortIndicatorComponent);

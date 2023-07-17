@@ -20,6 +20,7 @@ module.exports = async (env, options) => {
       mode: options.mode,
       context: resolve(),
       entry: {
+        global: './src/main/webapp/content/scss/global.scss',
         app: './src/main/webapp/app/main.ts',
       },
       output: {
