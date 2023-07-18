@@ -25,6 +25,9 @@
       <li>
         <router-link to="/l414Apply">新增</router-link>
       </li>
+      <li>
+        <router-link to="/appendix">附件</router-link>
+      </li>
     </ul>
   </div>
 </template>
