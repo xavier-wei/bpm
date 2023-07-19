@@ -41,7 +41,7 @@ public class ProcessFlowService {
         return processInstance.getId();
     }
 
-    // 完成task用，如為exclusive gateway前，則需一個Map傳入決策
+    // for completing task
     public ProcessRes completeTask(String processInstanceId, String taskId, Map<String, Object> variables) {
         Task task = taskService.createTaskQuery().processInstanceId(processInstanceId).taskId(taskId).singleResult();
         if (task.getId() != null) {
@@ -60,7 +60,7 @@ public class ProcessFlowService {
         return new  ProcessRes(SIGNATURE_STATUS[1], MESSAGE[1]);
     }
 
-    // 查詢個人所有任務
+    // query task
     public List<TaskDTO> queryProcessingTask(String id) {
         return taskService.createTaskQuery()
                 .taskCandidateOrAssigned(id)
@@ -77,4 +77,5 @@ public class ProcessFlowService {
                                                           .singleResult();
         return (historicProcessInstance != null && historicProcessInstance.getEndTime() != null);
     }
+
 }
