@@ -14,39 +14,24 @@
         </div>
         <div class="card-body clo-12" style="background-color: #8fd4ce">
           <b-form-row>
-            <i-form-group-check   class="col-4" label-cols="4" content-cols="8" :label="'部門：'" :item="$v.deaprtmant">
-              <b-form-select v-model="$v.deaprtmant.$model" ><template #first>
+            <i-form-group-check class="col-4" label-cols="4" content-cols="8" :label="'部門：'" :item="$v.deaprtmant">
+              <b-form-select v-model="$v.deaprtmant.$model"
+                ><template #first>
                   <option value="">請選擇</option>
-                </template></b-form-select
-              ></b-form-select>
+                </template>
+              </b-form-select>
             </i-form-group-check>
 
-            <i-form-group-check  class="col-4" label-cols="4" content-cols="8" :label="`申請者：`" :item="$v.usrMail">
-              <b-form-select v-model="$v.usrMail.$model" ><template #first>
+            <i-form-group-check class="col-4" label-cols="4" content-cols="8" :label="`申請者：`" :item="$v.usrMail">
+              <b-form-select v-model="$v.usrMail.$model"
+                ><template #first>
                   <option value="">請選擇</option>
-                </template></b-form-select
-              ></b-form-select>
+                </template>
+              </b-form-select>
             </i-form-group-check>
           </b-form-row>
-          <!-- <b-form-row>
-            <b-form-group class="col-4" label-cols="4" content-cols="8" label="部門:">
-              <b-form-select v-model="$v.deaprtmant.$moddel">
-                <template #first>
-                  <option value="">請選擇</option>
-                </template></b-form-select
-              >
-            </b-form-group>
-            <b-form-group class="col-4" label-cols="4" content-cols="8" label="申請者：">
-              <b-form-select v-model="$v.usrMail.$model">
-                <template #first>
-                  <option value="">請選擇</option>
-                </template></b-form-select
-              >
-            </b-form-group>
-          </b-form-row> -->
-
           <b-form-row>
-            <i-form-group-check class="col-4" label-cols="4" content-cols="8" label="表單:">
+            <i-form-group-check class="col-4" label-cols="4" content-cols="8" label="表單：">
               <b-form-select v-model="$v.seqNo.$model">
                 <template #first>
                   <option value="">請選擇</option>
@@ -71,9 +56,9 @@
           <!-- 填表日期 -->
           <b-form-row>
             <i-form-group-check
-              :label="'期間:'"
-               class="col-4" 
-               label-cols="4"
+              :label="'期間：'"
+              class="col-4"
+              label-cols="4"
               content-cols="8"
               :dual1="$v.seqDate.$model"
               :dual2="$v.seqDateEnd.$model"
@@ -172,7 +157,7 @@ export default defineComponent({
           key: 'action',
           label: '',
           sortable: false,
-          thStyle: 'width:20%',
+          thStyle: 'width:10%',
           thClass: 'text-center',
           tdClass: 'text-center align-middle',
         },
@@ -180,7 +165,7 @@ export default defineComponent({
           key: 'action2',
           label: '',
           sortable: false,
-          thStyle: 'width:20%',
+          thStyle: 'width:10%',
           thClass: 'text-center',
           tdClass: 'text-center align-middle',
         },
@@ -188,7 +173,6 @@ export default defineComponent({
           key: 'index',
           label: '申請者/填表人',
           sortable: false,
-          thStyle: 'width:10%',
           thClass: 'text-center',
           tdClass: 'text-center align-middle',
         },
@@ -196,7 +180,6 @@ export default defineComponent({
           key: 'hostname',
           label: '申請日期',
           sortable: false,
-          thStyle: 'width:10%',
           thClass: 'text-center',
           tdClass: 'text-center align-middle',
         },
@@ -204,7 +187,6 @@ export default defineComponent({
           key: 'port',
           label: '目前處理單位',
           sortable: false,
-          thStyle: 'width:20%',
           thClass: 'text-center',
           tdClass: 'text-center align-middle',
         },
@@ -212,7 +194,6 @@ export default defineComponent({
           key: 'active2',
           label: '處理狀況',
           sortable: false,
-          thStyle: 'width:20%',
           thClass: 'text-center',
           tdClass: 'text-center align-middle',
         },
@@ -220,7 +201,7 @@ export default defineComponent({
           key: 'active3',
           label: '主旨',
           sortable: false,
-          thStyle: 'width:20%',
+          thStyle: 'width:40%',
           thClass: 'text-center',
           tdClass: 'text-center align-middle',
         },
