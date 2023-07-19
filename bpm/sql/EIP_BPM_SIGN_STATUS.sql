@@ -1,16 +1,17 @@
 create table EIP_BPM_SIGN_STATUS
 (
-    FORM_ID             varchar(50)                not null,
-    PROCESS_INSTANCE_ID varchar(50)                not null,
-    TASK_ID             varchar(50)                not null,
-    SIGNER_ID           nvarchar(20) not null,
+    FORM_ID             varchar(50)                                      not null,
+    PROCESS_INSTANCE_ID varchar(50)                                      not null,
+    TASK_ID             varchar(50)                                      not null,
+    SIGNER_ID           nvarchar(20)                                     not null,
     SIGNER              nvarchar(20) collate Chinese_Taiwan_Stroke_CS_AS not null,
-    STATUS              varchar                    not null,
+    STATUS              varchar                                          not null,
     OPINION             nvarchar(1000) collate Chinese_Taiwan_Stroke_CS_AS,
-    SIGNING_DATETIME    datetime default getdate() not null,
+    SIGNING_DATETIME    datetime default getdate()                       not null,
     constraint EIP_BPM_SIGN_STATUS_pk
         primary key (FORM_ID, PROCESS_INSTANCE_ID, TASK_ID, SIGNER_ID)
-) go
+)
+go
 
 exec sp_addextendedproperty 'MS_Description', N'表單編號', 'SCHEMA', 'dbo', 'TABLE', 'EIP_BPM_SIGN_STATUS', 'COLUMN',
      'FORM_ID'
