@@ -10,11 +10,9 @@ import javax.validation.constraints.*;
  */
 public class EipBpmIsmsL414DTO implements Serializable {
 
-    @NotNull
     @Size(max = 50)
     private String formId;
 
-    @NotNull
     @Size(max = 50)
     private String processInstanceId;
 

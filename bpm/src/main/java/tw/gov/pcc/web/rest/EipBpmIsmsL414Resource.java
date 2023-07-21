@@ -23,7 +23,7 @@ import tw.gov.pcc.web.rest.errors.BadRequestAlertException;
  * REST controller for managing {@link tw.gov.pcc.domain.EipBpmIsmsL414}.
  */
 @RestController
-@RequestMapping("/api")
+@RequestMapping("/api/eip")
 public class EipBpmIsmsL414Resource {
 
     private final Logger log = LoggerFactory.getLogger(EipBpmIsmsL414Resource.class);
@@ -43,13 +43,13 @@ public class EipBpmIsmsL414Resource {
     }
 
     /**
-     * {@code POST  /eip-bpm-isms-l-414-s} : Create a new eipBpmIsmsL414.
+     * {@code POST  /eip-bpm-isms-l414} : Create a new eipBpmIsmsL414.
      *
      * @param eipBpmIsmsL414DTO the eipBpmIsmsL414DTO to create.
      * @return the {@link ResponseEntity} with status {@code 201 (Created)} and with body the new eipBpmIsmsL414DTO, or with status {@code 400 (Bad Request)} if the eipBpmIsmsL414 has already an ID.
      * @throws URISyntaxException if the Location URI syntax is incorrect.
      */
-    @PostMapping("/eip-bpm-isms-l-414-s")
+    @PostMapping("/eip-bpm-isms-l414")
     public ResponseEntity<EipBpmIsmsL414DTO> createEipBpmIsmsL414(@Valid @RequestBody EipBpmIsmsL414DTO eipBpmIsmsL414DTO)
         throws URISyntaxException {
         log.debug("REST request to save EipBpmIsmsL414 : {}", eipBpmIsmsL414DTO);
@@ -58,13 +58,13 @@ public class EipBpmIsmsL414Resource {
         }
         EipBpmIsmsL414DTO result = eipBpmIsmsL414Service.save(eipBpmIsmsL414DTO);
         return ResponseEntity
-            .created(new URI("/api/eip-bpm-isms-l-414-s/" + result.getFormId()))
+            .created(new URI("/api/eip-bpm-isms-l414/" + result.getFormId()))
             .headers(HeaderUtil.createEntityCreationAlert(applicationName, true, ENTITY_NAME, result.getFormId()))
             .body(result);
     }
 
     /**
-     * {@code PUT  /eip-bpm-isms-l-414-s/:formId} : Updates an existing eipBpmIsmsL414.
+     * {@code PUT  /eip-bpm-isms-l414/:formId} : Updates an existing eipBpmIsmsL414.
      *
      * @param formId the id of the eipBpmIsmsL414DTO to save.
      * @param eipBpmIsmsL414DTO the eipBpmIsmsL414DTO to update.
@@ -73,7 +73,7 @@ public class EipBpmIsmsL414Resource {
      * or with status {@code 500 (Internal Server Error)} if the eipBpmIsmsL414DTO couldn't be updated.
      * @throws URISyntaxException if the Location URI syntax is incorrect.
      */
-    @PutMapping("/eip-bpm-isms-l-414-s/{formId}")
+    @PutMapping("/eip-bpm-isms-l414/{formId}")
     public ResponseEntity<EipBpmIsmsL414DTO> updateEipBpmIsmsL414(
         @PathVariable(value = "formId", required = false) final String formId,
         @Valid @RequestBody EipBpmIsmsL414DTO eipBpmIsmsL414DTO
@@ -98,7 +98,7 @@ public class EipBpmIsmsL414Resource {
     }
 
     /**
-     * {@code PATCH  /eip-bpm-isms-l-414-s/:formId} : Partial updates given fields of an existing eipBpmIsmsL414, field will ignore if it is null
+     * {@code PATCH  /eip-bpm-isms-l414/:formId} : Partial updates given fields of an existing eipBpmIsmsL414, field will ignore if it is null
      *
      * @param formId the id of the eipBpmIsmsL414DTO to save.
      * @param eipBpmIsmsL414DTO the eipBpmIsmsL414DTO to update.
@@ -108,7 +108,7 @@ public class EipBpmIsmsL414Resource {
      * or with status {@code 500 (Internal Server Error)} if the eipBpmIsmsL414DTO couldn't be updated.
      * @throws URISyntaxException if the Location URI syntax is incorrect.
      */
-    @PatchMapping(value = "/eip-bpm-isms-l-414-s/{formId}", consumes = { "application/json", "application/merge-patch+json" })
+    @PatchMapping(value = "/eip-bpm-isms-l414/{formId}", consumes = { "application/json", "application/merge-patch+json" })
     public ResponseEntity<EipBpmIsmsL414DTO> partialUpdateEipBpmIsmsL414(
         @PathVariable(value = "formId", required = false) final String formId,
         @NotNull @RequestBody EipBpmIsmsL414DTO eipBpmIsmsL414DTO
@@ -134,23 +134,23 @@ public class EipBpmIsmsL414Resource {
     }
 
     /**
-     * {@code GET  /eip-bpm-isms-l-414-s} : get all the eipBpmIsmsL414s.
+     * {@code GET  /eip-bpm-isms-l414} : get all the eipBpmIsmsL414s.
      *
      * @return the {@link ResponseEntity} with status {@code 200 (OK)} and the list of eipBpmIsmsL414s in body.
      */
-    @GetMapping("/eip/eip-bpm-isms-l-414-s")
+    @GetMapping("/eip-bpm-isms-l414")
     public List<EipBpmIsmsL414DTO> getAllEipBpmIsmsL414s() {
         log.debug("REST request to get all EipBpmIsmsL414s");
         return eipBpmIsmsL414Service.findAll();
     }
 
     /**
-     * {@code GET  /eip-bpm-isms-l-414-s/:id} : get the "id" eipBpmIsmsL414.
+     * {@code GET  /eip-bpm-isms-l414/:id} : get the "id" eipBpmIsmsL414.
      *
      * @param id the id of the eipBpmIsmsL414DTO to retrieve.
      * @return the {@link ResponseEntity} with status {@code 200 (OK)} and with body the eipBpmIsmsL414DTO, or with status {@code 404 (Not Found)}.
      */
-    @GetMapping("/eip-bpm-isms-l-414-s/{id}")
+    @GetMapping("/eip-bpm-isms-l414/{id}")
     public ResponseEntity<EipBpmIsmsL414DTO> getEipBpmIsmsL414(@PathVariable String id) {
         log.debug("REST request to get EipBpmIsmsL414 : {}", id);
         Optional<EipBpmIsmsL414DTO> eipBpmIsmsL414DTO = eipBpmIsmsL414Service.findOne(id);
@@ -158,12 +158,12 @@ public class EipBpmIsmsL414Resource {
     }
 
     /**
-     * {@code DELETE  /eip-bpm-isms-l-414-s/:id} : delete the "id" eipBpmIsmsL414.
+     * {@code DELETE  /eip-bpm-isms-l414/:id} : delete the "id" eipBpmIsmsL414.
      *
      * @param id the id of the eipBpmIsmsL414DTO to delete.
      * @return the {@link ResponseEntity} with status {@code 204 (NO_CONTENT)}.
      */
-    @DeleteMapping("/eip-bpm-isms-l-414-s/{id}")
+    @DeleteMapping("/eip-bpm-isms-l414/{id}")
     public ResponseEntity<Void> deleteEipBpmIsmsL414(@PathVariable String id) {
         log.debug("REST request to delete EipBpmIsmsL414 : {}", id);
         eipBpmIsmsL414Service.delete(id);

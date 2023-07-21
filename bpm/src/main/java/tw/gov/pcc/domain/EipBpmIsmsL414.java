@@ -14,13 +14,11 @@ public class EipBpmIsmsL414 implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
-    @NotNull
     @Size(max = 50)
     @Id
     @Column(name = "form_id", length = 50, nullable = false)
     private String formId;
 
-    @NotNull
     @Size(max = 50)
     @Column(name = "process_instance_id", length = 50, nullable = false)
     private String processInstanceId;
