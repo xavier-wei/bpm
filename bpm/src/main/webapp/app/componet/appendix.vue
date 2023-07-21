@@ -1,11 +1,11 @@
 <template>
   <div>
     <section class="container mt-2">
-      <div class="card" style="background-color: #8fd4ce">
+      <div class="card" style="background-color: #d3ede8">
         <div class="card-body">
 
           <!-- 新增附件 -->
-          <div class="card context" style="background-color: #8fd4ce">
+          <div class="card context" style="background-color: #d3ede8">
             <b-table
               class="table-sm"
               show-empty
