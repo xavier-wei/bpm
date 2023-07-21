@@ -4,6 +4,8 @@ import lombok.Data;
 import tw.gov.pcc.eip.framework.validation.RequiredString;
 
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * 意見調查主題列表-題目Case
@@ -26,4 +28,6 @@ public class Eip00w520QuestionCase implements Serializable {
     @RequiredString(label = "是否必填")
     private String isrequired;//是否必填
     private String mode;
+    private int rowspan;
+    private List<Eip00w520OptionCase> optionList = new ArrayList<>();
 }

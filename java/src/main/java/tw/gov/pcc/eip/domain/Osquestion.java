@@ -45,4 +45,5 @@ public class Osquestion {
     private String upduser;
     @LogField("UPDDT")
     private LocalDateTime upddt;
+    private Integer rowspan;
 }

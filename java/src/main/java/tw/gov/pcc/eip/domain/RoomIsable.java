@@ -11,7 +11,7 @@ import java.io.Serializable;
 
 
 /**
- * 會議室禁用(ROOMISABLE)
+ * 會議室啟用(ROOMISABLE)
  * @author 2207003
  *
  */
@@ -23,13 +23,16 @@ import java.io.Serializable;
 @Table(RoomIsableDao.TABLE_NAME)
 public class RoomIsable implements Serializable {
 	private static final long serialVersionUID = 1L;
+	@PkeyField("ITEMNO")
+	@LogField("ITEMNO")
+	private String itemNo; // 序號
 
 	@PkeyField("ITEMID")
 	@LogField("ITEMID")
-	private String itemId; // 場地
+	private String itemId; // 編號
 
 	@LogField("ITEMNAME")
-	private String itemName; // 場地名稱
+	private String itemName; // 編號名稱
 
 
 	@PkeyField("ISABLEDATE")

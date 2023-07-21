@@ -26,7 +26,7 @@ public interface OsquestionDao {
      * 取得全部資料
      * @return
      */
-    public List<Osquestion> getAll();
+    public List<Osquestion> getAllByOsformno(String osformno);
 
     /**
      * 取得最大流水號
@@ -39,6 +39,12 @@ public interface OsquestionDao {
      * @return
      */
     public List<Osquestion> getListByOsformno(String osformno);
+
+    /**
+     * 依表單編號取得所有題目資料
+     * @return
+     */
+    public List<Osquestion> getAllQuestionByOsformno(String osformno);
 
     /**
      * 依表單編號及部分標題序號取得資料
@@ -71,13 +77,19 @@ public interface OsquestionDao {
     public Osquestion getSinglePartData(String osformno, String sectitleseq);
 
     /**
-     * 依表單編號、問題流水號與部分標題序號取得單一問題資料
+     * 依表單編號、部分標題序號與題目序號取得單一題目資料
+     * @return
+     */
+    public Osquestion getSingleQuestionData(String osformno, String sectitleseq, String topicseq);
+
+    /**
+     * 依表單編號、問題流水號取得單一問題資料
      * @return
      */
     public Osquestion getSingleQuestionData(String osformno, String qseqno);
 
     /**
-     * 依表單編號與部分標題序號更新該序號後面的部分標題序號
+     * 依表單編號、部分標題序號、目的標題序號及更新種類將其他部分標題序號加一
      *
      * @param osformno
      * @param sectitleseq
@@ -85,4 +97,15 @@ public interface OsquestionDao {
      * @param isbehind
      */
     public int updateBatchSectitleseq(String osformno, String sectitleseq, String targetsectitleseq, boolean isbehind);
+
+    /**
+     * 依表單編號、部分標題序號、題目序號及更新種類將其他題目序號加一
+     *
+     * @param osformno
+     * @param sectitleseq
+     * @param topicseq
+     * @param targetTopicseq
+     * @param isbehind
+     */
+    public int updateBatchTopicseq(String osformno, String sectitleseq, String topicseq, String targetTopicseq, boolean isbehind);
 }

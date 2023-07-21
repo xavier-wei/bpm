@@ -122,7 +122,6 @@ public class Eip06w050Controller extends BaseController {
             eip06w050Service.getMeetingCodeList(caseData);
             setSystemMessage(getDeleteSuccessMessage());
             eip06w050Service.initializeOption(caseData);
-
         } catch (Exception e) {
             log.error(ExceptionUtility.getStackTrace(e));
             setSystemMessage(getDeleteFailMessage());

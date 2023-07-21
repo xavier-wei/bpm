@@ -28,5 +28,6 @@ public class Eip00w520OptionCase implements Serializable {
     private String topicseq;//題目序號
     private String topic;//題目
     private String mode;
+    private String isText;
     private List<String> iseqnoList;//畫面所選題目序號列表(選項列表)
 }

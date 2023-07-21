@@ -21,7 +21,6 @@
         </style>
     </jsp:attribute>
     <jsp:attribute name="contents">
-        <tags:fieldset legend="查詢條件">
             <form:form id="eip01w040Form" modelAttribute="${caseKey}">
                 <div id="dynaTree">
                     <ul>
@@ -37,8 +36,9 @@
                         <tags:button cssClass="ml-2" id="btnQuery">搜尋<i class="fas fa-search"></i></tags:button>
                     </div>
                 </tags:form-row>
+        <tags:fieldset legend="查詢結果">
 
-                <div class="table-responsive mt-4">
+                <div class="table-responsive mt-2">
                     <table class="table" id="qryListTable">
                         <thead>
                             <tr>
@@ -77,8 +77,8 @@
                 <form:hidden path="seq" />
                 <form:hidden path="key" />
                 <form:hidden path="subject" />
-            </form:form>
         </tags:fieldset>
+            </form:form>
 
         <div id="popModal" class="modal fade" tabindex="-1" role="dialog">
             <div class="modal-dialog modal-lg" role="document">

@@ -100,7 +100,7 @@ public class LoginController extends BaseController {
      */
     @ModelAttribute("msgdata")
     public List<Eip01wPopCase> getMsgdata() {
-        return ObjectUtility.normalizeObject(msgdataDao.getEip01w030LatestDataList());
+        return ObjectUtility.normalizeObject(msgdataDao.getEip01w030DataList(userData.getDeptId(), null, null));
     }
 
     /**

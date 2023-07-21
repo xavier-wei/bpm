@@ -124,6 +124,21 @@ public class OsitemDaoImpl extends BaseDao<Ositem> implements OsitemDao {
     }
 
     @Override
+    public List<Ositem> getAllByOsformno(String osformno) {
+        StringBuilder sql = new StringBuilder();
+        sql.append(" SELECT ");
+        sql.append(ALL_COLUMNS_SQL);
+        sql.append("  FROM " + TABLE_NAME);
+        sql.append(" WHERE OSFORMNO = :osformno ");
+        sql.append(" ORDER BY ITEMSEQ ");
+        Map<String, Object> params = new HashMap<>();
+        params.put("osformno", osformno);
+        List<Ositem> list = getNamedParameterJdbcTemplate().query(sql.toString(), params,
+                BeanPropertyRowMapper.newInstance(Ositem.class));
+        return CollectionUtils.isEmpty(list) ? new ArrayList<>() : list;
+    }
+
+    @Override
     public List<Ositem> getItemsByOsformnoAndQseqno(String osformno, String qseqno) {
         StringBuilder sql = new StringBuilder();
         sql.append(" SELECT ");
@@ -138,6 +153,44 @@ public class OsitemDaoImpl extends BaseDao<Ositem> implements OsitemDao {
         List<Ositem> list = getNamedParameterJdbcTemplate().query(sql.toString(), params,
                 BeanPropertyRowMapper.newInstance(Ositem.class));
         return CollectionUtils.isEmpty(list) ? new ArrayList<>() : list;
+    }
+
+    @Override
+    public Ositem getSingleOptionData(String osformno, String qseqno, String itemseq) {
+        StringBuilder sql = new StringBuilder();
+        sql.append(" SELECT ");
+        sql.append(ALL_COLUMNS_SQL);
+        sql.append("   FROM " + TABLE_NAME);
+        sql.append("  WHERE OSFORMNO = :osformno ");
+        sql.append("    AND QSEQNO = :qseqno ");
+        sql.append("    AND ITEMSEQ = :itemseq ");
+        Map<String, Object> params = new HashMap<>();
+        params.put("osformno", osformno);
+        params.put("qseqno", qseqno);
+        params.put("itemseq", itemseq);
+        List<Ositem> list = getNamedParameterJdbcTemplate().query(sql.toString(), params,
+                BeanPropertyRowMapper.newInstance(Ositem.class));
+        return CollectionUtils.isEmpty(list) ? null : list.get(0);
+    }
+
+    @Override
+    public int updateBatchItemseq(String osformno, String qseqno, String itemseq, String targeitemseq, boolean isbehind) {
+        StringBuilder sql = new StringBuilder();
+        sql.append(" UPDATE " + TABLE_NAME);
+        sql.append("    SET ITEMSEQ = itemseq+1 ");
+        sql.append("  WHERE OSFORMNO = :osformno ");
+        sql.append("    AND QSEQNO = :qseqno ");
+        if (isbehind) {
+            sql.append("    AND ITEMSEQ >= :itemseq and ITEMSEQ < 99 ");
+        } else {
+            sql.append("    AND (ITEMSEQ < :itemseq and ITEMSEQ >= :targeitemseq ) and ITEMSEQ < 99 ");
+        }
+        Map<String, Object> params = new HashMap<>();
+        params.put("osformno", osformno);
+        params.put("qseqno", qseqno);
+        params.put("itemseq", itemseq);
+        params.put("targeitemseq", targeitemseq);
+        return getNamedParameterJdbcTemplate().update(sql.toString(), params);
     }
 
 }

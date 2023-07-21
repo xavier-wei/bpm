@@ -1,5 +1,6 @@
 package tw.gov.pcc.eip.dao;
 
+import tw.gov.pcc.eip.domain.Orformdata;
 import tw.gov.pcc.eip.domain.Osformdata;
 
 import java.util.List;
@@ -55,4 +56,12 @@ public interface OsformdataDao {
      * @return
      */
     public List<Osformdata> getStartingData(Integer osccode);
+
+    /**
+     * 使用狀態與部門代碼查詢意見調查列表
+     * @param statusList
+     * @param deptno
+     * @return
+     */
+    public List<Osformdata> getListByStatus(List<String> statusList, String deptno);
 }

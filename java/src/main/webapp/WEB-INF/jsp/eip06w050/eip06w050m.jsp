@@ -110,7 +110,6 @@ $(function(){
         }).done(function(data) {
             if (data.itemIdIsUse === "N") {
                 showAlert("參數使用中，無法刪除");
-                // 清空系統資訊
                 $('#footer .prog.infoword').text('')
                 return;
             } else {
@@ -128,15 +127,6 @@ $(function(){
         $('#mode').val('U');
         $('#itemId').val($(this).parent().data('itemid'));
         $('#eip06w050Form').attr('action', '<c:url value="/Eip06w050_modify.action" />').submit();
-    });
-    $("input[name^='meetingCodeList']").click(function() {
-        var numberOfChecked = $("input[name^='meetingCodeList']:checked").length;
-        var allcheckbox = $("input[name^='meetingCodeList']").length;
-        if (numberOfChecked === allcheckbox) {
-            $("#selectAll").prop("checked",true);
-        }else {
-            $("#selectAll").prop("checked",false);
-        }
     });
 })
 </script>

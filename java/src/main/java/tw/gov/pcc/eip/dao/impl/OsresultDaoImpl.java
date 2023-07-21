@@ -27,12 +27,9 @@ public class OsresultDaoImpl extends BaseDao<Osresult> implements OsresultDao {
         sql.append(" SELECT ");
         sql.append(ALL_COLUMNS_SQL);
         sql.append(" FROM " + TABLE_NAME + " where osformno = :osformno" );
-
         SqlParameterSource params = new MapSqlParameterSource("osformno", Osresult.getOsformno());
-
         List<Osresult> list = getNamedParameterJdbcTemplate().query(sql.toString(), params,
                 BeanPropertyRowMapper.newInstance(Osresult.class));
-
         return CollectionUtils.isEmpty(list) ? null : list.get(0);
     }
 
@@ -67,6 +64,20 @@ public class OsresultDaoImpl extends BaseDao<Osresult> implements OsresultDao {
     }
 
     @Override
+    public Osresult getDataByCreuser(String osformno, String creuser) {
+        StringBuilder sql = new StringBuilder();
+        sql.append(" SELECT ");
+        sql.append(ALL_COLUMNS_SQL);
+        sql.append(" FROM " + TABLE_NAME + " where osformno = :osformno" );
+        sql.append("  AND CREUSER = :creuser ");
+        SqlParameterSource params = new MapSqlParameterSource("osformno", osformno)
+                .addValue("creuser", creuser);
+        List<Osresult> list = getNamedParameterJdbcTemplate().query(sql.toString(), params,
+                BeanPropertyRowMapper.newInstance(Osresult.class));
+        return CollectionUtils.isEmpty(list) ? null : list.get(0);
+    }
+
+    @Override
     public List<Osresult> getAll() {
         StringBuilder sql = new StringBuilder();
         sql.append(" SELECT ");
@@ -81,14 +92,14 @@ public class OsresultDaoImpl extends BaseDao<Osresult> implements OsresultDao {
     }
 
     @Override
-    public String getMaximumWriseq(String osformno) {
+    public Integer getMaximumWriseq(String osformno) {
         StringBuilder sql = new StringBuilder();
         sql.append(" SELECT ISNULL(MAX(wriseq),0)+1 ");
-        sql.append("   FROM OSQUESTION ");
+        sql.append("   FROM OSRESULT ");
         sql.append("  WHERE OSFORMNO = :osformno ");
         SqlParameterSource params = new MapSqlParameterSource("osformno", osformno);
         return getNamedParameterJdbcTemplate().queryForObject(
-                sql.toString(), params, String.class);
+                sql.toString(), params, Integer.class);
     }
 
 }

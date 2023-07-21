@@ -75,16 +75,16 @@ public class OsquestionDaoImpl extends BaseDao<Osquestion> implements Osquestion
     }
 
     @Override
-    public List<Osquestion> getAll() {
+    public List<Osquestion> getAllByOsformno(String osformno) {
         StringBuilder sql = new StringBuilder();
         sql.append(" SELECT ");
         sql.append(ALL_COLUMNS_SQL);
         sql.append("   FROM " + TABLE_NAME);
+        sql.append("  WHERE OSFORMNO = :osformno ");
         sql.append("  order by qseqno ");
-
-        List<Osquestion> list = getNamedParameterJdbcTemplate().query(sql.toString(),
+        SqlParameterSource params = new MapSqlParameterSource("osformno", osformno);
+        List<Osquestion> list = getNamedParameterJdbcTemplate().query(sql.toString(), params,
                 BeanPropertyRowMapper.newInstance(Osquestion.class));
-
         return CollectionUtils.isEmpty(list) ? new ArrayList<>() : list;
     }
 
@@ -108,6 +108,22 @@ public class OsquestionDaoImpl extends BaseDao<Osquestion> implements Osquestion
         sql.append(" WHERE OSFORMNO = :osformno ");
         sql.append("   AND TOPICSEQ IS NULL");
         sql.append(" ORDER BY SECTITLESEQ ");
+        SqlParameterSource params = new MapSqlParameterSource("osformno", osformno);
+        List<Osquestion> list = getNamedParameterJdbcTemplate().query(sql.toString(), params,
+                BeanPropertyRowMapper.newInstance(Osquestion.class));
+        return CollectionUtils.isEmpty(list) ? new ArrayList<>() : list;
+    }
+
+    @Override
+    public List<Osquestion> getAllQuestionByOsformno(String osformno) {
+        StringBuilder sql = new StringBuilder();
+        sql.append(" SELECT ");
+        sql.append(ALL_COLUMNS_SQL);
+        sql.append(",(select count(OSFORMNO) from OSQUESTION b where OSFORMNO = :osformno and b.SECTITLESEQ = t.SECTITLESEQ AND TOPICSEQ IS NOT NULL group by OSFORMNO,SECTITLESEQ)rowspan");
+        sql.append("  FROM " + TABLE_NAME + " T");
+        sql.append(" WHERE OSFORMNO = :osformno ");
+        sql.append("   AND TOPICSEQ IS NOT NULL");
+        sql.append(" ORDER BY SECTITLESEQ,TOPICSEQ ");
         SqlParameterSource params = new MapSqlParameterSource("osformno", osformno);
         List<Osquestion> list = getNamedParameterJdbcTemplate().query(sql.toString(), params,
                 BeanPropertyRowMapper.newInstance(Osquestion.class));
@@ -190,6 +206,24 @@ public class OsquestionDaoImpl extends BaseDao<Osquestion> implements Osquestion
     }
 
     @Override
+    public Osquestion getSingleQuestionData(String osformno, String sectitleseq, String topicseq) {
+        StringBuilder sql = new StringBuilder();
+        sql.append(" SELECT ");
+        sql.append(ALL_COLUMNS_SQL);
+        sql.append("   FROM " + TABLE_NAME);
+        sql.append("  WHERE osformno = :osformno ");
+        sql.append("    AND sectitleseq = :sectitleseq ");
+        sql.append("    AND topicseq = :topicseq ");
+        Map<String, Object> params = new HashMap<>();
+        params.put("osformno", osformno);
+        params.put("sectitleseq", sectitleseq);
+        params.put("topicseq", topicseq);
+        List<Osquestion> list = getNamedParameterJdbcTemplate().query(sql.toString(), params,
+                BeanPropertyRowMapper.newInstance(Osquestion.class));
+        return CollectionUtils.isEmpty(list) ? null : list.get(0);
+    }
+
+    @Override
     public Osquestion getSingleQuestionData(String osformno, String qseqno) {
         StringBuilder sql = new StringBuilder();
         sql.append(" SELECT ");
@@ -221,6 +255,26 @@ public class OsquestionDaoImpl extends BaseDao<Osquestion> implements Osquestion
         params.put("osformno", osformno);
         params.put("sectitleseq", sectitleseq);
         params.put("targetsectitleseq", targetsectitleseq);
+        return getNamedParameterJdbcTemplate().update(sql.toString(), params);
+    }
+
+    @Override
+    public int updateBatchTopicseq(String osformno, String sectitleseq, String topicseq, String targetTopicseq, boolean isbehind) {
+        StringBuilder sql = new StringBuilder();
+        sql.append(" UPDATE " + TABLE_NAME);
+        sql.append("    SET TOPICSEQ = topicseq+1 ");
+        sql.append("  WHERE OSFORMNO = :osformno ");
+        sql.append("    AND SECTITLESEQ = :sectitleseq ");
+        if (isbehind) {
+            sql.append("    AND topicseq >= :topicseq and topicseq < 99 ");
+        } else {
+            sql.append("    AND (TOPICSEQ < :topicseq and TOPICSEQ >= :targetTopicseq ) and TOPICSEQ < 99 ");
+        }
+        Map<String, Object> params = new HashMap<>();
+        params.put("osformno", osformno);
+        params.put("sectitleseq", sectitleseq);
+        params.put("topicseq", topicseq);
+        params.put("targetTopicseq", targetTopicseq);
         return getNamedParameterJdbcTemplate().update(sql.toString(), params);
     }
 

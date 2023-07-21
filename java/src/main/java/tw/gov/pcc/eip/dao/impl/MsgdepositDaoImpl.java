@@ -56,7 +56,7 @@ public class MsgdepositDaoImpl extends BaseDao<Msgdeposit> implements Msgdeposit
         sql.append(" SELECT * ");
         sql.append("   FROM MSGDEPOSIT ");
         sql.append("  WHERE FSEQ in ( :fseq )");
-        sql.append("  ORDER BY SEQ; ");
+        sql.append("  ORDER BY FSEQ, SEQ ");
         Map<String, Object> params = new HashMap<>();
         params.put("fseq", fseq);
         return getNamedParameterJdbcTemplate().query(sql.toString(), params,

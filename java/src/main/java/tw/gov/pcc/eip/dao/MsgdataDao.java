@@ -57,28 +57,41 @@ public interface MsgdataDao {
             String contactunit, String creatid, String updid, String releasedts, String releasedte);
 
     /**
-     * 取得畫面初始 最新的公告事項
-     * 
-     * @return
-     */
-    public List<Eip01wPopCase> getEip01w030LatestDataList();
-
-    /**
      * 取得畫面條件 查詢的公告事項
      * 
-     * @param msgtype
-     * @param subject
+     * @param deptId  登入者部門代號
+     * @param msgtype 訊息類別
+     * @param subject 主旨
      * @return
      */
-    public List<Eip01wPopCase> getEip01w030DataList(String msgtype, String subject);
+    public List<Eip01wPopCase> getEip01w030DataList(String deptId, String msgtype, String subject);
 
     /**
-     * 取得單筆公告事項明細
+     * 取得單筆fseq pop視窗明細
      * 
      * @param fseq
+     * @param scodekind 1:公告事項4:下載專區5:輿情專區
      * @return
      */
-    public Eip01wPopCase getEip01w030Detail(String fseq);
+    public Eip01wPopCase getEip01wDetail(String fseq, String scodekind);
+
+    /**
+     * 下載專區 - 路徑查詢
+     * 
+     * @param dept
+     * @param path
+     * @return
+     */
+    public List<Msgdata> getEip01w040byPath(String dept, String path);
+    
+    /**
+     * 下載專區 - 依關鍵字查詢
+     * 
+     * @param dept
+     * @param keyword
+     * @return
+     */
+    public List<Msgdata> getEip01w040byKeyword(String dept, String keyword);
 
     /**
      * 取得輿情專區初始資料 (依登入者部門查詢)
@@ -89,37 +102,20 @@ public interface MsgdataDao {
     public List<Eip01wPopCase> getEip01w050DataList(String dept);
 
     /**
-     * 取得單筆輿情資料明細
+     * 取得該聯絡單位(之單位簡介或業務資訊)已上架的文章內容
      * 
-     * @param fseq
+     * @param attr        6:單位簡介 7:業務資訊
+     * @param contactunit 聯絡單位
      * @return
      */
-    public Eip01wPopCase getEip01w050Detail(String fseq);
+    public List<Msgdata> getStatus4Mcontent(String attr, String contactunit);
 
     /**
-     * 取得已上架的文章
+     * 取得該連絡單位(之單位簡介或業務資訊)有效的文章總數
      * 
-     * @param attr 6:單位簡介 7:業務資訊
-     * @param dept 登入者部門 聯絡人
+     * @param attr        6:單位簡介 7:業務資訊
+     * @param contactunit 聯絡單位
      * @return
      */
-    public List<Msgdata> getMcontentWithStatus4(String attr, String dept);
-
-    /**
-     * 下載專區 - 路徑查詢
-     * 
-     * @param dept
-     * @param path
-     * @return
-     */
-    public List<Msgdata> getbyPath(String dept, String path);
-
-    /**
-     * 下載專區 - 依關鍵字查詢
-     * 
-     * @param dept
-     * @param keyword
-     * @return
-     */
-    public List<Msgdata> getbyKeyword(String dept, String keyword);
+    public int getEffectiveCount(String attr, String contactunit);
 }

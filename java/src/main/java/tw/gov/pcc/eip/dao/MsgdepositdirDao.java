@@ -52,4 +52,13 @@ public interface MsgdepositdirDao {
      */
     public String getNextFseq();
 
+    /**
+     * 取預設目錄
+     * 
+     * @param attr
+     * @param deptId
+     * @return
+     */
+    public Msgdepositdir getDefaultPath(String attr, String deptId);
+
 }

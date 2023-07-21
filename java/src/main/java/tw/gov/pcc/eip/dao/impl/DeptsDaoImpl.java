@@ -1,6 +1,8 @@
 package tw.gov.pcc.eip.dao.impl;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
@@ -14,8 +16,6 @@ import tw.gov.pcc.common.annotation.DaoTable;
 import tw.gov.pcc.common.framework.dao.BaseDao;
 import tw.gov.pcc.eip.dao.DeptsDao;
 import tw.gov.pcc.eip.domain.Depts;
-import tw.gov.pcc.eip.domain.Items;
-import tw.gov.pcc.eip.domain.Users;
 
 /**
  * 選單項目資料 DaoImpl
@@ -119,6 +119,28 @@ public class DeptsDaoImpl extends BaseDao<Depts> implements DeptsDao {
         sql.append(" UNION ");
         sql.append(" SELECT DEPT_ID,DEPT_NAME FROM DEPTS WHERE IS_VALID ='Y' ");
         return getNamedParameterJdbcTemplate().query(sql.toString(), 
+                BeanPropertyRowMapper.newInstance(Depts.class));
+    }
+
+    @Override
+    public List<Depts> getRelevantDeptByAttr(String attr, String deptId) {
+        StringBuilder sql = new StringBuilder();
+        sql.append(" SELECT DEPT_ID, ");
+        sql.append("        DEPT_NAME ");
+        sql.append("   FROM DEPTS C ");
+        sql.append("  WHERE IS_VALID ='Y' ");
+        sql.append("    AND DEPT_ID IN (SELECT DISTINCT A.CONTACTUNIT ");
+        sql.append("                      FROM MSGDATA A, ");
+        sql.append("                           MSGAVAILDEP B ");
+        sql.append("                     WHERE A.FSEQ = B.FSEQ ");
+        sql.append("                       AND A.STATUS = '4' ");
+        sql.append("                       AND A.ATTRIBUTYPE = :attr ");
+        sql.append("                       AND B.AVAILABLEDEP = :deptId ) ");
+        sql.append("  ORDER BY DEPT_ID ");
+        Map<String, Object> params = new HashMap<>();
+        params.put("attr", attr);
+        params.put("deptId", deptId);
+        return getNamedParameterJdbcTemplate().query(sql.toString(), params,
                 BeanPropertyRowMapper.newInstance(Depts.class));
     }
 }

@@ -20,6 +20,8 @@ public interface OsresultDao {
 
     public int deleteData(String osformno, Integer wriseq);
 
+    public Osresult getDataByCreuser(String osformno, String creuser);
+
     /**
      * 取得全部資料
      * @return
@@ -30,5 +32,5 @@ public interface OsresultDao {
      * 取得最大流水號
      * @return
      */
-    public String getMaximumWriseq(String osformno);
+    public Integer getMaximumWriseq(String osformno);
 }

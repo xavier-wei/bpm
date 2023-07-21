@@ -105,11 +105,6 @@ public class MeetingCodeDaoImpl extends BaseDao<MeetingCode> implements MeetingC
         return getNamedParameterJdbcTemplate().queryForObject(sql.toString(), params, Integer.class);
     }
 
-//    @Override
-//    public int deleteData(MeetingCode data) {
-//        return deleteByPK(data);
-//    }
-
     @Override
     public int updateData(MeetingCode data, String itemId) {
         String sql=new StringBuilder()
@@ -123,6 +118,18 @@ public class MeetingCodeDaoImpl extends BaseDao<MeetingCode> implements MeetingC
         params.put("qty", data.getQty());
         return getNamedParameterJdbcTemplate().update(sql, params);
     }
+
+    @Override
+    public int updateItemId(MeetingCode data, String itemId) {
+        String sql=new StringBuilder()
+                .append(" UPDATE " + TABLE_NAME )
+                .append(" SET ITEMTYP = CASE WHEN ITEMTYP = 'FX' THEN 'F' ELSE 'FX' END")
+                .append(" WHERE ITEMID = :itemid ").toString();
+        Map<String, Object> params = new HashMap<>();
+        params.put("itemid", itemId);//不能駝峰命名
+        return getNamedParameterJdbcTemplate().update(sql, params);
+    }
+    
 
     @Override
     public int deleteData(String itemId) {

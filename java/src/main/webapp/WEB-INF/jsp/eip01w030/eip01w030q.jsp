@@ -9,13 +9,13 @@
         </tags:button>
     </jsp:attribute>
     <jsp:attribute name="contents">
-        <tags:fieldset legend="查詢條件">
-            <form:form id="eip01w030Form" modelAttribute="${caseKey}">
+        <form:form id="eip01w030Form" modelAttribute="${caseKey}">
+            <tags:fieldset legend="查詢條件">
                 <tags:form-row>
                     <form:label cssClass="col-form-label" path="msgtype">類別：</form:label>
                     <div class="col-12 col-md">
                         <form:select path="msgtype" cssClass="form-control">
-                            <option value="" selected disabled hidden>請選擇</option>
+                            <option value="" selected>請選擇</option>
                             <c:forEach var="item" items="${caseData.optList}" varStatus="status">
                                 <form:option value="${item.codeno}">
                                     <c:out value="${item.codename}" />
@@ -30,60 +30,54 @@
                         <form:input path="theme" cssClass="form-control" size="40" maxlength="800" />
                     </div>
                 </tags:form-row>
-                <tags:form-note>
-                    <tags:form-note-item><span class="red">＊</span>為必填欄位。</tags:form-note-item>
-                </tags:form-note>
-                <c:if test="${not empty caseData.qryList }">
-                    <div class="table-responsive mt-4">
-                        <table class="table" id="qryListTable">
-                            <thead>
-                                <tr>
-                                    <th class="text-center">序號</th>
-                                    <th class="text-center">主題</th>
-                                    <th class="text-center">類別</th>
-                                    <th class="text-center">發布時間</th>
-                                    <th class="text-center">發布單位</th>
-                                    <th class="text-center">操作區</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <c:forEach items="${caseData.qryList}" var="item" varStatus="status">
-                                    <tr data-seq="${status.index + 1 }">
-                                        <td class="text-center">
-                                            <c:out value="${status.index + 1 }" />
-                                        </td>
-                                        <td class="text-left">
-                                            <c:out value="${item.subject}" />
-                                            <form:hidden path="qryList[${status.index}].subject" />
-                                        </td>
-                                        <td class="text-center">
-                                            <c:out value="${item.msgtype}" />
-                                            <form:hidden path="qryList[${status.index}].msgtype" />
-                                        </td>
-                                        <td class="text-center">
-                                            <func:minguo value="${item.releasedt}" /><br>
-                                            <form:hidden path="qryList[${status.index}].releasedt" />
-                                        </td>
-                                        <td class="text-center">
-                                            <c:out value="${item.contactunit}" />
-                                            <form:hidden path="qryList[${status.index}].contactunit" />
-                                        </td>
-                                        <td class="text-center" data-fseq="${item.fseq}">
-                                            <tags:button id="btnDetail">明細<i class="fas fa-list-alt"></i></tags:button>
-                                            <form:hidden path="qryList[${status.index}].fseq" />
-                                        </td>
-                                    </tr>
-                                </c:forEach>
-                            </tbody>
-                        </table>
-                    </div>
-                </c:if>
                 <form:hidden path="fseq" />
                 <form:hidden path="seq" />
                 <form:hidden path="subject" />
-            </form:form>
-        </tags:fieldset>
-
+            </tags:fieldset>
+            <div class="table-responsive mt-4">
+                <table class="table" id="qryListTable">
+                    <thead>
+                        <tr>
+                            <th class="text-center">序號</th>
+                            <th class="text-center">主題</th>
+                            <th class="text-center">類別</th>
+                            <th class="text-center">發布時間</th>
+                            <th class="text-center">發布單位</th>
+                            <th data-orderable="false" class="text-center">操作區</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <c:forEach items="${caseData.qryList}" var="item" varStatus="status">
+                            <tr data-seq="${status.index + 1 }">
+                                <td class="text-center">
+                                    <c:out value="${status.index + 1 }" />
+                                </td>
+                                <td class="text-left">
+                                    <c:out value="${item.subject}" />
+                                    <form:hidden path="qryList[${status.index}].subject" />
+                                </td>
+                                <td class="text-left">
+                                    <c:out value="${item.msgtype}" />
+                                    <form:hidden path="qryList[${status.index}].msgtype" />
+                                </td>
+                                <td class="text-center">
+                                    <c:out value="${item.releasedt}" />
+                                    <form:hidden path="qryList[${status.index}].releasedt" />
+                                </td>
+                                <td class="text-left">
+                                    <c:out value="${item.contactunit}" />
+                                    <form:hidden path="qryList[${status.index}].contactunit" />
+                                </td>
+                                <td class="text-center" data-fseq="${item.fseq}">
+                                    <tags:button id="btnDetail">明細<i class="fas fa-list-alt"></i></tags:button>
+                                    <form:hidden path="qryList[${status.index}].fseq" />
+                                </td>
+                            </tr>
+                        </c:forEach>
+                    </tbody>
+                </table>
+            </div>
+        </form:form>
         <div id="popModal" class="modal fade" tabindex="-1" role="dialog">
             <div class="modal-dialog modal-lg" role="document">
                 <div class="modal-content">
@@ -107,6 +101,8 @@
     <jsp:attribute name="footers">
         <script type="text/javascript">
             $(function() {
+                let config = getDataTablesConfig();
+                var table = $("#qryListTable").DataTable(config);
                 // 查詢
                 $('#btnQuery').click(function() {
                     $('#eip01w030Form').attr('action', '<c:url value="/Eip01w030_query.action" />')

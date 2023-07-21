@@ -146,6 +146,8 @@ public class Eip00w520Service extends OpinionSurveyService{
         themeCase.setOsendt(osformdata.getOsendt().format(minguoformatterForInput));
         themeCase.setOsendtHour(StringUtils.substringBefore(osformdata.getOsendt().format(timeformatter),":"));
         themeCase.setOsendtMinute(StringUtils.substringAfter(osformdata.getOsendt().format(timeformatter),":"));
+        themeCase.setFullosfmdt(osformdata.getOsfmdt().format(simpleMinguoformatter));
+        themeCase.setFullosendt(osformdata.getOsendt().format(simpleMinguoformatter));
         themeCase.setTopicdesc(osformdata.getTopicdesc());
         themeCase.setOrganizer(osformdata.getOrganizer());
         themeCase.setPromptmsg(osformdata.getPromptmsg());
@@ -309,7 +311,7 @@ public class Eip00w520Service extends OpinionSurveyService{
                 });
             }
             if (targetPart != null) {
-                //判斷題目流水號是否不同筆，不同筆的話才更新後面的序號+1
+                //判斷題目流水號是否不同筆，不同筆的話才更新其他序號+1
                 if (dbPart.getQseqno() != targetPart.getQseqno()) {
                     //目標序號大於當前序號
                     if (targetPart.getSectitleseq() > dbPart.getSectitleseq()) {
@@ -371,11 +373,16 @@ public class Eip00w520Service extends OpinionSurveyService{
             osquestion.setIsrequired(questionCase.getIsrequired());
             osquestion.setCreuser(userData.getUserId());
             osquestion.setCredt(LocalDateTime.now());
+            //判斷輸入序號是否重複，若有重複，將後面的序號全部+1
+            if (osquestionDao.getSingleQuestionData(questionCase.getOsformno(),questionCase.getSectitleseq(),questionCase.getTopicseq()) != null) {
+                osquestionDao.updateBatchTopicseq(questionCase.getOsformno(),questionCase.getSectitleseq(),questionCase.getTopicseq(),"",true);
+            }
             osquestionDao.insertData(osquestion);
         }
         //更新
         if ("U".equals(mode)) {
             Osquestion dbOsquestion = osquestionDao.getSingleQuestionData(questionCase.getOsformno(),questionCase.getQseqno());
+            Osquestion targetQuestion = osquestionDao.getSingleQuestionData(questionCase.getOsformno(),questionCase.getSectitleseq(),questionCase.getTopicseq());
             Osquestion osquestion = new Osquestion();
             BeanUtility.copyProperties(osquestion,dbOsquestion);
             osquestion.setSectitleseq(Integer.valueOf(questionCase.getSectitleseq()));
@@ -386,6 +393,20 @@ public class Eip00w520Service extends OpinionSurveyService{
             osquestion.setIsrequired(questionCase.getIsrequired());
             osquestion.setUpduser(userData.getUserId());
             osquestion.setUpddt(LocalDateTime.now());
+            if (targetQuestion != null) {
+                //判斷題目流水號是否不同筆，不同筆的話才更新其他序號+1
+                if (dbOsquestion.getQseqno() != targetQuestion.getQseqno()) {
+                    //目標題目序號大於當前題目序號
+                    if (targetQuestion.getTopicseq() > dbOsquestion.getTopicseq()) {
+                        //更新其他受影響序號
+                        osquestionDao.updateBatchTopicseq(questionCase.getOsformno(), questionCase.getSectitleseq(), questionCase.getTopicseq(), "", true);
+                    //目標序號小於當前序號
+                    } else {
+                        //將小於當前序號與大於等於目標序號都+1
+                        osquestionDao.updateBatchTopicseq(questionCase.getOsformno(), questionCase.getSectitleseq(), String.valueOf(dbOsquestion.getTopicseq()), questionCase.getTopicseq(), false);
+                    }
+                }
+            }
             osquestionDao.updateData(osquestion, osquestion.getOsformno(), osquestion.getQseqno());
         }
     }
@@ -408,19 +429,65 @@ public class Eip00w520Service extends OpinionSurveyService{
             ositem.setIsaddtext(optionCase.getIsaddtext());
             ositem.setCreuser(userData.getUserId());
             ositem.setCredt(LocalDateTime.now());
+            //判斷輸入序號是否重複，若有重複，將後面的序號全部+1
+            if (ositemDao.getSingleOptionData(optionCase.getOsformno(), optionCase.getQseqno(), optionCase.getItemseq()) != null) {
+                ositemDao.updateBatchItemseq(optionCase.getOsformno(), optionCase.getQseqno(), optionCase.getItemseq(), "", true);
+            }
             ositemDao.insertData(ositem);
         }
         //更新
         if ("U".equals(mode)) {
             Ositem dbOsitem = ositemDao.findByPk(optionCase.getOsformno(), Integer.valueOf(optionCase.getIseqno()));
             Ositem ositem = new Ositem();
+            Ositem targetitem = ositemDao.getSingleOptionData(optionCase.getOsformno(), optionCase.getQseqno(), optionCase.getItemseq());
             BeanUtility.copyProperties(ositem,dbOsitem);
             ositem.setItemseq(Integer.valueOf(optionCase.getItemseq()));
             ositem.setItemdesc(optionCase.getItemdesc());
             ositem.setIsaddtext(optionCase.getIsaddtext());
             ositem.setUpddt(LocalDateTime.now());
             ositem.setUpduser(userData.getUserId());
+            if (targetitem != null) {
+                //判斷選項序號是否不同筆，不同筆的話才更新其他序號+1
+                if (dbOsitem.getIseqno() != targetitem.getIseqno()) {
+                    //目標題目序號大於當前題目序號
+                    if (targetitem.getItemseq() > dbOsitem.getItemseq()) {
+                        //更新其他受影響序號
+                        ositemDao.updateBatchItemseq(optionCase.getOsformno(), optionCase.getQseqno(), optionCase.getItemseq(), "", true);
+                    //目標序號小於當前序號
+                    } else {
+                        //將小於當前序號與大於等於目標序號都+1
+                        ositemDao.updateBatchItemseq(optionCase.getOsformno(), optionCase.getQseqno(), String.valueOf(dbOsitem.getItemseq()), optionCase.getItemseq(), false);
+                    }
+                }
+            }
             ositemDao.updateData(ositem, optionCase.getOsformno(), Integer.valueOf(optionCase.getIseqno()));
+        }
+    }
+
+    public void getPreviewData(Eip00w520Case caseData) {
+        List<Osquestion>questions = osquestionDao.getAllQuestionByOsformno(caseData.getOsformno());
+        for(Osquestion ques : questions) {
+            Eip00w520QuestionCase questionCase = new Eip00w520QuestionCase();
+            List<Ositem>ositemList = ositemDao.getItemsByOsformnoAndQseqno(caseData.getOsformno(),  String.valueOf(ques.getQseqno()));
+            questionCase.setSectitle(ques.getSectitle());
+            questionCase.setTopic(ques.getTopic());
+            questionCase.setOptiontype(ques.getOptiontype());
+            questionCase.setIsrequired(ques.getIsrequired());
+            questionCase.setRowspan(ques.getRowspan());
+            for (Ositem option : ositemList) {
+                Eip00w520OptionCase optionCase = new Eip00w520OptionCase();
+                optionCase.setQseqno(String.valueOf(option.getQseqno()));
+                optionCase.setIseqno(String.valueOf(option.getIseqno()));
+                optionCase.setItemdesc(option.getItemdesc());
+                optionCase.setIsaddtext(option.getIsaddtext());
+                questionCase.getOptionList().add(optionCase);
+            }
+            if ("T".equals(ques.getOptiontype())) {
+                Eip00w520OptionCase optionCase = new Eip00w520OptionCase();
+                optionCase.setIsText("Y");
+                questionCase.getOptionList().add(optionCase);
+            }
+            caseData.getPreviews().add(questionCase);
         }
     }
 
@@ -479,6 +546,46 @@ public class Eip00w520Service extends OpinionSurveyService{
             ositemDao.deleteByOsformnoAndIseqnoList(caseData.getOsformno(), caseData.getIseqnoList());
         }
 
+    }
+
+    public void copyFormData(Eip00w520Case caseData) {
+        Osformdata dbOsformdata = osformdataDao.findByPk(caseData.getOsformno());
+        Osformdata newOsformdata = new Osformdata();
+        BeanUtility.copyProperties(newOsformdata, dbOsformdata);
+        String osformno = osformdataDao.getMaximumOsformno(DateUtility.getNowChineseYearMonth());
+        String newOsformno = "OS" + DateUtility.getNowChineseYearMonth() + (StringUtils.isBlank(osformno) ? "0001" :  StringUtils.leftPad(osformno, 4, "0"));
+        newOsformdata.setOsformno(newOsformno);
+        newOsformdata.setTopicname(dbOsformdata.getTopicname()+"-複製");
+        newOsformdata.setStatus("N");
+        newOsformdata.setCreuser(userData.getUserId());
+        newOsformdata.setCredt(LocalDateTime.now());
+        newOsformdata.setUpduser(null);
+        newOsformdata.setUpddt(null);
+        osformdataDao.insertData(newOsformdata);
+
+        List<Osquestion> dbOsquestionList = osquestionDao.getAllByOsformno(caseData.getOsformno());
+        dbOsquestionList.stream().forEach(t->{
+            Osquestion newOsquestion = new Osquestion();
+            BeanUtility.copyProperties(newOsquestion, t);
+            newOsquestion.setOsformno(newOsformno);
+            newOsquestion.setCreuser(userData.getUserId());
+            newOsquestion.setCredt(LocalDateTime.now());
+            newOsquestion.setUpduser(null);
+            newOsquestion.setUpddt(null);
+            osquestionDao.insertData(newOsquestion);
+        });
+
+        List<Ositem> dbOsitemList = ositemDao.getAllByOsformno(caseData.getOsformno());
+        dbOsitemList.stream().forEach(t->{
+            Ositem newOsitem = new Ositem();
+            BeanUtility.copyProperties(newOsitem, t);
+            newOsitem.setOsformno(newOsformno);
+            newOsitem.setCreuser(userData.getUserId());
+            newOsitem.setCredt(LocalDateTime.now());
+            newOsitem.setUpduser(null);
+            newOsitem.setUpddt(null);
+            ositemDao.insertData(newOsitem);
+        });
     }
 
     /**

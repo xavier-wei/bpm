@@ -45,6 +45,8 @@ public class Eip00w520Case implements Serializable {
 
     private List<Eip00w520OptionCase> optionList = new ArrayList<>();
 
+    private List<Eip00w520QuestionCase> previews = new ArrayList<>();
+
     private Map<Integer,String> osccodeCombobox;
 
     private Map<String,String> limitvoteCheckboxU;
@@ -56,6 +58,11 @@ public class Eip00w520Case implements Serializable {
     private Map<String,String> limitvoteCheckboxE3;
 
     private Map<String,String> limitvoteCheckboxE4;
+
+    private Eip00w520ThemeCase themeCase;
+
+    private List<Answer> wricontent;
+
     @Data
     public static class OsCase {
         private String osformno;
@@ -64,6 +71,20 @@ public class Eip00w520Case implements Serializable {
         private String osendt;
         private String status;
         private String statusVal;
+    }
+
+    @Data
+    public static class Answer {
+        private List<Multiple> checkboxList;
+        private String text;
+        private String isrequired;
+        private String optiontype;
+    }
+
+    @Data
+    public static class Multiple {
+        private String checkVal;
+        private String text;
     }
 
     /**

@@ -1,9 +1,5 @@
 package tw.gov.pcc.eip.services;
 
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
 import java.util.Arrays;
 import java.util.stream.Collectors;
 
@@ -16,7 +12,6 @@ import tw.gov.pcc.eip.dao.MsgdepositDao;
 import tw.gov.pcc.eip.domain.Msgdeposit;
 import tw.gov.pcc.eip.msg.cases.Eip01w050Case;
 import tw.gov.pcc.eip.msg.cases.Eip01wPopCase;
-import tw.gov.pcc.eip.util.ExceptionUtility;
 
 /**
  * 輿情專區
@@ -40,7 +35,7 @@ public class Eip01w050Service {
      * @param deptId
      */
     public void initQryList(Eip01w050Case caseData, String deptId) {
-        caseData.setQryList(msgdataDao.getEip01w050DataList(deptId)); // TODO deptId
+        caseData.setQryList(msgdataDao.getEip01w050DataList(deptId));
     }
 
     /**
@@ -50,37 +45,11 @@ public class Eip01w050Service {
      * @return
      */
     public Eip01wPopCase query(String fseq) {
-        Eip01wPopCase detail = msgdataDao.getEip01w050Detail(fseq);
+        Eip01wPopCase detail = msgdataDao.getEip01wDetail(fseq, "5");
         if (detail != null) {
             detail.setFile(msgdepositDao.findbyfseq(Arrays.asList(fseq)).stream()
                     .collect(Collectors.toMap(Msgdeposit::getSeq, Msgdeposit::getAttachfile)));
         }
         return detail;
-    }
-
-    /**
-     * 輿情專區 檔案下載
-     * 
-     * @param caseData
-     * @return
-     */
-    public ByteArrayOutputStream getFile(Eip01w050Case caseData) {
-        File file = null; // TODO file
-        if (!file.exists()) {
-            return null;
-        }
-        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-        try (FileInputStream inputStream = new FileInputStream(file); outputStream) {
-
-            byte[] buffer = new byte[1024];
-            int bytesRead;
-            while ((bytesRead = inputStream.read(buffer)) != -1) {
-                outputStream.write(buffer, 0, bytesRead);
-            }
-        } catch (IOException e) {
-            log.error(ExceptionUtility.getStackTrace(e));
-            return null;
-        }
-        return outputStream;
     }
 }

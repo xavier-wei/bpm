@@ -269,23 +269,4 @@ public class EipcodeDaoImpl extends BaseDao<Eipcode> implements EipcodeDao {
                 .query(sql.toString(), params,BeanPropertyRowMapper.newInstance(Eipcode.class));
     }
 
-    @Override
-    public List<Eipcode> getRelevantDepByAttr(String attr) {
-        StringBuilder sql = new StringBuilder();
-        sql.append(" SELECT CODENO,  ");
-        sql.append("        CODENAME  ");
-        sql.append("   FROM EIPCODE C  ");
-        sql.append("  WHERE CODEKIND = 'DEPT'  ");
-        sql.append("    AND CODENO <> '0'  ");
-        sql.append("    AND CODENO IN (SELECT DISTINCT A.CONTACTUNIT ");
-        sql.append("                     FROM MSGDATA A, ");
-        sql.append("                          MSGAVAILDEP B ");
-        sql.append("                    WHERE A.FSEQ = B.FSEQ  ");
-        sql.append("                      AND A.ATTRIBUTYPE = :attr) ");
-        sql.append(" ORDER BY CAST(CODENO AS INT) ");
-        Map<String, Object> params = new HashMap<>();
-        params.put("attr", attr);
-        return getNamedParameterJdbcTemplate().query(sql.toString(), params,
-                BeanPropertyRowMapper.newInstance(Eipcode.class));
-    }
 }

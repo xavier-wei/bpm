@@ -1,6 +1,7 @@
 package tw.gov.pcc.eip.dao;
 
 import tw.gov.pcc.eip.domain.Ositem;
+import tw.gov.pcc.eip.domain.Osquestion;
 
 import java.util.List;
 
@@ -43,8 +44,33 @@ public interface OsitemDao {
     public String getMaximumIseqno(String osformno);
 
     /**
+     * 取得全部資料
+     * @return
+     */
+    public List<Ositem> getAllByOsformno(String osformno);
+
+    /**
      * 依表單編號及問題流水號取得資料
      * @return
      */
     public List<Ositem> getItemsByOsformnoAndQseqno(String osformno, String qseqno);
+
+    /**
+     * 依表單編號、問題流水號及選項序號取得資料
+     * @param osformno
+     * @param qseqno
+     * @param itemseq
+     * @return
+     */
+    public Ositem getSingleOptionData(String osformno, String qseqno, String itemseq);
+
+    /**
+         * 依表單編號、問題流水號、目的選項序號及更新種類將其他序號加一
+     * @param osformno
+     * @param qseqno
+     * @param targeitemseq
+     * @param isbehind
+     * @return
+     */
+    public int updateBatchItemseq(String osformno, String qseqno, String itemseq, String targeitemseq, boolean isbehind);
 }

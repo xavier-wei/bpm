@@ -277,6 +277,37 @@ public class Eip00w520Controller extends BaseController {
         return OPTION_PAGE;
     }
 
+    @RequestMapping("/Eip00w520_preview.action")
+    public String preview(@ModelAttribute(CASE_KEY) Eip00w520Case caseData) {
+        try {
+            log.debug("導向 預覽畫面");
+            Eip00w520ThemeCase themeCase = new Eip00w520ThemeCase();
+            eip00w520Service.getSingleFormData(caseData, themeCase);
+            eip00w520Service.getPreviewData(caseData);
+            caseData.setThemeCase(themeCase);
+        } catch (Exception e) {
+            log.error(ExceptionUtility.getStackTrace(e));
+            setSystemMessage(super.getQueryFailMessage());
+            return MAIN_PAGE;
+        }
+        return PREVIEW_PAGE;
+    }
+    @RequestMapping("/Eip00w520_copy.action")
+    public String copy(@ModelAttribute(CASE_KEY) Eip00w520Case caseData) {
+        try {
+            log.debug("複製 意見調查主題");
+            eip00w520Service.copyFormData(caseData);
+            eip00w520Service.getOslist(caseData);
+        } catch (Exception e) {
+            log.error(ExceptionUtility.getStackTrace(e));
+            setSystemMessage(getSaveFailMessage());
+            eip00w520Service.getOslist(caseData);
+            return MAIN_PAGE;
+        }
+        setSystemMessage(getSaveSuccessMessage());
+        return MAIN_PAGE;
+    }
+
     @RequestMapping("/Eip00w520_delete.action")
     public String delete(@ModelAttribute(CASE_KEY) Eip00w520Case caseData) {
         try {
@@ -287,7 +318,7 @@ public class Eip00w520Controller extends BaseController {
             log.error(ExceptionUtility.getStackTrace(e));
             setSystemMessage(getDeleteFailMessage());
             eip00w520Service.getOslist(caseData);
-            return PARTLIST_PAGE;
+            return MAIN_PAGE;
         }
         setSystemMessage(getDeleteSuccessMessage());
         return MAIN_PAGE;

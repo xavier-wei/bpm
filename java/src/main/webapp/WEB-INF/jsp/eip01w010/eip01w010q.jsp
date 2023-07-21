@@ -42,7 +42,7 @@
                     <form:label cssClass="col-form-label" path="p1page">頁面型態：</form:label>
                     <div class="col-12 col-md">
                         <form:select path="p1page" cssClass="form-control">
-                            <option value="" selected disabled hidden>請選擇</option>
+                            <option value="" selected>請選擇</option>
                             <c:forEach var="item" items="${caseData.pagetypes}" varStatus="status">
                                 <form:option value="${item.codeno}">
                                     <c:out value="${item.codename}" />
@@ -58,9 +58,10 @@
                     </div>
                 </tags:form-row>
                 <tags:form-row>
-                    <form:label cssClass="col-form-label" path="status">狀態：</form:label>
+                    <form:label cssClass="col-form-label" path="p1status">狀態：</form:label>
                     <div class="col-12 col-md">
-                        <form:select path="status" cssClass="form-control">
+                        <form:select path="p1status" cssClass="form-control">
+                            <option value="" selected>請選擇</option>
                             <c:forEach var="item" items="${caseData.statuses1}" varStatus="status">
                                 <form:option value="${item.codeno}">
                                     <c:out value="${item.codename}" />
@@ -77,7 +78,7 @@
             </tags:fieldset>
             <c:if test="${(caseData.mode == 'Q' || caseData.mode == 'D' ) && not empty caseData.queryList }">
                 <tags:fieldset legend="查詢結果">
-                    <div class="table-responsive mt-4">
+                    <div class="table-responsive mt-2">
                         <table class="table" id="querylistTable">
                             <thead>
                                 <tr>
@@ -90,7 +91,7 @@
                                     <th class="text-center">前台是否顯示</th>
                                     <th class="text-center">上架時間<br>下架時間</th>
                                     <th class="text-center">狀態</th>
-                                    <th class="text-center">明細</th>
+                                    <th data-orderable="false" class="text-center">明細</th>
                                 </tr>
                             </thead>
                             <tbody>

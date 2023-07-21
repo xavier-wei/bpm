@@ -44,6 +44,7 @@ public class Eip01w030Controller extends BaseController {
     private Eip01wFileService eip01wFileService;
 
     /**
+     * 公告事項 畫面初始 代入最新公告事項
      * 
      * @param caseData
      * @return
@@ -51,12 +52,18 @@ public class Eip01w030Controller extends BaseController {
     @RequestMapping("/Eip01w030_enter.action")
     public String enter(@ModelAttribute(CASE_KEY) Eip01w030Case caseData) {
         log.debug("導向 Eip01w030_enter 公告事項 畫面初始");
-        eip01w030Service.initOptions(caseData);
-        eip01w030Service.getLatestData(caseData);
+        try {
+            eip01w030Service.initOptions(caseData);
+            eip01w030Service.getLatestData(caseData, userData.getDeptId());
+        } catch (Exception e) {
+            log.error("公告事項 最新事項查詢 - " + ExceptionUtility.getStackTrace(e));
+            setSystemMessage(getQueryFailMessage());
+        }
         return MAIN_PAGE;
     }
 
     /**
+     * 依畫面條件查詢公告事項
      * 
      * @param caseData
      * @return
@@ -66,7 +73,7 @@ public class Eip01w030Controller extends BaseController {
         log.debug("導向 Eip01w030_query 公告事項 條件查詢");
         try {
             eip01w030Service.initOptions(caseData);
-            eip01w030Service.query(caseData);
+            eip01w030Service.query(caseData, userData.getDeptId());
             if (!CollectionUtils.isEmpty(caseData.getQryList())) {
                 setSystemMessage(getQuerySuccessMessage());
             } else {

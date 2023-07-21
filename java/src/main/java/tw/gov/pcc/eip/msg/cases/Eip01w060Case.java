@@ -27,4 +27,9 @@ public class Eip01w060Case implements Serializable {
 
     private Map<String, String> files = null; // 附檔清單
 
+    private String fseq;
+
+    private String seq;
+
+    private String subject;
 }

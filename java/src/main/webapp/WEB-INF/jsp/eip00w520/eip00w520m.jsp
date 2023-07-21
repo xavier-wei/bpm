@@ -141,12 +141,13 @@ $(function(){
         } else if (action === 4) {
 
         } else if (action === 5) {
-
+            $('#mode').val('P');
+            $('#eip00w520Form').attr('action', '<c:url value="/Eip00w520_preview.action" />').submit();
         } else if (action === 6) {
             $('#topicname').val($(this).parent().siblings().eq(0).find(':first-child').data('topicname'));
             $('#eip00w520Form').attr('action', '<c:url value="/Eip00w520_partList.action" />').submit();
         } else if (action === 7) {
-
+            $('#eip00w520Form').attr('action', '<c:url value="/Eip00w520_copy.action" />').submit();
         } else if (action === 8) {
             $('#mode').val('U');
             $('#eip00w520Form').attr('action', '<c:url value="/Eip00w520_selectInsertUpdate.action" />').submit();

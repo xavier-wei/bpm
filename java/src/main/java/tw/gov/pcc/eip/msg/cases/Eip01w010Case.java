@@ -38,6 +38,7 @@ public class Eip01w010Case implements Serializable {
     private String p1id; // 建立人員：(帶入首次建入人員)
     private String p1page; // *頁面型態 A:文章 B:連結
     private String p1title; // *主旨/連結網址
+    private String p1status; // *狀態
 
     private String mode; // I , Q
 
@@ -198,6 +199,13 @@ public class Eip01w010Case implements Serializable {
     private String tmpPath;
     private String seq;
     private String pageNum; // 紀錄當前頁碼
+
+    @Data
+    public static class Tree {
+        private String defaultKey;
+        private String defaultPath;
+        private List<String> treeList;
+    }
 
     @AssertTrue(message = "請至少勾選一筆", groups = Check.class)
     public boolean isChecked() {

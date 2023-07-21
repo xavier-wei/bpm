@@ -2,6 +2,7 @@ package tw.gov.pcc.eip.common.cases;
 
 import lombok.Data;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
 import tw.gov.pcc.common.util.DateUtil;
 import tw.gov.pcc.eip.framework.validation.ChineseDate;
@@ -33,6 +34,7 @@ public class Eip00w520ThemeCase implements Serializable {
 //    @RequiredString(label = "開始時間(分)")
     private String osfmdtMinute;
 //    @RequiredString(label = "結束時間")
+    private String fullosfmdt;
     private String osfmdtChksys;
     @ChineseDate(label = "開始時間")
     private String osendt;
@@ -40,6 +42,7 @@ public class Eip00w520ThemeCase implements Serializable {
     private String osendtHour;
 //    @RequiredString(label = "結束時間(分)")
     private String osendtMinute;
+    private String fullosendt;
     private String osendtChksys;
     @RequiredString(label = "說明")
     private String topicdesc;

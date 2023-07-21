@@ -12,8 +12,8 @@
         </tags:button>
     </jsp:attribute>
     <jsp:attribute name="contents">
-        <tags:fieldset legend="查詢條件">
-            <form:form id="eip01w020Form" modelAttribute="${caseKey}">
+        <form:form id="eip01w020Form" modelAttribute="${caseKey}">
+            <tags:fieldset legend="查詢條件">
                 <tags:form-row>
                     <form:label cssClass="col-form-label" path="msgtype">分類名稱：</form:label>
                     <div class="col-12 col-md">
@@ -72,41 +72,38 @@
                         </form:select>
                     </div>
                 </tags:form-row>
-                <tags:form-note>
-                    <tags:form-note-item><span class="red">＊</span>為必填欄位。</tags:form-note-item>
-                </tags:form-note>
-                <c:if test="${not empty caseData.qryList }">
-                    <div class="table-responsive mt-4">
-                        <table class="table" id="qryListTable">
-                            <thead>
-                                <tr>
-                                    <th class="text-center">項次</th>
-                                    <th class="text-center">聯絡單位</th>
-                                    <th class="text-center">文章篇數</th>
+            </tags:fieldset>
+            <c:if test="${not empty caseData.qryList }">
+                <div class="table-responsive mt-4">
+                    <table class="table" id="qryListTable">
+                        <thead>
+                            <tr>
+                                <th class="text-center">項次</th>
+                                <th class="text-center">聯絡單位</th>
+                                <th class="text-center">文章篇數</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <c:forEach items="${caseData.qryList}" var="item" varStatus="status">
+                                <tr data-seq="${status.index + 1 }">
+                                    <td class="text-center">
+                                        ${status.index + 1}
+                                    </td>
+                                    <td class="text-center">
+                                        <c:out value="${item.deptname}" />
+                                        <form:hidden path="qryList[${status.index}].deptname" />
+                                    </td>
+                                    <td class="text-center">
+                                        <c:out value="${item.count}" />
+                                        <form:hidden path="qryList[${status.index}].count" />
+                                    </td>
                                 </tr>
-                            </thead>
-                            <tbody>
-                                <c:forEach items="${caseData.qryList}" var="item" varStatus="status">
-                                    <tr data-seq="${status.index + 1 }">
-                                        <td class="text-center">
-                                            ${status.index + 1}
-                                        </td>
-                                        <td class="text-center">
-                                            <c:out value="${item.deptname}" />
-                                            <form:hidden path="qryList[${status.index}].deptname" />
-                                        </td>
-                                        <td class="text-center">
-                                            <c:out value="${item.count}" />
-                                            <form:hidden path="qryList[${status.index}].count" />
-                                        </td>
-                                    </tr>
-                                </c:forEach>
-                            </tbody>
-                        </table>
-                    </div>
-                </c:if>
-            </form:form>
-        </tags:fieldset>
+                            </c:forEach>
+                        </tbody>
+                    </table>
+                </div>
+            </c:if>
+        </form:form>
     </jsp:attribute>
 
     <jsp:attribute name="footers">

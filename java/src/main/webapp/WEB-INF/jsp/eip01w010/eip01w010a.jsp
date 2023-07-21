@@ -417,6 +417,7 @@
                 <form:hidden path="p1id" />
                 <form:hidden path="p1page" />
                 <form:hidden path="p1title" />
+                <form:hidden path="p1status" />
                 <form:hidden path="seq" />
             </form:form>
 
@@ -425,12 +426,12 @@
                 <div class="modal-dialog modal-lg" role="document">
                     <div class="modal-content">
                         <div class="modal-header">
-                            <h5 class="modal-title"></h5>
+                            <h5 class="modal-title md-t1"></h5>
                             <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                                 <span aria-hidden="true">&times;</span>
                             </button>
                         </div>
-                        <div class="modal-body">
+                        <div class="modal-body md-b1">
 
                         </div>
                         <div class="modal-footer">
@@ -496,7 +497,7 @@
                 var seq = 0; // 新資料夾流水號
                 let tmp = '新資料夾';
 
-                function getAllNode(attr) {
+                function getAllNode(attr, init) {
                     $.ajax({
                         type: 'POST',
                         url: '<c:url value="/Eip01w010_getTree.action" />',
@@ -506,11 +507,15 @@
                         success: function(data) {
                             $('#dynaTree').html('');
                             var str = '';
-                            $.each(data, function(k, v) {
+                            $.each(data.treeList, function(k, v) {
                                 str += v;
                             });
                             $('#dynaTree').append(str);
                             initTree();
+                            if (!init) {
+                                $('#indir').val(data.defaultPath);
+                                $('#tmpPath').val(data.defaultKey);
+                            }
                         },
                         error: function(e) {
                             console.log(e);
@@ -624,8 +629,8 @@
                                         e + '</a>' + '　';
                                     //str += '<button type="button" class="btn btn-outline-info mr-3 mb-2" id='+i+'>'+e+'</button>';
                                 });
-                                $('.modal-title').html(data.attributype);
-                                $('.modal-body').html(
+                                $('.md-t1').html(data.attributype);
+                                $('.md-b1').html(
                                     '主　　題：' + data.subject +
                                     '<br>訊息文字：' + data.mcontent +
                                     '<br>發布單位：' + data.contactunit +
@@ -694,10 +699,8 @@
                         return this.value === $this;
                     }).prop('checked', true);
                 });
-                // 屬性下拉選單 連動 1.訊息類別下拉選單 2.樹
-                $('#attributype').on('change', function() {
-                    var selectValue = $(this).val();
-                    $('#msgtype').empty();
+
+                function getMsgtypeOptions(selectValue) {
                     $.ajax({
                         type: "POST",
                         url: '<c:url value="/Eip01w010_getOptionData.action" />',
@@ -722,9 +725,20 @@
                             showAlert("取得資料發生錯誤");
                         }
                     });
-                    getAllNode(selectValue);
+                }
+                // 屬性下拉選單 連動 1.訊息類別下拉選單 2.樹
+                $('#attributype').on('change', function() {
+                    var selectValue = $(this).val();
+                    $('#msgtype').empty();
+                    $('#indir').val('');
+                    $('#tmpPath').val('');
+                    // 清空存放目錄 帶預設部門
+                    getMsgtypeOptions(selectValue);
+                    getAllNode(selectValue, false);
                 });
-                $('#attributype').trigger('change');
+                var attribute = $('#attributype').val();
+                getMsgtypeOptions(attribute);
+                getAllNode(attribute, true);
                 // 選擇檔案
                 $("#files").on("change", function() {
                     let counts = $(this)[0].files.length;
@@ -755,31 +769,40 @@
                         $(this).next('.custom-file-label').html('Choose images');
                         return false;
                     } else if (counts > 0 && counts < 20) {
-                        var files = [];
-                        for (var i = 0; i < counts; i++) {
-                            files.push($(this)[0].files[i].name);
-                            getBase64($(this)[0].files[i]);
-                        }
-                        $(this).next('.custom-file-label').html(files.join(', '));
+                        prodPreViewImg($(this)[0].files);
                     } else {
                         $(this).next('.custom-file-label').html('Choose images');
                     }
                 });
                 // 預覽圖
-                function getBase64(file) {
-                    var reader = new FileReader();
-                    reader.readAsDataURL(file);
-                    reader.onload = function() {
+                const getBlob = (blob) => new Promise((resolve, reject) => {
+                    const reader = new FileReader();
+                    reader.onload = () => resolve(reader.result);
+                    reader.onerror = reject;
+                    reader.readAsDataURL(blob);
+                });
+                const appendImg = (blob) => new Promise((resolve, reject) => {
+                    if (blob != null) {
                         $('.imgblock').show();
                         $('.imgblock').append(
                             '<div class="img-box"><img class="myimage" src="' +
-                            reader.result +
+                            blob +
                             '"/></div>'
-                        ); // <span class="image-remove" @click="removeImage(index)">+</span> 
-                    };
-                    reader.onerror = function(error) {
-                        console.log('Error: ', error);
-                    };
+                        ); // <span class="image-remove">+</span> 
+                        resolve('成功!');
+                    } else {
+                        reject('失敗!');
+                    }
+                });
+                async function prodPreViewImg(files) {
+                    var fileNameArray = [];
+                    for (var i = 0; i < files.length; i++) {
+                        fileNameArray.push(files[i].name);
+                        const blob = await getBlob(files[i]); // 避免因較小的檔案較早讀取完成而順序錯誤
+                        const result = await appendImg(blob);
+                        // console.log(files[i].name + ' ' + result);
+                    }
+                    $('#images').next('.custom-file-label').html(fileNameArray.join(', '));
                 }
                 // 附檔清單 X按鈕
                 $('.text-remove').click(function() {

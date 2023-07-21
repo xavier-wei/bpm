@@ -13,6 +13,9 @@
                         </form:select>
                     </div>
                 </tags:form-row>
+                <form:hidden path="fseq"/>
+                <form:hidden path="seq"/>
+                <form:hidden path="subject"/>
                 <br>
                 <div class="msg">
 
@@ -30,7 +33,7 @@
                         type: "POST",
                         url: '<c:url value="/Eip01w060_getDetail.action" />',
                         data: {
-                            'attr': $('#dept').val()
+                            'contactunit': $('#dept').val()
                         },
                         timeout: 100000,
                         success: function(data) {
@@ -44,7 +47,7 @@
                                 $.each(data.msgs, function(i, e) { // 串接內容
                                     msg += '　　' + (i + 1) + '.' + e + '<br>';
                                 });
-                                $.each(data.file, function(i, e) { // 串接檔名
+                                $.each(data.files, function(i, e) { // 串接檔名
                                     str +=
                                         '<a href="javascript:;" class="alink" id=' +
                                         i + '>' +
@@ -54,6 +57,7 @@
                                 $('.msg').html(title +
                                     '<br>' + msg +
                                     '<br>附檔下載：' + str);
+                                $('#subject').val(data.subject);
                             }
                         },
                         error: function(e) {
@@ -65,8 +69,9 @@
             });
             // 檔案下載連結
             $(document).on('click', '.alink', function(e) {
-                $('#seq').val($(this).attr('id'));
-                $('#filename').val($(this).html());
+                var id = $(this).attr('id').split('_');
+                $('#fseq').val(id[0]);
+                $('#seq').val(id[1]);
                 $('#eip01w060Form').attr('action', '<c:url value="/Eip01w060_getFile.action" />')
                     .submit();
             });

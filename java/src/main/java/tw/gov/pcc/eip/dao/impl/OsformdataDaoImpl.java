@@ -1,6 +1,5 @@
 package tw.gov.pcc.eip.dao.impl;
 
-import org.apache.commons.lang3.ObjectUtils;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
@@ -9,15 +8,12 @@ import org.springframework.util.CollectionUtils;
 import tw.gov.pcc.common.annotation.DaoTable;
 import tw.gov.pcc.common.framework.dao.BaseDao;
 import tw.gov.pcc.eip.dao.OsformdataDao;
-import tw.gov.pcc.eip.domain.Orformdata;
 import tw.gov.pcc.eip.domain.Osformdata;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-import static org.apache.commons.lang3.StringUtils.isNotBlank;
 
 @DaoTable(OsformdataDao.TABLE_NAME)
 @Repository
@@ -126,6 +122,25 @@ public class OsformdataDaoImpl extends BaseDao<Osformdata> implements Osformdata
         sql.append("   AND status NOT IN ('N') ");
         Map<String, Object> params = new HashMap<>();
         params.put("osccode", osccode);
+        List<Osformdata> list = getNamedParameterJdbcTemplate().query(sql.toString(),params,
+                BeanPropertyRowMapper.newInstance(Osformdata.class));
+        return CollectionUtils.isEmpty(list) ? new ArrayList<>() : list;
+    }
+
+    @Override
+    public List<Osformdata> getListByStatus(List<String> statusList, String deptno) {
+        StringBuilder sql = new StringBuilder();
+        sql.append(" SELECT ");
+        sql.append(ALL_COLUMNS_SQL);
+        sql.append(" FROM " + TABLE_NAME);
+        sql.append(" WHERE status IN (:statusList) ");
+        sql.append("   AND (limitvote = :deptno ");
+        sql.append("        OR limitvote like :deptno + ',%' ");
+        sql.append("        OR limitvote like '%,' + :deptno ");
+        sql.append("        OR limitvote like '%,' + :deptno + ',%')");
+        Map<String, Object> params = new HashMap<>();
+        params.put("statusList", statusList);
+        params.put("deptno", deptno);
         List<Osformdata> list = getNamedParameterJdbcTemplate().query(sql.toString(),params,
                 BeanPropertyRowMapper.newInstance(Osformdata.class));
         return CollectionUtils.isEmpty(list) ? new ArrayList<>() : list;

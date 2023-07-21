@@ -92,11 +92,4 @@ public interface EipcodeDao {
      */
     public List<Eipcode> findByCodeKindAndExcludeScodekind(String codeKind, String scodekind);
 
-    /**
-     * 取得相關部門
-     * 
-     * @param attr 6:單位簡介 7:業務資訊
-     * @return
-     */
-    public List<Eipcode> getRelevantDepByAttr(String attr);
 }

@@ -21,6 +21,7 @@ import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.multipart.MultipartFile;
 
 import lombok.extern.slf4j.Slf4j;
@@ -217,7 +218,7 @@ public class Eip01w010Service {
         String p1id = caseData.getP1id();
         String p1page = StringUtils.trimToEmpty(caseData.getP1page());
         String p1title = caseData.getP1title();
-        String status = caseData.getStatus();
+        String status = caseData.getP1status();
         List<Msgdata> result = msgdataDao.findbyCreatidPagetype(p1id, p1page, p1title, status);
         // 0筆 1筆 多筆
         if (!CollectionUtils.isEmpty(result)) {
@@ -306,7 +307,13 @@ public class Eip01w010Service {
      * @param attr
      * @return
      */
-    public List<String> getTree(String attr) {
+    public Eip01w010Case.Tree getTree(String attr, String deptId) {
+        Eip01w010Case.Tree newTree = new Eip01w010Case.Tree();
+        Msgdepositdir dir = msgdepositdirDao.getDefaultPath(attr, deptId);
+        if (dir != null) {
+            newTree.setDefaultKey(trim(dir.getExisthier()));
+            newTree.setDefaultPath(dir.getFilepath());
+        }
         List<Msgdepositdir> tree = msgdepositdirDao.getTreeByAttr(attr, "");
 
         int j = 1;
@@ -350,9 +357,30 @@ public class Eip01w010Service {
             treeStr.add("</ul>");
             j--;
         }
-        return treeStr;
+        newTree.setTreeList(treeStr);
+        return newTree;
     }
 
+    /**
+     * 一個聯絡單位只能新增一筆單位簡介(6)或業務資訊(7)
+     * 
+     * @param caseData
+     * @param result
+     */
+    public void checkOptions(Eip01w010Case caseData, BindingResult result) {
+        String attr = caseData.getAttributype();
+        String contactunit = caseData.getContactunit();
+        if ("6".equals(attr)) {
+            if (msgdataDao.getEffectiveCount(attr, contactunit) != 0) {
+                result.rejectValue("attributype", "", "該聯絡單位已存在一筆此屬性資料，請修改「屬性」");
+            }
+        }
+        if ("7".equals(attr)) {
+            if (msgdataDao.getEffectiveCount(attr, contactunit) != 0) {
+                result.rejectValue("attributype", "", "該聯絡單位已存在一筆此屬性資料，請修改「屬性」");
+            }
+        }
+    }
     /**
      * 新增資料
      * 
@@ -421,7 +449,7 @@ public class Eip01w010Service {
     public void insertMsgdepositdir(String attr, String tmpPath, String indir) {
         if (StringUtils.contains(tmpPath, "_")) {
             String newkey = "";
-            String newsort = ""; // TODO
+            String newsort = "";
             String newdir = "";
             String filename = "";
             String tmpArray[] = indir.split("/");
@@ -429,6 +457,12 @@ public class Eip01w010Service {
             List<Msgdepositdir> tree = msgdepositdirDao.getTreeByAttr(attr, existPath); // 查詢下層路徑
             if (CollectionUtils.isEmpty(tree)) { // 已存在的路徑下再新增的資料夾
                 newkey = existPath + "A";
+                // 取得上一層的最大的排序值
+                String preMaxOrder = msgdepositdirDao
+                        .getTreeByAttr(attr, StringUtils.substring(existPath, 0, existPath.length() - 1)).stream()
+                        .sorted(Comparator.comparing(Msgdepositdir::getSortorder).reversed()).findFirst()
+                        .map(m -> m.getSortorder()).orElse("");
+                newsort = StringUtils.substring(preMaxOrder, 0, existPath.length() - 1) + "10"; // +1位數
                 newdir = StringUtils.join(tmpArray, "/", 0, newkey.length() + 1);
                 filename = tmpArray[newkey.length()];
             } else {
@@ -439,16 +473,21 @@ public class Eip01w010Service {
                             return existhier.charAt(existhier.length() - 1);
                         }).get();
                 newkey = existPath + (char) ((int) lastChar + 1);
+                // 目前最大的排序值+10
+                int maxOrder = tree.stream().sorted(Comparator.comparing(Msgdepositdir::getSortorder).reversed())
+                        .findFirst().map(m -> Integer.valueOf(m.getSortorder())).orElse(0);
+                newsort = String.valueOf(maxOrder + 10);
                 newdir = StringUtils.join(tmpArray, "/", 0, newkey.length() + 1);
                 filename = tmpArray[newkey.length()];
             }
-            insertMsgdepositdir(attr, newkey, "", newdir, filename);
+            insertMsgdepositdir(attr, newkey, newsort, newdir, filename);
             int count = StringUtils.countMatches(tmpPath, "_"); // 還有?個新增的資料夾
             while (count > 1) {
+                newsort = StringUtils.substring(newsort, 0, newkey.length() - 1) + "10"; // 子層 多一層編號
                 newkey = newkey + "A";
                 newdir = StringUtils.join(tmpArray, "/", 0, newkey.length() + 1);
                 filename = tmpArray[newkey.length()];
-                insertMsgdepositdir(attr, newkey, "", newdir, filename);
+                insertMsgdepositdir(attr, newkey, newsort, newdir, filename);
                 count--;
             }
         }

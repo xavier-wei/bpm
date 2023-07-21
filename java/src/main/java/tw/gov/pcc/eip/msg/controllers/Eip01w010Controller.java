@@ -145,6 +145,7 @@ public class Eip01w010Controller extends BaseController {
             BindingResult result) {
         log.debug("導向 Eip01w010_enter 訊息上稿 新增/修改");
         eip01w010Service.initOptions(caseData);
+        eip01w010Service.checkOptions(caseData, result);
         if (result.hasErrors()) {
             return new ModelAndView(EDIT_PAGE);
         }
@@ -263,8 +264,8 @@ public class Eip01w010Controller extends BaseController {
      */
     @RequestMapping("/Eip01w010_getTree.action")
     @ResponseBody
-    public List<String> getTree(@RequestParam("attr") String attr) {
-        return ObjectUtility.normalizeObject(eip01w010Service.getTree(attr));
+    public Eip01w010Case.Tree getTree(@RequestParam("attr") String attr) {
+        return ObjectUtility.normalizeObject(eip01w010Service.getTree(attr, userData.getDeptId()));
     }
 
     /**

@@ -2,10 +2,6 @@ package tw.gov.pcc.eip.services;
 
 import static org.apache.commons.lang3.StringUtils.trimToNull;
 
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
 import java.time.chrono.MinguoChronology;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
@@ -15,7 +11,6 @@ import java.util.List;
 import java.util.Locale;
 import java.util.stream.Collectors;
 
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -27,8 +22,6 @@ import tw.gov.pcc.eip.domain.Eipcode;
 import tw.gov.pcc.eip.domain.Msgdeposit;
 import tw.gov.pcc.eip.msg.cases.Eip01w030Case;
 import tw.gov.pcc.eip.msg.cases.Eip01wPopCase;
-import tw.gov.pcc.eip.util.DateUtility;
-import tw.gov.pcc.eip.util.ExceptionUtility;
 
 /**
  * 公告事項
@@ -72,17 +65,8 @@ public class Eip01w030Service {
      * 
      * @param caseData
      */
-    public void getLatestData(Eip01w030Case caseData) {
-        List<Eip01wPopCase> qryList = msgdataDao.getEip01w030LatestDataList().stream().map(m -> {
-            Eip01wPopCase dataCase = new Eip01wPopCase();
-            dataCase.setFseq(m.getFseq());
-            dataCase.setSubject(m.getSubject());
-            dataCase.setMsgtype(m.getMsgtype());
-            dataCase.setReleasedt(StringUtils.isBlank(m.getReleasedt()) ? ""
-                    : DateUtility.changeDateTypeToChineseDate(m.getReleasedt()));
-            dataCase.setContactunit(m.getContactunit());
-            return dataCase;
-        }).collect(Collectors.toCollection(ArrayList::new));
+    public void getLatestData(Eip01w030Case caseData, String deptId) {
+        List<Eip01wPopCase> qryList = msgdataDao.getEip01w030DataList(deptId, null, null);
         caseData.setQryList(qryList);
     }
 
@@ -91,19 +75,10 @@ public class Eip01w030Service {
      * 
      * @param caseData
      */
-    public void query(Eip01w030Case caseData) {
+    public void query(Eip01w030Case caseData, String deptId) {
         String msgtype = trimToNull(caseData.getMsgtype());
         String subject = trimToNull(caseData.getTheme());
-        List<Eip01wPopCase> qryList = msgdataDao.getEip01w030DataList(msgtype, subject).stream().map(m -> {
-            Eip01wPopCase dataCase = new Eip01wPopCase();
-            dataCase.setFseq(m.getFseq());
-            dataCase.setSubject(m.getSubject());
-            dataCase.setMsgtype(m.getMsgtype());
-            dataCase.setReleasedt(StringUtils.isBlank(m.getReleasedt()) ? ""
-                    : DateUtility.changeDateTypeToChineseDate(m.getReleasedt()));
-            dataCase.setContactunit(m.getContactunit());
-            return dataCase;
-        }).collect(Collectors.toCollection(ArrayList::new));
+        List<Eip01wPopCase> qryList = msgdataDao.getEip01w030DataList(deptId, msgtype, subject);
         caseData.setQryList(qryList);
     }
 
@@ -114,7 +89,7 @@ public class Eip01w030Service {
      * @return
      */
     public Eip01wPopCase query(String fseq) {
-        Eip01wPopCase detail = msgdataDao.getEip01w030Detail(fseq);
+        Eip01wPopCase detail = msgdataDao.getEip01wDetail(fseq, "1");
         if (detail != null) {
             detail.setFile(msgdepositDao.findbyfseq(Arrays.asList(fseq)).stream()
                     .collect(Collectors.toMap(Msgdeposit::getSeq, Msgdeposit::getAttachfile)));
@@ -122,29 +97,4 @@ public class Eip01w030Service {
         return detail;
     }
 
-    /**
-     * 公告事項 檔案下載
-     * 
-     * @param caseData
-     * @return
-     */
-    public ByteArrayOutputStream getFile(Eip01w030Case caseData) {
-        File file = null;
-        if (!file.exists()) {
-            return null;
-        }
-        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-        try (FileInputStream inputStream = new FileInputStream(file); outputStream) {
-
-            byte[] buffer = new byte[1024];
-            int bytesRead;
-            while ((bytesRead = inputStream.read(buffer)) != -1) {
-                outputStream.write(buffer, 0, bytesRead);
-            }
-        } catch (IOException e) {
-            log.error(ExceptionUtility.getStackTrace(e));
-            return null;
-        }
-        return outputStream;
-    }
 }

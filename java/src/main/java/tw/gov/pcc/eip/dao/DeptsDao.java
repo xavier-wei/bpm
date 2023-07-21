@@ -1,12 +1,11 @@
 package tw.gov.pcc.eip.dao;
 
+import java.util.List;
+
 import org.springframework.stereotype.Repository;
+
 import tw.gov.pcc.common.annotation.DaoTable;
 import tw.gov.pcc.eip.domain.Depts;
-import tw.gov.pcc.eip.domain.Itemcode;
-import tw.gov.pcc.eip.domain.Items;
-
-import java.util.List;
 
 /**
  *  Dao
@@ -32,4 +31,12 @@ public interface DeptsDao {
 	 */
 	public List<Depts> getEip01wDepts();
 
+    /**
+     * 取得登入者部門可檢視之單位簡介或業務資訊的初始下拉選單
+     * 
+     * @param attr   6:單位簡介 7:業務資訊
+     * @param deptId 登入者部門
+     * @return
+     */
+    public List<Depts> getRelevantDeptByAttr(String attr, String deptId);
 }
