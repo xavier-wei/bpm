@@ -29,10 +29,10 @@ public class ProcessFlowService {
         this.historyService = historyService;
     }
 
-    // 開啟流程，並且在applierConfirm為confirm的狀態，直接跳過申請者確認進到下個步驟，若為temp則需進行確認
+    // 開啟流程，並且在isSubmit為"1"的狀態，直接跳過申請者確認進到下個步驟，若為temp則需進行確認
     public String startProcess(String processKey, Map<String, Object> variables) {
         ProcessInstance processInstance = runtimeService.startProcessInstanceByKey(processKey, variables);
-        if (variables.get("applierConfirm").equals("confirm")) {
+        if (variables.get("isSubmit").equals("1")) {
             Task task = taskService.createTaskQuery()
                     .taskCandidateOrAssigned((String) variables.get("applier"))
                     .processInstanceId(processInstance.getId()).singleResult();

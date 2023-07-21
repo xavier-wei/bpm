@@ -5,28 +5,29 @@ import lombok.*;
 import javax.persistence.*;
 import java.io.Serializable;
 import java.sql.Timestamp;
+import java.util.UUID;
+
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @ToString
 @Entity
-@IdClass(EipBpmSignStatusPrimaryKey.class)
 @Table(schema = "dbo",name = "EIP_BPM_SIGN_STATUS")
 public class EipBpmSignStatus implements Serializable {
     @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    private UUID uuid;
+
     @Column(name = "FORM_ID",nullable = false)
     private String formId;
 
-    @Id
     @Column(name = "PROCESS_INSTANCE_ID",nullable = false)
     private String processInstanceId;
 
-    @Id
     @Column(name = "TASK_ID",nullable = false)
     private String taskId;
 
-    @Id
     @Column(name = "SIGNER_ID",nullable = false)
     private String signerId;
 

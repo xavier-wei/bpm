@@ -2,7 +2,7 @@ package tw.gov.pcc.flowable.domain;
 
 import lombok.Data;
 import org.flowable.task.api.Task;
-import tw.gov.pcc.flowable.utils.CovertTimeZone;
+import tw.gov.pcc.flowable.utils.ConvertTimeZone;
 
 @Data
 public class TaskDTO {
@@ -16,7 +16,7 @@ public class TaskDTO {
         this.taskId = task.getId();
         this.taskName = task.getName();
         this.processInstanceId = task.getProcessInstanceId();
-        this.createdTime = CovertTimeZone.convertTimezoneTaipei(task.getCreateTime());
+        this.createdTime = ConvertTimeZone.convertTimezoneTaipei(task.getCreateTime());
         this.isProcessComplete = isProcessComplete;
     }
 
