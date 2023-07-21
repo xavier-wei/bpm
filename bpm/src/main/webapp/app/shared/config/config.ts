@@ -46,6 +46,9 @@ import Vue2Filters from 'vue2-filters';
 import * as filters from '@/shared/date/filters';
 import { accountStore } from '@/shared/config/store/account-store';
 
+import { envStore } from '@/shared/config/store/env-store';
+
+
 export function initVueApp(vue) {
   vue.use(VueCookie);
   vue.use(Vuelidate);
@@ -100,6 +103,7 @@ export function initVueXStore(vue) {
   return new Vuex.Store({
     modules: {
       accountStore,
+      envStore
     },
   });
 }

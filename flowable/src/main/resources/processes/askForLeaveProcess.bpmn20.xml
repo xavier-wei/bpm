@@ -14,8 +14,8 @@
     </sequenceFlow>
     <exclusiveGateway id="managerJudgeGate" name="managerJudgeGate"/>
     <sequenceFlow id="managerTaskToJudgeGate" sourceRef="managerTask" targetRef="managerJudgeGate" name="managerTaskToJudgeGate"/>
-    <serviceTask id="sendAskFailedMail" name="sendAskFailedMail"  flowable:class="com.example.flowabledemo.activity.SendAskFailedMail"/>
-    <sequenceFlow id="groupLeaderJudgeGateToFailedWay" sourceRef="groupLeaderJudgeGate" targetRef="sendAskFailedMail" name="groupLeaderJudgeGateToFailedWay">
+    <serviceTask id="sendAskFailedMail" name="sendAskFailedMail" flowable:class="com.example.flowabledemo.activity.SendAskFailedMail"/>
+    <sequenceFlow id="groupLeaderJudgeGateToFailedWay" sourceRef="groupLeaderJudgeGate" targetRef="sendAskFailedMail" name="你好">
       <conditionExpression xsi:type="tFormalExpression"><![CDATA[${!approved}]]></conditionExpression>
     </sequenceFlow>
     <sequenceFlow id="managerJudgeGateToFailedWay" sourceRef="managerJudgeGate" targetRef="sendAskFailedMail" name="managerJudgeGateToFailedWay">

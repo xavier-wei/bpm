@@ -53,25 +53,11 @@ const router = new Router({
       component: Home,
       props: true
     },
-    // {
-    //   path: '/forbidden',
-    //   name: 'Forbidden',
-    //   component: Error,
-    //   props: true
-    // },
-    // {
-    //   path: '/not-found',
-    //   name: 'NotFound',
-    //   component: Error,
-    //   props: true
-    // },
-
-
     // ...account,
     // ...admin,
     // entities,
     // ...pages,
-    // ...bpmRouter
+    ...bpmRouter
   ]
 });
 

@@ -14,66 +14,66 @@
         </div>
         <div class="card-body clo-12" style="background-color: #8fd4ce">
           <b-form-row>
-            <b-form-group class="col-4" label-cols="4" content-cols="8" label="部門:">
-              <b-form-select v-model="formDefault.deaprtmant">
-                <template #first>
+            <i-form-group-check class="col-4" label-cols="4" content-cols="8" :label="'部門：'" :item="$v.deaprtmant">
+              <b-form-select v-model="$v.deaprtmant.$model"
+                ><template #first>
                   <option value="">請選擇</option>
-                </template></b-form-select
-              >
-            </b-form-group>
-            <b-form-group class="col-4" label-cols="4" content-cols="8" label="申請者：">
-              <b-form-select v-model="formDefault.usrMail">
-                <template #first>
-                  <option value="">請選擇</option>
-                </template></b-form-select
-              >
-            </b-form-group>
-          </b-form-row>
+                </template>
+              </b-form-select>
+            </i-form-group-check>
 
+            <i-form-group-check class="col-4" label-cols="4" content-cols="8" :label="`申請者：`" :item="$v.usrMail">
+              <b-form-select v-model="$v.usrMail.$model"
+                ><template #first>
+                  <option value="">請選擇</option>
+                </template>
+              </b-form-select>
+            </i-form-group-check>
+          </b-form-row>
           <b-form-row>
-            <b-form-group class="col-4" label-cols="4" content-cols="8" label="表單:">
-              <b-form-select v-model="formDefault.seqNo">
+            <i-form-group-check class="col-4" label-cols="4" content-cols="8" label="表單：">
+              <b-form-select v-model="$v.seqNo.$model">
                 <template #first>
                   <option value="">請選擇</option>
                 </template></b-form-select
               >
-            </b-form-group>
-            <b-form-group class="col-4" label-cols="4" content-cols="8" label="處理狀況：">
-              <b-form-select v-model="formDefault.status" :options="queryOptions.city">
+            </i-form-group-check>
+            <i-form-group-check class="col-4" label-cols="4" content-cols="8" label="處理狀況：">
+              <b-form-select v-model="$v.status.$model" :options="queryOptions.city">
                 <template #first>
                   <option value="">請選擇</option>
                 </template></b-form-select
               >
-            </b-form-group>
-            <b-form-group class="col-4" label-cols="4" content-cols="8" label="表單分類：">
-              <b-form-select v-model="formDefault.usrMail">
+            </i-form-group-check>
+            <i-form-group-check class="col-4" label-cols="4" content-cols="8" label="表單分類：">
+              <b-form-select v-model="$v.usrMail.$model">
                 <template #first>
                   <option value="">請選擇</option>
                 </template></b-form-select
               >
-            </b-form-group>
+            </i-form-group-check>
           </b-form-row>
           <!-- 填表日期 -->
           <b-form-row>
-            <b-form-group
-              :label="'期間:'"
+            <i-form-group-check
+              :label="'期間：'"
               class="col-4"
-              label-cols-md="4"
-              content-cols-md="8"
-              :dual1="formDefault.seqDate"
-              :dual2="formDefault.seqDateEnd"
+              label-cols="4"
+              content-cols="8"
+              :dual1="$v.seqDate.$model"
+              :dual2="$v.seqDateEnd.$model"
             >
               <b-input-group>
-                <i-date-picker v-model="formDefault.seqDate" placeholder="yyy/MM/dd"></i-date-picker>
+                <i-date-picker v-model="$v.seqDate" placeholder="yyy/MM/dd"></i-date-picker>
                 <b-input-group-text>至</b-input-group-text>
-                <i-date-picker v-model="formDefault.seqDateEnd" placeholder="yyy/MM/dd"></i-date-picker>
+                <i-date-picker v-model="$v.seqDateEnd" placeholder="yyy/MM/dd"></i-date-picker>
               </b-input-group>
-            </b-form-group>
+            </i-form-group-check>
           </b-form-row>
 
           <div class="text-center pt-5">
             <b-button class="ml-2" style="background-color: #17a2b8" @click="toQuery()">查詢</b-button>
-            <b-button class="ml-2" style="background-color: #17a2b8" @click="rest()">清除</b-button>
+            <b-button class="ml-2" style="background-color: #17a2b8" @click="reset()">清除</b-button>
           </div>
         </div>
       </div>
@@ -104,16 +104,22 @@ import axios from 'axios';
 import { ref, reactive, computed, toRefs, defineComponent } from '@vue/composition-api';
 import IDatePicker from '../shared/i-date-picker/i-date-picker.vue';
 import ITable from '../shared/i-table/i-table.vue';
+import IFormGroupCheck from '../shared/form/i-form-group-check.vue';
+import { useValidation, validateState } from '../shared/form';
+import { useBvModal } from '../shared/modal';
+import { required } from '../shared/validators';
 
 export default defineComponent({
   name: 'deal2',
   components: {
     IDatePicker,
     ITable,
+    IFormGroupCheck,
   },
   setup() {
     const iTable = ref(null);
     const stepVisible = ref(true);
+    const $bvModal = useBvModal();
 
     const formDefault = {
       deaprtmant: '',
@@ -121,6 +127,7 @@ export default defineComponent({
       seqNo: '',
       usrMail: '',
       usrMaster: '',
+      status: '',
       seqDate: undefined,
       seqDateEnd: undefined,
     };
@@ -136,7 +143,10 @@ export default defineComponent({
       usrMaster: {},
       seqDate: {},
       seqDateEnd: {},
+      status: { notnull: required },
     });
+
+    const { $v, checkValidity, reset } = useValidation(rules, form, formDefault);
 
     const table = reactive({
       fields: [
@@ -144,7 +154,6 @@ export default defineComponent({
           key: 'action',
           label: '',
           sortable: false,
-          thStyle: 'width:20%',
           thClass: 'text-center',
           tdClass: 'text-center align-middle',
         },
@@ -152,7 +161,6 @@ export default defineComponent({
           key: 'index',
           label: '申請者/填表人',
           sortable: false,
-          thStyle: 'width:10%',
           thClass: 'text-center',
           tdClass: 'text-center align-middle',
         },
@@ -160,7 +168,6 @@ export default defineComponent({
           key: 'hostname',
           label: '申請日期',
           sortable: false,
-          thStyle: 'width:10%',
           thClass: 'text-center',
           tdClass: 'text-center align-middle',
         },
@@ -168,7 +175,6 @@ export default defineComponent({
           key: 'port',
           label: '目前處理單位',
           sortable: false,
-          thStyle: 'width:20%',
           thClass: 'text-center',
           tdClass: 'text-center align-middle',
         },
@@ -176,7 +182,6 @@ export default defineComponent({
           key: 'active2',
           label: '處理狀況',
           sortable: false,
-          thStyle: 'width:20%',
           thClass: 'text-center',
           tdClass: 'text-center align-middle',
         },
@@ -184,7 +189,7 @@ export default defineComponent({
           key: 'active3',
           label: '主旨',
           sortable: false,
-          thStyle: 'width:20%',
+          thStyle: 'width:40%',
           thClass: 'text-center',
           tdClass: 'text-center align-middle',
         },
@@ -253,6 +258,17 @@ export default defineComponent({
 
     const toQuery = () => {
       stepVisible.value = true;
+      checkValidity().then((isValid: boolean) => {
+        if (isValid) {
+          $bvModal.msgBoxConfirm('是否確認送出修改內容？').then((isOK: boolean) => {
+            if (isOK) {
+              console.log('form', form);
+            }
+          });
+        } else {
+          $bvModal.msgBoxOk('欄位尚未填寫完畢，請於輸入完畢後再行送出。');
+        }
+      });
       // axios;
       // .post('/find/iwgHosts', formDefault)
       // .then(data => {
@@ -268,17 +284,15 @@ export default defineComponent({
       table.data.splice(0, table.data.length, ...mockdata);
     };
 
-    const rest = () => {
-      // formDefault.hostname = '';
-    };
-
     return {
-      formDefault,
+      $v,
+      form,
+      checkValidity,
+      validateState,
       stepVisible,
       toQuery,
-      rest,
+      reset,
       table,
-      form,
       mockdata,
       queryOptions,
       iTable,
