@@ -26,7 +26,7 @@ import AlertService from './shared/alert/alert.service';
 import VueCompositionAPI from '@vue/composition-api'
 import Hooks from'@u3u/vue-hooks'
 import { BootstrapVueIcons, ModalPlugin, VBTooltipPlugin } from 'bootstrap-vue';
-
+import axios from 'axios';
 
 import '../content/scss/global.scss';
 import '../content/scss/vendor.scss';
@@ -48,11 +48,11 @@ Vue.use(BootstrapVueIcons);
 Vue.use(ModalPlugin);
 Vue.use(VBTooltipPlugin);
 Vue.component('font-awesome-icon', FontAwesomeIcon);
-Vue.component('jhi-item-count', JhiItemCountComponent);
-Vue.component('jhi-sort-indicator', JhiSortIndicatorComponent);
-Vue.component('infinite-loading', InfiniteLoading);
+// Vue.component('jhi-item-count', JhiItemCountComponent);
+// Vue.component('jhi-sort-indicator', JhiSortIndicatorComponent);
+// Vue.component('infinite-loading', InfiniteLoading);
 const store = config.initVueXStore(Vue);
-
+axios.defaults.baseURL = '/bpm/api';
 const loginService = new LoginService();
 const accountService = new AccountService(store, router);
 

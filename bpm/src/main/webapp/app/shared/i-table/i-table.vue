@@ -332,7 +332,7 @@ export default {
   setup(props, context) {
     const mobileDevice = computed(() => useGetters(['mobileDevice']).mobileDevice.value);
     const padDevice = computed(() => useGetters(['padDevice']).padDevice.value);
-    const deskTopDevice = computed(() => useGetters(['deskTopDevice']).deskTopDevice.value);
+    // const deskTopDevice = computed(() => useGetters(['deskTopDevice']).deskTopDevice.value);
 
     const modalVisible = ref(false);
     const modalData = ref([]);
@@ -496,7 +496,7 @@ export default {
     };
 
     const rowClickForMobileModal = item => {
-      if (deskTopDevice.value) return;
+      // if (deskTopDevice.value) return;
       if (
         padDevice.value &&
         !state.pickedFields
