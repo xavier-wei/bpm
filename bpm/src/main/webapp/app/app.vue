@@ -64,7 +64,7 @@ export default {
     const padLowerLimit = computed(() => useGetters(['padLowerLimit']).padLowerLimit.value);
     const padUpperLimit = computed(() => useGetters(['padUpperLimit']).padUpperLimit.value);
     const deskTopLowerLimit = computed(() => useGetters(['deskTopLowerLimit']).deskTopLowerLimit.value);
-
+    // useStore().value.commit('initEnvProperties', process.env.ENV_PROFILE);
 
     const dynamicSizeForDev = () => {
       window.addEventListener('resize', e => {

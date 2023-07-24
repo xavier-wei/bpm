@@ -37,7 +37,7 @@
 
 <script lang="ts">
 import { computed, nextTick, onMounted, reactive, ref } from '@vue/composition-api';
-// import { onClickOutside, useWindowSize } from '@vueuse/core';
+import { onClickOutside, useWindowSize } from '@vueuse/core';
 import { BButton, BForm, BFormCheckbox, BFormGroup } from 'bootstrap-vue';
 import draggable from 'vuedraggable';
 
@@ -46,7 +46,7 @@ export default {
   components: { draggable, BButton, BForm, BFormCheckbox, BFormGroup },
   props: ['fields'],
   setup(props, { emit }) {
-    // const windowSize = useWindowSize();
+    const windowSize = useWindowSize();
     const tableFieldsPickerConfigLink = ref(null);
     const tableFieldsPickerDraggableContainer = ref(null);
 
@@ -74,9 +74,9 @@ export default {
       },
     });
 
-    // onClickOutside(tableFieldsPickerDraggableContainer, () => {
-    //   state.isShowPicker = false;
-    // });
+    onClickOutside(tableFieldsPickerDraggableContainer, () => {
+      state.isShowPicker = false;
+    });
 
     state.methods.showPickerModal = () => {
       //

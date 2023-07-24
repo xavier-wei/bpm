@@ -403,6 +403,9 @@
             <b-button style="background-color: #17a2b8; color: white" size="sm" variant="outline-secondary"
                       @click="submitForm('1')">申請
             </b-button>
+            <b-button style="background-color: #17a2b8; color: white" size="sm" variant="outline-secondary"
+                      @click="submitForm1('1')">申請
+            </b-button>
           </b-col>
         </b-form-row>
       </section>
@@ -566,8 +569,15 @@ export default {
               form.isSubmit = isSubmit;
               console.log('form', form)
 
+              // axios
+              //   .get(`/eip/eip-bpm-isms-l414`)
+              //   .then(({ data }) => {
+              //     console.log('data',data)
+              //   })
+              //   // .catch(notificationErrorHandler(notificationService));
+
               axios
-                .get(`/bpm/api/eip/eip-bpm-isms-l414`)
+                .get(`/process/startL414`)
                 .then(({ data }) => {
                   console.log('data',data)
                 })
@@ -579,6 +589,14 @@ export default {
           $bvModal.msgBoxOk('欄位尚未填寫完畢，請於輸入完畢後再行送出。');
         }
       });
+    };
+
+    const submitForm1 = () => {
+      axios
+        .get(`/process/startL414`)
+        .then(({ data }) => {
+          console.log('data',data)
+        })
     };
 
     const tabIndex = ref(0);
@@ -602,6 +620,7 @@ export default {
       validateState,
       options,
       submitForm,
+      submitForm1,
       changeTabIndex,
       activeTab,
       dual1,
