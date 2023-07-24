@@ -1,9 +1,10 @@
 package tw.gov.pcc.service.dto;
 
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 import java.io.Serializable;
 import java.time.Instant;
 import java.util.Objects;
-import javax.validation.constraints.*;
 
 /**
  * A DTO for the {@link tw.gov.pcc.domain.EipBpmIsmsL414} entity.
@@ -123,6 +124,16 @@ public class EipBpmIsmsL414DTO implements Serializable {
 
     @NotNull
     private Instant createTime;
+
+    public String getFormName() {
+        return formName;
+    }
+
+    public void setFormName(String formName) {
+        this.formName = formName;
+    }
+
+    private String formName;
 
     public String getFormId() {
         return formId;
