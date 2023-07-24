@@ -1,6 +1,7 @@
 package tw.gov.pcc.web.rest.process;
 
 import com.google.gson.Gson;
+import io.swagger.v3.oas.annotations.parameters.RequestBody;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
@@ -8,6 +9,7 @@ import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.client.RestTemplate;
+import tw.gov.pcc.service.dto.EipBpmIsmsL414DTO;
 import tw.gov.pcc.service.dto.ProcessReqDTO;
 
 import java.util.HashMap;
@@ -16,12 +18,23 @@ import java.util.HashMap;
 @RequestMapping("/api/process")
 public class ProcessL414Resource {
 
-    @RequestMapping("/startL414")
-    public String start() {
+    // 測試中若flowable沒在同一個container啟動，記得修改下方port
+    // todo: 上線後之後記得要改成自動抓取domain的方式
+    private String START_PROCESS_URL = "http://localhost:8080/flowable/process/startProcess";
 
-        // 若flowable沒在同一個container啟動，記得修改下方port
-        // fixme:
-        String url = "http://localhost:8080/flowable/process/startProcess";
+    @RequestMapping("/startL414")
+    public String start(@RequestBody EipBpmIsmsL414DTO eipBpmIsmsL414DTO) {
+
+        if (eipBpmIsmsL414DTO != null) {
+            String appEmpid = eipBpmIsmsL414DTO.getAppEmpid();
+            // todo: check appEmpId exist or not
+
+
+        }else {
+
+
+
+        }
 
         ProcessReqDTO processReqDTO = new ProcessReqDTO();
         processReqDTO.setFormName("L414");
@@ -40,7 +53,7 @@ public class ProcessL414Resource {
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
         HttpEntity<String> requestEntity = new HttpEntity<>(json, headers);
-        return restTemplate.exchange(url, HttpMethod.POST, requestEntity, String.class).getBody();
+        return restTemplate.exchange(START_PROCESS_URL, HttpMethod.POST, requestEntity, String.class).getBody();
     }
 
 
