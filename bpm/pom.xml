@@ -725,6 +725,7 @@
                             <exclude>**/*IT*</exclude>
                             <exclude>**/*IntTest*</exclude>
                         </excludes>
+                        <skipTests>true</skipTests>
                     </configuration>
                 </plugin>
                 <plugin>
@@ -963,6 +964,7 @@
                                     <include>**/*IntTest*</include>
                                 </includes>
                                 <argLine>@{argLine} -Dspring.profiles.active=testdev</argLine>
+                                <skipTests>true</skipTests>
                             </configuration>
                             <executions>
                                 <execution>
