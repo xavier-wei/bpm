@@ -20,21 +20,21 @@ public class ProcessL414Resource {
 
     // 測試中若flowable沒在同一個container啟動，記得修改下方port
     // todo: 上線後之後記得要改成自動抓取domain的方式
-    private String START_PROCESS_URL = "http://localhost:8081/flowable/process/startProcess";
+    private String START_PROCESS_URL = "http://localhost:8081/process/startProcess";
 
     @RequestMapping("/startL414")
     public String start(@RequestBody EipBpmIsmsL414DTO eipBpmIsmsL414DTO) {
 
-        if (eipBpmIsmsL414DTO != null) {
-            String appEmpid = eipBpmIsmsL414DTO.getAppEmpid();
-            // todo: check appEmpId exist or not
-
-
-        }else {
-
-
-
-        }
+//        if (eipBpmIsmsL414DTO != null) {
+//            String appEmpid = eipBpmIsmsL414DTO.getAppEmpid();
+//            // todo: check appEmpId exist or not
+//
+//
+//        }else {
+//
+//
+//
+//        }
 
         ProcessReqDTO processReqDTO = new ProcessReqDTO();
         processReqDTO.setFormName("L414");

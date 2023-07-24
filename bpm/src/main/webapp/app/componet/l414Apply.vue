@@ -387,7 +387,7 @@
 
               </b-tab>
               <b-tab title="流程圖" :active="activeTab(2)" @click="changeTabIndex(3)">
-                <flowChart>
+                <flowChart :filePathName = "fileData">
 
                 </flowChart>
               </b-tab>
@@ -476,6 +476,9 @@ export default {
     const dual2 = ref(null);
     // const notificationService = useNotification();
     const $bvModal = useBvModal();
+    const fileData = reactive({
+      filePathName: '',
+    });
     const formDefault = {
       formId: '',//表單編號
       applyDate: new Date(new Date().getFullYear(), 0, 1),//	申請日期
@@ -580,6 +583,8 @@ export default {
                 .get(`/process/startL414`)
                 .then(({ data }) => {
                   console.log('data',data)
+
+
                 })
                 // .catch(notificationErrorHandler(notificationService));
 
@@ -596,6 +601,10 @@ export default {
         .get(`/process/startL414`)
         .then(({ data }) => {
           console.log('data',data)
+
+          fileData.filePathName = 'http://localhost:8081/pic?processId=' + data;
+
+          console.log('fileData.filePathName))))',fileData.filePathName);
         })
     };
 
@@ -625,6 +634,7 @@ export default {
       activeTab,
       dual1,
       dual2,
+      fileData,
     }
   }
 }
