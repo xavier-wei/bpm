@@ -33,9 +33,9 @@ public class ProcessResource {
 
 
     @RequestMapping("/queryProcessingInstance")
-    public List<TaskDTO> queryProcessingInstance(@RequestParam String id) {
+    public List<TaskDTO> queryProcessingInstance(@RequestParam String id,String formName) {
 
-        return service.queryProcessingTask(id);
+        return service.queryProcessingTask(id,formName);
     }
 
     @RequestMapping("/completeTask")
