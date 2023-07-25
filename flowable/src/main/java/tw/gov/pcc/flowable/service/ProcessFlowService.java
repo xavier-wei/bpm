@@ -7,6 +7,7 @@ import org.flowable.engine.history.HistoricProcessInstance;
 import org.flowable.engine.runtime.ProcessInstance;
 import org.flowable.task.api.Task;
 import org.springframework.stereotype.Service;
+import tw.gov.pcc.flowable.domain.ProcessEnum;
 import tw.gov.pcc.flowable.domain.ProcessRes;
 import tw.gov.pcc.flowable.domain.TaskDTO;
 
@@ -61,9 +62,12 @@ public class ProcessFlowService {
     }
 
     // query task
-    public List<TaskDTO> queryProcessingTask(String id) {
+    public List<TaskDTO> queryProcessingTask(String id,String formName) {
         return taskService.createTaskQuery()
                 .taskCandidateOrAssigned(id)
+                .processDefinitionKey(ProcessEnum.getProcessKeyBykey(formName))
+                .orderByTaskCreateTime()
+                .asc()
                 .list()
                 .stream()
                 .map((Task task) -> new TaskDTO(task,isProcessComplete(task.getProcessInstanceId())))
