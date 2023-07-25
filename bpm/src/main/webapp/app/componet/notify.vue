@@ -2,7 +2,7 @@
   <div>
     <section class="container mt-2">
       <div class="card">
-        <div class="card-header py-1 text-left" style="background-color: #008b8b">
+        <div class="card-header py-1 text-left" style="background-color: #66bfab">
           <div class="row align-items-center">
             <div class="col-sm-11 p-0">
               <h5 class="m-0">
@@ -12,7 +12,7 @@
             </div>
           </div>
         </div>
-        <div class="card-body clo-12" style="background-color: #8fd4ce">
+        <div class="card-body clo-12" style="background-color: #d3ede8">
           <b-form-row>
             <i-form-group-check class="col-4" label-cols="4" content-cols="8" :label="'部門：'" :item="$v.deaprtmant">
               <b-form-select v-model="$v.deaprtmant.$model"
@@ -55,18 +55,15 @@
           </b-form-row>
           <!-- 填表日期 -->
           <b-form-row>
-            <i-form-group-check
-              :label="'期間：'"
-              class="col-4"
-              label-cols="4"
-              content-cols="8"
-              :dual1="$v.seqDate.$model"
-              :dual2="$v.seqDateEnd.$model"
-            >
+            <i-form-group-check :label="'期間：'" class="col-8" label-cols="2" content-cols="6" :dual1="$v.seqDate" :dual2="$v.seqDateEnd">
               <b-input-group>
-                <i-date-picker v-model="$v.seqDate" placeholder="yyy/MM/dd"></i-date-picker>
+                <i-date-picker v-model="$v.seqDate.$model" placeholder="yyy/MM/dd" :disabled-date="notAfterPublicDateEnd"></i-date-picker>
                 <b-input-group-text>至</b-input-group-text>
-                <i-date-picker v-model="$v.seqDateEnd" placeholder="yyy/MM/dd"></i-date-picker>
+                <i-date-picker
+                  v-model="$v.seqDateEnd.$model"
+                  placeholder="yyy/MM/dd"
+                  :disabled-date="notBeforePublicDateStart"
+                ></i-date-picker>
               </b-input-group>
             </i-form-group-check>
           </b-form-row>
@@ -123,6 +120,14 @@ export default defineComponent({
     const iTable = ref(null);
     const stepVisible = ref(true);
     const $bvModal = useBvModal();
+
+    function notBeforePublicDateStart(date: Date) {
+      if (form.seqDate) return date < new Date(form.seqDate);
+    }
+
+    function notAfterPublicDateEnd(date: Date) {
+      if (form.seqDateEnd) return date > new Date(form.seqDateEnd);
+    }
 
     const formDefault = {
       deaprtmant: '',
@@ -308,6 +313,8 @@ export default defineComponent({
       mockdata,
       queryOptions,
       iTable,
+      notBeforePublicDateStart,
+      notAfterPublicDateEnd,
     };
   },
 });

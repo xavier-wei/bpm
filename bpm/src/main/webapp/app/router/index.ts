@@ -9,7 +9,7 @@ import Router, { RouteConfig } from 'vue-router';
 
 const Home = () => import('../componet/home.vue');
 const Deal = () => import('../componet/deal.vue');
-const Deal2 = () => import('../componet/deal2.vue');
+const Pending = () => import('../componet/pending.vue');
 const Deal3 = () => import('../componet/deal3.vue');
 const Notify = () => import('../componet/notify.vue');
 import account from './account';
@@ -30,9 +30,9 @@ const router = new Router({
       props: true
     },
     {
-      path: '/deal2',
-      name: 'deal2',
-      component: Deal2,
+      path: '/pending',
+      name: 'pending',
+      component: Pending,
       props: true
     },
     {

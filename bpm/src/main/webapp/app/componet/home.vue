@@ -8,20 +8,20 @@
         <router-link to="/deal">L414-網路服務連結申請單</router-link>
       </li>
       <li>
-        <router-link to="/deal2">待處理</router-link>
+        <router-link to="/pending">待處理</router-link>
       </li>
-      <li>
+      <!-- <li>
         <router-link to="/notify">通知</router-link>
-      </li>
+      </li> -->
       <li>
-        <router-link to="/">申請</router-link>
+        <router-link to="/">表單查詢</router-link>
       </li>
-      <li>
+      <!-- <li>
         <router-link to="/deal2">處理中</router-link>
       </li>
       <li>
         <router-link to="/deal3">處理過</router-link>
-      </li>
+      </li> -->
       <li>
         <router-link to="/l414Apply">l414新增</router-link>
       </li>
