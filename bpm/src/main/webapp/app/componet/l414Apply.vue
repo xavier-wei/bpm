@@ -20,7 +20,7 @@
                 </div>
 
                 <div class="card" style="background-color: #d3ede8">
-                  <div class="card m-3" style="background-color: #d3ede8" >
+                  <div class="card m-3" style="background-color: #d3ede8">
 
                     <b-form-row>
                       <i-form-group-check class="col-sm-5" label-cols="5" content-cols="7" :label="'申請日期:'"
@@ -114,7 +114,7 @@
                   <!--                    </i-form-group-check>-->
                   <!--                  </b-form-row>-->
 
-                  <div class="card m-3" style="background-color: white" >
+                  <div class="card m-3" style="background-color: white">
 
                     <b-row>
                       <b-col class="col-sm-5">
@@ -154,7 +154,8 @@
                             <b-form-radio value="3">
                               <div style="height: 34px;">特殊時段 :</div>
                               <!--使用特殊時段內容 : otherEnableTime-->
-                              <b-form-input :disabled="$v.enableTime.$model !== '3'" v-model="$v.otherEnableTime.$model"/>
+                              <b-form-input :disabled="$v.enableTime.$model !== '3'"
+                                            v-model="$v.otherEnableTime.$model"/>
                             </b-form-radio>
 
                           </b-form-radio-group>
@@ -269,13 +270,12 @@
                   </div>
 
 
-
                   <b-form-row>
                     <i-form-group-check class="col-sm-3" label-cols="12" content-cols="0" :label="'以下由資訊推動小組填寫'">
                     </i-form-group-check>
                   </b-form-row>
 
-                  <div class="card m-3" style="background-color: white" >
+                  <div class="card m-3" style="background-color: white">
 
                     <b-form-row>
                       <!--處理意見 : agreeType-->
@@ -313,7 +313,8 @@
                           <b-form-radio class="col-12" value="3">
                             <b-input-group>
                               <div>不同意設定 : 原因 :　　　 　</div>
-                              <b-form-textarea :disabled="$v.agreeType.$model !== '3'" v-model="$v.notAgreeReason.$model"
+                              <b-form-textarea :disabled="$v.agreeType.$model !== '3'"
+                                               v-model="$v.notAgreeReason.$model"
                                                rows="1" maxlength="2000" trim lazy/>
                             </b-input-group>
                           </b-form-radio>
@@ -322,7 +323,7 @@
                     </b-form-row>
                   </div>
 
-                  <div class="card m-3" style="background-color: white" >
+                  <div class="card m-3" style="background-color: white">
 
                     <b-form-row>
                       <i-form-group-check class="col-sm-5" label-cols="5" content-cols="7" :label="`變更設備 ：`">
@@ -387,7 +388,7 @@
 
               </b-tab>
               <b-tab title="流程圖" :active="activeTab(2)" @click="changeTabIndex(3)">
-                <flowChart :filePathName = "fileData">
+                <flowChart :filePathName="fileData">
 
                 </flowChart>
               </b-tab>
@@ -402,9 +403,6 @@
             </b-button>
             <b-button style="background-color: #17a2b8; color: white" size="sm" variant="outline-secondary"
                       @click="submitForm('1')">申請
-            </b-button>
-            <b-button style="background-color: #17a2b8; color: white" size="sm" variant="outline-secondary"
-                      @click="submitForm1('1')">申請
             </b-button>
           </b-col>
         </b-form-row>
@@ -440,11 +438,13 @@ import IFormGroupCheck from '@/shared/form/i-form-group-check.vue';
 import {required} from '@/shared/validators';
 import IDatePicker from '@/shared/i-date-picker/i-date-picker.vue';
 import {useBvModal} from '@/shared/modal';
+
 const appendix = () => import('@/componet/appendix.vue');
 const flowChart = () => import('@/componet/FlowChart.vue');
 // import { notificationErrorHandler } from '@/shared/http/http-response-helper';
 // import { useNotification } from '@/shared/notification';
 import axios from 'axios';
+
 export default {
   name: "l414Apply",
   components: {
@@ -570,23 +570,15 @@ export default {
           $bvModal.msgBoxConfirm('是否確認送出修改內容？').then((isOK: boolean) => {
             if (isOK) {
               form.isSubmit = isSubmit;
-              console.log('form', form)
-
-              // axios
-              //   .get(`/eip/eip-bpm-isms-l414`)
-              //   .then(({ data }) => {
-              //     console.log('data',data)
-              //   })
-              //   // .catch(notificationErrorHandler(notificationService));
 
               axios
-                .get(`/process/startL414`)
-                .then(({ data }) => {
-                  console.log('data',data)
-
+                .post(`/process/startL414`, form)
+                .then(({data}) => {
+                  console.log('data', data)
+                  fileData.filePathName = 'http://localhost:8081/pic?processId=' + data;
 
                 })
-                // .catch(notificationErrorHandler(notificationService));
+              // .catch(notificationErrorHandler(notificationService));
 
             }
           });
@@ -596,17 +588,6 @@ export default {
       });
     };
 
-    const submitForm1 = () => {
-      axios
-        .get(`/process/startL414`)
-        .then(({ data }) => {
-          console.log('data',data)
-
-          fileData.filePathName = 'http://localhost:8081/pic?processId=' + data;
-
-          console.log('fileData.filePathName))))',fileData.filePathName);
-        })
-    };
 
     const tabIndex = ref(0);
 
@@ -629,7 +610,6 @@ export default {
       validateState,
       options,
       submitForm,
-      submitForm1,
       changeTabIndex,
       activeTab,
       dual1,
