@@ -5,10 +5,10 @@
         <router-link to="/">L410-共用系統使用者帳號申請單</router-link>
       </li>
       <li>
-        <router-link to="/deal">L414-網路服務連結申請單</router-link>
+        <router-link to="/l414Apply">L414-網路服務連結申請單</router-link>
       </li>
       <li>
-        <router-link to="/pending">待處理</router-link>
+        <router-link to="/pending">待處理表單</router-link>
       </li>
       <!-- <li>
         <router-link to="/notify">通知</router-link>

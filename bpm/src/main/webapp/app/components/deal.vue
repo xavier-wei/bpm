@@ -6,7 +6,7 @@
           <div class="row align-items-center">
             <div class="col-sm-11 p-0">
               <h5 class="m-0">
-                <font-awesome-icon icon="search" />
+                <font-awesome-icon icon="search"/>
                 查詢條件
               </h5>
             </div>
@@ -24,7 +24,8 @@
 
             <i-form-group-check class="col-4" label-cols="4" content-cols="8" :label="`申請者：`" :item="$v.createUser">
               <b-form-select v-model="$v.createUser.$model"
-                ><template #first>
+              >
+                <template #first>
                   <option value="">請選擇</option>
                 </template>
               </b-form-select>
@@ -35,29 +36,34 @@
               <b-form-select v-model="$v.formCase.$model" :options="queryOptions.formCase">
                 <template #first>
                   <option value="">請選擇</option>
-                </template></b-form-select
+                </template>
+              </b-form-select
               >
             </i-form-group-check>
             <i-form-group-check class="col-4" label-cols="4" content-cols="8" label="處理狀況：" :item="$v.status">
               <b-form-select v-model="$v.status.$model" :options="queryOptions.status">
                 <template #first>
                   <option value="">請選擇</option>
-                </template></b-form-select
+                </template>
+              </b-form-select
               >
             </i-form-group-check>
             <i-form-group-check class="col-4" label-cols="4" content-cols="8" label="表單分類：" :item="$v.formType">
               <b-form-select v-model="$v.formType.$model">
                 <template #first>
                   <option value="">請選擇</option>
-                </template></b-form-select
+                </template>
+              </b-form-select
               >
             </i-form-group-check>
           </b-form-row>
           <!-- 填表日期 -->
           <b-form-row>
-            <i-form-group-check :label="'期間：'" class="col-8" label-cols="2" content-cols="6" :dual1="$v.seqDate" :dual2="$v.seqDateEnd">
+            <i-form-group-check :label="'期間：'" class="col-8" label-cols="2" content-cols="6" :dual1="$v.seqDate"
+                                :dual2="$v.seqDateEnd">
               <b-input-group>
-                <i-date-picker v-model="$v.seqDate.$model" placeholder="yyy/MM/dd" :disabled-date="notAfterPublicDateEnd"></i-date-picker>
+                <i-date-picker v-model="$v.seqDate.$model" placeholder="yyy/MM/dd"
+                               :disabled-date="notAfterPublicDateEnd"></i-date-picker>
                 <b-input-group-text>至</b-input-group-text>
                 <i-date-picker
                   v-model="$v.seqDateEnd.$model"
@@ -88,7 +94,7 @@
           @changePagination="handlePaginationChanged($event)"
         >
           <template #cell(action)="row">
-            <b-button class="ml-2" style="background-color: #17a2b8" @click="toEdit(row.item)">檢視</b-button>
+            <b-button class="ml-2" style="background-color: #17a2b8" @click="toEdit(row)">檢視</b-button>
           </template>
         </i-table>
       </div>
@@ -98,14 +104,14 @@
 
 <script lang="ts">
 import axios from 'axios';
-import { ref, reactive, computed, toRefs, defineComponent } from '@vue/composition-api';
+import {ref, reactive, computed, toRefs, defineComponent} from '@vue/composition-api';
 import IDatePicker from '../shared/i-date-picker/i-date-picker.vue';
 import ITable from '../shared/i-table/i-table.vue';
 import IFormGroupCheck from '../shared/form/i-form-group-check.vue';
-import { useValidation, validateState } from '../shared/form';
-import { useBvModal } from '../shared/modal';
-import { required } from '@/shared/validators';
-
+import {useValidation, validateState} from '../shared/form';
+import {useBvModal} from '../shared/modal';
+import {required} from '@/shared/validators';
+import { Pagination } from '@/shared/model/pagination.model';
 export default defineComponent({
   name: 'deal2',
   components: {
@@ -143,13 +149,13 @@ export default defineComponent({
       dept: {},
       createUser: {},
       formCase: {},
-      status: { notnull: required },
+      status: {notnull: required},
       formType: {},
       seqDate: {},
       seqDateEnd: {},
     });
 
-    const { $v, checkValidity, reset } = useValidation(rules, form, formDefault);
+    const {$v, checkValidity, reset} = useValidation(rules, form, formDefault);
 
     const table = reactive({
       fields: [
@@ -252,13 +258,13 @@ export default defineComponent({
     // 下拉選單選項
     const queryOptions = reactive({
       status: [
-        { value: '0', text: '申請' },
-        { value: '1', text: '處理中' },
-        { value: '2', text: '處理過' },
+        {value: '0', text: '申請'},
+        {value: '1', text: '處理中'},
+        {value: '2', text: '處理過'},
       ],
       formCase: [
-        { value: '0', text: 'L410-共用系統使用者帳號申請單' },
-        { value: '1', text: 'L414-網路服務連結申請單' },
+        {value: '0', text: 'L410-共用系統使用者帳號申請單'},
+        {value: '1', text: 'L414-網路服務連結申請單'},
       ],
     });
 
@@ -290,6 +296,14 @@ export default defineComponent({
       table.data.splice(0, table.data.length, ...mockdata);
     };
 
+    const handlePaginationChanged = (pagination: Pagination) => {
+      //todo:未做方法先放著
+    };
+
+    function toEdit(i) {
+      //todo:未做方法先放著
+    }
+
     return {
       $v,
       form,
@@ -304,6 +318,8 @@ export default defineComponent({
       iTable,
       notBeforePublicDateStart,
       notAfterPublicDateEnd,
+      toEdit,
+      handlePaginationChanged,
     };
   },
 });

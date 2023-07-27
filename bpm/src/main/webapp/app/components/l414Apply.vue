@@ -439,8 +439,8 @@ import {required} from '@/shared/validators';
 import IDatePicker from '@/shared/i-date-picker/i-date-picker.vue';
 import {useBvModal} from '@/shared/modal';
 
-const appendix = () => import('@/componet/appendix.vue');
-const flowChart = () => import('@/componet/FlowChart.vue');
+const appendix = () => import('@/components/appendix.vue');
+const flowChart = () => import('@/components/flowChart.vue');
 // import { notificationErrorHandler } from '@/shared/http/http-response-helper';
 // import { useNotification } from '@/shared/notification';
 import axios from 'axios';

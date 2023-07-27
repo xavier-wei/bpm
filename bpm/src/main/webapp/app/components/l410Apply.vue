@@ -414,7 +414,7 @@
 
               </b-tab>
               <b-tab title="流程圖" :active="activeTab(2)" @click="changeTabIndex(3)">
-                <flowChart>
+                <flowChart :filePathName="fileData">
 
                 </flowChart>
               </b-tab>
@@ -467,8 +467,8 @@ import IDatePicker from '@/shared/i-date-picker/i-date-picker.vue';
 import {useBvModal} from '@/shared/modal';
 import {systemToName} from "@/shared/i-system/system-to-name"
 
-const appendix = () => import('@/componet/appendix.vue');
-const flowChart = () => import('@/componet/FlowChart.vue');
+const appendix = () => import('@/components/appendix.vue');
+const flowChart = () => import('@/components/flowChart.vue');
 export default {
   name: "l410Apply",
   components: {
@@ -542,6 +542,10 @@ export default {
       otherRemark: {},
     };
     const {$v, checkValidity, reset} = useValidation(rules, form, formDefault);
+
+    const fileData = reactive({
+      filePathName: '',
+    });
 
     const table = reactive({
       fields: [
@@ -811,6 +815,7 @@ export default {
       table,
       mockdata,
       systemToName,
+      fileData,
     }
   }
 }

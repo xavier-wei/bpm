@@ -27,15 +27,13 @@ export default {
   setup(props){
     const filePathNameProp = reactive(props.filePathName);
 
-    watch(
-      filePathNameProp,
-      newValue => {
-        console.log('filePathNameProp++++',filePathNameProp.filePathName)
-      },
-      { immediate: true }
-    );
-
-
+    // watch(
+    //   filePathNameProp,
+    //   newValue => {
+    //     console.log('filePathNameProp++++',filePathNameProp.filePathName)
+    //   },
+    //   { immediate: true }
+    // );
 
     return{
       filePathNameProp,

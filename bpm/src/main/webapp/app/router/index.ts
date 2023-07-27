@@ -7,11 +7,11 @@ Component.registerHooks([
 ]);
 import Router, { RouteConfig } from 'vue-router';
 
-const Home = () => import('../componet/home.vue');
-const Deal = () => import('../componet/deal.vue');
-const Pending = () => import('../componet/pending.vue');
-const Deal3 = () => import('../componet/deal3.vue');
-const Notify = () => import('../componet/notify.vue');
+const Home = () => import('@/components/home.vue');
+const Deal = () => import('@/components/deal.vue');
+const Pending = () => import('@/components/pending.vue');
+const Deal3 = () => import('@/components/deal3.vue');
+const Notify = () => import('@/components/notify.vue');
 import account from './account';
 import admin from './admin';
 import entities from './entities';
