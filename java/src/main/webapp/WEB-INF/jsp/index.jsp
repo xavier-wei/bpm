@@ -407,6 +407,33 @@
             }
 
 
+
+        $(function() {
+            getUserData();
+        });
+
+
+        //取得userId
+        function getUserData() {
+            $.ajax({
+                url: '<c:url value="/getUserData" />',
+                type: 'POST',
+                async: true,
+                timeout: 100000,
+                success: function(response) {
+                    console.log(response);
+                },
+                error: function(error) {
+                    console.error(error);
+                }
+            });
+        }
+
+
+
+          
+
+
         </script>
     </jsp:attribute>
 </tags:layout>
