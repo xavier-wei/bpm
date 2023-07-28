@@ -123,7 +123,7 @@ function rebuildNestedMenuData(arr, layerArr) {
       // {
       //   "id": 2,
       //   "meta": {
-      //     "functionId": "bpm0100np",
+      //     "functionId": "bpm0100",
       //     "parentId": "bpm0000",
       //     "layer": 1,
       //   },
