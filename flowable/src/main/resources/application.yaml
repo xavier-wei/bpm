@@ -16,3 +16,4 @@ flowable:
   database-schema-update: true
 server:
   port: 8081
+

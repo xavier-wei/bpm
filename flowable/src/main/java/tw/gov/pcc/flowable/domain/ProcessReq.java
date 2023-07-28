@@ -3,6 +3,7 @@ package tw.gov.pcc.flowable.domain;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import tw.gov.pcc.flowable.service.dto.ProcessReqDTO;
 
 import java.util.HashMap;
 
