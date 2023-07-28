@@ -1,4 +1,4 @@
-package tw.gov.pcc.flowable.domain;
+package tw.gov.pcc.flowable.service.dto;
 
 import lombok.Data;
 import org.flowable.task.api.Task;
