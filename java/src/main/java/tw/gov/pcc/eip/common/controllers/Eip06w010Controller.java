@@ -10,6 +10,7 @@ import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import tw.gov.pcc.eip.common.cases.Eip06w010Case;
+import tw.gov.pcc.eip.dao.MeetingCodeDao;
 import tw.gov.pcc.eip.services.Eip06w010Service;
 import tw.gov.pcc.eip.dao.MeetingDao;
 import tw.gov.pcc.eip.domain.Meeting;
@@ -47,6 +48,8 @@ public class Eip06w010Controller extends BaseController {
     private Eip06w010Service eip06w010Service;
     @Autowired
     private MeetingDao meetingDao;
+    @Autowired
+    private MeetingCodeDao meetingCodeDao;
 
     @ModelAttribute(CASE_KEY)
     public Eip06w010Case getEip06w010Case(){
@@ -224,19 +227,30 @@ public class Eip06w010Controller extends BaseController {
 
         //初始化會議場地下拉選單
         Map<String, String> meetingRoomMap = new LinkedHashMap<>();
-//        先將原本預定會議室放進map後再放其餘的
-        for (MeetingCode mc: roomList) {
-            if(StringUtils.equals(mt.getRoomId(), mc.getItemId())){
-                meetingRoomMap.put(mc.getItemId(), mc.getItemId()+'-'+mc.getItemName());
-                roomList.remove(mc);
-                break;
-            }
+//        先將原本預定會議室放進map後再放其餘的(當會議室條件一樣時才可以加入)
+        if(DateUtility.changeDateTypeToChineseDate(meetingDt.replaceAll("/","")).equals(DateUtility.changeDateTypeToChineseDate(mt.getMeetingdt())) &&
+           meetingBegin.equals(mt.getMeetingBegin()) &&
+           meetingEnd.equals(mt.getMeetingEnd())){
+            meetingRoomMap.put(mt.getRoomId(), mt.getRoomId()+'-'+meetingCodeDao.selectDataByItemId(mt.getRoomId()).get(0).getItemName());
         }
-        if(roomList.size() > 0){
-            roomList.forEach(a->{
-                meetingRoomMap.put(a.getItemId(), a.getItemId()+'-'+a.getItemName());
-            });
-        }
+        // 使用stream和collect過濾不重複的RoomId，然後塞入meetingRoomMap中
+        roomList.stream()
+                .map(MeetingCode::getItemId) // 取得RoomId
+                .distinct() // 過濾出不重複的RoomId
+                .forEach(roomId -> meetingRoomMap.put(roomId, roomId + '-' + meetingCodeDao.selectDataByItemId(roomId).get(0).getItemName()));
+
+//        for (MeetingCode mc: roomList) {
+//            if(StringUtils.equals(mt.getRoomId(), mc.getItemId())){
+//                meetingRoomMap.put(mc.getItemId(), mc.getItemId()+'-'+mc.getItemName());
+//                roomList.remove(mc);
+//                break;
+//            }
+//        }
+//        if(roomList.size() > 0){
+//            roomList.forEach(a->{
+//                meetingRoomMap.put(a.getItemId(), a.getItemId()+'-'+a.getItemName());
+//            });
+//        }
 
         caseData.setMeetingRoomCombobox(meetingRoomMap);
         return caseData;

@@ -3,7 +3,9 @@ package tw.gov.pcc.eip.orderCar.cases;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import tw.gov.pcc.common.annotation.LogField;
+import tw.gov.pcc.eip.domain.CaruseRec;
 import tw.gov.pcc.eip.domain.Eipcode;
+import tw.gov.pcc.eip.domain.GasRec;
 
 import java.io.Serializable;
 import java.util.List;
@@ -78,6 +80,11 @@ public class Eip07w010Case implements Serializable {
 	private String title;
 
 	/**
+	 *職稱(1:駕駛)
+	 */
+	private String titleNm;
+
+	/**
 	 *手機號碼
 	 */
 	private String cellphone;
@@ -91,6 +98,11 @@ public class Eip07w010Case implements Serializable {
 	 *在職註記: y:是/n:否
 	 */
 	private String stillWork;
+
+	/**
+	 *在職註記: y:是/n:否
+	 */
+	private String stillWorkNm;
 
 	/**
 	 *到職日期
@@ -160,6 +172,11 @@ public class Eip07w010Case implements Serializable {
 	private String carType;
 
 	/**
+	 *車輛種類: 1:4人座2:7人座_中文
+	 */
+	private String carTypeNm;
+
+	/**
 	 *車輛廠牌
 	 */
 	private String carSource;
@@ -185,6 +202,11 @@ public class Eip07w010Case implements Serializable {
 	private String bossMk;
 
 	/**
+	 *首長專用車: Y是/N否_中文
+	 */
+	private String bossMkNm;
+
+	/**
 	 *首長
 	 */
 	private String bossName;
@@ -207,7 +229,7 @@ public class Eip07w010Case implements Serializable {
 	/**
 	 *保險期間(迄)
 	 */
-	private String InsuranceEnd;
+	private String insuranceEnd;
 
 //車輛加油紀錄檔
 

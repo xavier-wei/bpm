@@ -25,6 +25,8 @@ import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import static java.util.stream.Collectors.groupingBy;
+
 /**
  * 會議室查詢/維護作業
  * @author 2201009
@@ -64,11 +66,9 @@ public class Eip06w010Service {
             }else {
                 a.setEditable(false);
             }
+            a.setOrderFood(a.getOrderNum()>0);
         });
-        resultList.forEach(a->{
-            List<MeetingItem> mtItem =  meetingItemDao.selectDataByMeetingIdAndItemID(a.getMeetingId(), "A");
-            a.setOrderFood(mtItem.size() > 0);
-        });
+
         caseData.setResultList(resultList.stream().map(Eip06w010Case::new).collect(Collectors.toList()));
 
         //初始化會議起始時間下拉選單
@@ -134,12 +134,11 @@ public class Eip06w010Service {
             }else {
                 a.setEditable(false);
             }
+            a.setOrderFood(a.getOrderNum()>0);
         });
-        resultList.forEach(a->{
-            List<MeetingItem> mtItem =  meetingItemDao.selectDataByMeetingIdAndItemID(a.getMeetingId(), "A");
-            a.setOrderFood(mtItem.size() > 0);
-        });
+
         caseData.setResultList(resultList.stream().map(Eip06w010Case::new).collect(Collectors.toList()));
+
     }
 
 
@@ -221,7 +220,7 @@ public class Eip06w010Service {
      */
     public List<MeetingCode> findValidRoominclBooked(String meetingId, String meetingDt, String meetingBegin, String meetingEnd){
         String using = timeConversionService.to48binary(meetingBegin, meetingEnd);
-        return meetingCodeDao.findValidRoominclBookedByDtandUsing(meetingId, meetingDt, using);
+        return meetingCodeDao.findValidRoominclBookedByDtandUsing(meetingId, DateUtility.changeDateTypeToWestDate(meetingDt), using);
     }
 
 

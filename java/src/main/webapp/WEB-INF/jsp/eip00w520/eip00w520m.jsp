@@ -133,13 +133,13 @@ $(function(){
         let action = $(this).data('action');
             $('#osformno').val($(this).parent().siblings().eq(0).find(':first-child').val());
         if (action === 1) {
-
+            $('#eip00w520Form').attr('action', '<c:url value="/Eip00w520_review.action" />').submit();
         } else if (action === 2) {
 
         } else if (action === 3) {
 
         } else if (action === 4) {
-
+            $('#eip00w520Form').attr('action', '<c:url value="/Eip00w520_contentQuery.action" />').submit();
         } else if (action === 5) {
             $('#mode').val('P');
             $('#eip00w520Form').attr('action', '<c:url value="/Eip00w520_preview.action" />').submit();

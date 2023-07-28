@@ -27,7 +27,7 @@
     <tags:fieldset>
 		<form:form id="Eip08w060xForm" name="Eip08w060xForm" modelAttribute="${caseKey}" method="POST">
 			<tags:form-row>
-				<label class="col-form-label text-left col-3">選項:<c:out value="${caseData.applyTpNm}"/></label>
+				<label class="col-form-label text-left col-3">選項:<c:out value="${fn:substring(caseData.applyTpNm, 2,-1)}"/></label>
 			</tags:form-row>
 			<tags:form-row>
 				<label class="col-form-label text-left col-3">申請人:<c:out value="${caseData.user}"/></label>
@@ -36,17 +36,17 @@
             </tags:form-row>
 
 			<tags:form-row>
-             <label class="col-form-label text-left col-3">請購/請修單號:</label>
+             <label class="col-form-label text-left col-3"><c:out value="${fn:substring(caseData.applyTpNm, 2,-1)}:${caseData.itemId}"/></label>
             </tags:form-row>
      <div class="table-responsive" id="div1">
 		 <table class="table" id="tb1">
 			 <thead data-orderable="true">
 			 <tr>
-				 <th class="text-center align-middle">序號</th>
-				 <th class="text-center align-middle">品名及規格</th>
-				 <th class="text-center align-middle">用途說明</th>
-				 <th class="text-center align-middle">數量</th>
-				 <th class="text-center align-middle">單位</th>
+				 <th class="text-center align-middle"width="4%">序號</th>
+				 <th class="text-center align-middle" width="44%">品名及規格</th>
+				 <th class="text-center align-middle" width="44%">用途說明</th>
+				 <th class="text-center align-middle" width="4%">數量</th>
+				 <th class="text-center align-middle"width="4%">單位</th>
 			 </tr>
 			 </thead>
 			 <tbody>
@@ -54,10 +54,10 @@
 				<c:forEach items="${caseData.eip08w060CaseList}" var="caseData" varStatus="status">
 				 	<tr>
 						 <td class="text-center align-middle"><c:out value="${status.index+1}" /></td>
-						 <td cssClass="text-center align-middle"><form:input id="item" path="eip08w060CaseList[${status.index}].item" cssClass="form-control" data-apno12autotab="true" size="18" maxlength="100" disabled="true"/></td>
-						 <td cssClass="text-center align-middle"><form:input id="desc_memo"  path="eip08w060CaseList[${status.index}].desc_memo" cssClass="form-control" data-apno12autotab="true" size="18" maxlength="200" disabled="true"/></td>
-				 		 <td cssClass="text-center align-middle"><form:input id="cnt"  path="eip08w060CaseList[${status.index}].cnt" cssClass="form-control" data-apno12autotab="true" size="18" maxlength="18" onkeyup="value=value.replace(/[^(\d)]/g,'')" disabled="true"/></td>
-						 <td cssClass="text-center align-middle"><form:input id="unit"  path="eip08w060CaseList[${status.index}].unit" cssClass="form-control" data-apno12autotab="true" size="7" maxlength="7" disabled="true"/></td>
+						 <td cssClass="text-center align-middle"><form:input id="item" path="eip08w060CaseList[${status.index}].item" cssClass="form-control"    size="75" maxlength="100" disabled="true" style="width: 100%"/></td>
+						 <td cssClass="text-center align-middle"><form:input id="desc_memo"  path="eip08w060CaseList[${status.index}].desc_memo" cssClass="form-control"    size="75" maxlength="200" disabled="true" style="width: 100%"/></td>
+				 		 <td cssClass="text-center align-middle"><form:input id="cnt"  path="eip08w060CaseList[${status.index}].cnt" cssClass="form-control"    size="18" maxlength="18" onkeyup="value=value.replace(/[^(\d)]/g,'')" disabled="true" style="width: 100%"/></td>
+						 <td cssClass="text-center align-middle"><form:input id="unit"  path="eip08w060CaseList[${status.index}].unit" cssClass="form-control"    size="7" maxlength="7" disabled="true" style="width: 100%"/></td>
 				 	</tr>
 			 	</c:forEach>
 			</c:if>
@@ -65,10 +65,10 @@
 				<c:forEach items="${caseData.eip08w060CaseList}" var="caseData" varStatus="status">
 					<tr>
 						 <td class="text-center align-middle"><c:out value="${status.index+1}" /></td>
-						 <td cssClass="text-center align-middle"><form:input id="item" path="eip08w060CaseList[${status.index}].item" cssClass="form-control" data-apno12autotab="true" size="18" maxlength="100" /></td>
-						 <td cssClass="text-center align-middle"><form:input id="desc_memo"  path="eip08w060CaseList[${status.index}].desc_memo" cssClass="form-control" data-apno12autotab="true" size="18" maxlength="200" /></td>
-				 		 <td cssClass="text-center align-middle"><form:input id="cnt"  path="eip08w060CaseList[${status.index}].cnt" cssClass="form-control" data-apno12autotab="true" size="18" maxlength="18" onkeyup="value=value.replace(/[^(\d)]/g,'')" /></td>
-						 <td cssClass="text-center align-middle"><form:input id="unit"  path="eip08w060CaseList[${status.index}].unit" cssClass="form-control" data-apno12autotab="true" size="7" maxlength="7" /></td>
+						 <td cssClass="text-center align-middle"><form:input id="item" path="eip08w060CaseList[${status.index}].item" cssClass="form-control"    size="18" maxlength="100" /></td>
+						 <td cssClass="text-center align-middle"><form:input id="desc_memo"  path="eip08w060CaseList[${status.index}].desc_memo" cssClass="form-control"    size="18" maxlength="200" /></td>
+				 		 <td cssClass="text-center align-middle"><form:input id="cnt"  path="eip08w060CaseList[${status.index}].cnt" cssClass="form-control"    size="18" maxlength="18" onkeyup="value=value.replace(/[^(\d)]/g,'')" /></td>
+						 <td cssClass="text-center align-middle"><form:input id="unit"  path="eip08w060CaseList[${status.index}].unit" cssClass="form-control"    size="7" maxlength="7" /></td>
 					</tr>
 				 </c:forEach>
 			</c:if>

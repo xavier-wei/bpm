@@ -19,31 +19,31 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 public class Eipcode implements Serializable {
 
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = 98432953901114332L;
-	
-	@PkeyField("CODEKIND")
-	@LogField("CODEKIND")
-	private String codekind;  // 主代號類別
+    /**
+     *
+     */
+    private static final long serialVersionUID = 98432953901114332L;
 
-	@PkeyField("CODEKIND")
-	@LogField("CODENO")
-	private String codeno;  // 主代號
+    @PkeyField("CODEKIND")
+    @LogField("CODEKIND")
+    private String codekind;  // 主代號類別
 
-	@LogField("SCODEKIND")
-	private String scodekind;  // 副代號類別
+    @PkeyField("CODEKIND")
+    @LogField("CODENO")
+    private String codeno;  // 主代號
 
-	@LogField("SCODENO")
-	private String scodeno;  // 副代號
+    @LogField("SCODEKIND")
+    private String scodekind;  // 副代號類別
 
-	@LogField("CODENAME")
-	private String codename;  // 主代號名稱
+    @LogField("SCODENO")
+    private String scodeno;  // 副代號
 
-	@LogField("PRCDAT")
-	private LocalDateTime prcdat;  // 異動日期時間
+    @LogField("CODENAME")
+    private String codename;  // 主代號名稱
 
-	@LogField("STAFF")
-	private String staff;  // 異動者代號
+    @LogField("PRCDAT")
+    private LocalDateTime prcdat;  // 異動日期時間
+
+    @LogField("STAFF")
+    private String staff;  // 異動者代號
 }

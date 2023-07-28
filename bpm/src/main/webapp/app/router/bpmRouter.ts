@@ -1,27 +1,54 @@
-const L414Apply =() => import('@/componet/l414Apply.vue');
-const Appendix =() => import('@/componet/appendix.vue');
-const FlowChart =() => import('@/componet/FlowChart.vue');
-const L410Apply =() => import('@/componet/l410Apply.vue');
+const l414Apply =() => import('@/components/l414Apply.vue');
+const l410Apply =() => import('@/components/l410Apply.vue');
+const appendix =() => import('@/components/appendix.vue');
+const flowChart =() => import('@/components/flowChart.vue');
+
+const breadcrumb =() => import('../core/menu/breadcrumb.vue');
 
 export default [
   {
+    path: '/l410Apply',
+    name: 'l410Apply',
+    component: l410Apply,
+    meta: {
+      functionId: 'l410Apply',
+    },
+    props: true,
+  },
+  {
     path: '/l414Apply',
-    name: 'L414Apply',
-    component: L414Apply,
+    name: 'l414Apply',
+    component: l414Apply,
+    meta: {
+      functionId: 'l414Apply',
+    },
+    props: true,
   },
   {
     path: '/appendix',
-    name: 'Appendix',
-    component: Appendix,
+    name: 'appendix',
+    component: appendix,
+    meta: {
+      functionId: 'appendix',
+    },
+    props: true,
   },
   {
     path: '/flowChart',
-    name: 'FlowChart',
-    component: FlowChart,
+    name: 'flowChart',
+    component: flowChart,
+    meta: {
+      functionId: 'flowChart',
+    },
+    props: true,
   },
   {
-    path: '/l410Apply',
-    name: 'L410Apply',
-    component: L410Apply,
+    path: '/breadcrumb',
+    name: 'breadcrumb',
+    component: breadcrumb,
+    meta: {
+      functionId: 'breadcrumb',
+    },
+    props: true,
   },
 ];

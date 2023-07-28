@@ -28,33 +28,35 @@
                             <c:forEach items="${item.optionList}" var="opts" varStatus="optStatus">
                                 <c:choose>
                                     <c:when test="${opts.isText eq 'Y'}">
-                                        <form:input path="wricontent[${status.index}].text" cssClass="form-control d-inline-block fullCase" size="30" maxlength="100"/>
+                                        <form:input path="wricontent[${status.index}].t" cssClass="form-control d-inline-block fullCase" size="30" maxlength="100"/>
                                     </c:when>
                                     <c:otherwise>
                                         <c:if test="${item.optiontype eq 'S'}">
                                             <label>
-                                                <form:radiobutton path="wricontent[${status.index}].checkboxList[0].checkVal" value="${opts.iseqno}"/>
+                                                <form:radiobutton path="wricontent[${status.index}].os[0].v" data-n="${item.qseqno}" value="${opts.iseqno}"/>
                                                 <span><c:out value="${opts.itemdesc}" /></span>
                                             </label>
                                             <c:if test="${opts.isaddtext eq 'Y'}">
-                                                <form:input path="wricontent[${status.index}].checkboxList[${optStatus.index}].text" cssClass="form-control d-inline-block fullCase underline-input" size="8" maxlength="10"/>
+                                                <form:input path="wricontent[${status.index}].os[${optStatus.index}].t" cssClass="form-control d-inline-block fullCase underline-input" size="8" maxlength="10"/>
                                             </c:if>
                                         </c:if>
                                         <c:if test="${item.optiontype eq 'M'}">
                                             <label class="mb-0">
                                                 <div class="form-check-inline">
-                                                    <form:checkbox path="wricontent[${status.index}].checkboxList[${optStatus.index}].checkVal" cssClass="form-check" value="${opts.iseqno}"/>${opts.itemdesc}
+                                                    <form:checkbox path="wricontent[${status.index}].os[${optStatus.index}].v" cssClass="form-check" value="${opts.iseqno}"/>${opts.itemdesc}
                                                 </div>
                                             </label>
                                             <c:if test="${opts.isaddtext eq 'Y'}">
-                                                <form:input path="wricontent[${status.index}].checkboxList[${optStatus.index}].text" cssClass="form-control d-inline-block fullCase underline-input" size="8" maxlength="10"/>
+                                                <form:input path="wricontent[${status.index}].os[${optStatus.index}].t" cssClass="form-control d-inline-block fullCase underline-input" size="8" maxlength="10"/>
                                             </c:if>
+                                            <form:hidden path="wricontent[${status.index}].os[${optStatus.index}].q" value="${item.qseqno}"/>
                                         </c:if>
                                     </c:otherwise>
                                 </c:choose>
                             </c:forEach>
                             <form:hidden path="wricontent[${status.index}].isrequired" value="${item.isrequired}" />
                             <form:hidden path="wricontent[${status.index}].optiontype" value="${item.optiontype}" />
+                            <form:hidden path="wricontent[${status.index}].n" value="${item.qseqno}"/>
                         </td>
                         <c:set var="currSectitle" value="${item.sectitle}" />
                         <c:set var="quesIndex" value="${quesIndex+1}" />

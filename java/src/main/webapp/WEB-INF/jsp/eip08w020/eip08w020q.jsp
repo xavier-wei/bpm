@@ -17,9 +17,9 @@
     <tags:fieldset>
 		<form:form id="eip08w020Form" name="eip08w020Form" modelAttribute="${caseKey}" method="POST">
             <tags:form-row>
-            	選項: 
-            	<label><input type="radio" name="SelectType"  value="apply" checked>申請作業</label>
-            	<label><input type="radio" name="SelectType"  value="search">查詢/更正作業</label>
+						選項：
+		            	<label><input type="radio" name="SelectType" value="apply" checked>申請作業</label>
+		            	<label><input type="radio" name="SelectType" value="search">查詢</label>
             </tags:form-row>
             <tags:form-row>
             	<form:label cssClass="col-form-label star" path="apply_user">申請人：</form:label>
@@ -36,13 +36,15 @@
             <tags:form-row>
             	<form:label cssClass="col-form-label star" path="apply_date">申請日期：</form:label>
                 <div class="col-12 col-md">
-                    <form:input path="apply_date" cssClass="add form-control" />
+                    <form:input path="apply_date" cssClass="add form-control num_only dateTW date" maxlength="7"/>
                 </div>
             </tags:form-row>
             <tags:form-note>
                 <div class="apply">申請人、申請單位、申請日期為必輸欄位</div>
                 <div class="search">申請日期為必輸欄位</div>
             </tags:form-note>
+            <form:hidden path="oriApply_user"/>
+            <form:hidden path="oriApply_dept"/>
         </form:form>
     </tags:fieldset>
 </jsp:attribute>
@@ -65,6 +67,10 @@
             
             $('#btnClear').click(function() {
                 $("#apply_date").val('');
+                if($("input[name='SelectType']")[1].checked){
+                	$("#apply_dept").val('');
+                	$("#apply_user").val('');
+                }
             });
             
          });
@@ -75,9 +81,13 @@
             	$(".search").hide();
             	$("#apply_user").addClass("star");
             	$("#apply_dept").addClass("star");
+            	$("#apply_user").val( $('#oriApply_user').val());
+            	$("#apply_dept").val( $('#oriApply_dept').val());
+            	$("#apply_user").attr("disabled",true);
+            	$("#apply_dept").attr("disabled",true);
             }else{
-            	$("#apply_user").removeClass("star");
-            	$("#apply_dept").removeClass("star");
+            	$("#apply_user").attr("disabled",false);
+            	$("#apply_dept").attr("disabled",false);
             	$(".apply").hide();
             	$(".search").show();
             }

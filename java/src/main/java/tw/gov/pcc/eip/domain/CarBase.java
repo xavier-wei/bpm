@@ -130,5 +130,7 @@ public class CarBase implements Serializable {
     private String upd_datetime;
 
 
-
+    private String name;//for eip07w040
+    private String cellphone;//for eip07w040
+    
 }

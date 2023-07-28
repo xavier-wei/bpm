@@ -4,6 +4,7 @@ import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Repository;
 import tw.gov.pcc.common.annotation.DaoTable;
 import tw.gov.pcc.eip.common.cases.Eip03w010Case;
+import tw.gov.pcc.eip.common.cases.Eip03w020Case;
 import tw.gov.pcc.eip.common.cases.Eip03w030Case;
 import tw.gov.pcc.eip.domain.KeepTrkMst;
 
@@ -57,6 +58,23 @@ public interface KeepTrkMstDao {
     public List<Eip03w010Case> selectByColumns(@Nullable String trkID, @Nullable String trkCont,
                                                @Nullable String allStDtSt, @Nullable String allStDtEnd,
                                                @Nullable String trkSts);
+
+
+    /**
+     * 查詢所有重要列管事項+處理狀態筆數(for 填報辦理進度)
+     *
+     * @param trkID
+     * @param trkCont
+     * @param allStDtSt
+     * @param allStDtEnd
+     * @param trkSts  全部/未完成/結案/作廢
+     * @param prcSts  全部/待處理/待解列/已解列
+     * @param userDept  操作者部室代碼
+     * @return
+     */
+    public List<Eip03w020Case> selectByColumnsForFillInProgress(@Nullable String trkID, @Nullable String trkCont,
+                                                                @Nullable String allStDtSt, @Nullable String allStDtEnd,
+                                                                @Nullable String trkSts, @Nullable String prcSts, @Nullable String userDept);
 
     /**
      * 均已解列，可結案

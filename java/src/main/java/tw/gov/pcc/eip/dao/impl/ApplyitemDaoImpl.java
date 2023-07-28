@@ -30,7 +30,8 @@ public class ApplyitemDaoImpl extends BaseDao<Applyitem> implements ApplyitemDao
         sql.append(" SELECT  * ");
         sql.append(" FROM " + TABLE_NAME + " T WHERE  APPLYNO=:applyno and SEQNO=:seqno and  ");
         sql.append(" ITEMKIND=:itemkind and ITEMNO = :itemno ");
-        SqlParameterSource params = new MapSqlParameterSource("applyno", applyno);
+        SqlParameterSource params = new MapSqlParameterSource("applyno", applyno)
+        		.addValue("seqno", seqno).addValue("itemkind", itemkind).addValue("itemno", itemno);
 
         List<Applyitem> list = getNamedParameterJdbcTemplate().query(sql.toString(), params,
                 BeanPropertyRowMapper.newInstance(Applyitem.class));
@@ -109,6 +110,7 @@ public class ApplyitemDaoImpl extends BaseDao<Applyitem> implements ApplyitemDao
         	sql.append(" and  apply_date = :apply_date ");
         }
         
+        sql.append(" order by applyno ");
         
         SqlParameterSource params = new MapSqlParameterSource("apply_user", apply_user)
         		.addValue("apply_dept", apply_dept).addValue("apply_date", apply_date);
@@ -137,17 +139,18 @@ public class ApplyitemDaoImpl extends BaseDao<Applyitem> implements ApplyitemDao
 
 
 	@Override
-	public List<Applyitem> selectByApply_dateAndProcess_status(String apply_dateStart, String apply_dateEnd) {
+	public List<Applyitem> selectByApply_dateAndProcess_status(String apply_dateStart, String apply_dateEnd,String process_status) {
         StringBuilder sql=new StringBuilder();
         sql.append(" SELECT  * ");
         sql.append(" FROM " + TABLE_NAME + " WHERE    ");
         sql.append(" apply_date >= :apply_dateStart ");
         sql.append(" And apply_date <= :apply_dateEnd ");
-        sql.append(" And process_status=1 ");
-        sql.append(" And seqno = '1' ");
+        sql.append(" And process_status= :process_status ");
+        sql.append(" And seqno = '1' order by applyno");
         
         SqlParameterSource params = new MapSqlParameterSource("apply_dateStart", DateUtility.changeDateType(apply_dateStart))
-        		.addValue("apply_dateEnd", DateUtility.changeDateType(apply_dateEnd));
+        		.addValue("apply_dateEnd", DateUtility.changeDateType(apply_dateEnd))
+        		.addValue("process_status", process_status);
 
         List<Applyitem> list = getNamedParameterJdbcTemplate().query(sql.toString(), params,
                 BeanPropertyRowMapper.newInstance(Applyitem.class));
@@ -164,7 +167,8 @@ public class ApplyitemDaoImpl extends BaseDao<Applyitem> implements ApplyitemDao
         sql.append(" AND reconfirm_mk='N' ");
         sql.append(" Group by itemkind, itemno ");
         
-        SqlParameterSource params = new MapSqlParameterSource("applynos", applynos);
+        Map<String, List<String>> params = new HashMap<>();
+        params.put("applynos", applynos);
 
         List<Applyitem> list = getNamedParameterJdbcTemplate().query(sql.toString(), params,
                 BeanPropertyRowMapper.newInstance(Applyitem.class));
@@ -173,4 +177,61 @@ public class ApplyitemDaoImpl extends BaseDao<Applyitem> implements ApplyitemDao
 	}
 
 
+	@Override
+	public List<Applyitem> selectApplyItemReportByUnit(String applyYearMonth) {
+        StringBuilder sql=new StringBuilder();
+        
+        sql.append(" Select apply_dept, itemkind, itemno, ");
+        sql.append(" (select itemno+'-'+itemname from itemcode where itemkind='MAIN' AND  substring(a.itemno,1,1)=itemno) as itemkind_nm, ");
+        sql.append(" (select itemno+'-'+itemname from itemcode where itemkind=a.itemkind And itemno=a.itemno) as itemno_nm, ");
+        sql.append(" sum(approve_cnt) approve_cnt ");
+        sql.append(" from applyitem a ");
+        sql.append(" Where substring(apply_date,1,6) like :applyYearMonth and process_status = '3' ");
+        sql.append(" Group by apply_dept, itemkind, itemno ");
+        sql.append(" Order by apply_dept, itemkind, itemno ");
+        
+        SqlParameterSource params = new MapSqlParameterSource("applyYearMonth", DateUtility.changeChineseYearMonthType(applyYearMonth) +"%");
+
+        List<Applyitem> list = getNamedParameterJdbcTemplate().query(sql.toString(), params,
+                BeanPropertyRowMapper.newInstance(Applyitem.class));
+
+        return CollectionUtils.isEmpty(list) ? null : list;
+	}
+
+
+	@Override
+	public List<Applyitem> selectApplyItemReportByItem(String applyYearMonth) {
+        StringBuilder sql = new StringBuilder();
+        
+        sql.append(" Select itemkind, itemno, sum(approve_cnt) approve_cnt, ");
+        sql.append(" (select itemno+'-'+itemname from itemcode where itemkind='MAIN' AND  substring(a.itemno,1,1)=itemno) as itemkind_nm, ");
+        sql.append(" (select itemno+'-'+itemname from itemcode where itemkind=a.itemkind And itemno=a.itemno) as itemno_nm ");
+        sql.append("  from applyitem a ");
+        sql.append(" Where substring(apply_date,1,6) like :applyYearMonth and process_status = '3' ");
+        sql.append(" Group by itemkind, itemno ");
+        sql.append(" ORDER BY ITEMKIND, ITEMNO ");
+        
+        SqlParameterSource params = new MapSqlParameterSource("applyYearMonth", DateUtility.changeChineseYearMonthType(applyYearMonth)+"%");
+
+        List<Applyitem> list = getNamedParameterJdbcTemplate().query(sql.toString(), params,
+                BeanPropertyRowMapper.newInstance(Applyitem.class));
+
+        return CollectionUtils.isEmpty(list) ? null : list;
+	}
+
+    @Override
+    public String getApplynoSeq() {
+        StringBuilder sql = new StringBuilder();
+        sql.append(" SELECT NEXT VALUE FOR EIP_APPLYNO ");
+        return getNamedParameterJdbcTemplate().queryForObject(sql.toString(), new HashMap<String, String>(),
+                String.class);
+    }
+
+
+	@Override
+	public void updateSequence() {
+		String sql = " ALTER SEQUENCE EIP_APPLYNO RESTART  WITH 1 ";
+		Map<String, Object> param = new HashMap<String, Object>();
+		getNamedParameterJdbcTemplate().update(sql, param);
+	}
 }

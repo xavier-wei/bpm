@@ -6,6 +6,9 @@
     <jsp:attribute name="buttons">
         <c:choose>
             <c:when test="${(caseData.mode == 'Q' || caseData.mode == 'D' ) && not empty caseData.queryList }">
+                <tags:button id="btnQuery">
+                    查詢<i class="fas fa-search"></i>
+                </tags:button>
                 <tags:button id="btnUpload">
                     上稿<i class="fas fa-paper-plane"></i>
                 </tags:button>
@@ -70,6 +73,18 @@
                         </form:select>
                     </div>
                 </tags:form-row>
+                <tags:form-row>
+                    <form:label cssClass="col-form-label" path="p1attributype">屬性：</form:label>
+                    <div class="col-12 col-md">
+                        <form:select path="p1attributype" cssClass="form-control">
+                            <c:forEach var="item" items="${caseData.attrtypes}" varStatus="status">
+                                <form:option value="${item.codeno}">
+                                    <c:out value="${item.codename}" />
+                                </form:option>
+                            </c:forEach>
+                        </form:select>
+                    </div>
+                </tags:form-row>
                 <form:hidden path="mode" />
                 <form:hidden path="fseq" />
                 <form:hidden path="keep" />
@@ -89,6 +104,7 @@
                                     <th class="text-center">頁面型態</th>
                                     <th class="text-center">主旨/連結網址</th>
                                     <th class="text-center">前台是否顯示</th>
+                                    <th class="text-center">屬性</th>
                                     <th class="text-center">上架時間<br>下架時間</th>
                                     <th class="text-center">狀態</th>
                                     <th data-orderable="false" class="text-center">明細</th>
@@ -98,10 +114,16 @@
                                 <c:forEach items="${caseData.queryList}" var="item" varStatus="status">
                                     <tr data-seq="${status.index + 1 }">
                                         <td class="text-center">
-                                            <c:if test="${item.status != '4' }">
-                                                <form:checkbox path="queryList[${status.index}].check"
-                                                    value="${item.check }" cssClass="checkedgreen" />
-                                            </c:if>
+                                            <c:choose>
+                                                <c:when test="${item.status != '4' }">
+                                                    <form:checkbox path="queryList[${status.index}].check"
+                                                        value="${item.check }" cssClass="checkedgreen" />
+                                                </c:when>
+                                                <c:otherwise>
+                                                    <form:checkbox path="queryList[${status.index}].check"
+                                                        value="${item.check }" checked="checked" disabled="true" cssClass="checkedgreen" />
+                                                </c:otherwise>
+                                            </c:choose>
                                         </td>
                                         <td class="text-center">
                                             <c:out value="${item.fseq}" />
@@ -120,6 +142,10 @@
                                             <form:hidden path="queryList[${status.index}].isfront" />
                                         </td>
                                         <td class="text-center">
+                                            <c:out value="${item.attributypeText}" />
+                                            <form:hidden path="queryList[${status.index}].attributypeText" />
+                                        </td>
+                                        <td class="text-center">
                                             <func:minguo value="${item.releasedt}" /><br>
                                             <func:minguo value="${item.offtime}" />
                                             <form:hidden path="queryList[${status.index}].releasedt" />
@@ -128,11 +154,11 @@
                                         <td class="text-center">
                                             <c:out value="${item.statusText}" />
                                             <form:hidden path="queryList[${status.index}].status" />
+                                            <form:hidden path="queryList[${status.index}].statusText" />
                                         </td>
                                         <td class="text-center" data-fseq="${item.fseq}">
-                                            <tags:button id="btnDetail">明細<i class="fas fa-list-alt"></i></tags:button>
-                                            <tags:button id="btnPreview">預覽<i class="fas fa-window-restore"></i>
-                                            </tags:button>
+                                            <tags:button id="btnDetail">修改</tags:button>
+                                            <tags:button id="btnPreview">預覽</tags:button>
                                         </td>
                                     </tr>
                                 </c:forEach>
@@ -155,7 +181,7 @@
 
                     </div>
                     <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">關閉</button>
                     </div>
                 </div>
             </div>
@@ -176,12 +202,14 @@
                 // 查詢
                 $('#btnQuery').click(function() {
                     $('#mode').val('Q');
+                    $('#keep').val('false');
                     $('#eip01w010Form').attr('action', '<c:url value="/Eip01w010_queryList.action" />')
                         .submit();
                 });
                 // 清除
                 $('#btnClear').click(function() {
                     $('input[type="text"]').val('');
+                    $('#p1page option:eq(0), #p1status option:eq(0), #p1attributype option:eq(0)').prop('selected', true);
                     $('#mode').val('');
                 });
                 // 明細
@@ -237,7 +265,7 @@
                 });
                 // 刪除
                 $('#btnDelete').click(function() {
-                    if ($('input:checkbox').length > 1 && $('input:checkbox:checked').length >
+                    if ($('input:checkbox').length > 1 && $('input:checkbox:checked:not(:disabled)').length >
                         0) { // 有顯示checkbox且至少勾選一個
                         showConfirm('確定要刪除資料？', () => {
                             $('#eip01w010Form').attr('action',
@@ -251,10 +279,8 @@
                 });
                 // 返回
                 $('#btnBack').click(function() {
-                    $('#mode').val('');
-                    $('#fseq').val('');
-                    $('#seq').val('');
-                    $('#pageNum').val('');
+                    $('#mode, #fseq, #seq, #pageNum, #p1id, #p1title').val('');
+                    $('#p1page option:eq(0), #p1status option:eq(0), #p1attributype option:eq(0)').prop('selected', true);
                     $('#eip01w010Form').attr('action', '<c:url value="/Eip01w010_enter.action" />')
                         .submit();
                 });

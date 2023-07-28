@@ -67,6 +67,7 @@
                     </div>
                     <div class="col-md-3">
                         <form:label cssClass="col-form-label" path="creDt">建立時間：</form:label>
+                        <func:minguo value="${caseData.creDt}"/>
                     </div>
                 </tags:form-row>
                 <tags:form-row>
@@ -76,6 +77,7 @@
                     </div>
                     <div class="col-md-3">
                         <form:label cssClass="col-form-label" path="updDt">更新時間：</form:label>
+                        <func:minguo value="${caseData.updDt}"/>
                     </div>
                 </tags:form-row>
                 <tags:form-row>
@@ -153,11 +155,13 @@
             $('table tr').each(function (){
                 var itemIds = $(this).find('#itemContent').text();
                 var rowText = $(this).text();
+                var prcSts = $(this).find('td').eq(3).text();
                 var stDt = $(this).find('.stDt').val();
                 var endDt = $(this).find('.endDt').val();
                 // alert(itemIds + rowText  + stDt + allStDtEnd);
                 var row = {
                     "rowText" : rowText,
+                    "prcSts" : prcSts,
                     "stDt" : stDt,
                     "endDt" : endDt
                 }
@@ -231,7 +235,7 @@
 
         var allStDt = $('#allStDt').val();
         var today = new Date();
-        var sysdate = (today.getFullYear() - 1911) + (today.getMonth() + 1) + (today.getDate());
+        var sysdate = parseInt ((today.getFullYear() - 1911).toString() + ((today.getMonth() + 1) >= 10 ? (today.getMonth() + 1).toString() :'0' + (today.getMonth() + 1))   + (today.getDate().toString()));
 
         $("#trkObj option[value='" + selectedID + "']").remove();
         var rowHtml =
@@ -248,7 +252,7 @@
     }
 
     //回填已增加列管對象資料行
-    function insertExistItem(selectedText, selectedID, stDt, endDt){
+    function insertExistItem(selectedText, selectedID, prcSts, stDt, endDt){
         let rows = $('#trkObjTable > tbody > tr');
         let rowCount = rows.length;
         if(selectedText === undefined){
@@ -266,9 +270,10 @@
             '<td>'.concat(rowCount+1) + '</td>'+
             '<td id="itemContentTxt" class="text-left">' +  selectedText + '</td>'+
             '<td id="itemContent" style="display: none;">' +  selectedID + '</td>'+
-            '<td >' +  "待處理" + '</td>'+
-            '<td >' +  '<input path="stDt" class="form-control num_only ml-3 stDt" size="7" maxlength="7" value="' + stDt + '"/>' + '</td>'+
-            '<td >' +  '<input path="endDt" class="form-control num_only ml-3 endDt" size="7" maxlength="7" value="' + endDt + '"/>' + '</td>'+
+            '<td>' + ( prcSts != null? prcSts : '待處理' ) + '</td>'+
+            // '<td >' +  '待處理' + '</td>'+
+            '<td>' +  '<input path="stDt" class="form-control num_only ml-3 stDt" size="7" maxlength="7" value="' + stDt + '"/>' + '</td>'+
+            '<td>' +  '<input path="endDt" class="form-control num_only ml-3 endDt" size="7" maxlength="7" value="' + endDt + '"/>' + '</td>'+
             '<td>' + buildDeleteItemButton(rowCount).prop('outerHTML') + '</td>'+
             '</tr>';
         $('#trkObjTable > tbody').append(rowHtml);
@@ -295,9 +300,10 @@
             let row =  rows[index];
             let selectedText = $(row).find('td').eq(1).text();
             let selectedId = $(row).find('td').eq(2).text();
+            let prcSts = $(row).find('td').eq(3).text();
             let stDt = $(row).find('input').eq(0).val();
             let endDt = $(row).find('input').eq(1).val();
-            insertExistItem(selectedText, selectedId, stDt, endDt);
+            insertExistItem(selectedText, selectedId, prcSts, stDt, endDt);
         })
         var optionCount = $('select[name="trkObj"] option').length;
         if(optionCount < 1){

@@ -37,7 +37,7 @@
         <meta http-equiv="Expires" content="0"/>
         <link rel="stylesheet" href="<c:url value='/css/web-fonts-with-css/css/fontawesome-all.css' />"/>
         <link rel="stylesheet" href="<c:url value='/css/bootstrap.min.css' />"/>
-        <link rel="stylesheet" href="<c:url value='/css/bootstrap-select.min.css' />" />
+        <link rel="stylesheet" href="<c:url value='/css/bootstrap-select.min.css' />"/>
         <link rel="stylesheet" href="<c:url value='/css/rowGroup.dataTables.min.css' />"/>
         <link rel="stylesheet" href="<c:url value='/css/buttons.dataTables.min.css' />"/>
         <link rel="stylesheet" href="<c:url value='/css/noty.css' />"/>
@@ -78,35 +78,37 @@
             <div class="nav bg">
                 <a href="<c:url value='/LoginForward.action' />" class="clickDiv" title="返回首頁"></a>
                 <div class="sys_info">
-                    <div class="row flex-row-reverse m-auto">
-                            <div class="col-md-3 top_3">
-                                <a href="<c:url value='/Common_sitemap.action' />">
-                                    <img src="./images/top_icon2.png" alt="" class="d-inline-block align-middle">
-                                    <div class="d-inline-block align-middle text-center">
-                                        <span class="title_04">網頁導覽</span>
-                                    </div>
-                                </a>
-                            </div>
-                            <div class="col-md-3 top_3">
-                                <a href="javascript:confirm('將開啟公文系統視窗')" style="text-decoration:none;">
-                                    <img src="./images/top_icon4.png" alt="" class="d-inline-block align-middle">
-                                    <div class="d-inline-block align-middle text-center">
-                                        <div class="title_01">待處理公文</div>
-                                        <span class="title_02">1</span>
-                                        <span class="title_03">件</span>
-                                    </div>
-                                </a>
-                            </div>
-                            <div class="col-md-3 top_3">
-                                <a href="javascript:confirm('將開啟差勤系統視窗')" style="text-decoration:none;">
-                                    <img src="./images/top_icon1.png" alt="" class="d-inline-block align-middle">
-                                    <div class="d-inline-block align-middle text-center">
-                                        <div class="title_01">待簽核件數</div>
-                                        <span class="title_02">1</span>
-                                        <span class="title_03">件</span>
-                                    </div>
-                                </a>
-                            </div>
+                    <div class="row flex-row-reverse m-auto" id="title_status">
+                        <div class="col-md-3 top_3 sitemap">
+                            <a href="<c:url value='/Common_sitemap.action' />">
+                                <img src="./images/top_icon2.png" alt="" class="d-inline-block align-middle">
+                                <div class="d-inline-block align-middle text-center">
+                                    <span class="title_04">網頁導覽</span>
+                                </div>
+                            </a>
+                        </div>
+                        <div class="col-md-3 top_3 title_status">
+                            <a href="" target="_blank" style="text-decoration:none;"
+                               class="title_05">
+                                <img src="./images/top_icon4.png" alt="" class="d-inline-block align-middle">
+                                <div class="d-inline-block align-middle text-center">
+                                    <div class="title_01">待處理公文</div>
+                                    <span class="title_02"></span>
+                                    <span class="title_03">件</span>
+                                </div>
+                            </a>
+                        </div>
+                        <div class="col-md-3 top_3 title_status">
+                            <a href="" target="_blank" style="text-decoration:none;"
+                               class="title_05">
+                                <img src="./images/top_icon1.png" alt="" class="d-inline-block align-middle">
+                                <div class="d-inline-block align-middle text-center">
+                                    <div class="title_01">待簽核件數</div>
+                                    <span class="title_02"></span>
+                                    <span class="title_03">件</span>
+                                </div>
+                            </a>
+                        </div>
                     </div>
                 </div>
                 <div class="sys_info">
@@ -157,12 +159,12 @@
 
                                                 <%
                                                     String pageName = FilenameUtils.getBaseName(StringUtils.upperCase(StringUtils.defaultString(application.getRealPath(request.getServletPath()))));
-                                                    String pageNameForMultiple = StringUtils.upperCase(StringUtils.substringBeforeLast( StringUtils.substringAfterLast((String) request.getAttribute("javax.servlet.forward.request_uri"),"/") ,"_")) + StringUtils.substring( FilenameUtils.getBaseName(StringUtils.upperCase(StringUtils.defaultString(application.getRealPath(request.getServletPath())))), -1);
+                                                    String pageNameForMultiple = StringUtils.upperCase(StringUtils.substringBeforeLast(StringUtils.substringAfterLast((String) request.getAttribute("javax.servlet.forward.request_uri"), "/"), "_")) + StringUtils.substring(FilenameUtils.getBaseName(StringUtils.upperCase(StringUtils.defaultString(application.getRealPath(request.getServletPath())))), -1);
                                                     tw.gov.pcc.common.domain.FrameworkUserInfoBean frameworkUserData = tw.gov.pcc.common.helper.UserSessionHelper.getFrameworkUserData(request);
-                                                    if (StringUtils.length(pageNameForMultiple) == 10){
+                                                    if (StringUtils.length(pageNameForMultiple) == 10) {
                                                         pageName = pageNameForMultiple;
                                                     }
-                                                    pageName = StringUtils.defaultIfBlank((String)jspContext.getAttribute("pgcode"), pageName);
+                                                    pageName = StringUtils.defaultIfBlank((String) jspContext.getAttribute("pgcode"), pageName);
                                                 %>
                                             </ol>
                                         </nav>
@@ -191,6 +193,7 @@
             </div>
         </div>
 
+
         <%@ include file="/WEB-INF/jsp/includes/js.jsp" %>
 
         <script type="text/javascript">
@@ -213,7 +216,8 @@
 
                 entryPath = '<c:url value="${requestScope['javax.servlet.forward.servlet_path']}" />';
                 if (entryPath.indexOf(".action") > -1) {
-                    if (entryPath.indexOf("_") > -1) {
+                    let funcPath = entryPath.substring(entryPath.lastIndexOf("/"));
+                    if (funcPath.indexOf("_") > -1) {
                         entryPath = entryPath.substring(0, entryPath.lastIndexOf("_") + 1);
                     }
                     const menus = $("#menu a[href^='" + entryPath + "']").parents('li');
@@ -266,7 +270,7 @@
                     $.ajax({
                         type: "POST",
                         contentType: "application/json",
-                        url: 'Common_saveSetting.action',
+                        url: '<c:url value="/Common_saveSetting.action"/>',
                         data: JSON.stringify(data),
                         dataType: 'json',
                         timeout: 100000,
@@ -284,50 +288,32 @@
                 }
                 $('input:checkbox:enabled[data-checkall]').on('click', checkall);
 
-                <c:if test="${not empty _file.filename}">
-                popup('<c:out value="${_file.filename}"/>');
-                </c:if>
+                reloadTitleStatus();
             });
 
-            function popup(_filename) {
-                let reportform = $("<form id='reportform' target='_blank' method='post' class='d-none' ><input id='filename' name='filename' value='" + _filename + "' ></form>");
-                let $main = $('#main');
-                $('#reportform').remove();
-                $main.append(reportform);
-                // $filename.val('<c:out value="${_file.filename}"/>');
-                if (entryPath.endsWith("_")) {
-                    $('#reportform').attr('action', entryPath + 'retrivefile.action').submit();
-                } else {
-                    console.log('entry path error!');
-                }
-                $('#reportform').remove();
+            function reloadTitleStatus() {
+                let interval = 60;
+                $.ajax({
+                    url: '<c:url value="/Common_getSysApi.action"/>',
+                    type: "POST",
+                    dataType: "json",
+                    contentType: "application/json",
+                    success: function (data) {
+                        let $titleStatus = $('#title_status .title_status');
+                        interval = data.interval;
+                        $(data.apiResultList.reverse()).each((i, x) => {
+                            $($titleStatus.find('.title_02').get(i)).text(x.cnt);
+                            $($titleStatus.find('.title_05').get(i)).prop('href', x.click_url);
+                        });
+                    },
+                    error: function (xhr, ajaxOptions, thrownError) {
+                        console.log(xhr.status + " " + thrownError);
+                    }
+                }).always(function () {
+                    setTimeout(reloadTitleStatus, interval * 1000);
+                });
             }
 
-            function flash(obj) {
-                if (obj) {
-                    $(obj).removeClass('flash');
-                    setTimeout(() => {
-                        $(obj).addClass('flash');
-                    }, 0);
-                }
-            }
-
-            const chars = {
-                '1': '一',
-                '2': '二',
-                '3': '三',
-                '4': '四',
-                '5': '五',
-                '6': '六',
-                '7': '七',
-                '8': '八',
-                '9': '九',
-                '0': '○'
-            };
-
-            function ntoc(s) {
-                return s.replace(/[0123456789]/g, m => chars[m]);
-            }
 
         </script>
         <jsp:invoke fragment="footers"/>

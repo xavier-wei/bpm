@@ -1,10 +1,9 @@
 package tw.gov.pcc.eip.dao;
 
-import tw.gov.pcc.eip.domain.Eipcode;
-
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
+
+import tw.gov.pcc.eip.domain.Eipcode;
 
 /**
  * @author Weith
@@ -91,5 +90,6 @@ public interface EipcodeDao {
      * @return
      */
     public List<Eipcode> findByCodeKindAndExcludeScodekind(String codeKind, String scodekind);
-
+    
+    public Eipcode selectDataByPrimaryKey(Eipcode eipcode);
 }

@@ -1,0 +1,14 @@
+entity BpmFunction(Bpm_Function) {
+    @Id id Long required /** type: bigint */
+    functionId String maxlength(20) unique required /** type: varchar(20) */
+    functionName String maxlength(20) required /** type: nvarchar(20) */
+    functionDescript String maxlength(500) required /** type: nvarchar(500) */
+    functionPath String maxlength(500) required /** type: varchar(500) */
+    functionCategory String maxlength(1) required /** type: varchar(1) */
+    sortNo BigDecimal min(0) max(255) required /** type: decimal(3,0) */
+    masterFunctionId String maxlength(20) required /** type: varchar(20) */
+    status String maxlength(1) required /** type: varchar(1) */
+    updateUser String maxlength(20) required /** type: varchar(20) */
+    updateTime Instant required /** type: datetime */
+}
+use mapstruct for *

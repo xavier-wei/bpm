@@ -7,6 +7,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.client.RestTemplate;
+import tw.gov.pcc.domain.EipBpmIsmsL414;
+import tw.gov.pcc.repository.EipBpmIsmsL414Repository;
 import tw.gov.pcc.service.EipBpmIsmsL414Service;
 import tw.gov.pcc.service.dto.EipBpmIsmsL414DTO;
 import tw.gov.pcc.service.dto.ProcessReqDTO;
@@ -17,6 +19,7 @@ import javax.validation.Valid;
 import java.time.Instant;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/process")
@@ -27,21 +30,17 @@ public class ProcessL414Resource {
     @Autowired
     private EipBpmIsmsL414Service eipBpmIsmsL414Service;
 
+    @Autowired
+    private EipBpmIsmsL414Repository eipBpmIsmsL414Repository;
+
     // 測試中若flowable沒在同一個container啟動，記得修改下方port
     // todo: 上線後之後記得要改成自動抓取domain的方式
-    private final String START_PROCESS_URL = "http://localhost:8081/process/startProcess";
+    private final String START_PROCESS_URL = "http://localhost:8081/process";
     private final RestTemplate restTemplate = new RestTemplate();
-
-    public static void main(String[] args) {
-        String formId = "L414-112060001";
-        System.out.println(new SeqNumber().getNewSeq(formId));
-
-    }
 
     @PostMapping("/startL414")
     public String start(@Valid @RequestBody EipBpmIsmsL414DTO eipBpmIsmsL414DTO) {
-
-        log.info("ProcessL414Resource.java - start - 37 :: " + eipBpmIsmsL414DTO);
+        log.info("ProcessL414Resource.java - start - 43 :: " + eipBpmIsmsL414DTO);
 
         if (eipBpmIsmsL414DTO != null) {
 
@@ -72,38 +71,33 @@ public class ProcessL414Resource {
         HttpEntity<String> requestEntity = new HttpEntity<>(json, headers);
 
         ResponseEntity<String> exchange = restTemplate.exchange(START_PROCESS_URL + "/startProcess", HttpMethod.POST, requestEntity, String.class);
-        String processInstanceId=null;
-        if (exchange.getStatusCodeValue()==200) {
+        String processInstanceId = null;
+        if (exchange.getStatusCodeValue() == 200) {
             processInstanceId = exchange.getBody();
-        }else {
+        } else {
             return "流程引擎忙碌中，請稍候再試";
         }
 
         eipBpmIsmsL414DTO.setProcessInstanceId(processInstanceId);
 
+        //取得表單最後的流水號
+        String lastFormId = eipBpmIsmsL414Repository.getMaxFormId().size() > 0 ? eipBpmIsmsL414Repository.getMaxFormId().get(0).getFormId() : null;
+        eipBpmIsmsL414DTO.setFormId(eipBpmIsmsL414DTO.getFormName() + "-" + new SeqNumber().getNewSeq(lastFormId));
 
-        // todo: 取得表單最後的流水號
-
-        String lastFormId = "L414-112070222"; // 之後可刪
-
-        eipBpmIsmsL414DTO.setFormId(eipBpmIsmsL414DTO.getFormName()+"-"+new SeqNumber().getNewSeq(lastFormId));
-
-        // todo: 存入table
-
+        //存入table
         eipBpmIsmsL414DTO.setProcessInstanceId(processInstanceId);
         eipBpmIsmsL414DTO.setProcessInstanceStatus("0");
         eipBpmIsmsL414DTO.setUpdateTime(Instant.now());
         eipBpmIsmsL414DTO.setUpdateUser(eipBpmIsmsL414DTO.getFilName());
         eipBpmIsmsL414DTO.setCreateTime(Instant.now());
         eipBpmIsmsL414DTO.setCreateUser(eipBpmIsmsL414DTO.getFilName());
-        EipBpmIsmsL414DTO result = eipBpmIsmsL414Service.save(eipBpmIsmsL414DTO);
-        log.info("ProcessL414Resource.java - start - 91 :: " + result);
+        eipBpmIsmsL414Service.save(eipBpmIsmsL414DTO);
 
         return processInstanceId;
     }
 
     @RequestMapping("/queryTask")
-    public List<TaskDTO> queryTask(String id , String formName) {
+    public List<TaskDTO> queryTask(String id, String formName) {
 
         HashMap<String, String> map = new HashMap<>();
 

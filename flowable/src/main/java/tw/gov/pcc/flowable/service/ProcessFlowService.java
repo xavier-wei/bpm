@@ -9,7 +9,7 @@ import org.flowable.task.api.Task;
 import org.springframework.stereotype.Service;
 import tw.gov.pcc.flowable.domain.ProcessEnum;
 import tw.gov.pcc.flowable.domain.ProcessRes;
-import tw.gov.pcc.flowable.domain.TaskDTO;
+import tw.gov.pcc.flowable.service.dto.TaskDTO;
 
 import java.util.List;
 import java.util.Map;
@@ -81,5 +81,17 @@ public class ProcessFlowService {
                                                           .singleResult();
         return (historicProcessInstance != null && historicProcessInstance.getEndTime() != null);
     }
+
+    // query processInstance is complete return true
+    public boolean isProcessComplete(String processInstanceId, String formName) {
+        HistoricProcessInstance historicProcessInstance = historyService
+                .createHistoricProcessInstanceQuery()
+                .processInstanceId(processInstanceId)
+                .processDefinitionKey(ProcessEnum.getProcessKeyBykey(formName))
+                .singleResult();
+        return (historicProcessInstance != null && historicProcessInstance.getEndTime() != null);
+    }
+
+
 
 }

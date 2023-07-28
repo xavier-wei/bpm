@@ -1,10 +1,11 @@
 package tw.gov.pcc.eip.dao;
 
+import java.util.List;
 import org.springframework.stereotype.Repository;
 import tw.gov.pcc.common.annotation.DaoTable;
+import tw.gov.pcc.eip.common.cases.Eip02w010Case.addressBook;
+import tw.gov.pcc.eip.domain.Depts;
 import tw.gov.pcc.eip.domain.Users;
-import java.math.BigDecimal;
-import java.util.List;
 
 /**
  * 使用者資料 Dao
@@ -23,11 +24,33 @@ public interface UsersDao {
 
     public int deleteByKey(Users users);
 
-	public int updateAcntisvalidByKey(Users users);
+    public int updateAcntisvalidByKey(Users users);
 
-	public List<Users> selectDataByUserIdAndDeptId(String user_id, String dept_id);
+    public List<Users> selectDataByUserIdAndDeptId(String user_id, String dept_id);
 
-	public List<Users> selectAll();
-	
+    public List<Users> selectAll();
+
+    /**
+     * 通訊錄查詢
+     * 
+     * @param dept_id
+     * @param user_name
+     * @param user_id
+     * @param ename
+     * @param email
+     * @param titlename 職稱
+     * @return
+     */
+    public List<addressBook> getEip02wUsers(String dept_id, String user_name, String user_id, String ename,
+            String email, String titlename);
+
+    public List<Users> getEip03wUsers(List<String> deptID);
+
+    /**
+     *
+     * @param userIDs
+     * @return
+     */
+    public List<Users> findNameByMultiID(List<String> userIDs);
 
 }

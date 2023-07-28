@@ -30,9 +30,7 @@ public class PortalMenuAclDaoImpl extends BaseDao<CursorAcl> implements PortalMe
                 "           CAST(i.item_id AS varchar(8000)) AS id_path" +
                 "    FROM items i" +
                 "    INNER JOIN items ii ON ii.item_id = i.item_id_p" +
-                "    WHERE i.item_id = (SELECT DISTINCT item_id" +
-                "                       FROM systems" +
-                "                       WHERE sys_id = :p_sys_id)" +
+                "    WHERE i.item_id_p = 'root'" +
                 "    UNION ALL" +
                 "    SELECT i.item_id," +
                 "           i.item_id_p, i.item_name, i.hyperlink AS url," +
@@ -72,9 +70,7 @@ public class PortalMenuAclDaoImpl extends BaseDao<CursorAcl> implements PortalMe
                 "           CAST(i.item_id AS varchar(8000)) AS id_path" +
                 "    FROM items i" +
                 "    INNER JOIN items ii ON ii.item_id = i.item_id_p" +
-                "    WHERE i.item_id = (SELECT DISTINCT item_id" +
-                "                       FROM systems" +
-                "                       WHERE sys_id = :sys_id)" +
+                "    WHERE i.item_id_p = 'root'" +
                 "    UNION ALL" +
                 "    SELECT i.item_id," +
                 "           i.item_id_p, i.item_name, i.hyperlink AS url," +

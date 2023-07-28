@@ -23,6 +23,8 @@ public class Eip08w060Case implements Serializable {
 
 	private List<Eip08w060Case> eip08w060QuaryList;
 
+	private List<Eip08w060Case> distinctItemIdList;
+
 
 
 	/**

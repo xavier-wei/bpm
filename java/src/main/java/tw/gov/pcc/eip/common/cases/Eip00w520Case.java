@@ -1,11 +1,11 @@
 package tw.gov.pcc.eip.common.cases;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.Data;
 
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * 意見調查主題列表
@@ -47,6 +47,10 @@ public class Eip00w520Case implements Serializable {
 
     private List<Eip00w520QuestionCase> previews = new ArrayList<>();
 
+    private List<Eip00w520QuestionCase> contents = new ArrayList<>();
+
+    private List<MixCase> reviews = new ArrayList<>();
+
     private Map<Integer,String> osccodeCombobox;
 
     private Map<String,String> limitvoteCheckboxU;
@@ -63,6 +67,26 @@ public class Eip00w520Case implements Serializable {
 
     private List<Answer> wricontent;
 
+    private List<Textcontent> reviewTextcontents;//收集畫面上勾選的流水號與文字內容，供統計查詢使用
+
+    private List<String> reviewMultiplecontents;//收集畫面上勾選的流水號，供統計查詢使用
+
+    Map<String, Statistics> textDataMap = new LinkedHashMap<>();//填空題統計資料，供統計使用
+
+    Map<String, Statistics> multipleDataMap = new LinkedHashMap<>();//選擇題統計資料，供統計使用
+
+    Map<String,List<String>> textUiMap = new LinkedHashMap<>();//填空題列表資料，供統計使用
+
+    Map<String,String> qseqnoTextMap = new HashMap<>();//有填入文字的資料，供統計使用
+
+    Map<String,Integer> titleRowspanMap = new HashMap<>();//合併列數資料，根據sectitleseq分類，供統計使用
+
+    Map<String,Integer> quesRowspanMap = new HashMap<>();//合併列數資料，根據topic分類，供統計使用
+
+    List<String>writeContentTitle = new ArrayList<>();//填寫內容表頭
+
+    List<List<String>> writeContentData = new ArrayList<>();//填寫內容資料
+
     @Data
     public static class OsCase {
         private String osformno;
@@ -75,16 +99,43 @@ public class Eip00w520Case implements Serializable {
 
     @Data
     public static class Answer {
-        private List<Multiple> checkboxList;
-        private String text;
+        private String n;//填空題題號
+        private List<Multiple> os;//選擇題答案
+        private String t;//填空題答案
+        @JsonIgnore
         private String isrequired;
+        @JsonIgnore
         private String optiontype;
     }
 
     @Data
     public static class Multiple {
-        private String checkVal;
-        private String text;
+        private String q;//選擇題題號
+        private String v;//選擇題答案
+        private String t;//選擇題文字輸入框
+    }
+
+    @Data
+    public static class Statistics {
+        private String count;
+        private String rate;
+    }
+
+    @Data
+    public static class Textcontent {
+        private String qseqno;//填空題題號
+        private String text;//填空題內容題號
+    }
+
+    @Data
+    public static class MixCase {
+        private String qseqno;//問題流水號
+        private String sectitleseq;//部分排序
+        private String sectitle;//部分標題
+        private String no;//iseqno
+        private String itemname;//題目名稱(文字框)或選項名稱
+        private String topic;//選擇題題目名稱
+        private String topicseq;//選擇題題目序號
     }
 
     /**

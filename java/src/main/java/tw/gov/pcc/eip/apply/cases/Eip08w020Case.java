@@ -6,10 +6,13 @@ import java.util.List;
 import javax.validation.constraints.AssertTrue;
 import javax.validation.groups.Default;
 
+import org.apache.commons.lang3.StringUtils;
+
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import tw.gov.pcc.eip.domain.Applyitem;
 import tw.gov.pcc.eip.domain.Itemcode;
+import tw.gov.pcc.eip.framework.validation.ChineseDate;
 import tw.gov.pcc.eip.framework.validation.RequiredString;
 
 /**
@@ -21,8 +24,8 @@ import tw.gov.pcc.eip.framework.validation.RequiredString;
 @NoArgsConstructor
 public class Eip08w020Case implements Serializable {
 
-	public interface Insert extends Default {
-	}
+	public interface Insert extends Default {}
+	public interface Query extends Default {}
 
 	private static final long serialVersionUID = 1L;
 
@@ -34,6 +37,8 @@ public class Eip08w020Case implements Serializable {
 	/**
 	 * 申請日期
 	 */
+	@RequiredString(label = "申請日期" , groups = { Query.class })
+	@ChineseDate(label = "申請日期" , groups = { Query.class })
 	private String apply_date;
 
 	/**
@@ -102,6 +107,17 @@ public class Eip08w020Case implements Serializable {
 	 */
 	private List<Eip08w020Case> allData;
 	
+	@AssertTrue(message = "至少申請一個物品", groups = {Insert.class})
+	private boolean isAllData2() {
+		for(Eip08w020Case data : this.allData) {
+			if(StringUtils.isNotEmpty(data.getItemkind()) && StringUtils.isNotEmpty(data.getItemno())
+					&& data.getApply_cnt()!=null && StringUtils.isNotEmpty(data.getUnit())) {
+				return true;
+			}
+		}
+		return false;
+	}
+	
 	/**
 	 * 
 	 */
@@ -110,7 +126,6 @@ public class Eip08w020Case implements Serializable {
 	@AssertTrue(message = "申請數量不得大於庫存數量", groups = {Insert.class})
 	private boolean isAllData() {
 		for(Eip08w020Case data : this.allData) {
-			
 			if(data.getApply_cnt()!=null && data.getBook_cnt()!=null && data.getApply_cnt()>data.getBook_cnt()) {
 				return false;
 			}
@@ -132,4 +147,9 @@ public class Eip08w020Case implements Serializable {
 	 * 查詢明細 List
 	 */
 	private List<Applyitem>detailList;
+	
+	private String oriApply_user;//用來保留畫面上原始userid
+	private String oriApply_dept;//用來保留畫面上原始dept
+	private String processStatus;
+
 }

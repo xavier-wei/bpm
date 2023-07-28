@@ -130,9 +130,51 @@ public class OsitemDaoImpl extends BaseDao<Ositem> implements OsitemDao {
         sql.append(ALL_COLUMNS_SQL);
         sql.append("  FROM " + TABLE_NAME);
         sql.append(" WHERE OSFORMNO = :osformno ");
-        sql.append(" ORDER BY ITEMSEQ ");
+        sql.append(" ORDER BY QSEQNO,ITEMSEQ ");
         Map<String, Object> params = new HashMap<>();
         params.put("osformno", osformno);
+        List<Ositem> list = getNamedParameterJdbcTemplate().query(sql.toString(), params,
+                BeanPropertyRowMapper.newInstance(Ositem.class));
+        return CollectionUtils.isEmpty(list) ? new ArrayList<>() : list;
+    }
+
+    @Override
+    public List<Ositem> getAllByIseqnoAndQseqnoList(String osformno, List<String> iseqnoList, List<String> qseqnoList) {
+        StringBuilder sql = new StringBuilder();
+        if (!CollectionUtils.isEmpty(iseqnoList)) {
+            sql.append(" SELECT t.qseqno, ");
+            sql.append("        t.iseqno no, ");
+            sql.append("        t.itemdesc itemname, ");
+            sql.append("        t.itemseq, ");
+            sql.append("        o.SECTITLESEQ, ");
+            sql.append("        o.SECTITLE, ");
+            sql.append("        o.TOPICSEQ, ");
+            sql.append("        o.TOPIC ");
+            sql.append("   FROM OSITEM t JOIN OSQUESTION O on t.QSEQNO = O.QSEQNO AND O.OSFORMNO = t.OSFORMNO ");
+            sql.append("  WHERE t.osformno = :osformno ");
+            sql.append("    and iseqno in (:iseqnoList) ");
+        }
+        if (!CollectionUtils.isEmpty(iseqnoList) && !CollectionUtils.isEmpty(qseqnoList)) {
+            sql.append("  UNION ");
+        }
+        if (!CollectionUtils.isEmpty(qseqnoList)) {
+            sql.append(" SELECT q.qseqno, '999' no, ");
+            sql.append("        q.topic itemname, ");
+            sql.append("        '999' itemseq, ");
+            sql.append("        q.SECTITLESEQ, ");
+            sql.append("        q.SECTITLE, ");
+            sql.append("        q.TOPICSEQ, ");
+            sql.append("        '' TOPIC ");
+            sql.append("   FROM OSQUESTION q ");
+            sql.append("  WHERE q.osformno = :osformno ");
+            sql.append("    AND q.OPTIONTYPE = 'T' ");
+            sql.append("    and q.qseqno in (:qseqnoList) ");
+        }
+        sql.append("  ORDER BY SECTITLESEQ,TOPICSEQ,QSEQNO,ITEMSEQ ");
+        Map<String, Object> params = new HashMap<>();
+        params.put("osformno", osformno);
+        params.put("iseqnoList", iseqnoList);
+        params.put("qseqnoList", qseqnoList);
         List<Ositem> list = getNamedParameterJdbcTemplate().query(sql.toString(), params,
                 BeanPropertyRowMapper.newInstance(Ositem.class));
         return CollectionUtils.isEmpty(list) ? new ArrayList<>() : list;
@@ -191,6 +233,38 @@ public class OsitemDaoImpl extends BaseDao<Ositem> implements OsitemDao {
         params.put("itemseq", itemseq);
         params.put("targeitemseq", targeitemseq);
         return getNamedParameterJdbcTemplate().update(sql.toString(), params);
+    }
+
+    @Override
+    public List<Ositem> getTopicByOsformno(String osformno) {
+        StringBuilder sql = new StringBuilder();
+        sql.append(" SELECT t.qseqno, ");
+        sql.append("        t.iseqno no, ");
+        sql.append("        t.itemdesc itemname, ");
+        sql.append("        t.itemseq, ");
+        sql.append("        o.SECTITLESEQ, ");
+        sql.append("        o.SECTITLE, ");
+        sql.append("        o.TOPICSEQ, ");
+        sql.append("        o.TOPIC ");
+        sql.append("   FROM OSITEM t JOIN OSQUESTION O on t.QSEQNO = O.QSEQNO AND O.OSFORMNO = t.OSFORMNO ");
+        sql.append("  WHERE t.osformno = :osformno ");
+        sql.append("  UNION ");
+        sql.append(" SELECT q.qseqno, '999' no, ");
+        sql.append("        q.topic itemname, ");
+        sql.append("        '999' itemseq, ");
+        sql.append("        q.SECTITLESEQ, ");
+        sql.append("        q.SECTITLE, ");
+        sql.append("        q.TOPICSEQ, ");
+        sql.append("        '' TOPIC ");
+        sql.append("   FROM OSQUESTION q ");
+        sql.append("  WHERE q.osformno = :osformno ");
+        sql.append("    AND q.OPTIONTYPE = 'T' ");
+        sql.append("  ORDER BY SECTITLESEQ,TOPICSEQ,QSEQNO,ITEMSEQ ");
+        Map<String, Object> params = new HashMap<>();
+        params.put("osformno", osformno);
+        List<Ositem> list = getNamedParameterJdbcTemplate().query(sql.toString(), params,
+                BeanPropertyRowMapper.newInstance(Ositem.class));
+        return CollectionUtils.isEmpty(list) ? new ArrayList<>() : list;
     }
 
 }

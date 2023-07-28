@@ -206,6 +206,7 @@ public class Eip01w010Service {
             caseData.setIstop("2");
             caseData.setIsfront("2");
             caseData.setContactperson(userData.getUserId());
+            caseData.setUserId(userData.getUserId());
         }
     }
 
@@ -219,7 +220,8 @@ public class Eip01w010Service {
         String p1page = StringUtils.trimToEmpty(caseData.getP1page());
         String p1title = caseData.getP1title();
         String status = caseData.getP1status();
-        List<Msgdata> result = msgdataDao.findbyCreatidPagetype(p1id, p1page, p1title, status);
+        String attributype = caseData.getP1attributype();
+        List<Msgdata> result = msgdataDao.findbyCreatidPagetype(p1id, p1page, p1title, status, attributype);
         // 0筆 1筆 多筆
         if (!CollectionUtils.isEmpty(result)) {
             List<Eip01w010Case.Detail> details = result.stream().map(m -> {
@@ -233,6 +235,11 @@ public class Eip01w010Service {
                 detail.setOfftime(m.getOfftime());
                 detail.setStatus(m.getStatus());
                 detail.setStatusText(changeStatusText(m.getStatus(), false));
+                detail.setAttributype(m.getAttributype());
+                Optional<Eipcode> opt = eipCodeDao.findByCodeKindCodeNo("ATTRIBUTYPE", m.getAttributype());
+                if (opt.isPresent()) {
+                    detail.setAttributypeText(opt.get().getCodename());
+                }
                 return detail;
             }).collect(Collectors.toCollection(ArrayList::new));
             caseData.setQueryList(details);
@@ -574,6 +581,10 @@ public class Eip01w010Service {
         Users user = usersDao.selectByKey(userId);
         caseData.setUpdid(user == null ? "" : user.getUser_name());
         caseData.setUpddt(ldt.format(minguoDateTimeformatter));
+        if ("D".equals(caseData.getMode())) {
+            getQueryList(caseData);
+            caseData.setKeep((caseData.getQueryList() != null && caseData.getQueryList().size() == 1) ? true : false);
+        }
     }
 
     /**

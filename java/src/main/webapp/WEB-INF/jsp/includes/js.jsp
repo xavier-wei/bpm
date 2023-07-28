@@ -1,20 +1,20 @@
 <script src='<c:url value="/js/jquery.min.js"/>'></script>
 <script src='<c:url value="/js/noty.min.js"/>'></script>
-<script src='<c:url value="/js/datatables.min.js"/>?a=<%=tw.gov.pcc.eip.util.DateUtility.getNowChineseDateTime(true)%>'></script>
+<script src='<c:url value="/js/datatables.min.js"/>'></script>
 
 <script src='<c:url value="/js/popper.min.js"/>'></script>
 <script src='<c:url value="/js/bootstrap.min.js"/>'></script>
 <script src='<c:url value="/js/bootstrap-select.min.js"/>'></script>
 
 <script src='<c:url value="/js/stomp.min.js"/>'></script>
-<script src='<c:url value="/js/function.js"/>?a=<%=tw.gov.pcc.eip.util.DateUtility.getNowChineseDateTime(true)%>'></script>
-<script src='<c:url value="/js/onload.js"/>?a=<%=tw.gov.pcc.eip.util.DateUtility.getNowChineseDateTime(true)%>'></script>
+<script src='<c:url value="/js/function.js"/>'></script>
+<script src='<c:url value="/js/onload.js"/>'></script>
 
 <script src='<c:url value="/js/pagination.input.js"/>'></script>
-<script src='<c:url value="/js/jquery.iisi.expand.js"/>?a=<%=tw.gov.pcc.eip.util.DateUtility.getNowChineseDateTime(true)%>'></script>
+<script src='<c:url value="/js/jquery.iisi.expand.js"/>'></script>
 
-<script src='<c:url value="/js/jquery.ui/jquery-ui.js"/>?a=<%=tw.gov.pcc.eip.util.DateUtility.getNowChineseDateTime(true)%>'></script>
-<script src='<c:url value="/js/dynatree/jquery.dynatree.js"/>?a=<%=tw.gov.pcc.eip.util.DateUtility.getNowChineseDateTime(true)%>'></script>
+<script src='<c:url value="/js/jquery.ui/jquery-ui.js"/>'></script>
+<script src='<c:url value="/js/dynatree/jquery.dynatree.js"/>'></script>
 
 <script src='<c:url value="/js/bootstrap-datepicker.js"/>'></script>
 <script src='<c:url value="/js/bootstrap-datepicker-zh-TW.min.js"/>'></script>

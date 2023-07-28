@@ -2,6 +2,7 @@ package tw.gov.pcc.eip.dao;
 
 import java.util.List;
 
+import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Repository;
 
 import tw.gov.pcc.common.annotation.DaoTable;
@@ -39,4 +40,21 @@ public interface DeptsDao {
      * @return
      */
     public List<Depts> getRelevantDeptByAttr(String attr, String deptId);
+	/**
+	 * @param level
+	 * 	 * WHEN '1' THEN '9999'   -- 根部門
+	 * 	 * WHEN '2' THEN '05'     -- 科室 -- 改成畫面入trkobj
+	 * @param trkObj
+	 * @return
+	 */
+	public List<Depts> getEip03wDepts(String level, @Nullable String trkObj);
+
+
+	/**
+	 *
+	 * @param deptIDs
+	 * @return
+	 */
+	public List<Depts> findNameByMultiID(List<String> deptIDs);
+
 }

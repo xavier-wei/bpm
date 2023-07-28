@@ -7,9 +7,11 @@ import lombok.NoArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
 import tw.gov.pcc.eip.domain.Eipcode;
 import tw.gov.pcc.eip.domain.KeepTrkDtl;
+import tw.gov.pcc.eip.framework.validation.ChineseDate;
 import tw.gov.pcc.eip.framework.validation.RequiredString;
 
 import javax.validation.constraints.AssertTrue;
+import javax.validation.constraints.NotBlank;
 import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.*;
@@ -26,7 +28,9 @@ public class Eip03w010Case implements Serializable {
     private String trkID; //列管編號
     private String trkCont; //列管事項內容
     private String allStDt; //全案列管日期
+    @ChineseDate(label = "全案列管日期起日")
     private String allStDtSt; //全案列管日期起日
+    @ChineseDate(label = "全案列管日期訖日")
     private String allStDtEnd; //全案列管日期訖日
     private String trkSts; // 列管狀態：0-暫存 1-未完成 9-結案 D-作廢
     private String cnt_all;  //全部
@@ -88,7 +92,7 @@ public class Eip03w010Case implements Serializable {
     private boolean isValidMeetingTime() {
         if(getMode().equals("query")){
             if (allStDtSt != null && allStDtEnd != null){
-                if (!allStDtSt.equals("") && !allStDtEnd.equals("") && Integer.parseInt(allStDtSt) >= Integer.parseInt(allStDtEnd)){
+                if (!allStDtSt.equals("") && !allStDtEnd.equals("") && Integer.parseInt(allStDtSt) > Integer.parseInt(allStDtEnd)){
                     return false;
                 }
             }
@@ -106,10 +110,30 @@ public class Eip03w010Case implements Serializable {
         return true;
     }
 
-    @AssertTrue(message="內容為必填")
+    @AssertTrue(message="「內容」為必填")
     private boolean isValidCont(){
         if(getMode().equals("insert") || getMode().equals("modify")){
             if(StringUtils.isBlank(getTrkCont())){
+                return false;
+            }
+        }
+        return true;
+    }
+
+    @AssertTrue(message="「交辦來源」為必選")
+    private boolean isValidTrkFrom(){
+        if(getMode().equals("insert") || getMode().equals("modify")){
+            if(StringUtils.isBlank(getTrkFrom())){
+                return false;
+            }
+        }
+        return true;
+    }
+
+    @AssertTrue(message="請輸入「其他交辦來源」")
+    private boolean isValidTrkFromForOthers(){
+        if(getMode().equals("insert") || getMode().equals("modify")){
+            if(StringUtils.equals(getTrkFrom(), "others") && StringUtils.isBlank(getOtherTrkFrom())){
                 return false;
             }
         }

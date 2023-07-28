@@ -27,9 +27,9 @@
 			<tags:form-row>
 				<label class="col-form-label text-left star">選項:</label>
 				<div class="d-flex align-items-center">
-					<form:radiobutton id="reportType" cssClass="checkedgreen" value="I-物品請購單" path="applyTpNm"/>物品請購
+					<form:radiobutton id="reportType" cssClass="checkedgreen" value="I-物品請購單" path="applyTpNm"/>物品請購單
 					&nbsp;&nbsp;&nbsp;
-					<form:radiobutton id="reportType" cssClass="checkedgreen" value="F-修請修單" path="applyTpNm"/>修繕請修單
+					<form:radiobutton id="reportType" cssClass="checkedgreen" value="F-修繕請修單" path="applyTpNm"/>修繕請修單
 					&nbsp;&nbsp;&nbsp;
 					<form:radiobutton id="reportType" cssClass="checkedgreen" value="P-軟(硬)體請購單" path="applyTpNm"/>軟(硬)體請購單
 				</div>

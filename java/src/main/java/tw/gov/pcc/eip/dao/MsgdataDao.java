@@ -29,8 +29,26 @@ public interface MsgdataDao {
 
     public Msgdata findbyfseq(String fseq);
 
-    public List<Msgdata> findbyCreatidPagetype(String creatid, String pagetype, String subject, String status);
+    /**
+     * 訊息上稿 查詢
+     * 
+     * @param creatid
+     * @param pagetype
+     * @param subject
+     * @param status
+     * @param attributype
+     * @return
+     */
+    public List<Msgdata> findbyCreatidPagetype(String creatid, String pagetype, String subject, String status,
+            String attributype);
 
+    /**
+     * 更新狀態
+     * 
+     * @param fseq
+     * @param status
+     * @return
+     */
     public int updateStatus(List<String> fseq, String status);
 
     /**

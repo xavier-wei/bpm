@@ -1,0 +1,97 @@
+{
+  "applications": "*",
+  "changelogDate": "20230726083511",
+  "dto": "mapstruct",
+  "embedded": false,
+  "entityTableName": "bpm_function",
+  "fields": [
+    {
+      "fieldName": "id",
+      "fieldType": "Long",
+      "fieldValidateRules": ["required"],
+      "javadoc": "type: bigint",
+      "options": {
+        "id": true
+      }
+    },
+    {
+      "fieldName": "functionId",
+      "fieldType": "String",
+      "fieldValidateRules": ["maxlength", "unique", "required"],
+      "fieldValidateRulesMaxlength": "20",
+      "javadoc": "type: varchar(20)"
+    },
+    {
+      "fieldName": "functionName",
+      "fieldType": "String",
+      "fieldValidateRules": ["maxlength", "required"],
+      "fieldValidateRulesMaxlength": "20",
+      "javadoc": "type: nvarchar(20)"
+    },
+    {
+      "fieldName": "functionDescript",
+      "fieldType": "String",
+      "fieldValidateRules": ["maxlength", "required"],
+      "fieldValidateRulesMaxlength": "500",
+      "javadoc": "type: nvarchar(500)"
+    },
+    {
+      "fieldName": "functionPath",
+      "fieldType": "String",
+      "fieldValidateRules": ["maxlength", "required"],
+      "fieldValidateRulesMaxlength": "500",
+      "javadoc": "type: varchar(500)"
+    },
+    {
+      "fieldName": "functionCategory",
+      "fieldType": "String",
+      "fieldValidateRules": ["maxlength", "required"],
+      "fieldValidateRulesMaxlength": "1",
+      "javadoc": "type: varchar(1)"
+    },
+    {
+      "fieldName": "sortNo",
+      "fieldType": "BigDecimal",
+      "fieldValidateRules": ["min", "max", "required"],
+      "fieldValidateRulesMax": "255",
+      "fieldValidateRulesMin": "0",
+      "javadoc": "type: decimal(3,0)"
+    },
+    {
+      "fieldName": "masterFunctionId",
+      "fieldType": "String",
+      "fieldValidateRules": ["maxlength", "required"],
+      "fieldValidateRulesMaxlength": "20",
+      "javadoc": "type: varchar(20)"
+    },
+    {
+      "fieldName": "status",
+      "fieldType": "String",
+      "fieldValidateRules": ["maxlength", "required"],
+      "fieldValidateRulesMaxlength": "1",
+      "javadoc": "type: varchar(1)"
+    },
+    {
+      "fieldName": "updateUser",
+      "fieldType": "String",
+      "fieldValidateRules": ["maxlength", "required"],
+      "fieldValidateRulesMaxlength": "20",
+      "javadoc": "type: varchar(20)"
+    },
+    {
+      "fieldName": "updateTime",
+      "fieldType": "Instant",
+      "fieldValidateRules": ["required"],
+      "javadoc": "type: datetime"
+    }
+  ],
+  "fluentMethods": true,
+  "jpaMetamodelFiltering": false,
+  "name": "BpmFunction",
+  "pagination": "no",
+  "readOnly": false,
+  "relationships": [],
+  "service": "serviceClass",
+  "skipClient": true,
+  "skipServer": true
+}

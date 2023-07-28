@@ -64,6 +64,18 @@ public class OsresultDaoImpl extends BaseDao<Osresult> implements OsresultDao {
     }
 
     @Override
+    public int deleteDataByCreuser(String osformno, String creuser) {
+        StringBuilder sql = new StringBuilder();
+        sql.append(" DELETE FROM OSRESULT ");
+        sql.append("  WHERE OSFORMNO=:osformno ");
+        sql.append("    AND CREUSER=:creuser");
+        Map<String, Object> params = new HashMap<>();
+        params.put("osformno", osformno);
+        params.put("creuser", creuser);
+        return getNamedParameterJdbcTemplate().update(sql.toString(), params);
+    }
+
+    @Override
     public Osresult getDataByCreuser(String osformno, String creuser) {
         StringBuilder sql = new StringBuilder();
         sql.append(" SELECT ");
@@ -100,6 +112,35 @@ public class OsresultDaoImpl extends BaseDao<Osresult> implements OsresultDao {
         SqlParameterSource params = new MapSqlParameterSource("osformno", osformno);
         return getNamedParameterJdbcTemplate().queryForObject(
                 sql.toString(), params, Integer.class);
+    }
+
+    @Override
+    public List<Osresult> getListByOsformno(String osformno) {
+        StringBuilder sql = new StringBuilder();
+        sql.append(" SELECT ");
+        sql.append(ALL_COLUMNS_SQL);
+        sql.append("   FROM " + TABLE_NAME);
+        sql.append("  WHERE OSFORMNO = :osformno");
+        sql.append("  order by wriseq ");
+        SqlParameterSource params = new MapSqlParameterSource("osformno", osformno);
+        List<Osresult> list = getNamedParameterJdbcTemplate().query(sql.toString(), params,
+                BeanPropertyRowMapper.newInstance(Osresult.class));
+        return CollectionUtils.isEmpty(list) ? new ArrayList<>() : list;
+    }
+
+    @Override
+    public List<Osresult> getListByOsformnoAndList(String osformno, List<Integer> wriseqList) {
+        StringBuilder sql = new StringBuilder();
+        sql.append(" SELECT ");
+        sql.append(ALL_COLUMNS_SQL);
+        sql.append("   FROM " + TABLE_NAME);
+        sql.append("  WHERE OSFORMNO = :osformno");
+        sql.append("    AND wriseq in (:wriseqList)");
+        sql.append("  order by wriseq ");
+        SqlParameterSource params = new MapSqlParameterSource("osformno", osformno).addValue("wriseqList", wriseqList);
+        List<Osresult> list = getNamedParameterJdbcTemplate().query(sql.toString(), params,
+                BeanPropertyRowMapper.newInstance(Osresult.class));
+        return CollectionUtils.isEmpty(list) ? new ArrayList<>() : list;
     }
 
 }

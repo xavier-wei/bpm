@@ -87,4 +87,10 @@ public interface KeepTrkDtlDao {
      * @return
      */
     public int deleteByTrkIDAndTrkObj(String trkID,  @Nullable String trkObj);
+
+    /**
+     * 依PK更新資料 for 填報辦理進度
+     * @param ktd
+     */
+    public void updateForApplyProgress(KeepTrkDtl ktd);
 }
