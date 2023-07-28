@@ -2,11 +2,11 @@
   <div>
     <section class="container mt-2">
       <div class="card">
-        <div class="card-header py-1 text-left" style="background-color: #66bfab">
+        <div class="card-header py-1 text-left" style="background-color: #b0ded4">
           <div class="row align-items-center">
             <div class="col-sm-11 p-0">
               <h5 class="m-0">
-                <font-awesome-icon icon="search" />
+                <font-awesome-icon icon="search"/>
                 查詢條件
               </h5>
             </div>
@@ -14,55 +14,61 @@
         </div>
         <div class="card-body clo-12" style="background-color: #d3ede8">
           <b-form-row>
-            <i-form-group-check class="col-4" label-cols="4" content-cols="8" :label="'部門：'" :item="$v.deaprtmant">
-              <b-form-select v-model="$v.deaprtmant.$model"
-                ><template #first>
+            <i-form-group-check class="col-4" label-cols="4" content-cols="8" :label="'部門：'" :item="$v.dept">
+              <b-form-select v-model="$v.dept.$model">
+                <template #first>
                   <option value="">請選擇</option>
                 </template>
               </b-form-select>
             </i-form-group-check>
 
-            <i-form-group-check class="col-4" label-cols="4" content-cols="8" :label="`申請者：`" :item="$v.usrMail">
-              <b-form-select v-model="$v.usrMail.$model"
-                ><template #first>
+            <i-form-group-check class="col-4" label-cols="4" content-cols="8" :label="`申請者：`" :item="$v.createUser">
+              <b-form-select v-model="$v.createUser.$model"
+              >
+                <template #first>
                   <option value="">請選擇</option>
                 </template>
               </b-form-select>
             </i-form-group-check>
           </b-form-row>
           <b-form-row>
-            <i-form-group-check class="col-4" label-cols="4" content-cols="8" label="表單：">
-              <b-form-select v-model="$v.seqNo.$model">
+            <i-form-group-check class="col-4" label-cols="4" content-cols="8" label="表單：" :item="$v.formCase">
+              <b-form-select v-model="$v.formCase.$model" :options="queryOptions.formCase">
                 <template #first>
                   <option value="">請選擇</option>
-                </template></b-form-select
+                </template>
+              </b-form-select
               >
             </i-form-group-check>
-            <i-form-group-check class="col-4" label-cols="4" content-cols="8" label="處理狀況：">
-              <b-form-select v-model="$v.status.$model" :options="queryOptions.city">
+            <i-form-group-check class="col-4" label-cols="4" content-cols="8" label="處理狀況：" :item="$v.status">
+              <b-form-select v-model="$v.status.$model" :options="queryOptions.status">
                 <template #first>
                   <option value="">請選擇</option>
-                </template></b-form-select
+                </template>
+              </b-form-select
               >
             </i-form-group-check>
-            <i-form-group-check class="col-4" label-cols="4" content-cols="8" label="表單分類：">
-              <b-form-select v-model="$v.usrMail.$model">
+            <i-form-group-check class="col-4" label-cols="4" content-cols="8" label="表單分類：" :item="$v.formType">
+              <b-form-select v-model="$v.formType.$model">
                 <template #first>
                   <option value="">請選擇</option>
-                </template></b-form-select
+                </template>
+              </b-form-select
               >
             </i-form-group-check>
           </b-form-row>
           <!-- 填表日期 -->
           <b-form-row>
-            <i-form-group-check :label="'期間：'" class="col-8" label-cols="2" content-cols="6" :dual1="$v.seqDate" :dual2="$v.seqDateEnd">
+            <i-form-group-check :label="'期間：'" class="col-8" label-cols="2" content-cols="6" :dual1="$v.seqDate"
+                                :dual2="$v.seqDateEnd">
               <b-input-group>
-                <i-date-picker v-model="$v.seqDate.$model" placeholder="yyy/MM/dd" :disabled-date="notAfterPublicDateEnd"></i-date-picker>
+                <i-date-picker v-model="$v.seqDate.$model" placeholder="yyy/MM/dd"
+                               :disabled-date="notAfterPublicDateEnd"></i-date-picker>
                 <b-input-group-text>至</b-input-group-text>
                 <i-date-picker
-                  v-model="$v.seqDateEnd.$model"
-                  placeholder="yyy/MM/dd"
-                  :disabled-date="notBeforePublicDateStart"
+                    v-model="$v.seqDateEnd.$model"
+                    placeholder="yyy/MM/dd"
+                    :disabled-date="notBeforePublicDateStart"
                 ></i-date-picker>
               </b-input-group>
             </i-form-group-check>
@@ -79,19 +85,16 @@
     <section class="mt-2">
       <div class="container">
         <i-table
-          ref="iTable"
-          :itemsUndefinedBehavior="'loading'"
-          :items="mockdata"
-          :fields="table.fields"
-          :totalItems="table.totalItems"
-          :is-server-side-paging="true"
-          @changePagination="handlePaginationChanged($event)"
+            ref="iTable"
+            :itemsUndefinedBehavior="'loading'"
+            :items="mockdata"
+            :fields="table.fields"
+            :totalItems="table.totalItems"
+            :is-server-side-paging="true"
+            @changePagination="handlePaginationChanged($event)"
         >
           <template #cell(action)="row">
-            <b-button class="ml-2" style="background-color: #17a2b8" @click="toEdit(row.item)">處理</b-button>
-          </template>
-          <template #cell(action2)="row">
-            <b-button class="ml-2" style="background-color: #17a2b8" @click="toEdit(row.item)">刪除</b-button>
+            <b-button class="ml-2" style="background-color: #17a2b8" @click="toEdit(row)">檢視</b-button>
           </template>
         </i-table>
       </div>
@@ -101,16 +104,16 @@
 
 <script lang="ts">
 import axios from 'axios';
-import { ref, reactive, computed, toRefs, defineComponent } from '@vue/composition-api';
+import {ref, reactive, computed, toRefs, defineComponent} from '@vue/composition-api';
 import IDatePicker from '../shared/i-date-picker/i-date-picker.vue';
 import ITable from '../shared/i-table/i-table.vue';
 import IFormGroupCheck from '../shared/form/i-form-group-check.vue';
-import { useValidation, validateState } from '../shared/form';
-import { useBvModal } from '../shared/modal';
-import { required } from '../shared/validators';
-
+import {useValidation, validateState} from '../shared/form';
+import {useBvModal} from '../shared/modal';
+import {required} from '@/shared/validators';
+import { Pagination } from '@/shared/model/pagination.model';
 export default defineComponent({
-  name: 'deal2',
+  name: 'notify',
   components: {
     IDatePicker,
     ITable,
@@ -130,31 +133,29 @@ export default defineComponent({
     }
 
     const formDefault = {
-      deaprtmant: '',
-      result: 'N',
-      seqNo: '',
-      usrMail: '',
-      usrMaster: '',
-      status: '',
-      seqDate: undefined,
-      seqDateEnd: undefined,
+      dept: '', //部門
+      createUser: '', //申請者
+      formCase: '', //表單
+      status: '', //處理狀態
+      formType: '', //表單分類
+      seqDate: undefined, //起
+      seqDateEnd: undefined, //迄
     };
 
     const form = reactive(Object.assign({}, formDefault));
 
     // 表單物件驗證規則
     const rules = ref({
-      deaprtmant: {},
-      result: {},
-      seqNo: {},
-      usrMail: {},
-      usrMaster: {},
+      dept: {},
+      createUser: {},
+      formCase: {},
+      status: {notnull: required},
+      formType: {},
       seqDate: {},
       seqDateEnd: {},
-      status: { notnull: required },
     });
 
-    const { $v, checkValidity, reset } = useValidation(rules, form, formDefault);
+    const {$v, checkValidity, reset} = useValidation(rules, form, formDefault);
 
     const table = reactive({
       fields: [
@@ -162,15 +163,6 @@ export default defineComponent({
           key: 'action',
           label: '',
           sortable: false,
-          thStyle: 'width:10%',
-          thClass: 'text-center',
-          tdClass: 'text-center align-middle',
-        },
-        {
-          key: 'action2',
-          label: '',
-          sortable: false,
-          thStyle: 'width:10%',
           thClass: 'text-center',
           tdClass: 'text-center align-middle',
         },
@@ -183,7 +175,14 @@ export default defineComponent({
         },
         {
           key: 'hostname',
-          label: '申請日期',
+          label: '申請表單',
+          sortable: false,
+          thClass: 'text-center',
+          tdClass: 'text-center align-middle',
+        },
+        {
+          key: 'applyDate',
+          label: '申請表單',
           sortable: false,
           thClass: 'text-center',
           tdClass: 'text-center align-middle',
@@ -218,59 +217,44 @@ export default defineComponent({
     const mockdata = [
       {
         action: '4,02.03.04',
-        index: '其他材料檢驗審查紀錄缺失',
-        id: '14',
-        hostname: '77.78%',
-        port: '0',
-        active2: '0',
-        active3: '14',
+        index: '林一郎/楊助理',
+        hostname: 'L410-共用系統使用者帳號申請單',
+        applyDate: '112/05/23 10:23:43',
+        port: '',
+        active2: '已處理完畢',
+        active3: 'L410-共用系統使用者帳號申請單(L410-11205-0001)',
       },
       {
         action: '4,02.03.04',
-        index: '其他材料檢驗審查紀錄缺失',
-        id: '14',
-        hostname: '77.78%',
-        port: '0',
-        active2: '0',
-        active3: '14',
+        index: '林一郎/楊助理',
+        hostname: 'L410-共用系統使用者帳號申請單',
+        applyDate: '112/05/25 11:43:13',
+        port: '張為寬(直屬主管)',
+        active2: '處理中',
+        active3: 'L410-共用系統使用者帳號申請單(L410-11205-0002)',
       },
       {
         action: '4,02.03.04',
-        index: '其他材料檢驗審查紀錄缺失',
-        id: '14',
-        hostname: '77.78%',
-        port: '0',
-        active2: '0',
-        active3: '14',
-      },
-      {
-        action: '4,02.03.04',
-        index: '其他材料檢驗審查紀錄缺失',
-        id: '14',
-        hostname: '77.78%',
-        port: '0',
-        active2: '0',
-        active3: '14',
-      },
-      {
-        action: '4,02.03.04',
-        index: '其他材料檢驗審查紀錄缺失',
-        id: '14',
-        hostname: '77.78%',
-        port: '0',
-        active2: '0',
-        active3: '14',
+        index: '林一郎/楊助理',
+        hostname: 'L414-網路服務連結申請單',
+        applyDate: '112/05/24 14:51:02',
+        port: '',
+        active2: '已處理完畢',
+        active3: 'L414-網路服務連結申請單(L414-11205-0001)',
       },
     ];
 
     // 下拉選單選項
     const queryOptions = reactive({
-      city: [
-        { value: '0', text: '申請' },
-        { value: '1', text: '處理中' },
-        { value: '2', text: '處理過' },
+      status: [
+        {value: '0', text: '申請'},
+        {value: '1', text: '處理中'},
+        {value: '2', text: '處理過'},
       ],
-      city1: [],
+      formCase: [
+        {value: '0', text: 'L410-共用系統使用者帳號申請單'},
+        {value: '1', text: 'L414-網路服務連結申請單'},
+      ],
     });
 
     const toQuery = () => {
@@ -301,6 +285,14 @@ export default defineComponent({
       table.data.splice(0, table.data.length, ...mockdata);
     };
 
+    const handlePaginationChanged = (pagination: Pagination) => {
+      //todo:未做方法先放著
+    };
+
+    function toEdit(i) {
+      //todo:未做方法先放著
+    }
+
     return {
       $v,
       form,
@@ -315,6 +307,8 @@ export default defineComponent({
       iTable,
       notBeforePublicDateStart,
       notAfterPublicDateEnd,
+      toEdit,
+      handlePaginationChanged,
     };
   },
 });
@@ -322,4 +316,3 @@ export default defineComponent({
 
 <style scoped>
 </style>
-

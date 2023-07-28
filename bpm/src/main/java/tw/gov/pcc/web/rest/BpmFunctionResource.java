@@ -181,17 +181,6 @@ public class BpmFunctionResource {
     public ResponseEntity<List<MenuTreeDTO>> makeMenu() {
 
         List<MenuTreeDTO> menuTreeDTOs = bpmFunctionService.makeAdmFunctionMenu();
-        log.info("BpmFunctionResource.java - makeMenu - 184 :: " + menuTreeDTOs);
-//        if (StringUtils.equals("pwc", category.toLowerCase())) {
-//            KeycloakSecurityContext keycloakSecurityContext = (KeycloakSecurityContext) request.getAttribute(KeycloakSecurityContext.class.getName());
-//            if (keycloakSecurityContext != null) {
-//                String username = keycloakSecurityContext.getToken().getPreferredUsername();
-//
-//                MenuTreeDTO usualFunction = pwbUsualfunctionService.getPwcWebUserUsualFunctions(username);
-//                menuTreeDTOs.get(0).getChildren().add(0, usualFunction);
-//            }
-//
-//        }
 
         return ResponseEntity.ok().body(menuTreeDTOs);
     }

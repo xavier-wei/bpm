@@ -2,7 +2,7 @@
   <div>
     <ul>
       <li>
-        <router-link to="/">L410-共用系統使用者帳號申請單</router-link>
+        <router-link to="/l410Apply">L410-共用系統使用者帳號申請單</router-link>
       </li>
       <li>
         <router-link to="/l414Apply">L414-網路服務連結申請單</router-link>
@@ -10,23 +10,8 @@
       <li>
         <router-link to="/pending">待處理表單</router-link>
       </li>
-      <!-- <li>
-        <router-link to="/notify">通知</router-link>
-      </li> -->
       <li>
-        <router-link to="/">表單查詢</router-link>
-      </li>
-      <!-- <li>
-        <router-link to="/deal2">處理中</router-link>
-      </li>
-      <li>
-        <router-link to="/deal3">處理過</router-link>
-      </li> -->
-      <li>
-        <router-link to="/l414Apply">l414新增</router-link>
-      </li>
-      <li>
-        <router-link to="/l410Apply">l410新增</router-link>
+        <router-link to="/notify">表單查詢</router-link>
       </li>
     </ul>
   </div>

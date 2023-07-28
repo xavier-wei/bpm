@@ -71,7 +71,7 @@
           @changePagination="handlePaginationChanged($event)"
         >
           <template #cell(action)="row">
-            <b-button class="ml-2" style="background-color: #17a2b8" @click="toEdit(row.item)">處理</b-button>
+            <b-button class="ml-2" style="background-color: #17a2b8" @click="toEdit(row)">處理</b-button>
           </template>
         </i-table>
       </div>
@@ -88,6 +88,7 @@ import IFormGroupCheck from '../shared/form/i-form-group-check.vue';
 import { useValidation, validateState } from '../shared/form';
 import { useBvModal } from '../shared/modal';
 import { required } from '../shared/validators';
+import {Pagination} from "@/shared/model/pagination.model";
 
 export default defineComponent({
   name: 'pending',
@@ -140,29 +141,15 @@ export default defineComponent({
           tdClass: 'text-center align-middle',
         },
         {
+          key: 'receiveData',
+          label: '收件日期',
+          sortable: false,
+          thClass: 'text-center',
+          tdClass: 'text-center align-middle',
+        },
+        {
           key: 'index',
           label: '申請者/填表人',
-          sortable: false,
-          thClass: 'text-center',
-          tdClass: 'text-center align-middle',
-        },
-        {
-          key: 'hostname',
-          label: '申請日期',
-          sortable: false,
-          thClass: 'text-center',
-          tdClass: 'text-center align-middle',
-        },
-        {
-          key: 'port',
-          label: '目前處理單位',
-          sortable: false,
-          thClass: 'text-center',
-          tdClass: 'text-center align-middle',
-        },
-        {
-          key: 'active2',
-          label: '處理狀況',
           sortable: false,
           thClass: 'text-center',
           tdClass: 'text-center align-middle',
@@ -183,48 +170,33 @@ export default defineComponent({
     const mockdata = [
       {
         action: '4,02.03.04',
-        index: '其他材料檢驗審查紀錄缺失',
-        id: '14',
-        hostname: '77.78%',
-        port: '0',
-        active2: '0',
-        active3: '14',
+        receiveData: '112/05/25 11:43:13',
+        index: '林一郎/楊助理',
+        active3: 'L410-共用系統使用者帳號申請單(L410-11205-0002,112/05/23 10:23:43)',
       },
       {
         action: '4,02.03.04',
-        index: '其他材料檢驗審查紀錄缺失',
-        id: '14',
-        hostname: '77.78%',
-        port: '0',
-        active2: '0',
-        active3: '14',
+        receiveData: '112/05/25 11:43:13',
+        index: '林一郎/楊助理',
+        active3: 'L410-共用系統使用者帳號申請單(L410-11205-0002,112/05/23 10:23:43)',
       },
       {
         action: '4,02.03.04',
-        index: '其他材料檢驗審查紀錄缺失',
-        id: '14',
-        hostname: '77.78%',
-        port: '0',
-        active2: '0',
-        active3: '14',
+        receiveData: '112/05/25 11:43:13',
+        index: '林一郎/楊助理',
+        active3: 'L410-共用系統使用者帳號申請單(L410-11205-0002,112/05/23 10:23:43)',
       },
       {
         action: '4,02.03.04',
-        index: '其他材料檢驗審查紀錄缺失',
-        id: '14',
-        hostname: '77.78%',
-        port: '0',
-        active2: '0',
-        active3: '14',
+        receiveData: '112/05/25 11:43:13',
+        index: '林一郎/楊助理',
+        active3: 'L414-網路服務連結申請單(L414-11205-0002,112/05/25 09:36:32)',
       },
       {
         action: '4,02.03.04',
-        index: '其他材料檢驗審查紀錄缺失',
-        id: '14',
-        hostname: '77.78%',
-        port: '0',
-        active2: '0',
-        active3: '14',
+        receiveData: '112/05/25 11:43:13',
+        index: '林一郎/楊助理',
+        active3: 'L414-網路服務連結申請單(L414-11205-0002,112/05/25 09:36:32)',
       },
     ];
 
@@ -269,6 +241,14 @@ export default defineComponent({
       table.data.splice(0, table.data.length, ...mockdata);
     };
 
+    const handlePaginationChanged = (pagination: Pagination) => {
+      //todo:未做方法先放著
+    };
+
+    function toEdit(i) {
+      //todo:未做方法先放著
+    }
+
     return {
       $v,
       form,
@@ -283,6 +263,8 @@ export default defineComponent({
       iTable,
       notBeforePublicDateStart,
       notAfterPublicDateEnd,
+      handlePaginationChanged,
+      toEdit,
     };
   },
 });

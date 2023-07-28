@@ -17,16 +17,6 @@
         </li>
       </ol>
     </nav>
-<!--    <p>-->
-<!--      安安-->
-<!--    </p>-->
-<!--    <b-form-row>-->
-<!--      <b-col cols="4" offset="6">-->
-<!--        <b-button style="background-color: #17a2b8; color: white" size="sm" variant="outline-secondary"-->
-<!--                  @click="testBu()">測試-->
-<!--        </b-button>-->
-<!--      </b-col>-->
-<!--    </b-form-row>-->
   </div>
 </template>
 
@@ -60,7 +50,6 @@ export default {
 
     watch(menu.data, value => {
       expandedMenus.push(...flattenAndTransformMenus(value));
-      console.log('expandedMenus',expandedMenus)
     });
 
     const { route } = useRouter();
@@ -72,7 +61,7 @@ export default {
         parentId: null,
         label: '行政支援系統',
         path: '/',
-        icon: 'search',
+        icon: 'home',
       });
       if (id) {
         addBreadcrumb(id, breadcrumbs);
@@ -90,12 +79,7 @@ export default {
       }
     }
 
-    function testBu() {
-      menuService.retrieveAppMenu();
-    }
-
     return {
-      testBu,
       breadcrumbs,
     }
   }

@@ -103,9 +103,7 @@ public class BpmFunctionService {
     public List<MenuTreeDTO> makeAdmFunctionMenu() {
 
         final List<BpmFunction> sourceFunction = bpmFunctionRepository.findByStatus(MENU_STATUS);
-        log.info("BpmFunctionService.java - makeAdmFunctionMenu - 107 :: " + sourceFunction);
         List<MenuTreeDTO> menuTreeDTOs = sourceFunction.stream().sorted(Comparator.comparing(BpmFunction::getSortNo)).map(funMap -> {
-            log.info("BpmFunctionService.java - makeAdmFunctionMenu - 109 :: " + funMap);
             final MenuTreeDTO menuTreeDTO = new MenuTreeDTO();
             try {
                 BeanUtils.copyProperties(menuTreeDTO, funMap);
@@ -119,7 +117,6 @@ public class BpmFunctionService {
     }
 
     public List<MenuTreeDTO> makeMenuTree(List<MenuTreeDTO> menuTreeDTOs, String functionId) {
-        log.info("BpmFunctionService.java - makeMenuTree - 123 :: " + menuTreeDTOs );
         final List<MenuTreeDTO> children = menuTreeDTOs.stream()
             .filter(treeItem -> StringUtils.equals(treeItem.getMasterFunctionId(), functionId))
             .collect(Collectors.toList());
