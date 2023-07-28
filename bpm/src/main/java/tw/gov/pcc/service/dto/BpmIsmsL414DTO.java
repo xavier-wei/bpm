@@ -1,179 +1,141 @@
-package tw.gov.pcc.domain;
+package tw.gov.pcc.service.dto;
 
+import tw.gov.pcc.domain.BpmIsmsL414;
+
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 import java.io.Serializable;
 import java.time.Instant;
-import javax.persistence.*;
-import javax.validation.constraints.*;
+import java.util.Objects;
 
 /**
- * A EipBpmIsmsL414.
+ * A DTO for the {@link BpmIsmsL414} entity.
  */
-@Entity
-@Table(name = "EIP_BPM_ISMS_L414")
-public class EipBpmIsmsL414 implements Serializable {
-
-    private static final long serialVersionUID = 1L;
+public class BpmIsmsL414DTO implements Serializable {
 
     @Size(max = 50)
-    @Id
-    @Column(name = "form_id", length = 50, nullable = false)
     private String formId;
 
     @Size(max = 50)
-    @Column(name = "process_instance_id", length = 50, nullable = false)
     private String processInstanceId;
 
     @NotNull
-    @Column(name = "apply_date", nullable = false)
     private Instant applyDate;
 
     @NotNull
     @Size(max = 20)
-    @Column(name = "fil_empid", length = 20, nullable = false)
     private String filEmpid;
 
     @NotNull
     @Size(max = 20)
-    @Column(name = "fil_name", length = 20, nullable = false)
     private String filName;
 
     @NotNull
     @Size(max = 100)
-    @Column(name = "fil_unit", length = 100, nullable = false)
     private String filUnit;
 
     @NotNull
     @Size(max = 20)
-    @Column(name = "app_empid", length = 20, nullable = false)
     private String appEmpid;
 
     @NotNull
     @Size(max = 20)
-    @Column(name = "app_name", length = 20, nullable = false)
     private String appName;
 
     @NotNull
     @Size(max = 100)
-    @Column(name = "app_unit", length = 100, nullable = false)
     private String appUnit;
 
     @NotNull
     @Size(max = 1)
-    @Column(name = "is_submit", length = 1, nullable = false)
     private String isSubmit;
 
     @NotNull
     @Size(max = 1)
-    @Column(name = "is_enable", length = 1, nullable = false)
     private String isEnable;
 
     @NotNull
     @Size(max = 1)
-    @Column(name = "enable_time", length = 1, nullable = false)
     private String enableTime;
 
     @Size(max = 100)
-    @Column(name = "other_enable_time", length = 100)
     private String otherEnableTime;
 
     @NotNull
     @Size(max = 1)
-    @Column(name = "selecte_edate_type", length = 1, nullable = false)
     private String selecteEdateType;
 
-    @Column(name = "sdate")
     private Instant sdate;
 
-    @Column(name = "edate")
     private Instant edate;
 
     @Size(max = 100)
-    @Column(name = "othere_edate", length = 100)
     private String othereEdate;
 
-    @Column(name = "del_enable_date")
     private Instant delEnableDate;
 
     @Size(max = 100)
-    @Column(name = "source_ip", length = 100)
     private String sourceIp;
 
     @Size(max = 100)
-    @Column(name = "target_ip", length = 100)
     private String targetIp;
 
     @Size(max = 50)
-    @Column(name = "port", length = 50)
     private String port;
 
     @Size(max = 1)
-    @Column(name = "is_tcp", length = 1)
     private String isTcp;
 
     @Size(max = 1)
-    @Column(name = "is_udp", length = 1)
     private String isUdp;
 
     @Size(max = 1000)
-    @Column(name = "instructions", length = 1000)
     private String instructions;
 
     @Size(max = 1)
-    @Column(name = "agree_type", length = 1)
     private String agreeType;
 
-    @Column(name = "schedule_date")
     private Instant scheduleDate;
 
     @Size(max = 200)
-    @Column(name = "setting_reason", length = 200)
     private String settingReason;
 
     @Size(max = 1)
-    @Column(name = "is_external_firewall", length = 1)
     private String isExternalFirewall;
 
     @Size(max = 1)
-    @Column(name = "is_internal_firewall", length = 1)
     private String isInternalFirewall;
 
     @Size(max = 1000)
-    @Column(name = "firewall_content", length = 1000)
     private String firewallContent;
 
-    @Column(name = "finish_datetime")
     private Instant finishDatetime;
 
-    @NotNull
     @Size(max = 1)
-    @Column(name = "process_instance_status", length = 1, nullable = false)
     private String processInstanceStatus;
 
     @Size(max = 20)
-    @Column(name = "update_user", length = 20)
     private String updateUser;
 
-    @Column(name = "update_time")
     private Instant updateTime;
 
-    @NotNull
     @Size(max = 20)
-    @Column(name = "create_user", length = 20, nullable = false)
     private String createUser;
 
-    @NotNull
-    @Column(name = "create_time", nullable = false)
     private Instant createTime;
 
-    // jhipster-needle-entity-add-field - JHipster will add fields here
-
-    public String getFormId() {
-        return this.formId;
+    public String getFormName() {
+        return formName;
     }
 
-    public EipBpmIsmsL414 formId(String formId) {
-        this.setFormId(formId);
-        return this;
+    public void setFormName(String formName) {
+        this.formName = formName;
+    }
+
+    private String formName;
+
+    public String getFormId() {
+        return formId;
     }
 
     public void setFormId(String formId) {
@@ -181,12 +143,7 @@ public class EipBpmIsmsL414 implements Serializable {
     }
 
     public String getProcessInstanceId() {
-        return this.processInstanceId;
-    }
-
-    public EipBpmIsmsL414 processInstanceId(String processInstanceId) {
-        this.setProcessInstanceId(processInstanceId);
-        return this;
+        return processInstanceId;
     }
 
     public void setProcessInstanceId(String processInstanceId) {
@@ -194,12 +151,7 @@ public class EipBpmIsmsL414 implements Serializable {
     }
 
     public Instant getApplyDate() {
-        return this.applyDate;
-    }
-
-    public EipBpmIsmsL414 applyDate(Instant applyDate) {
-        this.setApplyDate(applyDate);
-        return this;
+        return applyDate;
     }
 
     public void setApplyDate(Instant applyDate) {
@@ -207,12 +159,7 @@ public class EipBpmIsmsL414 implements Serializable {
     }
 
     public String getFilEmpid() {
-        return this.filEmpid;
-    }
-
-    public EipBpmIsmsL414 filEmpid(String filEmpid) {
-        this.setFilEmpid(filEmpid);
-        return this;
+        return filEmpid;
     }
 
     public void setFilEmpid(String filEmpid) {
@@ -220,12 +167,7 @@ public class EipBpmIsmsL414 implements Serializable {
     }
 
     public String getFilName() {
-        return this.filName;
-    }
-
-    public EipBpmIsmsL414 filName(String filName) {
-        this.setFilName(filName);
-        return this;
+        return filName;
     }
 
     public void setFilName(String filName) {
@@ -233,12 +175,7 @@ public class EipBpmIsmsL414 implements Serializable {
     }
 
     public String getFilUnit() {
-        return this.filUnit;
-    }
-
-    public EipBpmIsmsL414 filUnit(String filUnit) {
-        this.setFilUnit(filUnit);
-        return this;
+        return filUnit;
     }
 
     public void setFilUnit(String filUnit) {
@@ -246,12 +183,7 @@ public class EipBpmIsmsL414 implements Serializable {
     }
 
     public String getAppEmpid() {
-        return this.appEmpid;
-    }
-
-    public EipBpmIsmsL414 appEmpid(String appEmpid) {
-        this.setAppEmpid(appEmpid);
-        return this;
+        return appEmpid;
     }
 
     public void setAppEmpid(String appEmpid) {
@@ -259,12 +191,7 @@ public class EipBpmIsmsL414 implements Serializable {
     }
 
     public String getAppName() {
-        return this.appName;
-    }
-
-    public EipBpmIsmsL414 appName(String appName) {
-        this.setAppName(appName);
-        return this;
+        return appName;
     }
 
     public void setAppName(String appName) {
@@ -272,12 +199,7 @@ public class EipBpmIsmsL414 implements Serializable {
     }
 
     public String getAppUnit() {
-        return this.appUnit;
-    }
-
-    public EipBpmIsmsL414 appUnit(String appUnit) {
-        this.setAppUnit(appUnit);
-        return this;
+        return appUnit;
     }
 
     public void setAppUnit(String appUnit) {
@@ -285,12 +207,7 @@ public class EipBpmIsmsL414 implements Serializable {
     }
 
     public String getIsSubmit() {
-        return this.isSubmit;
-    }
-
-    public EipBpmIsmsL414 isSubmit(String isSubmit) {
-        this.setIsSubmit(isSubmit);
-        return this;
+        return isSubmit;
     }
 
     public void setIsSubmit(String isSubmit) {
@@ -298,12 +215,7 @@ public class EipBpmIsmsL414 implements Serializable {
     }
 
     public String getIsEnable() {
-        return this.isEnable;
-    }
-
-    public EipBpmIsmsL414 isEnable(String isEnable) {
-        this.setIsEnable(isEnable);
-        return this;
+        return isEnable;
     }
 
     public void setIsEnable(String isEnable) {
@@ -311,12 +223,7 @@ public class EipBpmIsmsL414 implements Serializable {
     }
 
     public String getEnableTime() {
-        return this.enableTime;
-    }
-
-    public EipBpmIsmsL414 enableTime(String enableTime) {
-        this.setEnableTime(enableTime);
-        return this;
+        return enableTime;
     }
 
     public void setEnableTime(String enableTime) {
@@ -324,12 +231,7 @@ public class EipBpmIsmsL414 implements Serializable {
     }
 
     public String getOtherEnableTime() {
-        return this.otherEnableTime;
-    }
-
-    public EipBpmIsmsL414 otherEnableTime(String otherEnableTime) {
-        this.setOtherEnableTime(otherEnableTime);
-        return this;
+        return otherEnableTime;
     }
 
     public void setOtherEnableTime(String otherEnableTime) {
@@ -337,12 +239,7 @@ public class EipBpmIsmsL414 implements Serializable {
     }
 
     public String getSelecteEdateType() {
-        return this.selecteEdateType;
-    }
-
-    public EipBpmIsmsL414 selecteEdateType(String selecteEdateType) {
-        this.setSelecteEdateType(selecteEdateType);
-        return this;
+        return selecteEdateType;
     }
 
     public void setSelecteEdateType(String selecteEdateType) {
@@ -350,12 +247,7 @@ public class EipBpmIsmsL414 implements Serializable {
     }
 
     public Instant getSdate() {
-        return this.sdate;
-    }
-
-    public EipBpmIsmsL414 sdate(Instant sdate) {
-        this.setSdate(sdate);
-        return this;
+        return sdate;
     }
 
     public void setSdate(Instant sdate) {
@@ -363,12 +255,7 @@ public class EipBpmIsmsL414 implements Serializable {
     }
 
     public Instant getEdate() {
-        return this.edate;
-    }
-
-    public EipBpmIsmsL414 edate(Instant edate) {
-        this.setEdate(edate);
-        return this;
+        return edate;
     }
 
     public void setEdate(Instant edate) {
@@ -376,12 +263,7 @@ public class EipBpmIsmsL414 implements Serializable {
     }
 
     public String getOthereEdate() {
-        return this.othereEdate;
-    }
-
-    public EipBpmIsmsL414 othereEdate(String othereEdate) {
-        this.setOthereEdate(othereEdate);
-        return this;
+        return othereEdate;
     }
 
     public void setOthereEdate(String othereEdate) {
@@ -389,12 +271,7 @@ public class EipBpmIsmsL414 implements Serializable {
     }
 
     public Instant getDelEnableDate() {
-        return this.delEnableDate;
-    }
-
-    public EipBpmIsmsL414 delEnableDate(Instant delEnableDate) {
-        this.setDelEnableDate(delEnableDate);
-        return this;
+        return delEnableDate;
     }
 
     public void setDelEnableDate(Instant delEnableDate) {
@@ -402,12 +279,7 @@ public class EipBpmIsmsL414 implements Serializable {
     }
 
     public String getSourceIp() {
-        return this.sourceIp;
-    }
-
-    public EipBpmIsmsL414 sourceIp(String sourceIp) {
-        this.setSourceIp(sourceIp);
-        return this;
+        return sourceIp;
     }
 
     public void setSourceIp(String sourceIp) {
@@ -415,12 +287,7 @@ public class EipBpmIsmsL414 implements Serializable {
     }
 
     public String getTargetIp() {
-        return this.targetIp;
-    }
-
-    public EipBpmIsmsL414 targetIp(String targetIp) {
-        this.setTargetIp(targetIp);
-        return this;
+        return targetIp;
     }
 
     public void setTargetIp(String targetIp) {
@@ -428,12 +295,7 @@ public class EipBpmIsmsL414 implements Serializable {
     }
 
     public String getPort() {
-        return this.port;
-    }
-
-    public EipBpmIsmsL414 port(String port) {
-        this.setPort(port);
-        return this;
+        return port;
     }
 
     public void setPort(String port) {
@@ -441,12 +303,7 @@ public class EipBpmIsmsL414 implements Serializable {
     }
 
     public String getIsTcp() {
-        return this.isTcp;
-    }
-
-    public EipBpmIsmsL414 isTcp(String isTcp) {
-        this.setIsTcp(isTcp);
-        return this;
+        return isTcp;
     }
 
     public void setIsTcp(String isTcp) {
@@ -454,12 +311,7 @@ public class EipBpmIsmsL414 implements Serializable {
     }
 
     public String getIsUdp() {
-        return this.isUdp;
-    }
-
-    public EipBpmIsmsL414 isUdp(String isUdp) {
-        this.setIsUdp(isUdp);
-        return this;
+        return isUdp;
     }
 
     public void setIsUdp(String isUdp) {
@@ -467,12 +319,7 @@ public class EipBpmIsmsL414 implements Serializable {
     }
 
     public String getInstructions() {
-        return this.instructions;
-    }
-
-    public EipBpmIsmsL414 instructions(String instructions) {
-        this.setInstructions(instructions);
-        return this;
+        return instructions;
     }
 
     public void setInstructions(String instructions) {
@@ -480,12 +327,7 @@ public class EipBpmIsmsL414 implements Serializable {
     }
 
     public String getAgreeType() {
-        return this.agreeType;
-    }
-
-    public EipBpmIsmsL414 agreeType(String agreeType) {
-        this.setAgreeType(agreeType);
-        return this;
+        return agreeType;
     }
 
     public void setAgreeType(String agreeType) {
@@ -493,12 +335,7 @@ public class EipBpmIsmsL414 implements Serializable {
     }
 
     public Instant getScheduleDate() {
-        return this.scheduleDate;
-    }
-
-    public EipBpmIsmsL414 scheduleDate(Instant scheduleDate) {
-        this.setScheduleDate(scheduleDate);
-        return this;
+        return scheduleDate;
     }
 
     public void setScheduleDate(Instant scheduleDate) {
@@ -506,12 +343,7 @@ public class EipBpmIsmsL414 implements Serializable {
     }
 
     public String getSettingReason() {
-        return this.settingReason;
-    }
-
-    public EipBpmIsmsL414 settingReason(String settingReason) {
-        this.setSettingReason(settingReason);
-        return this;
+        return settingReason;
     }
 
     public void setSettingReason(String settingReason) {
@@ -519,12 +351,7 @@ public class EipBpmIsmsL414 implements Serializable {
     }
 
     public String getIsExternalFirewall() {
-        return this.isExternalFirewall;
-    }
-
-    public EipBpmIsmsL414 isExternalFirewall(String isExternalFirewall) {
-        this.setIsExternalFirewall(isExternalFirewall);
-        return this;
+        return isExternalFirewall;
     }
 
     public void setIsExternalFirewall(String isExternalFirewall) {
@@ -532,12 +359,7 @@ public class EipBpmIsmsL414 implements Serializable {
     }
 
     public String getIsInternalFirewall() {
-        return this.isInternalFirewall;
-    }
-
-    public EipBpmIsmsL414 isInternalFirewall(String isInternalFirewall) {
-        this.setIsInternalFirewall(isInternalFirewall);
-        return this;
+        return isInternalFirewall;
     }
 
     public void setIsInternalFirewall(String isInternalFirewall) {
@@ -545,12 +367,7 @@ public class EipBpmIsmsL414 implements Serializable {
     }
 
     public String getFirewallContent() {
-        return this.firewallContent;
-    }
-
-    public EipBpmIsmsL414 firewallContent(String firewallContent) {
-        this.setFirewallContent(firewallContent);
-        return this;
+        return firewallContent;
     }
 
     public void setFirewallContent(String firewallContent) {
@@ -558,12 +375,7 @@ public class EipBpmIsmsL414 implements Serializable {
     }
 
     public Instant getFinishDatetime() {
-        return this.finishDatetime;
-    }
-
-    public EipBpmIsmsL414 finishDatetime(Instant finishDatetime) {
-        this.setFinishDatetime(finishDatetime);
-        return this;
+        return finishDatetime;
     }
 
     public void setFinishDatetime(Instant finishDatetime) {
@@ -571,12 +383,7 @@ public class EipBpmIsmsL414 implements Serializable {
     }
 
     public String getProcessInstanceStatus() {
-        return this.processInstanceStatus;
-    }
-
-    public EipBpmIsmsL414 processInstanceStatus(String processInstanceStatus) {
-        this.setProcessInstanceStatus(processInstanceStatus);
-        return this;
+        return processInstanceStatus;
     }
 
     public void setProcessInstanceStatus(String processInstanceStatus) {
@@ -584,12 +391,7 @@ public class EipBpmIsmsL414 implements Serializable {
     }
 
     public String getUpdateUser() {
-        return this.updateUser;
-    }
-
-    public EipBpmIsmsL414 updateUser(String updateUser) {
-        this.setUpdateUser(updateUser);
-        return this;
+        return updateUser;
     }
 
     public void setUpdateUser(String updateUser) {
@@ -597,12 +399,7 @@ public class EipBpmIsmsL414 implements Serializable {
     }
 
     public Instant getUpdateTime() {
-        return this.updateTime;
-    }
-
-    public EipBpmIsmsL414 updateTime(Instant updateTime) {
-        this.setUpdateTime(updateTime);
-        return this;
+        return updateTime;
     }
 
     public void setUpdateTime(Instant updateTime) {
@@ -610,12 +407,7 @@ public class EipBpmIsmsL414 implements Serializable {
     }
 
     public String getCreateUser() {
-        return this.createUser;
-    }
-
-    public EipBpmIsmsL414 createUser(String createUser) {
-        this.setCreateUser(createUser);
-        return this;
+        return createUser;
     }
 
     public void setCreateUser(String createUser) {
@@ -623,42 +415,39 @@ public class EipBpmIsmsL414 implements Serializable {
     }
 
     public Instant getCreateTime() {
-        return this.createTime;
-    }
-
-    public EipBpmIsmsL414 createTime(Instant createTime) {
-        this.setCreateTime(createTime);
-        return this;
+        return createTime;
     }
 
     public void setCreateTime(Instant createTime) {
         this.createTime = createTime;
     }
 
-    // jhipster-needle-entity-add-getters-setters - JHipster will add getters and setters here
-
     @Override
     public boolean equals(Object o) {
         if (this == o) {
             return true;
         }
-        if (!(o instanceof EipBpmIsmsL414)) {
+        if (!(o instanceof BpmIsmsL414DTO)) {
             return false;
         }
-        return formId != null && formId.equals(((EipBpmIsmsL414) o).formId);
+
+        BpmIsmsL414DTO bpmIsmsL414DTO = (BpmIsmsL414DTO) o;
+        if (this.formId == null) {
+            return false;
+        }
+        return Objects.equals(this.formId, bpmIsmsL414DTO.formId);
     }
 
     @Override
     public int hashCode() {
-        // see https://vladmihalcea.com/how-to-implement-equals-and-hashcode-using-the-jpa-entity-identifier/
-        return getClass().hashCode();
+        return Objects.hash(this.formId);
     }
 
     // prettier-ignore
     @Override
     public String toString() {
-        return "EipBpmIsmsL414{" +
-            "formId=" + getFormId() +
+        return "EipBpmIsmsL414DTO{" +
+            "formId='" + getFormId() + "'" +
             ", processInstanceId='" + getProcessInstanceId() + "'" +
             ", applyDate='" + getApplyDate() + "'" +
             ", filEmpid='" + getFilEmpid() + "'" +

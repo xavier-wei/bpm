@@ -3,7 +3,7 @@
   "changelogDate": "20230719094902",
   "dto": "mapstruct",
   "embedded": false,
-  "entityTableName": "eip_bpm_isms_l414",
+  "entityTableName": "bpm_isms_l414",
   "fields": [
     {
       "fieldName": "formId",
@@ -213,7 +213,7 @@
   ],
   "fluentMethods": true,
   "jpaMetamodelFiltering": false,
-  "name": "EipBpmIsmsL414",
+  "name": "BpmIsmsL414",
   "pagination": "no",
   "readOnly": false,
   "relationships": [],

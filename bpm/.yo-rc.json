@@ -19,7 +19,7 @@
     "enableHibernateCache": false,
     "enableSwaggerCodegen": false,
     "enableTranslation": true,
-    "entities": ["EipBpmIsmsL414", "BpmFunction"],
+    "entities": ["BpmIsmsL414", "BpmFunction"],
     "entitySuffix": "",
     "jhiPrefix": "jhi",
     "jhipsterVersion": "7.9.3",
