@@ -77,19 +77,19 @@ public class LoginService {
             userId = StringUtils.EMPTY;
         }
         if (StringUtils.isBlank(userId)) return false;
-        KeycloakUser keyCloakUser = portalDao.selectCasUser(userId);
-        if (keyCloakUser == null) return false;
-        userName = StringUtils.defaultString(keyCloakUser.getUserName()); // 使用者名稱
-        deptId = StringUtils.defaultString(keyCloakUser.getDeptId()); // 部門代碼
-        empId = StringUtils.defaultString(keyCloakUser.getEmpId()); // 員工編號
+        User user = portalDao.selectUser(userId);
+        if (user == null) return false;
+        userName = StringUtils.defaultString(user.getUserName()); // 使用者名稱
+        deptId = StringUtils.defaultString(user.getDeptId()); // 部門代碼
+        empId = StringUtils.defaultString(user.getEmpId()); // 員工編號
         loginIP = StringUtils.defaultString(HttpUtil.getClientIP(request)); // 使用者 IP
         token = userId + DateUtil.getNowWestDateTime(true); // 檢查資訊 Token
-        tel1 = StringUtils.defaultString(keyCloakUser.getTel1());
-        tel2 = StringUtils.defaultString(keyCloakUser.getTel2());
-        email = StringUtils.defaultString(keyCloakUser.getEmail());
-        titleId = StringUtils.defaultString(keyCloakUser.getTitleId());
-        lineToken = StringUtils.defaultString(keyCloakUser.getLineToken());
-        orgId = StringUtils.defaultString(keyCloakUser.getOrgId());
+        tel1 = StringUtils.defaultString(user.getTel1());
+        tel2 = StringUtils.defaultString(user.getTel2());
+        email = StringUtils.defaultString(user.getEmail());
+        titleId = StringUtils.defaultString(user.getTitleId());
+        lineToken = StringUtils.defaultString(user.getLineToken());
+        orgId = StringUtils.defaultString(user.getOrgId());
 
         // 沒有 使用者代碼 及 檢查資訊 Token 一切免談
         if (StringUtils.isBlank(userId) || StringUtils.isBlank(token)) return false;
@@ -99,7 +99,7 @@ public class LoginService {
         // 取得 登入日期 及 登入時間
         String loginDateTime = DateUtil.getNowChineseDateTime(false);
         // 取得使用者功能選單資料
-        List<HashMap<String, String>> menuMapList = portalDao.selectCasUserMenu(EnvFacadeHelper.getSystemId(), userId, deptId);
+        List<HashMap<String, String>> menuMapList = portalDao.selectUserMenu(EnvFacadeHelper.getSystemId(), userId, deptId);
         Optional.ofNullable(user_rolesDao.selectByKey(userId, EnvFacadeHelper.getSystemId(), User_rolesDao.SYSTEM_ADMIN_DEPT_ID, User_rolesDao.SYSTEM_ADMIN_ROLE_ID))
                 .ifPresent(x -> {
                     log.info("系統管理者登入：{}", userId);
@@ -141,7 +141,7 @@ public class LoginService {
         }
 
         // 取得使用者可執行之所有系統項目代碼 (ITEMS.ITEM_ID)
-        List<String> itemIdList = portalDao.selectCasUserItemList(EnvFacadeHelper.getSystemId(), userId, deptId);
+        List<String> itemIdList = portalDao.selectUserItemList(EnvFacadeHelper.getSystemId(), userId, deptId);
         frameworkUserInfoBean.setItemIdList(itemIdList);
 
         if (log.isDebugEnabled()) {

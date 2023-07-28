@@ -1,16 +1,25 @@
 package tw.gov.pcc.eip.dao.impl;
 
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.stereotype.Repository;
 import org.springframework.util.CollectionUtils;
+
 import tw.gov.pcc.common.annotation.DaoTable;
 import tw.gov.pcc.common.framework.dao.BaseDao;
+import tw.gov.pcc.eip.common.cases.Eip02w010Case.addressBook;
 import tw.gov.pcc.eip.dao.UsersDao;
+import tw.gov.pcc.eip.domain.Depts;
 import tw.gov.pcc.eip.domain.Users;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * 使用者資料 DaoImpl
@@ -158,5 +167,82 @@ public class UsersDaoImpl extends BaseDao<Users> implements UsersDao {
         List<Users> list = getNamedParameterJdbcTemplate().query(sql, new BeanPropertySqlParameterSource(users), BeanPropertyRowMapper.newInstance(Users.class));
         return list;
     }
+
+    @Override
+    public List<addressBook> getEip02wUsers(String dept_id, String user_name, String user_id, String ename,
+            String email, String titlename) {
+        StringBuilder sql = new StringBuilder();
+        sql.append(" SELECT A.USER_ID, "); // 員工編號
+        sql.append("        A.USER_NAME, "); // 姓名
+        sql.append("        SUBSTRING(A.EMAIL, 1, CHARINDEX('@', A.EMAIL) -1) ENAME, "); // 英文名
+        sql.append("        A.DEPT_ID, "); // 部門代號
+        sql.append("        B.DEPT_NAME, "); // 部門
+        sql.append("        D.CODENAME AS ORGNAME, "); // 機關名稱
+        sql.append("        C.CODENAME AS TITLENAME, "); // 職稱
+        sql.append("        A.EMAIL, "); // 電子郵件信箱
+        sql.append("        A.TEL1, "); // 聯絡電話
+        sql.append("        A.TEL2 "); // 分機
+        sql.append("   FROM USERS A, ");
+        sql.append("        DEPTS B, ");
+        sql.append("        (SELECT CODENO,CODENAME FROM EIPCODE WHERE CODEKIND ='TITLE') C, ");
+        sql.append("        (SELECT CODENO,CODENAME FROM EIPCODE WHERE CODEKIND ='ORG') D ");
+        sql.append("  WHERE A.ACNT_IS_VALID = 'Y' ");
+        sql.append("    AND B.IS_VALID = 'Y' ");
+        sql.append("    AND A.DEPT_ID = B.DEPT_ID ");
+        sql.append("    AND A.TITLE_ID = C.CODENO ");
+        sql.append("    AND A.ORG_ID = D.CODENO ");
+        sql.append("    AND A.DEPT_ID = ISNULL(:dept_id, A.DEPT_ID) ");
+        sql.append("    AND A.TITLE_ID = ISNULL(:titlename, A.TITLE_ID) ");
+        sql.append("    AND A.USER_NAME LIKE '%' + ISNULL(:user_name, A.USER_NAME) + '%' ");
+        sql.append("    AND A.USER_ID = ISNULL(:user_id, A.USER_ID) ");
+        sql.append("    AND A.EMAIL LIKE ISNULL(:ename, A.EMAIL) + '%' ");
+        sql.append("    AND A.EMAIL LIKE '%' + ISNULL(:email, A.EMAIL) + '%' ");
+        Map<String, Object> params = new HashMap<>();
+        params.put("dept_id", dept_id);
+        params.put("user_name", user_name);
+        params.put("user_id", user_id);
+        params.put("ename", ename);
+        params.put("email", email);
+        params.put("titlename", titlename);
+        return getNamedParameterJdbcTemplate().query(sql.toString(), params,
+                BeanPropertyRowMapper.newInstance(addressBook.class));
+    }
+
+    public List<Users> getEip03wUsers(List<String> deptID) {
+        StringBuilder sql = new StringBuilder();
+        sql.append("   SELECT DEPT_ID, ");
+        sql.append("          EMP_ID, ");
+        sql.append("          (SELECT B.DEPT_NAME FROM DEPTS B WHERE B.DEPT_ID = A.DEPT_ID) AS DEPT_NAME, ");
+        sql.append("          USER_NAME ");
+        sql.append("     FROM USERS A ");
+        sql.append("    WHERE DEPT_ID IN (:deptID)   "); // 替換為畫面選擇之RPTDEPT
+        sql.append("      AND ACNT_IS_VALID = 'Y' ");
+        sql.append(" ORDER BY DEPT_ID, EMP_ID ");
+
+        Map<String, Object> params = new HashMap<>();
+        params.put("deptID", deptID);
+
+        return getNamedParameterJdbcTemplate().query(sql.toString(), params,
+                BeanPropertyRowMapper.newInstance(Users.class));
+    }
+
+
+
+    @Override
+    public List<Users> findNameByMultiID(List<String> userIDs) {
+        StringBuilder sql = new StringBuilder();
+        sql.append("   SELECT ");
+        sql.append(ALL_COLUMNS_SQL);
+        sql.append("     FROM USERS t");
+        sql.append("    WHERE EMP_ID in (:userIDs) ");
+        sql.append(" ORDER BY EMP_ID  ");
+
+        Map<String, Object> params = new HashMap<>();
+        params.put("userIDs", userIDs);
+
+        return getNamedParameterJdbcTemplate().query(sql.toString(), params,
+                BeanPropertyRowMapper.newInstance(Users.class));
+    }
+
 
 }

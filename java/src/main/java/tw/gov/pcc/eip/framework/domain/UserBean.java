@@ -5,6 +5,7 @@ import tw.gov.pcc.common.domain.UserInfo;
 import tw.gov.pcc.eip.util.DateUtility;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
 
 @Data
 public class UserBean implements UserInfo, Serializable {
@@ -22,6 +23,8 @@ public class UserBean implements UserInfo, Serializable {
     private String lineToken; //LineToken
     private String email; //EMAIL
     private String orgId; //機關代碼
+    
+    private BigDecimal sysApiErrorTry;
 
     /**
      * 取得登入日期格式化字串

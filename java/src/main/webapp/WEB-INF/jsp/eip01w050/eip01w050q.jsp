@@ -6,17 +6,17 @@
     <jsp:attribute name="contents">
         <tags:fieldset legend="輿情專區">
             <form:form id="eip01w050Form" modelAttribute="${caseKey}">
-                <c:if test="${not empty caseData.qryList }">
-                    <div class="table-responsive mt-4">
-                        <table class="table" id="qryListTable">
-                            <thead>
-                                <tr>
-                                    <th class="text-center">序號</th>
-                                    <th class="text-center">主題</th>
-                                    <th class="text-center">更新日期</th>
-                                    <th class="text-center">操作區</th>
-                                </tr>
-                            </thead>
+                <div class="table-responsive mt-2">
+                    <table class="table" id="qryListTable">
+                        <thead>
+                            <tr>
+                                <th class="text-center">序號</th>
+                                <th class="text-center">主題</th>
+                                <th class="text-center">更新日期</th>
+                                <th class="text-center">操作區</th>
+                            </tr>
+                        </thead>
+                        <c:if test="${not empty caseData.qryList }">
                             <tbody>
                                 <c:forEach items="${caseData.qryList}" var="item" varStatus="status">
                                     <tr data-seq="${status.index + 1 }">
@@ -32,15 +32,15 @@
                                             <form:hidden path="qryList[${status.index}].upddt" />
                                         </td>
                                         <td class="text-center" data-fseq="${item.fseq}">
-                                            <tags:button id="btnDetail">明細<i class="fas fa-list-alt"></i></tags:button>
+                                            <tags:button id="btnDetail">明細</tags:button>
                                             <form:hidden path="qryList[${status.index}].fseq" />
                                         </td>
                                     </tr>
                                 </c:forEach>
                             </tbody>
-                        </table>
-                    </div>
-                </c:if>
+                        </c:if>
+                    </table>
+                </div>
                 <form:hidden path="fseq" />
                 <form:hidden path="seq" />
                 <form:hidden path="subject" />
@@ -60,7 +60,7 @@
 
                     </div>
                     <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">關閉</button>
                     </div>
                 </div>
             </div>
@@ -92,6 +92,8 @@
                                         '附加檔案：<a href="javascript:;" class="alink" id=' +
                                         key + '>' +
                                         data.file[key] + '</a>';
+                                } else if (count == 0) {
+                                    str += '附加檔案：';
                                 } else {
                                     str +=
                                         '<div style="display: flex;">' +

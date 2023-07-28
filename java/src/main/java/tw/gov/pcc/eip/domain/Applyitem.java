@@ -90,4 +90,7 @@ public class Applyitem implements Serializable {
     
     @LogField("UPD_DATETIME")
   	private String upd_datetime;//更新時間
+    
+    private String itemkind_nm;//品名大類中文+英文(eip08w050)
+    private String itemno_nm;//品名：中文+英文(eip08w050)
 }

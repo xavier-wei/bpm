@@ -97,7 +97,7 @@
         let data = {};
         data['item_id'] = item_id;
         $.ajax({
-            url: "Eip00w070_info.action",
+            url: '<c:url value="Eip00w070_info.action"/>',
             type: "POST",
             dataType: "json",
             contentType: "application/json",

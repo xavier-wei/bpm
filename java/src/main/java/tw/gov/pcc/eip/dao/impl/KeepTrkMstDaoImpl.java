@@ -9,9 +9,11 @@ import org.springframework.stereotype.Repository;
 import tw.gov.pcc.common.annotation.DaoTable;
 import tw.gov.pcc.common.framework.dao.BaseDao;
 import tw.gov.pcc.eip.common.cases.Eip03w010Case;
+import tw.gov.pcc.eip.common.cases.Eip03w020Case;
 import tw.gov.pcc.eip.common.cases.Eip03w030Case;
 import tw.gov.pcc.eip.dao.KeepTrkMstDao;
 import tw.gov.pcc.eip.dao.MsgdataDao;
+import tw.gov.pcc.eip.domain.Depts;
 import tw.gov.pcc.eip.domain.KeepTrkMst;
 
 import java.util.HashMap;
@@ -95,7 +97,7 @@ public class KeepTrkMstDaoImpl extends BaseDao<KeepTrkMst> implements KeepTrkMst
             params.put("trkID", trkID);
         }
         if(StringUtils.isNotBlank(trkCont)){  // CONTAINS為必須要用IF-ELSE，有值才能用的語法
-            sql.append("           AND CONTAINS(a.TrkCont, :trkCont)          "); //畫面輸入[內容]
+            sql.append("           AND a. TrkCont like '%' + :trkCont + '%'          "); //畫面輸入[內容]
             params.put("trkCont", trkCont);
         }
         sql.append("               AND a.AllStDt >= dbo.UFN_NVL(:allStDtSt,a.AllStDt)  "); // 畫面輸入[全案列管日期起日] 民國轉西元查詢
@@ -112,7 +114,7 @@ public class KeepTrkMstDaoImpl extends BaseDao<KeepTrkMst> implements KeepTrkMst
                 sql.append("   WHERE subquery.cnt_done > 0  ");
             }
         }
-        sql.append("  ORDER BY subquery.Trkid ");
+        sql.append("  ORDER BY Trkid DESC");
 
         params.put("allStDtSt", allStDtSt);
         params.put("allStDtEnd", allStDtEnd);
@@ -135,27 +137,101 @@ public class KeepTrkMstDaoImpl extends BaseDao<KeepTrkMst> implements KeepTrkMst
         sql.append("      FROM KeepTrkMst a, ");
         sql.append("           KeepTrkDtl b ");
         sql.append("     WHERE a.TrkID = b.TrkID ");
-        if(StringUtils.isNotBlank(trkSts)){
+//        if(StringUtils.isNotBlank(trkSts)){
             sql.append("   AND a.TrkSts = dbo.UFN_NVL(:trkSts, a.TrkSts)  "); //畫面選擇[列管狀態]，全部則為空字串
             params.put("trkSts", trkSts);
-        }
+//        }
         if(StringUtils.isNotBlank(trkID)){
             sql.append("   AND a.TrkID like '%' + :trkID + '%'  ");     // 畫面輸入[列管編號]
             params.put("trkID", trkID);
         }
         if(StringUtils.isNotBlank(trkCont)){  // CONTAINS為必須要用IF-ELSE，有值才能用的語法
-            sql.append("   AND CONTAINS(a.TrkCont, :trkCont)          "); //畫面輸入[內容]
+            sql.append("   AND a. TrkCont like '%' + :trkCont + '%'          "); //畫面輸入[內容]
             params.put("trkCont", trkCont);
         }
         sql.append("       AND a.AllStDt >= dbo.UFN_NVL(:allStDtSt,a.AllStDt)  "); // 畫面輸入[全案列管日期起日] 民國轉西元查詢
         sql.append("       AND a.AllStDt <= dbo.UFN_NVL(:allStDtEnd,a.AllStDt)  "); // 畫面輸入[全案列管日期迄日] 民國轉西元查詢
         sql.append("  GROUP BY a.Trkid, a.TrkCont, a.AllStDt, a.Trksts ");
-        sql.append("  ORDER BY Trkid ");
+        sql.append("  ORDER BY Trkid DESC");
 
         params.put("allStDtSt", allStDtSt);
         params.put("allStDtEnd", allStDtEnd);
 
         return getNamedParameterJdbcTemplate().query(sql.toString(), params, BeanPropertyRowMapper.newInstance(Eip03w010Case.class));
+    }
+
+    @Override
+    public List<Eip03w020Case> selectByColumnsForFillInProgress(String trkID, String trkCont, String allStDtSt,
+                                                                String allStDtEnd, String trkSts, String prcSts, String userDept) {
+
+        //sql_1  查找該部室之主部門資訊
+        StringBuilder sql_1 = new StringBuilder();
+        HashMap<String, Object> params = new HashMap<>();
+
+        sql_1.append(" WITH DeptRoot AS ( ");
+        sql_1.append("                 SELECT * ");
+        sql_1.append("                   FROM DEPTS ");
+        sql_1.append("                  WHERE DEPT_ID = :userDept ");
+        sql_1.append("              UNION ALL ");
+        sql_1.append("                 SELECT A.* ");
+        sql_1.append("                   FROM DEPTS A ");
+        sql_1.append("             INNER JOIN DeptRoot B ON A.DEPT_ID = B.DEPT_ID_P ");
+        sql_1.append("                  ) ");
+        sql_1.append(" SELECT * FROM DeptRoot ");
+        sql_1.append("         WHERE DEPT_ID_P = '9999'; ");
+
+        //測試
+        params.put("userDept", userDept);
+        List<Depts> depts = getNamedParameterJdbcTemplate().query(sql_1.toString(), params, BeanPropertyRowMapper.newInstance(Depts.class));
+        String deptID = depts.size() > 0 ? depts.get(0).getDept_id() : "";
+
+        //sql_2  查詢案件SQL
+        StringBuilder sql_2 = new StringBuilder();
+        sql_2.append(" SELECT * FROM (  ");
+        sql_2.append("        SELECT a.Trkid, ");
+        sql_2.append("               a.TrkCont, ");
+        sql_2.append("               a.AllStDt, ");
+        sql_2.append("               a.Trksts, ");
+        sql_2.append("               COUNT(1) AS cnt_all, ");
+        sql_2.append("               SUM(CASE b.PrcSts WHEN '1' THEN 1 ELSE 0 END) AS cnt_doing, ");
+        sql_2.append("               SUM(CASE b.PrcSts WHEN '2' THEN 1 ELSE 0 END) AS cnt_wait, ");
+        sql_2.append("               SUM(CASE b.PrcSts WHEN '3' THEN 1 ELSE 0 END) AS cnt_done, ");
+        sql_2.append("               CAST(SUM(CASE b.TrkObj WHEN :deptID THEN CAST(b.PrcSts AS INT) ELSE 0 END) AS VARCHAR) AS nowStat ");  //操作者之部室代碼
+        sql_2.append("          FROM KeepTrkMst a, ");
+        sql_2.append("               KeepTrkDtl b ");
+        sql_2.append("         WHERE a.TrkID = b.TrkID ");
+        sql_2.append("           AND a.TrkSts != '0' ");
+        if(StringUtils.isNotBlank(trkSts)){
+            sql_2.append("       AND a.TrkSts = dbo.UFN_NVL(:trkSts, a.TrkSts)  "); //畫面選擇[列管狀態]，全部則為空字串
+            params.put("trkSts", trkSts);
+        }
+        sql_2.append("           AND EXISTS( ");
+        sql_2.append("                    SELECT 1 FROM KeepTrkDtl c ");
+        sql_2.append("                     WHERE c.TrkID = a.TrkID ");
+        sql_2.append("                       AND :deptID IN (a.CreDept, b.TrkObj) ");  //操作者之部室代碼
+        sql_2.append("                     ) ");
+        if(StringUtils.isNotBlank(trkID)){
+            sql_2.append("       AND a.TrkID like '%' + :trkID + '%'  ");     // 畫面輸入[列管編號]
+            params.put("trkID", trkID);
+        }
+        if(StringUtils.isNotBlank(trkCont)){   // CONTAINS為必須要用IF-ELSE，有值才能用的語法
+            sql_2.append("       AND a. TrkCont like '%' + :trkCont + '%'   ");          //畫面輸入[內容]
+            params.put("trkCont", trkCont);
+        }
+        sql_2.append("           AND a.AllStDt >= dbo.UFN_NVL(:allStDtSt,a.AllStDt)  ");  // 畫面輸入[全案列管日期起日] 民國轉西元查詢
+        sql_2.append("           AND a.AllStDt <= dbo.UFN_NVL(:allStDtEnd,a.AllStDt)  ");  // 畫面輸入[全案列管日期迄日] 民國轉西元查詢
+        sql_2.append("      GROUP BY a.Trkid, a.TrkCont, a.AllStDt, a.Trksts ");
+        sql_2.append("               ) d ");
+        sql_2.append("      WHERE d.nowStat = dbo.UFN_NVL(:prcSts, d.nowStat)  "); // 替換為 畫面選擇[處理狀態]，全部則為空字串
+        sql_2.append("   ORDER BY Trkid DESC ");
+
+        params.put("deptID", deptID);
+        params.put("trkSts", trkSts);
+        params.put("allStDtSt", allStDtSt);
+        params.put("allStDtEnd", allStDtEnd);
+        params.put("prcSts", prcSts);
+
+        return getNamedParameterJdbcTemplate().query(sql_2.toString(), params, BeanPropertyRowMapper.newInstance(Eip03w020Case.class));
     }
 
 

@@ -180,7 +180,7 @@ public class Eip03w040l00xls extends XlsReport {
             setCellValue(row, 0, data.getTrkId() != null? data.getTrkId() : "", alignCenter);
             setCellValue(row, 1, data.getTrkFrom() != null? data.getTrkFrom() : "", alignLeft);
             setCellValue(row, 2, data.getTrkCont() != null? data.getTrkCont() : "", alignLeft);
-            setCellValue(row, 3, data.getTrkObj() != null? data.getTrkObj() : "", alignCenter);
+            setCellValue(row, 3, data.getDept_name() != null? data.getDept_name() : "", alignCenter);
             setCellValue(row, 4, data.getPrcSts() != null?  data.getPrcSts() : "", alignCenter);
             setCellValue(row, 5, data.getRptCont() != null? data.getRptCont() : "", alignLeft);
             setCellValue(row, 6, data.getEndDt() != null? DateUtility.changeDateTypeToChineseDate(data.getEndDt()) : "", alignCenter);

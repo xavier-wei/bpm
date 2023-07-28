@@ -1,6 +1,5 @@
 package tw.gov.pcc.common.dao.impl;
 
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.dao.IncorrectResultSizeDataAccessException;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
@@ -8,7 +7,7 @@ import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.stereotype.Repository;
 import tw.gov.pcc.common.annotation.SkipLog;
 import tw.gov.pcc.common.dao.PortalDao;
-import tw.gov.pcc.common.domain.KeycloakUser;
+import tw.gov.pcc.common.domain.User;
 import tw.gov.pcc.common.framework.dao.FrameworkBaseDao;
 import tw.gov.pcc.eip.dao.User_rolesDao;
 
@@ -21,7 +20,7 @@ import java.util.stream.Collectors;
 @Repository
 public class PortalDaoImpl extends FrameworkBaseDao implements PortalDao {
 
-    private static final String SELECT_CAS_USER_ITEMLIST_SQL = "WITH CTE_items AS (" +
+    private static final String SELECT_USER_ITEMLIST_SQL = "WITH CTE_items AS (" +
             "    SELECT i.item_id, i.item_id_p, i.item_name, i.hyperlink url," +
             "        i.DISABLE is_disabled, i.sort_order, i.sub_link" +
             "    FROM items i" +
@@ -40,11 +39,7 @@ public class PortalDaoImpl extends FrameworkBaseDao implements PortalDao {
             "    SELECT i.item_id, i.item_id_p, i.item_name, i.url, i.is_disabled, i.sort_order," +
             "        1 AS LEVEL, CAST(1 AS BIT) AS is_leaf, NULL AS dept_id, i.sub_link AS func_id" +
             "    FROM CTE_items i" +
-            "    WHERE i.item_id = (" +
-            "        SELECT DISTINCT item_id" +
-            "        FROM systems" +
-            "        WHERE sys_id = :systemId" +
-            "    )" +
+            "    WHERE i.item_id_p = 'root'" +
             "    UNION ALL" +
             "    SELECT i.item_id, i.item_id_p, i.item_name, i.url, i.is_disabled, i.sort_order," +
             "        LEVEL + 1 AS LEVEL, CAST(1 AS BIT) AS is_leaf, NULL AS dept_id, i.sub_link AS func_id" +
@@ -61,7 +56,7 @@ public class PortalDaoImpl extends FrameworkBaseDao implements PortalDao {
             + "WHERE  IS_DISABLED IS NULL OR "
             + "       IS_DISABLED <> 'Y' "
             + "ORDER  BY FUNC_ID";
-    private static final String SELECT_CAS_USER_MENU_SQL = "WITH CTE_items AS (" +
+    private static final String SELECT_USER_MENU_SQL = "WITH CTE_items AS (" +
             "    SELECT i.item_id, i.item_id_p, i.item_name, i.hyperlink url," +
             "        i.DISABLE is_disabled, i.sort_order, i.sub_link" +
             "    FROM items i" +
@@ -79,11 +74,7 @@ public class PortalDaoImpl extends FrameworkBaseDao implements PortalDao {
             "    SELECT i.item_id, i.item_id_p, i.item_name, i.url, i.is_disabled, i.sort_order," +
             "        1 AS LEVEL, CAST(1 AS BIT) AS is_leaf, NULL AS dept_id, i.sub_link AS func_id" +
             "    FROM CTE_items i" +
-            "    WHERE i.item_id = (" +
-            "        SELECT DISTINCT item_id" +
-            "        FROM systems" +
-            "        WHERE sys_id = :systemId" +
-            "    )" +
+            "    WHERE i.item_id_p = 'root'" +
             "    UNION ALL" +
             "    SELECT i.item_id, i.item_id_p, i.item_name, i.url, i.is_disabled, i.sort_order," +
             "        LEVEL + 1 AS LEVEL, CAST(1 AS BIT) AS is_leaf, NULL AS dept_id, i.sub_link AS func_id" +
@@ -107,7 +98,7 @@ public class PortalDaoImpl extends FrameworkBaseDao implements PortalDao {
             + "FROM   CTE_items_hierarchy "
             + "WHERE  LEVEL > 1 AND  "
             + "       (IS_DISABLED IS NULL OR IS_DISABLED <> 'Y') ";
-    private static final String SELECT_CAS_USER = "SELECT A.USER_ID as \"userId\", "
+    private static final String SELECT_USER = "SELECT A.USER_ID as \"userId\", "
             + "       A.USER_NAME as \"userName\", "
             + "       A.EMP_ID as \"empId\", "
             + "       A.DEPT_ID as \"deptId\", "
@@ -129,11 +120,11 @@ public class PortalDaoImpl extends FrameworkBaseDao implements PortalDao {
      */
     @SkipLog
     @Override
-    public List<String> selectCasUserItemList(String systemId, String userId, String deptId) {
+    public List<String> selectUserItemList(String systemId, String userId, String deptId) {
         SqlParameterSource namedParameters = new MapSqlParameterSource("systemId", systemId)
                 .addValue("userId", userId)
                 .addValue("deptId", deptId);
-        return getNamedParameterJdbcTemplate().queryForList(SELECT_CAS_USER_ITEMLIST_SQL, namedParameters, String.class);
+        return getNamedParameterJdbcTemplate().queryForList(SELECT_USER_ITEMLIST_SQL, namedParameters, String.class);
     }
 
     /**
@@ -145,13 +136,13 @@ public class PortalDaoImpl extends FrameworkBaseDao implements PortalDao {
      */
     @SkipLog
     @Override
-    public List<HashMap<String, String>> selectCasUserMenu(String systemId, String userId, String deptId) {
+    public List<HashMap<String, String>> selectUserMenu(String systemId, String userId, String deptId) {
 
         SqlParameterSource namedParameters = new MapSqlParameterSource("systemId", systemId)
                 .addValue("userId", userId)
                 .addValue("deptId", deptId);
 
-        List<HashMap<String, String>> result = getNamedParameterJdbcTemplate().query(SELECT_CAS_USER_MENU_SQL, namedParameters, (resultSet, rowNum) -> {
+        List<HashMap<String, String>> result = getNamedParameterJdbcTemplate().query(SELECT_USER_MENU_SQL, namedParameters, (resultSet, rowNum) -> {
             HashMap<String, String> map = new HashMap<>();
             map.put("itemId", resultSet.getString("itemId"));
             map.put("itemIdP", resultSet.getString("itemIdP"));
@@ -205,10 +196,10 @@ public class PortalDaoImpl extends FrameworkBaseDao implements PortalDao {
      */
     @SkipLog
     @Override
-    public KeycloakUser selectCasUser(String userId) {
+    public User selectUser(String userId) {
         try {
             SqlParameterSource namedParameters = new MapSqlParameterSource("userId", userId);
-            return getNamedParameterJdbcTemplate().queryForObject(SELECT_CAS_USER, namedParameters, BeanPropertyRowMapper.newInstance(KeycloakUser.class));
+            return getNamedParameterJdbcTemplate().queryForObject(SELECT_USER, namedParameters, BeanPropertyRowMapper.newInstance(User.class));
         } catch (IncorrectResultSizeDataAccessException e) {
             return null;
         }

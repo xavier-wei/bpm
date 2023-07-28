@@ -47,8 +47,8 @@
                 </tags:form-row>
                 <tags:form-row>
                     <div class="col">
-                        <form:label cssClass="col-form-label " path="allStDt">結案日期：</form:label>
-                        <func:minguo value="${mixData.allStDt}"/>
+                        <form:label cssClass="col-form-label " path="clsDt">結案日期：</form:label>
+                        <func:minguo value="${mixData.clsDt}"/>
                     </div>
                 </tags:form-row>
                 <tags:form-row>
@@ -63,11 +63,11 @@
                 </tags:form-row>
                 <tags:form-row>
                     <div class="col-md-3">
-                        <form:label cssClass="col-form-label " path="updUser">修改人員：</form:label>
+                        <form:label cssClass="col-form-label " path="updUser">更新人員：</form:label>
                         <c:out value="${mixData.updDept }-${mixData.updUser}" />
                     </div>
                     <div class="col-md-3">
-                        <form:label cssClass="col-form-label " path="updDt">修改時間：</form:label>
+                        <form:label cssClass="col-form-label " path="updDt">更新時間：</form:label>
                         <func:minguo value="${mixData.updDt}"/>
                     </div>
                 </tags:form-row>
@@ -77,6 +77,9 @@
 <%--                <form:hidden path="trkID"/>--%>
                 <form:hidden path="trkObjList"/>
                 <%--                <form:hidden path="organizerId" value="${mixData.organizerId }"/>--%>
+                <tags:form-note>
+                    <tags:form-note-item>請點選列管對象解除列管。</tags:form-note-item>
+                </tags:form-note>
             </form:form>
         </tags:fieldset>
 <%--列管對象--%>
@@ -115,8 +118,8 @@
                     <div id="${item.key}" style="display: none;">
                         <tags:form-row>
                             <div class="col">
-                                <form:label cssClass="col-form-label " path="rptDept">列管對象：</form:label>
-                                <c:out value="${item.value['rptDept']}"/>
+                                <form:label cssClass="col-form-label " path="trkObj">列管對象：</form:label>
+                                <c:out value="${item.value['trkObjName']}"/>
                             </div>
                         </tags:form-row>
                         <tags:form-row>
@@ -134,7 +137,7 @@
                         <tags:form-row>
                             <div class="col">
                                 <form:label cssClass="col-form-label " path="rptRate">完成進度：</form:label>
-                                <c:out value="${item.value['rptRate']}"/>
+                                <c:out value="${item.value['rptRate']}"/><span class="pt-2">％</span>
                             </div>
                         </tags:form-row>
                         <tags:form-row>
@@ -146,19 +149,19 @@
                         <tags:form-row>
                             <div class="col">
                                 <form:label cssClass="col-form-label " path="rptDept">指定填報單位：</form:label>
-                                <c:out value="${item.value['rptDept']}"/>
+                                <c:out value="${item.value['rptDeptName']}"/>
                             </div>
                         </tags:form-row>
                         <tags:form-row>
                             <div class="col">
                                 <form:label cssClass="col-form-label " path="rptUser">指定填報人員：</form:label>
-                                <c:out value="${item.value['rptUser']}"/>
+                                <c:out value="${item.value['rptUserName']}"/>
                             </div>
                         </tags:form-row>
                         <tags:form-row>
                             <div class="col">
                                 <form:label cssClass="col-form-label " path="rptUpdUser">更新人員：</form:label>
-                                <c:out value="${item.value['rptUpdDept']}-${item.value['rptUpdUser']}"/>
+                                <c:out value="${item.value['rptUpdUser']}"/>
                             </div>
                         </tags:form-row>
                         <tags:form-row>
@@ -192,6 +195,7 @@
                                         <form:radiobutton path="doubleMap[${item.key}]['supAgree']" label="否" value="N" cssClass="mr-1" />
                                     </div>
                                 </tags:form-row>
+
                             </c:when>
                             <c:otherwise>
                                 <tags:form-row>
@@ -202,7 +206,7 @@
                                 </tags:form-row>
                                 <tags:form-row>
                                     <div class="col-md-6">
-                                        <form:label cssClass="col-form-label star" path="doubleMap[${item.key}]['supAgree']" >是否同意解列：</form:label>
+                                        <form:label cssClass="col-form-label" path="doubleMap[${item.key}]['supAgree']" >是否同意解列：</form:label>
                                         <form:radiobutton path="doubleMap[${item.key}]['supAgree']" label="是" value="Y" cssClass="mr-1" disabled="true"/>
                                         <form:radiobutton path="doubleMap[${item.key}]['supAgree']" label="否" value="N" cssClass="mr-1" disabled="true"/>
                                     </div>
@@ -222,17 +226,14 @@
                                 </div>
                             </tags:form-row>
                     </div>
-
                 </c:forEach>
+                <form:hidden path="trkID"/>
                 <tags:form-note>
                         <tags:form-note-item><span class="red">＊</span>為必填欄位。</tags:form-note-item>
                 </tags:form-note>
-                <form:hidden path="trkID"/>
-
             </form:form>
         </fieldset>
         </jsp:attribute>
-
     <jsp:attribute name="footers">
 <script>
     $(function(){

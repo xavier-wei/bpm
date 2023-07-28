@@ -250,7 +250,32 @@ function getDataTablesConfig(columnDefs, exportOptions) {
         paging: true,
         pagingType: "input",
         ordering:"true",
-        pageLength: 5,
+        pageLength: 20,
+        lengthChange: false,
+        order: [],
+        language: DATATABLES_LANG_CFG,
+    };
+
+    if (columnDefs != null) {
+        config.columnDefs = columnDefs;
+    }
+
+    return config;
+}
+
+function getDataTablesConfig(columnDefs, exportOptions, pageLength) {
+
+    if (exportOptions == null)
+        exportOptions = {};
+
+    var config = {
+        dom: "<'pagination'pli>t",
+        autoWidth: false,
+        searching: false,
+        paging: true,
+        pagingType: "input",
+        ordering:"true",
+        pageLength: pageLength,
         lengthChange: false,
         order: [],
         language: DATATABLES_LANG_CFG,

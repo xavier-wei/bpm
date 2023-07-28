@@ -59,6 +59,7 @@ public class Eip06w010Case implements Serializable {
     private Map<String, String> meetingRoomCombobox;
 
     private boolean isEditable; //是否有編輯權限（管理員或會議預約者）
+    private int orderNum; //是否有訂餐
     private boolean isOrderFood; //是否有訂餐
     private boolean isAdmin; //是否為管理員
 

@@ -13,12 +13,12 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import tw.gov.pcc.eip.adm.cases.Eip00w050Case;
+import tw.gov.pcc.eip.dao.User_rolesDao;
 import tw.gov.pcc.eip.services.ItemService;
 import tw.gov.pcc.eip.adm.view.dynatree.DynaTreeBuilder;
 import tw.gov.pcc.eip.adm.view.dynatree.parser.ItemParser;
 import tw.gov.pcc.eip.dao.ItemsDao;
 import tw.gov.pcc.eip.dao.PortalMenuAclDao;
-import tw.gov.pcc.eip.dao.SystemsDao;
 import tw.gov.pcc.eip.domain.CursorAcl;
 import tw.gov.pcc.eip.domain.Items;
 import tw.gov.pcc.eip.framework.domain.UserBean;
@@ -42,17 +42,14 @@ import java.util.stream.Collectors;
 @Slf4j
 public class Eip00w050Controller extends BaseController {
     public static final String CASE_KEY = "_eip00w050_caseData";
-    private static final String QUERY_PAGE = "/eip00w050/eip00w050q";//選擇頁
     private static final String LIST_PAGE = "/eip00w050/eip00w050x";//編輯頁
 
-    private final SystemsDao systemsDao;
     private final PortalMenuAclDao portalMenuAclDao;
     private final ItemsDao itemsDao;
     private final ItemService itemService;
     private final UserBean userData;
 
-    public Eip00w050Controller(SystemsDao systemsDao, PortalMenuAclDao portalMenuAclDao, ItemsDao itemsDao, ItemService itemService, UserBean userData) {
-        this.systemsDao = systemsDao;
+    public Eip00w050Controller(PortalMenuAclDao portalMenuAclDao, ItemsDao itemsDao, ItemService itemService, UserBean userData) {
         this.portalMenuAclDao = portalMenuAclDao;
         this.itemsDao = itemsDao;
         this.itemService = itemService;
@@ -74,16 +71,27 @@ public class Eip00w050Controller extends BaseController {
     @RequestMapping(value = "/Eip00w050_enter.action")
     public String enter(ModelMap m, @ModelAttribute(CASE_KEY) Eip00w050Case caseData) {
         log.debug("導向 Eip00w050_enter ");
-        m.put("systems", systemsDao.selectOwnSystem(userData.getUserId()));
-        return QUERY_PAGE;
+        try {
+            List<CursorAcl> da = portalMenuAclDao.findAllAcl(User_rolesDao.SYSTEM_ADMIN_SYS_ID);
+            m.put("items", DynaTreeBuilder.build(ItemParser.parser(da)
+                    .stream()
+                    .peek(x -> {
+                        if (StringUtils.isNotBlank(caseData.getItem_id()) && StringUtils.equalsIgnoreCase(caseData.getItem_id(), x.getId())) {
+                            x.setChecked(true);
+                        }
+                    })
+                    .collect(Collectors.toList())));
+        } catch (Exception e) {
+            log.error("功能管理查詢失敗 - {}", ExceptionUtility.getStackTrace(e));
+        }
+        return LIST_PAGE;
     }
 
 
     @RequestMapping(value = "/Eip00w050_list.action")
     public String list(@ModelAttribute(CASE_KEY) Eip00w050Case caseData, ModelMap m) {
         try {
-            List<CursorAcl> da = portalMenuAclDao.findAllAcl(caseData.getSys_id());
-            m.put("sys_id", caseData.getSys_id());
+            List<CursorAcl> da = portalMenuAclDao.findAllAcl(User_rolesDao.SYSTEM_ADMIN_SYS_ID);
             m.put("items", DynaTreeBuilder.build(ItemParser.parser(da)
                     .stream()
                     .peek(x -> {
@@ -122,7 +130,7 @@ public class Eip00w050Controller extends BaseController {
                 return list(eip00w050Case, m);
             }
             LocalDateTime today = LocalDateTime.now();
-            List<CursorAcl> da = portalMenuAclDao.findAllAcl(eip00w050Case.getSys_id());
+            List<CursorAcl> da = portalMenuAclDao.findAllAcl(User_rolesDao.SYSTEM_ADMIN_SYS_ID);
             String newItemId = itemService.getNewItemIdByLevel(da, new BigDecimal((eip00w050Case.getPid()
                     .length() / 2) + 1), eip00w050Case.getPid());
             Items items = new Items();

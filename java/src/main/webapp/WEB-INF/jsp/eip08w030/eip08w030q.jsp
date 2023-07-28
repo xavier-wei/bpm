@@ -17,9 +17,10 @@
     <tags:fieldset>
 		<form:form id="eip08w030Form" name="eip08w030Form" modelAttribute="${caseKey}" method="POST">
             <tags:form-row>
-            	<form:label cssClass="col-form-label star" path="apply_dateStart">申請日期：</form:label>
-                <div class="col-12 col-md d-flex align-center">
-                    <form:input path="apply_dateStart" cssClass="add form-control" />~<form:input path="apply_dateEnd" cssClass="add form-control" />
+            	<form:label cssClass="col-form-label star" path="applydateStart">申請日期：</form:label>
+                <div class="col-12 col-md d-flex align-items-center">
+                    <form:input path="applydateStart" cssClass="add form-control dateTW date" />~
+                    <form:input path="applydateEnd" cssClass="add form-control dateTW date" />
                 </div>
             </tags:form-row>
             <tags:form-note>
@@ -33,15 +34,20 @@
         $(function() {
 
             $('#btnConfirm').click(function() {
-                if($('#apply_dateStart').val()==''){
+                if($('#applydateStart').val()==''){
                 	showAlert('申請日期(起)為必需輸入');
                 	return;
-                }        	
+                }
+                
+                if($('#applydateEnd').val()==''){
+                	$('#applydateEnd').val(changeDateType(getSysdate()));
+                }   	
             	$('#eip08w030Form').attr('action', '<c:url value="/Eip08w030_query.action" />').submit();
             });
             
             $('#btnClear').click(function() {
-                $("#apply_date").val('');
+                $("#applydateStart").val('');
+                $("#applydateEnd").val('');
             });
             
          });

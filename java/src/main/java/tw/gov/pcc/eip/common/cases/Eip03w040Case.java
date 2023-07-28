@@ -24,6 +24,7 @@ public class Eip03w040Case implements Serializable {
     private String cnt_opn; // 未結案數統計
     private String status; // 搜尋案件狀態
     private List<Eip03w040Case> eip03w040CaseList = new ArrayList<>();
+    private String dept_name; // 處室名稱
 
 //    查詢表頁
     private String trkId; //列管編號

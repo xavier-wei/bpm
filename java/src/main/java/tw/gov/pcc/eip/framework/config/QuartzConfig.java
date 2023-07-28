@@ -1,7 +1,6 @@
 package tw.gov.pcc.eip.framework.config;
 
 import java.util.Arrays;
-import java.util.Collections;
 
 import org.quartz.CronTrigger;
 import org.quartz.JobDataMap;
@@ -73,4 +72,18 @@ public class QuartzConfig {
 		schedulerFactory.setOverwriteExistingJobs(false);
 		return schedulerFactory;
 	}
+	
+    /**
+     * 重置Sequence
+     *
+     * @param resetSequenceJobDetail 重置Sequence JOB
+     * @return cronTriggerFactoryBean`
+     */
+    @Bean
+    public CronTriggerFactoryBean resetSequenceTrigger(JobDetail resetSequenceJobDetail) {
+        CronTriggerFactoryBean cronTriggerFactoryBean = new CronTriggerFactoryBean();
+        cronTriggerFactoryBean.setJobDetail(resetSequenceJobDetail);
+        cronTriggerFactoryBean.setCronExpression("0 0 0 ? * *"); // 每日 00:00 時整
+        return cronTriggerFactoryBean;
+    }
 }

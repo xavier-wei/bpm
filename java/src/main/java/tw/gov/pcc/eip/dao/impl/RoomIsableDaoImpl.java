@@ -108,7 +108,7 @@ public class RoomIsableDaoImpl extends BaseDao<RoomIsable> implements RoomIsable
         sql.append(ALL_COLUMNS_SQL);
         sql.append(" FROM "+ TABLE_NAME + " T ");
         sql.append(" WHERE T.ITEMID = :itemId");
-        sql.append(" ORDER BY ISABLEDATE");
+        sql.append(" ORDER BY ISABLEDATE, MEETINGBEGIN");
 
         Map<String, Object> params = new HashMap<>();
         params.put("itemId", itemId);
@@ -127,6 +127,21 @@ public class RoomIsableDaoImpl extends BaseDao<RoomIsable> implements RoomIsable
         params.put("isableTime", isableTime);
 
         return getNamedParameterJdbcTemplate().queryForObject(sql.toString(), params, Integer.class);
+    }
+
+    @Override
+    public List<RoomIsable> selectItemIdByDate(String itemId, String isableDate){
+        StringBuilder sql = new StringBuilder();
+        sql.append(" SELECT ");
+        sql.append(ALL_COLUMNS_SQL);
+        sql.append(" FROM "+ TABLE_NAME + " T ");
+        sql.append(" WHERE T.ITEMID = :itemId AND T.ISABLEDATE = :isableDate");
+        sql.append(" ORDER BY ISABLETIME");
+
+        Map<String, Object> params = new HashMap<>();
+        params.put("itemId", itemId);
+        params.put("isableDate", isableDate);
+        return getNamedParameterJdbcTemplate().query(sql.toString(), params, BeanPropertyRowMapper.newInstance(RoomIsable.class));
     }
 
 }

@@ -31,4 +31,6 @@ public interface ItemcodeDao {
     public int updateByKey(Itemcode itemcode);
     
     public Itemcode getItemname(String itemno);
+    
+    public List<Itemcode>getStatus2List(String applyno);
 }

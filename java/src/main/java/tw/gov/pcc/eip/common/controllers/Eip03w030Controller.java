@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.support.SessionStatus;
 import tw.gov.pcc.eip.common.cases.*;
 import tw.gov.pcc.eip.framework.domain.UserBean;
 import tw.gov.pcc.eip.framework.spring.controllers.BaseController;
@@ -52,8 +53,9 @@ public class Eip03w030Controller extends BaseController {
      *
      */
     @RequestMapping("/Eip03w030_enter.action")
-    public String enter() {
+    public String enter(SessionStatus status) {
         log.debug("導向重要列管事項_解除列管作業");
+        status.setComplete();
         return QUERY_PAGE;
     }
 

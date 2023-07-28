@@ -26,7 +26,8 @@ public class Eip03w030MixCase implements Serializable {
     private String trkObj;
     private String trkCont; //列管事項內容
     private String trkFrom; //交辦來源
-    private String allStDt; //全案列管日期 & 結案日期
+    private String allStDt; //全案列管日期
+    private String clsDt; //結案日期
     private String creDept; //建立部門
     private String creUser; //建立人員
     private String creDt; //建立時間

@@ -25,10 +25,8 @@ public class TimeConversionService {
     public String to48binary(String begin, String end){
         StringBuilder using = new StringBuilder(); //回傳值
         //取得時間差間隔幾個半小時
-        LocalTime beginTime = LocalTime.parse(begin.substring(0,2) + ":" + begin.substring(2));
-        LocalTime endTime = LocalTime.parse(end.substring(0,2) + ":" + end.substring(2));
-        Duration duration = Duration.between(beginTime, endTime);
-        int halfHours = Integer.parseInt(String.valueOf(duration.getSeconds()/1800));
+        int duration = Integer.parseInt(end) - Integer.parseInt(begin);  // 每50 = 半小時 1400- 1600 = 200 = 50 * 4
+        int halfHours =  duration % 50 != 0 ? duration/50+1 : duration/50; //如果開始時間為00，則需無條件進位  (ex (1630-1400) / 50 = 4.6
         //取得開始時間位置
         //前兩位如果是00，後兩位是30? +0 : +1
         //前兩位如果不是00，取前兩位數/100*2，後兩位是30? +0 : +1
@@ -68,14 +66,13 @@ public class TimeConversionService {
      */
     public String to48binary_isAble(String begin, String end){
         StringBuilder using = new StringBuilder(); //回傳值
-       //轉換時間格式
-        LocalTime beginTime = LocalTime.parse(begin.substring(0,2) + ":" + begin.substring(2));
-        LocalTime endTime = LocalTime.parse(end.substring(0,2) + ":" + end.substring(2));
-        //計算時間區間
-        Duration duration = Duration.between(beginTime, endTime);
-        //計算時間區間為幾個半小時(系統只有29分+60秒=1800)
-        int halfHours = Integer.parseInt(String.valueOf((duration.getSeconds()+60)/1800));
 
+        int duration= Integer.parseInt(end) -Integer.parseInt(begin);// 半小時為50  ex 1600-1400= 200/50 =4
+        //若啟用區間不能整除，四捨五入
+        //1600-1430=170/50=3.4=3、1700-1430=240/50=5.4=5
+        //1630-1400=230/50=4.6=5、1730-1400=330/50=6.6=7
+        int halfHours=duration % 50 != 0 ? (int)Math.round( (double) duration/50) : duration/50;
+        
         //計算起始位置，預設為0
         int beginPosition = 0;
         //00:00 起始位置為0、00:30 起始位置為1
@@ -98,6 +95,11 @@ public class TimeConversionService {
                     using.append("0");
                 }
             }
+        }
+
+        //若訖的時間為2359 則將第48位元轉成0
+        if(StringUtils.equals(end,"2359")){
+            using.setCharAt(using.length()-1, '0');
         }
         return using.toString();
     }

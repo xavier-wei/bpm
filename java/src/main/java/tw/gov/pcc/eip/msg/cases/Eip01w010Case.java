@@ -39,6 +39,7 @@ public class Eip01w010Case implements Serializable {
     private String p1page; // *頁面型態 A:文章 B:連結
     private String p1title; // *主旨/連結網址
     private String p1status; // *狀態
+    private String p1attributype; // *屬性
 
     private String mode; // I , Q
 
@@ -104,6 +105,7 @@ public class Eip01w010Case implements Serializable {
 
     @RequiredString(label = "聯絡人", groups = { Update.class })
     private String contactperson;// *聯絡人： (註10)
+    private String userId; // 清除按鈕 選單回復使用
 
     @RequiredString(label = "連絡電話", groups = { Update.class })
     private String contacttel;// *連絡電話：
@@ -172,6 +174,10 @@ public class Eip01w010Case implements Serializable {
         private String status; // 狀態
 
         private String statusText; // 狀態中文描述
+
+        private String attributype; // 屬性
+
+        private String attributypeText; // 屬性中文
     }
 
     @Data
@@ -209,25 +215,12 @@ public class Eip01w010Case implements Serializable {
 
     @AssertTrue(message = "請至少勾選一筆", groups = Check.class)
     public boolean isChecked() {
-        if (!"".equals(fseq)) {
-            return true;
-        }
         if (queryList != null && queryList.stream().filter(Eip01w010Case.Detail::isCheck).findAny().isPresent()) {
             return true;
         }
         return false;
     }
 
-    @AssertTrue(message = "頁面不存在，請先存檔", groups = Check.class)
-    public boolean isExists() {
-        if ("Q".equals(mode)) {
-            return true;
-        }
-        if (!StringUtils.isEmpty(fseq)) {
-            return true;
-        }
-        return false;
-    }
     @AssertTrue(message = "狀態改為註銷時，「下架原因」為必填", groups = Update.class)
     public boolean isOff() {
         if ("X".equals(status) && StringUtils.isEmpty(offreason)) {

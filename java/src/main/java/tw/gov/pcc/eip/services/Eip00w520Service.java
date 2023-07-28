@@ -1,15 +1,16 @@
 package tw.gov.pcc.eip.services;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.util.CollectionUtils;
 import org.springframework.validation.BindingResult;
 import tw.gov.pcc.eip.common.cases.*;
-import tw.gov.pcc.eip.dao.OsclassDao;
-import tw.gov.pcc.eip.dao.OsformdataDao;
-import tw.gov.pcc.eip.dao.OsitemDao;
-import tw.gov.pcc.eip.dao.OsquestionDao;
+import tw.gov.pcc.eip.dao.*;
 import tw.gov.pcc.eip.domain.*;
 import tw.gov.pcc.eip.framework.domain.UserBean;
 import tw.gov.pcc.eip.util.BeanUtility;
@@ -37,6 +38,8 @@ public class Eip00w520Service extends OpinionSurveyService{
     OsquestionDao osquestionDao;
     @Autowired
     OsitemDao ositemDao;
+    @Autowired
+    OsresultDao osresultDao;
 
     /**
      * 初始化畫面所需資料
@@ -464,6 +467,10 @@ public class Eip00w520Service extends OpinionSurveyService{
         }
     }
 
+    /**
+     * 取得預覽資料
+     * @param caseData
+     */
     public void getPreviewData(Eip00w520Case caseData) {
         List<Osquestion>questions = osquestionDao.getAllQuestionByOsformno(caseData.getOsformno());
         for(Osquestion ques : questions) {
@@ -489,6 +496,321 @@ public class Eip00w520Service extends OpinionSurveyService{
             }
             caseData.getPreviews().add(questionCase);
         }
+    }
+
+    /**
+     * 取得填寫內容查詢列表
+     * @param caseData
+     */
+    public void getContentQuery(Eip00w520Case caseData) {
+        List<Osquestion>questions = osquestionDao.getAllQuestionByOsformno(caseData.getOsformno());
+        for(Osquestion ques : questions) {
+            Eip00w520QuestionCase questionCase = new Eip00w520QuestionCase();
+            List<Ositem>ositemList = ositemDao.getItemsByOsformnoAndQseqno(caseData.getOsformno(),  String.valueOf(ques.getQseqno()));
+            questionCase.setSectitle(ques.getSectitle());
+            questionCase.setTopic(ques.getTopic());
+            questionCase.setRowspan(ques.getRowspan());
+            for (Ositem option : ositemList) {
+                Eip00w520OptionCase optionCase = new Eip00w520OptionCase();
+                optionCase.setQseqno(String.valueOf(option.getQseqno()));
+                optionCase.setIseqno(String.valueOf(option.getIseqno()));
+                optionCase.setItemdesc(option.getItemdesc());
+                optionCase.setIsaddtext(option.getIsaddtext());
+                questionCase.getOptionList().add(optionCase);
+            }
+            if ("T".equals(ques.getOptiontype())) {
+                Eip00w520OptionCase optionCase = new Eip00w520OptionCase();
+                optionCase.setIsText("Y");
+                optionCase.setQseqno(String.valueOf(ques.getQseqno()));
+                questionCase.getOptionList().add(optionCase);
+            }
+            caseData.getContents().add(questionCase);
+        }
+    }
+
+    /**
+     * 取得統計表欲產生內容
+     * V1.0:會根據畫面勾選決定內容
+     * V1.1:註解勾選部分邏輯，全部都顯示，未來如需要將註解打開
+     * @param caseData
+     */
+    public void getStatistics(Eip00w520Case caseData) {
+//        //有勾沒輸入文字，另外取出，之後特別計算該輸入種類數量
+//        List<String> qseqnoEmptyTextList = caseData.getReviewTextcontents().stream()
+//                .filter(f->StringUtils.isNotBlank(f.getQseqno()) && StringUtils.isBlank(f.getText()))
+//                .map(Eip00w520Case.Textcontent::getQseqno).collect(Collectors.toList());
+//        //有勾有輸入文字，另外取出
+//        Map<String,String> qseqnoTextMap = caseData.getReviewTextcontents().stream()
+//                .filter(f->StringUtils.isNotBlank(f.getQseqno()) && StringUtils.isNotBlank(f.getText()))
+//                .collect(Collectors.toMap(Eip00w520Case.Textcontent::getQseqno, Eip00w520Case.Textcontent::getText));
+//        //有勾，知道畫面上需出現該題目
+//        List<String> qseqnoList = caseData.getReviewTextcontents().stream()
+//                .map(Eip00w520Case.Textcontent::getQseqno)
+//                .filter(StringUtils::isNotBlank).collect(Collectors.toList());
+//        List<Ositem>checkitems = ositemDao.getAllByIseqnoAndQseqnoList(caseData.getOsformno(), caseData.getReviewMultiplecontents(), qseqnoList);
+        List<Ositem>checkitems = ositemDao.getTopicByOsformno(caseData.getOsformno());
+        Map<String,Integer> titleRowspanMap = new HashMap<>();
+        Map<String,Integer> quesRowspanMap = new HashMap<>();
+        for(Ositem item : checkitems) {
+            Eip00w520Case.MixCase mixCase = new Eip00w520Case.MixCase();
+            mixCase.setSectitle(item.getSectitle());
+            mixCase.setSectitleseq(item.getSectitleseq());
+            mixCase.setItemname(item.getItemname());//題目名稱(文字框)或選項名稱
+            mixCase.setQseqno(String.valueOf(item.getQseqno()));
+            mixCase.setNo(item.getNo());
+            mixCase.setTopic(item.getTopic());
+            mixCase.setTopicseq(item.getTopicseq());
+            caseData.getReviews().add(mixCase);
+            titleRowspanMap.putIfAbsent(String.valueOf(item.getSectitleseq()),0);
+            quesRowspanMap.putIfAbsent(String.valueOf(item.getTopic()),0);
+            titleRowspanMap.computeIfPresent(String.valueOf(item.getSectitleseq()), (key, value) -> value + 1);
+            quesRowspanMap.computeIfPresent(String.valueOf(item.getTopic()), (key, value) -> value + 1);
+        }
+//        for (String qseqno : qseqnoEmptyTextList) {
+//            Osquestion osquestion = osquestionDao.findByPk(caseData.getOsformno(), Integer.valueOf(qseqno));
+//            Integer sectitleCount = CollectionUtils.isEmpty(caseData.getTextUiMap().get(qseqno)) ? 1 : caseData.getTextUiMap().get(qseqno).size();
+//            //減1是因為原先存在rowspanmap的填空題一定是計1次，故減1將其扣除
+//            titleRowspanMap.computeIfPresent(String.valueOf(osquestion.getSectitleseq()), (key, value) -> value + (sectitleCount - 1));
+//        }
+        List<Integer>qseqnoTextList = checkitems.stream().filter(t->t.getItemseq() == 999).map(Ositem::getQseqno).collect(Collectors.toList());
+        for (Integer qseqno : qseqnoTextList) {
+            Osquestion osquestion = osquestionDao.findByPk(caseData.getOsformno(), qseqno);
+            Integer sectitleCount = CollectionUtils.isEmpty(caseData.getTextUiMap().get(String.valueOf(qseqno))) ? 1 : caseData.getTextUiMap().get(String.valueOf(qseqno)).size();
+            //減1是因為原先存在rowspanmap的填空題一定是計1次，故減1將其扣除
+            titleRowspanMap.computeIfPresent(String.valueOf(osquestion.getSectitleseq()), (key, value) -> value + (sectitleCount - 1));
+        }
+        caseData.setTitleRowspanMap(titleRowspanMap);
+        caseData.setQuesRowspanMap(quesRowspanMap);
+//        caseData.setQseqnoTextMap(qseqnoTextMap);
+    }
+
+    /**
+     * 取得填寫內容
+     * @param caseData
+     * @throws JsonProcessingException
+     */
+    public void getWriteContents(Eip00w520Case caseData) throws JsonProcessingException {
+        List<Osresult>osresultList = osresultDao.getListByOsformno(caseData.getOsformno());
+        List<Integer>wriseqList = new ArrayList<>();
+        List<String>topicList = caseData.getReviewTextcontents().stream().map(Eip00w520Case.Textcontent::getQseqno)
+                .filter(StringUtils::isNotBlank).collect(Collectors.toList());
+        caseData.getReviewMultiplecontents().forEach(s->{
+            Ositem ositem = ositemDao.findByPk(caseData.getOsformno(),Integer.valueOf(s));
+            if (!topicList.contains(String.valueOf(ositem.getQseqno())))
+                topicList.add(String.valueOf(ositem.getQseqno()));
+        });
+        List<String>sortTopicList = topicList.stream().map(t->{
+            return osquestionDao.findByPk(caseData.getOsformno(),Integer.valueOf(t));
+        }).sorted(Comparator.comparing(Osquestion::getSectitleseq).thenComparing(Osquestion::getTopicseq)).map(t -> String.valueOf(t.getQseqno())).collect(Collectors.toList());
+        Map<String,String> qMap = getQMap(caseData.getOsformno());
+        Map<String,String> iMap = getIMap(caseData.getOsformno());
+        for (String iseqno : caseData.getReviewMultiplecontents()) {
+            for (Osresult osresult : osresultList) {
+                if (StringUtils.contains(osresult.getWricontent(), "\"v\":\"" + iseqno + "\"")) {
+                    if (!wriseqList.contains(osresult.getWriseq())) {
+                        wriseqList.add(osresult.getWriseq());
+                    }
+                }
+            }
+        }
+        boolean isBreak = false;
+        for (Eip00w520Case.Textcontent textcontent : caseData.getReviewTextcontents()) {
+            for (Osresult osresult : osresultList) {
+                if (StringUtils.isNotBlank(textcontent.getQseqno()) && StringUtils.isBlank(textcontent.getText())) {
+                    wriseqList = osresultDao.getListByOsformno(caseData.getOsformno()).stream()
+                            .map(Osresult::getWriseq).collect(Collectors.toList());
+                    isBreak = true;
+                    break;
+                } else if (StringUtils.isNotBlank(textcontent.getQseqno()) && StringUtils.isNotBlank(textcontent.getText())) {
+                    if (StringUtils.contains(osresult.getWricontent(), "\"n\":\"" + textcontent.getQseqno() + "\"" + ",\"t\":\"" + textcontent.getText() + "\"")) {
+                        if (!wriseqList.contains(osresult.getWriseq())) {
+                            wriseqList.add(osresult.getWriseq());
+                        }
+                    }
+                }
+            }
+            if (isBreak) {
+                break;
+            }
+        }
+        if (!wriseqList.isEmpty()) {
+            List<Osresult>uiOsresultList = osresultDao.getListByOsformnoAndList(caseData.getOsformno(), wriseqList);
+            //填寫內容表標題
+            List<String>tableTitles = new ArrayList<>(Arrays.asList("序號","填寫人"));
+            //填寫內容表內容
+            List<List<String>>tableData = new ArrayList<>();
+            for (String topic : sortTopicList) {
+                //如果勾選的選項有包含這一題就加入表內
+                tableTitles.add(qMap.get(topic));
+            }
+            for (Osresult osresult : uiOsresultList) {
+                ObjectMapper objectMapper = new ObjectMapper();
+                List<List<Eip00w520Case.Answer>>allAnswer = new ArrayList<>();
+                StringBuilder sb = new StringBuilder(osresult.getWriname()+",");
+                //某個人的所有答案
+                List<Eip00w520Case.Answer> answers = objectMapper.readValue(osresult.getWricontent(), new TypeReference<List<Eip00w520Case.Answer>>(){});
+                for (Eip00w520Case.Answer a : answers) {
+                    if (topicList.contains(a.getN())){
+                        //填空題
+                        if (StringUtils.isNotBlank(a.getT())) {
+                            sb.append(a.getT()).append(",");
+                            //選擇題
+                        } else if (!CollectionUtils.isEmpty(a.getOs())) {
+                            //單選
+                            if (a.getOs().size() == 1) {
+                                sb.append(iMap.get(a.getOs().get(0).getV()));
+                                if (StringUtils.isNotBlank(a.getOs().get(0).getT())) {
+                                    sb.append("(").append(a.getOs().get(0).getT()).append(")");
+                                }
+                                sb.append(",");
+                                //多選
+                            } else {
+                                a.getOs().forEach(m->{
+                                    if (StringUtils.isNotBlank(m.getV())) {
+                                        sb.append(iMap.get(m.getV()));
+                                        if (StringUtils.isNotBlank(m.getT())) {
+                                            sb.append("(").append(m.getT()).append(")");
+                                        }
+                                        sb.append("、");
+                                    }
+                                });
+                                if (sb.length()>1) {
+                                    // 删除最後一個、
+                                    sb.deleteCharAt(sb.length() - 1);
+                                }
+                                sb.append(",");
+                            }
+                        }
+                    }
+                }
+                if (sb.length()>1) {
+                    // 删除最後一個逗號
+                    sb.deleteCharAt(sb.length() - 1);
+                }
+                tableData.add(Arrays.asList(StringUtils.split(sb.toString(),",")));
+            }
+            caseData.setWriteContentTitle(tableTitles);
+            caseData.setWriteContentData(tableData);
+        } else {
+            caseData.setWriteContentTitle(new ArrayList<>(Arrays.asList("序號","填寫人")));
+            List<String>str = Arrays.asList("無符合資料");
+            caseData.getWriteContentData().add(str);
+        }
+//        log.debug("XXXX"+wriseqList.toString());
+    }
+
+    /**
+     * 檢視統計表
+     * @param caseData
+     */
+    public String getReviewStatistics(Eip00w520Case caseData) throws JsonProcessingException {
+        List<String>wricontentList = osresultDao.getListByOsformno(caseData.getOsformno()).stream().map(Osresult::getWricontent).collect(Collectors.toList());
+        List<Ositem>ositems = ositemDao.getAllByOsformno(caseData.getOsformno());
+        //key為選項序號iseqno，值為出現次數
+        Map<String,Integer> multipleCountMap = new LinkedHashMap<>();
+        //key為問題序號qseqno，值為分母
+        Map<String,Integer> totalMap = new LinkedHashMap<>();
+        //key為問題序號qseqno，值為text，紀錄有哪些文字內容(不重複)，供畫面使用
+        Map<String,List<String>> textUiMap = new LinkedHashMap<>();
+        //key為問題序號qseqno，值為text，紀錄有哪些文字內容(重複)
+        Map<String,List<String>> textTotalMap = new LinkedHashMap<>();
+        //key為text，值為出現次數與比例，供畫面使用
+        Map<String, Eip00w520Case.Statistics> textDataMap = new LinkedHashMap<>();
+        Map<String, Eip00w520Case.Statistics> multipleDataMap = new LinkedHashMap<>();
+        if (wricontentList.isEmpty()) {
+            return "isEmpty";
+        }
+        //處理文字前置資料
+        ObjectMapper objectMapper = new ObjectMapper();
+        List<List<Eip00w520Case.Answer>>allAnswer = new ArrayList<>();
+        for (String json : wricontentList) {
+            //某個人的所有答案
+            List<Eip00w520Case.Answer> answers = objectMapper.readValue(json, new TypeReference<List<Eip00w520Case.Answer>>(){});
+            for (Eip00w520Case.Answer a : answers) {
+                if (StringUtils.isNotBlank(a.getT())) {
+                    textUiMap.putIfAbsent(a.getN(), new ArrayList<>(Arrays.asList(a.getT())));
+                    textTotalMap.putIfAbsent(a.getN(), new ArrayList<>());
+                    if (textUiMap.containsKey(a.getN())) {
+                        List<String>list = textUiMap.get(a.getN());
+                        if(!list.contains(a.getT())) {
+                            list.add(a.getT());
+                        }
+                    }
+                    List<String>list = textTotalMap.get(a.getN());
+                    list.add(a.getT());
+                } else {
+                    textUiMap.putIfAbsent(a.getN(), new ArrayList<>(Arrays.asList("未填寫")));
+                    textTotalMap.putIfAbsent(a.getN(), new ArrayList<>());
+                    if (textUiMap.containsKey(a.getN())) {
+                        List<String>list = textUiMap.get(a.getN());
+                        if(!list.contains("未填寫")) {
+                            list.add("未填寫");
+                        }
+                    }
+                    List<String>list = textTotalMap.get(a.getN());
+                    list.add("未填寫");
+                }
+            }
+        }
+
+        //組成文字統計資料
+        for (Map.Entry<String, List<String>> entry : textUiMap.entrySet()) {
+            String key = entry.getKey();
+            List<String> value = entry.getValue();
+            for (String text : value) {
+                double frequency = (double)Collections.frequency(textTotalMap.get(key), text);
+                double all = textTotalMap.get(key).size();
+                log.debug(text + " -> 次數:" + frequency + "分母:" + textTotalMap.get(key).size() + "比率:" + Math.round(frequency/all*100)+"%");
+                Eip00w520Case.Statistics statistics = new Eip00w520Case.Statistics();
+                statistics.setCount(String.valueOf(Math.round(frequency)));
+                statistics.setRate(Math.round(frequency/all*100)+"%");
+                textDataMap.put(text,statistics);
+            }
+        }
+
+        //處理選擇題前置資料
+        for (Ositem i : ositems) {
+            multipleCountMap.putIfAbsent(String.valueOf(i.getIseqno()), 0);
+            totalMap.putIfAbsent(String.valueOf(i.getQseqno()), 0);
+            for (String json : wricontentList) {
+                if (StringUtils.contains(json, "\"v\":\"" + String.valueOf(i.getIseqno()) + "\"")) {
+                    multipleCountMap.computeIfPresent(String.valueOf(i.getIseqno()), (key, value) -> value + 1);
+                }
+                if (StringUtils.contains(json, "\"q\":\"" + String.valueOf(i.getQseqno()) + "\"" + ",\"v\":\"" + String.valueOf(i.getIseqno()) + "\"")) {
+                    totalMap.computeIfPresent(String.valueOf(i.getQseqno()), (key, value) -> value + 1);
+                }
+            }
+        }
+        //處理radio型態選擇題的分母為總資料量
+        for (Map.Entry<String, Integer> entry : totalMap.entrySet()) {
+            if (entry.getValue() == 0) {
+                totalMap.put(entry.getKey(),wricontentList.size());
+            }
+        }
+
+        //組成選擇題統計資料
+        for (Ositem i : ositems) {
+            Eip00w520Case.Statistics statistics = new Eip00w520Case.Statistics();
+            double all = 0;
+            double frequency = multipleCountMap.get(String.valueOf(i.getIseqno()));
+            statistics.setCount(String.valueOf(multipleCountMap.get(String.valueOf(i.getIseqno()))));
+            all = totalMap.get(String.valueOf(i.getQseqno()));
+            statistics.setRate(Math.round(frequency/all*100)+"%");
+            multipleDataMap.put(String.valueOf(i.getIseqno()), statistics);
+        }
+        log.debug("====multipleCountMap====:"+multipleCountMap.toString());
+        log.debug("====totalMap====:"+totalMap.toString());
+        log.debug("====textUiMap====:"+textUiMap.toString());
+        log.debug("====textTotalMap====:"+textTotalMap.toString());
+        log.debug("====textDataMap====:"+textDataMap.toString());
+        log.debug("====multipleDataMap====:"+multipleDataMap.toString());
+//        log.debug("====rowspanMap====:"+rowspanMap.toString());
+        caseData.setMultipleDataMap(multipleDataMap);
+        caseData.setTextDataMap(textDataMap);
+        caseData.setTextUiMap(textUiMap);
+        getStatistics(caseData);
+//        getWriteContents(caseData);
+        return "";
     }
 
     /**

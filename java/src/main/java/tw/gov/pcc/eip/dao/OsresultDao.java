@@ -20,6 +20,8 @@ public interface OsresultDao {
 
     public int deleteData(String osformno, Integer wriseq);
 
+    public int deleteDataByCreuser(String osformno, String creuser);
+
     public Osresult getDataByCreuser(String osformno, String creuser);
 
     /**
@@ -33,4 +35,14 @@ public interface OsresultDao {
      * @return
      */
     public Integer getMaximumWriseq(String osformno);
+
+    public List<Osresult> getListByOsformno(String osformno);
+
+    /**
+     * 取得特定人員的答案
+     * @param osformno
+     * @param wriseqList
+     * @return
+     */
+    public List<Osresult> getListByOsformnoAndList(String osformno, List<Integer> wriseqList);
 }

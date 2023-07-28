@@ -21,10 +21,6 @@
         <aop:scoped-proxy />
     </bean>
 
-    <bean id="fileStore" class="tw.gov.pcc.eip.framework.domain.FileStore" scope="session">
-        <aop:scoped-proxy />
-    </bean>
-
     <!-- 以下設定為使用一般的 MessageSource -->
     <!-- [ -->
     <!--<bean id="messageSource" class="org.springframework.context.support.ResourceBundleMessageSource">

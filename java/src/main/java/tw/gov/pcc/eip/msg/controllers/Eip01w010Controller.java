@@ -167,6 +167,41 @@ public class Eip01w010Controller extends BaseController {
     }
 
     /**
+     * 新增/修改後 上稿
+     * 
+     * @param caseData
+     * @param result
+     * @return
+     */
+    @RequestMapping("/Eip01w010_msg.action")
+    public ModelAndView uploadMsg(
+            @Validated(Eip01w010Case.Update.class) @ModelAttribute(CASE_KEY) Eip01w010Case caseData,
+            BindingResult result) {
+        log.debug("導向 Eip01w010_enter 訊息上稿 上稿");
+        eip01w010Service.initOptions(caseData);
+        eip01w010Service.checkOptions(caseData, result);
+        if (result.hasErrors()) {
+            return new ModelAndView(EDIT_PAGE);
+        }
+        boolean isNewCase = StringUtils.isEmpty(caseData.getFseq());
+        try {
+            if (isNewCase) {
+                eip01w010Service.insert(caseData, userData.getUserId());
+            } else {
+                eip01w010Service.update(caseData, userData.getUserId());
+            }
+            eip01w010Service.insertDataUploadFiles(caseData);
+            eip01w010Service.updStatus(caseData, "1");
+            setSystemMessage(isNewCase ? getSaveSuccessMessage() : getUpdateSuccessMessage());
+            return new ModelAndView(EDIT_PAGE);
+        } catch (Exception e) {
+            log.error("訊息上稿 - " + ExceptionUtility.getStackTrace(e));
+            setSystemMessage(isNewCase ? getSaveFailMessage() : getUpdateFailMessage());
+        }
+        return new ModelAndView(MAIN_PAGE);
+    }
+
+    /**
      * 上稿按鈕
      * 
      * @param caseData
@@ -179,22 +214,17 @@ public class Eip01w010Controller extends BaseController {
             BindingResult result) {
         log.debug("導向 Eip01w010_enter 訊息上稿 上稿按鈕");
         eip01w010Service.initOptions(caseData);
-        String returnPage = "".equals(caseData.getFseq()) ? MAIN_PAGE : EDIT_PAGE;
         if (result.hasErrors()) {
-            return new ModelAndView(returnPage);
+            return new ModelAndView(MAIN_PAGE);
         }
         try {
             eip01w010Service.updStatus(caseData, "1");
             setSystemMessage(getUpdateSuccessMessage());
-            if ("".equals(caseData.getFseq())) {
-                return new ModelAndView(MAIN_PAGE);
-            } else {
-                return new ModelAndView(EDIT_PAGE);
-            }
+            return new ModelAndView(MAIN_PAGE);
         } catch (Exception e) {
             log.error("訊息上稿 - " + ExceptionUtility.getStackTrace(e));
             setSystemMessage(getUpdateFailMessage());
-            return new ModelAndView(returnPage);
+            return new ModelAndView(MAIN_PAGE);
         }
     }
 

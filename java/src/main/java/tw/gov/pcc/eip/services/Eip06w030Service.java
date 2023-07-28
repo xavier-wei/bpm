@@ -161,13 +161,13 @@ public class Eip06w030Service {
         String periodStart = DateUtility.changeDateTypeToWestDate(map.get("periodStart").toString());
         String periodEnd = DateUtility.changeDateTypeToWestDate(map.get("periodEnd").toString());
         periodStart = periodStart.substring(0,4) + "-" + periodStart.substring(4,6) + "-" + periodStart.substring(6);
-        periodEnd = periodEnd.substring(0,4) + "-" + periodEnd.substring(4,6) + "-" + periodEnd.substring(6);
         String dateWeekMonth = map.get("dateWeekMonth").toString();
         String repeat = map.get("repeat").toString();
         int day = Integer.parseInt(map.get("day").toString());
         int week = Integer.parseInt(map.get("week").toString());
         List<String> datelist =new ArrayList<>();
         if(repeat.equals("true")){
+            periodEnd = periodEnd.substring(0,4) + "-" + periodEnd.substring(4,6) + "-" + periodEnd.substring(6);
             if(dateWeekMonth.equals("date")) {   //每天
                 datelist = getBeginAndEndDateBetween(periodStart, periodEnd);
 

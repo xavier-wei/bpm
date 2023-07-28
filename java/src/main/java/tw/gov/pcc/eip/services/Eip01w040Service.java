@@ -118,7 +118,7 @@ public class Eip01w040Service {
      * @param deptId
      */
     public void defaultQuery(Eip01w040Case caseData, String deptId) {
-        List<Eip01wPopCase> qryList = msgdataDao.getEip01w040byPath(deptId, caseData.getPath()).stream().map(m -> {
+        List<Eip01wPopCase> qryList = msgdataDao.getEip01w040byPath(deptId, defaultPath(caseData, deptId)).stream().map(m -> {
             Eip01wPopCase data = new Eip01wPopCase();
             data.setFseq(m.getFseq());
             data.setSubject(m.getSubject());
@@ -126,6 +126,21 @@ public class Eip01w040Service {
             return data;
         }).collect(Collectors.toCollection(ArrayList::new));
         caseData.setQryList(qryList);
+    }
+
+    /**
+     * 取得預設路徑
+     * 
+     * @param caseData
+     * @param deptId
+     * @return
+     */
+    private String defaultPath(Eip01w040Case caseData, String deptId) {
+        if (!StringUtils.isEmpty(caseData.getPath())) {
+            return caseData.getPath();
+        }
+        List<Msgdepositdir> tree = msgdepositdirDao.getTree(deptId);
+        return tree.stream().findFirst().map(m -> m.getFilepath()).orElse("");
     }
 
     /**

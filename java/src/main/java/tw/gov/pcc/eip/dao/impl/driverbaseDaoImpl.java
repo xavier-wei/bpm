@@ -9,15 +9,10 @@ import org.springframework.stereotype.Repository;
 import org.springframework.util.CollectionUtils;
 
 import tw.gov.pcc.common.annotation.DaoTable;
-import tw.gov.pcc.common.domain.Roitem;
 import tw.gov.pcc.common.framework.dao.BaseDao;
-import tw.gov.pcc.eip.adm.cases.Eip00w010Case;
-import tw.gov.pcc.eip.apply.cases.Eip08w060Case;
 import tw.gov.pcc.eip.dao.DriverBaseDao;
-import tw.gov.pcc.eip.domain.Itemcode;
-import tw.gov.pcc.eip.domain.DriverBbase;
+import tw.gov.pcc.eip.domain.DriverBase;
 import tw.gov.pcc.eip.orderCar.cases.Eip07w010Case;
-import tw.gov.pcc.eip.util.StringUtility;
 
 import java.util.List;
 
@@ -26,7 +21,7 @@ import java.util.List;
  */
 @DaoTable(DriverBaseDao.TABLE_NAME)
 @Repository
-public class driverbaseDaoImpl extends BaseDao<DriverBbase> implements DriverBaseDao {
+public class DriverbaseDaoImpl extends BaseDao<DriverBase> implements DriverBaseDao {
 
     private static final String ALL_COLUMNS_SQL;
 
@@ -44,11 +39,11 @@ public class driverbaseDaoImpl extends BaseDao<DriverBbase> implements DriverBas
      * @return 唯一值
      */
     @Override
-    public DriverBbase selectDataByPrimaryKey(DriverBbase driverBbase) {
+    public DriverBase selectDataByPrimaryKey(DriverBase driverBbase) {
         String sql = "SELECT " +
                 ALL_COLUMNS_SQL +
                 " FROM " + TABLE_NAME + " t WHERE t.driverid = :driverid ";
-        List<DriverBbase> list = getNamedParameterJdbcTemplate().query(sql, new BeanPropertySqlParameterSource(driverBbase), BeanPropertyRowMapper.newInstance(DriverBbase.class));
+        List<DriverBase> list = getNamedParameterJdbcTemplate().query(sql, new BeanPropertySqlParameterSource(driverBbase), BeanPropertyRowMapper.newInstance(DriverBase.class));
         return CollectionUtils.isEmpty(list) ? null : list.get(0);
     }
 
@@ -90,9 +85,12 @@ public class driverbaseDaoImpl extends BaseDao<DriverBbase> implements DriverBas
         if (StringUtils.isNotBlank(caseData.getDriveridDetail())){
             sql.append("  driverid=:driveridDetail And  ");
         }
-        sql.append(" still_work= :stillWork ");
+        if ("A".equals(caseData.getStillWork())){//判斷是否查詢全部
+            sql.append(" still_work= dbo.ufn_nvl('' , still_work) ");
+        }else {
+            sql.append(" still_work= :stillWork ");
+        }
         sql.append(" Order by driverid, still_work ");
-
         SqlParameterSource params = new MapSqlParameterSource("stillWork",caseData.getStillWork())
                 .addValue("name", caseData.getName())
                 .addValue("driveridDetail", caseData.getDriveridDetail());
@@ -119,7 +117,8 @@ public class driverbaseDaoImpl extends BaseDao<DriverBbase> implements DriverBas
     public int delete(Eip07w010Case caseData)  {
         return getNamedParameterJdbcTemplate().update(
                 new StringBuilder()
-                        .append(" DELETE  from " ) .append(TABLE_NAME ).append( " WHERE driverid=:driverid ").toString(),
+                        .append(" DELETE  from " ) .append(TABLE_NAME ).append( " WHERE driverid=:driverid ")
+                        .append( " AND still_work ='Y' ").toString(),
                 new BeanPropertySqlParameterSource(caseData));
     }
     @Override

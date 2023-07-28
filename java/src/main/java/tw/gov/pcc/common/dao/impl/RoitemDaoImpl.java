@@ -132,4 +132,18 @@ public class RoitemDaoImpl extends BaseDao<Roitem> implements RoitemDao {
                         .toString(),
                 new BeanPropertySqlParameterSource(updateDate));
     }
+
+    @Override
+    public List<Eip08w060Case> distinctItemId(Eip08w060Case caseData) {
+        StringBuilder sql = new StringBuilder();
+        sql.append(" select    DISTINCT ITEMID  from roitem");
+        sql.append(" WHERE apply_type  = :apply_type ");
+        sql.append(" AND apply_staff =:apply_staff ");
+        sql.append(" and apply_date =:apply_date ");
+        sql.append(" order by ITEMID  ");
+        SqlParameterSource params = new MapSqlParameterSource("apply_type",caseData.getApplyTpNm().substring(0,1))
+                .addValue("apply_staff", caseData.getUser())
+                .addValue("apply_date", caseData.getApplyDate());
+        return getNamedParameterJdbcTemplate().query(sql.toString(),params, BeanPropertyRowMapper.newInstance(Eip08w060Case.class));
+    }
 }

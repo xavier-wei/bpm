@@ -1,6 +1,7 @@
 package tw.gov.pcc.eip.services;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -92,6 +93,7 @@ public class Eip00w530Service extends OpinionSurveyService {
         for(Osquestion ques : questions) {
             Eip00w520QuestionCase questionCase = new Eip00w520QuestionCase();
             List<Ositem>ositemList = ositemDao.getItemsByOsformnoAndQseqno(caseData.getOsformno(),  String.valueOf(ques.getQseqno()));
+            questionCase.setQseqno(String.valueOf(ques.getQseqno()));
             questionCase.setSectitle(ques.getSectitle());
             questionCase.setTopic(ques.getTopic());
             questionCase.setOptiontype(ques.getOptiontype());
@@ -124,24 +126,35 @@ public class Eip00w530Service extends OpinionSurveyService {
         for (int i = 0; i < list.size(); i++) {
             boolean isEmpty = false;
             if ("Y".equals(list.get(i).getIsrequired())) {
-                List<Eip00w530Case.Multiple> cList = list.get(i).getCheckboxList();
-                if ("T".equals(list.get(i).getOptiontype()) && StringUtils.isBlank(list.get(i).getText())) {
-                    result.rejectValue("wricontent["+i+"].text","","必填題目不得為空!");
+                List<Eip00w530Case.Multiple> cList = list.get(i).getOs();
+                if ("T".equals(list.get(i).getOptiontype()) && StringUtils.isBlank(list.get(i).getT())) {
+                    result.rejectValue("wricontent["+i+"].t","","必填題目不得為空!");
                     break;
                 } else if ("S".equals(list.get(i).getOptiontype())) {
                     if(cList == null) {
-                        result.rejectValue("wricontent["+i+"].checkboxList[0].checkVal","","必填題目選項不得為空!");
+                        result.rejectValue("wricontent["+i+"].os[0].v","","必填題目選項不得為空!");
                         break;
+                    } else {
+                        boolean isValid = false;
+                        for (Eip00w530Case.Multiple m : list.get(i).getOs()) {
+                            if (StringUtils.isNotBlank(m.getV())) {
+                                isValid = true;
+                            }
+                        }
+                        if (!isValid) {
+                            result.rejectValue("wricontent[" + i + "].os[0].v", "", "必填題目選項不得為空!");
+                            break;
+                        }
                     }
                 } else if ("M".equals(list.get(i).getOptiontype())) {
                     int emptyCount = 0;
                     for (int j = 0; j < cList.size(); j++) {
-                        if (StringUtils.isBlank(cList.get(j).getCheckVal())) {
+                        if (StringUtils.isBlank(cList.get(j).getV())) {
                             emptyCount++;
                         }
                     }
                     if (emptyCount == cList.size()) {
-                        result.rejectValue("wricontent["+i+"].checkboxList[0].checkVal","","必填題目選項不得為空!");
+                        result.rejectValue("wricontent["+i+"].os[0].v","","必填題目選項不得為空!");
                     }
                 }
             }
@@ -156,11 +169,30 @@ public class Eip00w530Service extends OpinionSurveyService {
         osresult.setWrijogtitle(userData.getTitleId());
         osresult.setWriname(userData.getUserName());
         osresult.setWriad(userData.getUserId());
-        ObjectMapper objectMapper = new ObjectMapper();
-        String wricontent = objectMapper.writeValueAsString(caseData.getWricontent());
+        ObjectMapper objectMapper1 = new ObjectMapper();
+        List<Eip00w530Case.RadioContent> radioContents = objectMapper1.readValue(caseData.getRadioContent(), new TypeReference<List<Eip00w530Case.RadioContent>>(){});
+        for (Eip00w530Case.Answer a : caseData.getWricontent()) {
+            if ("S".equals(a.getOptiontype())) {
+                for (Eip00w530Case.RadioContent rc: radioContents) {
+                    if (StringUtils.equals(rc.getN(),a.getN())) {
+                        List<Eip00w530Case.Multiple> os = new ArrayList<>();
+                        Eip00w530Case.Multiple multiple = new Eip00w530Case.Multiple();
+                        multiple.setV(rc.getV());
+                        if (StringUtils.isNotBlank(rc.getT())) {
+                            multiple.setT(rc.getT());
+                        }
+                        os.add(multiple);
+                        a.setOs(os);
+                    }
+                }
+            }
+        }
+        ObjectMapper objectMapper2 = new ObjectMapper();
+        String wricontent = objectMapper2.writeValueAsString(caseData.getWricontent());
         osresult.setWricontent(wricontent);
         osresult.setCreuser(userData.getUserId());
         osresult.setCredt(LocalDateTime.now());
+//        osresultDao.deleteDataByCreuser(caseData.getOsformno(), userData.getUserId());
         osresultDao.insertData(osresult);
     }
 

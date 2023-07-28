@@ -10,7 +10,6 @@ import tw.gov.pcc.common.annotation.DaoTable;
 import tw.gov.pcc.common.framework.dao.BaseDao;
 import tw.gov.pcc.eip.dao.ItemsDao;
 import tw.gov.pcc.eip.domain.Items;
-import tw.gov.pcc.eip.domain.Systems;
 
 import java.util.List;
 
@@ -68,6 +67,7 @@ public class ItemsDaoImpl extends BaseDao<Items> implements ItemsDao {
                         " WHERE ITEM_ID = :item_id ",
                 new BeanPropertySqlParameterSource(items));
     }
+
     /**
      * 根據key更新資料
      *
@@ -103,7 +103,7 @@ public class ItemsDaoImpl extends BaseDao<Items> implements ItemsDao {
                 new BeanPropertySqlParameterSource(items));
     }
 
-    
+
     @Override
     public List<Items> findItemAndChild(String item_id) {
         String sql = "SELECT * FROM ITEMS WHERE ITEM_ID LIKE :item_id + '%' ORDER BY ITEM_ID DESC";

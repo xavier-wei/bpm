@@ -102,6 +102,9 @@
                 font-weight: 800;
                 opacity: 0.6;
             }
+            .custom-file-label::after {
+                content: "瀏覽檔案";
+            }
         </style>
     </jsp:attribute>
     <jsp:attribute name="buttons">
@@ -114,15 +117,24 @@
         <tags:button id="btnUpload">
             上稿<i class="fas fa-paper-plane"></i>
         </tags:button>
-        <tags:button id="btnDelete">
-            刪除<i class="fas fa-trash-alt"></i>
-        </tags:button>
+        <c:choose>
+            <c:when test="${caseData.fseq != '' }">
+                <tags:button id="btnDelete">
+                    刪除<i class="fas fa-trash-alt"></i>
+                </tags:button>
+            </c:when>
+            <c:otherwise>
+                <tags:button id="btnClear">
+                    清除<i class="fas fa-eraser"></i>
+                </tags:button>
+            </c:otherwise>
+        </c:choose>
         <tags:button id="btnBack">
             返回<i class="fas fa-reply"></i>
         </tags:button>
     </jsp:attribute>
     <jsp:attribute name="contents">
-        <tags:fieldset legend="編輯">
+        <tags:fieldset legend="${caseData.fseq == '' ? '新增' : '編輯' }">
             <form:form id="eip01w010Form" modelAttribute="${caseKey}" enctype="multipart/form-data">
                 <tags:form-row>
                     <form:label cssClass="col-form-label star" path="pagetype">頁面型態：</form:label>
@@ -277,7 +289,7 @@
                                 placeholder="4000字內"></form:textarea>
                         </div>
                         <div class="d-inline-flex" id="word-count"
-                            style="font-size: 14px; position: absolute; margin: auto; bottom: 0; right: 2%;"></div>
+                            style="font-size: 14px; position: absolute; margin: auto; bottom: 0; right: 0.9rem;"></div>
                     </div>
                 </tags:form-row>
                 <tags:form-row>
@@ -418,7 +430,9 @@
                 <form:hidden path="p1page" />
                 <form:hidden path="p1title" />
                 <form:hidden path="p1status" />
+                <form:hidden path="p1attributype" />
                 <form:hidden path="seq" />
+                <form:hidden path="userId" />
             </form:form>
 
             <div id="preViewModal" class="modal fade" tabindex="-1" role="dialog">
@@ -435,7 +449,7 @@
 
                         </div>
                         <div class="modal-footer">
-                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal">關閉</button>
                         </div>
                     </div>
                 </div>
@@ -597,10 +611,6 @@
                 $('#btnPath').click(function() {
                     $('#popModal').modal('show');
                 });
-                // 清除
-                $('#btnClear').click(function() {
-                    $('input[type="text"]').val('');
-                });
                 // 存檔
                 $("#btnSave").click(function(e) {
                     e.preventDefault();
@@ -658,7 +668,7 @@
                 });
                 // 上稿
                 $("#btnUpload").click(function(e) {
-                    $('#eip01w010Form').attr('action', '<c:url value="/Eip01w010_btnup.action" />')
+                    $('#eip01w010Form').attr('action', '<c:url value="/Eip01w010_msg.action" />')
                         .submit();
                 });
                 // 刪除
@@ -669,13 +679,31 @@
                             .submit();
                     });
                 });
+                // 清除
+                $('#btnClear').click(function(e) {
+                    $('input:text, textarea').val('');
+                    $('input:file').val('');
+                    $('#files').next('.custom-file-label').html('Choose files');
+                    $('#images').next('.custom-file-label').html('Choose images');
+                    $('.imgblock').html('');
+                    $('.imgblock').hide();
+                    $('#pagetype option:eq(0)').prop('selected', true);
+                    $('#attributype option:eq(0)').prop('selected', true);
+                    $('#contactunit option:eq(0)').prop('selected', true);
+                    $('#contactperson option[value="${caseData.userId}"]').prop('selected', true);
+                    $('#msgtype').empty();
+                    $('#msgtype').append("<option>請先選擇屬性</option>");
+                    $('input:checkbox').prop('checked', false);
+                    $('input:radio:not([name="istop"],[name="isfront"])').prop('checked', false);
+                    $('input:radio[name="istop"],[name="isfront"]:eq(1)').prop('checked', true);
+                    $('#word-count').css('visibility', 'hidden');
+                });
                 // 返回
                 $("#btnBack").click(function(e) {
                     e.preventDefault();
                     $('#fseq').val('');
                     if ($('#mode').val() === 'I' || $('#mode').val() === 'Q') {
-                        $('#mode').val('');
-                        localStorage.clear();
+                        $('#mode, #p1id, #p1page, #p1title, #p1status, #p1attributype').val('');
                         $('#eip01w010Form').attr('action', '<c:url value="/Eip01w010_enter.action" />')
                             .submit();
                     } else {
@@ -691,6 +719,9 @@
                 let $availabledep = availabledep.split(",")
                 if (status == 4 || status == 'X') {
                     $('#btnUpload').attr('disabled', true);
+                }
+                if ($('#fseq').val() == '') {
+                	$('#btnPreview').attr('disabled', true);
                 }
                 // 分眾 checkbox
                 $.each($availabledep, function(k, v) {

@@ -63,7 +63,7 @@ public class ItemcodeDaoImpl extends BaseDao<Itemcode> implements ItemcodeDao {
     @Override
     public List<Itemcode> findByItemkind(String itemkind) {
         String sql = "SELECT * FROM " + TABLE_NAME
-        		      + " WHERE ITEMKIND = :itemkind ORDER BY ITEMNO DESC";
+        		      + " WHERE ITEMKIND = :itemkind ORDER BY ITEMNO";
         SqlParameterSource params = new MapSqlParameterSource("itemkind", itemkind);
         List<Itemcode> list = getNamedParameterJdbcTemplate().query(sql, params,
                 BeanPropertyRowMapper.newInstance(Itemcode.class));
@@ -75,7 +75,7 @@ public class ItemcodeDaoImpl extends BaseDao<Itemcode> implements ItemcodeDao {
     public List<Itemcode> selectDataListByKey(Itemcode itemcode) {
         String sql = "SELECT " +
                 ALL_COLUMNS_SQL +
-                " FROM " + TABLE_NAME + " t WHERE ITEMKIND = :itemkind AND ITEMNO = ISNULL(:itemno, ITEMNO) ";
+                " FROM " + TABLE_NAME + " t WHERE ITEMKIND = :itemkind AND ITEMNO = ISNULL(:itemno, ITEMNO) ORDER BY ITEMNO ";
         return getNamedParameterJdbcTemplate().query(sql, new BeanPropertySqlParameterSource(itemcode), BeanPropertyRowMapper.newInstance(Itemcode.class));
 
     }
@@ -136,5 +136,28 @@ public class ItemcodeDaoImpl extends BaseDao<Itemcode> implements ItemcodeDao {
 		  SqlParameterSource params = new MapSqlParameterSource("itemno", itemno); 
 		  List<Itemcode> list = getNamedParameterJdbcTemplate().query(sql, params,BeanPropertyRowMapper.newInstance(Itemcode.class));
 		  return CollectionUtils.isEmpty(list)? null : list.get(0);
+	}
+
+	@Override
+	public List<Itemcode> getStatus2List(String applyno) {
+			StringBuffer sb = new StringBuffer();
+			sb.append(" Select A.*, ");
+			sb.append(" (select itemno+'-'+itemname from itemcode where itemkind='MAIN' AND  substring(a.itemno,1,1)=itemno) as itemkind_nm, ");
+			sb.append(" (select itemno+'-'+itemname from itemcode where itemkind=a.itemkind And itemno=a.itemno) as itemno_nm, ");
+			sb.append(" I.FINAL_CNT,  ");
+			sb.append(" I.WITHHOLD_CNT, "); 
+			sb.append(" I.BOOK_CNT, apply_cnt ");
+			sb.append(" from applyitem A, ITEMCODE I ");
+			sb.append(" Where A.applyno= :applyno ");
+			sb.append(" AND A.Reconfirm_mk ='Y' ");
+			sb.append(" AND A.process_status ='2' ");
+			sb.append(" AND A.ITEMKIND=I.ITEMKIND ");
+			sb.append(" AND A.ITEMNO=I.ITEMNO ");
+			sb.append(" ORDER BY A.SEQNO ");
+		  
+		  SqlParameterSource params = new MapSqlParameterSource("applyno", applyno);
+		  List<Itemcode> list = getNamedParameterJdbcTemplate().query(sb.toString(), params,
+		          BeanPropertyRowMapper.newInstance(Itemcode.class));
+		  return list;
 	}
 }

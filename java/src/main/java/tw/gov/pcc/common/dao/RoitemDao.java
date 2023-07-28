@@ -30,4 +30,6 @@ public interface RoitemDao {
 
     public int updateRoitem(Eip08w060Case caseData);
 
+    public List<Eip08w060Case> distinctItemId(Eip08w060Case caseData) ;
+
 }
