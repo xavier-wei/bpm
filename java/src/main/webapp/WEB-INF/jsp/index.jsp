@@ -14,6 +14,17 @@
             .dataTables_wrapper label {
                 margin: 0;
             }
+
+            .pic-scale-up {
+                position: relative; /* 設定定位上下文，使 z-index 生效 */
+                z-index: 1; /* 設定 z-index 值為 1，放在其他元素之上 */
+            }
+
+            .pic-scale-up:hover {
+                transform: translate(100%, 50%) scale(3, 3);
+                transition: transform 0.25s ease;
+                z-index: 2; /* 懸停時，將 z-index 值提高到 2，使其放在最外層 */
+            }
         </style>
     </jsp:attribute>
     <jsp:attribute name="contents">
@@ -41,6 +52,33 @@
                         </button>
                     </div>
                 </nav>
+                <div  class="box" draggable="true">
+                    <div id="tableauContainer" class="row"></div>
+                </div>
+
+                <!-- <div class="box" draggable="true">
+                    <div class="row">
+                        <div class="col-md-2 tableau_btn">
+                             <div class="top pic-scale-up">
+                                    <a href="#" onclick="openTableau(1)">
+                                        <div class="d-inline-block align-middle text-center">
+                                            <img src="././images/tableau/BID_01_01_20230717.png" style="border-radius: 10px; max-width:100%; max-height:100%;" alt="Responsive image" />
+                                        </div>
+                                    </a>
+                            </div>
+                        </div>
+                          <div class="col-md-2 tableau_btn">
+                            <div class="top pic-scale-up">
+                                   <a href="#" onclick="openTableau(2)">
+                                    <div class="d-inline-block align-middle text-center">
+                                        <img src="././images/tableau/BID_02_01_20230717.png"  style="border-radius: 10px; max-width:100%; max-height:100%; " alt="Responsive image" />
+                                    </div>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                     
+                </div> -->
             </div>                        
                 </c:when>
                 <c:when test="${item eq 'drag3'}">
@@ -397,6 +435,101 @@
                 });
 
             });
+
+
+
+            $(function() {
+                getUserData();
+            });
+
+
+            // 假設後端資料
+            const backendResponse = [{
+                    imageNumber: 1,
+                    imageUrl: "././images/tableau/BID_01_01_20230717.png",
+                    tableauUrl: "http://223.200.84.115/#/views/__2023071701/_?:iid=4"
+                },
+                {
+                    imageNumber: 2,
+                    imageUrl: "././images/tableau/BID_02_01_20230717.png",
+                    tableauUrl: "http://223.200.84.115/#/views/__2023071701_16895610210960/_?:iid=1"
+                },
+            ];
+
+
+            function openTableau(type) {
+                // 顯示確認視窗
+                const isConfirmed = confirm('將開啟Tableau視窗，確認繼續嗎？');
+                if (isConfirmed) {
+                    const imageNumber = type; 
+                    const foundImage = backendResponse.find(item => item.imageNumber === imageNumber);
+                    if (foundImage) {
+                        window.open(foundImage.tableauUrl, "_blank");
+                    } else {
+                        alert('找不到對應的儀錶板網址');
+                    }
+                }
+            }
+
+
+            //取得userId
+            function getUserData() {
+                $.ajax({
+                    url: '<c:url value="/getUserData" />',
+                    type: 'POST',
+                    async: true,
+                    timeout: 100000,
+                    success: function(response) {
+                        console.log(response);
+                        if (response) {
+                            //動態生成tableau div
+                            const tableauContainer = document.getElementById("tableauContainer");
+                            backendResponse.forEach((imageData) => {
+                                const tableauElement = createTableauElement(imageData);
+                                tableauContainer.appendChild(tableauElement);
+                            });
+                        }
+                    },
+                    error: function(error) {
+                        console.error(error);
+                    }
+                });
+            }
+
+
+
+            // 動態產生tableau div
+            function createTableauElement(imageData) {
+                const tableauDiv = document.createElement("div");
+                tableauDiv.classList.add("col-md-2", "tableau_btn");
+                tableauDiv.id = "tableau_btn_" + imageData.imageNumber;
+
+                const topDiv = document.createElement("div");
+                topDiv.classList.add("top", "pic-scale-up");
+
+                const link = document.createElement("a");
+                link.href = "#";
+                link.onclick = function() {
+                    openTableau(imageData.imageNumber);
+                };
+
+                const imgDiv = document.createElement("div");
+                imgDiv.classList.add("d-inline-block", "align-middle", "text-center");
+
+                const img = document.createElement("img");
+                img.src = imageData.imageUrl;
+                img.style.borderRadius = "10px";
+                img.style.maxWidth = "100%";
+                img.style.maxHeight = "100%";
+                img.alt = "Responsive image";
+
+                imgDiv.appendChild(img);
+                link.appendChild(imgDiv);
+                topDiv.appendChild(link);
+                tableauDiv.appendChild(topDiv);
+                return tableauDiv;
+            }
+
         </script>
     </jsp:attribute>
 </tags:layout>
