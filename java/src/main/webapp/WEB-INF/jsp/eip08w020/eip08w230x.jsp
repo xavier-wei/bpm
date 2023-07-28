@@ -5,19 +5,23 @@
 <c:set var="caseData" value="${sessionScope[caseKey]}" />
 <tags:layout>
 <jsp:attribute name="buttons">
-<c:if test="${caseData.detailList[0].process_status=='1'}">
+<c:if test="${caseData.processStatus == '1'}">
     <tags:button id="btnDelete">
     	單號刪除<i class="fas fa-trash-alt"></i>
     </tags:button>
 </c:if>     
     <tags:button id="btnReturn">
+    	回上一頁<i class="fas fa-reply"></i>
+    </tags:button>
+    <tags:button id="btnBackToHome">
     	回主畫面<i class="fas fa-reply"></i>
     </tags:button>
 </jsp:attribute>
 
 <jsp:attribute name="contents">
-    <tags:fieldset>
+    <tags:fieldset> 
 		<form:form id="eip08w020Form" name="eip08w020Form" modelAttribute="${caseKey}" method="POST">
+		
             <tags:form-row>
             	<div class="col-4 col-md-4">領物單號：PL<c:out value="${caseData.applyno}"/></div>
             	<div class="col-4 col-md-4">表單狀態：<c:out value="${caseData.detailList[0].process_status }"/></div>
@@ -31,7 +35,31 @@
             	備註 : 主管未複核前才可刪除領物單
             </tags:form-row>
             <tags:form-row>
-            	    <table id="foodTable" class="table table-hover m-2">
+            		<c:choose>
+            			<c:when test="${caseData.processStatus == '3'}">
+            			<table id="foodTable" class="table table-hover m-2">
+                        <thead>
+                            <th style="width: 10%">序號</th>
+                            <th style="width: 30%">品名大類</th>
+                            <th style="width: 30%">品名</th>
+                            <th style="width: 10%">申請數量</th>
+                            <th style="width: 10%">核發數量</th>
+                            <th style="width: 10%">單位</th>
+                        </thead>
+	                       <c:forEach items="${caseData.detailList}" var="item" varStatus="status">
+	                        <tbody>
+		                        	<td><c:out value="${status.index +1 }"/></td>
+		                        	<td class="text-left"><c:out value="${item.itemkind}"/></td>
+		                        	<td class="text-left"><c:out value="${item.itemno}"/></td>
+		                        	<td><c:out value="${item.apply_cnt}"/></td>
+		                        	<td><c:out value="${item.approve_cnt}"/></td>
+		                        	<td><c:out value="${item.unit}"/></td>
+	                        </tbody>
+	                        </c:forEach>
+                    </table>
+            			</c:when>
+            			<c:otherwise>
+            			<table id="foodTable" class="table table-hover m-2">
                         <thead>
                             <th style="width: 10%">序號</th>
                             <th style="width: 30%">品名大類</th>
@@ -42,13 +70,15 @@
 	                       <c:forEach items="${caseData.detailList}" var="item" varStatus="status">
 	                        <tbody>
 		                        	<td><c:out value="${status.index +1 }"/></td>
-		                        	<td><c:out value="${item.itemkind}"/></td>
-		                        	<td><c:out value="${item.itemno}"/></td>
+		                        	<td class="text-left"><c:out value="${item.itemkind}"/></td>
+		                        	<td class="text-left"><c:out value="${item.itemno}"/></td>
 		                        	<td><c:out value="${item.apply_cnt}"/></td>
-		                        	<td><c:out value="${item.apply_dept}"/></td>
+		                        	<td><c:out value="${item.unit}"/></td>
 	                        </tbody>
 	                        </c:forEach>
                     </table>
+            			</c:otherwise>
+            		</c:choose>
             </tags:form-row>
         </form:form>
     </tags:fieldset>
@@ -57,7 +87,7 @@
 <script>
         $(function() {
             $('#btnReturn').click(function(){
-           		$('#eip08w020Form').attr('action', '<c:url value="/Eip08w020_enter.action" />').submit();
+           		$('#eip08w020Form').attr('action', '<c:url value="/Eip08w020_back.action" />').submit();
             });
             
             $('#btnDelete').click(function(){
@@ -67,6 +97,11 @@
             function deleteData(){
             	$('#eip08w020Form').attr('action', '<c:url value="/Eip08w020_delete.action" />').submit();
             }
+            
+            $('#btnBackToHome').click(function(){
+           		$('#eip08w020Form').attr('action', '<c:url value="/Eip08w020_enter.action" />').submit();
+            });
+            
             
             function cancel(){
             	return;

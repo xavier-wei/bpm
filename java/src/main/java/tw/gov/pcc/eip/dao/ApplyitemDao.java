@@ -30,8 +30,15 @@ public interface ApplyitemDao {
 
     List<Applyitem> selectByApplyno(String applyno);
     
-    List<Applyitem> selectByApply_dateAndProcess_status(String apply_dateStart,String apply_dateEnd);
+    List<Applyitem> selectByApply_dateAndProcess_status(String apply_dateStart, String apply_dateEnd,String process_status);
 
     List<Applyitem> selectReconfirm_mkNData(List<String>applynos);
+    
+    List<Applyitem> selectApplyItemReportByUnit(String applyYearMonth);
 
+    List<Applyitem> selectApplyItemReportByItem(String applyYearMonth);
+
+    String getApplynoSeq();
+    
+    void updateSequence();
 }

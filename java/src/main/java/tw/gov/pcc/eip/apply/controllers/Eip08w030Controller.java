@@ -51,7 +51,7 @@ public class Eip08w030Controller extends BaseController {
 		log.debug("導向 Eip08w030_enter 領物單申請作業");
 		Eip08w030Case newCase = new Eip08w030Case();
 		BeanUtility.copyProperties(caseData, newCase);// 進來時清除caseData
-		caseData.setApply_dateStart(DateUtility.getNowChineseDate());
+		caseData.setApplydateStart(DateUtility.getNowChineseDate());
 		return new ModelAndView(QUERY_PAGE);
 	}
 
@@ -63,8 +63,8 @@ public class Eip08w030Controller extends BaseController {
 	 * @return
 	 */
 	@RequestMapping("/Eip08w030_query.action")
-	public String query(@Validated @ModelAttribute(CASE_KEY) Eip08w030Case caseData, BindingResult result) {
-		log.debug("導向   Eip08w030   領物單申請作業畫面-查詢畫面");
+	public String query(@Validated(Eip08w030Case.Query.class) @ModelAttribute(CASE_KEY) Eip08w030Case caseData, BindingResult result) {
+		log.debug("導向 Eip08w030 領物單申請作業畫面-查詢畫面");
 		if (result.hasErrors()) {
 			return QUERY_PAGE;
 		}
@@ -86,7 +86,7 @@ public class Eip08w030Controller extends BaseController {
 	 */
 	@RequestMapping("/Eip08w030_detail.action")
 	public String detail(@Validated @ModelAttribute(CASE_KEY) Eip08w030Case caseData, BindingResult result) {
-		log.debug("導向   Eip08w020   領物單申請作業畫面-查詢更正作業");
+		log.debug("導向 Eip08w030 領物單申請複核作業 明細畫面");
 		if (result.hasErrors()) {
 			return LIST_APGE;
 		}
@@ -94,7 +94,7 @@ public class Eip08w030Controller extends BaseController {
 		try {
 			eip08w030Service.getApplyItemByApplyno(caseData);
 		} catch (Exception e) {
-			log.error("Eip08w020Controller查詢Applyitem失敗" + ExceptionUtility.getStackTrace(e));
+			log.error("Eip08w030Controller查詢明細失敗" + ExceptionUtility.getStackTrace(e));
 			setSystemMessage("查詢失敗");
 			return LIST_APGE;
 		}
@@ -110,8 +110,8 @@ public class Eip08w030Controller extends BaseController {
 	 * @return
 	 */
 	@RequestMapping("/Eip08w030_update.action")
-	public String update(@Validated @ModelAttribute(CASE_KEY) Eip08w030Case caseData, BindingResult result) {
-		log.debug("導向   Eip08w020   領物單申請作業畫面-查詢更正作業");
+	public String update(@Validated(Eip08w030Case.Update.class) @ModelAttribute(CASE_KEY) Eip08w030Case caseData, BindingResult result) {
+		log.debug("導向   Eip08w020  領物單申請複核作業：更新資料 ");
 		if (result.hasErrors()) {
 			return LIST_APGE;
 		}
@@ -123,9 +123,11 @@ public class Eip08w030Controller extends BaseController {
 			setSystemMessage("查詢失敗");
 			return LIST_APGE;
 		}
-		
-		setSystemMessage("複核失敗");
-		return LIST_APGE;
+		Eip08w030Case newCase = new Eip08w030Case();
+		BeanUtility.copyProperties(caseData, newCase);// 進來時清除caseData
+		caseData.setApplydateStart(DateUtility.getNowChineseDate());
+		setSystemMessage("複核成功");
+		return QUERY_PAGE;
 	}
 	
 }

@@ -19,7 +19,7 @@
             <tags:form-row>
             	<div class="col-4 col-md-4">申請人：<c:out value="${caseData.apply_user}"/></div>
             	<div class="col-4 col-md-4">申請單位：<c:out value="${caseData.apply_dept}"/></div>
-            	<div class="col-4 col-md-4">申請日期：<c:out value="${caseData.apply_date}"/></div>
+            	<div class="col-4 col-md-4">申請日期：<func:minguo value = "${caseData.apply_date}"/></div>
             </tags:form-row>
             <tags:form-row>
             	<div class="col-4 col-md-4">申請用途：<c:out value="${caseData.apply_memo}"/></div>
@@ -36,10 +36,10 @@
 	                       <c:forEach items="${caseData.detailList}" var="item" varStatus="status">
 	                        <tbody>
 		                        	<td><c:out value="${status.index +1 }"/></td>
-		                        	<td><c:out value="${item.itemkind}"/></td>
-		                        	<td><c:out value="${item.itemno}"/></td>
+		                        	<td class="text-left"><c:out value="${item.itemkind}"/></td>
+		                        	<td class="text-left"><c:out value="${item.itemno}"/></td>
 		                        	<td><c:out value="${item.apply_cnt}"/></td>
-		                        	<td><c:out value="${item.apply_dept}"/></td>
+		                        	<td><c:out value="${item.unit}"/></td>
 	                        </tbody>
 	                        </c:forEach>
                     </table>
@@ -51,7 +51,7 @@
 <script>
         $(function() {
             $('#btnReturn').click(function(){
-           		$('#eip08w030Form').attr('action', '<c:url value="/Eip08w030_enter.action" />').submit();
+           		$('#eip08w030Form').attr('action', '<c:url value="/Eip08w030_query.action" />').submit();
             });
             
          });

@@ -64,7 +64,8 @@ public class MsgdataDaoImpl extends BaseDao<Msgdata> implements MsgdataDao {
     }
 
     @Override
-    public List<Msgdata> findbyCreatidPagetype(String creatid, String pagetype, String subject, String status) {
+    public List<Msgdata> findbyCreatidPagetype(String creatid, String pagetype, String subject, String status,
+            String attributype) {
         StringBuilder sql = new StringBuilder();
         sql.append(" SELECT * ");
         sql.append("   FROM " + TABLE_NAME + " A ");
@@ -81,11 +82,15 @@ public class MsgdataDaoImpl extends BaseDao<Msgdata> implements MsgdataDao {
         if (StringUtils.isNotEmpty(status)) {
             sql.append("    AND A.STATUS = isnull(:status , A.STATUS) ");
         }
+        if (StringUtils.isNotEmpty(attributype)) {
+            sql.append("    AND A.ATTRIBUTYPE = isnull(:attributype , A.ATTRIBUTYPE) ");
+        }
         Map<String, Object> params = new HashMap<>();
         params.put("creatid", creatid);
         params.put("pagetype", pagetype);
         params.put("subject", subject);
         params.put("status", status);
+        params.put("attributype", attributype);
         return getNamedParameterJdbcTemplate().query(sql.toString(), params,
                 BeanPropertyRowMapper.newInstance(Msgdata.class));
     }

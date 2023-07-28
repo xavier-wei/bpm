@@ -140,6 +140,41 @@ public class DeptsDaoImpl extends BaseDao<Depts> implements DeptsDao {
         Map<String, Object> params = new HashMap<>();
         params.put("attr", attr);
         params.put("deptId", deptId);
+
+        return getNamedParameterJdbcTemplate().query(sql.toString(), params,
+                BeanPropertyRowMapper.newInstance(Depts.class));
+    }
+        
+    public List<Depts> getEip03wDepts(String level, String trkObj) {
+        StringBuilder sql = new StringBuilder();
+        sql.append("   SELECT ");
+        sql.append(ALL_COLUMNS_SQL);
+        sql.append("     FROM DEPTS T");
+        sql.append("    WHERE DEPT_ID_P = CASE :level WHEN '1' THEN '9999' "); //根部門
+        sql.append("                                  WHEN '2' THEN :trkObj END ");  //改成畫面入trkobj
+        sql.append("      AND IS_VALID = 'Y'  ");
+        sql.append(" ORDER BY SORT_ORDER, DEPT_ID  ");
+
+        Map<String, Object> params = new HashMap<>();
+        params.put("level", level);
+        params.put("trkObj", trkObj);
+
+        return getNamedParameterJdbcTemplate().query(sql.toString(), params,
+                BeanPropertyRowMapper.newInstance(Depts.class));
+    }
+
+    @Override
+    public List<Depts> findNameByMultiID(List<String> deptIDs) {
+        StringBuilder sql = new StringBuilder();
+        sql.append("   SELECT ");
+        sql.append(ALL_COLUMNS_SQL);
+        sql.append("     FROM DEPTS t");
+        sql.append("    WHERE DEPT_ID in (:deptIDs) ");
+        sql.append(" ORDER BY DEPT_ID  ");
+
+        Map<String, Object> params = new HashMap<>();
+        params.put("deptIDs", deptIDs);
+
         return getNamedParameterJdbcTemplate().query(sql.toString(), params,
                 BeanPropertyRowMapper.newInstance(Depts.class));
     }

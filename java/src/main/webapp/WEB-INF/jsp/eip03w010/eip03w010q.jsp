@@ -6,8 +6,8 @@
 <c:set var="caseData" value="${requestScope[caseKey]}" />
 <tags:layout>
     <jsp:attribute name="buttons">
-        <tags:button id="btnQuery">查詢<i class="fas fa-search"></i></tags:button>
         <tags:button id="btnInsert">新增<i class="fas fa-user-plus"></i></tags:button>
+        <tags:button id="btnQuery">查詢<i class="fas fa-search"></i></tags:button>
         <tags:button id="btnClear">清除<i class="fas fa-eraser"></i></tags:button>
     </jsp:attribute>
     <jsp:attribute name="contents">
@@ -83,19 +83,19 @@
                                     <td>
                                         <c:out value='${item.trkSts}'/>
                                     </td>
-                                    <td>
+                                    <td class="text-right">
                                         <c:out value='${item.cnt_all}'/> <%--列管對象數--%>
                                     </td>
-                                    <td>
+                                    <td class="text-right">
                                         <c:out value='${item.cnt_doing}' /> <%--待處理--%>
                                     </td>
-                                    <td>
+                                    <td class="text-right">
                                         <c:out value='${item.cnt_wait}' /> <%--待解列--%>
                                     </td>
-                                    <td>
+                                    <td class="text-right">
                                         <c:out value='${item.cnt_done}' />  <%--已解列--%>
                                     </td>
-                                    <td class="text-center" >
+                                    <td class="text-left" >
                                         <c:choose>
                                             <c:when test="${item.trkSts == '未完成'}">
                                                 <tags:button id="btnDetail" class="btn btn-outline-be btn-sm btnDetail" data-selected="${item.trkID}" >明細</tags:button>
@@ -111,7 +111,6 @@
                                                 <tags:button id="btnDetail" class="btn btn-outline-be btn-sm btnDetail" data-selected="${item.trkID}" >明細</tags:button>
                                             </c:otherwise>
                                         </c:choose>
-
 <%--                                        <tags:button id="btnDetail" class="btn btn-outline-be btn-sm btnDetail" data-selected="${item.trkID}" >明細</tags:button>--%>
                                     </td>
                                 </tr>

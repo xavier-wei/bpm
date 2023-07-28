@@ -95,6 +95,33 @@
         $('#eip06w060Form').attr('action', '<c:url value="/Eip06w060_partisable.action" />').submit();
     })
 
+    $('#repeat, #dateWeekMonth').change(function () {
+        let repeat = $('#repeat').val();
+        let dateWeekMonth = $('#dateWeekMonth').val();
+
+        if(repeat === 'false'){
+            $('#dateWeekMonth').prop('disabled', true);
+            $('#week').prop('disabled', true);
+            $('#day').prop('disabled', true);
+            $('#periodEnd').prop('disabled', true);
+        }else {
+            $('#dateWeekMonth').prop('disabled', false);
+            if(dateWeekMonth === 'date'){
+                $('#week').prop('disabled', true);
+                $('#day').prop('disabled', true);
+                $('#periodEnd').prop('disabled', false);
+            }else if(dateWeekMonth === 'week'){
+                $('#week').prop('disabled', true);
+                $('#day').prop('disabled', false);
+                $('#periodEnd').prop('disabled', false);
+            }else if (dateWeekMonth === 'month'){
+                $('#week').prop('disabled', false);
+                $('#day').prop('disabled', false);
+                $('#periodEnd').prop('disabled', false);
+            }
+        }
+    })
+
 </script>
 </jsp:attribute>
 </tags:layout>

@@ -31,11 +31,11 @@
             	    <table id="foodTable" class="table table-hover m-2">
                         <thead>
                             <th style="width: 10%">序號</th>
-                            <th style="width: 20%">品名大類</th>
-                            <th style="width: 30%">品名</th>
+                            <th style="width: 20%"><font color="red">*</font>品名大類</th>
+                            <th style="width: 30%"><font color="red">*</font>品名</th>
                             <th style="width: 10%">庫存數量</th>
-                            <th style="width: 10%">申請數量</th>
-                            <th style="width: 10%">單位</th>
+                            <th style="width: 10%"><font color="red">*</font>申請數量</th>
+                            <th style="width: 10%"><font color="red">*</font>單位</th>
                         </thead>
 					<c:forEach  begin="0" end="14" step="1" var="num"  varStatus="numstatus">
                         <tbody>
@@ -56,7 +56,7 @@
 			                    <form:hidden path="allData[${numstatus.index}].keepitemno" class="keepitemno"/>
 	                        	</td>
 	                        	<td>
-	                        	<form:input path="allData[${numstatus.index}].book_cnt" cssClass="book_cnt form-control num_only" readonly="true"/>
+	                        	<form:input path="allData[${numstatus.index}].book_cnt" cssClass="book_cnt form-control num_only" readOnly="true"/>
 	                        	<form:hidden path="allData[${numstatus.index}].withhold_cnt" class="withhold_cnt"/>
 	                        	</td>
 	                        	<td><form:input path="allData[${numstatus.index}].apply_cnt" cssClass="apply_cnt form-control num_only"/></td>
@@ -72,23 +72,14 @@
 <jsp:attribute name="footers">
 <script>
 	$(document).ready(function(){
-// 		$(".itemkind").each(function(index,el){
-// 			console.log("xxx"+e.value);
-// // 			if(item.val()!==''){
-// // 				getItemno(index,$('.itemkind').eq(index).val(),item.val());
-// // 			}
-// 		});
 		for(var i=0; i<15; i++){
 			if($('.keepitemno').eq(i).val()!==''){
-				console.log("xxx="+$('.keepitemno').eq(i).val());
 				getItemno(i,$('.itemkind').eq(i).val(),$('.keepitemno').eq(i).val());
 			}
 		}
 	});
 
-	
         $(function() {
-
             $('#btnConfirm').click(function() {
            		$('#eip08w020Form').attr('action', '<c:url value="/Eip08w020_insert.action" />').submit();
             });
@@ -105,9 +96,7 @@
     			var itemkind = $('.itemkind').eq(index).val();
     			var url = '<c:url value='/Eip08w020_getItemCodekind.action' />';
     			var data = {};
-
     			data["itemkind"] = itemkind;
-	        	
     			$.ajax({
     				type : "POST",
     				contentType : "application/json",
@@ -135,7 +124,6 @@
    					
     				},
     				error : function(e) {
-    					console.log(e);
     					showAlert("取得品項失敗");
     				}
     	    	});
@@ -158,7 +146,7 @@
 							}
 							
 						}
-	    			}
+	    			
 	    			
 	    			var url = '<c:url value='/Eip08w020_getWithholdCnt.action'/>';
 	    			var data = {};
@@ -182,10 +170,14 @@
 	    					}
 	    				},
 	    				error : function(e) {
-	    					console.log("取得品項失敗"+e);
 	    					showAlert("取得品項失敗"+e);
 	    				}
 	    	    	});
+	    			
+		        } else{
+		        	$(".book_cnt").eq(index).val('');
+		        	$(".withhold_cnt").eq(index).val('');
+		        }
 	    		
 	        });
 		        
@@ -227,7 +219,6 @@
    					
     				},
     				error : function(e) {
-    					console.log(e);
     					showAlert("取得品項失敗");
     				}
     	    	});

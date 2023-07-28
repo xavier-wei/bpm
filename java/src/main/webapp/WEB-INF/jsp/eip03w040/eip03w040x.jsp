@@ -13,11 +13,11 @@
         <form:form id="eip03w040Form" modelAttribute="${caseKey}">
                    <tags:form-row>
                         <div class="col-md-3">
-                            <form:label cssClass="col-form-label star" path="trkObj">處室：</form:label>
-                            <c:out value="${caseData.trkObj}" />
+                            <form:label cssClass="col-form-label" path="dept_name">處室：</form:label>
+                            <c:out value="${caseData.dept_name}" />
                         </div>
                         <div class="col-md-3">
-                            <form:label cssClass="col-form-label star" path="status">狀態：</form:label>
+                            <form:label cssClass="col-form-label" path="status">狀態：</form:label>
                             <c:choose>
                                 <c:when test="${caseData.status == 'closed'}">
                                     <c:out value="已結案" />

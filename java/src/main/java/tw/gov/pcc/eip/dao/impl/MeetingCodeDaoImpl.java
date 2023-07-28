@@ -204,7 +204,7 @@ public class MeetingCodeDaoImpl extends BaseDao<MeetingCode> implements MeetingC
     public List<MeetingCode> findValidRoomByDtandUsing(String meetingDt, String using) {
         StringBuilder sql = new StringBuilder();
         sql.append("   SELECT a.ITEMID, a.ITEMNAME FROM MEETINGCODE a ");
-        sql.append("    WHERE a.ITEMTYP = 'F' ");
+        sql.append(" 	 WHERE a.ITEMTYP IN ('F','FX') ");
         sql.append("      AND NOT exists ( ");
         sql.append("                   SELECT b.ROOMID FROM MEETING b ");
         sql.append("                    WHERE b.MEETINGDT = :meetingDt ");
@@ -235,7 +235,7 @@ public class MeetingCodeDaoImpl extends BaseDao<MeetingCode> implements MeetingC
     public List<MeetingCode> findValidRoominclBookedByDtandUsing(String meetingId, String meetingDt, String using) {
         StringBuilder sql = new StringBuilder();
         sql.append(" 	SELECT a.ITEMID, a.ITEMNAME FROM MEETINGCODE a ");
-        sql.append(" 	 WHERE a.ITEMTYP = 'F' ");
+        sql.append(" 	 WHERE a.ITEMTYP IN ('F','FX') ");
         //判斷是否為同一筆會議 相同就列出該會議室
         sql.append(" 	   AND (exists ( ");
         sql.append(" 				   SELECT b.ROOMID FROM MEETING b ");
@@ -264,11 +264,11 @@ public class MeetingCodeDaoImpl extends BaseDao<MeetingCode> implements MeetingC
         sql.append(" 				) ");
         sql.append(" 		) ");
 
-
         Map<String, Object> params = new HashMap<>();
         params.put("meetingId", meetingId);
         params.put("meetingDt", meetingDt);
         params.put("using", using);
+
         return getNamedParameterJdbcTemplate().query(sql.toString(), params, BeanPropertyRowMapper.newInstance(MeetingCode.class));
     }
 }

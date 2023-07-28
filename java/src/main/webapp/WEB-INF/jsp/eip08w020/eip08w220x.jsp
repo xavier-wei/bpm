@@ -32,12 +32,12 @@
                         <tbody>
                         	<td><c:out value="${status.index+1}"/></td>
                         	<td>PL<c:out value="${item.applyno}"/></td>
-                        	<td><c:out value="${item.apply_date}"/></td>
+                        	<td><func:minguo value = "${item.apply_date}"/></td>
                         	<td class="text-left"><c:out value="${item.apply_memo}"/></td>
                         	<td><c:out value="${item.process_status}"/></td>
                         	<td>
 	                        	<tags:button cssClass="btnDetail" value="${item.applyno}">
-									明細<i class="fas fa-user-plus"></i>
+									明細
 								</tags:button>
                         	</td>
                         </tbody>

@@ -4,6 +4,7 @@ import lombok.Data;
 import tw.gov.pcc.eip.framework.validation.RequiredString;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 

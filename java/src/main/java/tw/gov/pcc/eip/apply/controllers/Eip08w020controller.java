@@ -1,6 +1,5 @@
 package tw.gov.pcc.eip.apply.controllers;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -24,6 +23,7 @@ import tw.gov.pcc.eip.framework.domain.UserBean;
 import tw.gov.pcc.eip.framework.spring.annotation.SkipCSRFVerify;
 import tw.gov.pcc.eip.framework.spring.controllers.BaseController;
 import tw.gov.pcc.eip.services.Eip08w020Service;
+import tw.gov.pcc.eip.util.BeanUtility;
 import tw.gov.pcc.eip.util.DateUtility;
 import tw.gov.pcc.eip.util.ExceptionUtility;
 import tw.gov.pcc.eip.util.ObjectUtility;
@@ -62,13 +62,24 @@ public class Eip08w020Controller extends BaseController {
 	@RequestMapping("/Eip08w020_enter.action")
 	public ModelAndView enter(@ModelAttribute(CASE_KEY) Eip08w020Case caseData) {
 		log.debug("導向 Eip08w020_enter 領物單申請作業");
-		List<Eip08w020Case> newData = new ArrayList<>();
-		caseData.setAllData(newData);
+		Eip08w020Case newCase = new Eip08w020Case();
+		BeanUtility.copyProperties(caseData, newCase);// 進來時清除caseData
 		caseData.setApply_date(DateUtility.getNowChineseDate());// 申請日期(預設系統日)
 		caseData.setApply_dept(userData.getDeptId());// 申請單位
 		caseData.setApply_user(userData.getUserId());// 申請人
-
+		caseData.setOriApply_dept(userData.getDeptId());
+		caseData.setOriApply_user(userData.getUserId());
 		return new ModelAndView(QUERY_PAGE);
+	}
+	
+	private void resetData(Eip08w020Case caseData) {
+		Eip08w020Case newCase = new Eip08w020Case();
+		BeanUtility.copyProperties(caseData, newCase);// 進來時清除caseData
+		caseData.setApply_date(DateUtility.getNowChineseDate());// 申請日期(預設系統日)
+		caseData.setApply_dept(userData.getDeptId());// 申請單位
+		caseData.setApply_user(userData.getUserId());// 申請人
+		caseData.setOriApply_dept(userData.getDeptId());
+		caseData.setOriApply_user(userData.getUserId());
 	}
 
 	/**
@@ -79,7 +90,7 @@ public class Eip08w020Controller extends BaseController {
 	 * @return
 	 */
 	@RequestMapping("/Eip08w020_add.action")
-	public String add(@Validated @ModelAttribute(CASE_KEY) Eip08w020Case caseData, BindingResult result) {
+	public String add(@Validated(Eip08w020Case.Query.class) @ModelAttribute(CASE_KEY) Eip08w020Case caseData, BindingResult result) {
 		log.debug("導向   Eip08w020   領物單申請作業畫面-新增作業");
 		if (result.hasErrors()) {
 			return QUERY_PAGE;
@@ -139,6 +150,7 @@ public class Eip08w020Controller extends BaseController {
 		try {
 			eip08w020Service.insertApplyItem(caseData);
 			setSystemMessage("申請成功");
+			resetData(caseData);
 		} catch (Exception e) {
 			log.error("Eip08w020Controller新增Applyitem失敗" + ExceptionUtility.getStackTrace(e));
 			setSystemMessage("申請失敗");
@@ -231,7 +243,38 @@ public class Eip08w020Controller extends BaseController {
 		}
 		
 		setSystemMessage("刪除成功");
-		return DETAIL_PAGE;
+		resetData(caseData);
+		return QUERY_PAGE;
+	}
+	
+	/**
+	 * 領物單申請作業畫面 - 明細畫面返回按鈕
+	 *
+	 * @param caseData
+	 * @param result
+	 * @return
+	 */
+	@RequestMapping("/Eip08w020_back.action")
+	public String back(@Validated @ModelAttribute(CASE_KEY) Eip08w020Case caseData, BindingResult result) {
+		log.debug("導向   Eip08w020   領物單申請作業畫面-查詢更正作業");
+		if (result.hasErrors()) {
+			return QUERY_PAGE;
+		}
+
+		try {
+			eip08w020Service.getApplyItem(caseData);
+			if (CollectionUtils.isEmpty(caseData.getApplyitemList()) || caseData.getApplyitemList().size() == 1) {
+				return QUERY_PAGE;
+			} 
+			
+		} catch (Exception e) {
+			log.error("Eip08w020Controller查詢Applyitem失敗" + ExceptionUtility.getStackTrace(e));
+			setSystemMessage("查詢失敗");
+			return QUERY_PAGE;
+		}
+
+		return DATA_PAGE;//若有多筆則返回多筆選擇畫面
+
 	}
 
 }

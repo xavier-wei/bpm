@@ -67,10 +67,11 @@ public class Eip01w070Service {
         caseData.setMsgs(contentList);
 
         if (!CollectionUtils.isEmpty(fseqList)) {
-            Map<String, String> filesMap = msgdepositDao.findbyfseq(fseqList).stream().collect(Collectors.toMap(
-                    m -> m.getFseq() + "_" + m.getSeq(), Msgdeposit::getAttachfile, (n, o) -> n, LinkedHashMap::new));
+            Map<String, String> filesMap = msgdepositDao.findbyfseq(fseqList).stream().collect(
+                    Collectors.toMap(Msgdeposit::getSeq, Msgdeposit::getAttachfile, (n, o) -> n, LinkedHashMap::new));
             caseData.setFiles(filesMap);
         }
+        caseData.setFseq(result.get(0).getFseq());
         caseData.setSubject(result.get(0).getSubject());
         return caseData;
     }

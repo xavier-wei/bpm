@@ -41,4 +41,10 @@ public class Ositem {
     private String upduser;
     @LogField("UPDDT")
     private LocalDateTime upddt;
+    private String no;
+    private String itemname;
+    private String sectitleseq;
+    private String sectitle;
+    private String topic;
+    private String topicseq;
 }

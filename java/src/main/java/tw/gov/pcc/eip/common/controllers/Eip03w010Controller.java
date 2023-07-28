@@ -185,25 +185,6 @@ public class Eip03w010Controller extends BaseController {
         return "redirect:/Eip03w010_enter.action";
     }
 
-//
-//    /**
-//     * 依條件查詢重要列管事項  for Detail
-//     * @param caseData
-//     * @return
-//     */
-//    @RequestMapping("/Eip03w030_queryKeepTrkForDetail.action")
-//    public String queryKeepTrkForDetail(@ModelAttribute(CASE_KEY) Eip03w030Case caseData, @ModelAttribute(MIX_CASE_KEY) Eip03w030MixCase mixCase) {
-//        try {
-//            eip03w030Service.queryKeepTrkDetail(caseData, mixCase);
-//            return DETAIL_PAGE;
-//        }catch (Exception e){
-//            log.error("查詢失敗  - " + ExceptionUtility.getStackTrace(e));
-//            setSystemMessage(getQueryFailMessage());
-//        }
-//        return QUERY_PAGE;
-//    }
-
-
     /**
      * 新增列管事項
      * @return
@@ -246,41 +227,4 @@ public class Eip03w010Controller extends BaseController {
         eip03w010Service.initDataList(caseData);
         return "redirect:/Eip03w010_enter.action";
     }
-//
-//    /**
-//     * 依條件查詢重要列管事項  for Detail
-//     * @param caseData
-//     * @return
-//     */
-//    @RequestMapping("/Eip03w030_queryKeepTrkForDetail.action")
-//    public String queryKeepTrkForDetail(@ModelAttribute(CASE_KEY) Eip03w030Case caseData, @ModelAttribute(MIX_CASE_KEY)Eip03w030MixCase mixCase) {
-//        try {
-//            eip03w030Service.queryKeepTrkDetail(caseData, mixCase);
-//            return DETAIL_PAGE;
-//        }catch (Exception e){
-//            log.error("查詢失敗  - " + ExceptionUtility.getStackTrace(e));
-//            setSystemMessage(getQueryFailMessage());
-//        }
-//        return QUERY_PAGE;
-//    }
-//
-//    /**
-//     * 儲存
-//     * @param mixCase
-//     * @return
-//     */
-//    @RequestMapping("/Eip03w030_update.action")
-//    public String update(@Validated@ModelAttribute(MIX_CASE_KEY)Eip03w030MixCase mixCase) {
-//
-//        try {
-//            eip03w030Service.update(userData, mixCase);
-//            setSystemMessage(getUpdateSuccessMessage());
-//            //儲存成功後，回到原畫面
-//            return "redirect:/Eip03w030_queryKeepTrkForDetail.action";
-//        }catch (Exception e){
-//            log.error("更新失敗  - " + ExceptionUtility.getStackTrace(e));
-//            setSystemMessage(getUpdateFailMessage());
-//        }
-//        return QUERY_PAGE;
-//    }
 }

@@ -44,19 +44,40 @@
                                 var msg = '';
                                 var str = '';
                                 title = !$('select[name="dept"] option').length ? '' : $('select[name="dept"] :selected').html();
+                                var count = Object.keys(data.files).length;
+                                if (count == 1) {
+                                    var key = Object.keys(data.files);
+                                    str +=
+                                        '附檔下載：<a href="javascript:;" class="alink" id=' +
+                                        key + '>' +
+                                        data.files[key] + '</a>';
+                                } else if (count == 0) {
+                                    str += '附檔下載：';
+                                } else {
+                                    str +=
+                                        '<div style="display: flex;">' +
+                                        '<div style="flex: none;">附檔下載：</div><div>';
+                                    $.each(data.files, function(key, value) {
+                                        str +=
+                                            '<div class="d-inline-flex mr-3">' +
+                                            '<input type="checkbox" id="' +
+                                            key +
+                                            '" name="filelist"><a href="javascript:;" class="alink" id=' +
+                                            key + '>' + value + '</a></div>';
+                                    });
+                                    str +=
+                                        '</div></div>' +
+                                        '<button type="button" class="btn btn-outline-be btn-sm mr-1" ' +
+                                        'style="margin-left: 80px;" id="zipDownload">下載</button>';
+                                }
                                 $.each(data.msgs, function(i, e) { // 串接內容
                                     msg += '　　' + (i + 1) + '.' + e + '<br>';
-                                });
-                                $.each(data.files, function(i, e) { // 串接檔名
-                                    str +=
-                                        '<a href="javascript:;" class="alink" id=' +
-                                        i + '>' +
-                                        e + '</a>' + '　';
                                 });
                                 $('.msg').html('');
                                 $('.msg').html(title +
                                     '<br>' + msg +
-                                    '<br>附檔下載：' + str);
+                                    '<br>' + str);
+                                $('#fseq').val(data.fseq);
                                 $('#subject').val(data.subject);
                             }
                         },
@@ -67,11 +88,22 @@
                 });
                 $('#dept').trigger('change');
             });
+            // 檔案下載按鈕
+            $(document).on('click', '#zipDownload', function(e) {
+                var checkedList = $('input:checkbox[name="filelist"]:checked');
+                if (checkedList.length) {
+                    var idArray = [];
+                    checkedList.each(function() {
+                        idArray.push(this.id);
+                    });
+                    $('#seq').val(idArray.join(','));
+                    $('#eip01w060Form').attr('action', '<c:url value="/Eip01w060_getFile.action" />')
+                        .submit();
+                }
+            });
             // 檔案下載連結
             $(document).on('click', '.alink', function(e) {
-                var id = $(this).attr('id').split('_');
-                $('#fseq').val(id[0]);
-                $('#seq').val(id[1]);
+                $('#seq').val($(this).attr('id'));
                 $('#eip01w060Form').attr('action', '<c:url value="/Eip01w060_getFile.action" />')
                     .submit();
             });

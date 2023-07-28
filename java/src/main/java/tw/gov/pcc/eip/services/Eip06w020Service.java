@@ -81,7 +81,7 @@ public class Eip06w020Service {
      */
     public List<MeetingCode> findValidRoom(String meetingDt, String meetingBegin, String meetingEnd){
         String using = timeConversionService.to48binary(meetingBegin, meetingEnd);
-        return meetingCodeDao.findValidRoomByDtandUsing(meetingDt, using);
+        return meetingCodeDao.findValidRoomByDtandUsing(DateUtility.changeDateTypeToWestDate(meetingDt), using);
     }
 
     /**

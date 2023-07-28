@@ -13,12 +13,11 @@ import org.springframework.web.servlet.ModelAndView;
 
 import tw.gov.pcc.common.util.DateUtil;
 import tw.gov.pcc.eip.apply.cases.Eip08w060Case;
-import tw.gov.pcc.eip.apply.service.Eip08w060CaseValidator;
-import tw.gov.pcc.eip.apply.service.Eip08w060Service;
+import tw.gov.pcc.eip.apply.Validator.Eip08w060CaseValidator;
+import tw.gov.pcc.eip.services.Eip08w060Service;
 import tw.gov.pcc.eip.framework.domain.UserBean;
 import tw.gov.pcc.eip.framework.spring.controllers.BaseController;
 import tw.gov.pcc.eip.framework.spring.support.FileOutputView;
-import tw.gov.pcc.eip.util.DateUtility;
 import tw.gov.pcc.eip.util.ExceptionUtility;
 import tw.gov.pcc.eip.util.ObjectUtility;
 
@@ -90,9 +89,7 @@ public class Eip08w060Controller extends BaseController {
         if (result.hasErrors()) {
             return QUERY_PAGE;
         }
-
         try {
-
             eip08W060Service.quary(caseData);
             if (caseData.getEip08w060QuaryList().isEmpty()) {
                 log.debug("查無資料");
@@ -140,7 +137,6 @@ public class Eip08w060Controller extends BaseController {
             return ADD_APGE;
         }
         try {
-
             String sysDateTime = DateUtil.getNowWestDateTime(true);
             String sysDate = sysDateTime.substring(0, 8);
             caseData.setApply_date(sysDate);
@@ -171,6 +167,7 @@ public class Eip08w060Controller extends BaseController {
                 arrayList.add(data);
             }
         }
+        caseData.setItemId(caseData.getSelectItemID());
         caseData.setEip08w060CaseList(arrayList);
         return Details_DATA_APGE;
     }

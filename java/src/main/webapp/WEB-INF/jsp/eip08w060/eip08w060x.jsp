@@ -28,7 +28,7 @@
     <tags:fieldset>
 		<form:form id="Eip08w060xForm" name="Eip08w060xForm" modelAttribute="${caseKey}" method="POST">
 			<tags:form-row>
-				<label class="col-form-label text-left col-3">選項:<c:out value="${caseData.applyTpNm}"/></label>
+				<label class="col-form-label text-left col-3">選項:<c:out value="${fn:substring(caseData.applyTpNm, 2,-1)}"/></label>
 			</tags:form-row>
 			<tags:form-row>
 				<label class="col-form-label text-left col-3">申請人:<c:out value="${caseData.user}"/></label>
@@ -36,28 +36,21 @@
 				<label class="col-form-label text-left col-3">暫存:<c:out value="${caseData.save}"/></label>
             </tags:form-row>
 
-			<tags:form-row>
-             <label class="col-form-label text-left col-3">請購/請修單號:</label>
-            </tags:form-row>
      <div class="table-responsive" id="div1">
 		 <table class="table" id="tb1">
 			 <thead data-orderable="true">
 			 <tr>
 				 <th class="text-center align-middle">序號</th>
-				 <th class="text-center align-middle">品名及規格</th>
-				 <th class="text-center align-middle">請購/請修單號</th>
+				 <th class="text-center align-middle"><c:out value="${fn:substring(caseData.applyTpNm, 2,-1)}"/></th>
 				 <th class="text-center align-middle"></th>
 
 			 </tr>
 			 </thead>
 			 <tbody>
-			 <c:forEach items="${caseData.eip08w060QuaryList}" var="item" varStatus="status">
+			 <c:forEach items="${caseData.distinctItemIdList}" var="item" varStatus="status">
                                 <tr class="text-left">
 									<td class="text-center">
 										<c:out value='${status.count}'/>
-									</td>
-									<td id="item">
-										<c:out value='${item.item}'/>
 									</td>
 									<td id="itemId">
 										<c:out value='${item.itemId}'/>
@@ -94,16 +87,6 @@
 			$('#Eip08w060xForm').attr('action', fun).submit();
 		}
 
-		// function controlBt(){
-		// 	var save=$("#save").val();
-		// 	if(save == 'Y'){
-		// 		$("#btUpdate").show();
-		// 		$("#btDelete").show();
-		// 	} else {
-		// 		$("#btUpdate").hide();
-		// 		$("#btDelete").hide()
-		// 	}
-		// }
 </script>
 </jsp:attribute>
 </tags:layout>

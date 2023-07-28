@@ -63,7 +63,7 @@
                                         <c:when test="${item.itemTyp == 'FX'}">啟用</c:when>
                                       </c:choose>
                                     </tags:button>
-                                    <c:if test="${item.itemTyp == 'F'}">
+                                    <c:if test="${item.itemTyp == 'FX'}">
                                       <tags:button name="partisable">部分啟用</tags:button>
                                     </c:if>
                                 </td>

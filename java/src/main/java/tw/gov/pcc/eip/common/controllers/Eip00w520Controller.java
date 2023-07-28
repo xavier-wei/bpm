@@ -27,7 +27,8 @@ public class Eip00w520Controller extends BaseController {
     private static final org.slf4j.Logger log = org.slf4j.LoggerFactory.getLogger(Eip00w520Controller.class);
     private static final String MAIN_PAGE = "/eip00w520/eip00w520m";//主頁
     private static final String THEME_PAGE = "/eip00w520/eip00w520a";//主題新增修改頁
-    private static final String REVIEW_PAGE = "/eip00w520/eip00w521x";//檢視統計表(選項統計與填寫人統計)
+    private static final String REVIEW_PAGE = "/eip00w520/eip00w521x";//檢視統計表
+    private static final String WRITECONTENT_PAGE = "/eip00w520/eip00w527x";//檢視填寫內容表
     private static final String PREVIEW_PAGE = "/eip00w520/eip00w522x";//預覽
     private static final String PARTLIST_PAGE = "/eip00w520/eip00w523m";//部分列表
     private static final String PART_PAGE = "/eip00w520/eip00w523a";//新增修改部分標題
@@ -77,6 +78,27 @@ public class Eip00w520Controller extends BaseController {
             setSystemMessage(getQueryFailMessage());
         }
         return MAIN_PAGE;
+    }
+
+    @RequestMapping("/Eip00w520_review.action")
+    public String review(@ModelAttribute(CASE_KEY) Eip00w520Case caseData) {
+        try {
+            log.debug("導向 檢視畫面");
+            Eip00w520ThemeCase themeCase = new Eip00w520ThemeCase();
+            eip00w520Service.getSingleFormData(caseData, themeCase);
+            String result = eip00w520Service.getReviewStatistics(caseData);
+            if ("isEmpty".equals(result)) {
+                eip00w520Service.getOslist(caseData);
+                setSystemMessage(super.getQueryEmptyMessage());
+                return MAIN_PAGE;
+            }
+            caseData.setThemeCase(themeCase);
+        } catch (Exception e) {
+            log.error(ExceptionUtility.getStackTrace(e));
+            setSystemMessage(super.getQueryFailMessage());
+            return MAIN_PAGE;
+        }
+        return REVIEW_PAGE;
     }
 
     @RequestMapping("/Eip00w520_selectInsertUpdate.action")
@@ -292,6 +314,40 @@ public class Eip00w520Controller extends BaseController {
         }
         return PREVIEW_PAGE;
     }
+
+    @RequestMapping("/Eip00w520_contentQuery.action")
+    public String contentQuery(@ModelAttribute(CASE_KEY) Eip00w520Case caseData) {
+        try {
+            log.debug("導向 填寫內容查詢畫面");
+            Eip00w520ThemeCase themeCase = new Eip00w520ThemeCase();
+            eip00w520Service.getSingleFormData(caseData, themeCase);
+            eip00w520Service.getContentQuery(caseData);
+            caseData.setThemeCase(themeCase);
+        } catch (Exception e) {
+            log.error(ExceptionUtility.getStackTrace(e));
+            setSystemMessage(super.getQueryFailMessage());
+            return MAIN_PAGE;
+        }
+        return QUERY_PAGE;
+    }
+
+    @RequestMapping("/Eip00w520_writeContent.action")
+    public String writeContent(@ModelAttribute(CASE_KEY) Eip00w520Case caseData) {
+        try {
+            log.debug("導向 填寫內容統計表");
+            Eip00w520ThemeCase themeCase = new Eip00w520ThemeCase();
+            eip00w520Service.getSingleFormData(caseData, themeCase);
+            caseData.setThemeCase(themeCase);
+            eip00w520Service.getWriteContents(caseData);
+        } catch (Exception e) {
+            log.error(ExceptionUtility.getStackTrace(e));
+            eip00w520Service.getContentQuery(caseData);
+            setSystemMessage(super.getQueryFailMessage());
+            return QUERY_PAGE;
+        }
+        return WRITECONTENT_PAGE;
+    }
+
     @RequestMapping("/Eip00w520_copy.action")
     public String copy(@ModelAttribute(CASE_KEY) Eip00w520Case caseData) {
         try {

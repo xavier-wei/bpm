@@ -4,7 +4,11 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import tw.gov.pcc.eip.dao.EipcodeDao;
+import tw.gov.pcc.eip.dao.OsitemDao;
+import tw.gov.pcc.eip.dao.OsquestionDao;
 import tw.gov.pcc.eip.domain.Eipcode;
+import tw.gov.pcc.eip.domain.Ositem;
+import tw.gov.pcc.eip.domain.Osquestion;
 
 import java.time.chrono.MinguoChronology;
 import java.time.format.DateTimeFormatter;
@@ -22,6 +26,10 @@ import java.util.Map;
 public class OpinionSurveyService {
     @Autowired
     EipcodeDao eipcodeDao;
+    @Autowired
+    OsquestionDao osquestionDao;
+    @Autowired
+    OsitemDao ositemDao;
     private static final org.slf4j.Logger log = org.slf4j.LoggerFactory.getLogger(OpinionSurveyService.class);
 
     DateTimeFormatter minguoformatter = DateTimeFormatter.ofPattern("yyy/MM/dd HH:mm:ss")
@@ -101,6 +109,28 @@ public class OpinionSurveyService {
         List<Eipcode>list = eipcodeDao.findByCodekindScodekindOrderByCodeno("REGISQUAL","E4");
         Map<String, String> map = new LinkedHashMap<>();
         list.forEach(t -> map.put(t.getCodeno(), StringUtils.isEmpty(t.getCodename()) ? "" : t.getCodename()));
+        return map;
+    }
+
+    /**
+     * 取得題目map
+     * @return map
+     */
+    public Map<String,String> getQMap(String osformno) {
+        List<Osquestion>list = osquestionDao.getAllQuestionByOsformno(osformno);
+        Map<String, String> map = new LinkedHashMap<>();
+        list.forEach(t -> map.put(String.valueOf(t.getQseqno()), t.getTopic()));
+        return map;
+    }
+
+    /**
+     * 取得題目map
+     * @return map
+     */
+    public Map<String,String> getIMap(String osformno) {
+        List<Ositem>list = ositemDao.getAllByOsformno(osformno);
+        Map<String, String> map = new LinkedHashMap<>();
+        list.forEach(t -> map.put(String.valueOf(t.getIseqno()), t.getItemdesc()));
         return map;
     }
 

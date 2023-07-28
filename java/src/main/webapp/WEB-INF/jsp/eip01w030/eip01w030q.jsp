@@ -69,7 +69,7 @@
                                     <form:hidden path="qryList[${status.index}].contactunit" />
                                 </td>
                                 <td class="text-center" data-fseq="${item.fseq}">
-                                    <tags:button id="btnDetail">明細<i class="fas fa-list-alt"></i></tags:button>
+                                    <tags:button id="btnDetail">明細</tags:button>
                                     <form:hidden path="qryList[${status.index}].fseq" />
                                 </td>
                             </tr>
@@ -91,7 +91,7 @@
 
                     </div>
                     <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">關閉</button>
                     </div>
                 </div>
             </div>
@@ -130,6 +130,8 @@
                                         '附加檔案：<a href="javascript:;" class="alink" id=' +
                                         key + '>' +
                                         data.file[key] + '</a>';
+                                } else if (count == 0) {
+                                    str += '附加檔案：';
                                 } else {
                                     str +=
                                         '<div style="display: flex;">' +

@@ -35,7 +35,7 @@
 <%--                        </form:select>--%>
 <%--                    </div>--%>
                     <div class="col-md-6 d-flex">
-                        <form:label cssClass="col-form-label" path="trkFrom">交辦來源：</form:label>
+                        <form:label cssClass="col-form-label star" path="trkFrom">交辦來源：</form:label>
                         <form:select path="trkFrom" cssClass="selectpicker form-control" data-live-search="true">
                             <form:option value="">請選擇</form:option>
                             <form:options items="${caseData.trkFromCombobox}" />
@@ -87,17 +87,6 @@
                         <tbody></tbody>
                     </table>
                 </tags:form-row>
-<%--                <tags:form-row>--%>
-<%--                    <div class="col-md d-flex">--%>
-<%--                        <form:label cssClass="col-form-label" path="trkSts">列管狀態：</form:label>--%>
-<%--                        <form:select path="trkSts" cssClass="form-control selector">--%>
-<%--                            <form:option name="" value="">全部</form:option>--%>
-<%--                            <c:forEach items="${caseData.trkStsList}" var="item">--%>
-<%--                                <form:option name="${item.codeno }" value="${item.codeno }">${item.codename }</form:option>--%>
-<%--                            </c:forEach>--%>
-<%--                        </form:select>--%>
-<%--                    </div>--%>
-<%--                </tags:form-row>--%>
                 <form:hidden path="temp"/>
                 <form:hidden path="jsonMap"/>
                 <form:hidden path="mode" value="insert"/>
@@ -107,27 +96,6 @@
     <jsp:attribute name="footers">
 <script>
     $(function(){
-
-        // $('.selectpicker').selectpicker('refresh');	// 3. render slectpicker
-
-        // // 選擇要監聽的 Selectpicker 元素
-        // var selectpickerElement = $('.selectpicker');
-        //
-        // // 定義检查搜索结果的函数
-        // function checkNoResults() {
-        //     var noResultsElement = selectpickerElement.siblings('.dropdown-menu').find('.no-results');
-        //     if (noResultsElement.length > 0) {
-        //         alert("uuu")
-        //         // 创建新的选项元素
-        //         var option = $("<option></option>").attr("value", 'jj')
-        //             .text('jjjjjj');
-        //         $("#trkFrom").append(option);
-        //     }
-        // }
-        //
-        // // 啟動定時器，每隔一定時間检查搜尋結果
-        // setInterval(checkNoResults, 1000); // 每秒钟检查一次
-
         showOtherTrkFrom();
         // 监听选择菜单的 change 事件
         $('.selectpicker').on('change', function() {
@@ -221,7 +189,7 @@
 
         var allStDt = $('#allStDt').val();
         var today = new Date();
-        var sysdate = (today.getFullYear() - 1911) + (today.getMonth() + 1) + (today.getDate());
+        var sysdate = parseInt ((today.getFullYear() - 1911).toString() + ((today.getMonth() + 1) >= 10 ? (today.getMonth() + 1).toString() :'0' + (today.getMonth() + 1))   + (today.getDate().toString()));
 
         $("#trkObj option[value='" + selectedID + "']").remove();
         var rowHtml =

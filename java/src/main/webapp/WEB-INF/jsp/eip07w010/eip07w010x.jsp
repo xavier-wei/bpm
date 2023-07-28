@@ -6,10 +6,6 @@
 <tags:layout>
 <jsp:attribute name="buttons">
 <!-- 選擇頁 -->
-	  <tags:button id="btnSelect">
-    	確認<i class="fas fa-user-plus"></i>
-      </tags:button>
-
 	  <tags:button id="btnClearn">
     	回上一頁<i class="fas fa-user-plus"></i>
       </tags:button>
@@ -30,7 +26,6 @@
 					<th class="text-center align-middle">在職註記</th>
 					<th class="text-center align-middle">預定保管車號</th>
 					<th class="text-center align-middle"></th>
-
 				</tr>
 				</thead>
 				<tbody>
@@ -46,17 +41,17 @@
 										<c:out value='${item.cellphone}'/>
 									</td>
 									<td id="title">
-										<c:out value='${item.title}'/>
+										<c:out value='${item.title}'/>-<c:out value='${item.titleNm}'/>
 									</td>
 									<td id="stillWork">
-										<c:out value='${item.stillWork}'/>
+										<c:out value='${item.stillWork}'/>-<c:out value='${item.stillWorkNm}'/>
 									</td>
 									<td id="carno1">
 										<c:out value='${item.carno1}'/>-
 										<c:out value='${item.carno2}'/>
 									</td>
 									<td class="text-left" >
-										<tags:button onclick="printDetailReport('${item.driverid}','${item.stillWork}')"  >明細</tags:button>
+										<tags:button onclick="driverDetailReport('${item.driverid}','${item.stillWork}')"  >明細</tags:button>
 									</td>
 								</tr>
                             </c:forEach>
@@ -89,10 +84,10 @@
 										<c:out value='${item.carno2}'/>
 									</td>
 									<td id="carType">
-										<c:out value='${item.carType}'/>
+										<c:out value='${item.carType}'/>-<c:out value='${item.carTypeNm}'/>
 									</td>
 									<td id="bossMk">
-										<c:out value='${item.bossMk}'/>
+										<c:out value='${item.bossMk}'/><c:out value='${item.bossMkNm}'/>
 									</td>
 									<td id="owned">
 										<c:out value='${item.owned}'/>
@@ -102,20 +97,21 @@
 									</td>
 									<td id="date">
 										<c:out value='${item.insuranceStart}'/>~
-										<c:out value='${item.InsuranceEnd}'/>
+										<c:out value='${item.insuranceEnd}'/>
 									</td>
 									<td class="text-left" >
-										<tags:button onclick="printDetailReport('${item.driverid}','${item.stillWork}')"  >明細</tags:button>
+										<tags:button onclick="carDetailReport('${item.carno1}','${item.carno2}')"  >明細</tags:button>
 									</td>
 								</tr>
                             </c:forEach>
 				</tbody>
 			</table>
 		</div>
-
-
+		<form:hidden id="carno1" path="carno1" />
+		<form:hidden id="carno2" path="carno2" />
 		<form:hidden id="driveridDetail" path="driveridDetail" />
 		<form:hidden id="stillWork" path="stillWork" />
+		<form:hidden id="processTy" path="processTy" />
         </form:form>
     </tags:fieldset>
 </jsp:attribute>
@@ -140,7 +136,7 @@
 			});
 
 			function controlBt(){
-				var processTy=$("input[id=processTy]:checked").val();
+				var processTy=$("#processTy").val();
 				if(processTy == 'D'){
 					$("#driver").show();
 					$("#car").hide();
@@ -151,11 +147,19 @@
 			}
          });
 
-		function printDetailReport(driverid,stillWork){
+		function driverDetailReport(driverid,stillWork){
 			console.log(driverid)
 			var fun = '<c:url value="/Eip07w010_detail.action" />';
 			$('input[id="driveridDetail"]').val(driverid);
 			$('input[id="stillWork"]').val(stillWork);
+			$('#eip07w010Form').attr('action', fun).submit();
+		}
+
+		function carDetailReport(carno1,carno2){
+			console.log(carno1)
+			var fun = '<c:url value="/Eip07w010_carDetail.action" />';
+			$('input[id="carno1"]').val(carno1);
+			$('input[id="carno2"]').val(carno2);
 			$('#eip07w010Form').attr('action', fun).submit();
 		}
 </script>

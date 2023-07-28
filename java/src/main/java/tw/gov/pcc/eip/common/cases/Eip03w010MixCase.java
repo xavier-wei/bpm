@@ -23,10 +23,11 @@ public class Eip03w010MixCase implements Serializable {
 //    明細頁
     private String trkID; //列管編號
     private String trkSts; // 列管狀態：0-暫存 1-未完成 9-結案 D-作廢
-    private String trkObj;
+    private String trkObj; //列管對象
     private String trkCont; //列管事項內容
     private String trkFrom; //交辦來源
-    private String allStDt; //全案列管日期 & 結案日期
+    private String allStDt; //全案列管日期
+    private String clsDt; //結案日期
     private String creDept; //建立部門
     private String creUser; //建立人員
     private String creDt; //建立時間

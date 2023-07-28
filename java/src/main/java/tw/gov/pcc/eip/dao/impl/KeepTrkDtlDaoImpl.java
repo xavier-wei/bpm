@@ -62,11 +62,12 @@ public class KeepTrkDtlDaoImpl extends BaseDao<KeepTrkDtl> implements KeepTrkDtl
     public List<Eip03w040Case> selectAll() {
         StringBuilder sql = new StringBuilder();
         sql.append(" 	SELECT TrkObj, "); //處室代碼
+        sql.append(" 	       dbo.ufn_nvl((SELECT b.dept_name FROM depts b WHERE b.dept_id = a.trkobj),TrkObj) AS dept_name,  ");
         sql.append("           COUNT(1) AS cnt,  "); //案件數
         sql.append("           SUM(CASE WHEN PrcSts = '3' THEN 1 ELSE 0 END) AS cnt_cls,   "); //已結案
         sql.append("           SUM(CASE WHEN PrcSts = '3' THEN 0 ELSE 1 END) AS cnt_opn    "); //未結案
-        sql.append("      FROM KeepTrkDtl ");
-        sql.append("  GROUP BY TrkObj ORDER BY cnt DESC; ");
+        sql.append("      FROM KeepTrkDtl a ");
+        sql.append("  GROUP BY TrkObj ORDER BY cnt DESC ");
 
         return getNamedParameterJdbcTemplate().query(sql.toString(), BeanPropertyRowMapper.newInstance(Eip03w040Case.class));
     }
@@ -78,6 +79,7 @@ public class KeepTrkDtlDaoImpl extends BaseDao<KeepTrkDtl> implements KeepTrkDtl
         sql.append("        a.TrkFrom,  "); //交辦來源
         sql.append("        a.TrkCont,  "); //列管事項
         sql.append("        b.TrkObj,   "); //處室
+        sql.append("        dbo.ufn_nvl((SELECT c.dept_name FROM depts c WHERE c.dept_id = b.trkobj),TrkObj) AS dept_name, ");  // 處室
         sql.append("        b.PrcSts,   "); //處理狀態
         sql.append("        b.RptCont,  "); //辦理情形
         sql.append("        b.EndDt,    "); //列管迄日
@@ -93,7 +95,7 @@ public class KeepTrkDtlDaoImpl extends BaseDao<KeepTrkDtl> implements KeepTrkDtl
         }else {                     //未結案
             sql.append(" AND b.prcsts != '3' ");
         }
-        sql.append(" ORDER BY a.TrkID DESC; ");
+        sql.append(" ORDER BY a.TrkID DESC ");
 
         Map<String, Object> params = new HashMap<>();
         params.put("trkObj", trkObj);
@@ -215,5 +217,35 @@ public class KeepTrkDtlDaoImpl extends BaseDao<KeepTrkDtl> implements KeepTrkDtl
         SqlParameterSource params =
                 new MapSqlParameterSource("trkID", trkID).addValue("trkObj", trkObj);
         return getNamedParameterJdbcTemplate().update(sql.toString(), params);
+    }
+
+    @Override
+    public void updateForApplyProgress(KeepTrkDtl ktd) {
+        StringBuilder sql = new StringBuilder();
+        Map<String, Object> params = new HashMap<>();
+
+        sql.append(" UPDATE KeepTrkDtl ");
+        sql.append("    SET RptCont = :rptCont, "); //畫面輸入回應內容
+        sql.append("        RptAskEnd = :rptAskEnd, "); //畫面選擇是Y/否N
+        sql.append("        RptDept = :rptDept, "); //畫面輸入指定填報單位
+        sql.append("        RptUser = :rptUser, ");  //畫面輸入指定填報人員
+        sql.append("        RptUpdUser = :rptUpdUser, "); //操作人員之員編
+        sql.append("        RptUpdDt = :rptUpdDt, "); //CURRENT_TIMESTAMP
+        sql.append("        Prcsts = CASE :rptAskEnd WHEN 'N' THEN '1' ELSE '2' END, "); //畫面點選是否申請解列
+        sql.append("        RptRate = CASE :rptAskEnd WHEN 'Y' THEN 100 ELSE :rptRate END "); //畫面點選是否申請解列
+//        sql.append("        RptAskEnd = CASE :rptAskEnd WHEN 'N' THEN 'N' ELSE RptAskEnd END "); //畫面點選是否申請解列
+        sql.append("  WHERE TrkID = :trkID AND TrkObj = :trkObj ");
+
+        params.put("rptCont", ktd.getRptCont());
+        params.put("rptAskEnd", ktd.getRptAskEnd());
+        params.put("rptRate", ktd.getRptRate());
+        params.put("rptDept", ktd.getRptDept());
+        params.put("rptUser", ktd.getRptUser());
+        params.put("rptUpdUser", ktd.getRptUpdUser());
+        params.put("rptUpdDt", ktd.getRptUpdDt());
+        params.put("trkID", ktd.getTrkID());
+        params.put("trkObj", ktd.getTrkObj());
+
+        getNamedParameterJdbcTemplate().update(sql.toString(), params);
     }
 }

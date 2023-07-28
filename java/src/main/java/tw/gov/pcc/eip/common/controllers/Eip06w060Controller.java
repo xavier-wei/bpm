@@ -143,12 +143,13 @@ public class Eip06w060Controller extends BaseController {
             if (result.hasErrors()){
                 return INSERT_PAGE;
             }
-//            if(caseData.isRepeat()){
-//                eip06w060Service.saveMultiMeeting(caseData);
-//            }else {
-            //不重複
-            eip06w060Service.insertClass(caseData);
-//            }
+            if(caseData.isRepeat()){
+                //重複
+                eip06w060Service.multiInsertClass(caseData);
+            }else {
+                //不重複
+                eip06w060Service.insertClass(caseData);
+            }
             setSystemMessage(getSaveSuccessMessage());
             //重新取得狀態
             eip06w060Service.getRoomIsableList(caseData);

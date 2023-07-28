@@ -8,19 +8,14 @@ import org.springframework.stereotype.Service;
 import tw.gov.pcc.eip.common.cases.Eip03w030Case;
 import tw.gov.pcc.eip.common.cases.Eip03w030MixCase;
 import tw.gov.pcc.eip.common.controllers.Eip03w030Controller;
-import tw.gov.pcc.eip.dao.EipcodeDao;
-import tw.gov.pcc.eip.dao.KeepTrkDtlDao;
-import tw.gov.pcc.eip.dao.KeepTrkMstDao;
-import tw.gov.pcc.eip.domain.Eipcode;
-import tw.gov.pcc.eip.domain.KeepTrkDtl;
-import tw.gov.pcc.eip.domain.KeepTrkMst;
+import tw.gov.pcc.eip.dao.*;
+import tw.gov.pcc.eip.domain.*;
 import tw.gov.pcc.eip.framework.domain.UserBean;
 import tw.gov.pcc.eip.util.DateUtility;
 
 import java.time.format.DateTimeFormatter;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * 重要列管事項_解除列管
@@ -36,6 +31,10 @@ public class Eip03w030Service {
     private KeepTrkDtlDao keepTrkDtlDao;
     @Autowired
     private EipcodeDao eipcodeDao;
+    @Autowired
+    private DeptsDao deptsDao;
+    @Autowired
+    private UsersDao usersDao;
     public void initDataList(Eip03w030Case caseData) {
         List<Eip03w030Case> keepTrkMstList = keepTrkMstDao.selectByColumnsForCaclControl(null,null,null,null, "1", "2");
         List<Eipcode> trkStsList = eipcodeDao.findByCodeKind("TRKSTS");
@@ -117,11 +116,13 @@ public class Eip03w030Service {
             mixCase.setTrkCont(km.getTrkCont().replaceAll("\r\n","<br>"));
         }
         mixCase.setTrkFrom(km.getTrkFrom());
-        mixCase.setAllStDt(km.getAllStDt()); //全案列管日期  結案日期
+        mixCase.setAllStDt(km.getAllStDt()); //全案列管日期
+        mixCase.setClsDt(km.getClsDt()); //結案日期
         mixCase.setCreDept(km.getCreDept());
         mixCase.setCreUser(km.getCreUser());
         mixCase.setCreDt(km.getCreDt() == null? "": km.getCreDt().format(fmt).replaceAll("-",""));
         mixCase.setUpdDept(km.getUpdDept());
+        mixCase.setRptUpdUser(km.getUpdUser());
         mixCase.setUpdDt(km.getUpdDt() == null? "": km.getUpdDt().format(fmt).replaceAll("-",""));
 
         List<KeepTrkDtl> kdList = keepTrkDtlDao.selectDataByTrkIDAndTrkObj(caseData.getSelectedTrkID(),"");
@@ -146,6 +147,7 @@ public class Eip03w030Service {
             Map<String,String> innerMap = new HashMap<>();
             innerMap.put("trkID", list.get(0).getTrkID());      //列管事項編號
             innerMap.put("trkObj", list.get(0).getTrkObj());     //列管對象 (處室)
+            innerMap.put("trkObjName", deptsDao.findByPk(list.get(0).getTrkObj()).getDept_name());
 //            innerMap.put("trkObj", eipcodeDao.findByCodeKindCodeNo("TRKOBJ",list.get(0).getTrkObj()).get().getCodename());     //列管對象 (處室)
             innerMap.put("prcSts", eipcodeDao.findByCodeKindCodeNo("TRKPRCSTS", list.get(0).getPrcSts()).get().getCodename());    //處理狀態：1-待處理 2-待解列 3-已解列
             innerMap.put("stDt", list.get(0).getStDt());   //列管起日
@@ -154,11 +156,36 @@ public class Eip03w030Service {
                 list.get(0).setRptCont(list.get(0).getRptCont().replaceAll("\r\n","<br>"));
             }
             innerMap.put("rptCont", list.get(0).getRptCont());    //辦理情形
-            innerMap.put("RptRate", String.valueOf(list.get(0).getRptRate()) + " %");    //辦理完成進度(0-100)
+            innerMap.put("rptRate", String.valueOf(list.get(0).getRptRate()));    //辦理完成進度(0-100)
             innerMap.put("rptAskEnd", StringUtils.equals(list.get(0).getRptAskEnd(), "Y")? "是" : "否");  //是否要求解列(Y/N)
             innerMap.put("rptDept", list.get(0).getRptDept());   //指定填報單位
             innerMap.put("rptUser", list.get(0).getRptUser());    //指定填報人員
             innerMap.put("rptUpdUser", list.get(0).getRptUpdUser()); //填報更新人員
+            List<Depts> rptDeptNameList = new ArrayList<>();
+            List<Users> rptUserNameList = new ArrayList<>();
+            if (list.get(0).getRptDept() != null){
+                rptDeptNameList = deptsDao.findNameByMultiID(Arrays.stream(list.get(0).getRptDept().split(";")).collect(Collectors.toList()));
+            }
+            if (list.get(0).getRptUser() != null){
+                rptUserNameList = usersDao.findNameByMultiID(Arrays.stream(list.get(0).getRptUser().split(";")).collect(Collectors.toList()));
+            }
+
+            StringBuilder rptDeptName = new StringBuilder();
+            for (Depts depts : rptDeptNameList) {
+                if(depts != null){
+                    rptDeptName.append(depts.getDept_name()).append(";");
+                }
+            }
+
+            StringBuilder rptUserName = new StringBuilder();
+            for (Users users : rptUserNameList) {
+                if(users != null){
+                    rptUserName.append(users.getUser_name()).append(";");
+                }
+            }
+
+            innerMap.put("rptDeptName", rptDeptName.toString());   //指定填報單位
+            innerMap.put("rptUserName", rptUserName.toString());    //指定填報人員
             String rptUpdDt = DateUtility.parseLocalDateTimeToChineseDateTime(list.get(0).getRptUpdDt(), true);
             if(StringUtils.isNotBlank(rptUpdDt)){
                 rptUpdDt = rptUpdDt.substring(0,3) + "/" + rptUpdDt.substring(3,5) + "/" + rptUpdDt.substring(5,7) + "  " + rptUpdDt.substring(7,9) + ":" + rptUpdDt.substring(9,11) + ":" + rptUpdDt.substring(11);
@@ -176,7 +203,7 @@ public class Eip03w030Service {
             }
             innerMap.put("supDt", supDt);      //回應日期時間
 
-            a.setTrkObj(a.getTrkObj() + "-" + eipcodeDao.findByCodeKindCodeNo("TRKOBJ",a.getTrkObj()).get().getCodename());
+            a.setTrkObj(a.getTrkObj() + "-" + deptsDao.findByPk(a.getTrkObj()).getDept_name());
             doubleMap.put(a.getTrkObj().split("-")[0], innerMap);
         });
         mixCase.setDoubleMap(doubleMap);

@@ -150,7 +150,9 @@ public class MeetingDaoImpl extends BaseDao<Meeting> implements MeetingDao{
 
         sql.append("    SELECT ");
         sql.append(ALL_COLUMNS_SQL);
-        sql.append("            , M.ITEMNAME FROM MEETING T ");
+        sql.append("            , M.ITEMNAME  ");
+        sql.append("            , (SELECT count(1) FROM MEETINGITEM MI WHERE T.MEETINGID = MI.MEETINGID AND MI.ITEMID LIKE 'A%') as orderNum");
+        sql.append("      FROM MEETING T ");
         sql.append(" LEFT JOIN MEETINGCODE M on T.ROOMID = M.ITEMID ");
         sql.append("     WHERE ");
         sql.append("            T.STATUS = 'A' ");

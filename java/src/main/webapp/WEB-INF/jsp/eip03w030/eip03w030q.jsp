@@ -96,16 +96,16 @@
                                     <td>
                                         <c:out value='${item.trkSts}'/>
                                     </td>
-                                    <td>
+                                    <td class="text-right">
                                         <c:out value='${item.cnt_all}'/> <%--列管對象數--%>
                                     </td>
-                                    <td>
+                                    <td class="text-right">
                                         <c:out value='${item.cnt_doing}' /> <%--待處理--%>
                                     </td>
-                                    <td>
+                                    <td class="text-right">
                                         <c:out value='${item.cnt_wait}' /> <%--待解列--%>
                                     </td>
-                                    <td>
+                                    <td class="text-right">
                                         <c:out value='${item.cnt_done}' />  <%--已解列--%>
                                     </td>
                                     <td class="text-center" >

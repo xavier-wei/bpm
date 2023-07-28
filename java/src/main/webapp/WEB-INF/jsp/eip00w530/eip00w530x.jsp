@@ -53,6 +53,7 @@
     <%@ include file="/WEB-INF/jsp/eip00w520/eip00w500x.jsp" %>
     <form:hidden path="osformno"/>
     <form:hidden path="promptmsg"/>
+    <form:hidden path="radioContent"/>
 </form:form>
 <tags:form-note>
 <tags:form-note-item><span class="red">＊</span>為必填欄位。</tags:form-note-item>
@@ -65,6 +66,13 @@ $(function(){
     // dataTable 設定
     $('#btnInsert').click(function(e){
         e.preventDefault();
+        var radioArray = new Array();
+        $("input[type='radio']:checked").each(function() {
+            let textVal = $(this).parent().next().is("input[type='text']") ? $(this).parent().next().val() : '';
+            radioArray.push({'n':$(this).data('n'),'v':$(this).val(),'t':textVal});
+        });
+        $('#radioContent').val(JSON.stringify(radioArray));
+        // console.log(JSON.stringify(radioArray));
         $('#eip00w530Form').attr('action', '<c:url value="/Eip00w530_send.action" />').submit();
     })
     $('#btnClear').click(function(e){

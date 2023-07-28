@@ -23,25 +23,25 @@
                             <tr>
                                 <td>${status.index+1 }</td>
                                 <td class="text-left">
-                                    <c:out value="${item.trkObj }" />
+                                    <c:out value="${item.dept_name }" />
                                 </td>
-                                <td class="text-center cnt">
+                                <td class="text-right cnt">
                                     <c:out value="${item.cnt }" />
                                 </td>
                                 <c:choose>
                                     <c:when test="${item.cnt_cls > 0}">
-                                        <td class="cnt_cls"><a class="clicked" href="#" data-obj="${item.trkObj}" data-status="closed"><c:out value="${item.cnt_cls }" /></a></td>
+                                        <td class="text-right cnt_cls"><a class="clicked" href="#" data-obj="${item.trkObj}" data-name="${item.dept_name}" data-status="closed"><c:out value="${item.cnt_cls }" /></a></td>
                                     </c:when>
                                     <c:otherwise>
-                                        <td class="text-center "><c:out value="${item.cnt_cls }" /></td>
+                                        <td class="text-right "><c:out value="${item.cnt_cls }" /></td>
                                     </c:otherwise>
                                 </c:choose>
                                 <c:choose>
                                     <c:when test="${item.cnt_opn > 0}">
-                                        <td class="cnt_opn"><a class="clicked" href="#" data-obj="${item.trkObj}" data-status="unclosed"><c:out value="${item.cnt_opn }" /></a></td>
+                                        <td class="text-right cnt_opn"><a class="clicked" href="#" data-obj="${item.trkObj}" data-name="${item.dept_name}" data-status="unclosed"><c:out value="${item.cnt_opn }" /></a></td>
                                     </c:when>
                                     <c:otherwise>
-                                        <td class="text-center"><c:out value="${item.cnt_opn }" /></td>
+                                        <td class="text-right"><c:out value="${item.cnt_opn }" /></td>
                                     </c:otherwise>
                                 </c:choose>
                             </tr>
@@ -49,15 +49,16 @@
                         <tr>
                             <td></td>
                             <td class="text-center"><c:out value="合計" /></td>
-                            <td class="text-center vSum" ></td>
-                            <td class="text-center vSum" ></td>
-                            <td class="text-center vSum" ></td>
+                            <td class="text-right vSum" ></td>
+                            <td class="text-right vSum" ></td>
+                            <td class="text-right vSum" ></td>
                         </tr>
 
                     </tbody>
                 </table>
             </div>
             <form:hidden path="trkObj" />
+            <form:hidden path="dept_name" />
             <form:hidden path="status" />
         </form:form>
     </jsp:attribute>
@@ -80,6 +81,7 @@
         $('.clicked').css('text-decoration', 'underline').click(function(e){
             e.preventDefault();
             $('#trkObj').val($(this).data('obj'));
+            $('#dept_name').val($(this).data('name'));
             $('#status').val($(this).data('status'));
             $('#eip03w040Form').attr('action', '<c:url value="/Eip03w040_queryIssue.action" />').submit();
         });

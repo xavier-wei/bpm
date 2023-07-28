@@ -15,8 +15,8 @@
  </jsp:attribute>
 
     <jsp:attribute name="buttons">
-        <tags:button id="btnBack">返回<i class="fas fa-reply"></i></tags:button>
-</jsp:attribute>
+        <tags:button id="btnReload">重新整理<i class="fas fa-reply"></i></tags:button>
+    </jsp:attribute>
     <jsp:attribute name="contents">
     <tags:fieldset legend="功能管理">
         <div class="col-12 d-flex">
@@ -57,7 +57,6 @@
             <form:hidden path="pid"/>
             <form:hidden path="item_id"/>
             <form:hidden path="action_type"/>
-            <form:hidden path="sys_id"/>
 		</form:form>
                 </div>
             </div>
@@ -85,6 +84,7 @@
     <jsp:attribute name="footers">
 <script type="text/javascript">
     let te;
+
     function initTree() {
         te = $("#dynaTree").dynatree(
             {
@@ -109,7 +109,7 @@
             }
         );
         let dynatree = $(te).dynatree('getSelectedNodes');
-        if(dynatree && dynatree.length > 0){
+        if (dynatree && dynatree.length > 0) {
             dynatree[0].makeVisible();
         }
     }
@@ -197,7 +197,7 @@
             }
         });
 
-        $('#btnBack').click(function () {
+        $('#btnReload').click(function () {
             $('#eip00w050Form').attr('action', '<c:url value="/Eip00w050_enter.action"/>').submit();
         });
 
@@ -233,6 +233,7 @@
             $('#eip00w050Form input:text:enabled:visible').val('');
             $('#sort_order').val('0');
         }
+
         initTree();
     });
 </script>

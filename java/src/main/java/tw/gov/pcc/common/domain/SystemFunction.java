@@ -14,7 +14,7 @@ public class SystemFunction implements Serializable {
     private String itemName; // 系統項目名稱
     private String url; // 系統項目 URL & 頁面程式代號
     private String urlDesc; // URL 描述 & 頁面程式描述
-    private Pattern urlPattern; // URL Regex Pattern - 由 SysfuncService.selectCasSysFuncBySystemId() 設定
+    private Pattern urlPattern; // URL Regex Pattern
 
     public String getItemId() {
         return this.itemId;
