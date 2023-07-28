@@ -9,7 +9,7 @@
             <b-tabs>
               <b-tab title="表單" :active="activeTab(0)" @click="changeTabIndex(0)">
 
-                <div style="background-color: #008b8b;padding-top: 10px;">
+                <div style="background-color: #b0ded4;padding-top: 10px;">
                   <b-row class=" d-flex">
                     <p class="ml-3" style="color: white">
                       L410-共用系統使用者帳號申請單
@@ -19,7 +19,7 @@
                   </b-row>
                 </div>
 
-                <div class="card" style="background-color: #8fd4ce ">
+                <div class="card" style="background-color: #d3ede8 ">
 
                   <b-form-row>
                     <i-form-group-check class="col-sm-5" label-cols="5" content-cols="7" :label="'申請日期:'"
@@ -75,19 +75,19 @@
                     </i-form-group-check>
                   </b-form-row>
 
-                  <b-form-row>
-                    <i-form-group-check label-star class="col-sm-5" label-cols="5" content-cols="7" :label="`是否暫存：`"
-                                        :item="$v.isSubmit">
-                      <!--是否暫存、送出 : isSubmit-->
-                      <b-form-select v-model="$v.isSubmit.$model">
-                        <template #first>
-                          <b-form-select-option value="" disabled>請選擇</b-form-select-option>
-                          <b-form-select-option value="0">暫存</b-form-select-option>
-                          <b-form-select-option value="1">送出</b-form-select-option>
-                        </template>
-                      </b-form-select>
-                    </i-form-group-check>
-                  </b-form-row>
+<!--                  <b-form-row>-->
+<!--                    <i-form-group-check label-star class="col-sm-5" label-cols="5" content-cols="7" :label="`是否暫存：`"-->
+<!--                                        :item="$v.isSubmit">-->
+<!--                      &lt;!&ndash;是否暫存、送出 : isSubmit&ndash;&gt;-->
+<!--                      <b-form-select v-model="$v.isSubmit.$model">-->
+<!--                        <template #first>-->
+<!--                          <b-form-select-option value="" disabled>請選擇</b-form-select-option>-->
+<!--                          <b-form-select-option value="0">暫存</b-form-select-option>-->
+<!--                          <b-form-select-option value="1">送出</b-form-select-option>-->
+<!--                        </template>-->
+<!--                      </b-form-select>-->
+<!--                    </i-form-group-check>-->
+<!--                  </b-form-row>-->
 
                   <b-form-row>
                     <p class="test1">一、個人基本資料：</p>
@@ -192,6 +192,8 @@
                       <b-form-input class="col-3" v-model="$v.otherRemark.$model"/>
                     </b-input-group>
                   </b-form-row>
+
+                  <hr/>
 
                   <b-form-row>
                     <p class="test1">三、系統申請/異動/停用項目：</p>
@@ -412,7 +414,7 @@
 
               </b-tab>
               <b-tab title="流程圖" :active="activeTab(2)" @click="changeTabIndex(3)">
-                <flowChart>
+                <flowChart :filePathName="fileData">
 
                 </flowChart>
               </b-tab>
@@ -422,6 +424,9 @@
         </div>
         <b-form-row>
           <b-col cols="4" offset="6">
+            <b-button style="background-color: #17a2b8; color: white" size="sm" variant="outline-secondary"
+                      @click="submitForm()">暫存
+            </b-button>
             <b-button style="background-color: #17a2b8; color: white" size="sm" variant="outline-secondary"
                       @click="submitForm()">申請
             </b-button>
@@ -462,8 +467,8 @@ import IDatePicker from '@/shared/i-date-picker/i-date-picker.vue';
 import {useBvModal} from '@/shared/modal';
 import {systemToName} from "@/shared/i-system/system-to-name"
 
-const appendix = () => import('@/componet/appendix.vue');
-const flowChart = () => import('@/componet/FlowChart.vue');
+const appendix = () => import('@/components/appendix.vue');
+const flowChart = () => import('@/components/flowChart.vue');
 export default {
   name: "l410Apply",
   components: {
@@ -512,6 +517,7 @@ export default {
       effectiveDate: '',//	生效日期
       other: '',//	其他
       otherRemark: '',//	其他說明
+      formName: 'L410',
     };
     const form = reactive(Object.assign({}, formDefault));
     const rules = {
@@ -521,7 +527,7 @@ export default {
       filName: {},
       filUnit: {},
       appName: {},
-      isSubmit: {required},
+      isSubmit: {},
       chName: {},
       enName: {},
       appEmpid: {},
@@ -536,6 +542,10 @@ export default {
       otherRemark: {},
     };
     const {$v, checkValidity, reset} = useValidation(rules, form, formDefault);
+
+    const fileData = reactive({
+      filePathName: '',
+    });
 
     const table = reactive({
       fields: [
@@ -805,6 +815,7 @@ export default {
       table,
       mockdata,
       systemToName,
+      fileData,
     }
   }
 }
@@ -823,6 +834,28 @@ export default {
 .input-checkbox {
   height: 15px;
   width: 15px;
+}
+
+.hr {
+  margin-top: 1rem;
+  margin-bottom: 1rem;
+  border: 0;
+  border-top: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+#u68 {
+  position: absolute;
+  left: 10px;
+  top: 425px;
+  width: 680px;
+  height: 10px;
+}
+
+.ax {
+  font-size: 13px;
+  color: #333333;
+  text-align: center;
+  line-height: normal;
 }
 
 </style>

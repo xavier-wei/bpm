@@ -2,6 +2,8 @@
 // (runtime-only or standalone) has been set in webpack.common with an alias.
 import Vue from 'vue';
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
+import { fas } from '@fortawesome/free-solid-svg-icons';
+import { library } from '@fortawesome/fontawesome-svg-core';
 import { setupAxiosInterceptors } from '@/shared/config/axios-interceptor';
 import App from './app.vue';
 import BootstrapVue from 'bootstrap-vue';
@@ -26,7 +28,8 @@ import AlertService from './shared/alert/alert.service';
 import VueCompositionAPI from '@vue/composition-api'
 import Hooks from'@u3u/vue-hooks'
 import { BootstrapVueIcons, ModalPlugin, VBTooltipPlugin } from 'bootstrap-vue';
-
+import axios from 'axios';
+import MenuService from './core/menu/menu-service';
 
 import '../content/scss/global.scss';
 import '../content/scss/vendor.scss';
@@ -35,6 +38,7 @@ import '../content/scss/vendor.scss';
 // jhipster-needle-add-entity-service-to-main-import - JHipster will import entities services here
 
 /* tslint:enable */
+library.add(fas);
 Vue.config.productionTip = false;
 config.initVueApp(Vue);
 config.initFortAwesome(Vue);
@@ -52,7 +56,7 @@ Vue.component('jhi-item-count', JhiItemCountComponent);
 Vue.component('jhi-sort-indicator', JhiSortIndicatorComponent);
 Vue.component('infinite-loading', InfiniteLoading);
 const store = config.initVueXStore(Vue);
-
+axios.defaults.baseURL = '/bpm/api';
 const loginService = new LoginService();
 const accountService = new AccountService(store, router);
 
@@ -89,7 +93,7 @@ const vue = new Vue({
     configurationService: () => new ConfigurationService(),
     logsService: () => new LogsService(),
     metricsService: () => new MetricsService(),
-
+    menuService: () => new MenuService,
     // jhipster-needle-add-entity-service-to-main - JHipster will import entities services here
     accountService: () => accountService,
     alertService: () => new AlertService(),

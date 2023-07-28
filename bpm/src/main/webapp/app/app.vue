@@ -7,6 +7,11 @@
     <!-- <div class="main">
       <Deal></Deal>
     </div> -->
+
+    <div class="d-flex">
+        <breadcrumb class="print-not-show"></breadcrumb>
+    </div>
+
     <div class="main">
       <router-view></router-view>
     </div>
@@ -18,14 +23,18 @@ import Ribbon from '../app/core/ribbon/ribbon.vue';
 import JhiFooter from '../app/core/jhi-footer/jhi-footer.vue';
 import JhiNavbar from '../app/core/jhi-navbar/jhi-navbar.vue';
 import LoginForm from '../app/account/login-form/login-form.vue';
-import Home from '../app/componet/home.vue';
-import Deal from '../app/componet/deal.vue';
+import Home from '@/components/home.vue';
 import { computed, nextTick, onMounted, provide, reactive, ref, watch, inject } from '@vue/composition-api';
 import { BButton, BIcon, BSidebar, BvModal, BRow } from 'bootstrap-vue';
 import '@/shared/config/dayjs';
 import { useGetters, useRouter, useStore } from '@u3u/vue-hooks';
+import MenuService from '@/core/menu/menu-service';
+import NotificationService from './shared/notification/notification-service';
+import axios from 'axios';
+import Breadcrumb from '@/core/menu/breadcrumb.vue';
 
-
+const ALERT_HEADER = 'x-pwc-alert';
+const ALERT_MESSAGE = 'x-pwc-params';
 
 export default {
   name: 'app',
@@ -35,7 +44,7 @@ export default {
     'login-form': LoginForm,
     'jhi-footer': JhiFooter,
     Home,
-    Deal,
+    Breadcrumb,
   },
   setup(prop, context) {
     // const router = useRouter();
@@ -64,7 +73,9 @@ export default {
     const padLowerLimit = computed(() => useGetters(['padLowerLimit']).padLowerLimit.value);
     const padUpperLimit = computed(() => useGetters(['padUpperLimit']).padUpperLimit.value);
     const deskTopLowerLimit = computed(() => useGetters(['deskTopLowerLimit']).deskTopLowerLimit.value);
-
+    // useStore().value.commit('initEnvProperties', process.env.ENV_PROFILE);
+    const menuService = inject<() => MenuService>('menuService')();
+    const notificationService = new NotificationService(context.root);
 
     const dynamicSizeForDev = () => {
       window.addEventListener('resize', e => {
@@ -76,9 +87,21 @@ export default {
         useStore().value.commit('setMobileDevice', isMobileDevice);
         useStore().value.commit('setPadDevice', isPadDevice);
         useStore().value.commit('setDeskTopDevice', isDeskTopDevice);
-        useStore().value.commit('setMenuState', isDeskTopDevice);
+        // useStore().value.commit('setMenuState', isDeskTopDevice);
       });
     };
+
+    axios.interceptors.response.use(
+      response => {
+        if (response.headers[ALERT_HEADER] === 'SUCCESS' || response.headers[ALERT_HEADER] === 'INFO') {
+          notificationService.info(decodeURIComponent(response.headers[ALERT_MESSAGE]));
+        }
+        return response;
+      },
+      error => {
+        return Promise.reject(error);
+      }
+    );
 
     const lockInputTypeNumberWheelEvent = () => {
       document.addEventListener('wheel', e => {
@@ -86,6 +109,11 @@ export default {
         document.activeElement.blur();
       });
     };
+
+    provide('menuService', menuService);
+    provide<NotificationService>('notificationService', notificationService);
+    provide<BvModal>('$bvModal', overrideBvModal(context.root.$bvModal));
+
 
     onMounted(() => {
 

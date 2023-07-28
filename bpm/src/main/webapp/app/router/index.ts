@@ -7,11 +7,10 @@ Component.registerHooks([
 ]);
 import Router, { RouteConfig } from 'vue-router';
 
-const Home = () => import('../componet/home.vue');
-const Deal = () => import('../componet/deal.vue');
-const Deal2 = () => import('../componet/deal2.vue');
-const Deal3 = () => import('../componet/deal3.vue');
-const Notify = () => import('../componet/notify.vue');
+const Home = () => import('@/components/home.vue');
+const Deal = () => import('@/components/deal.vue');
+const Pending = () => import('@/components/pending.vue');
+const Notify = () => import('@/components/notify.vue');
 import account from './account';
 import admin from './admin';
 import entities from './entities';
@@ -27,24 +26,27 @@ const router = new Router({
       path: '/',
       name: 'deal',
       component: Deal,
+      meta: {
+        functionId: 'deal',
+      },
       props: true
     },
     {
-      path: '/deal2',
-      name: 'deal2',
-      component: Deal2,
-      props: true
-    },
-    {
-      path: '/deal3',
-      name: 'deal3',
-      component: Deal3,
+      path: '/pending',
+      name: 'pending',
+      component: Pending,
+      meta: {
+        functionId: 'pending',
+      },
       props: true
     },
     {
       path: '/notify',
       name: 'notify',
       component: Notify,
+      meta: {
+        functionId: 'notify',
+      },
       props: true
     },
     {

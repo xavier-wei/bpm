@@ -7,6 +7,9 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import tw.gov.pcc.flowable.domain.*;
 import tw.gov.pcc.flowable.service.ProcessFlowService;
+import tw.gov.pcc.flowable.service.dto.CompleteReqDTO;
+import tw.gov.pcc.flowable.service.dto.ProcessReqDTO;
+import tw.gov.pcc.flowable.service.dto.TaskDTO;
 
 import java.util.List;
 
@@ -33,9 +36,9 @@ public class ProcessResource {
 
 
     @RequestMapping("/queryProcessingInstance")
-    public List<TaskDTO> queryProcessingInstance(@RequestParam String id) {
+    public List<TaskDTO> queryProcessingInstance(@RequestParam String id, String formName) {
 
-        return service.queryProcessingTask(id);
+        return service.queryProcessingTask(id,formName);
     }
 
     @RequestMapping("/completeTask")
