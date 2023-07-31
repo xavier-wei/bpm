@@ -4,7 +4,7 @@ import java.time.LocalDate;
 
 public class SeqNumber {
 
-    // 傳入參數可接受 null 或"112010001"
+    // 傳入參數可接受 null 或"112010001" 回傳 新流水號 112010002
     public String getNewSeq(String lastFormId) {
         LocalDate localDate = LocalDate.now();
         String year = String.valueOf(localDate.getYear() - 1911);
@@ -37,4 +37,7 @@ public class SeqNumber {
             return year + mon + "0001";
         }
     }
+
+
+
 }
