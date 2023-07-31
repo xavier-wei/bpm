@@ -62,15 +62,15 @@ public class ProcessFlowService {
     }
 
     // query task
-    public List<TaskDTO> queryProcessingTask(String id,String formName) {
+    public List<TaskDTO> queryProcessingTask(String id) {
+        System.out.println(id);
         return taskService.createTaskQuery()
                 .taskCandidateOrAssigned(id)
-                .processDefinitionKey(ProcessEnum.getProcessKeyBykey(formName))
                 .orderByTaskCreateTime()
                 .asc()
                 .list()
                 .stream()
-                .map((Task task) -> new TaskDTO(task,isProcessComplete(task.getProcessInstanceId())))
+                .map(TaskDTO::new)
                 .collect(Collectors.toList());
     }
 

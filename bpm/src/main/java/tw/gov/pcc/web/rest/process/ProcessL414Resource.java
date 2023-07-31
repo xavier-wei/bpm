@@ -1,13 +1,15 @@
 package tw.gov.pcc.web.rest.process;
 
 import com.google.gson.Gson;
-import org.springframework.web.bind.annotation.*;
-import org.springframework.http.*;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.*;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.client.RestTemplate;
-import tw.gov.pcc.domain.EipBpmIsmsL414;
 import tw.gov.pcc.repository.EipBpmIsmsL414Repository;
 import tw.gov.pcc.service.EipBpmIsmsL414Service;
 import tw.gov.pcc.service.dto.EipBpmIsmsL414DTO;
@@ -19,7 +21,6 @@ import javax.validation.Valid;
 import java.time.Instant;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 @RestController
 @RequestMapping("/api/process")
@@ -65,7 +66,6 @@ public class ProcessL414Resource {
         processReqDTO.setVariables(variables);
         Gson gson = new Gson();
         String json = gson.toJson(processReqDTO);
-
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
         HttpEntity<String> requestEntity = new HttpEntity<>(json, headers);
@@ -97,15 +97,17 @@ public class ProcessL414Resource {
     }
 
     @RequestMapping("/queryTask")
-    public List<TaskDTO> queryTask(String id, String formName) {
-
-        HashMap<String, String> map = new HashMap<>();
-
-//        restTemplate
-
-
+    public List<TaskDTO> queryTask() {
+        String id="ApplyTester";
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+        HttpEntity<String> requestEntity = new HttpEntity<>(id,headers);
+        ResponseEntity<String> exchange = restTemplate.exchange(START_PROCESS_URL + "/queryProcessingTask", HttpMethod.POST, requestEntity, String.class);
+        if (exchange.getStatusCodeValue() == 200) {
+            String body = exchange.getBody();
+            return new Gson().fromJson(body, List.class);
+        }
         return null;
     }
-
 
 }
