@@ -14,12 +14,50 @@
         <router-link to="/notify">表單查詢</router-link>
       </li>
     </ul>
+
+    <b-form-select v-model="userData" :options="options.userOptions">
+      <template #first>
+        <b-form-select-option value="null" disabled>請選擇</b-form-select-option>
+        <b-form-select-option value="">全部</b-form-select-option>
+      </template>
+    </b-form-select>
   </div>
 </template>
 
 <script lang="ts">
+import {BFormSelect, BFormSelectOption} from "bootstrap-vue";
+import {reactive, ref, watch} from "@vue/composition-api";
+import {useStore} from '@u3u/vue-hooks';
+
 export default {
   name: 'home',
+  components: {
+    'b-form-select': BFormSelect,
+    'b-form-select-option': BFormSelectOption,
+  },
+  setup() {
+
+    const userData = ref('');
+
+    const options = reactive({
+      userOptions: [
+        {value: 'ApplyTester', text: '申請人'},
+        {value: 'ChiefTester', text: '科長'},
+        {value: 'DirectorTester', text: '主管'},
+        {value: 'InfoTester', text: '資推'},
+      ],
+    });
+
+    watch(userData, () => {
+      console.log('userData::', userData.value)
+      useStore().value.commit('setUserData', { user: userData.value });
+    })
+
+    return {
+      options,
+      userData
+    };
+  },
 };
 </script>
 

@@ -404,6 +404,9 @@
             <b-button style="background-color: #17a2b8; color: white" size="sm" variant="outline-secondary"
                       @click="submitForm('1')">申請
             </b-button>
+            <b-button style="background-color: #17a2b8; color: white" size="sm" variant="outline-secondary"
+                      @click="test()">權限測試
+            </b-button>
           </b-col>
         </b-form-row>
       </section>
@@ -444,7 +447,7 @@ const flowChart = () => import('@/components/flowChart.vue');
 // import { notificationErrorHandler } from '@/shared/http/http-response-helper';
 // import { useNotification } from '@/shared/notification';
 import axios from 'axios';
-
+import { useGetters } from '@u3u/vue-hooks';
 export default {
   name: "l414Apply",
   components: {
@@ -471,6 +474,9 @@ export default {
     flowChart,
   },
   setup() {
+
+    const mainTypeOptions = ref(useGetters(['getUserData']).getUserData.value);
+
     const innerDual1 = ref(null);
     const dual1 = ref(null);
     const dual2 = ref(null);
@@ -603,6 +609,10 @@ export default {
       }
     };
 
+    function test() {
+      console.log('mainTypeOptions',mainTypeOptions)
+    }
+
     return {
       $v,
       form,
@@ -615,6 +625,7 @@ export default {
       dual1,
       dual2,
       fileData,
+      test,
     }
   }
 }
