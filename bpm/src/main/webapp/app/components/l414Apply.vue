@@ -282,14 +282,14 @@
                       <i-form-group-check class="col-sm-12"
                                           label-cols="2"
                                           content-cols="10" :label="'處理意見：'">
-                        <b-form-radio-group v-model="$v.agreeType.$model">
+                        <b-form-radio-group v-model="$v.agreeType.$model" :disabled="userData != 'InfoTester'">
 
                           <!--預定完成日期 : scheduleDate-->
                           <b-form-radio class="col-12" value="1">
                             <b-input-group>
                               <div>同意設定 : 預定完成日期 : 　</div>
                               <i-date-picker
-                                :disabled="$v.agreeType.$model !== '1'"
+                                :disabled="$v.agreeType.$model !== '1' && userData != 'InfoTester'"
                                 placeholder="yyy/MM/dd"
                                 v-model="$v.scheduleDate.$model"
                                 :state="validateState($v.scheduleDate)"
@@ -303,7 +303,7 @@
                           <b-form-radio class="col-12" value="2">
                             <b-input-group>
                               <div>部分同意設定 : 原因 :　　 　</div>
-                              <b-form-textarea :disabled="$v.agreeType.$model !== '2'"
+                              <b-form-textarea :disabled="$v.agreeType.$model !== '2' && userData != 'InfoTester'"
                                                v-model="$v.partialAgreeReason.$model" rows="1" maxlength="2000" trim
                                                lazy/>
                             </b-input-group>
@@ -313,7 +313,7 @@
                           <b-form-radio class="col-12" value="3">
                             <b-input-group>
                               <div>不同意設定 : 原因 :　　　 　</div>
-                              <b-form-textarea :disabled="$v.agreeType.$model !== '3'"
+                              <b-form-textarea :disabled="$v.agreeType.$model !== '3' && userData != 'InfoTester'"
                                                v-model="$v.notAgreeReason.$model"
                                                rows="1" maxlength="2000" trim lazy/>
                             </b-input-group>
@@ -329,11 +329,11 @@
                       <i-form-group-check class="col-sm-5" label-cols="5" content-cols="7" :label="`變更設備 ：`">
                         <b-input-group>
                           <!--是否為外部防火牆 : isExternalFirewall-->
-                          <b-form-checkbox v-model="$v.isExternalFirewall.$model" value="Y" unchecked-value="N">
+                          <b-form-checkbox v-model="$v.isExternalFirewall.$model" value="Y" unchecked-value="N" :disabled="userData != 'InfoTester'">
                             外部防火牆
                           </b-form-checkbox>
                           <!--變更設備：是否為內部防火牆 : isInternalFirewall-->
-                          <b-form-checkbox v-model="$v.isInternalFirewall.$model" value="Y" unchecked-value="N">
+                          <b-form-checkbox v-model="$v.isInternalFirewall.$model" value="Y" unchecked-value="N" :disabled="userData != 'InfoTester'">
                             外部防火牆
                           </b-form-checkbox>
                         </b-input-group>
@@ -344,7 +344,7 @@
                       <i-form-group-check class="col-sm-12" label-cols="2" content-cols="8" :label="'設定內容 ：'"
                                           :item="$v.firewallContent" style="margin-left: 7px">
                         <!--設定內容 : firewallContent-->
-                        <b-form-textarea v-model="$v.firewallContent.$model" rows="1" maxlength="2000" trim lazy/>
+                        <b-form-textarea v-model="$v.firewallContent.$model" rows="1" maxlength="2000" trim lazy :disabled="userData != 'InfoTester'"/>
                       </i-form-group-check>
                     </b-form-row>
 
@@ -360,6 +360,7 @@
                             :state="validateState($v.finishDatetime)"
                             lazy
                             trim
+                            :disabled="userData != 'InfoTester'"
                           ></i-date-picker>
                           <span class="m-1">，並以電話通知申請單位。</span>
                         </b-input-group>
@@ -475,7 +476,7 @@ export default {
   },
   setup() {
 
-    const mainTypeOptions = ref(useGetters(['getUserData']).getUserData.value);
+    const userData = ref(useGetters(['getUserData']).getUserData).value.user;
 
     const innerDual1 = ref(null);
     const dual1 = ref(null);
@@ -610,7 +611,7 @@ export default {
     };
 
     function test() {
-      console.log('mainTypeOptions',mainTypeOptions)
+      console.log('mainTypeOptions ==>  ',userData)
     }
 
     return {
@@ -626,6 +627,7 @@ export default {
       dual2,
       fileData,
       test,
+      userData
     }
   }
 }

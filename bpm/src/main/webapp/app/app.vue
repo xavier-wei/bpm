@@ -1,5 +1,8 @@
 <template>
   <div class="app">
+
+
+
     <div class="sidebar">
       <!-- 侧边栏内容 -->
       <Home></Home>
@@ -25,7 +28,7 @@ import JhiNavbar from '../app/core/jhi-navbar/jhi-navbar.vue';
 import LoginForm from '../app/account/login-form/login-form.vue';
 import Home from '@/components/home.vue';
 import { computed, nextTick, onMounted, provide, reactive, ref, watch, inject } from '@vue/composition-api';
-import { BButton, BIcon, BSidebar, BvModal, BRow } from 'bootstrap-vue';
+import {BButton, BIcon, BSidebar, BvModal, BRow, BFormSelect, BFormSelectOption} from 'bootstrap-vue';
 import '@/shared/config/dayjs';
 import { useGetters, useRouter, useStore } from '@u3u/vue-hooks';
 import MenuService from '@/core/menu/menu-service';
