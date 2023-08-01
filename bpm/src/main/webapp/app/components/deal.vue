@@ -1,17 +1,12 @@
 <template>
-  <div>
-
-  </div>
+  <div></div>
 </template>
 
 <script lang="ts">
-export default({
+export default {
   name: 'deal',
-  components: {
-
-  },
-
-});
+  components: {},
+};
 </script>
 
 <style scoped>

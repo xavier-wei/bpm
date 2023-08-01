@@ -2,10 +2,10 @@
   <div>
     <ul>
       <li>
-        <router-link to="/l410Apply">L410-共用系統使用者帳號申請單</router-link>
+        <router-link to="/l410Query">L410-共用系統使用者帳號申請單</router-link>
       </li>
       <li>
-        <router-link to="/l414Apply">L414-網路服務連結申請單</router-link>
+        <router-link to="/l414Query">L414-網路服務連結申請單</router-link>
       </li>
       <li>
         <router-link to="/pending">待處理表單</router-link>
@@ -25,9 +25,9 @@
 </template>
 
 <script lang="ts">
-import {BFormSelect, BFormSelectOption} from "bootstrap-vue";
-import {reactive, ref, watch} from "@vue/composition-api";
-import {useStore} from '@u3u/vue-hooks';
+import { BFormSelect, BFormSelectOption } from 'bootstrap-vue';
+import { reactive, ref, watch } from '@vue/composition-api';
+import { useStore } from '@u3u/vue-hooks';
 
 export default {
   name: 'home',
@@ -36,26 +36,25 @@ export default {
     'b-form-select-option': BFormSelectOption,
   },
   setup() {
-
     const userData = ref('');
 
     const options = reactive({
       userOptions: [
-        {value: 'ApplyTester', text: '申請人'},
-        {value: 'ChiefTester', text: '科長'},
-        {value: 'DirectorTester', text: '主管'},
-        {value: 'InfoTester', text: '資推'},
+        { value: 'ApplyTester', text: '申請人' },
+        { value: 'ChiefTester', text: '科長' },
+        { value: 'DirectorTester', text: '主管' },
+        { value: 'InfoTester', text: '資推' },
       ],
     });
 
     watch(userData, () => {
-      console.log('userData::', userData.value)
+      console.log('userData::', userData.value);
       useStore().value.commit('setUserData', { user: userData.value });
-    })
+    });
 
     return {
       options,
-      userData
+      userData,
     };
   },
 };
