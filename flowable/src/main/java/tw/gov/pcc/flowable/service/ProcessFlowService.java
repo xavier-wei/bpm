@@ -33,6 +33,7 @@ public class ProcessFlowService {
     // 開啟流程，並且在isSubmit為"1"的狀態，直接跳過申請者確認進到下個步驟，若為temp則需進行確認
     public String startProcess(String processKey, Map<String, Object> variables) {
         ProcessInstance processInstance = runtimeService.startProcessInstanceByKey(processKey, variables);
+
         if (variables.get("isSubmit").equals("1")) {
             Task task = taskService.createTaskQuery()
                     .taskCandidateOrAssigned((String) variables.get("applier"))
@@ -63,15 +64,23 @@ public class ProcessFlowService {
 
     // query task
     public List<TaskDTO> queryProcessingTask(String id) {
-        System.out.println(id);
+
         return taskService.createTaskQuery()
                 .taskCandidateOrAssigned(id)
                 .orderByTaskCreateTime()
-                .asc()
+                .desc()
                 .list()
                 .stream()
-                .map(TaskDTO::new)
+                .map(this::getTaskDTO)
                 .collect(Collectors.toList());
+    }
+
+    private TaskDTO getTaskDTO(Task task) {
+        ProcessInstance processInstance = runtimeService.createProcessInstanceQuery()
+                .processInstanceId(task.getProcessInstanceId())
+                .singleResult();
+        String processDefinitionKey = processInstance.getProcessDefinitionKey();
+        return new TaskDTO(task, processDefinitionKey);
     }
 
     public boolean isProcessComplete(String processInstanceId) {
@@ -87,7 +96,7 @@ public class ProcessFlowService {
         HistoricProcessInstance historicProcessInstance = historyService
                 .createHistoricProcessInstanceQuery()
                 .processInstanceId(processInstanceId)
-                .processDefinitionKey(ProcessEnum.getProcessKeyBykey(formName))
+                .processDefinitionKey(ProcessEnum.getProcessKeyByKey(formName))
                 .singleResult();
         return (historicProcessInstance != null && historicProcessInstance.getEndTime() != null);
     }
