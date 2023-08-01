@@ -14,13 +14,6 @@
         <router-link to="/notify">表單查詢</router-link>
       </li>
     </ul>
-
-    <b-form-select v-model="userData" :options="options.userOptions">
-      <template #first>
-        <b-form-select-option value="null" disabled>請選擇</b-form-select-option>
-        <b-form-select-option value="">全部</b-form-select-option>
-      </template>
-    </b-form-select>
   </div>
 </template>
 
