@@ -1,6 +1,7 @@
 package tw.gov.pcc.flowable.rest;
 
 
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -38,12 +39,11 @@ public class ProcessResource {
     @RequestMapping("/queryProcessingTask")
     public List<TaskDTO> queryProcessingTask(@RequestBody String id) {
         System.out.println(id);
-
         return service.queryProcessingTask(id);
     }
 
     @RequestMapping("/completeTask")
-    public ProcessRes completeTask(@RequestBody CompleteReqDTO completeReqDTO) {
+    public ProcessRes completeTask(@Validated @RequestBody CompleteReqDTO completeReqDTO) {
         if (completeReqDTO.getVariables() != null) {
             return service.completeTask(completeReqDTO.getProcessInstanceId(), completeReqDTO.getTaskId(),completeReqDTO.getVariables());
         }

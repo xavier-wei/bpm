@@ -16,7 +16,7 @@ public class ProcessReq {
     private HashMap<String, Object> variables;
 
     public ProcessReq(ProcessReqDTO dto) {
-        this.processKey=ProcessEnum.getProcessKeyBykey(dto.getFormName());
+        this.processKey=ProcessEnum.getProcessKeyByKey(dto.getFormName());
         this.variables = dto.getVariables();
     }
 
