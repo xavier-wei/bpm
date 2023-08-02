@@ -99,21 +99,6 @@
 
                   </div>
 
-
-                  <!--                  <b-form-row>-->
-                  <!--                    <i-form-group-check label-star class="col-sm-5" label-cols="5" content-cols="7" :label="`是否暫存：`"-->
-                  <!--                                        :item="$v.isSubmit">-->
-                  <!--                      &lt;!&ndash;是否暫存、送出 : isSubmit&ndash;&gt;-->
-                  <!--                      <b-form-select v-model="$v.isSubmit.$model">-->
-                  <!--                        <template #first>-->
-                  <!--                          <b-form-select-option value="" disabled>請選擇</b-form-select-option>-->
-                  <!--                          <b-form-select-option value="0">暫存</b-form-select-option>-->
-                  <!--                          <b-form-select-option value="1">送出</b-form-select-option>-->
-                  <!--                        </template>-->
-                  <!--                      </b-form-select>-->
-                  <!--                    </i-form-group-check>-->
-                  <!--                  </b-form-row>-->
-
                   <div class="card m-3" style="background-color: white">
 
                     <b-row>
@@ -271,7 +256,8 @@
 
 
                   <b-form-row>
-                    <i-form-group-check class="col-sm-3" label-cols="12" content-cols="0" :label="'以下由資訊推動小組填寫'">
+                    <i-form-group-check class="col-sm-3" label-cols="12" content-cols="0"
+                                        :label="'以下由資訊推動小組填寫'">
                     </i-form-group-check>
                   </b-form-row>
 
@@ -329,11 +315,13 @@
                       <i-form-group-check class="col-sm-5" label-cols="5" content-cols="7" :label="`變更設備 ：`">
                         <b-input-group>
                           <!--是否為外部防火牆 : isExternalFirewall-->
-                          <b-form-checkbox v-model="$v.isExternalFirewall.$model" value="Y" unchecked-value="N" :disabled="userData != 'InfoTester'">
+                          <b-form-checkbox v-model="$v.isExternalFirewall.$model" value="Y" unchecked-value="N"
+                                           :disabled="userData != 'InfoTester'">
                             外部防火牆
                           </b-form-checkbox>
                           <!--變更設備：是否為內部防火牆 : isInternalFirewall-->
-                          <b-form-checkbox v-model="$v.isInternalFirewall.$model" value="Y" unchecked-value="N" :disabled="userData != 'InfoTester'">
+                          <b-form-checkbox v-model="$v.isInternalFirewall.$model" value="Y" unchecked-value="N"
+                                           :disabled="userData != 'InfoTester'">
                             外部防火牆
                           </b-form-checkbox>
                         </b-input-group>
@@ -344,7 +332,8 @@
                       <i-form-group-check class="col-sm-12" label-cols="2" content-cols="8" :label="'設定內容 ：'"
                                           :item="$v.firewallContent" style="margin-left: 7px">
                         <!--設定內容 : firewallContent-->
-                        <b-form-textarea v-model="$v.firewallContent.$model" rows="1" maxlength="2000" trim lazy :disabled="userData != 'InfoTester'"/>
+                        <b-form-textarea v-model="$v.firewallContent.$model" rows="1" maxlength="2000" trim lazy
+                                         :disabled="userData != 'InfoTester'"/>
                       </i-form-group-check>
                     </b-form-row>
 
@@ -378,12 +367,26 @@
                     </P>
 
                   </div>
+
+                  <b-container class="mt-3">
+                    <b-row class="justify-content-center">
+                      <b-button class="mr-1" style="background-color: #17a2b8; color: white" size="sm"
+                                variant="outline-secondary"
+                                @click="submitForm('0')">暫存
+                      </b-button>
+                      <b-button class="mr-1" style="background-color: #17a2b8; color: white" size="sm"
+                                variant="outline-secondary"
+                                @click="submitForm('1')">申請
+                      </b-button>
+                    </b-row>
+                  </b-container>
+
                 </div>
 
               </b-tab>
               <b-tab title="附件" :active="activeTab(1)" @click="changeTabIndex(1)">
 
-                <appendix>
+                <appendix :vData="appendixData">
 
                 </appendix>
 
@@ -397,19 +400,7 @@
           </b-card-body>
 
         </div>
-        <b-form-row>
-          <b-col cols="4" offset="6">
-            <b-button style="background-color: #17a2b8; color: white" size="sm" variant="outline-secondary"
-                      @click="submitForm('0')">暫存
-            </b-button>
-            <b-button style="background-color: #17a2b8; color: white" size="sm" variant="outline-secondary"
-                      @click="submitForm('1')">申請
-            </b-button>
-            <b-button style="background-color: #17a2b8; color: white" size="sm" variant="outline-secondary"
-                      @click="test()">權限測試
-            </b-button>
-          </b-col>
-        </b-form-row>
+
       </section>
     </b-container>
   </div>
@@ -417,24 +408,7 @@
 
 <script lang="ts">
 
-import {
-  BRow,
-  BFormRow,
-  BFormInput,
-  BFormRadioGroup,
-  BFormRadio,
-  BContainer,
-  BCol,
-  BFormTextarea,
-  BFormCheckbox,
-  BButton,
-  BInputGroup,
-  BFormSelect,
-  BFormSelectOption,
-  BCardBody,
-  BTabs,
-  BTab,
-} from 'bootstrap-vue';
+
 import IDualDatePicker from '@/shared/i-date-picker/i-dual-date-picker.vue';
 import {reactive, ref, Ref, toRef, watch} from '@vue/composition-api';
 import {useValidation, validateState} from '@/shared/form';
@@ -445,47 +419,35 @@ import {useBvModal} from '@/shared/modal';
 
 const appendix = () => import('@/components/appendix.vue');
 const flowChart = () => import('@/components/flowChart.vue');
-// import { notificationErrorHandler } from '@/shared/http/http-response-helper';
-// import { useNotification } from '@/shared/notification';
+import { notificationErrorHandler } from '@/shared/http/http-response-helper';
+import { useNotification } from '@/shared/notification';
 import axios from 'axios';
-import { useGetters } from '@u3u/vue-hooks';
+import {useGetters} from '@u3u/vue-hooks';
+import {FileModel} from "@/shared/model/qua/fileModel,";
+
 export default {
   name: "l414Apply",
   components: {
-    'b-row': BRow,
     'i-form-group-check': IFormGroupCheck,
     'i-dual-date-picker': IDualDatePicker,
     'i-date-picker': IDatePicker,
-    'b-form-row': BFormRow,
-    'b-form-input': BFormInput,
-    'b-form-radio-group': BFormRadioGroup,
-    'b-form-radio': BFormRadio,
-    'b-container': BContainer,
-    'b-col': BCol,
-    'b-form-textarea': BFormTextarea,
-    'b-form-checkbox': BFormCheckbox,
-    'b-button': BButton,
-    'b-input-group': BInputGroup,
-    'b-form-select': BFormSelect,
-    'b-form-select-option': BFormSelectOption,
-    BCardBody,
-    BTabs,
-    BTab,
     appendix,
     flowChart,
   },
   setup() {
-
     const userData = ref(useGetters(['getUserData']).getUserData).value.user;
-
-    const innerDual1 = ref(null);
+    console.log('userData : ',userData)
+    const tabIndex = ref(0);
     const dual1 = ref(null);
     const dual2 = ref(null);
-    // const notificationService = useNotification();
+    const notificationService = useNotification();
     const $bvModal = useBvModal();
     const fileData = reactive({
       filePathName: '',
     });
+
+    const appendixData = reactive({});
+
     const formDefault = {
       formId: '',//表單編號
       applyDate: new Date(new Date().getFullYear(), 0, 1),//	申請日期
@@ -572,6 +534,10 @@ export default {
     });
 
     const submitForm = (isSubmit) => {
+
+      //TODO: 接續未完籌起流程跟上傳檔案
+      console.log('appendixData>>>  ',appendixData)
+
       checkValidity().then((isValid: boolean) => {
         if (isValid) {
           $bvModal.msgBoxConfirm('是否確認送出修改內容？').then((isOK: boolean) => {
@@ -585,7 +551,7 @@ export default {
                   fileData.filePathName = 'http://localhost:8081/pic?processId=' + data;
 
                 })
-              // .catch(notificationErrorHandler(notificationService));
+              .catch(notificationErrorHandler(notificationService));
 
             }
           });
@@ -594,9 +560,6 @@ export default {
         }
       });
     };
-
-
-    const tabIndex = ref(0);
 
     const changeTabIndex = (index: number) => {
       tabIndex.value = index;
@@ -610,10 +573,6 @@ export default {
       }
     };
 
-    function test() {
-      console.log('mainTypeOptions ==>  ',userData)
-    }
-
     return {
       $v,
       form,
@@ -626,8 +585,8 @@ export default {
       dual1,
       dual2,
       fileData,
-      test,
-      userData
+      userData,
+      appendixData
     }
   }
 }

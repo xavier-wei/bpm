@@ -1,0 +1,14 @@
+entity BpmUploadFile(BPM_UPLOAD_FILE) {
+        @Id uuid UUID required,
+        formId String maxlength(50) required ,
+        fileName String maxlength(200) required ,
+        fileSize String maxlength(20) required ,
+        authorName String maxlength(20) required ,
+        fileDescription String maxlength(1000) ,
+        filePath String maxlength(1000) required ,
+        updateUser String maxlength(20) ,
+        updateTime Instant ,
+        createUser String maxlength(20) required  ,
+        createTime  Instant required ,
+}
+use mapstruct for *
