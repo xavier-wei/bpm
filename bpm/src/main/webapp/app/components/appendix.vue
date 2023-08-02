@@ -7,58 +7,51 @@
           <!-- 新增附件 -->
           <div class="card context" style="background-color: #d3ede8">
             <b-table
-              class="table-sm"
-              show-empty
-              responsive
-              bordered
-              empty-text="無資料"
-              :items="appendixData.appendix"
-              :fields="appendixData.fields"
+                class="table-sm"
+                show-empty
+                responsive
+                bordered
+                empty-text="無資料"
+                :items="appendixData.appendix"
+                :fields="appendixData.fields"
             >
-<!--              <template #cell(index)="row">{{ row.index + 1 }}</template>-->
 
               <template #cell(file)="row">
 
                 <b-form-file
-                  v-model="row.item.file"
-                  trim
-                  multiple
-                  browse-text="選擇檔案"
-                  @change="upload($event,row.index,row.item)"
+                    v-model="row.item.file"
+                    trim
+                    multiple
+                    browse-text="選擇檔案"
+                    @change="upload($event,row.index,row.item)"
                 ></b-form-file>
               </template>
 
-              <template #cell(size)="row">
-                <b-form-input v-model="row.item.size" maxlength="200"></b-form-input>
+              <template #cell(fileSize)="row">
+                <b-form-input v-model="row.item.fileSize" maxlength="200"></b-form-input>
               </template>
               <template #cell(upDataTime)="row">
-                <div v-model="row.item.upDataTime" >{{ formatToString(row.item.updateTime,'/') }}</div>
+                <div v-model="row.item.upDataTime">{{ formatToString(row.item.updateTime, '/') }}</div>
               </template>
 
-              <template #cell(author)="row">
-                <b-form-input v-model="row.item.author" maxlength="200"></b-form-input>
+              <template #cell(authorName)="row">
+                <b-form-input v-model="row.item.authorName" maxlength="200"></b-form-input>
               </template>
-              <template #cell(attachmentDescription)="row">
-                <b-form-input v-model="row.item.attachmentDescription" maxlength="200"></b-form-input>
+              <template #cell(fileDescription)="row">
+                <b-form-input v-model="row.item.fileDescription" maxlength="200"></b-form-input>
               </template>
 
               <template #cell(action)="row">
 
-                <b-button class="submitFormBon"  @click="removeAnnouncement(row.index)"
-                          v-if="appendixData.appendix.length > 1">刪除</b-button>
-                <b-button class="submitFormBon"  @click="addAnnouncement"
-                          v-if="row.index == appendixData.appendix.length - 1">新增</b-button>
+                <b-button class="submitFormBon" @click="removeAnnouncement(row.index)"
+                          v-if="appendixData.appendix.length > 1">刪除
+                </b-button>
+                <b-button class="submitFormBon" @click="addAnnouncement"
+                          v-if="row.index == appendixData.appendix.length - 1">新增
+                </b-button>
 
               </template>
             </b-table>
-
-
-            <b-col>
-              <b-form-row class="justify-content-end">
-                <b-button class="submitFormBon" @click="test">測試</b-button>
-              </b-form-row>
-            </b-col>
-
           </div>
         </div>
       </div>
@@ -68,74 +61,41 @@
 
 
 <script lang="ts">
-import {
-  BCol,
-  BFormRow,
-  BLink,
-  BListGroup,
-  BListGroupItem,
-  BTableSimple,
-  BTbody,
-  BTd,
-  BTr,
-  BTable,
-  BFormInput,
-  BFormSelect,
-  BFormSelectOption,
-  BFormFile,
-  BButton,
-} from "bootstrap-vue";
+
 import IButton from '@/shared/buttons/i-button.vue';
-import {onMounted, reactive,ref} from "@vue/composition-api";
-import {AuthorModel} from "@/shared/model/qua/authorModel";
-import IDatePicker from '@/shared/i-date-picker/i-date-picker.vue';
+import {onMounted, reactive, ref, watch} from "@vue/composition-api";
+import {FileModel} from "@/shared/model/qua/fileModel,";
+import {formatToString} from "@/shared/date/minguo-calendar-utils";
+import {useGetters} from "@u3u/vue-hooks";
+import {useNotification} from '@/shared/notification';
 import axios from "axios";
-import NotificationService from "@/shared/notification/notification-service";
 import {useBvModal} from "@/shared/modal";
-import {formatDate, formatToString} from "@/shared/date/minguo-calendar-utils";
-import {loadImage} from "@/shared/file/image2";
+import {notificationErrorHandler} from '@/shared/http/http-response-helper';
+
 export default {
   name: "appendix",
   components: {
-    BButton,
-    BCol,
-    BFormRow,
-    BLink,
-    BTableSimple,
-    BTbody,
-    BTd,
-    BTr,
     IButton,
-    BListGroup,
-    BListGroupItem,
-    BTable,
-    BFormInput,
-    BFormSelect,
-    BFormSelectOption,
-    IDatePicker,
-    BFormFile,
   },
-  props: {},
+  props: {
+    vData: {
+      type: Object,
+      required: false,
+    },
+  },
   setup(props) {
 
-    // const notificationService: NotificationService = useNotification();
-    const $bvModal = useBvModal();
+    let filePathNameProp = reactive(props.vData);
+    const userData = ref(useGetters(['getUserData']).getUserData).value.user;
+    const fideIndex = ref(0);
+    const notificationService = useNotification();
     onMounted(() => {
       doQuery();
-    //   handleQuery();
     });
 
-    const appendixData: { appendix: AuthorModel[] } = reactive({
+    const appendixData: { appendix: FileModel[], fields: any } = reactive({
       appendix: [],
       fields: [
-        // {
-        //   key: 'index',
-        //   label: '序號',
-        //   sortable: false,
-        //   thStyle: 'width:5%',
-        //   thClass: 'text-center',
-        //   tdClass: 'text-center align-middle',
-        // },
         {
           key: 'file',
           label: '附件名稱',
@@ -145,7 +105,7 @@ export default {
           tdClass: 'text-center align-middle',
         },
         {
-          key: 'size',
+          key: 'fileSize',
           label: '大小',
           sortable: false,
           thStyle: 'width:7%',
@@ -161,7 +121,7 @@ export default {
           tdClass: 'text-center align-middle',
         },
         {
-          key: 'author',
+          key: 'authorName',
           label: '作者',
           sortable: false,
           thStyle: 'width:10%',
@@ -169,7 +129,7 @@ export default {
           tdClass: 'text-center align-middle',
         },
         {
-          key: 'attachmentDescription',
+          key: 'fileDescription',
           label: '附件說明',
           sortable: false,
           thStyle: 'width:30%',
@@ -187,38 +147,14 @@ export default {
       ],
     });
 
-    // function downloadQuaFile(item) {
-    //   axios
-    //     .get('/service/adm-files/downloadFile/toQua/' + item.sourceId, {responseType: 'blob'})
-    //     .then(res => {
-    //       const content = String(res.headers['content-disposition']);
-    //       const fileName = decodeURI(
-    //         content
-    //           .substring(content.lastIndexOf('filename*=') + 17)
-    //           .replace(/"/g, '')
-    //           .replace(/\+/g, '')
-    //       );
-    //       const extName = fileName.substring(fileName.lastIndexOf('.'));
-    //
-    //       // 檔案是pdf跳出預覽視窗，不是pdf則直接下載
-    //       if (extName === '.pdf') {
-    //         let blob = new Blob([res.data], {type: 'application/pdf'});
-    //         let url = window.URL.createObjectURL(blob);
-    //         pdfViewer.value.pdfSrc = url;
-    //         pdfViewer.value.isShowDia(url, true);
-    //       } else {
-    //         downloadFile(res);
-    //       }
-    //     })
-    //     // .catch(notificationErrorHandler(notificationService));
-    // }
-
     function doQuery() {
       appendixData.appendix = [];
       // 給畫面的[新增附件:]預設值
-      let authorModel = new AuthorModel()
-      authorModel.updateTime = new Date();
-      appendixData.appendix.push(authorModel);
+      let fileModel = new FileModel()
+      fileModel.updateTime = new Date();
+      fileModel.createTime = new Date();
+      fileModel.authorName = userData
+      appendixData.appendix.push(fileModel);
     }
 
     function removeAnnouncement(index: number) {
@@ -226,62 +162,52 @@ export default {
     }
 
     function addAnnouncement() {
-      let authorModel = new AuthorModel()
-      authorModel.updateTime = new Date();
-      appendixData.appendix.push(authorModel);
+      let fileModel = new FileModel()
+      fileModel.updateTime = new Date();
+      fileModel.createTime = new Date();
+      fileModel.authorName = userData
+      appendixData.appendix.push(fileModel);
     }
 
-    async function test() {
-      for (let i = 0; i < appendixData.appendix.length; i++) {
-
-        console.log(' appendixData.appendix[i]', appendixData.appendix[i])
-      }
-    }
-
-    async function upload(e,index,data) {
-      data.file = e.target.files[0];
-      data.size = (e.target.files[0].size/1024).toFixed(1)
-    }
-
-    // async function submitForm() {
+    // function test() {
     //
     //   for (let i = 0; i < appendixData.appendix.length; i++) {
     //
-    //     if (appendixData.appendix[i].subject != null && (appendixData.appendix[i].quaUrl != null || (appendixData.appendix[i].file !== null && appendixData.appendix[i].file !== undefined))) {
+    //     let body = {
+    //       formId: 'L414-112070001',
+    //       fileName: appendixData.appendix[i].file[0].name,
+    //       fileSize: appendixData.appendix[i].fileSize,
+    //       authorName: appendixData.appendix[i].authorName,
+    //       fileDescription: appendixData.appendix[i].fileDescription,
+    //     };
     //
-    //       let body = {
-    //         subject: appendixData.appendix[i].subject,
-    //         quaUrl: appendixData.appendix[i].quaUrl,
-    //       };
+    //     const params = new FormData();
+    //     params.append('dto', new Blob([JSON.stringify(body)], {type: 'application/json'}));
+    //     params.append('file', appendixData.appendix[i].file[0]);
     //
-    //       const params = new FormData();
-    //       params.append('dto', new Blob([JSON.stringify(body)], {type: 'application/json'}));
-    //       if (appendixData.appendix[i].file !== null && appendixData.appendix[i].file !== undefined) {
-    //         params.append('file', appendixData.appendix[i].file[0]);
-    //       }
-    //
-    //       await axios
-    //         .post('/qua-appendix/qua0304r1', params)
+    //     axios
+    //         .post('/eip/bpmUploadFile', params)
     //         .then(({data}) => {
-    //           console.log('data', data)
     //
     //         })
-    //         // .catch(notificationErrorHandler(notificationService));
-    //     }else {
-    //       return $bvModal.msgBoxOk('請確認至少輸入一個公告 + 任意連結或文件 !');
-    //     }
+    //         .catch(notificationErrorHandler(notificationService));
     //   }
-    //
-    //   await $bvModal.msgBoxOk('儲存成功');
-    //   await doQuery()
     // }
+
+    async function upload(e, index, data) {
+      fideIndex.value += 1;
+      data.file = e.target.files[0];
+      data.fileSize = (e.target.files[0].size / 1024).toFixed(1)
+    }
+
+    watch(fideIndex, () => {
+      Object.assign(filePathNameProp, appendixData.appendix)
+    })
 
     return {
       appendixData,
       removeAnnouncement,
       addAnnouncement,
-      // submitForm,
-      test,
       formatToString,
       upload,
     };

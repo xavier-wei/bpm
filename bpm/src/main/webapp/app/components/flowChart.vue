@@ -9,15 +9,10 @@
 </template>
 
 <script lang="ts">
-import {BContainer, BRow} from "bootstrap-vue";
-import {reactive, watch} from '@vue/composition-api';
+import {reactive} from '@vue/composition-api';
 
 export default {
   name: "flowChart",
-  components: {
-    'b-container': BContainer,
-    'b-row': BRow,
-  },
   props: {
     filePathName: {
       type: Object,
@@ -26,15 +21,6 @@ export default {
   },
   setup(props){
     const filePathNameProp = reactive(props.filePathName);
-
-    // watch(
-    //   filePathNameProp,
-    //   newValue => {
-    //     console.log('filePathNameProp++++',filePathNameProp.filePathName)
-    //   },
-    //   { immediate: true }
-    // );
-
     return{
       filePathNameProp,
     }
