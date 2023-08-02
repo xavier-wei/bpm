@@ -18,38 +18,10 @@
 </template>
 
 <script lang="ts">
-import { BFormSelect, BFormSelectOption } from 'bootstrap-vue';
-import { reactive, ref, watch } from '@vue/composition-api';
-import { useStore } from '@u3u/vue-hooks';
+
 
 export default {
   name: 'home',
-  components: {
-    'b-form-select': BFormSelect,
-    'b-form-select-option': BFormSelectOption,
-  },
-  setup() {
-    const userData = ref('');
-
-    const options = reactive({
-      userOptions: [
-        { value: 'ApplyTester', text: '申請人' },
-        { value: 'ChiefTester', text: '科長' },
-        { value: 'DirectorTester', text: '主管' },
-        { value: 'InfoTester', text: '資推' },
-      ],
-    });
-
-    watch(userData, () => {
-      console.log('userData::', userData.value);
-      useStore().value.commit('setUserData', { user: userData.value });
-    });
-
-    return {
-      options,
-      userData,
-    };
-  },
 };
 </script>
 

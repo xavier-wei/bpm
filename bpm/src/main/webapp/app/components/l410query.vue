@@ -71,6 +71,7 @@ import { useValidation, validateState } from '../shared/form';
 import { useBvModal } from '../shared/modal';
 import { navigateByNameAndParams } from '@/router/router';
 import { useStore } from '@u3u/vue-hooks';
+import { Pagination } from '@/shared/pagination.model';
 export default defineComponent({
   name: 'l410Query',
   components: {

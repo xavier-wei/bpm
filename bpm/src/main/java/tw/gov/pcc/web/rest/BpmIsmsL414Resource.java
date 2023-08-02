@@ -5,6 +5,7 @@ import java.net.URISyntaxException;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.stream.Collectors;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import org.slf4j.Logger;
@@ -18,6 +19,7 @@ import tw.gov.pcc.domain.BpmIsmsL414;
 import tw.gov.pcc.repository.BpmIsmsL414Repository;
 import tw.gov.pcc.service.BpmIsmsL414Service;
 import tw.gov.pcc.service.dto.BpmIsmsL414DTO;
+import tw.gov.pcc.service.mapper.BpmIsmsL414Mapper;
 import tw.gov.pcc.web.rest.errors.BadRequestAlertException;
 
 /**
@@ -38,9 +40,12 @@ public class BpmIsmsL414Resource {
 
     private final BpmIsmsL414Repository bpmIsmsL414Repository;
 
-    public BpmIsmsL414Resource(BpmIsmsL414Service bpmIsmsL414Service, BpmIsmsL414Repository bpmIsmsL414Repository) {
+    private final BpmIsmsL414Mapper bpmIsmsL414Mapper;
+
+    public BpmIsmsL414Resource(BpmIsmsL414Service bpmIsmsL414Service, BpmIsmsL414Repository bpmIsmsL414Repository, BpmIsmsL414Mapper bpmIsmsL414Mapper) {
         this.bpmIsmsL414Service = bpmIsmsL414Service;
         this.bpmIsmsL414Repository = bpmIsmsL414Repository;
+        this.bpmIsmsL414Mapper = bpmIsmsL414Mapper;
     }
 
     /**
@@ -170,4 +175,18 @@ public class BpmIsmsL414Resource {
         bpmIsmsL414Service.delete(id);
         return ResponseEntity.noContent().headers(HeaderUtil.createEntityDeletionAlert(applicationName, true, ENTITY_NAME, id)).build();
     }
+
+    @GetMapping("/eip-bpm-isms-l414/findByWord")
+    public List<BpmIsmsL414DTO> findByWord(
+            @RequestParam(required = false) String word,
+            @RequestParam(required = false) String number
+    ) {
+
+        return bpmIsmsL414Repository.findByWord(word)
+                .stream()
+                .map(bpmIsmsL414Mapper::toDto)
+                .collect(Collectors.toList());
+    }
+
+
 }
