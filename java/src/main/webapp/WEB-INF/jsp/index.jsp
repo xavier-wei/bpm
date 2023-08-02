@@ -440,18 +440,19 @@
 
             $(function() {
                 getUserData();
+                getTicket()
             });
 
 
             // 假設後端資料
-            const backendResponse = [{
-                    imageNumber: 1,
-                    imageUrl: "././images/tableau/BID_01_01_20230717.png",
+            let backendResponse = [{
+                    dashboardFigId: 1,
+                    imageBase64String: "././images/tableau/BID_01_01_20230717.png",
                     tableauUrl: "http://223.200.84.115/#/views/__2023071701/_?:iid=4"
                 },
                 {
-                    imageNumber: 2,
-                    imageUrl: "././images/tableau/BID_02_01_20230717.png",
+                    dashboardFigId: 2,
+                    imageBase64String: "././images/tableau/BID_02_01_20230717.png",
                     tableauUrl: "http://223.200.84.115/#/views/__2023071701_16895610210960/_?:iid=1"
                 },
             ];
@@ -461,10 +462,14 @@
                 // 顯示確認視窗
                 const isConfirmed = confirm('將開啟Tableau視窗，確認繼續嗎？');
                 if (isConfirmed) {
-                    const imageNumber = type; 
-                    const foundImage = backendResponse.find(item => item.imageNumber === imageNumber);
+                    //美新開一個url都要再拿一次ticket，不然ticket會失效
+                    getTicket();
+                    const dashboardFigId = type; 
+                    const foundImage = backendResponse.find(item => item.dashboardFigId === dashboardFigId);
                     if (foundImage) {
-                        window.open(foundImage.tableauUrl, "_blank");
+                        foundImage.tableauUrl = foundImage.tableauUrl.replace("#","/trusted/"+ticket)
+                        console.log(foundImage.tableauUrl)
+                        window.open(foundImage.tableauUrl, "_blank");                       
                     } else {
                         alert('找不到對應的儀錶板網址');
                     }
@@ -475,16 +480,18 @@
             //取得userId
             function getUserData() {
                 $.ajax({
-                    url: '<c:url value="/getUserData" />',
+                    url: '<c:url value="/get-tableau-data" />',
                     type: 'POST',
                     async: true,
                     timeout: 100000,
                     success: function(response) {
                         console.log(response);
                         if (response) {
+                            backendResponse = response
                             //動態生成tableau div
                             const tableauContainer = document.getElementById("tableauContainer");
                             backendResponse.forEach((imageData) => {
+                                console.log("imageData",imageData)
                                 const tableauElement = createTableauElement(imageData);
                                 tableauContainer.appendChild(tableauElement);
                             });
@@ -502,7 +509,7 @@
             function createTableauElement(imageData) {
                 const tableauDiv = document.createElement("div");
                 tableauDiv.classList.add("col-md-2", "tableau_btn");
-                tableauDiv.id = "tableau_btn_" + imageData.imageNumber;
+                tableauDiv.id = "tableau_btn_" + imageData.dashboardFigId;
 
                 const topDiv = document.createElement("div");
                 topDiv.classList.add("top", "pic-scale-up");
@@ -510,18 +517,19 @@
                 const link = document.createElement("a");
                 link.href = "#";
                 link.onclick = function() {
-                    openTableau(imageData.imageNumber);
+                    openTableau(imageData.dashboardFigId);
                 };
 
                 const imgDiv = document.createElement("div");
                 imgDiv.classList.add("d-inline-block", "align-middle", "text-center");
-
                 const img = document.createElement("img");
-                img.src = imageData.imageUrl;
+                const base64String = imageData.imageBase64String;
+                img.src = "data:image/png;base64," + base64String;
                 img.style.borderRadius = "10px";
                 img.style.maxWidth = "100%";
                 img.style.maxHeight = "100%";
-                img.alt = "Responsive image";
+                img.alt = "儀錶板";
+
 
                 imgDiv.appendChild(img);
                 link.appendChild(imgDiv);
@@ -529,6 +537,38 @@
                 tableauDiv.appendChild(topDiv);
                 return tableauDiv;
             }
+
+
+            let ticket;
+            //獲取tableau授權碼，不用再二次登入
+            function getTicket() {
+             $.ajax({
+                    url: '<c:url value="/get-ticket" />',
+                    type: 'POST',
+                    async: true,
+                    timeout: 100000,
+                    success: function(response) {
+                        if (response) {
+                            ticket = response.ticket;  
+                            console.log("ticket",ticket);
+                        }
+                    },
+                    error: function(error) {
+                        console.error(error);
+                    }
+                });
+            }
+
+          function arrayBufferToBase64(buffer) {
+            console.log("buffer", buffer); // 檢查 buffer 是否有值
+            const bytes = new Uint8Array(buffer);
+            console.log("bytes", bytes); // 檢查 bytes 是否有值
+            let binary = '';
+            for (let i = 0; i < bytes.length; i++) {
+                binary += String.fromCharCode(bytes[i]);
+            }
+            return window.btoa(binary);
+        }
 
         </script>
     </jsp:attribute>
