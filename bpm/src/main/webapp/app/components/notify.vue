@@ -6,7 +6,7 @@
           <div class="row align-items-center">
             <div class="col-sm-11 p-0">
               <h5 class="m-0">
-                <font-awesome-icon icon="search"/>
+                <font-awesome-icon icon="search" />
                 查詢條件
               </h5>
             </div>
@@ -23,8 +23,7 @@
             </i-form-group-check>
 
             <i-form-group-check class="col-4" label-cols="4" content-cols="8" :label="`申請者：`" :item="$v.createUser">
-              <b-form-select v-model="$v.createUser.$model"
-              >
+              <b-form-select v-model="$v.createUser.$model">
                 <template #first>
                   <option value="">請選擇</option>
                 </template>
@@ -37,38 +36,33 @@
                 <template #first>
                   <option value="">請選擇</option>
                 </template>
-              </b-form-select
-              >
+              </b-form-select>
             </i-form-group-check>
             <i-form-group-check class="col-4" label-cols="4" content-cols="8" label="處理狀況：" :item="$v.status">
               <b-form-select v-model="$v.status.$model" :options="queryOptions.status">
                 <template #first>
                   <option value="">請選擇</option>
                 </template>
-              </b-form-select
-              >
+              </b-form-select>
             </i-form-group-check>
             <i-form-group-check class="col-4" label-cols="4" content-cols="8" label="表單分類：" :item="$v.formType">
               <b-form-select v-model="$v.formType.$model">
                 <template #first>
                   <option value="">請選擇</option>
                 </template>
-              </b-form-select
-              >
+              </b-form-select>
             </i-form-group-check>
           </b-form-row>
           <!-- 填表日期 -->
           <b-form-row>
-            <i-form-group-check :label="'期間：'" class="col-8" label-cols="2" content-cols="6" :dual1="$v.seqDate"
-                                :dual2="$v.seqDateEnd">
+            <i-form-group-check :label="'期間：'" class="col-8" label-cols="2" content-cols="6" :dual1="$v.seqDate" :dual2="$v.seqDateEnd">
               <b-input-group>
-                <i-date-picker v-model="$v.seqDate.$model" placeholder="yyy/MM/dd"
-                               :disabled-date="notAfterPublicDateEnd"></i-date-picker>
+                <i-date-picker v-model="$v.seqDate.$model" placeholder="yyy/MM/dd" :disabled-date="notAfterPublicDateEnd"></i-date-picker>
                 <b-input-group-text>至</b-input-group-text>
                 <i-date-picker
-                    v-model="$v.seqDateEnd.$model"
-                    placeholder="yyy/MM/dd"
-                    :disabled-date="notBeforePublicDateStart"
+                  v-model="$v.seqDateEnd.$model"
+                  placeholder="yyy/MM/dd"
+                  :disabled-date="notBeforePublicDateStart"
                 ></i-date-picker>
               </b-input-group>
             </i-form-group-check>
@@ -85,13 +79,13 @@
     <section class="mt-2">
       <div class="container">
         <i-table
-            ref="iTable"
-            :itemsUndefinedBehavior="'loading'"
-            :items="mockdata"
-            :fields="table.fields"
-            :totalItems="table.totalItems"
-            :is-server-side-paging="true"
-            @changePagination="handlePaginationChanged($event)"
+          ref="iTable"
+          :itemsUndefinedBehavior="'loading'"
+          :items="table.data"
+          :fields="table.fields"
+          :totalItems="table.totalItems"
+          :is-server-side-paging="true"
+          @changePagination="handlePaginationChanged($event)"
         >
           <template #cell(action)="row">
             <b-button class="ml-2" style="background-color: #17a2b8" @click="toEdit(row)">檢視</b-button>
@@ -104,14 +98,16 @@
 
 <script lang="ts">
 import axios from 'axios';
-import {ref, reactive, computed, toRefs, defineComponent} from '@vue/composition-api';
+import { ref, reactive, computed, toRefs, defineComponent } from '@vue/composition-api';
 import IDatePicker from '../shared/i-date-picker/i-date-picker.vue';
 import ITable from '../shared/i-table/i-table.vue';
 import IFormGroupCheck from '../shared/form/i-form-group-check.vue';
-import {useValidation, validateState} from '../shared/form';
-import {useBvModal} from '../shared/modal';
-import {required} from '@/shared/validators';
+import { useValidation, validateState } from '../shared/form';
+import { useBvModal } from '../shared/modal';
+import { required } from '@/shared/validators';
 import { Pagination } from '@/shared/model/pagination.model';
+import { useGetters, useStore } from '@u3u/vue-hooks';
+
 export default defineComponent({
   name: 'notify',
   components: {
@@ -149,13 +145,13 @@ export default defineComponent({
       dept: {},
       createUser: {},
       formCase: {},
-      status: {notnull: required},
+      status: { notnull: required },
       formType: {},
       seqDate: {},
       seqDateEnd: {},
     });
 
-    const {$v, checkValidity, reset} = useValidation(rules, form, formDefault);
+    const { $v, checkValidity, reset } = useValidation(rules, form, formDefault);
 
     const table = reactive({
       fields: [
@@ -167,7 +163,7 @@ export default defineComponent({
           tdClass: 'text-center align-middle',
         },
         {
-          key: 'index',
+          key: 'formId',
           label: '申請者/填表人',
           sortable: false,
           thClass: 'text-center',
@@ -182,7 +178,7 @@ export default defineComponent({
         },
         {
           key: 'applyDate',
-          label: '申請表單',
+          label: '申請日期',
           sortable: false,
           thClass: 'text-center',
           tdClass: 'text-center align-middle',
@@ -211,13 +207,13 @@ export default defineComponent({
         },
       ],
       data: [],
-      totalItems: 5,
+      totalItems: 0,
     });
 
     const mockdata = [
       {
         action: '4,02.03.04',
-        index: '林一郎/楊助理',
+        formId: '林一郎/楊助理',
         hostname: 'L410-共用系統使用者帳號申請單',
         applyDate: '112/05/23 10:23:43',
         port: '',
@@ -226,7 +222,7 @@ export default defineComponent({
       },
       {
         action: '4,02.03.04',
-        index: '林一郎/楊助理',
+        formId: '林一郎/楊助理',
         hostname: 'L410-共用系統使用者帳號申請單',
         applyDate: '112/05/25 11:43:13',
         port: '張為寬(直屬主管)',
@@ -235,7 +231,7 @@ export default defineComponent({
       },
       {
         action: '4,02.03.04',
-        index: '林一郎/楊助理',
+        formId: '林一郎/楊助理',
         hostname: 'L414-網路服務連結申請單',
         applyDate: '112/05/24 14:51:02',
         port: '',
@@ -247,23 +243,31 @@ export default defineComponent({
     // 下拉選單選項
     const queryOptions = reactive({
       status: [
-        {value: '0', text: '申請'},
-        {value: '1', text: '處理中'},
-        {value: '2', text: '處理過'},
+        { value: '0', text: '申請' },
+        { value: '1', text: '處理中' },
+        { value: '2', text: '處理過' },
       ],
       formCase: [
-        {value: '0', text: 'L410-共用系統使用者帳號申請單'},
-        {value: '1', text: 'L414-網路服務連結申請單'},
+        { value: '0', text: 'L410-共用系統使用者帳號申請單' },
+        { value: '1', text: 'L414-網路服務連結申請單' },
       ],
     });
 
     const toQuery = () => {
+      table.data = undefined;
+      const usegetters = useGetters;
+      console.log('useGetters', useGetters);
+      const id = 'ApplyTester';
       stepVisible.value = true;
       checkValidity().then((isValid: boolean) => {
         if (isValid) {
           $bvModal.msgBoxConfirm('是否確認送出修改內容？').then((isOK: boolean) => {
             if (isOK) {
-              console.log('form', form);
+              axios.post(`/process/queryTask/${id}`).then(data => {
+                console.log('data', data.data);
+                table.data = data.data.slice(0, data.data.length); //前端分頁(後端資料回傳)
+                table.totalItems = data.data.length;
+              });
             }
           });
         } else {
@@ -280,9 +284,9 @@ export default defineComponent({
       //   console.log('catch', error);
       // });
 
-      table.data = [];
-      table.totalItems = 1;
-      table.data.splice(0, table.data.length, ...mockdata);
+      // table.data = [];
+      // table.totalItems = 1;
+      // table.data.splice(0, table.data.length, ...mockdata);
     };
 
     const handlePaginationChanged = (pagination: Pagination) => {

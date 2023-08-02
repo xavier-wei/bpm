@@ -101,8 +101,8 @@ public class ProcessL414Resource {
         return processInstanceId;
     }
 
-    @RequestMapping("/queryTask")
-    public List<BpmIsmsL414DTO> queryTask(@RequestParam String id) {
+    @PostMapping("/queryTask/{id}")
+    public List<BpmIsmsL414DTO> queryTask(@PathVariable String id) {
 //        String id="ApplyTester";
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
@@ -113,6 +113,7 @@ public class ProcessL414Resource {
             Type listType = new TypeToken<ArrayList<TaskDTO>>(){}.getType();
             List<TaskDTO> taskDTOS= new Gson().fromJson(body, listType);
             assert taskDTOS != null;
+            System.out.println("@@"+taskDTOS.isEmpty());
             return taskDTOS.isEmpty()?null:taskDTOS.stream().map(taskDTO -> bpmIsmsL414Mapper.toDto(bpmIsmsL414Repository.findFirstByProcessInstanceId(taskDTO.getProcessInstanceId())))
                 .collect(Collectors.toList());
         }
