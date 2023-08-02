@@ -1,53 +1,72 @@
 package tw.gov.pcc.eip.tableau.controllers;
 
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.servlet.ModelAndView;
-import tw.gov.pcc.common.services.LoginService;
-import tw.gov.pcc.eip.dao.EipcodeDao;
-import tw.gov.pcc.eip.dao.MsgdataDao;
+import tw.gov.pcc.eip.adm.cases.Eip00w070Case;
 import tw.gov.pcc.eip.framework.domain.UserBean;
 import tw.gov.pcc.eip.framework.spring.controllers.BaseController;
-import tw.gov.pcc.eip.services.Eip01w040Service;
-import tw.gov.pcc.eip.tableau.cases.TableauUserCase;
+import tw.gov.pcc.eip.tableau.cases.TableauDataCase;
+import tw.gov.pcc.eip.tableau.service.TableauService;
+import tw.gov.pcc.eip.util.ExceptionUtility;
 import tw.gov.pcc.eip.util.ObjectUtility;
 
+import javax.servlet.http.HttpServletResponse;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
+
 /**
- * 使用者登入
+ * index頁面，tableau儀錶板顯示
  *
- * @author Goston
+ * @author Susan
  */
 @Controller
 public class TableauController extends BaseController {
     private static final org.slf4j.Logger log = org.slf4j.LoggerFactory.getLogger(TableauController.class);
-    private static final String INDEX_PAGE = "/index";
-    private static final String ERROR = "/unauthorized";
-    private static final String LOGOUT_PAGE = "/logout";
-    private static final String MSG_AUTO_LOGIN = "msg.framework.autoReLogin";
-    private final LoginService loginService;
-    private final MsgdataDao msgdataDao;
     private final UserBean userData;
-    private final Eip01w040Service eip01w040Service;
-    private final EipcodeDao eipcodeDao;
+    private final TableauService tableauService;
 
-
-    public TableauController(LoginService loginService, MsgdataDao msgdataDao, UserBean userData, Eip01w040Service eip01w040Service, EipcodeDao eipcodeDao) {
-        this.loginService = loginService;
-        this.msgdataDao = msgdataDao;
+    public TableauController(UserBean userData, TableauService tableauService) {
         this.userData = userData;
-        this.eip01w040Service = eip01w040Service;
-        this.eipcodeDao = eipcodeDao;
+        this.tableauService = tableauService;
+    }
+
+    /**
+     * 取得首頁應顯示的各儀表板資訊
+     */
+    @RequestMapping("/get-tableau-data")
+    @ResponseBody
+    public List<TableauDataCase> getUserdata() {
+        List<TableauDataCase> resultList = new ArrayList<>();
+        try {
+            resultList = tableauService.findTableauData(userData.getUserId());
+        } catch (Exception e) {
+            log.error("tableau儀錶板查詢失敗 - " + ExceptionUtility.getStackTrace(e));
+            setSystemMessage(getQueryFailMessage());
+        }
+        return ObjectUtility.normalizeObject(resultList);
+
     }
 
 
-    @RequestMapping("/getUserData")
+    /**
+     * 取得 tableau ticket
+     */
+    @RequestMapping(path = "/get-ticket")
     @ResponseBody
-    public TableauUserCase getUserdata() {
-        TableauUserCase caseData = new TableauUserCase();
-        caseData.setUser(userData.getUserId());
-        return ObjectUtility.normalizeObject(caseData);
+    public Map<String, String> getTrustedTicket() {
+        Map<String, String> map = new HashMap<>();
+        try {
+            map = tableauService.getTrustedTicket();
+        } catch (Exception e) {
+            log.error("tableau ticket error - " + ExceptionUtility.getStackTrace(e));
+            setSystemMessage(getQueryFailMessage());
+        }
+        return ObjectUtility.normalizeObject(map);
     }
 
 }
