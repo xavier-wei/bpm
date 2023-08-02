@@ -23,6 +23,7 @@ import java.time.Instant;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 @RestController
@@ -64,7 +65,7 @@ public class ProcessL414Resource {
         HashMap<String, Object> variables = new HashMap<>();
 
         variables.put("applier", "ApplyTester");
-        variables.put("isSubmit", 1);
+        variables.put("isSubmit", 0);
         variables.put("sectionChief", "ChiefTester");
         variables.put("director", "DirectorTester");
         variables.put("infoGroup", "InfoTester");
@@ -113,9 +114,11 @@ public class ProcessL414Resource {
             Type listType = new TypeToken<ArrayList<TaskDTO>>(){}.getType();
             List<TaskDTO> taskDTOS= new Gson().fromJson(body, listType);
             assert taskDTOS != null;
-            System.out.println("@@"+taskDTOS.isEmpty());
-            return taskDTOS.isEmpty()?null:taskDTOS.stream().map(taskDTO -> bpmIsmsL414Mapper.toDto(bpmIsmsL414Repository.findFirstByProcessInstanceId(taskDTO.getProcessInstanceId())))
-                .collect(Collectors.toList());
+            return taskDTOS.isEmpty() ? null:
+                taskDTOS.stream()
+                    .map(taskDTO -> bpmIsmsL414Mapper.toDto(bpmIsmsL414Repository.findFirstByProcessInstanceId(taskDTO.getProcessInstanceId())))
+                    .filter(Objects::nonNull)
+                    .collect(Collectors.toList());
         }
 
         return null;

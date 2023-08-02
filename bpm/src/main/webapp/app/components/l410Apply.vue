@@ -403,6 +403,20 @@
                     </P>
 
                   </div>
+
+                  <b-container class="mt-3">
+                    <b-row class="justify-content-center">
+                      <b-button class="mr-1" style="background-color: #17a2b8; color: white" size="sm"
+                                variant="outline-secondary"
+                                @click="submitForm('0')">暫存
+                      </b-button>
+                      <b-button class="mr-1" style="background-color: #17a2b8; color: white" size="sm"
+                                variant="outline-secondary"
+                                @click="submitForm('1')">申請
+                      </b-button>
+                    </b-row>
+                  </b-container>
+
                 </div>
 
               </b-tab>
@@ -422,16 +436,6 @@
           </b-card-body>
 
         </div>
-        <b-form-row>
-          <b-col cols="4" offset="6">
-            <b-button style="background-color: #17a2b8; color: white" size="sm" variant="outline-secondary"
-                      @click="submitForm()">暫存
-            </b-button>
-            <b-button style="background-color: #17a2b8; color: white" size="sm" variant="outline-secondary"
-                      @click="submitForm()">申請
-            </b-button>
-          </b-col>
-        </b-form-row>
       </section>
     </b-container>
   </div>
@@ -439,25 +443,7 @@
 
 <script lang="ts">
 
-import {
-  BRow,
-  BFormRow,
-  BFormInput,
-  BFormRadioGroup,
-  BFormRadio,
-  BContainer,
-  BCol,
-  BFormTextarea,
-  BFormCheckbox,
-  BButton,
-  BInputGroup,
-  BFormSelect,
-  BFormSelectOption,
-  BCardBody,
-  BTabs,
-  BTab,
-  BTable,
-} from 'bootstrap-vue';
+
 import IDualDatePicker from '@/shared/i-date-picker/i-dual-date-picker.vue';
 import {reactive, ref, Ref, toRef, watch} from '@vue/composition-api';
 import {useValidation, validateState} from '@/shared/form';
@@ -472,28 +458,11 @@ const flowChart = () => import('@/components/flowChart.vue');
 export default {
   name: "l410Apply",
   components: {
-    'b-row': BRow,
     'i-form-group-check': IFormGroupCheck,
     'i-dual-date-picker': IDualDatePicker,
     'i-date-picker': IDatePicker,
-    'b-form-row': BFormRow,
-    'b-form-input': BFormInput,
-    'b-form-radio-group': BFormRadioGroup,
-    'b-form-radio': BFormRadio,
-    'b-container': BContainer,
-    'b-col': BCol,
-    'b-form-textarea': BFormTextarea,
-    'b-form-checkbox': BFormCheckbox,
-    'b-button': BButton,
-    'b-input-group': BInputGroup,
-    'b-form-select': BFormSelect,
-    'b-form-select-option': BFormSelectOption,
-    BCardBody,
-    BTabs,
-    BTab,
     appendix,
     flowChart,
-    BTable
   },
   setup() {
 
@@ -775,7 +744,7 @@ export default {
       ],
     });
 
-    const submitForm = () => {
+    const submitForm = (isSubmit) => {
       checkValidity().then((isValid: boolean) => {
         if (isValid) {
           $bvModal.msgBoxConfirm('是否確認送出修改內容？').then((isOK: boolean) => {
