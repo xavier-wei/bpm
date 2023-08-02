@@ -6,7 +6,7 @@
           <div class="row align-items-center">
             <div class="col-sm-11 p-0">
               <h5 class="m-0">
-                <font-awesome-icon icon="search" />
+                <font-awesome-icon icon="search"/>
                 查詢條件
               </h5>
             </div>
@@ -15,7 +15,7 @@
         <div class="card-body clo-12" style="background-color: #d3ede8">
           <b-form-row>
             <i-form-group-check class="col-4" label-cols="4" content-cols="8" :label="'關鍵字：'" :item="$v.word">
-              <b-form-input v-model="$v.word.$model"> </b-form-input>
+              <b-form-input v-model="$v.word.$model"></b-form-input>
             </i-form-group-check>
 
             <i-form-group-check class="col-4" label-cols="4" content-cols="8" :label="`版號：`" :item="$v.number">
@@ -36,22 +36,30 @@
       </div>
     </section>
 
-    <section class="mt-2">
+    <section class="mt-2" v-show="queryStatus">
       <div class="container">
         <i-table
-          ref="iTable"
-          :itemsUndefinedBehavior="'loading'"
-          :items="mockdata"
-          :fields="table.fields"
-          :totalItems="table.totalItems"
-          :is-server-side-paging="true"
-          @changePagination="handlePaginationChanged($event)"
-          :hideNo="true"
+            ref="iTable"
+            :itemsUndefinedBehavior="'loading'"
+            :items="table.data"
+            :fields="table.fields"
+            :totalItems="table.totalItems"
+            :is-server-side-paging="false"
+            :hideNo="true"
         >
-          <template #cell(number)="row">
-            <b-button variant="link" style="color: blue" @click="toDetail(row.item)"
-              ><u>{{ row.item.number }}</u></b-button
-            >
+          <template #cell(formId)="row">
+            <b-button variant="link" style="color: blue" @click="toDetail(row.item)">
+              <u>{{ row.item.formId }}</u>
+            </b-button>
+          </template>
+
+          <template #cell(isEnable)="row">
+            <div v-if="row.item.isEnable === '0'">
+              停用
+            </div>
+            <div v-if="row.item.isEnable === '1'">
+              啟用
+            </div>
           </template>
         </i-table>
       </div>
@@ -61,13 +69,15 @@
 
 <script lang="ts">
 import axios from 'axios';
-import { ref, reactive, computed, toRefs, defineComponent } from '@vue/composition-api';
+import {ref, reactive, defineComponent} from '@vue/composition-api';
 import IDatePicker from '../shared/i-date-picker/i-date-picker.vue';
 import ITable from '../shared/i-table/i-table.vue';
 import IFormGroupCheck from '../shared/form/i-form-group-check.vue';
-import { useValidation, validateState } from '../shared/form';
-import { useBvModal } from '../shared/modal';
-import { navigateByNameAndParams } from '@/router/router';
+import {useValidation, validateState} from '@/shared/form';
+import {navigateByNameAndParams} from '@/router/router';
+import {notificationErrorHandler} from "@/shared/http/http-response-helper";
+import {useNotification} from "@/shared/notification";
+import {newformatDate} from '@/shared/date/minguo-calendar-utils';
 
 export default defineComponent({
   name: 'l414Query',
@@ -78,8 +88,8 @@ export default defineComponent({
   },
   setup() {
     const iTable = ref(null);
-    const stepVisible = ref(true);
-    const $bvModal = useBvModal();
+    const queryStatus = ref(false);
+    const notificationService = useNotification();
 
     const formDefault = {
       word: '', //關鍵字
@@ -94,12 +104,12 @@ export default defineComponent({
       number: {},
     });
 
-    const { $v, checkValidity, reset } = useValidation(rules, form, formDefault);
+    const {$v, checkValidity, reset} = useValidation(rules, form, formDefault);
 
     const table = reactive({
       fields: [
         {
-          key: 'number',
+          key: 'formId',
           label: '表單編號',
           sortable: false,
           thStyle: 'width:20%',
@@ -107,15 +117,16 @@ export default defineComponent({
           tdClass: 'text-center align-middle',
         },
         {
-          key: 'hostname',
+          key: 'applyDate',
           label: '申請日期',
           sortable: false,
           thStyle: 'width:10%',
           thClass: 'text-center',
           tdClass: 'text-center align-middle',
+          formatter: value => (value == undefined ? '' : newformatDate(new Date(value), '/')),
         },
         {
-          key: 'applyDate',
+          key: 'appName',
           label: '申請人',
           sortable: false,
           thStyle: 'width:10%',
@@ -123,7 +134,7 @@ export default defineComponent({
           tdClass: 'text-center align-middle',
         },
         {
-          key: 'port',
+          key: 'filEmpid',
           label: '填表人',
           sortable: false,
           thStyle: 'width:10%',
@@ -131,7 +142,7 @@ export default defineComponent({
           tdClass: 'text-center align-middle',
         },
         {
-          key: 'active2',
+          key: 'appUnit',
           label: '申請單位',
           sortable: false,
           thStyle: 'width:10%',
@@ -139,7 +150,7 @@ export default defineComponent({
           tdClass: 'text-center align-middle',
         },
         {
-          key: 'active3',
+          key: 'isEnable',
           label: '規則',
           sortable: false,
           thStyle: 'width:10%',
@@ -147,7 +158,7 @@ export default defineComponent({
           tdClass: 'text-center align-middle',
         },
         {
-          key: 'active4',
+          key: 'needNarrative',
           label: '需求說明',
           sortable: false,
           thStyle: 'width:40%',
@@ -156,72 +167,42 @@ export default defineComponent({
         },
       ],
       data: [],
-      totalItems: 1,
+      totalItems: 0,
     });
-
-    const mockdata = [
-      {
-        number: 'L414-2023050001',
-        hostname: '2023/05/24 下午 02:51:02',
-        applyDate: '林一郎(3021)',
-        port: '楊助理(2753)',
-        active2: '企劃部',
-        active3: '啟用',
-        active4: '來源IP:223.200.82.17,目的IP:210.69.171.172,使用協定(Port):https443,傳輸模式:TCP,用途說明:XXXXX',
-      },
-    ];
 
     // 下拉選單選項
     const queryOptions = reactive({
       number: [
-        { value: '0', text: '1_0_2' },
-        { value: '1', text: '1_0_1' },
-        { value: '2', text: '1_0_0' },
+        {value: '0', text: '1_0_2'},
+        {value: '1', text: '1_0_1'},
+        {value: '2', text: '1_0_0'},
       ],
     });
 
     const toQuery = () => {
-      stepVisible.value = true;
-      checkValidity().then((isValid: boolean) => {
-        if (isValid) {
-          $bvModal.msgBoxConfirm('是否確認送出修改內容？').then((isOK: boolean) => {
-            if (isOK) {
-              console.log('form', form);
-            }
-          });
-        } else {
-          $bvModal.msgBoxOk('欄位尚未填寫完畢，請於輸入完畢後再行送出。');
-        }
-      });
-      // axios;
-      // .post('/find/iwgHosts', formDefault)
-      // .then(data => {
-      //   // ele.forEach((e) => {});
-      //   table.data = data.data;
-      // })
-      // .catch(error => {
-      //   console.log('catch', error);
-      // });
-
       table.data = [];
-      table.totalItems = 1;
-      table.data.splice(0, table.data.length, ...mockdata);
-    };
+      const params = new URLSearchParams()
+      params.append('word', form.word)
+      params.append('number', form.number)
 
-    const handlePaginationChanged = (pagination: Pagination) => {
-      //todo:未做方法先放著
+      axios.get(`/eip/eip-bpm-isms-l414/findByWord?${params.toString()}`)
+          .then(({data}) => {
+            console.log('data', data)
+            queryStatus.value = true
+            if (iTable.value) iTable.value.state.pagination.currentPage = 1;
+            if (data) {
+              table.data = data
+            }
+          })
+          .catch(notificationErrorHandler(notificationService))
     };
-
-    function toEdit(i) {
-      //todo:未做方法先放著
-    }
 
     const toL414Apply = () => {
-      navigateByNameAndParams('l414Apply', { isNotKeepAlive: false });
+      navigateByNameAndParams('l414Apply', {isNotKeepAlive: false});
     };
 
-    const toDetail = () => {
-      navigateByNameAndParams('deal', { isNotKeepAlive: false });
+    const toDetail = (any) => {
+      navigateByNameAndParams('l414Apply', {isNotKeepAlive: false});
     };
 
     return {
@@ -229,17 +210,14 @@ export default defineComponent({
       form,
       checkValidity,
       validateState,
-      stepVisible,
       toQuery,
       reset,
       table,
-      mockdata,
       queryOptions,
       iTable,
-      toEdit,
-      handlePaginationChanged,
       toL414Apply,
       toDetail,
+      queryStatus,
     };
   },
 });

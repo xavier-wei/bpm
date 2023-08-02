@@ -22,7 +22,6 @@
 </template>
 
 <script lang="ts">
-import { BFormRow, BFormSelect } from 'bootstrap-vue';
 import { reactive, ref, watch } from '@vue/composition-api';
 import { useStore } from '@u3u/vue-hooks';
 import IFormGroupCheck from '@/shared/form/i-form-group-check.vue';
@@ -30,9 +29,7 @@ import IFormGroupCheck from '@/shared/form/i-form-group-check.vue';
 export default {
   name: 'deal',
   components: {
-    'b-form-select': BFormSelect,
     'i-form-group-check': IFormGroupCheck,
-    'b-form-row': BFormRow,
   },
   setup() {
     const formDefault = {
