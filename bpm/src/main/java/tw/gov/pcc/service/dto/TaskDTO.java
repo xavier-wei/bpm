@@ -1,22 +1,45 @@
 package tw.gov.pcc.service.dto;
 
-public class TaskDTO {
+import java.io.Serializable;
+import java.util.Objects;
 
+public class TaskDTO implements Serializable {
+    private String formName;
     private String processInstanceId; // 流程ID
     private String taskId; // 任務ID
     private String taskName; // 任務名稱
     private String createdTime; // 任務創建時間
-    private boolean isProcessComplete; // 判斷此任務完成後流程是否結束
 
-    public TaskDTO() {
+    @Override
+    public String toString() {
+        return "TaskDTO{" +
+            "formName='" + formName + '\'' +
+            ", processInstanceId='" + processInstanceId + '\'' +
+            ", taskId='" + taskId + '\'' +
+            ", taskName='" + taskName + '\'' +
+            ", createdTime='" + createdTime + '\'' +
+            '}';
     }
 
-    public TaskDTO(String processInstanceId, String taskId, String taskName, String createdTime, boolean isProcessComplete) {
-        this.processInstanceId = processInstanceId;
-        this.taskId = taskId;
-        this.taskName = taskName;
-        this.createdTime = createdTime;
-        this.isProcessComplete = isProcessComplete;
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        TaskDTO taskDTO = (TaskDTO) o;
+        return Objects.equals(formName, taskDTO.formName) && Objects.equals(processInstanceId, taskDTO.processInstanceId) && Objects.equals(taskId, taskDTO.taskId) && Objects.equals(taskName, taskDTO.taskName) && Objects.equals(createdTime, taskDTO.createdTime);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(formName, processInstanceId, taskId, taskName, createdTime);
+    }
+
+    public String getFormName() {
+        return formName;
+    }
+
+    public void setFormName(String formName) {
+        this.formName = formName;
     }
 
     public String getProcessInstanceId() {
@@ -51,12 +74,14 @@ public class TaskDTO {
         this.createdTime = createdTime;
     }
 
-    public boolean isProcessComplete() {
-        return isProcessComplete;
+    public TaskDTO(String formName, String processInstanceId, String taskId, String taskName, String createdTime) {
+        this.formName = formName;
+        this.processInstanceId = processInstanceId;
+        this.taskId = taskId;
+        this.taskName = taskName;
+        this.createdTime = createdTime;
     }
 
-    public void setProcessComplete(boolean processComplete) {
-        isProcessComplete = processComplete;
+    public TaskDTO() {
     }
-
 }

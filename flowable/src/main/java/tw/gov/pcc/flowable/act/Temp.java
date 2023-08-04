@@ -2,12 +2,20 @@ package tw.gov.pcc.flowable.act;
 
 import org.flowable.engine.delegate.DelegateExecution;
 import org.flowable.engine.delegate.JavaDelegate;
+import org.springframework.jndi.JndiTemplate;
+
+import javax.naming.NamingException;
+import javax.sql.DataSource;
 
 public class Temp implements JavaDelegate {
+
     @Override
     public void execute(DelegateExecution execution) {
-        System.out.println("執行成功");
+        // get jndi Datasource which pool name is hikari and dbname is eip
+        try {
+            DataSource dataSource = (DataSource) new JndiTemplate().lookup("java:comp/env/jdbc/hikari");
+        } catch (NamingException e) {
+            throw new RuntimeException(e);
+        }
     }
-
-
 }

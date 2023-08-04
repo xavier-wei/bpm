@@ -9,7 +9,7 @@
     </div> -->
 
     <div class="d-flex">
-        <breadcrumb class="print-not-show"></breadcrumb>
+      <breadcrumb class="print-not-show"></breadcrumb>
     </div>
 
     <div class="main">
@@ -25,7 +25,7 @@ import JhiNavbar from '../app/core/jhi-navbar/jhi-navbar.vue';
 import LoginForm from '../app/account/login-form/login-form.vue';
 import Home from '@/components/home.vue';
 import { computed, nextTick, onMounted, provide, reactive, ref, watch, inject } from '@vue/composition-api';
-import { BButton, BIcon, BSidebar, BvModal, BRow } from 'bootstrap-vue';
+import { BButton, BIcon, BSidebar, BvModal, BRow, BFormSelect, BFormSelectOption } from 'bootstrap-vue';
 import '@/shared/config/dayjs';
 import { useGetters, useRouter, useStore } from '@u3u/vue-hooks';
 import MenuService from '@/core/menu/menu-service';
@@ -47,8 +47,6 @@ export default {
     Breadcrumb,
   },
   setup(prop, context) {
-    // const router = useRouter();
-    // router.push({ name: 'Deal' });
     provide<BvModal>('$bvModal', overrideBvModal(context.root.$bvModal));
 
     function overrideBvModal(bvModal: BvModal): BvModal {
@@ -114,13 +112,10 @@ export default {
     provide<NotificationService>('notificationService', notificationService);
     provide<BvModal>('$bvModal', overrideBvModal(context.root.$bvModal));
 
-
     onMounted(() => {
-
       dynamicSizeForDev();
       lockInputTypeNumberWheelEvent();
     });
-
   },
 };
 </script>
@@ -148,6 +143,4 @@ export default {
   background: #1aa4b7;
   text-align: center;
 }
-
-
 </style>

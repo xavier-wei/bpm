@@ -11,10 +11,8 @@ const Home = () => import('@/components/home.vue');
 const Deal = () => import('@/components/deal.vue');
 const Pending = () => import('@/components/pending.vue');
 const Notify = () => import('@/components/notify.vue');
-import account from './account';
-import admin from './admin';
-import entities from './entities';
-import pages from './pages';
+const L414Query = () => import('@/components/l414query.vue');
+const L410Query = () => import('@/components/l410query.vue');
 import bpmRouter from "@/router/bpmRouter";
 Vue.use(Router);
 
@@ -46,6 +44,24 @@ const router = new Router({
       component: Notify,
       meta: {
         functionId: 'notify',
+      },
+      props: true
+    },
+    {
+      path: '/l414Query',
+      name: 'l414Query',
+      component: L414Query,
+      meta: {
+        functionId: 'l414Query',
+      },
+      props: true
+    },
+    {
+      path: '/l410Query',
+      name: 'l410Query',
+      component: L410Query,
+      meta: {
+        functionId: 'l410Query',
       },
       props: true
     },

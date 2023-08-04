@@ -14,6 +14,17 @@
             .dataTables_wrapper label {
                 margin: 0;
             }
+
+            .pic-scale-up {
+                position: relative; /* 設定定位上下文，使 z-index 生效 */
+                z-index: 1; /* 設定 z-index 值為 1，放在其他元素之上 */
+            }
+
+            .pic-scale-up:hover {
+                transform: translate(100%, 50%) scale(3, 3);
+                transition: transform 0.25s ease;
+                z-index: 2; /* 懸停時，將 z-index 值提高到 2，使其放在最外層 */
+            }
         </style>
     </jsp:attribute>
     <jsp:attribute name="contents">
@@ -31,17 +42,43 @@
             <c:choose>
                 <c:when test="${item eq 'drag2'}">
             <div class="box" draggable="true">
-                <section id="drag2" class="dragtag">
-                    <nav class="nav pt-4 navbar-expand">
-                        <div id="nav-tab4" role="tablist" class="nav nav-tabs container-fluid">
-                            <button id="nav-inform-tab4" data-toggle="tab" data-target="#nav-inform" role="tab"
-                                    aria-controls="nav-inform" aria-selected="true" type="button"
-                                    class="btn nav-link btn-secondary active w-100">
-                                個人儀表板
-                            </button>
+                <section id="drag2" class="dragtag"></section>
+                <nav class="nav pt-4 navbar-expand">
+                    <div id="nav-tab4" role="tablist" class="nav nav-tabs container-fluid">
+                        <button id="nav-inform-tab4" data-toggle="tab" data-target="#nav-inform" role="tab"
+                                aria-controls="nav-inform" aria-selected="true" type="button"
+                                class="btn nav-link btn-secondary active w-100">
+                            個人儀表板
+                        </button>
+                    </div>
+                </nav>
+                <div  class="box" draggable="true">
+                    <div id="tableauContainer" class="row"></div>
+                </div>
+
+                <!-- <div class="box" draggable="true">
+                    <div class="row">
+                        <div class="col-md-2 tableau_btn">
+                             <div class="top pic-scale-up">
+                                    <a href="#" onclick="openTableau(1)">
+                                        <div class="d-inline-block align-middle text-center">
+                                            <img src="././images/tableau/BID_01_01_20230717.png" style="border-radius: 10px; max-width:100%; max-height:100%;" alt="Responsive image" />
+                                        </div>
+                                    </a>
+                            </div>
                         </div>
-                    </nav>
-                </section>
+                          <div class="col-md-2 tableau_btn">
+                            <div class="top pic-scale-up">
+                                   <a href="#" onclick="openTableau(2)">
+                                    <div class="d-inline-block align-middle text-center">
+                                        <img src="././images/tableau/BID_02_01_20230717.png"  style="border-radius: 10px; max-width:100%; max-height:100%; " alt="Responsive image" />
+                                    </div>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                     
+                </div> -->
             </div>                        
                 </c:when>
                 <c:when test="${item eq 'drag3'}">
@@ -395,6 +432,141 @@
                 });
 
             });
+
+
+
+            $(function() {
+                getUserData();
+                getTicket()
+            });
+
+
+            // 假設後端資料
+            let backendResponse = [{
+                    dashboardFigId: 1,
+                    imageBase64String: "././images/tableau/BID_01_01_20230717.png",
+                    tableauUrl: "http://223.200.84.115/#/views/__2023071701/_?:iid=4"
+                },
+                {
+                    dashboardFigId: 2,
+                    imageBase64String: "././images/tableau/BID_02_01_20230717.png",
+                    tableauUrl: "http://223.200.84.115/#/views/__2023071701_16895610210960/_?:iid=1"
+                },
+            ];
+
+
+            function openTableau(type) {
+                // 顯示確認視窗
+                const isConfirmed = confirm('將開啟Tableau視窗，確認繼續嗎？');
+                if (isConfirmed) {
+                    //美新開一個url都要再拿一次ticket，不然ticket會失效
+                    getTicket();
+                    const dashboardFigId = type; 
+                    const foundImage = backendResponse.find(item => item.dashboardFigId === dashboardFigId);
+                    if (foundImage) {
+                        foundImage.tableauUrl = foundImage.tableauUrl.replace("#","/trusted/"+ticket)
+                        console.log(foundImage.tableauUrl)
+                        window.open(foundImage.tableauUrl, "_blank");                       
+                    } else {
+                        alert('找不到對應的儀錶板網址');
+                    }
+                }
+            }
+
+
+            //取得userId
+            function getUserData() {
+                $.ajax({
+                    url: '<c:url value="/get-tableau-data" />',
+                    type: 'POST',
+                    async: true,
+                    timeout: 100000,
+                    success: function(response) {
+                        console.log(response);
+                        if (response) {
+                            backendResponse = response
+                            //動態生成tableau div
+                            const tableauContainer = document.getElementById("tableauContainer");
+                            backendResponse.forEach((imageData) => {
+                                console.log("imageData",imageData)
+                                const tableauElement = createTableauElement(imageData);
+                                tableauContainer.appendChild(tableauElement);
+                            });
+                        }
+                    },
+                    error: function(error) {
+                        console.error(error);
+                    }
+                });
+            }
+
+
+
+            // 動態產生tableau div
+            function createTableauElement(imageData) {
+                const tableauDiv = document.createElement("div");
+                tableauDiv.classList.add("col-md-2", "tableau_btn");
+                tableauDiv.id = "tableau_btn_" + imageData.dashboardFigId;
+
+                const topDiv = document.createElement("div");
+                topDiv.classList.add("top", "pic-scale-up");
+
+                const link = document.createElement("a");
+                link.href = "#";
+                link.onclick = function() {
+                    openTableau(imageData.dashboardFigId);
+                };
+
+                const imgDiv = document.createElement("div");
+                imgDiv.classList.add("d-inline-block", "align-middle", "text-center");
+                const img = document.createElement("img");
+                const base64String = imageData.imageBase64String;
+                img.src = "data:image/png;base64," + base64String;
+                img.style.borderRadius = "10px";
+                img.style.maxWidth = "100%";
+                img.style.maxHeight = "100%";
+                img.alt = "儀錶板";
+
+
+                imgDiv.appendChild(img);
+                link.appendChild(imgDiv);
+                topDiv.appendChild(link);
+                tableauDiv.appendChild(topDiv);
+                return tableauDiv;
+            }
+
+
+            let ticket;
+            //獲取tableau授權碼，不用再二次登入
+            function getTicket() {
+             $.ajax({
+                    url: '<c:url value="/get-ticket" />',
+                    type: 'POST',
+                    async: true,
+                    timeout: 100000,
+                    success: function(response) {
+                        if (response) {
+                            ticket = response.ticket;  
+                            console.log("ticket",ticket);
+                        }
+                    },
+                    error: function(error) {
+                        console.error(error);
+                    }
+                });
+            }
+
+          function arrayBufferToBase64(buffer) {
+            console.log("buffer", buffer); // 檢查 buffer 是否有值
+            const bytes = new Uint8Array(buffer);
+            console.log("bytes", bytes); // 檢查 bytes 是否有值
+            let binary = '';
+            for (let i = 0; i < bytes.length; i++) {
+                binary += String.fromCharCode(bytes[i]);
+            }
+            return window.btoa(binary);
+        }
+
         </script>
     </jsp:attribute>
 </tags:layout>

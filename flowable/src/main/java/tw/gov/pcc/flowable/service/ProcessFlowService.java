@@ -33,6 +33,7 @@ public class ProcessFlowService {
     // 開啟流程，並且在isSubmit為"1"的狀態，直接跳過申請者確認進到下個步驟，若為temp則需進行確認
     public String startProcess(String processKey, Map<String, Object> variables) {
         ProcessInstance processInstance = runtimeService.startProcessInstanceByKey(processKey, variables);
+
         if (variables.get("isSubmit").equals("1")) {
             Task task = taskService.createTaskQuery()
                     .taskCandidateOrAssigned((String) variables.get("applier"))
@@ -62,16 +63,24 @@ public class ProcessFlowService {
     }
 
     // query task
-    public List<TaskDTO> queryProcessingTask(String id,String formName) {
+    public List<TaskDTO> queryProcessingTask(String id) {
+
         return taskService.createTaskQuery()
                 .taskCandidateOrAssigned(id)
-                .processDefinitionKey(ProcessEnum.getProcessKeyBykey(formName))
                 .orderByTaskCreateTime()
-                .asc()
+                .desc()
                 .list()
                 .stream()
-                .map((Task task) -> new TaskDTO(task,isProcessComplete(task.getProcessInstanceId())))
+                .map(this::getTaskDTO)
                 .collect(Collectors.toList());
+    }
+
+    private TaskDTO getTaskDTO(Task task) {
+        ProcessInstance processInstance = runtimeService.createProcessInstanceQuery()
+                .processInstanceId(task.getProcessInstanceId())
+                .singleResult();
+        String processDefinitionKey = processInstance.getProcessDefinitionKey();
+        return new TaskDTO(task, processDefinitionKey);
     }
 
     public boolean isProcessComplete(String processInstanceId) {
@@ -87,7 +96,7 @@ public class ProcessFlowService {
         HistoricProcessInstance historicProcessInstance = historyService
                 .createHistoricProcessInstanceQuery()
                 .processInstanceId(processInstanceId)
-                .processDefinitionKey(ProcessEnum.getProcessKeyBykey(formName))
+                .processDefinitionKey(ProcessEnum.getProcessKeyByKey(formName))
                 .singleResult();
         return (historicProcessInstance != null && historicProcessInstance.getEndTime() != null);
     }

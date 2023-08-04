@@ -47,6 +47,7 @@ import * as filters from '@/shared/date/filters';
 import { accountStore } from '@/shared/config/store/account-store';
 
 import { envStore } from '@/shared/config/store/env-store';
+import {userStore} from "@/components/userStore/user-store";
 
 
 export function initVueApp(vue) {
@@ -103,7 +104,8 @@ export function initVueXStore(vue) {
   return new Vuex.Store({
     modules: {
       accountStore,
-      envStore
+      envStore,
+      userStore,
     },
   });
 }

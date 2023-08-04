@@ -1,25 +1,30 @@
 package tw.gov.pcc.web.rest.process;
 
 import com.google.gson.Gson;
-import org.springframework.web.bind.annotation.*;
-import org.springframework.http.*;
-import org.springframework.beans.factory.annotation.Autowired;
+import com.google.gson.reflect.TypeToken;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.*;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.RestTemplate;
-import tw.gov.pcc.domain.EipBpmIsmsL414;
-import tw.gov.pcc.repository.EipBpmIsmsL414Repository;
-import tw.gov.pcc.service.EipBpmIsmsL414Service;
-import tw.gov.pcc.service.dto.EipBpmIsmsL414DTO;
+import tw.gov.pcc.repository.BpmIsmsL414Repository;
+import tw.gov.pcc.service.BpmIsmsL414Service;
+import tw.gov.pcc.service.dto.BpmIsmsL414DTO;
+import tw.gov.pcc.service.dto.CompleteReqDTO;
 import tw.gov.pcc.service.dto.ProcessReqDTO;
 import tw.gov.pcc.service.dto.TaskDTO;
+import tw.gov.pcc.service.mapper.BpmIsmsL414Mapper;
 import tw.gov.pcc.utils.SeqNumber;
 
 import javax.validation.Valid;
+import java.lang.reflect.Type;
 import java.time.Instant;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
+import java.util.Objects;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/process")
@@ -28,24 +33,26 @@ public class ProcessL414Resource {
     private final Logger log = LoggerFactory.getLogger(ProcessL414Resource.class);
 
     @Autowired
-    private EipBpmIsmsL414Service eipBpmIsmsL414Service;
+    private BpmIsmsL414Service bpmIsmsL414Service;
 
     @Autowired
-    private EipBpmIsmsL414Repository eipBpmIsmsL414Repository;
+    private BpmIsmsL414Repository bpmIsmsL414Repository;
 
+    @Autowired
+    private BpmIsmsL414Mapper bpmIsmsL414Mapper;
     // 測試中若flowable沒在同一個container啟動，記得修改下方port
     // todo: 上線後之後記得要改成自動抓取domain的方式
     private final String START_PROCESS_URL = "http://localhost:8081/process";
     private final RestTemplate restTemplate = new RestTemplate();
 
     @PostMapping("/startL414")
-    public String start(@Valid @RequestBody EipBpmIsmsL414DTO eipBpmIsmsL414DTO) {
-        log.info("ProcessL414Resource.java - start - 43 :: " + eipBpmIsmsL414DTO);
+    public String start(@Valid @RequestBody BpmIsmsL414DTO bpmIsmsL414DTO) {
+        log.info("ProcessL414Resource.java - start - 43 :: " + bpmIsmsL414DTO);
 
-        if (eipBpmIsmsL414DTO != null) {
+        if (bpmIsmsL414DTO != null) {
 
             // todo: 驗證資料
-            String appEmpid = eipBpmIsmsL414DTO.getAppEmpid();
+            String appEmpid = bpmIsmsL414DTO.getAppEmpid();
 
 
         } else {
@@ -58,14 +65,13 @@ public class ProcessL414Resource {
         HashMap<String, Object> variables = new HashMap<>();
 
         variables.put("applier", "ApplyTester");
-        variables.put("isSubmit", 1);
+        variables.put("isSubmit", 0);
         variables.put("sectionChief", "ChiefTester");
         variables.put("director", "DirectorTester");
         variables.put("infoGroup", "InfoTester");
         processReqDTO.setVariables(variables);
         Gson gson = new Gson();
         String json = gson.toJson(processReqDTO);
-
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
         HttpEntity<String> requestEntity = new HttpEntity<>(json, headers);
@@ -78,33 +84,60 @@ public class ProcessL414Resource {
             return "流程引擎忙碌中，請稍候再試";
         }
 
-        eipBpmIsmsL414DTO.setProcessInstanceId(processInstanceId);
+        bpmIsmsL414DTO.setProcessInstanceId(processInstanceId);
 
         //取得表單最後的流水號
-        String lastFormId = eipBpmIsmsL414Repository.getMaxFormId().size() > 0 ? eipBpmIsmsL414Repository.getMaxFormId().get(0).getFormId() : null;
-        eipBpmIsmsL414DTO.setFormId(eipBpmIsmsL414DTO.getFormName() + "-" + new SeqNumber().getNewSeq(lastFormId));
+        String lastFormId = bpmIsmsL414Repository.getMaxFormId().size() > 0 ? bpmIsmsL414Repository.getMaxFormId().get(0).getFormId() : null;
+        bpmIsmsL414DTO.setFormId(bpmIsmsL414DTO.getFormName() + "-" + new SeqNumber().getNewSeq(lastFormId));
 
         //存入table
-        eipBpmIsmsL414DTO.setProcessInstanceId(processInstanceId);
-        eipBpmIsmsL414DTO.setProcessInstanceStatus("0");
-        eipBpmIsmsL414DTO.setUpdateTime(Instant.now());
-        eipBpmIsmsL414DTO.setUpdateUser(eipBpmIsmsL414DTO.getFilName());
-        eipBpmIsmsL414DTO.setCreateTime(Instant.now());
-        eipBpmIsmsL414DTO.setCreateUser(eipBpmIsmsL414DTO.getFilName());
-        eipBpmIsmsL414Service.save(eipBpmIsmsL414DTO);
+        bpmIsmsL414DTO.setProcessInstanceId(processInstanceId);
+        bpmIsmsL414DTO.setProcessInstanceStatus("0");
+        bpmIsmsL414DTO.setUpdateTime(Instant.now());
+        bpmIsmsL414DTO.setUpdateUser(bpmIsmsL414DTO.getFilName());
+        bpmIsmsL414DTO.setCreateTime(Instant.now());
+        bpmIsmsL414DTO.setCreateUser(bpmIsmsL414DTO.getFilName());
+        bpmIsmsL414Service.save(bpmIsmsL414DTO);
 
         return processInstanceId;
     }
 
-    @RequestMapping("/queryTask")
-    public List<TaskDTO> queryTask(String id, String formName) {
-
-        HashMap<String, String> map = new HashMap<>();
-
-//        restTemplate
-
+    @PostMapping("/queryTask/{id}")
+    public List<BpmIsmsL414DTO> queryTask(@PathVariable String id) {
+//        String id="ApplyTester";
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+        HttpEntity<String> requestEntity = new HttpEntity<>(id,headers);
+        ResponseEntity<String> exchange = restTemplate.exchange(START_PROCESS_URL + "/queryProcessingTask", HttpMethod.POST, requestEntity, String.class);
+        if (exchange.getStatusCodeValue() == 200) {
+            String body = exchange.getBody();
+            Type listType = new TypeToken<ArrayList<TaskDTO>>(){}.getType();
+            List<TaskDTO> taskDTOS= new Gson().fromJson(body, listType);
+            assert taskDTOS != null;
+            return taskDTOS.isEmpty() ? null:
+                taskDTOS.stream()
+                    .map(taskDTO -> bpmIsmsL414Mapper.toDto(bpmIsmsL414Repository.findFirstByProcessInstanceId(taskDTO.getProcessInstanceId())))
+                    .filter(Objects::nonNull)
+                    .collect(Collectors.toList());
+        }
 
         return null;
+    }
+
+
+
+    @RequestMapping("/completeTask")
+    public String completeTask(@RequestBody CompleteReqDTO completeReqDTO) {
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+        Gson gson = new Gson();
+        HttpEntity<String> requestEntity = new HttpEntity<>(gson.toJson(completeReqDTO),headers);
+        ResponseEntity<String> exchange = restTemplate.exchange(START_PROCESS_URL + "/completeTask", HttpMethod.POST, requestEntity, String.class);
+        if (exchange.getStatusCodeValue() == 200) {
+            // todo 寫入表單審核紀錄
+            return exchange.getBody();
+        }
+        return "伺服器忙碌中或查無任務，請稍候再試";
     }
 
 

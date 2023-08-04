@@ -1,11 +1,12 @@
 package tw.gov.pcc.flowable.rest;
 
 
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-import tw.gov.pcc.flowable.domain.*;
+import tw.gov.pcc.flowable.domain.ProcessReq;
+import tw.gov.pcc.flowable.domain.ProcessRes;
 import tw.gov.pcc.flowable.service.ProcessFlowService;
 import tw.gov.pcc.flowable.service.dto.CompleteReqDTO;
 import tw.gov.pcc.flowable.service.dto.ProcessReqDTO;
@@ -35,14 +36,14 @@ public class ProcessResource {
     }
 
 
-    @RequestMapping("/queryProcessingInstance")
-    public List<TaskDTO> queryProcessingInstance(@RequestParam String id, String formName) {
-
-        return service.queryProcessingTask(id,formName);
+    @RequestMapping("/queryProcessingTask")
+    public List<TaskDTO> queryProcessingTask(@RequestBody String id) {
+        System.out.println(id);
+        return service.queryProcessingTask(id);
     }
 
     @RequestMapping("/completeTask")
-    public ProcessRes completeTask(@RequestBody CompleteReqDTO completeReqDTO) {
+    public ProcessRes completeTask(@Validated @RequestBody CompleteReqDTO completeReqDTO) {
         if (completeReqDTO.getVariables() != null) {
             return service.completeTask(completeReqDTO.getProcessInstanceId(), completeReqDTO.getTaskId(),completeReqDTO.getVariables());
         }
