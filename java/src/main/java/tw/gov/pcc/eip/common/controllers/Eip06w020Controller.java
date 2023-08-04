@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import tw.gov.pcc.eip.common.cases.Eip06w010Case;
 import tw.gov.pcc.eip.common.cases.Eip06w020Case;
+import tw.gov.pcc.eip.dao.UsersDao;
 import tw.gov.pcc.eip.services.Eip06w010Service;
 import tw.gov.pcc.eip.services.Eip06w020Service;
 import tw.gov.pcc.eip.domain.MeetingCode;
@@ -44,7 +45,7 @@ public class Eip06w020Controller extends BaseController {
     @ModelAttribute(CASE_KEY)
     public Eip06w020Case getEip06w020Case(){
         Eip06w020Case caseData = new Eip06w020Case();
-        caseData.setOrganizerId(userData.getUserId() + " " + userData.getUserName());
+        caseData.setOrganizerId(userData.getUserId() + "-" + userData.getUserName());
         eip06w020Service.initSelectList(caseData);
         return ObjectUtility.normalizeObject(caseData);
     }
@@ -56,6 +57,7 @@ public class Eip06w020Controller extends BaseController {
     @RequestMapping("/Eip06w020_enter.action")
     public String enter() {
         log.debug("導向會議室預約作業");
+        getEip06w020Case();
         return INSERT_PAGE;
     }
 

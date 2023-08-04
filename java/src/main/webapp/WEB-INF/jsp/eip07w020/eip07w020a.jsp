@@ -40,15 +40,15 @@
 			<tags:form-row>
 				<label class="col-form-label text-left  star">用車事由:</label>
 				<div class="col-sm-2">
-					<form:input id="useCarMemo" name="useCarMemo" path="insterList[0].useCarMemo" cssClass="form-control"   size="40"
-								maxlength="40" />
+					<form:input id="useCarMemo" name="useCarMemo" path="insterList[0].useCarMemo" cssClass="form-control"   size="50"
+								maxlength="50" />
 				</div>
 			</tags:form-row>
 			<tags:form-row>
 				<label class="col-form-label text-left  star">目的地:</label>
 				<div class="col-sm-2">
-					<form:input id="destination" name="destination" path="insterList[0].destination" cssClass="form-control"   size="40"
-								maxlength="40" />
+					<form:input id="destination" name="destination" path="insterList[0].destination" cssClass="form-control"   size="50"
+								maxlength="50" />
 				</div>
 			</tags:form-row>
 			<tags:form-row>
@@ -67,8 +67,15 @@
 										maxlength="3" />
 						</div>
 			</tags:form-row>
+			<tags:form-row>
+						<label class="col-form-label text-left   star ">用車日期:</label>
+					<div class="col-sm-2">
+						<form:input id="useDate" name="useDate" path="insterList[0].useDate" cssClass="form-control num_only dateTW"   size="7"
+									maxlength="7" />
+					</div>
+			</tags:form-row>
 					 <div class="d-flex">
-						 <label class="col-form-label text-left  ">用車時間:</label>
+						 <label class="col-form-label text-left   star ">用車時間:</label>
 						   <form:select id="starH"  name="starH"  path="insterList[0].starH" cssClass="form-control">
 	                    	<form:option value=""></form:option>
 	                        <c:forEach var="hour" items="${caseData.hourList}" varStatus="status">
@@ -98,13 +105,7 @@
 	                    </form:select>
 
 					 </div>
-			<tags:form-row>
-					<label class="col-form-label text-left  ">用車日期:</label>
-				<div class="col-sm-2">
-					<form:input id="useDate" name="useDate" path="insterList[0].useDate" cssClass="form-control num_only dateTW"   size="7"
-								maxlength="7" />
-				</div>
-			</tags:form-row>
+
 
 			<tags:form-row>
 

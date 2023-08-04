@@ -7,11 +7,16 @@ import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.servlet.ModelAndView;
 import tw.gov.pcc.eip.common.cases.*;
 import tw.gov.pcc.eip.framework.domain.UserBean;
 import tw.gov.pcc.eip.framework.spring.controllers.BaseController;
+import tw.gov.pcc.eip.framework.spring.support.FileOutputView;
 import tw.gov.pcc.eip.services.Eip00w520Service;
 import tw.gov.pcc.eip.util.ExceptionUtility;
+import tw.gov.pcc.eip.util.FilenameUtility;
+
+import java.io.ByteArrayOutputStream;
 
 /**
  * 意見調查主題列表Controller
@@ -116,7 +121,6 @@ public class Eip00w520Controller extends BaseController {
             }
         } catch (Exception e) {
             log.error(ExceptionUtility.getStackTrace(e));
-            eip00w520Service.getOslist(caseData);
             setSystemMessage(super.getQueryFailMessage());
             return MAIN_PAGE;
         }
@@ -154,7 +158,6 @@ public class Eip00w520Controller extends BaseController {
             eip00w520Service.getPartList(caseData);
         } catch (Exception e) {
             log.error(ExceptionUtility.getStackTrace(e));
-            eip00w520Service.getOslist(caseData);
             setSystemMessage(getQueryFailMessage());
             return MAIN_PAGE;
         }
@@ -175,7 +178,6 @@ public class Eip00w520Controller extends BaseController {
             }
         } catch (Exception e) {
             log.error(ExceptionUtility.getStackTrace(e));
-            eip00w520Service.getPartList(caseData);
             setSystemMessage(getQueryFailMessage());
             return PARTLIST_PAGE;
         }
@@ -212,7 +214,6 @@ public class Eip00w520Controller extends BaseController {
         } catch (Exception e) {
             log.error(ExceptionUtility.getStackTrace(e));
             setSystemMessage(getQueryFailMessage());
-            eip00w520Service.getPartList(caseData);
             return PARTLIST_PAGE;
         }
         return QUESTIONLIST_PAGE;
@@ -231,7 +232,6 @@ public class Eip00w520Controller extends BaseController {
             }
         } catch (Exception e) {
             log.error(ExceptionUtility.getStackTrace(e));
-            eip00w520Service.getQuestionList(caseData);
             setSystemMessage(getQueryFailMessage());
             return QUESTIONLIST_PAGE;
         }
@@ -268,7 +268,6 @@ public class Eip00w520Controller extends BaseController {
             eip00w520Service.getOptionList(caseData, optionCase);
         } catch (Exception e) {
             log.error(ExceptionUtility.getStackTrace(e));
-            eip00w520Service.getQuestionList(caseData);
             setSystemMessage(getQueryFailMessage());
             return OPTION_PAGE;
         }
@@ -292,7 +291,6 @@ public class Eip00w520Controller extends BaseController {
         } catch (Exception e) {
             String failmsg = "A".equals(caseData.getMode()) ? getSaveFailMessage() : getUpdateFailMessage();
             log.error(ExceptionUtility.getStackTrace(e));
-            eip00w520Service.getOptionList(caseData,optionCase);
             setSystemMessage(failmsg);
             return OPTION_PAGE;
         }
@@ -334,18 +332,97 @@ public class Eip00w520Controller extends BaseController {
     @RequestMapping("/Eip00w520_writeContent.action")
     public String writeContent(@ModelAttribute(CASE_KEY) Eip00w520Case caseData) {
         try {
-            log.debug("導向 填寫內容統計表");
+            log.debug("導向 填寫內容表");
             Eip00w520ThemeCase themeCase = new Eip00w520ThemeCase();
             eip00w520Service.getSingleFormData(caseData, themeCase);
             caseData.setThemeCase(themeCase);
-            eip00w520Service.getWriteContents(caseData);
+            String result = eip00w520Service.getWriteContents(caseData);
+            if ("isEmpty".equals(result)) {
+                eip00w520Service.getContentQuery(caseData);
+                setSystemMessage(super.getQueryEmptyMessage());
+                return QUERY_PAGE;
+            }
         } catch (Exception e) {
             log.error(ExceptionUtility.getStackTrace(e));
-            eip00w520Service.getContentQuery(caseData);
             setSystemMessage(super.getQueryFailMessage());
             return QUERY_PAGE;
         }
         return WRITECONTENT_PAGE;
+    }
+
+    @RequestMapping("/Eip00w520_printStatistics.action")
+    public ModelAndView printStatistics(@ModelAttribute(CASE_KEY) Eip00w520Case caseData) {
+        ByteArrayOutputStream baos = new ByteArrayOutputStream(0);
+        try {
+            log.debug("匯出 統計表");
+            Eip00w520ThemeCase themeCase = new Eip00w520ThemeCase();
+            eip00w520Service.getSingleFormData(caseData, themeCase);
+            caseData.setThemeCase(themeCase);
+            String result = eip00w520Service.getReviewStatistics(caseData);
+            baos = eip00w520Service.prodStatistics(caseData);
+            if ("isEmpty".equals(result) || baos == null) {
+                log.info("查無報表資料");
+                setSystemMessage(getQueryEmptyMessage());
+                eip00w520Service.getOslist(caseData);
+                return new ModelAndView(MAIN_PAGE);
+            }
+            String filename = FilenameUtility.getFileName(userData.getUserId(), "EIP00W520L00","xls");
+            return new ModelAndView(new FileOutputView(baos, filename, FileOutputView.GENERAL_FILE));
+        } catch (Exception e) {
+            log.error(ExceptionUtility.getStackTrace(e));
+            setSystemMessage(getReportErrorMessage());
+        }
+        return new ModelAndView(MAIN_PAGE);
+    }
+
+    @RequestMapping("/Eip00w520_printWriteContent.action")
+    public ModelAndView printWriteContent(@ModelAttribute(CASE_KEY) Eip00w520Case caseData) {
+        ByteArrayOutputStream baos = new ByteArrayOutputStream(0);
+        try {
+            log.debug("匯出 全部填寫內容(主畫面)");
+            Eip00w520ThemeCase themeCase = new Eip00w520ThemeCase();
+            eip00w520Service.getSingleFormData(caseData, themeCase);
+            caseData.setThemeCase(themeCase);
+            String result = eip00w520Service.getAllWriteContents(caseData);
+            if ("isEmpty".equals(result)) {
+                log.info("查無報表資料");
+                setSystemMessage(getQueryEmptyMessage());
+                eip00w520Service.getOslist(caseData);
+                return new ModelAndView(MAIN_PAGE);
+            }
+            baos = eip00w520Service.prodWriteContent(caseData);
+            String filename = FilenameUtility.getFileName(userData.getUserId(), "EIP00W520L01","xls");
+            return new ModelAndView(new FileOutputView(baos, filename, FileOutputView.GENERAL_FILE));
+        } catch (Exception e) {
+            log.error(ExceptionUtility.getStackTrace(e));
+            setSystemMessage(getReportErrorMessage());
+            return new ModelAndView(MAIN_PAGE);
+        }
+    }
+
+    @RequestMapping("/Eip00w520_printQueryWriteContent.action")
+    public ModelAndView printQueryWriteContent(@ModelAttribute(CASE_KEY) Eip00w520Case caseData) {
+        ByteArrayOutputStream baos = new ByteArrayOutputStream(0);
+        try {
+            log.debug("匯出 選擇填寫內容(查詢)");
+            Eip00w520ThemeCase themeCase = new Eip00w520ThemeCase();
+            eip00w520Service.getSingleFormData(caseData, themeCase);
+            caseData.setThemeCase(themeCase);
+            String result = eip00w520Service.getWriteContents(caseData);
+            if ("isEmpty".equals(result)) {
+                log.info("查無報表資料");
+                setSystemMessage(getQueryEmptyMessage());
+                eip00w520Service.getContentQuery(caseData);
+                return new ModelAndView(QUERY_PAGE);
+            }
+            baos = eip00w520Service.prodWriteContent(caseData);
+            String filename = FilenameUtility.getFileName(userData.getUserId(), "EIP00W520L01","xls");
+            return new ModelAndView(new FileOutputView(baos, filename, FileOutputView.GENERAL_FILE));
+        } catch (Exception e) {
+            log.error(ExceptionUtility.getStackTrace(e));
+            setSystemMessage(getReportErrorMessage());
+            return new ModelAndView(QUERY_PAGE);
+        }
     }
 
     @RequestMapping("/Eip00w520_copy.action")
@@ -357,7 +434,6 @@ public class Eip00w520Controller extends BaseController {
         } catch (Exception e) {
             log.error(ExceptionUtility.getStackTrace(e));
             setSystemMessage(getSaveFailMessage());
-            eip00w520Service.getOslist(caseData);
             return MAIN_PAGE;
         }
         setSystemMessage(getSaveSuccessMessage());
@@ -373,7 +449,6 @@ public class Eip00w520Controller extends BaseController {
         } catch (Exception e) {
             log.error(ExceptionUtility.getStackTrace(e));
             setSystemMessage(getDeleteFailMessage());
-            eip00w520Service.getOslist(caseData);
             return MAIN_PAGE;
         }
         setSystemMessage(getDeleteSuccessMessage());
@@ -388,7 +463,6 @@ public class Eip00w520Controller extends BaseController {
             eip00w520Service.getPartList(caseData);
         } catch (Exception e) {
             log.error(ExceptionUtility.getStackTrace(e));
-            eip00w520Service.getPartList(caseData);
             setSystemMessage(getDeleteFailMessage());
             return PARTLIST_PAGE;
         }
@@ -404,7 +478,6 @@ public class Eip00w520Controller extends BaseController {
             eip00w520Service.getQuestionList(caseData);
         } catch (Exception e) {
             log.error(ExceptionUtility.getStackTrace(e));
-            eip00w520Service.getQuestionList(caseData);
             setSystemMessage(getDeleteFailMessage());
             return QUESTIONLIST_PAGE;
         }
@@ -422,7 +495,6 @@ public class Eip00w520Controller extends BaseController {
             eip00w520Service.getOptionList(caseData, optionCase);
         } catch (Exception e) {
             log.error(ExceptionUtility.getStackTrace(e));
-            eip00w520Service.getOptionList(caseData, optionCase);
             setSystemMessage(getDeleteFailMessage());
             return OPTION_PAGE;
         }

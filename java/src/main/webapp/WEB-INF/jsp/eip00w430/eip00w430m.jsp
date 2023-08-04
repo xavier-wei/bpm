@@ -5,6 +5,7 @@
 <c:set var="caseData" value="${requestScope[caseKey]}" />
 <tags:layout>
 <jsp:attribute name="heads">
+    <link rel="stylesheet" href="<c:url value='/css/18698.css' />"/>
     <style>
         td .btn {
             vertical-align: baseline;
@@ -13,37 +14,25 @@
             margin-left: -15px;
             margin-right: -15px;
         }
-        .nav-link{
-            border-radius: 8px 8px 0px 0px;
-            padding: 4px;
-            background-color: #8fd4ce;
-            background-image: linear-gradient(to bottom, #c0dad5, #c0dad5);
-            border: 1px solid #107db0;
-            /*box-shadow: inset 0 1px 0 #eeeeee, inset 0 -1px 0 #eeeeee, inset 0 0 0 1px #eeeeee, 0 2px 4px rgba(0, 0, 0, 0.2);*/
-            color: white;
-        }
-
-        .nav-link.font-weight-bold.active {
-            border-radius: 8px 8px 0px 0px;
-            padding: 4px;
-            background-color: #ffffff;
-            background-image: linear-gradient(to bottom, #fdd9a1, #fdd9a1);
-            border: 1px solid #b2784e;
-            box-shadow: inset 0 1px 0 #fdd9a1, inset 0 -1px 0 #fdd9a1, inset 0 0 0 1px #fdd9a1, 0 2px 4px rgba(0, 0, 0, 0.2);
-            color: white;
+        .nav-tabs .nav-link {
+            width: 10%
         }
 </style>
 </jsp:attribute>
 <jsp:attribute name="contents">
 <tags:fieldset legend="線上報名">
-    <div id="tabLinks" class="row">
-        <div class="col-6 col-md">
-            <ul class="nav nav-tabs text-center mt-1">
-                <li class="nav-item"><a id="tab1" class="nav-link" href="#">報名</a></li>
-                <li class="nav-item"><a id="tab2" class="nav-link" href="#">歷史區</a></li>
-            </ul>
+    <nav class="nav pt-4 navbar-expand">
+        <div id="nav-tab3" role="tablist" class="nav nav-tabs container-fluid">
+            <button id="tab1" data-toggle="tab" role="tab"
+                    aria-controls="nav-inform" aria-selected="true" type="button"
+                    class="btn nav-link btn-secondary active">報名
+            </button>
+            <button id="tab2" data-toggle="tab" role="tab"
+                    aria-controls="nav-download" aria-selected="false" type="button"
+                    class="btn nav-link btn-secondary">歷史區
+            </button>
         </div>
-    </div>
+    </nav>
     <form:form id="eip00w430Form" name="eip00w430Form" modelAttribute="${caseKey}" method="POST">
         <tags:form-row>
             <div class="table-responsive" id="div1">
@@ -53,7 +42,8 @@
                         <th class="text-center align-middle">項次</th>
                         <th class="text-center align-middle">主題</th>
                         <th class="text-center align-middle">報名結果</th>
-                        <th class="text-center align-middle">操作區</th>
+                        <th class="text-center align-middle" colspan="3">操作區</th>
+                        <th style="display: none"></th>
                     </tr>
                     </thead>
                     <tbody>
@@ -64,9 +54,14 @@
                                 <td class="text-center align-middle"><c:out value="${item.statusVal}" /></td>
                                 <td class="text-center align-middle">
                                     <tags:button cssClass="btnContent" data-formno="${item.orformno}">內容</tags:button>
+                                </td>
+                                <td class="text-center align-middle">
                                     <tags:button cssClass="btnReg" data-formno="${item.orformno}" data-status="${item.status}" data-full="${item.isfull}" data-result="${item.regresultVal}">報名</tags:button>
+                                </td>
+                                <td class="text-center align-middle">
                                     <tags:button cssClass="btnCancel" data-formno="${item.orformno}" data-status="${item.status}" data-result="${item.regresultVal}">取消報名</tags:button>
                                 </td>
+                                <td style="display: none"></td>
                             </tr>
                         </c:forEach>
                     </tbody>
@@ -111,10 +106,8 @@ $(function(){
     $('#tb1').DataTable(config);
     $('#tb2').DataTable(config);
 
-    $('.nav-item').click(function(){
-        $('.nav-link').removeClass('font-weight-bold active');
-        $(this).find('a').addClass('font-weight-bold active');
-        let clickId = $(this).find('a').attr("id").substring(3);
+    $('.nav-link').click(function(){
+        let clickId = $(this).attr("id").substring(3);
         if (clickId === '1') {
             $('#div1').show();
             $('#div2').hide();

@@ -10,6 +10,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -104,7 +105,9 @@ public class Eip01w040Service {
                 }
             }
         } else {
-            treeStr.set(0, treeStr.get(0).replace("folder", "folder expanded")); // 預設展開第一層
+            if (!CollectionUtils.isEmpty(treeStr)) {
+                treeStr.set(0, treeStr.get(0).replace("folder", "folder expanded")); // 預設展開第一層
+            }
         }
         String defaultpath = tree.stream().findFirst().map(m -> m.getFilepath()).orElse(""); // 取第一筆資料為預設路徑
         caseData.setPath(defaultpath);

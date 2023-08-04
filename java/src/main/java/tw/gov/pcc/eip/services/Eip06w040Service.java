@@ -11,6 +11,7 @@ import tw.gov.pcc.eip.common.report.Eip06w040l00xls;
 import tw.gov.pcc.eip.dao.MeetingCodeDao;
 import tw.gov.pcc.eip.dao.MeetingDao;
 import tw.gov.pcc.eip.dao.MeetingItemDao;
+import tw.gov.pcc.eip.dao.UsersDao;
 import tw.gov.pcc.eip.domain.*;
 import tw.gov.pcc.eip.framework.domain.UserBean;
 import tw.gov.pcc.eip.util.DateUtility;
@@ -29,6 +30,8 @@ public class Eip06w040Service {
 
     @Autowired
     UserBean userData;
+    @Autowired
+    UsersDao usersDao;
     @Autowired
     private MeetingCodeDao meetingCodeDao;
     @Autowired
@@ -70,6 +73,7 @@ public class Eip06w040Service {
                             || (resultList.size()-1 == i)){
                         resultList.get(i).setFoodName(foodName_Qty.toString());
                         resultList.get(i).setItemName(itemName.toString());
+                        resultList.get(i).setOrganizerId(resultList.get(i).getOrganizerId() + "-" + usersDao.selectByKey(resultList.get(i).getOrganizerId()).getUser_name());
                         newResultList.add(resultList.get(i));
                         foodName_Qty.delete(0,foodName_Qty.length());
                         itemName.delete(0,itemName.length());

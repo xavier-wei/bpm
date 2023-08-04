@@ -10,10 +10,7 @@ import org.springframework.stereotype.Service;
 import tw.gov.pcc.eip.common.cases.Eip06w010Case;
 import tw.gov.pcc.eip.common.controllers.Eip06w010Controller;
 import tw.gov.pcc.eip.common.report.Eip06w010l00;
-import tw.gov.pcc.eip.dao.MeetingCodeDao;
-import tw.gov.pcc.eip.dao.MeetingDao;
-import tw.gov.pcc.eip.dao.MeetingItemDao;
-import tw.gov.pcc.eip.dao.MsgdataDao;
+import tw.gov.pcc.eip.dao.*;
 import tw.gov.pcc.eip.domain.*;
 import tw.gov.pcc.eip.framework.domain.UserBean;
 import tw.gov.pcc.eip.util.DateUtility;
@@ -25,7 +22,6 @@ import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.stream.Collectors;
 
-import static java.util.stream.Collectors.groupingBy;
 
 /**
  * 會議室查詢/維護作業
@@ -37,6 +33,8 @@ public class Eip06w010Service {
 
     @Autowired
     UserBean userData;
+    @Autowired
+    UsersDao usersDao;
     @Autowired
     private MeetingCodeDao meetingCodeDao;
     @Autowired
@@ -52,7 +50,10 @@ public class Eip06w010Service {
      * @param caseData
      */
     public void initSelectList(Eip06w010Case caseData){
-        List<MeetingCode> roomIdList = meetingCodeDao.selectDataByItemType("F");
+        List<String> itemTyps = new ArrayList<>();
+        itemTyps.add("F");
+        itemTyps.add("FX");
+        List<MeetingCode> roomIdList = meetingCodeDao.selectDataByItemTypes(itemTyps);
         caseData.setRoomIdList(roomIdList.stream().map(Eip06w010Case.Eip06w010OptionCase::new).collect(Collectors.toList()));
 
         //初始化查詢結果(撈出所有從今天~未來會議)
@@ -67,6 +68,7 @@ public class Eip06w010Service {
                 a.setEditable(false);
             }
             a.setOrderFood(a.getOrderNum()>0);
+            a.setOrganizerId(usersDao.selectByKey(a.getOrganizerId()).getUser_name());
         });
 
         caseData.setResultList(resultList.stream().map(Eip06w010Case::new).collect(Collectors.toList()));
@@ -183,7 +185,7 @@ public class Eip06w010Service {
         caseData.setMeetingdt(DateUtility.changeDateType(mt.getMeetingdt()));
         caseData.setMeetingBegin(mt.getMeetingBegin());
         caseData.setMeetingEnd(mt.getMeetingEnd());
-        caseData.setOrganizerId(mt.getOrganizerId());
+        caseData.setOrganizerId(userData.getUserId() + "-" + usersDao.selectByKey(mt.getOrganizerId()).getUser_name());
         caseData.setRoomId(mt.getRoomId() + "-" + meetingCodeDao.selectDataByItemId(mt.getRoomId()).get(0).getItemName());
         caseData.setMeetingQty(mt.getQty());
         caseData.setApplydt(mt.getApplydt());
@@ -336,7 +338,7 @@ public class Eip06w010Service {
 //        原訂於112年4月12日預約使用十樓第一會議室舉辦之全民督工111年執行績效考核會議，因故取消改場地之登記使用，原登記使用人，
 //        若仍有使用場地之需求，請重新辦理預約手續。(公告至:112/4/13)
 
-        String meetingChDt = DateUtility.changeDateTypeToChineseDate(meeting.getMeetingdt()).substring(0,3) + "年" +
+        String meetingChgDt = DateUtility.changeDateTypeToChineseDate(meeting.getMeetingdt()).substring(0,3) + "年" +
                              meeting.getMeetingdt().substring(4,6) + "月" +
                              meeting.getMeetingdt().substring(6) + "日";
 
@@ -344,7 +346,7 @@ public class Eip06w010Service {
         DateTimeFormatter fmt = DateTimeFormatter.ofPattern("yyyy-MM-dd");
         String endAnnounceDt = DateUtility.changeDateTypeToChineseDate(endAnnounceLocalDt.format(fmt).replaceAll("-",""));
 
-        String content = "原訂於" + meetingChDt + "預約使用" + meetingCodeDao.selectDataByItemId(meeting.getRoomId()).get(0).getItemName() +
+        String content = "原訂於" + meetingChgDt + "預約使用" + meetingCodeDao.selectDataByItemId(meeting.getRoomId()).get(0).getItemName() +
                          "舉辦之" + meeting.getMeetingName() +
                          "會議，因故取消該場地之登記使用，原登記使用人，若仍有使用場地之需求，請重新辦理預約手續。(公告至:" +
                           endAnnounceDt.substring(0,3) + "/" +

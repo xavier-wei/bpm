@@ -12,11 +12,11 @@
 </tags:form-row>
 <tags:form-row>
     <div class="table-responsive">
-        <table class="table" id="tb2">
-            <thead>
+        <table class="table" id="tb1">
+            <thead data-orderable="true">
             <tr>
                 <c:forEach items="${caseData.writeContentTitle}" var="title" varStatus="status">
-                <td class="text-left align-middle">${title}</td>
+                <td class="text-center align-middle">${title}</td>
                 </c:forEach>
             <tr>
             </thead>

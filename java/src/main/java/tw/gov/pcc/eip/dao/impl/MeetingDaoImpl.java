@@ -240,7 +240,6 @@ public class MeetingDaoImpl extends BaseDao<Meeting> implements MeetingDao{
         sql.append("  ORDER BY T.MEETINGID     ");
 
         SqlParameterSource params = new MapSqlParameterSource("dateList", dateList).addValue("using", using).addValue("roomId", roomId);
-        System.out.println(sql);
         return getNamedParameterJdbcTemplate().query(sql.toString(), params,
                 BeanPropertyRowMapper.newInstance(Meeting.class));
     }

@@ -60,22 +60,22 @@
                     <tbody>
                         <c:forEach items="${caseData.osList}" var="item" varStatus="status">
                             <tr>
-                                <td class="text-center align-middle"><form:checkbox path="osformnoList[${status.index}]" data-status="${item.statusVal}" data-topicname="${item.topicname}" value="${item.osformno}"/></td>
+                                <td class="text-center align-middle"><form:checkbox path="osformnoList[${status.index}]" data-status="${item.statusVal}" data-anonymous="${item.isanonymous}" data-topicname="${item.topicname}" value="${item.osformno}"/></td>
                                 <td class="text-center align-middle"><c:out value="${status.index+1}"/></td>
 <%--                                <td class="text-center align-middle"><c:out value="${item.osformno}"/></td>--%>
                                 <td class="text-left align-middle"><c:out value="${item.topicname}" escapeXml="false"/></td>
                                 <td class="text-center align-middle"><c:out value="${item.osfmdt}"/><br><c:out value="${item.osendt}" /></td>
                                 <td class="text-center align-middle btntd2"><c:out value="${item.status}"/></td>
-                                <td class="text-center align-middle btntd2"><tags:button data-action="1">檢視</tags:button></td>
-                                <td class="text-center align-middle btntd2"><tags:button data-action="2">匯出</tags:button></td>
-                                <td class="text-center align-middle btntd2"><tags:button data-action="3">匯出</tags:button></td>
-                                <td class="text-center align-middle btntd2"><tags:button data-action="4">查詢</tags:button></td>
-                                <td class="text-center align-middle btntd2"><tags:button data-action="5">預覽</tags:button></td>
-                                <td class="text-center align-middle btntd4"><tags:button data-action="6">部分列表</tags:button></td>
-                                <td class="text-center align-middle btntd2"><tags:button data-action="7">複製</tags:button></td>
-                                <td class="text-center align-middle btntd2"><tags:button data-action="8">修改</tags:button></td>
-                                <td class="text-center align-middle btntd2"><tags:button data-action="9">上架</tags:button></td>
-                                <td class="text-center align-middle btntd2"><tags:button data-action="10">下架</tags:button></td>
+                                <td class="text-center align-middle btntd2"><tags:button cssClass="groupI groupC" data-action="1">檢視</tags:button></td>
+                                <td class="text-center align-middle btntd2"><tags:button cssClass="groupI groupC" data-action="2">匯出</tags:button></td>
+                                <td class="text-center align-middle btntd2"><tags:button cssClass="groupI groupT groupC anonymous" data-action="3">匯出</tags:button></td>
+                                <td class="text-center align-middle btntd2"><tags:button cssClass="groupI groupT groupC anonymous" data-action="4">查詢</tags:button></td>
+                                <td class="text-center align-middle btntd2"><tags:button cssClass="groupN groupP groupI groupT groupC" data-action="5">預覽</tags:button></td>
+                                <td class="text-center align-middle btntd4"><tags:button cssClass="groupN groupP" data-action="6">部分列表</tags:button></td>
+                                <td class="text-center align-middle btntd2"><tags:button cssClass="groupN groupP groupI groupT groupC" data-action="7">複製</tags:button></td>
+                                <td class="text-center align-middle btntd2"><tags:button cssClass="groupN groupP" data-action="8">修改</tags:button></td>
+                                <td class="text-center align-middle btntd2"><tags:button cssClass="groupN" data-action="9">上架</tags:button></td>
+                                <td class="text-center align-middle btntd2"><tags:button cssClass="groupP groupI" data-action="10">下架</tags:button></td>
                                 <td style="display: none"></td>
                             </tr>
                         </c:forEach>
@@ -88,7 +88,7 @@
         <form:hidden path="topicname"/>
     </form:form>
     <tags:form-note>
-    <tags:form-note-item>操作區選單允許執行與否根據活動狀態決定。</tags:form-note-item>
+    <tags:form-note-item>功能是否開放根據活動狀態決定。</tags:form-note-item>
     </tags:form-note>
     </tags:fieldset>
 </jsp:attribute>
@@ -115,12 +115,12 @@ $(function(){
         let isAllowDel = true;
         $("input[name^='osformnoList']:checked").each(function () {
             let status = $(this).data('status');
-            if ($.inArray(status, ["N","P"]) < 0){
+            if ($.inArray(status, ["N"]) < 0){
                 isAllowDel = false;
             }
         });
         if (!isAllowDel) {
-            showAlert("所選主題需為「已建檔」或「上架中」，才可進行刪除！");
+            showAlert("所選主題需為「已建檔」，才可進行刪除！");
             return;
         }
         showConfirm('確定刪除嗎？',()=>{
@@ -135,9 +135,9 @@ $(function(){
         if (action === 1) {
             $('#eip00w520Form').attr('action', '<c:url value="/Eip00w520_review.action" />').submit();
         } else if (action === 2) {
-
+            $('#eip00w520Form').attr('action', '<c:url value="/Eip00w520_printStatistics.action" />').submit();
         } else if (action === 3) {
-
+            $('#eip00w520Form').attr('action', '<c:url value="/Eip00w520_printWriteContent.action" />').submit();
         } else if (action === 4) {
             $('#eip00w520Form').attr('action', '<c:url value="/Eip00w520_contentQuery.action" />').submit();
         } else if (action === 5) {
@@ -180,6 +180,34 @@ $(function(){
             $("#selectAll").prop("checked",false);
         }
     });
+
+    $("#tb1 tbody tr").each(function() {
+        var status = $(this).find("input[name^='osformnoList']").data('status');
+        var anonymous = $(this).find("input[name^='osformnoList']").data('anonymous');
+        var buttons = $(this).find(".btn");
+        buttons.prop("disabled", true);
+        if (status === 'N') {
+            buttons = $(this).find(".groupN");
+            buttons.prop("disabled", false);
+        } else if (status === 'P') {
+            buttons = $(this).find(".groupP");
+            buttons.prop("disabled", false);
+        } else if (status === 'I') {
+            buttons = $(this).find(".groupI");
+            buttons.prop("disabled", false);
+        } else if (status === 'T') {
+            buttons = $(this).find(".groupT");
+            buttons.prop("disabled", false);
+        } else if (status === 'C') {
+            buttons = $(this).find(".groupC");
+            buttons.prop("disabled", false);
+        }
+        if (anonymous === 'Y') {
+            buttons = $(this).find(".anonymous");
+            buttons.prop("disabled", true);
+        }
+    });
+
 })
 </script>
 </jsp:attribute>

@@ -109,8 +109,8 @@
                                     <td class="text-left" id="itemContentTxt" ><c:out value="${data.trkObj.split('-')[1]}"/></td>
                                     <td id="itemContent" style="display: none"><c:out value="${data.trkObj.split('-')[0]}"/></td>
                                     <td ><c:out value="${data.prcSts}"/></td>
-                                    <td ><form:input path="stDt" class="form-control num_only ml-3 stDt" size="7" maxlength="7" value="${data.stDt}"/></td>
-                                    <td ><form:input path="endDt" class="form-control num_only ml-3 endDt" size="7" maxlength="7" value="${data.endDt}"/></td>
+                                    <td ><form:input path="stDt" class="form-control num_only ml-5 stDt" size="7" maxlength="7" value="${data.stDt}"/></td>
+                                    <td ><form:input path="endDt" class="form-control num_only ml-5 endDt" size="7" maxlength="7" value="${data.endDt}"/></td>
                                     <td ><button class="btn btn-sm btn-outline-be" name="delete-item" type="button" onclick="deleteItem(${status.index})">刪除</button></td>
                                 </tr>
 					        </c:forEach>
@@ -244,8 +244,8 @@
                 '<td id="itemContentTxt" class="text-left">' +  selectedText + '</td>'+
                 '<td id="itemContent" style="display: none;">' +  selectedID + '</td>'+
                 '<td >' +  "待處理" + '</td>'+
-                '<td >' +  '<input path="stDt" class="form-control num_only ml-3 stDt" size="7" maxlength="7" value="' + (allStDt > sysdate? allStDt : sysdate) + '"/>' + '</td>'+
-                '<td >' +  '<input path="endDt" class="form-control num_only ml-3 endDt" size="7" maxlength="7"/>' + '</td>'+
+                '<td >' +  '<input path="stDt" class="form-control num_only ml-5 stDt" size="7" maxlength="7" value="' + (allStDt > sysdate? allStDt : sysdate) + '"/>' + '</td>'+
+                '<td >' +  '<input path="endDt" class="form-control num_only ml-5 endDt" size="7" maxlength="7"/>' + '</td>'+
                 '<td>' + buildDeleteItemButton(rowCount).prop('outerHTML') + '</td>'+
             '</tr>';
         $('#trkObjTable > tbody').append(rowHtml);

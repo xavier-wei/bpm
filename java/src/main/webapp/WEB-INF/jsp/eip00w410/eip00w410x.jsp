@@ -17,7 +17,7 @@
         儲存<i class="fas fa-user-check"></i>
     </tags:button>
     <tags:button id="btnReply">
-        取消<i class="fas fa-reply"></i>
+        返回<i class="fas fa-reply"></i>
     </tags:button>
 </jsp:attribute>
 

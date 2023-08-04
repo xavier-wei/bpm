@@ -100,4 +100,6 @@ public class Msgdata implements Serializable {
     /** 更新時間 */
     @LogField("UPDDT")
     private LocalDateTime upddt;
+    
+    private String creatname;
 }

@@ -116,20 +116,6 @@ public class RoomIsableDaoImpl extends BaseDao<RoomIsable> implements RoomIsable
     }
 
     @Override
-
-    public int findByIsableTime(String itemId, String isableDate, String isableTime){
-        StringBuilder sql=new StringBuilder();
-        sql.append(" SELECT COUNT(*) ");
-        sql.append(" FROM " + TABLE_NAME + " T WHERE T.ITEMID = :itemId AND T.ISABLEDATE = :isableDate AND T.ISABLETIME= :isableTime ");
-        Map<String, String> params=new HashMap<>();
-        params.put("itemId", itemId);
-        params.put("isableDate", isableDate);
-        params.put("isableTime", isableTime);
-
-        return getNamedParameterJdbcTemplate().queryForObject(sql.toString(), params, Integer.class);
-    }
-
-    @Override
     public List<RoomIsable> selectItemIdByDate(String itemId, String isableDate){
         StringBuilder sql = new StringBuilder();
         sql.append(" SELECT ");

@@ -44,9 +44,9 @@ public class Eip00w430Service extends OnlineRegService {
      */
     public void getAllList(Eip00w430Case caseData) {
         Map<String,String> regstatusMap = getRegstatus();
-        //TODO 目前userdata還沒有職稱，未來需要補
-        String deptno = getRegisqualDept().containsKey(userData.getDeptId()) ? userData.getDeptId() : userData.getEmpId();
-            List<Eip00w430Case.RegCase> list = orformdataDao.getDataByStatus(Arrays.asList("P", "A"), deptno).stream().map(t -> {
+        String deptno = "D" + userData.getDeptId();
+        String jobtitleno = userData.getTitleId();
+        List<Eip00w430Case.RegCase> list = orformdataDao.getDataByStatus(Arrays.asList("P", "A"), deptno, jobtitleno).stream().map(t -> {
             Eip00w430Case.RegCase regCase = new Eip00w430Case.RegCase();
             Orresult orresult = orresultDao.getDataByPerson(t.getOrformno(),userData.getUserId());
             List<Orresult>resultList = orresultDao.getDataByOrformno(t.getOrformno(),"D");
@@ -64,7 +64,7 @@ public class Eip00w430Service extends OnlineRegService {
             regCase.setStatusVal(StringUtils.defaultIfEmpty(regstatusMap.get(regCase.getRegresult()),"未報名"));//畫面上的報名結果
             return regCase;
         }).collect(Collectors.toList());
-        List<Eip00w430Case.RegCase> hislist = orformdataDao.getDataByStatus(Arrays.asList("I", "C", "D"), deptno).stream().map(t -> {
+        List<Eip00w430Case.RegCase> hislist = orformdataDao.getDataByStatus(Arrays.asList("I", "C", "D"), deptno, jobtitleno).stream().map(t -> {
             Eip00w430Case.RegCase regCase = new Eip00w430Case.RegCase();
             Orresult orresult = orresultDao.getDataByPerson(t.getOrformno(),userData.getUserId());
             regCase.setTopicname(t.getTopicname());
@@ -116,7 +116,8 @@ public class Eip00w430Service extends OnlineRegService {
         contentCase.setEmail(orformdata.getEmail());
         contentCase.setAllowappway(StringUtils.substring(allowappwaySb.toString(), 0, allowappwaySb.length()-2));
         contentCase.setIsmeals(orformdata.getIsmeals());
-        String dir = getFilesPath() + orformdata.getOrformno();
+        String filedir = eipcodeDao.findByCodeKindCodeNo("FILEDIR", "1").get().getCodename();
+        String dir = filedir + "\\線上報名\\" + orformdata.getOrformno();
         File directory = new File(dir);
         if (directory.exists() && directory.isDirectory()) {
             List<String> fileList = new ArrayList<>();
@@ -142,9 +143,12 @@ public class Eip00w430Service extends OnlineRegService {
         orresult.setRegisidn("");
         orresult.setRegissex("");
         orresult.setRegisbrth("");
-        orresult.setRegisemail("");
+        orresult.setRegisemail(userData.getEmail());
         //取不到dept名稱就直接exception
         orresult.setDept(eipcodeDao.findByCodeKindCodeNo("REGISQUAL", userData.getDeptId()).get().getCodename());
+        orresult.setCompany(eipcodeDao.findByCodeKindCodeNo("ORG", userData.getOrgId()).get().getCodename());
+        orresult.setJogtitle(eipcodeDao.findByCodeKindCodeNo("TITLE", userData.getTitleId()).get().getCodename());
+        orresult.setRegisphone(userData.getTel1());
         orresult.setDegreen(6);
         orresult.setCreuser(userData.getUserId());
         orresult.setCredt(LocalDateTime.now());
@@ -182,7 +186,7 @@ public class Eip00w430Service extends OnlineRegService {
      * @return
      */
     public ByteArrayOutputStream downloadFile(Eip00w430Case caseData) throws IOException {
-        String dir = getFilesPath() + caseData.getOrformno() + "/";
+        String dir = eipcodeDao.findByCodeKindCodeNo("FILEDIR", "1").get().getCodename() + "\\線上報名\\" +caseData.getOrformno() + "\\";
         String filePath = dir + caseData.getFilename();
         File file = new File(filePath);
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();

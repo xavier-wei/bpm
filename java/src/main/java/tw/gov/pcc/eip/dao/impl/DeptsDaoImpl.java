@@ -135,7 +135,7 @@ public class DeptsDaoImpl extends BaseDao<Depts> implements DeptsDao {
         sql.append("                     WHERE A.FSEQ = B.FSEQ ");
         sql.append("                       AND A.STATUS = '4' ");
         sql.append("                       AND A.ATTRIBUTYPE = :attr ");
-        sql.append("                       AND B.AVAILABLEDEP = :deptId ) ");
+        sql.append("                       AND (CASE WHEN TRIM(B.AVAILABLEDEP) = '00' THEN :deptId ELSE TRIM(B.AVAILABLEDEP) END) = :deptId ) ");
         sql.append("  ORDER BY DEPT_ID ");
         Map<String, Object> params = new HashMap<>();
         params.put("attr", attr);

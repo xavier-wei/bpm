@@ -265,6 +265,7 @@ public class Eip07w020Service {
         detail.setEndH(StringUtils.substring(detail.getUsing_time_e(),0,2));
         detail.setEndM(StringUtils.substring(detail.getUsing_time_e(),2));
         detail.setUsing_date(DateUtility.changeDateType(detail.getUsing_date()));
+        detail.setApply_date(DateUtility.changeDateType(detail.getApply_date()));
         return detail;
     }
 

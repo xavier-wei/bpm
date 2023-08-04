@@ -157,6 +157,7 @@ public class Eip01w010Controller extends BaseController {
                 eip01w010Service.update(caseData, userData.getUserId());
             }
             eip01w010Service.insertDataUploadFiles(caseData);
+            eip01w010Service.callSp_Eip01w010();
             setSystemMessage(isNewCase ? getSaveSuccessMessage() : getUpdateSuccessMessage());
             return new ModelAndView(EDIT_PAGE);
         } catch (Exception e) {
@@ -192,6 +193,7 @@ public class Eip01w010Controller extends BaseController {
             }
             eip01w010Service.insertDataUploadFiles(caseData);
             eip01w010Service.updStatus(caseData, "1");
+            eip01w010Service.callSp_Eip01w010();
             setSystemMessage(isNewCase ? getSaveSuccessMessage() : getUpdateSuccessMessage());
             return new ModelAndView(EDIT_PAGE);
         } catch (Exception e) {
@@ -219,6 +221,7 @@ public class Eip01w010Controller extends BaseController {
         }
         try {
             eip01w010Service.updStatus(caseData, "1");
+            eip01w010Service.callSp_Eip01w010();
             setSystemMessage(getUpdateSuccessMessage());
             return new ModelAndView(MAIN_PAGE);
         } catch (Exception e) {

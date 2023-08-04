@@ -15,16 +15,19 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import tw.gov.pcc.eip.common.cases.Eip06w010Case;
 import tw.gov.pcc.eip.common.cases.Eip06w030Case;
+import tw.gov.pcc.eip.dao.UsersDao;
 import tw.gov.pcc.eip.services.Eip06w010Service;
 import tw.gov.pcc.eip.services.Eip06w030Service;
 import tw.gov.pcc.eip.domain.Meeting;
 import tw.gov.pcc.eip.framework.domain.UserBean;
 import tw.gov.pcc.eip.framework.spring.controllers.BaseController;
+import tw.gov.pcc.eip.util.DateUtility;
 import tw.gov.pcc.eip.util.ExceptionUtility;
 import tw.gov.pcc.eip.util.ObjectUtility;
 
 import java.text.ParseException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -46,6 +49,8 @@ public class Eip06w030Controller extends BaseController {
     @Autowired
     private UserBean userData;
     @Autowired
+    private UsersDao usersDao;
+    @Autowired
     private Eip06w030Service eip06w030Service;
     @Autowired
     private Eip06w010Service eip06w010Service;
@@ -54,7 +59,7 @@ public class Eip06w030Controller extends BaseController {
     @ModelAttribute(CASE_KEY)
     public Eip06w030Case getEip06w030Case(){
         Eip06w030Case caseData = new Eip06w030Case();
-        caseData.setOrganizerId(userData.getUserId() + " " + userData.getUserName());
+        caseData.setOrganizerId(userData.getUserId() + "-" + userData.getUserName());
         eip06w030Service.initSelectList(caseData);
         return ObjectUtility.normalizeObject(caseData);
     }
@@ -100,17 +105,22 @@ public class Eip06w030Controller extends BaseController {
      */
     @RequestMapping("/Eip06w030_findExistedMeeting.action")
     @ResponseBody
-    public  List<String>  findExistedMeeting(@RequestBody Map<Object, Object> map) throws ParseException {
+    public  Map<String,List<String>>  findExistedMeeting(@RequestBody Map<Object, Object> map) throws ParseException {
         List<Meeting> ml = eip06w030Service.findExistedMeeting(map);
-        List<String> list = new ArrayList<>();
+        List<String> showList = new ArrayList<>();
+        List<String> hideList = new ArrayList<>();
         ml.forEach(a -> {
-            String meetings = a.getMeetingId() + "-" + a.getMeetingName() + "-" + a.getOrganizerId();
-            list.add(meetings);
+            String meetings = DateUtility.changeDateTypeToChineseDate(a.getMeetingdt()) + "-" + a.getMeetingName() + "-" + usersDao.selectByKey(a.getOrganizerId()).getUser_name();
+            hideList.add(a.getMeetingId().toString());
+            showList.add(meetings);
         });
-        if(list.size() == 0){
-            list.add("no");
+        if(showList.size() == 0){
+            showList.add("no");
         }
-        return list;
+        Map<String,List<String>> returnMap = new HashMap<>();
+        returnMap.put("show",showList);
+        returnMap.put("hide",hideList);
+        return returnMap;
     }
 
     /**

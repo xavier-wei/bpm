@@ -22,10 +22,11 @@ public interface MeetingCodeDao {
 
 	/**
 	 * 查詢 itemId 筆數
+	 * @param itemTyp
 	 * @param itemId
 	 * @return
 	 */
-	public int findByitemId(String itemId);
+	public int findByitemId(String itemTyp, String itemId);
 
 	/**
 	 * 查詢 itemId 使用
@@ -98,4 +99,11 @@ public interface MeetingCodeDao {
 	 * @return
 	 */
 	public List<MeetingCode> findValidRoominclBookedByDtandUsing(String meetingId, String meetingDt, String using);
+
+	/**
+	 * 查詢類別(僅含會議室啟用)
+	 * @param itemtyps
+	 * @return
+	 */
+	public List<MeetingCode> selectDataByItemTypes(List<String> itemtyps);
 }

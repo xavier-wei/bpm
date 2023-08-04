@@ -382,10 +382,11 @@
     </tags:form-row>
     <div id="fileRow">
     <tags:form-row>
-        <div class="col-md-6">
+        <div class="col-md-12">
             <form:label cssClass="col-form-label" path="files">附加檔案：</form:label>
             <form:input path="files" type="file"/>
             <tags:button id="btnAddUpload">增加檔案</tags:button>
+            <tags:button id="btnDelUpload">刪除檔案</tags:button>
         </div>
     </tags:form-row>
     </div>
@@ -488,6 +489,15 @@ $(function(){
             '</div>'+
             '</div>';
         $("#fileRow").append(addfile);
+    });
+
+    //增加檔案
+    $("#btnDelUpload").click(function() {
+        if ($("#fileRow").find(".form-row").length > 1) {
+            $("#fileRow").find(".form-row:last").remove();
+        } else {
+            $("#files").val("");
+        }
     });
 
     //初始化

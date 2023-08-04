@@ -24,16 +24,6 @@ public interface RoomIsableDao {
 	public List<RoomIsable> selectDataByItemId(String itemId);
 
 	/**
-	 * 查詢 isabletime 筆數
-	 * @param itemId
-	 * @param periodStart
-	 * @param isableTime
-	 * @return
-	 */
-
-	public int findByIsableTime(String itemId, String periodStart, String isableTime);
-
-	/**
 	 * 查詢 會議室當日啟用時段
 	 * @param itemId
 	 * @param isableDate

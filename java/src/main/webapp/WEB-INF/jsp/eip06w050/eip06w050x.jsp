@@ -26,7 +26,14 @@
 <tags:fieldset legend="參數${caseData.mode eq 'A' ? '新增' : '修改'}">
 <form:form id="eip06w050Form" modelAttribute="${caseKey}">
     <tags:form-row>
-        <form:label cssClass="col-form-label star" path="itemTyp">類別：</form:label>
+        <c:choose>
+            <c:when test="${caseData.mode eq 'A'}">
+                <form:label cssClass="col-form-label star" path="itemTyp">類別：</form:label>
+            </c:when>
+            <c:when test="${caseData.mode eq 'U'}">
+                <form:label cssClass="col-form-label " path="itemTyp">類別：</form:label>
+            </c:when>
+        </c:choose>
         <div class="col-md-6">
             <form:select path="itemTyp" cssClass="form-control selector">
             <form:option value="">請選擇</form:option>
@@ -35,9 +42,16 @@
         </div>
     </tags:form-row>
     <tags:form-row>
-        <form:label cssClass="col-form-label star" path="itemId">編號：</form:label>
+        <c:choose>
+            <c:when test="${caseData.mode eq 'A'}">
+                <form:label id="itemIdLabel" cssClass="col-form-label star" path="itemId">編號：</form:label>
+            </c:when>
+            <c:when test="${caseData.mode eq 'U'}">
+                <form:label id="itemIdLabel" cssClass="col-form-label" path="itemId">編號：</form:label>
+            </c:when>
+        </c:choose>
         <div class="col-md-6">
-            <form:input path="itemId" cssClass="form-control d-inline-block" maxlength="10"/>
+            <form:input path="itemId" cssClass="form-control d-inline-block num_only" maxlength="10"/>
         </div>
     </tags:form-row>
     <tags:form-row>
@@ -48,15 +62,16 @@
     </tags:form-row>
 
     <tags:form-row id="qtyRow">
-        <form:label id="qtyLabel" cssClass="col-form-label " path="qty">數量：</form:label>
+        <form:label id="qtyLabel" cssClass="col-form-label star" path="qty">數量：</form:label>
         <div class="col-md-6">
             <form:input path="qty" cssClass="form-control d-inline-block num_only" maxlength="2"/>
         </div>
     </tags:form-row>
+    <form:hidden path="mode"/>
     <tags:form-note>
     <tags:form-note-item><span class="red">＊</span>為必填欄位。</tags:form-note-item>
     </tags:form-note>
-    <form:hidden path="mode"/>
+
 </form:form>
 </tags:fieldset>
 </jsp:attribute>
@@ -95,6 +110,15 @@ $(function(){
         }else{
             $('#qtyLabel').text('數量：');
         }
+
+        //類別新增時A：餐點  B：物品 F：會議室
+        if (itemTypValue == 'A') {
+            $('#itemIdLabel').text('編號：A-');
+        } else if (itemTypValue == 'B') {
+            $('#itemIdLabel').text('編號：B-');
+        } else if (itemTypValue == 'F') {
+            $('#itemIdLabel').text('編號：F-');
+        }
     }
     cheitemTyp();
 
@@ -102,12 +126,8 @@ $(function(){
     if($('#mode').val() =='U'){
         $('#itemId').prop('disabled', true);
         $('#itemTyp').prop('disabled', true);
+        $('#itemIdLabel').text('編號：');
     }
-
-    if($('#mode').val() =='A'){
-        $('#itemId').val('');
-    }
-
 })
 </script>
 </jsp:attribute>

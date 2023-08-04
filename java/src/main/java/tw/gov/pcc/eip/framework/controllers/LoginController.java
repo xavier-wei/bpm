@@ -22,7 +22,6 @@ import tw.gov.pcc.eip.msg.cases.Eip01w030Case;
 import tw.gov.pcc.eip.msg.cases.Eip01w040Case;
 import tw.gov.pcc.eip.msg.cases.Eip01wPopCase;
 import tw.gov.pcc.eip.msg.controllers.Eip01w030Controller;
-import tw.gov.pcc.eip.msg.controllers.Eip01w040Controller;
 import tw.gov.pcc.eip.services.Eip01w040Service;
 import tw.gov.pcc.eip.util.BeanUtility;
 import tw.gov.pcc.eip.util.DateUtility;
@@ -56,7 +55,6 @@ public class LoginController extends BaseController {
     private final Eip01w040Service eip01w040Service;
     private final EipcodeDao eipcodeDao;
     private final MsgdepositdirDao msgdepositdirDao;
-    private final Eip01w040Controller eip01w040Controller;
     private final Eip01w030Controller eip01w030Controller;
 
     private static Comparator<Eip01wPopCase> getEip01wPopCaseComparator(DatatableCase<Eip01wPopCase> datatableCase) {

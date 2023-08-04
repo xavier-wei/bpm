@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.util.CollectionUtils;
 import org.springframework.validation.BindingResult;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.SessionAttributes;
@@ -53,9 +54,8 @@ public class Eip07w040Controller extends BaseController {
 		try {
 			eip07w040Service.getData(caseData);
 		} catch (Exception e) {
-			e.printStackTrace();
+			log.error("Eip07w040Case_enter查詢失敗" + ExceptionUtility.getStackTrace(e));
 		}
-		
 		return new ModelAndView(QUERY_PAGE);
 	}
 
@@ -74,12 +74,12 @@ public class Eip07w040Controller extends BaseController {
 			caseData.setShowEmptyStr(false);//清除資料
 			caseData.setTimeMK("");
 			caseData.setShowButton(false);
+			caseData.setUsing("");
 			eip07w040Service.getDetailData(caseData);
 		} catch (Exception e) {
 			log.error("Eip07w040Controller查詢失敗" + ExceptionUtility.getStackTrace(e));
 			setSystemMessage("查詢失敗");
 			return new ModelAndView(QUERY_PAGE);
-			
 		}
 		
 		return new ModelAndView(DETAIL_PAGE);
@@ -109,8 +109,11 @@ public class Eip07w040Controller extends BaseController {
 	 * @return
 	 */
 	@RequestMapping("/Eip07w040_updateAll.action")
-	public String updateAllData(@ModelAttribute(CASE_KEY) Eip07w040Case caseData, BindingResult result) {
+	public String updateAllData(@Validated(Eip07w040Case.Update.class)@ModelAttribute(CASE_KEY) Eip07w040Case caseData, BindingResult result) {
 		log.debug("導向   Eip07w040  秘書處進行派車作業：更新全部資料 ");
+		if(result.hasErrors()) {
+			return DETAIL_PAGE;
+		}
 		try {
 			eip07w040Service.updateAll(caseData);
 			Eip07w040Case newCase = new Eip07w040Case();
@@ -132,9 +135,8 @@ public class Eip07w040Controller extends BaseController {
 	 * @return
 	 */
 	@RequestMapping("/Eip07w040_print.action")
-	public ModelAndView print(@ModelAttribute(CASE_KEY) Eip07w040Case caseData, BindingResult result) {
+	public ModelAndView print(@Validated(Eip07w040Case.Print.class) @ModelAttribute(CASE_KEY)Eip07w040Case caseData, BindingResult result) {
 		try {
-			
 			if(CollectionUtils.isEmpty(caseData.getApplyids()) && StringUtils.isEmpty(caseData.getReprintApplyid())) {
 				setSystemMessage("尚未勾選欲列印的案件",true);
 				return new ModelAndView(QUERY_PAGE);
@@ -149,5 +151,4 @@ public class Eip07w040Controller extends BaseController {
 			return new ModelAndView(QUERY_PAGE);
 		}
 	}
-
 }

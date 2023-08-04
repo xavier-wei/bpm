@@ -15,12 +15,8 @@ import tw.gov.pcc.eip.framework.report.PdfReportBase;
 
 public class Eip07w020l00 extends PdfReportBase {
 	private static final org.slf4j.Logger log = org.slf4j.LoggerFactory.getLogger(Eip07w020l00.class);
-
 	private static final float PAGEWIDTH = 100.0F;
 	private static final int COLALL = 100;
-
-
-
 	private static final int SECOND_TITLE_FONT_SIZE = 14;//14
 	private static final int SIZE_12 = 12;//12
 

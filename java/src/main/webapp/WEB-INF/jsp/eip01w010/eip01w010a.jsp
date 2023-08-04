@@ -15,7 +15,7 @@
                 text-overflow: ellipsis;
             }
 
-            #btnPath {
+            #btnPath, #btnLink {
                 height: 90%;
                 margin-top: 2.5px;
                 padding-top: 6px;
@@ -262,13 +262,14 @@
                     </div>
                 </tags:form-row>
                 <tags:form-row>
-                    <form:label cssClass="col-form-label star" path="subject">主旨/連結網址：</form:label>
-                    <div class="col-sm-6">
-                        <form:input path="subject" cssClass="form-control" style="width:100%;" maxlength="400"
+                    <form:label cssClass="col-form-label star subject-label-name" path="subject">主旨/連結網址：</form:label>
+                    <div class="col-sm-6 d-flex">
+                        <form:input path="subject" cssClass="form-control" style="width:70%;" maxlength="400"
                             placeholder="400字內" />
+                        <tags:button cssClass="ml-2" id="btnLink">測試連結</tags:button>
                     </div>
                 </tags:form-row>
-                <tags:form-row>
+                <tags:form-row cssClass="oplink-row">
                     <div class="col-3 col-md d-flex align-items-center">
                         <form:label cssClass="col-form-label" path="oplink">是否需要另開視窗：</form:label>
                         <label class="mb-0 d-flex">
@@ -281,7 +282,7 @@
                         </label>
                     </div>
                 </tags:form-row>
-                <tags:form-row>
+                <tags:form-row cssClass="mcontent-row">
                     <form:label cssClass="col-form-label star" path="mcontent">內文：</form:label>
                     <div class="col-sm-6">
                         <div class="d-inline-flex" style="width:100%;">
@@ -292,7 +293,7 @@
                             style="font-size: 14px; position: absolute; margin: auto; bottom: 0; right: 0.9rem;"></div>
                     </div>
                 </tags:form-row>
-                <tags:form-row>
+                <tags:form-row cssClass="images-row">
                     <form:label cssClass="col-form-label" path="images">內文附圖：</form:label>
                     <div class="custom-file" style="width:50%;">
                         <input type="file" class="custom-file-input" id="images" name="images" multiple
@@ -311,14 +312,7 @@
                 <tags:form-row cssClass="imgblock">
 
                 </tags:form-row>
-                <tags:form-row>
-                    <form:label cssClass="col-form-label" path="indir">存放目錄：</form:label>
-                    <div class="col-sm-6 d-flex">
-                        <form:input path="indir" cssClass="form-control" maxlength="0" size="50" />
-                        <tags:button cssClass="ml-2" id="btnPath">選取目錄</tags:button>
-                    </div>
-                </tags:form-row>
-                <tags:form-row>
+                <tags:form-row cssClass="files-row">
                     <form:label cssClass="col-form-label" path="files">附加檔案：</form:label>
                     <div class="custom-file" style="width:50%;">
                         <input type="file" class="custom-file-input" id="files" name="files" multiple
@@ -334,11 +328,26 @@
                         </c:forEach>
                     </tags:form-row>
                 </c:if>
+                <tags:form-row cssClass="indir-row">
+                    <form:label cssClass="col-form-label" path="indir">存放目錄：</form:label>
+                    <div class="col-sm-6 d-flex">
+                        <form:input path="indir" cssClass="form-control" maxlength="0" style="width:70%;" />
+                        <tags:button cssClass="ml-2" id="btnPath">選取目錄</tags:button>
+                    </div>
+                </tags:form-row>
                 <tags:form-row>
                     <form:label cssClass="col-form-label star" path="releasedt">上架時間：</form:label>
-                    <div class="col-sm-6">
-                        <form:input path="releasedt" cssClass="form-control d-inline-block dateTW date" size="10"
-                            maxlength="7" />
+                    <div class="col-sm-6 my-auto">
+                         <c:choose>
+                            <c:when test="${caseData.status == '4' || caseData.status == 'X'}">
+                                <form:hidden path="releasedt" />
+                                <c:out value="${caseData.releasedt}" />
+                            </c:when>
+                            <c:otherwise>
+                                <form:input path="releasedt" cssClass="form-control d-inline-block dateTW date" size="10"
+                                    maxlength="7" />
+                            </c:otherwise>
+                        </c:choose>
                     </div>
                 </tags:form-row>
                 <tags:form-row>
@@ -628,7 +637,7 @@
                         },
                         timeout: 100000,
                         success: function(data) {
-                            if (data == '') {
+                            if (data === '') {
                                 showAlert('查無資料!');
                             } else {
                                 var str = '';
@@ -662,7 +671,7 @@
                     let count = $(this).val().length;
                     $('#word-count').css('visibility', '');
                     $('#word-count').html('已輸入' + count + '字');
-                    if (count == 0) {
+                    if (count === 0) {
                         $('#word-count').css('visibility', 'hidden');
                     }
                 });
@@ -697,6 +706,7 @@
                     $('input:radio:not([name="istop"],[name="isfront"])').prop('checked', false);
                     $('input:radio[name="istop"],[name="isfront"]:eq(1)').prop('checked', true);
                     $('#word-count').css('visibility', 'hidden');
+                    showhide('');
                 });
                 // 返回
                 $("#btnBack").click(function(e) {
@@ -714,13 +724,53 @@
                             .submit();
                     }
                 });
+                // 頁面型態 控制
+                showhide('<c:out value="${caseData.pagetype }"/>');
+                function showhide(pagetype) {
+	                if(pagetype === 'A'){ // 文章
+	                    $('.mcontent-row, .images-row, .imgblock, .files-row, .indir-row, .textblock').show();
+	                    $('.oplink-row, #btnLink').hide();
+	                    $('input:radio[name="oplink"]').prop('checked', false);
+	                    $('.subject-label-name').html('主旨：');
+	                } else if (pagetype === 'B') { // 連結
+	                    $("#images, #files, #indir").val('');
+	                    $('.imgblock').html('');
+	                    $('#files').next('.custom-file-label').html('Choose files');
+	                    $('#images').next('.custom-file-label').html('Choose images');
+	                    
+	                    $('.mcontent-row, .images-row, .imgblock, .files-row, .indir-row, .textblock').hide();
+	                    $('.oplink-row, #btnLink').show();
+	                    $('input:radio[name="oplink"][value="1"]').prop('checked', true);
+	                    $('.subject-label-name').html('連結網址：');
+	                } else {
+	                    $("#images, #files, #indir").val('');
+	                    $('.imgblock').html('');
+	                    $('.subject-label-name').html('主旨/連結網址：');
+	                    $('#files').next('.custom-file-label').html('Choose files');
+	                    $('#images').next('.custom-file-label').html('Choose images');
+	                    $('.mcontent-row, .images-row, .imgblock, .files-row, .indir-row, .oplink-row, #btnLink, .textblock').hide();
+	                }
+                }
+                // 測試連結
+                $('#btnLink').click(function(){
+                    let url = $('#subject').val();
+                    if(url !== '') {
+                        window.open(url);
+                    }
+                });
+                $('#pagetype').change(function(){
+                    showhide($(this).val());
+                });
                 let status = '<c:out value="${caseData.status }"/>';
                 let availabledep = '<c:out value="${caseData.availabledep }"/>';
                 let $availabledep = availabledep.split(",")
-                if (status == 4 || status == 'X') {
+                if (status === '1') {
                     $('#btnUpload').attr('disabled', true);
+                } else if (status === '4' || status === 'X') {
+                    $('#btnUpload, #btnDelete').attr('disabled', true);
+                    $('label[for="releasedt"]').removeClass('star');
                 }
-                if ($('#fseq').val() == '') {
+                if ($('#fseq').val() === '') {
                 	$('#btnPreview').attr('disabled', true);
                 }
                 // 分眾 checkbox
@@ -778,7 +828,7 @@
                         alert('超過檔案數量 請重新選擇!');
                         $(this).next('.custom-file-label').html('Choose files');
                         return false;
-                    } else if (counts > 0 && counts < 20) {
+                    } else if (counts > 0 && counts <= 20) {
                         var files = [];
                         for (var i = 0; i < counts; i++) {
                             files.push($(this)[0].files[i].name);
@@ -789,7 +839,6 @@
                     }
                 });
                 // 選擇圖檔
-                $('.imgblock').hide();
                 $("#images").on("change", function() {
                     $('.imgblock').html('');
                     $('.imgblock').hide();
@@ -799,7 +848,7 @@
                         alert('超過檔案數量 請重新選擇!');
                         $(this).next('.custom-file-label').html('Choose images');
                         return false;
-                    } else if (counts > 0 && counts < 20) {
+                    } else if (counts > 0 && counts <= 20) {
                         prodPreViewImg($(this)[0].files);
                     } else {
                         $(this).next('.custom-file-label').html('Choose images');

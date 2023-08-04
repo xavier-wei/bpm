@@ -32,7 +32,7 @@
     <form:form id="eip00w420Form" name="eip00w420Form" modelAttribute="${caseKey}" method="POST">
         <tags:form-row>
             <div class="col-md-3">
-                <form:label cssClass="col-form-label" path="qKeyword">關鍵字：</form:label>
+                <form:label cssClass="col-form-label" path="qKeyword">主題關鍵字：</form:label>
                 <form:input path="qKeyword" cssClass="form-control d-inline-block" size="16" maxlength="50"/>
             </div>
             <div class="col-md-3">

@@ -77,4 +77,15 @@ public class MsgdepositDaoImpl extends BaseDao<Msgdeposit> implements Msgdeposit
         return getNamedParameterJdbcTemplate().query(sql.toString(), params,
                 BeanPropertyRowMapper.newInstance(Msgdeposit.class));
     }
+
+    @Override
+    public Msgdeposit getCnt(String fseq, String filetype) {
+        StringBuilder sql = new StringBuilder();
+        sql.append(" SELECT count(1) as cnt from msgdeposit where fseq = :fseq and filetype = :filetype ");
+        Map<String, Object> params = new HashMap<>();
+        params.put("fseq", fseq);
+        params.put("filetype", filetype);
+        return getNamedParameterJdbcTemplate().query(sql.toString(), params,
+                BeanPropertyRowMapper.newInstance(Msgdeposit.class)).stream().findFirst().orElse(null);
+    }
 }

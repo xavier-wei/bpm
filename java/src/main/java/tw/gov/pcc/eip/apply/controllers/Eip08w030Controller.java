@@ -1,6 +1,10 @@
 package tw.gov.pcc.eip.apply.controllers;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
@@ -117,6 +121,14 @@ public class Eip08w030Controller extends BaseController {
 		}
 
 		try {
+			List<String> applynos = caseData.getDataList().stream()
+					.filter(it -> it.isCheck() && StringUtils.isNotEmpty(it.getApplyno())).map(e -> e.getApplyno())
+					.collect(Collectors.toList());
+			if(CollectionUtils.isEmpty(applynos)) {
+				setSystemMessage("請至少勾選一項案件",true);
+				return LIST_APGE;
+			}
+			caseData.setApplynoList(applynos);
 			eip08w030Service.updateAll(caseData);
 		} catch (Exception e) {
 			log.error("Eip08w030Controller update失敗" + ExceptionUtility.getStackTrace(e));

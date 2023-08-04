@@ -58,8 +58,11 @@
                                         <td rowspan="${fn:length(textList)}" class="text-left align-middle sec-td"><c:out value="${item.itemname}"/></td>
                                     </c:if>
                                     <td class="text-left align-middle">${textui}</td>
-                                    <td class="text-right align-middle">${caseData.textDataMap[textui].count}</td>
-                                    <td class="text-right align-middle">${caseData.textDataMap[textui].rate}</td>
+                                    <c:set var="part1" value="${qseqnokey}" />
+                                    <c:set var="part2" value="${textui}" />
+                                    <c:set var="realKey" value="${part1}-${part2}" /> <!-- 透過串接組成myKey -->
+                                    <td class="text-right align-middle">${caseData.textDataMap[realKey].count}</td>
+                                    <td class="text-right align-middle">${caseData.textDataMap[realKey].rate}</td>
                                 </tr>
                             </c:forEach>
                         </c:if>
@@ -69,8 +72,11 @@
                                 <td rowspan="${caseData.titleRowspanMap[rowspankey]}" class="text-left align-middle first-td"><c:out value="${item.sectitle}"/></td>
                                 <td class="text-left align-middle sec-td"><c:out value="${item.itemname}"/></td>
                                 <td class="text-left align-middle">${textui}</td>
-                                <td class="text-right align-middle">${empty caseData.textDataMap[textui].count ? '0' : caseData.textDataMap[textui].count}</td>
-                                <td class="text-right align-middle">${empty caseData.textDataMap[textui].rate ? '0%' : caseData.textDataMap[textui].rate}</td>
+                                <c:set var="part1" value="${qseqnokey}" />
+                                <c:set var="part2" value="${textui}" />
+                                <c:set var="realKey" value="${part1}-${part2}" /> <!-- 透過串接組成myKey -->
+                                <td class="text-right align-middle">${empty caseData.textDataMap[realKey].count ? '0' : caseData.textDataMap[realKey].count}</td>
+                                <td class="text-right align-middle">${empty caseData.textDataMap[realKey].rate ? '0%' : caseData.textDataMap[realKey].rate}</td>
                             </tr>
                         </c:if>
                     </c:when>
@@ -98,8 +104,11 @@
                                         <td rowspan="${fn:length(textList)}" class="text-left align-middle sec-td"><c:out value="${item.itemname}"/></td>
                                     </c:if>
                                     <td class="text-left align-middle">${textui}</td>
-                                    <td class="text-right align-middle">${caseData.textDataMap[textui].count}</td>
-                                    <td class="text-right align-middle">${caseData.textDataMap[textui].rate}</td>
+                                    <c:set var="part1" value="${qseqnokey}" />
+                                    <c:set var="part2" value="${textui}" />
+                                    <c:set var="realKey" value="${part1}-${part2}" /> <!-- 透過串接組成myKey -->
+                                    <td class="text-right align-middle">${caseData.textDataMap[realKey].count}</td>
+                                    <td class="text-right align-middle">${caseData.textDataMap[realKey].rate}</td>
                                 </tr>
                             </c:forEach>
                         </c:if>
@@ -108,8 +117,11 @@
                             <tr>
                                 <td class="text-left align-middle sec-td"><c:out value="${item.itemname}"/></td>
                                 <td class="text-left align-middle">${textui}</td>
-                                <td class="text-right align-middle">${empty caseData.textDataMap[textui].count ? '0' : caseData.textDataMap[textui].count}</td>
-                                <td class="text-right align-middle">${empty caseData.textDataMap[textui].rate ? '0%' : caseData.textDataMap[textui].rate}</td>
+                                <c:set var="part1" value="${qseqnokey}" />
+                                <c:set var="part2" value="${textui}" />
+                                <c:set var="realKey" value="${part1}-${part2}" /> <!-- 透過串接組成myKey -->
+                                <td class="text-right align-middle">${empty caseData.textDataMap[realKey].count ? '0' : caseData.textDataMap[realKey].count}</td>
+                                <td class="text-right align-middle">${empty caseData.textDataMap[realKey].rate ? '0%' : caseData.textDataMap[realKey].rate}</td>
                             </tr>
                         </c:if>
                     </c:when>

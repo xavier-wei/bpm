@@ -3,8 +3,11 @@ package tw.gov.pcc.eip.orderCar.cases;
 import java.io.Serializable;
 import java.util.List;
 
+import javax.validation.groups.Default;
+
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import tw.gov.pcc.eip.framework.validation.RequiredString;
 
 /**
  * 派車預約暨派車結果查詢作業Case
@@ -15,6 +18,7 @@ import lombok.NoArgsConstructor;
 public class Eip07w030Case implements Serializable {
 
 	private static final long serialVersionUID = 1L;
+	public interface Update extends Default {}
 
 	private String applydateStart;//申請日期(起)
 	
@@ -31,6 +35,7 @@ public class Eip07w030Case implements Serializable {
 	private String apply_memo;
 	private String carprocess_status;
 	private List<String>applyIdList;
+	@RequiredString(label = "同意/不同意", groups = {Update.class})
 	private String agree;
 	
 }

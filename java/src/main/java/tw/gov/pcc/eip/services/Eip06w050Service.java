@@ -4,7 +4,9 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.BindingResult;
+import org.springframework.validation.ObjectError;
 import tw.gov.pcc.eip.common.cases.Eip06w050Case;
+import tw.gov.pcc.eip.common.cases.Eip06w060Case;
 import tw.gov.pcc.eip.dao.MeetingCodeDao;
 import tw.gov.pcc.eip.domain.MeetingCode;
 import tw.gov.pcc.eip.framework.domain.UserBean;
@@ -13,6 +15,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
+
+import static org.apache.commons.lang3.StringUtils.isEmpty;
 
 /**
  * 會議室參數維護
@@ -97,8 +101,17 @@ public class Eip06w050Service extends OnlineRegService {
      */
     public void insertClass(Eip06w050Case caseData) {
         MeetingCode meetingCode = new MeetingCode();
-        meetingCode.setItemTyp(caseData.getItemTyp());
-        meetingCode.setItemId(caseData.getItemId());
+        String itemTyp=caseData.getItemTyp();
+        meetingCode.setItemTyp(itemTyp);
+        String itemId;
+        if("A".equals(itemTyp)) {
+            itemId = "A" + caseData.getItemId();
+        }else if("B".equals(itemTyp)){
+            itemId = "B" + caseData.getItemId();
+        }else{
+            itemId = "F" + caseData.getItemId();
+        }
+        meetingCode.setItemId(itemId);
         meetingCode.setItemName(caseData.getItemName());
         meetingCode.setQty(caseData.getQty());
         meetingCodeDao.insertData(meetingCode);
@@ -109,7 +122,7 @@ public class Eip06w050Service extends OnlineRegService {
      * @param caseData
      */
     public void itemIsUse(Eip06w050Case caseData, BindingResult result) {
-        int itemId = meetingCodeDao.findByitemId(caseData.getItemId());
+        int itemId = meetingCodeDao.findByitemId(caseData.getItemTyp(), caseData.getItemId());
         if (StringUtils.equals(caseData.getMode(), "A")) {
             if (itemId == 1) {
                 log.debug("輸入itemId(編號)已經存在");
@@ -182,5 +195,27 @@ public class Eip06w050Service extends OnlineRegService {
         }
         return null;
     }
+
+    /**
+     * 資料檢查
+     * @param caseData
+     * @param result
+     */
+    public void validate(Eip06w050Case caseData, BindingResult result) {
+        ObjectError error;
+        String itemTyp = caseData.getItemTyp();
+        if ("B".equals(itemTyp)) {
+            if (caseData.getQty() == null || caseData.getQty() <= 0) {
+                error = new ObjectError("qty", "「數量」需大於0");
+                result.addError(error);
+            }
+        } else if ("F".equals(itemTyp) || "FX".equals(itemTyp)) {
+            if (caseData.getQty() == null || caseData.getQty() <= 0) {
+                error = new ObjectError("qty", "「人數」需大於0");
+                result.addError(error);
+            }
+        }
+    }
+
 
 }

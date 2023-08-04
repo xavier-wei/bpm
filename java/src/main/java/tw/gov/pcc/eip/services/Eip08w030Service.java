@@ -2,10 +2,8 @@ package tw.gov.pcc.eip.services;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -103,11 +101,7 @@ public class Eip08w030Service {
 	 * @return
 	 */
 	public void updateAll(Eip08w030Case caseData) throws Exception {
-		List<String> applynos = caseData.getDataList().stream()
-				.filter(it -> it.isCheck() && StringUtils.isNotEmpty(it.getApplyno())).map(e -> e.getApplyno())
-				.collect(Collectors.toList());
 
-		caseData.setApplynoList(applynos);
 		String nowdatetime = DateUtility.getNowWestDateTime(true);
 
 		for (String applyno : caseData.getApplynoList()) {
@@ -132,7 +126,7 @@ public class Eip08w030Service {
 					applyitemDao.updateByKey(item);
 				}
 
-				List<Applyitem> dataN = applyitemDao.selectReconfirm_mkNData(applynos);
+				List<Applyitem> dataN = applyitemDao.selectReconfirm_mkNData(caseData.getApplynoList());
 
 //		      (統計全部核準的數量)
 //				STEP2:先將改前資料搬至itemcodeu

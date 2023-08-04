@@ -60,6 +60,17 @@ public class Eip03w030Controller extends BaseController {
     }
 
     /**
+     * 導回查詢頁
+     *
+     */
+    @RequestMapping("/Eip03w030_backHome.action")
+    public String backHome(SessionStatus status) {
+        log.debug("導回查詢頁");
+        status.setComplete();
+        return "redirect:/Eip03w030_enter.action";
+    }
+
+    /**
      * 依條件查詢重要列管事項
      * @param caseData
      * @return

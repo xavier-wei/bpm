@@ -72,9 +72,9 @@
         <div class="table-responsive">
             <table class="table" id="tb1">
                 <tbody>
-                <c:set var="partIndex" value="1" />
-                <c:set var="quesIndex" value="1" />
-                <c:forEach items="${caseData.contents}" var="item" varStatus="status">
+                    <c:set var="partIndex" value="1" />
+                    <c:set var="quesIndex" value="1" />
+                    <c:forEach items="${caseData.contents}" var="item" varStatus="status">
                         <tr>
                             <c:if test="${currSectitle ne item.sectitle}">
                                 <td rowspan="${item.rowspan}" class="text-left align-middle first-td"><c:out value="${partIndex}" />.<c:out value="${item.sectitle}" /></td>
@@ -123,7 +123,14 @@
 <jsp:attribute name="footers">
 <script>
 $(function(){
-    // dataTable 設定
+    $('#btnExport').click(function(e){
+        e.preventDefault();
+        if($('input[type="checkbox"]:checked').length === 0) {
+            showAlert("請至少勾選一項");
+            return;
+        }
+        $('#eip00w520Form').attr('action', '<c:url value="/Eip00w520_printQueryWriteContent.action" />').submit();
+    })
     $('#btnReview').click(function(e){
         e.preventDefault();
         if($('input[type="checkbox"]:checked').length === 0) {

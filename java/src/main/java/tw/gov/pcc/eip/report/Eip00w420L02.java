@@ -9,11 +9,9 @@ import org.apache.poi.hssf.usermodel.HSSFPrintSetup;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.ss.util.CellRangeAddress;
 import tw.gov.pcc.common.util.DateUtil;
-import tw.gov.pcc.eip.common.cases.Eip00w420Case;
 import tw.gov.pcc.eip.domain.Orclass;
 import tw.gov.pcc.eip.domain.Orformdata;
 import tw.gov.pcc.eip.domain.Orresult;
-import tw.gov.pcc.eip.util.DateUtility;
 import tw.gov.pcc.eip.util.NumberUtility;
 
 import java.time.LocalDateTime;
@@ -24,7 +22,7 @@ import java.util.List;
 import java.util.Locale;
 
 /**
- * 核付後事故者重要欄位整檔核對清單
+ * 報名資料
  * 
  * @author Weith
  */

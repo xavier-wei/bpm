@@ -1,6 +1,10 @@
 package tw.gov.pcc.eip.orderCar.controllers;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
@@ -10,7 +14,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.SessionAttributes;
 import org.springframework.web.servlet.ModelAndView;
 
-import tw.gov.pcc.eip.apply.cases.Eip08w030Case;
 import tw.gov.pcc.eip.framework.spring.controllers.BaseController;
 import tw.gov.pcc.eip.orderCar.cases.Eip07w030Case;
 import tw.gov.pcc.eip.services.Eip07w030Service;
@@ -86,13 +89,22 @@ public class Eip07w030Controller extends BaseController {
 	 * @return
 	 */
 	@RequestMapping("/Eip07w030_update.action")
-	public String updateData(@Validated(Eip08w030Case.Update.class) @ModelAttribute(CASE_KEY) Eip07w030Case caseData, BindingResult result) {
+	public String updateData(@Validated(Eip07w030Case.Update.class) @ModelAttribute(CASE_KEY) Eip07w030Case caseData, BindingResult result) {
 		log.debug("導向   Eip07w030  派車預約審核作業：更新資料 ");
 		if (result.hasErrors()) {
 			return LIST_PAGE;
 		}
 
 		try {
+			List<String> applyids = caseData.getDataList().stream()
+					.filter(it -> it.isCheck() && StringUtils.isNotEmpty(it.getApplyid())).map(e -> e.getApplyid())
+					.collect(Collectors.toList());
+			if(CollectionUtils.isEmpty(applyids)) {
+				setSystemMessage("請至少勾選一項案件",true);
+				return LIST_PAGE;
+			}
+			
+			caseData.setApplyIdList(applyids);
 			eip07w030Service.updateAll(caseData);
 			eip07w030Service.getData(caseData);
 			if(CollectionUtils.isNotEmpty(caseData.getDataList())) {//若同一時間區間仍有未複合的案件則返回資料列表頁
@@ -104,7 +116,7 @@ public class Eip07w030Controller extends BaseController {
 			setSystemMessage("複核失敗");
 			return LIST_PAGE;
 		}
-		Eip08w030Case newCase = new Eip08w030Case();
+		Eip07w030Case newCase = new Eip07w030Case();
 		BeanUtility.copyProperties(caseData, newCase);// 進來時清除caseData
 		caseData.setApplydateStart(DateUtility.getNowChineseDate());
 		setSystemMessage("複核成功");

@@ -17,13 +17,13 @@
         </style>
     </jsp:attribute>
     <jsp:attribute name="contents">
-                        <c:set var="listOrder" value="${sessionScope[caseKey].entryListOrder}"/>
+        <c:set var="listOrder" value="${sessionScope['_setting'].entryListOrder}"/>
         <c:choose>
-            <c:when test="${empty sessionScope[caseKey].entryListOrder }">
+            <c:when test="${empty sessionScope['_setting'].entryListOrder }">
                 <c:set var="listOrder" value="drag2,drag3,drag4"/>
             </c:when>
             <c:otherwise>
-                <c:set var="listOrder" value="${sessionScope[caseKey].entryListOrder}"/>
+                <c:set var="listOrder" value="${sessionScope['_setting'].entryListOrder}"/>
             </c:otherwise>
         </c:choose>
         <div class="container2">
@@ -31,119 +31,122 @@
             <c:choose>
                 <c:when test="${item eq 'drag2'}">
             <div class="box" draggable="true">
-                <section id="drag2" class="dragtag"></section>
-                <nav class="nav pt-4 navbar-expand">
-                    <div id="nav-tab4" role="tablist" class="nav nav-tabs container-fluid">
-                        <button id="nav-inform-tab4" data-toggle="tab" data-target="#nav-inform" role="tab"
-                                aria-controls="nav-inform" aria-selected="true" type="button"
-                                class="btn nav-link btn-secondary active w-100">
-                            個人儀表板
-                        </button>
-                    </div>
-                </nav>
+                <section id="drag2" class="dragtag">
+                    <nav class="nav pt-4 navbar-expand">
+                        <div id="nav-tab4" role="tablist" class="nav nav-tabs container-fluid">
+                            <button id="nav-inform-tab4" data-toggle="tab" data-target="#nav-inform" role="tab"
+                                    aria-controls="nav-inform" aria-selected="true" type="button"
+                                    class="btn nav-link btn-secondary active w-100">
+                                個人儀表板
+                            </button>
+                        </div>
+                    </nav>
+                </section>
             </div>                        
                 </c:when>
                 <c:when test="${item eq 'drag3'}">
             <div class="box" draggable="true">
-                <section id="drag3" class="dragtag"></section>
-                <nav class="nav pt-4 navbar-expand">
-                    <div id="nav-tab3" role="tablist" class="nav nav-tabs container-fluid">
-                        <button id="nav-inform-tab3" data-toggle="tab" data-target="#nav-inform" role="tab"
-                                aria-controls="nav-inform" aria-selected="true" type="button"
-                                class="btn nav-link btn-secondary active">
-                            公告事項
-                        </button>
-                        <button id="nav-download-tab" data-toggle="tab" data-target="#nav-download" role="tab"
-                                aria-controls="nav-download" aria-selected="false" type="button"
-                                class="btn nav-link btn-secondary">下載專區
-                        </button>
-                    </div>
-                </nav>
-                <div id="nav-tabContent" class="tab-content">
-                    <div id="nav-inform" role="tabpanel" aria-labelledby="nav-inform-tab"
-                         class="tab-pane fade active show">
-                        <section class="container pt-2 pl-0 pr-0">
-                            <div class="card">
-                                <div class="card-body p-0">
-                                    <div class="px-1 py-1 collapse show">
-                                        <div class="card test-table table-sm table-hover">
-                                            <div class="card-body m-0 p-0">
-                                                <div class="table-responsive">
-                                                    <table class="table" id="msgListTable">
-                                                        <thead data-orderable="true">
-                                                            <tr>
-                                                                <th class="text-center">序號</th>
-                                                                <th class="text-center">主題</th>
-                                                                <th class="text-center">類別</th>
-                                                                <th class="text-center">發布時間</th>
-                                                                <th class="text-center">發布單位</th>
-                                                                <th class="text-center">操作區</th>
-                                                            </tr>
-                                                        </thead>
-                                                        <tbody>
-                                                        </tbody>
-                                                    </table>
+                <section id="drag3" class="dragtag">
+                    <nav class="nav pt-4 navbar-expand">
+                        <div id="nav-tab3" role="tablist" class="nav nav-tabs container-fluid">
+                            <button id="nav-inform-tab3" data-toggle="tab" data-target="#nav-inform" role="tab"
+                                    aria-controls="nav-inform" aria-selected="true" type="button"
+                                    class="btn nav-link btn-secondary active">
+                                公告事項
+                            </button>
+                            <button id="nav-download-tab" data-toggle="tab" data-target="#nav-download" role="tab"
+                                    aria-controls="nav-download" aria-selected="false" type="button"
+                                    class="btn nav-link btn-secondary">下載專區
+                            </button>
+                        </div>
+                    </nav>
+                    <div id="nav-tabContent" class="tab-content">
+                        <div id="nav-inform" role="tabpanel" aria-labelledby="nav-inform-tab"
+                             class="tab-pane fade active show">
+                            <section class="container pt-2 pl-0 pr-0">
+                                <div class="card">
+                                    <div class="card-body p-0">
+                                        <div class="px-1 py-1 collapse show">
+                                            <div class="card test-table table-sm table-hover">
+                                                <div class="card-body m-0 p-0">
+                                                    <div class="table-responsive">
+                                                        <table class="table" id="msgListTable">
+                                                            <thead data-orderable="true">
+                                                                <tr>
+                                                                    <th class="text-center">序號</th>
+                                                                    <th class="text-center">主題</th>
+                                                                    <th class="text-center">類別</th>
+                                                                    <th class="text-center">發布時間</th>
+                                                                    <th class="text-center">發布單位</th>
+                                                                    <th class="text-center">操作區</th>
+                                                                </tr>
+                                                            </thead>
+                                                            <tbody>
+                                                            </tbody>
+                                                        </table>
+                                                    </div>
                                                 </div>
                                             </div>
                                         </div>
                                     </div>
                                 </div>
-                            </div>
-                        </section>
-                    </div>
-                    <div id="nav-download" role="tabpanel" aria-labelledby="nav-download-tab" class="tab-pane fade">
-                        <section class="container pt-2 pl-0 pr-0">
-                            <div class="card">
-                                <div class="card-body p-0">
-                                    <div class="px-1 py-1 collapse show">
-                                        <div class="card test-table table-sm table-hover">
-                                            <div class="card-body m-0 p-0">
-                                                <div class="table-responsive">
-                                                    <table class="table" id="downloadListTable">
-                                                        <thead data-orderable="true">
-                                                            <tr>
-                                                                <th class="text-center">序號</th>
-                                                                <th class="text-center">主題</th>
-                                                                <th class="text-center">更新日期</th>
-                                                                <th class="text-center">路徑</th>
-                                                                <th class="text-center">操作區</th>
-                                                            </tr>
-                                                        </thead>
-                                                        <tbody>
+                            </section>
+                        </div>
+                        <div id="nav-download" role="tabpanel" aria-labelledby="nav-download-tab" class="tab-pane fade">
+                            <section class="container pt-2 pl-0 pr-0">
+                                <div class="card">
+                                    <div class="card-body p-0">
+                                        <div class="px-1 py-1 collapse show">
+                                            <div class="card test-table table-sm table-hover">
+                                                <div class="card-body m-0 p-0">
+                                                    <div class="table-responsive">
+                                                        <table class="table" id="downloadListTable">
+                                                            <thead data-orderable="true">
+                                                                <tr>
+                                                                    <th class="text-center">序號</th>
+                                                                    <th class="text-center">主題</th>
+                                                                    <th class="text-center">更新日期</th>
+                                                                    <th class="text-center">路徑</th>
+                                                                    <th class="text-center">操作區</th>
+                                                                </tr>
+                                                            </thead>
+                                                            <tbody>
 
-                                                        </tbody>
-                                                    </table>
+                                                            </tbody>
+                                                        </table>
+                                                    </div>
                                                 </div>
                                             </div>
                                         </div>
                                     </div>
                                 </div>
-                            </div>
-                        </section>
+                            </section>
+                        </div>
                     </div>
-                </div>
+                </section>
             </div>
                 </c:when>
                 <c:when test="${item eq 'drag4'}">
             <div class="box" draggable="true">
-                <section id="drag4" class="dragtag"></section>
-                <nav class="nav pt-4 navbar-expand">
-                    <div id="nav-tab2" role="tablist" class="nav nav-tabs container-fluid">
-                        <button id="nav-inform-tab2" data-toggle="tab" data-target="#nav-inform" role="tab"
-                                aria-controls="nav-inform" aria-selected="true" type="button"
-                                class="btn nav-link btn-secondary active w-100">
-                            常用系統及網站
-                        </button>
-                    </div>
-                </nav>
-                <div class="row row-cols-2" data-index="3" data-type="3" data-child="3">
+                <section id="drag4" class="dragtag">
+                    <nav class="nav pt-4 navbar-expand">
+                        <div id="nav-tab2" role="tablist" class="nav nav-tabs container-fluid">
+                            <button id="nav-inform-tab2" data-toggle="tab" data-target="#nav-inform" role="tab"
+                                    aria-controls="nav-inform" aria-selected="true" type="button"
+                                    class="btn nav-link btn-secondary active w-100">
+                                常用系統及網站
+                            </button>
+                        </div>
+                    </nav>
+                    <div class="row row-cols-2" data-index="3" data-type="3" data-child="3">
                     <c:forEach items="${sys_site}" var="item">
                     <div>
                         <a href="${item.codename}" target="_blank" title="開啟新視窗"><c:out
                                 value="${item.scodekind}"/></a>
                     </div>
                     </c:forEach>
-                </div>
+                    </div>
+                </section>
             </div>                    
                 </c:when>
                 <c:otherwise>
@@ -184,26 +187,25 @@
                 let dragSrcEl = null;
 
                 function handleDragStart(e) {
+                    e.stopPropagation();
                     $(this).css('opacity', '0.4');
                     dragSrcEl = this;
                     e.originalEvent.dataTransfer.effectAllowed = 'move';
                 }
 
                 function handleDragOver(e) {
-                    if (e.preventDefault) {
-                        e.preventDefault();
-                    }
-
+                    e.preventDefault();
                     e.originalEvent.dataTransfer.dropEffect = 'move';
-
                     return false;
                 }
 
-                function handleDragEnter() {
+                function handleDragEnter(e) {
+                    e.stopPropagation();
                     $(this).addClass('over');
                 }
 
                 function handleDragLeave(e) {
+                    e.stopPropagation();
                     if ($.contains(e.currentTarget, e.relatedTarget)) {
                         return;
                     }
@@ -211,22 +213,18 @@
                 }
 
                 function handleDrop(e) {
-                    if (e.stopPropagation) {
-                        e.stopPropagation();
-                    }
-
+                    e.stopPropagation();
                     if (dragSrcEl !== this) {
                         let thisCopy = $(this).children().detach();
                         let dragSrcElCopy = $(dragSrcEl).children().detach();
-
                         $(this).append(dragSrcElCopy);
                         $(dragSrcEl).append(thisCopy);
                     }
-
                     return false;
                 }
 
-                function handleDragEnd() {
+                function handleDragEnd(e) {
+                    e.stopPropagation();
                     $('.box').css('opacity', '1').removeClass('over');
 
                     let data = {};
@@ -313,7 +311,7 @@
                 $('#downloadListTable').DataTable(downloadListTableConfig);
 
                 //公告-明細
-                $(document).on('click', '.btnDetailMsg', function() {
+                $(document).on('click', '.btnDetailMsg', function () {
                     $('#fseq').val($(this).parent('td').data('fseq'));
                     $.ajax({
                         type: "POST",
@@ -322,7 +320,7 @@
                             'fseq': $(this).parent('td').data('fseq')
                         },
                         timeout: 100000,
-                        success: function(data) {
+                        success: function (data) {
                             if (data == '') {
                                 showAlert('查無資料!');
                             } else {
@@ -340,7 +338,7 @@
                                     str +=
                                         '<div style="display: flex;">' +
                                         '<div style="flex: none;">附加檔案：</div><div>';
-                                    $.each(data.file, function(key, value) {
+                                    $.each(data.file, function (key, value) {
                                         str +=
                                             '<div class="d-inline-flex mr-3">' +
                                             '<input type="checkbox" id="' +
@@ -354,8 +352,8 @@
                                         'style="margin-left: 80px;" id="zipDownload">下載</button>';
                                 }
                                 $('#subject').val(data.subject);
-                                $('.modal-title').html('公告事項－' + data.msgtype);
-                                $('.modal-body').html(
+                                $('#popModal .modal-title').html('公告事項－' + data.msgtype);
+                                $('#popModal .modal-body').html(
                                     '主　　題：' + data.subject +
                                     '<br>訊息文字：' + data.mcontent +
                                     '<br>發布單位：' + data.contactunit +
@@ -366,7 +364,7 @@
                                 $('#popModal').modal('show');
                             }
                         },
-                        error: function(e) {
+                        error: function (e) {
                             showAlert("取得資料發生錯誤");
                         }
                     });

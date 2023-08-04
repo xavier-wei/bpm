@@ -120,6 +120,7 @@
                     onActivate: function(node) {
                         // 路徑查詢
                         $('#key').val(node.data.key);
+                        $('#keyword').val('');
                         $('#eip01w040Form').attr('action',
                                 '<c:url value="/Eip01w040_path.action" />')
                             .submit();

@@ -71,7 +71,6 @@ public class Eip06w060Controller extends BaseController {
         }
         //重新取得狀態
         eip06w060Service.getMeetingRoomList(caseData);
-        setSystemMessage(getUpdateSuccessMessage());
         return MAIN_PAGE;
     }
 
@@ -135,9 +134,8 @@ public class Eip06w060Controller extends BaseController {
     public String saveClass(@Validated @ModelAttribute(CASE_KEY) Eip06w060Case caseData, BindingResult result){
         try{
             log.debug("儲存 指定啟用時間");
-            eip06w060Service.initSelectBeginList(caseData); //時間開始
-            eip06w060Service.initSelectEndList(caseData);//時間結束
-
+            eip06w060Service.initSelectBeginList(caseData); //初始化 開起時間清單
+            eip06w060Service.initSelectEndList(caseData);//初始化 關閉時間清單
             eip06w060Service.validate(caseData, result);
             eip06w060Service.isableTime(caseData, result);//檢查 會議室啟用區間是否重複
             if (result.hasErrors()){
@@ -153,9 +151,8 @@ public class Eip06w060Controller extends BaseController {
             setSystemMessage(getSaveSuccessMessage());
             //重新取得狀態
             eip06w060Service.getRoomIsableList(caseData);
-        }catch (Exception e){
+        } catch (Exception e){
             log.error(ExceptionUtility.getStackTrace(e));
-            setSystemMessage(getSaveFailMessage());
             return INSERT_PAGE;
         }
         return QUERY_PAGE;

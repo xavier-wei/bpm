@@ -182,7 +182,7 @@ public class Eip03w010Case implements Serializable {
                     Map<String, String> innerJsonMap = jsonMap.get(k);
                     String stDt = innerJsonMap.get("stDt");
                     String endDt = innerJsonMap.get("endDt");
-                    if (StringUtils.isNotBlank(stDt) && StringUtils.isNotBlank(endDt) && Integer.parseInt(stDt) >= Integer.parseInt(endDt)){
+                    if (StringUtils.isNotBlank(stDt) && StringUtils.isNotBlank(endDt) && Integer.parseInt(stDt) > Integer.parseInt(endDt)){
                         return false;
                     }
                 }

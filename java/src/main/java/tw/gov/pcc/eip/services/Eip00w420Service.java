@@ -9,10 +9,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import tw.gov.pcc.common.util.DateUtil;
 import tw.gov.pcc.eip.common.cases.*;
-import tw.gov.pcc.eip.dao.OrclassDao;
-import tw.gov.pcc.eip.dao.OrformdataDao;
-import tw.gov.pcc.eip.dao.OrmodihisDao;
-import tw.gov.pcc.eip.dao.OrresultDao;
+import tw.gov.pcc.eip.dao.*;
 import tw.gov.pcc.eip.domain.*;
 import tw.gov.pcc.eip.framework.domain.UserBean;
 import tw.gov.pcc.eip.report.Eip00w420L00;
@@ -48,6 +45,10 @@ public class Eip00w420Service extends OnlineRegService {
     OrmodihisDao ormodihisDao;
     @Autowired
     OrresultDao orresultDao;
+    @Autowired
+    DeptsDao deptsDao;
+    @Autowired
+    EipcodeDao eipcodeDao;
     DateTimeFormatter minguoformatter = DateTimeFormatter.ofPattern("yyy/MM/dd HH:mm")
             .withChronology(MinguoChronology.INSTANCE)
             .withLocale(Locale.TAIWAN);
@@ -108,9 +109,17 @@ public class Eip00w420Service extends OnlineRegService {
             Eip00w420Case.OrCase orCase = new Eip00w420Case.OrCase();
             List<Orresult>resultList = orresultDao.getDataByOrformno(t.getOrformno(),"D");
             List<Orresult>resultPassList = orresultDao.getDataByMultiCondition(t.getOrformno(),"","Y");
-            // 開放的報名資格LIST
+            // 該活動開放的報名資格(職稱)
             List<String> regisqualList =
-                    eipcodeDao.findByCodeKindAndList("REGISQUAL",Arrays.asList(StringUtils.split(t.getRegisqual(),",")));
+                    eipcodeDao.findByCodeKindAndList("TITLE",Arrays.asList(StringUtils.split(t.getRegisqual(),",")));
+            // 找出部門代號(D開頭)
+            List<String>regisqulForDept = Arrays.stream(StringUtils.split(t.getRegisqual(),",")).filter(s->StringUtils.startsWith(s,"D")).map(r->StringUtils.substring(r, 1)).collect(Collectors.toList());
+            // 該活動開放的報名資格(部門)
+            List<String> deptList = new ArrayList<>();
+            if (CollectionUtils.isNotEmpty(regisqulForDept)) {
+                deptList = deptsDao.findNameByMultiID(regisqulForDept).stream().map(Depts::getDept_name).collect(Collectors.toList());
+                regisqualList.addAll(deptList);
+            }
             Map<String, Integer> actualappnumMap = new LinkedHashMap<>();
             Map<String, Integer> passnumMap = new LinkedHashMap<>();
             orCase.setOrformno(t.getOrformno());
@@ -235,6 +244,7 @@ public class Eip00w420Service extends OnlineRegService {
         modifyCase.setLecturercode(orformdata.getLecturercode());
         modifyCase.setPassmsg(orformdata.getPassmsg());
         modifyCase.setRejectmst(orformdata.getRejectmst());
+        modifyCase.setSubject(orformdata.getSubject());
         modifyCase.setRegisqual(Arrays.asList(orformdata.getRegisqual().split(",")));
         modifyCase.setTopicdesc(orformdata.getTopicdesc());
         modifyCase.setRemark(orformdata.getRemark());
@@ -277,6 +287,7 @@ public class Eip00w420Service extends OnlineRegService {
         orformdata.setClasshours(modifyCaseData.getClasshours() + modifyCaseData.getClasshoursUnit());
         orformdata.setCertihours(modifyCaseData.getCertihours());
         orformdata.setLecturercode(modifyCaseData.getLecturercode());
+        orformdata.setSubject(modifyCaseData.getSubject());
         orformdata.setPassmsg(modifyCaseData.getPassmsg());
         orformdata.setRejectmst(modifyCaseData.getRejectmst());
         orformdata.setRegisqual(StringUtils.join(modifyCaseData.getRegisqual(), ","));
@@ -317,12 +328,13 @@ public class Eip00w420Service extends OnlineRegService {
             ormodihisDao.insertData(ormodihis);
             orformdataDao.updateData(orformdata, modifyCaseData.getOrformno());
         }
-        // 處理檔案上傳
+        // 處理檔案上傳，不存在直接exception
         MultipartFile[] files = Arrays.stream(modifyCaseData.getFiles()).filter(f->StringUtils.isNotBlank(f.getOriginalFilename())).toArray(MultipartFile[]::new);
-        String saveDirectory = "/eip/uploadfile/" + ("U".equals(mode) ? modifyCaseData.getOrformno() : orformdata.getOrformno());
-        String apDirectory = System.getProperty("user.dir");
-        String serverDrive = apDirectory.substring(0, apDirectory.indexOf(File.separator));
-        File savePath = new File(serverDrive + saveDirectory);
+        String filedir = eipcodeDao.findByCodeKindCodeNo("FILEDIR", "1").get().getCodename();
+        String saveDirectory = filedir + "\\線上報名\\" + ("U".equals(mode) ? modifyCaseData.getOrformno() : orformdata.getOrformno());
+//        String apDirectory = System.getProperty("user.dir");
+//        String serverDrive = apDirectory.substring(0, apDirectory.indexOf(File.separator));
+        File savePath = new File(saveDirectory);
         // 目錄不存在則創建
         if (!savePath.exists()) {
             savePath.mkdirs();

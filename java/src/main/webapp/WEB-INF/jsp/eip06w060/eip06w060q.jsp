@@ -24,6 +24,10 @@
 
 <jsp:attribute name="contents">
     <tags:fieldset legend="查詢條件">
+    <tags:form-row>
+        <tags:text-item label="編號" ><c:out value="${caseData.itemId}"/></tags:text-item>
+        <tags:text-item label="名稱"><c:out value="${caseData.itemName}"/></tags:text-item>
+    </tags:form-row>
     <form:form id="eip06w060Form" name="eip06w060Form" modelAttribute="${caseKey}" method="POST">
         <tags:form-row>
             <div class="table-responsive">
@@ -31,8 +35,6 @@
                     <thead data-orderable="true">
                     <tr>
                         <th style="width: 5%">序號</th>
-                        <th style="width: 15%">編號</th>
-                        <th style="width: 20%">名稱</th>
                         <th style="width: 15%">啟用日期</th>
                         <th style="width: 15%">開始時間</th>
                         <th style="width: 15%">結束時間</th>
@@ -43,8 +45,6 @@
                         <c:forEach items="${caseData.roomIsableCaseList}" var="item" varStatus="status" >
                             <tr>
                                 <td class="text-center align-middle">${status.count}</td>
-                                <td class="text-center align-middle"><c:out value="${item.itemId}" /></td>
-                                <td class="text-left align-middle"><c:out value="${item.itemName}" /></td>
                                 <td class="text-left align-middle"><c:out value="${item.isableDate}" /></td>
                                 <td class="text-center align-middle"><c:out value="${item.meetingBegin}" /></td>
                                 <td class="text-center align-middle"><c:out value="${item.meetingEnd}" /></td>

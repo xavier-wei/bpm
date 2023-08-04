@@ -38,7 +38,7 @@
                 <tags:form-row>
                     <form:label cssClass="col-form-label" path="p1id">建立人員：</form:label>
                     <div class="col-12 col-md">
-                        <form:input path="p1id" cssClass="form-control num_eng_only" size="10" maxlength="10" />
+                        <form:input path="p1id" cssClass="form-control" size="20" maxlength="10" />
                     </div>
                 </tags:form-row>
                 <tags:form-row>
@@ -107,6 +107,7 @@
                                     <th class="text-center">屬性</th>
                                     <th class="text-center">上架時間<br>下架時間</th>
                                     <th class="text-center">狀態</th>
+                                    <th class="text-center">建立人員</th>
                                     <th data-orderable="false" class="text-center">明細</th>
                                 </tr>
                             </thead>
@@ -121,7 +122,8 @@
                                                 </c:when>
                                                 <c:otherwise>
                                                     <form:checkbox path="queryList[${status.index}].check"
-                                                        value="${item.check }" checked="checked" disabled="true" cssClass="checkedgreen" />
+                                                        value="${item.check }" checked="checked" disabled="true"
+                                                        cssClass="checkedgreen" />
                                                 </c:otherwise>
                                             </c:choose>
                                         </td>
@@ -155,6 +157,10 @@
                                             <c:out value="${item.statusText}" />
                                             <form:hidden path="queryList[${status.index}].status" />
                                             <form:hidden path="queryList[${status.index}].statusText" />
+                                        </td>
+                                        <td class="text-left">
+                                            <c:out value="${item.creatname}" />
+                                            <form:hidden path="queryList[${status.index}].creatname" />
                                         </td>
                                         <td class="text-center" data-fseq="${item.fseq}">
                                             <tags:button id="btnDetail">修改</tags:button>
@@ -209,7 +215,8 @@
                 // 清除
                 $('#btnClear').click(function() {
                     $('input[type="text"]').val('');
-                    $('#p1page option:eq(0), #p1status option:eq(0), #p1attributype option:eq(0)').prop('selected', true);
+                    $('#p1page option:eq(0), #p1status option:eq(0), #p1attributype option:eq(0)').prop(
+                        'selected', true);
                     $('#mode').val('');
                 });
                 // 明細
@@ -265,8 +272,10 @@
                 });
                 // 刪除
                 $('#btnDelete').click(function() {
-                    if ($('input:checkbox').length > 1 && $('input:checkbox:checked:not(:disabled)').length >
-                        0) { // 有顯示checkbox且至少勾選一個
+                    // var xxx = $('tbody tr:not(:hidden) td input:checkbox:checked:not(:disabled)')
+                    // .length; // 紀錄當前頁面有勾選的數量(不包括disabled的)
+                    var checkedcnt = $('input:checkbox:checked:not(:disabled)').length;
+                    if (checkedcnt > 0) { // 有顯示checkbox且至少勾選一個
                         showConfirm('確定要刪除資料？', () => {
                             $('#eip01w010Form').attr('action',
                                     '<c:url value="/Eip01w010_btndel.action" />')
@@ -277,16 +286,40 @@
                             .submit();
                     }
                 });
+                $('#btnUpload, #btnDelete').hide();
+                // 控制上稿&刪除按鈕 (當前列表中有可勾選之checkbox才顯示)
+                btnShowHide();
+
+                function btnShowHide() {
+                    var all = $('tbody tr:not(:hidden)').length;
+                    var dis = $('tbody tr:not(:hidden) td input:checkbox:disabled').length;
+                    if (all != dis) {
+                        $('#btnUpload, #btnDelete').show();
+                    } else {
+                        $('#btnUpload, #btnDelete').hide();
+                    }
+                }
+                // 第一頁 上一頁 下一頁 最後一頁
+                $('#querylistTable_first, #querylistTable_previous, #querylistTable_next, #querylistTable_last')
+                    .click(function() {
+                        btnShowHide();
+                    });
+                // 手動修改頁數
+                $('.paginate_input').keyup(function() {
+                    btnShowHide();
+                });
                 // 返回
                 $('#btnBack').click(function() {
                     $('#mode, #fseq, #seq, #pageNum, #p1id, #p1title').val('');
-                    $('#p1page option:eq(0), #p1status option:eq(0), #p1attributype option:eq(0)').prop('selected', true);
+                    $('#p1page option:eq(0), #p1status option:eq(0), #p1attributype option:eq(0)').prop(
+                        'selected', true);
                     $('#eip01w010Form').attr('action', '<c:url value="/Eip01w010_enter.action" />')
                         .submit();
                 });
                 // checkbox 控制
                 var $checkAll = $('input[name="checkAll"]');
-                var $checks = $('#querylistTable > tbody input:checkbox');
+                var $checks = $('#querylistTable > tbody input:checkbox:not(:disabled)');
+                $checkAll.prop('checked', false);
                 $checkAll.change(function(e) {
                     $checks.prop("checked", $(this).prop("checked"));
                 });

@@ -135,8 +135,16 @@ public class Eip06w050Controller extends BaseController {
     public String saveMeetingCodeModifyClass(@Validated @ModelAttribute(CASE_KEY) Eip06w050Case caseData, BindingResult result) {
         try {
             log.debug("儲存或更新 會議室參數維護");
-            eip06w050Service.initializeOption(caseData);
+            //新增時移除D(預約天數)、FX(會議室取消)，已包含於F(會議室邏輯)
+            Map<String, String> map =  eip06w050Service.initializeOptionAll(caseData);
+            map.entrySet().removeIf(entry -> entry.getKey().equals("D")|| entry.getKey().equals("FX"));
+            eip06w050Service.validate(caseData, result);
+
             if (result.hasErrors()) {
+                //修改時，顯示FX選項
+                if (StringUtils.equals(caseData.getMode(), "U")) {
+                    eip06w050Service.initializeOptionAll(caseData);
+                }
                 return MODIFY_PAGE;
             }
             if (StringUtils.equals(caseData.getMode(), "A")) {
@@ -148,6 +156,7 @@ public class Eip06w050Controller extends BaseController {
                 setSystemMessage(getSaveSuccessMessage());
             } else if (StringUtils.equals(caseData.getMode(), "U")) {
                 //檢查名稱是否重複，名稱無更新，不需檢查是否重複
+                eip06w050Service.initializeOptionAll(caseData);
                 String updateResult= eip06w050Service.updateClass(caseData);
                   if("Y".equals(updateResult)){
                       eip06w050Service.itemIsUse(caseData, result);
@@ -170,6 +179,7 @@ public class Eip06w050Controller extends BaseController {
             }
             return MODIFY_PAGE;
         }
+        eip06w050Service.initializeOption(caseData);//查詢頁類別
         return MAIN_PAGE;
 
     }

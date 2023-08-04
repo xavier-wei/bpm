@@ -52,7 +52,7 @@ public class MsgdataDaoImpl extends BaseDao<Msgdata> implements MsgdataDao {
         params.put("fseq", fseq);
         return getNamedParameterJdbcTemplate()
                 .query(sql.toString(), params, BeanPropertyRowMapper.newInstance(Msgdata.class)).stream().findFirst()
-                .get();
+                .orElse(null);
 //        Msgdata m = new Msgdata();
 //        m.setFseq(fseq);
 //        return this.selectDataByPrimaryKey(m);
@@ -67,12 +67,12 @@ public class MsgdataDaoImpl extends BaseDao<Msgdata> implements MsgdataDao {
     public List<Msgdata> findbyCreatidPagetype(String creatid, String pagetype, String subject, String status,
             String attributype) {
         StringBuilder sql = new StringBuilder();
-        sql.append(" SELECT * ");
-        sql.append("   FROM " + TABLE_NAME + " A ");
-        sql.append("  WHERE A.STATUS IN ('0','1','4') ");
-        if (StringUtils.isNotEmpty(creatid)) {
-            sql.append("    AND A.CREATID = isnull( :creatid , A.CREATID) ");
-        }
+        sql.append(" SELECT A.CREATID, A.FSEQ, A.PAGETYPE, A.SUBJECT, A.ISFRONT, A.RELEASEDT, ");
+        sql.append("        A.OFFTIME, A.STATUS,A.ATTRIBUTYPE, U.USER_NAME CREATNAME ");
+        sql.append("   FROM " + TABLE_NAME + " A, USERS U ");
+        sql.append("  WHERE U.ACNT_IS_VALID = 'Y' ");
+        sql.append("    AND U.USER_ID = A.CREATID ");
+        sql.append("    AND A.STATUS IN ('0','1','4') ");
         if (StringUtils.isNotEmpty(pagetype)) {
             sql.append("    AND A.PAGETYPE = isnull(:pagetype,  A.PAGETYPE) ");
         }
@@ -84,6 +84,11 @@ public class MsgdataDaoImpl extends BaseDao<Msgdata> implements MsgdataDao {
         }
         if (StringUtils.isNotEmpty(attributype)) {
             sql.append("    AND A.ATTRIBUTYPE = isnull(:attributype , A.ATTRIBUTYPE) ");
+        }
+        if (StringUtils.isNotEmpty(creatid)) {
+            sql.append("    AND A.CREATID IN (SELECT USER_ID FROM USERS ");
+            sql.append("        WHERE USER_ID LIKE ('%' + ISNULL(:creatid, USER_ID) +'%') ");
+            sql.append("           OR USER_NAME LIKE ('%' + ISNULL(:creatid, USER_NAME) + '%'))");
         }
         Map<String, Object> params = new HashMap<>();
         params.put("creatid", creatid);
@@ -167,8 +172,9 @@ public class MsgdataDaoImpl extends BaseDao<Msgdata> implements MsgdataDao {
         sql.append("    AND A.SUBJECT like '%' + isnull(:subject, A.SUBJECT) + '%' ");
         sql.append("    AND EXISTS (SELECT FSEQ ");
         sql.append("                  FROM MSGAVAILDEP D ");
-        sql.append("                 WHERE (CASE WHEN D.AVAILABLEDEP  = '00'");
-        sql.append("                             THEN :deptId ELSE D.AVAILABLEDEP");
+        sql.append("                 WHERE D.FSEQ = A.FSEQ ");
+        sql.append("                   AND (CASE WHEN TRIM(D.AVAILABLEDEP) = '00' ");
+        sql.append("                             THEN :deptId ELSE TRIM(D.AVAILABLEDEP) ");
         sql.append("                        END) = :deptId)");
         sql.append("  ORDER BY A.SHOWORDER, RELEASEDT DESC ");
         Map<String, Object> params = new HashMap<>();
@@ -222,7 +228,7 @@ public class MsgdataDaoImpl extends BaseDao<Msgdata> implements MsgdataDao {
         sql.append("            FROM MSGDEPOSIT A, ");
         sql.append("                 MSGAVAILDEP B ");
         sql.append("           WHERE A.FSEQ = B.FSEQ ");
-        sql.append("             AND B.AVAILABLEDEP = :dept  ");
+        sql.append("             AND (CASE WHEN TRIM(B.AVAILABLEDEP) = '00' THEN :dept ELSE TRIM(B.AVAILABLEDEP) END) = :dept ");
         sql.append("             AND C.ATTRIBUTYPE  = '4') ");
         sql.append("    AND C.INDIR = :path ");
         sql.append("    AND C.STATUS = '4' ");
@@ -247,7 +253,7 @@ public class MsgdataDaoImpl extends BaseDao<Msgdata> implements MsgdataDao {
         sql.append("           FROM MSGDEPOSIT A, ");
         sql.append("                MSGAVAILDEP B ");
         sql.append("          WHERE A.FSEQ = B.FSEQ ");
-        sql.append("            AND B.AVAILABLEDEP = :dept  ");
+        sql.append("            AND (CASE WHEN TRIM(B.AVAILABLEDEP) = '00' THEN :dept ELSE TRIM(B.AVAILABLEDEP) END ) = :dept ");
         sql.append("            AND C.ATTRIBUTYPE  = '4') ");
         sql.append("    AND C.STATUS = '4' ");
         sql.append("    AND C.ATTRIBUTYPE = '4' ");
@@ -275,7 +281,7 @@ public class MsgdataDaoImpl extends BaseDao<Msgdata> implements MsgdataDao {
         sql.append("                  FROM MSGAVAILDEP B ");
         sql.append("                 WHERE A.FSEQ = B.FSEQ  ");
         sql.append("                   AND A.ATTRIBUTYPE = '5' ");
-        sql.append("                   AND B.AVAILABLEDEP = :dept ");
+        sql.append("                   AND (CASE WHEN TRIM(B.AVAILABLEDEP) = '00' THEN :dept ELSE TRIM(B.AVAILABLEDEP) END) = :dept ");
         sql.append("  ) ");
         sql.append(" ORDER BY A.SHOWORDER, RELEASEDT DESC ");
         Map<String, Object> params = new HashMap<>();

@@ -259,18 +259,6 @@ public class Eip03w020Service {
                     ktd.setRptUpdUser(userData.getUserId());
                     ktd.setRptUpdDt(DateUtility.getNowDateTimeAsTimestamp().toLocalDateTime());
                     keepTrkDtlDao.updateForApplyProgress(ktd);
-
-//                    sql.append("    SET RptCont = :rptCont, "); //畫面輸入回應內容
-//                    sql.append("        RptAskEnd = :rptAskEnd, "); //畫面選擇是Y/否N
-//                    sql.append("        RptRate = :rptRate, "); //畫面輸入完成進度
-//                    sql.append("        RptDept = :rptDept, "); //畫面輸入指定填報單位
-//                    sql.append("        RptUser = :rptUser, ");  //畫面輸入指定填報人員
-//                    sql.append("        RptUpdUser = :rptUpdUser, "); //操作人員之員編
-//                    sql.append("        RptUpdDt = :rptUpdDt, "); //CURRENT_TIMESTAMP
-//                    sql.append("        Prcsts = CASE :rptAskEnd WHEN 'N' THEN '1' ELSE '2' END, "); //畫面點選是否申請解列
-//                    sql.append("        RptRate = CASE :rptAskEnd WHEN 'Y' THEN 100 ELSE RptRate END, "); //畫面點選是否申請解列
-//                    sql.append("        RptAskEnd = CASE :rptAskEnd WHEN 'N' THEN 'N' ELSE RptAskEnd END "); //畫面點選是否申請解列
-
                 }
             }
         }

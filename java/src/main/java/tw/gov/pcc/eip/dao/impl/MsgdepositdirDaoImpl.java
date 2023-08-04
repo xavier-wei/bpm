@@ -74,9 +74,10 @@ public class MsgdepositdirDaoImpl extends BaseDao<Msgdepositdir> implements Msgd
         sql.append(" SELECT EXISTHIER, "); // 檔案存放父階層
         sql.append("        SORTORDER, "); // 排序位置
         sql.append("        FILEPATH, "); // 檔案路徑
-        sql.append("        FILENAME1 FILENAME "); // 檔案/資料夾名稱
+        sql.append("        FILENAME1 FILENAME, "); // 檔案/資料夾名稱
+        sql.append("        ASCII(EXISTHIER) ORDERBYUSE");
         sql.append("   FROM UFN_GET_DIR(:attr, :path) ");
-        sql.append("  ORDER BY ASCII(EXISTHIER) ");
+        sql.append("  ORDER BY ORDERBYUSE, SORTORDER ");
         Map<String, Object> params = new HashMap<>();
         params.put("attr", attr);
         params.put("path", path);

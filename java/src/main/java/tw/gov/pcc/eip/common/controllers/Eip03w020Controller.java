@@ -67,8 +67,20 @@ public class Eip03w020Controller extends BaseController {
     public String enter(SessionStatus status) {
         log.debug("導向重要列管事項_填報辦理進度作業");
         status.setComplete();
+        getEip03w020Case();
         return QUERY_PAGE;
     }
+
+        /**
+         * 導回查詢頁
+         *
+         */
+        @RequestMapping("/Eip03w020_backHome.action")
+        public String backHome(SessionStatus status) {
+            log.debug("導回查詢頁");
+            status.setComplete();
+            return "redirect:/Eip03w020_enter.action";
+        }
 
     /**
      * 依條件查詢重要列管事項
@@ -157,7 +169,6 @@ public class Eip03w020Controller extends BaseController {
      */
     @RequestMapping("/Eip03w020_update.action")
     public String update(@Validated @ModelAttribute(MIX_CASE_KEY)Eip03w020MixCase mixCase, @ModelAttribute(CASE_KEY) Eip03w020Case caseData, BindingResult result) {
-//        @ModelAttribute(CASE_KEY) Eip03w020Case caseData,
         try {
             eip03w020Service.update(mixCase);
             setSystemMessage(getUpdateSuccessMessage());

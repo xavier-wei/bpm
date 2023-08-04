@@ -183,7 +183,7 @@ public class CarBookingDaoImpl extends BaseDao<CarBooking> implements CarBooking
     }
     
 	@Override
-	public List<CarBooking> selectByStatusIn234(Eip07w040Case caseData) {
+	public List<CarBooking> selectForEip07w040(Eip07w040Case caseData) {
         StringBuilder sql = new StringBuilder();
         
         sql.append(" Select * from CAR_BOOKING ");
@@ -215,10 +215,14 @@ public class CarBookingDaoImpl extends BaseDao<CarBooking> implements CarBooking
             map.put("applydateend", StringUtils.isNotEmpty(caseData.getApplydateEnd())?DateUtility.changeDateType(caseData.getApplydateEnd()) : "");
         }
         
+        //若用車日期起日有值，但迄日沒值=>迄日帶入系統日
         if(StringUtils.isNotEmpty(caseData.getUsing_time_s()) && StringUtils.isEmpty(caseData.getUsing_time_e())) {
         	map.put("using_time_s", caseData.getUsing_time_s());
         	map.put("using_time_e", DateUtility.getNowWestDate());
-        }else {        	
+        } else if(StringUtils.isAllEmpty(caseData.getUsing_time_s(),caseData.getUsing_time_e())){//若用車日期起迄日都沒值=>起日帶入：本月一日，迄日帶入：系統日
+        	map.put("using_time_s", DateUtility.getNowWestYearMonth()+"01");
+        	map.put("using_time_e", DateUtility.getNowWestDate());
+        } else {
         	map.put("using_time_s", StringUtils.isNotEmpty(caseData.getUsing_time_s())?DateUtility.changeDateType(caseData.getUsing_time_s()) : "");
         	map.put("using_time_e", StringUtils.isNotEmpty(caseData.getUsing_time_e())?DateUtility.changeDateType(caseData.getUsing_time_e()) : "");
         }
@@ -231,7 +235,7 @@ public class CarBookingDaoImpl extends BaseDao<CarBooking> implements CarBooking
 	public List<CarBooking> getDataByCarnoAndUsing_date(CarBooking carBooking) {
 		StringBuffer sql = new StringBuffer();
 		
-		sql.append(" Select distinct c.APPLYid, c.using_rec,b.Using_date,b.Using_time_s,b.Using_time_e,b.apply_memo,b.apply_dept,c.using_rec as using "); 
+		sql.append(" Select distinct c.APPLYid,b.apply_user, c.using_rec,b.Using_date,b.Using_time_s,b.Using_time_e,b.apply_memo,b.apply_dept,c.using_rec as using "); 
 		sql.append(" From  car_booking_rec c , Car_Booking b   "); 
 		sql.append(" Where c.CARNO1+c.CARNO2 =:carno  "); 
 		sql.append(" AND c.using_date= :using_date  "); 
@@ -247,16 +251,14 @@ public class CarBookingDaoImpl extends BaseDao<CarBooking> implements CarBooking
 	}
 
 	@Override
-	public String checkTime(String using1 , String using2) {
+	public CarBooking checkTime(String using1 , String using2) {
         StringBuilder sql = new StringBuilder();
-        sql.append(" SELECT dbo.UFN_CHECK( :using1, :using2 ) as using ");
+        sql.append(" SELECT dbo.UFN_CHECK( :using1, :using2 ) using ");
         
-        Map<String, String> map = new HashMap<String, String>();
-        map.put("using1", using1);
-        map.put("using2", using2);
+        SqlParameterSource params = new MapSqlParameterSource("using1",using1).addValue("using2", using2);
         		
-        List<String> list = getNamedParameterJdbcTemplate().query(sql.toString(), map,
-                BeanPropertyRowMapper.newInstance(String.class));
+        List<CarBooking> list = getNamedParameterJdbcTemplate().query(sql.toString(), params,
+                BeanPropertyRowMapper.newInstance(CarBooking.class));
 
         return CollectionUtils.isEmpty(list) ? null : list.get(0);
 	}

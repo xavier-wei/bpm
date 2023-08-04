@@ -43,4 +43,5 @@ public class Msgdeposit implements Serializable {
     @LogField("REALFILENAME")
     private String realfilename; // 放置於FILESERVER的實際檔名 存放時檔名變造規則：FSEQ+’_’+SEQ+’_’+ATTACHFILE
 
+    private int cnt;
 }

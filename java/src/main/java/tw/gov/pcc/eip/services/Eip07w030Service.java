@@ -2,10 +2,8 @@ package tw.gov.pcc.eip.services;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -69,11 +67,6 @@ public class Eip07w030Service {
 	 * @return
 	 */
 	public void updateAll(Eip07w030Case caseData) throws Exception {
-		List<String> applyids = caseData.getDataList().stream()
-				.filter(it -> it.isCheck() && StringUtils.isNotEmpty(it.getApplyid())).map(e -> e.getApplyid())
-				.collect(Collectors.toList());
-
-		caseData.setApplyIdList(applyids);
 		String nowdatetime = DateUtility.getNowWestDateTime(true);
 
 		for (String applyId : caseData.getApplyIdList()) {

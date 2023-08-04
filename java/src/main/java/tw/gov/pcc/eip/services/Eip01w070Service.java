@@ -7,6 +7,7 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -62,7 +63,7 @@ public class Eip01w070Service {
         // 部門
         List<Msgdata> result = msgdataDao.getStatus4Mcontent("7", contactunit);
         List<String> fseqList = result.stream().map(m -> m.getFseq()).collect(Collectors.toCollection(ArrayList::new));
-        List<String> contentList = result.stream().map(m -> m.getMcontent())
+        List<String> contentList = result.stream().map( m -> StringUtils.replace(m.getMcontent(), "\r\n", "<br>"))
                 .collect(Collectors.toCollection(ArrayList::new));
         caseData.setMsgs(contentList);
 

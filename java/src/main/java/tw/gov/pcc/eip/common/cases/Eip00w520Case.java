@@ -95,6 +95,7 @@ public class Eip00w520Case implements Serializable {
         private String osendt;
         private String status;
         private String statusVal;
+        private String isanonymous;
     }
 
     @Data

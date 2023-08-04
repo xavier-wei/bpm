@@ -10,7 +10,6 @@ import tw.gov.pcc.common.annotation.DaoTable;
 import tw.gov.pcc.common.framework.dao.BaseDao;
 import tw.gov.pcc.eip.common.cases.Eip03w040Case;
 import tw.gov.pcc.eip.dao.KeepTrkDtlDao;
-import tw.gov.pcc.eip.dao.MsgdataDao;
 import tw.gov.pcc.eip.domain.KeepTrkDtl;
 
 import java.util.HashMap;
@@ -66,7 +65,10 @@ public class KeepTrkDtlDaoImpl extends BaseDao<KeepTrkDtl> implements KeepTrkDtl
         sql.append("           COUNT(1) AS cnt,  "); //案件數
         sql.append("           SUM(CASE WHEN PrcSts = '3' THEN 1 ELSE 0 END) AS cnt_cls,   "); //已結案
         sql.append("           SUM(CASE WHEN PrcSts = '3' THEN 0 ELSE 1 END) AS cnt_opn    "); //未結案
-        sql.append("      FROM KeepTrkDtl a ");
+        sql.append("      FROM KeepTrkDtl a, ");
+        sql.append("           KeepTrkMst b ");
+        sql.append("     WHERE a.TrkID = b.TrkID  ");
+        sql.append("       AND b.TrkSts NOT IN ('0', 'D') ");
         sql.append("  GROUP BY TrkObj ORDER BY cnt DESC ");
 
         return getNamedParameterJdbcTemplate().query(sql.toString(), BeanPropertyRowMapper.newInstance(Eip03w040Case.class));
@@ -89,7 +91,7 @@ public class KeepTrkDtlDaoImpl extends BaseDao<KeepTrkDtl> implements KeepTrkDtl
         sql.append("        KeepTrkDtl b  ");
         sql.append("  WHERE a.TrkID = b.TrkID  ");
         sql.append("    AND b.TrkObj = :trkObj ");
-
+        sql.append("    AND a.Trksts NOT IN ('0','D') ");
         if (prcsts.equals("closed")) { //已結案
             sql.append(" AND b.prcsts = '3' ");
         }else {                     //未結案

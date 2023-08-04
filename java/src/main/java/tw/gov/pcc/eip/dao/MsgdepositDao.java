@@ -43,4 +43,13 @@ public interface MsgdepositDao {
      * @return
      */
     public List<Msgdeposit> findbyFseqSeq(String fseq, List<String> seq);
+
+    /**
+     * 取得該fseq下檔案總數與最大序號
+     * 
+     * @param fseq
+     * @param filetype
+     * @return
+     */
+    public Msgdeposit getCnt(String fseq, String filetype);
 }

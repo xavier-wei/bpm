@@ -1,10 +1,13 @@
 <%@ page language="java" pageEncoding="UTF-8" %>
 <%@ include file="/WEB-INF/jsp/includes/include.jsp" %>
 <!doctype html>
-<spring:eval var="caseKey" expression="T(tw.gov.pcc.eip.common.controllers.Eip00w530Controller).CASE_KEY" />
-<c:set var="caseData" value="${requestScope[caseKey]}" />
+<spring:eval var="caseKeyA" expression="T(tw.gov.pcc.eip.common.controllers.Eip00w530Controller).CASE_KEY" />
+<c:set var="caseDataA" value="${requestScope[caseKeyA]}" />
+<spring:eval var="caseKeyB" expression="T(tw.gov.pcc.eip.common.controllers.Eip00w520Controller).CASE_KEY" />
+<c:set var="caseDataB" value="${requestScope[caseKeyB]}" />
 <tags:layout>
 <jsp:attribute name="heads">
+    <link rel="stylesheet" href="<c:url value='/css/18698.css' />"/>
     <style>
         td .btn {
             vertical-align: baseline;
@@ -13,92 +16,85 @@
             margin-left: -15px;
             margin-right: -15px;
         }
-        .nav-link{
-            border-radius: 8px 8px 0px 0px;
-            padding: 4px;
-            background-color: #8fd4ce;
-            background-image: linear-gradient(to bottom, #c0dad5, #c0dad5);
-            border: 1px solid #107db0;
-            /*box-shadow: inset 0 1px 0 #eeeeee, inset 0 -1px 0 #eeeeee, inset 0 0 0 1px #eeeeee, 0 2px 4px rgba(0, 0, 0, 0.2);*/
-            color: white;
-        }
-
-        .nav-link.font-weight-bold.active {
-            border-radius: 8px 8px 0px 0px;
-            padding: 4px;
-            background-color: #ffffff;
-            background-image: linear-gradient(to bottom, #fdd9a1, #fdd9a1);
-            border: 1px solid #b2784e;
-            box-shadow: inset 0 1px 0 #fdd9a1, inset 0 -1px 0 #fdd9a1, inset 0 0 0 1px #fdd9a1, 0 2px 4px rgba(0, 0, 0, 0.2);
-            color: white;
+        .nav-tabs .nav-link {
+            width: 10%
         }
 </style>
 </jsp:attribute>
 <jsp:attribute name="contents">
 <tags:fieldset legend="意見調查">
-    <div id="tabLinks" class="row">
-        <div class="col-6 col-md">
-            <ul class="nav nav-tabs text-center mt-1">
-                <li class="nav-item"><a id="tab1" class="nav-link" href="#">列表</a></li>
-                <li class="nav-item"><a id="tab2" class="nav-link" href="#">歷史區</a></li>
-            </ul>
+    <nav class="nav pt-4 navbar-expand">
+        <div id="nav-tab3" role="tablist" class="nav nav-tabs container-fluid">
+            <button id="tab1" data-toggle="tab" role="tab"
+                    aria-controls="nav-inform" aria-selected="true" type="button"
+                    class="btn nav-link btn-secondary active">列表
+            </button>
+            <button id="tab2" data-toggle="tab" role="tab"
+                    aria-controls="nav-download" aria-selected="false" type="button"
+                    class="btn nav-link btn-secondary">歷史區
+            </button>
         </div>
-    </div>
-    <form:form id="eip00w530Form" name="eip00w530Form" modelAttribute="${caseKey}" method="POST">
-        <tags:form-row>
-            <div class="table-responsive" id="div1">
-                <table class="table" id="tb1">
-                    <thead data-orderable="true">
-                    <tr>
-                        <th class="text-center align-middle">項次</th>
-                        <th class="text-center align-middle">主題</th>
-                        <th colspan="2" class="text-center align-middle">操作區</th>
-                        <th style="display: none"></th>
-                    </tr>
-                    </thead>
-                    <tbody>
-                        <c:forEach items="${caseData.osList}" var="item" varStatus="status">
-                            <tr>
-                                <td class="text-center align-middle"><c:out value="${status.index+1}" /></td>
-                                <td class="text-left align-middle"><c:out value="${item.topicname}" /></td>
-                                <td class="text-center align-middle">
-                                    <tags:button cssClass="btnWrite" data-formno="${item.osformno}" data-completed ="${item.iscompleted}">填寫</tags:button>
-                                </td>
-                                <td class="text-center align-middle">
-                                    <tags:button cssClass="btnResult" data-formno="${item.osformno}" data-disstatic="${item.isdisstatic}">結果</tags:button>
-                                </td>
-                                <td style="display: none"></td>
-                            </tr>
-                        </c:forEach>
-                    </tbody>
-                </table>
-            </div>
-            <div class="table-responsive" id="div2">
-                <table class="table" id="tb2">
-                    <thead data-orderable="true">
-                    <tr>
-                        <th class="text-center align-middle">項次</th>
-                        <th class="text-center align-middle">主題</th>
-                        <th class="text-center align-middle">操作區</th>
-                    </tr>
-                    </thead>
-                    <tbody>
-                        <c:forEach items="${caseData.hisList}" var="item" varStatus="status">
-                            <tr>
-                                <td class="text-center align-middle"><c:out value="${status.index+1}" /></td>
-                                <td class="text-left align-middle"><c:out value="${item.topicname}" /></td>
-                                <td class="text-center align-middle">
-                                    <tags:button cssClass="btnHisResult" data-formno="${item.osformno}" data-disstatic="${item.isdisstatic}">結果</tags:button>
-                                </td>
-                            </tr>
-                        </c:forEach>
-                    </tbody>
-                </table>
-            </div>
-        </tags:form-row>
-        <form:hidden path="osformno"/>
-        <form:hidden path="promptmsg"/>
-    </form:form>
+    </nav>
+    <tags:form-row>
+        <div class="table-responsive" id="div1">
+            <table class="table" id="tb1">
+                <thead data-orderable="true">
+                <tr>
+                    <th class="text-center align-middle">項次</th>
+                    <th class="text-center align-middle">主題</th>
+                    <th colspan="2" class="text-center align-middle">操作區</th>
+                    <th style="display: none"></th>
+                </tr>
+                </thead>
+                <tbody>
+                    <c:forEach items="${caseDataA.osList}" var="item" varStatus="status">
+                        <tr>
+                            <td class="text-center align-middle"><c:out value="${status.index+1}" /></td>
+                            <td class="text-left align-middle"><c:out value="${item.topicname}" /></td>
+                            <td class="text-center align-middle">
+                                <form:form id="eip00w530Form" name="eip00w530Form" modelAttribute="${caseKeyA}" method="POST">
+                                <tags:button cssClass="btnWrite" data-formno="${item.osformno}" data-completed="${item.iscompleted}" data-status="${item.status}">填寫</tags:button>
+                                <form:hidden path="osformno"/>
+                                <form:hidden path="promptmsg"/>
+                                </form:form>
+                            </td>
+                            <td class="text-center align-middle">
+                                <form:form id="eip00w520Form" name="eip00w520Form" modelAttribute="${caseKeyB}" method="POST">
+                                <tags:button cssClass="btnResult" data-formno="${item.osformno}" data-disstatic="${item.isdisstatic}">結果</tags:button>
+                                <form:hidden path="osformno"/>
+                                </form:form>
+                            </td>
+                            <td style="display: none"></td>
+                        </tr>
+                    </c:forEach>
+                </tbody>
+            </table>
+        </div>
+        <div class="table-responsive" id="div2">
+            <table class="table" id="tb2">
+                <thead data-orderable="true">
+                <tr>
+                    <th class="text-center align-middle">項次</th>
+                    <th class="text-center align-middle">主題</th>
+                    <th class="text-center align-middle">操作區</th>
+                </tr>
+                </thead>
+                <tbody>
+                    <c:forEach items="${caseDataA.hisList}" var="item" varStatus="status">
+                        <tr>
+                            <td class="text-center align-middle"><c:out value="${status.index+1}" /></td>
+                            <td class="text-left align-middle"><c:out value="${item.topicname}" /></td>
+                            <td class="text-center align-middle">
+                                <tags:button cssClass="btnHisResult" data-formno="${item.osformno}" data-disstatic="${item.isdisstatic}">結果</tags:button>
+                            </td>
+                        </tr>
+                    </c:forEach>
+                </tbody>
+            </table>
+        </div>
+    </tags:form-row>
+
+
 </tags:fieldset>
 </jsp:attribute>
 <jsp:attribute name="footers">
@@ -110,10 +106,8 @@ $(function(){
     $('#tb1').DataTable(config);
     $('#tb2').DataTable(config);
 
-    $('.nav-item').click(function(){
-        $('.nav-link').removeClass('font-weight-bold active');
-        $(this).find('a').addClass('font-weight-bold active');
-        let clickId = $(this).find('a').attr("id").substring(3);
+    $('.nav-link').click(function(){
+        let clickId = $(this).attr("id").substring(3);
         if (clickId === '1') {
             $('#div1').show();
             $('#div2').hide();
@@ -132,6 +126,13 @@ $(function(){
         $('#osformno').val($(this).data('formno'));
         $('#eip00w530Form').attr('action', '<c:url value="/Eip00w530_write.action" />').submit();
     });
+
+    $('.btnResult,.btnHisResult').click(function(e) {
+        e.preventDefault();
+        $('#promptmsg').val('');
+        $('#osformno').val($(this).data('formno'));
+        $('#eip00w530Form').attr('action', '<c:url value="/Eip00w530_result.action" />').submit();
+    });
     
     //初始化
     $('.btnResult,.btnHisResult').each(function (){
@@ -143,7 +144,7 @@ $(function(){
     });
 
     $('.btnWrite').each(function (){
-        if ($(this).data('completed')==='Y') {
+        if ($(this).data('completed')==='Y' || $(this).data('status')!=='I') {
             $(this).prop('disabled',true);
         } else {
             $(this).prop('disabled',false);

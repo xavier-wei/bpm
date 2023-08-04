@@ -13,9 +13,12 @@ import tw.gov.pcc.eip.common.cases.*;
 import tw.gov.pcc.eip.dao.*;
 import tw.gov.pcc.eip.domain.*;
 import tw.gov.pcc.eip.framework.domain.UserBean;
+import tw.gov.pcc.eip.report.Eip00w520L00;
+import tw.gov.pcc.eip.report.Eip00w520L01;
 import tw.gov.pcc.eip.util.BeanUtility;
 import tw.gov.pcc.eip.util.DateUtility;
 
+import java.io.ByteArrayOutputStream;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.*;
@@ -66,9 +69,7 @@ public class Eip00w520Service extends OpinionSurveyService{
     public void getOslist(Eip00w520Case caseData) {
         Map<String, String> statusMap = getOsstatus();
         List<Osformdata> osformdataList = new ArrayList<>();
-
         osformdataList = osformdataDao.getAll();
-
         List<Eip00w520Case.OsCase> list = osformdataList.stream().map(t -> {
             Eip00w520Case.OsCase osCase = new Eip00w520Case.OsCase();
             osCase.setOsformno(t.getOsformno());
@@ -77,6 +78,7 @@ public class Eip00w520Service extends OpinionSurveyService{
             osCase.setOsendt(t.getOsendt().format(simpleMinguoformatter));
             osCase.setStatus(statusMap.get(t.getStatus()));
             osCase.setStatusVal(t.getStatus());
+            osCase.setIsanonymous(t.getIsanonymous());
             return osCase;
         }).collect(Collectors.toList());
         caseData.setOsList(list);
@@ -149,8 +151,8 @@ public class Eip00w520Service extends OpinionSurveyService{
         themeCase.setOsendt(osformdata.getOsendt().format(minguoformatterForInput));
         themeCase.setOsendtHour(StringUtils.substringBefore(osformdata.getOsendt().format(timeformatter),":"));
         themeCase.setOsendtMinute(StringUtils.substringAfter(osformdata.getOsendt().format(timeformatter),":"));
-        themeCase.setFullosfmdt(osformdata.getOsfmdt().format(simpleMinguoformatter));
-        themeCase.setFullosendt(osformdata.getOsendt().format(simpleMinguoformatter));
+        themeCase.setFullosfmdt(osformdata.getOsfmdt().format(minguoformatter));
+        themeCase.setFullosendt(osformdata.getOsendt().format(minguoformatter));
         themeCase.setTopicdesc(osformdata.getTopicdesc());
         themeCase.setOrganizer(osformdata.getOrganizer());
         themeCase.setPromptmsg(osformdata.getPromptmsg());
@@ -589,26 +591,33 @@ public class Eip00w520Service extends OpinionSurveyService{
      * @param caseData
      * @throws JsonProcessingException
      */
-    public void getWriteContents(Eip00w520Case caseData) throws JsonProcessingException {
+    public String getWriteContents(Eip00w520Case caseData) throws JsonProcessingException {
         List<Osresult>osresultList = osresultDao.getListByOsformno(caseData.getOsformno());
         List<Integer>wriseqList = new ArrayList<>();
         List<String>topicList = caseData.getReviewTextcontents().stream().map(Eip00w520Case.Textcontent::getQseqno)
                 .filter(StringUtils::isNotBlank).collect(Collectors.toList());
-        caseData.getReviewMultiplecontents().forEach(s->{
-            Ositem ositem = ositemDao.findByPk(caseData.getOsformno(),Integer.valueOf(s));
-            if (!topicList.contains(String.valueOf(ositem.getQseqno())))
-                topicList.add(String.valueOf(ositem.getQseqno()));
-        });
+        if (!CollectionUtils.isEmpty(caseData.getReviewMultiplecontents())) {
+            caseData.getReviewMultiplecontents().forEach(s->{
+                Ositem ositem = ositemDao.findByPk(caseData.getOsformno(),Integer.valueOf(s));
+                if (ositem != null) {
+                    if (!topicList.contains(String.valueOf(ositem.getQseqno()))) {
+                        topicList.add(String.valueOf(ositem.getQseqno()));
+                    }
+                }
+            });
+        }
         List<String>sortTopicList = topicList.stream().map(t->{
             return osquestionDao.findByPk(caseData.getOsformno(),Integer.valueOf(t));
         }).sorted(Comparator.comparing(Osquestion::getSectitleseq).thenComparing(Osquestion::getTopicseq)).map(t -> String.valueOf(t.getQseqno())).collect(Collectors.toList());
         Map<String,String> qMap = getQMap(caseData.getOsformno());
         Map<String,String> iMap = getIMap(caseData.getOsformno());
-        for (String iseqno : caseData.getReviewMultiplecontents()) {
-            for (Osresult osresult : osresultList) {
-                if (StringUtils.contains(osresult.getWricontent(), "\"v\":\"" + iseqno + "\"")) {
-                    if (!wriseqList.contains(osresult.getWriseq())) {
-                        wriseqList.add(osresult.getWriseq());
+        if (!CollectionUtils.isEmpty(caseData.getReviewMultiplecontents())) {
+            for (String iseqno : caseData.getReviewMultiplecontents()) {
+                for (Osresult osresult : osresultList) {
+                    if (StringUtils.contains(osresult.getWricontent(), "\"v\":\"" + iseqno + "\"")) {
+                        if (!wriseqList.contains(osresult.getWriseq())) {
+                            wriseqList.add(osresult.getWriseq());
+                        }
                     }
                 }
             }
@@ -652,8 +661,8 @@ public class Eip00w520Service extends OpinionSurveyService{
                 for (Eip00w520Case.Answer a : answers) {
                     if (topicList.contains(a.getN())){
                         //填空題
-                        if (StringUtils.isNotBlank(a.getT())) {
-                            sb.append(a.getT()).append(",");
+                        if (CollectionUtils.isEmpty(a.getOs())) {
+                            sb.append(StringUtils.defaultIfEmpty(a.getT()," ")).append(",");
                             //選擇題
                         } else if (!CollectionUtils.isEmpty(a.getOs())) {
                             //單選
@@ -692,11 +701,82 @@ public class Eip00w520Service extends OpinionSurveyService{
             caseData.setWriteContentTitle(tableTitles);
             caseData.setWriteContentData(tableData);
         } else {
-            caseData.setWriteContentTitle(new ArrayList<>(Arrays.asList("序號","填寫人")));
-            List<String>str = Arrays.asList("無符合資料");
-            caseData.getWriteContentData().add(str);
+            return "isEmpty";
+//            caseData.setWriteContentTitle(new ArrayList<>(Arrays.asList("序號","填寫人")));
+//            List<String>str = Arrays.asList("無符合資料");
+//            caseData.getWriteContentData().add(str);
         }
 //        log.debug("XXXX"+wriseqList.toString());
+        return "";
+    }
+
+    public String getAllWriteContents(Eip00w520Case caseData) throws JsonProcessingException {
+        Map<String,String> qMap = getQMap(caseData.getOsformno());
+        Map<String,String> iMap = getIMap(caseData.getOsformno());
+        List<Osresult>osresultList = osresultDao.getListByOsformno(caseData.getOsformno());
+        if (!osresultList.isEmpty()) {
+            //填寫內容表標題
+            List<String>tableTitles = new ArrayList<>(Arrays.asList("序號","填寫人"));
+            List<Integer>topicList = ositemDao.getTopicByOsformno(caseData.getOsformno()).stream().map(Ositem::getQseqno).distinct().collect(Collectors.toList());
+            for (Integer topic : topicList) {
+                //如果勾選的選項有包含這一題就加入表內
+                tableTitles.add(qMap.get(String.valueOf(topic)));
+            }
+            //填寫內容表內容
+            List<List<String>>tableData = new ArrayList<>();
+            for (Osresult osresult : osresultList) {
+                ObjectMapper objectMapper = new ObjectMapper();
+                List<List<Eip00w520Case.Answer>>allAnswer = new ArrayList<>();
+                StringBuilder sb = new StringBuilder(osresult.getWriname()+",");
+                //某個人的所有答案
+                List<Eip00w520Case.Answer> answers = objectMapper.readValue(osresult.getWricontent(), new TypeReference<List<Eip00w520Case.Answer>>(){});
+                for (Eip00w520Case.Answer a : answers) {
+                    //填空題
+                    if (CollectionUtils.isEmpty(a.getOs())) {
+                        sb.append(StringUtils.defaultIfEmpty(a.getT()," ")).append(",");
+                        //選擇題
+                    } else if (!CollectionUtils.isEmpty(a.getOs())) {
+                        //單選
+                        if (a.getOs().size() == 1) {
+                            sb.append(iMap.get(a.getOs().get(0).getV()));
+                            if (StringUtils.isNotBlank(a.getOs().get(0).getT())) {
+                                sb.append("(").append(a.getOs().get(0).getT()).append(")");
+                            }
+                            sb.append(",");
+                            //多選
+                        } else {
+                            a.getOs().forEach(m->{
+                                if (StringUtils.isNotBlank(m.getV())) {
+                                    sb.append(iMap.get(m.getV()));
+                                    if (StringUtils.isNotBlank(m.getT())) {
+                                        sb.append("(").append(m.getT()).append(")");
+                                    }
+                                    sb.append("、");
+                                }
+                            });
+                            if (sb.length()>1) {
+                                // 删除最後一個、
+                                sb.deleteCharAt(sb.length() - 1);
+                            }
+                            sb.append(",");
+                        }
+                    }
+                }
+                if (sb.length()>1) {
+                    // 删除最後一個逗號
+                    sb.deleteCharAt(sb.length() - 1);
+                }
+                tableData.add(Arrays.asList(StringUtils.split(sb.toString(),",")));
+            }
+            caseData.setWriteContentTitle(tableTitles);
+            caseData.setWriteContentData(tableData);
+        } else {
+            return "isEmpty";
+//            caseData.setWriteContentTitle(new ArrayList<>(Arrays.asList("序號","填寫人")));
+//            List<String>str = Arrays.asList("無符合資料");
+//            caseData.getWriteContentData().add(str);
+        }
+        return "";
     }
 
     /**
@@ -739,16 +819,16 @@ public class Eip00w520Service extends OpinionSurveyService{
                     List<String>list = textTotalMap.get(a.getN());
                     list.add(a.getT());
                 } else {
-                    textUiMap.putIfAbsent(a.getN(), new ArrayList<>(Arrays.asList("未填寫")));
+                    textUiMap.putIfAbsent(a.getN(), new ArrayList<>(Arrays.asList(" ")));
                     textTotalMap.putIfAbsent(a.getN(), new ArrayList<>());
                     if (textUiMap.containsKey(a.getN())) {
                         List<String>list = textUiMap.get(a.getN());
-                        if(!list.contains("未填寫")) {
-                            list.add("未填寫");
+                        if(!list.contains(" ")) {
+                            list.add(" ");
                         }
                     }
                     List<String>list = textTotalMap.get(a.getN());
-                    list.add("未填寫");
+                    list.add(" ");
                 }
             }
         }
@@ -758,13 +838,13 @@ public class Eip00w520Service extends OpinionSurveyService{
             String key = entry.getKey();
             List<String> value = entry.getValue();
             for (String text : value) {
-                double frequency = (double)Collections.frequency(textTotalMap.get(key), text);
+                double frequency = (double) Collections.frequency(textTotalMap.get(key), text);
                 double all = textTotalMap.get(key).size();
-                log.debug(text + " -> 次數:" + frequency + "分母:" + textTotalMap.get(key).size() + "比率:" + Math.round(frequency/all*100)+"%");
+                log.debug(text + " -> 次數:" + frequency + "分母:" + textTotalMap.get(key).size() + "比率:" + Math.round(frequency / all * 100) + "%");
                 Eip00w520Case.Statistics statistics = new Eip00w520Case.Statistics();
                 statistics.setCount(String.valueOf(Math.round(frequency)));
-                statistics.setRate(Math.round(frequency/all*100)+"%");
-                textDataMap.put(text,statistics);
+                statistics.setRate(Math.round(frequency / all * 100) + "%");
+                textDataMap.put(key + "-" + text, statistics);
             }
         }
 
@@ -811,6 +891,46 @@ public class Eip00w520Service extends OpinionSurveyService{
         getStatistics(caseData);
 //        getWriteContents(caseData);
         return "";
+    }
+
+    /**
+     * 產製統計表
+     * @param caseData
+     */
+    public ByteArrayOutputStream prodStatistics(Eip00w520Case caseData) {
+        Eip00w520L00 eip00w520L00 = new Eip00w520L00();
+        eip00w520L00.addHeader(caseData);
+        eip00w520L00.addContent(caseData);
+        return eip00w520L00.getOutputStream();
+    }
+
+    /**
+     * 產製填寫內容
+     * @param caseData
+     */
+    public ByteArrayOutputStream prodWriteContent(Eip00w520Case caseData) {
+        //每個題目的最大長度List，用於設定寬度，size等於題目數量(序號除外)
+        List<Integer>lengthList = new ArrayList<>();
+        List<String> titles = caseData.getWriteContentTitle();
+        List<List<String>> writeContent = caseData.getWriteContentData();
+        for (String title : titles) {
+            lengthList.add(title.length());
+        }
+        //移除序號的值
+        lengthList.remove(0);
+        //計算每個題目的最大長度依序放入
+        for (List<String> list : writeContent) {
+            for (int j = 0; j < list.size(); j++) {
+                //開始比較長度並放入
+                if (lengthList.get(j) < list.get(j).length()) {
+                    lengthList.set(j, list.get(j).length());
+                }
+            }
+        }
+        Eip00w520L01 eip00w520L01 = new Eip00w520L01(lengthList);
+        eip00w520L01.addHeader(caseData);
+        eip00w520L01.addContent(caseData);
+        return eip00w520L01.getOutputStream();
     }
 
     /**

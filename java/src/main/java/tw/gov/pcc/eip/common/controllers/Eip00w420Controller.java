@@ -279,7 +279,6 @@ public class Eip00w420Controller extends BaseController {
             return new ModelAndView(new FileOutputView(baos, filename, FileOutputView.GENERAL_FILE));
         } catch (Exception e) {
             log.error(ExceptionUtility.getStackTrace(e));
-            eip00w420Service.getOrlist(caseData, false);
             setSystemMessage(getReportErrorMessage());
         }
         return new ModelAndView(MAIN_PAGE);
@@ -302,7 +301,6 @@ public class Eip00w420Controller extends BaseController {
             return new ModelAndView(new FileOutputView(baos, filename, FileOutputView.GENERAL_FILE));
         } catch (Exception e) {
             log.error(ExceptionUtility.getStackTrace(e));
-            eip00w420Service.getOrlist(caseData, false);
             setSystemMessage(getReportErrorMessage());
         }
         return new ModelAndView(MAIN_PAGE);
@@ -324,7 +322,6 @@ public class Eip00w420Controller extends BaseController {
             return new ModelAndView(new FileOutputView(baos, filename, FileOutputView.GENERAL_FILE));
         } catch (Exception e) {
             log.error(ExceptionUtility.getStackTrace(e));
-            eip00w420Service.getOrlist(caseData, false);
             setSystemMessage(getReportErrorMessage());
         }
         return new ModelAndView(MAIN_PAGE);
@@ -401,7 +398,6 @@ public class Eip00w420Controller extends BaseController {
             return new ModelAndView(new FileOutputView(baos, filename, FileOutputView.GENERAL_FILE));
         } catch (Exception e) {
             log.error(ExceptionUtility.getStackTrace(e));
-            eip00w420Service.getOrlist(caseData, false);
             setSystemMessage(getReportErrorMessage());
         }
         return new ModelAndView(MAIN_PAGE);

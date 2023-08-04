@@ -81,7 +81,6 @@ public class Eip01w010Case implements Serializable {
 
     private String oplink; // 是否需要另開視窗 Y:是 N:否
 
-    @RequiredString(label = "內文", groups = { Update.class })
     private String mcontent; // *內文
 
 //    內文附圖： 
@@ -178,6 +177,8 @@ public class Eip01w010Case implements Serializable {
         private String attributype; // 屬性
 
         private String attributypeText; // 屬性中文
+
+        private String creatname;
     }
 
     @Data
@@ -215,6 +216,9 @@ public class Eip01w010Case implements Serializable {
 
     @AssertTrue(message = "請至少勾選一筆", groups = Check.class)
     public boolean isChecked() {
+        if ("I".equals(mode) || "D".equals(mode)) {
+            return true;
+        }
         if (queryList != null && queryList.stream().filter(Eip01w010Case.Detail::isCheck).findAny().isPresent()) {
             return true;
         }

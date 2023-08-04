@@ -3,6 +3,7 @@ package tw.gov.pcc.eip.services;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import tw.gov.pcc.eip.common.cases.Eip03w030Case;
@@ -218,22 +219,23 @@ public class Eip03w030Service {
     public void update(UserBean userData, Eip03w030MixCase mixCase){
             if ( mixCase.getDoubleMap().size() > 0){
                 for (String outerKey: mixCase.getDoubleMap().keySet()) {
-                    KeepTrkDtl ktd = new KeepTrkDtl();
+                    KeepTrkDtl ktd = keepTrkDtlDao.selectDataByTrkIDAndTrkObj(mixCase.getTrkID(), outerKey).get(0);
+                    KeepTrkDtl newKtd = new KeepTrkDtl();
+                    BeanUtils.copyProperties(ktd, newKtd);
                     Map<String, String> innerMap = mixCase.getDoubleMap().get(outerKey);
-                    ktd.setTrkID(mixCase.getTrkID());
-                    ktd.setTrkObj(outerKey);
-                    ktd.setSupCont(innerMap.get("supCont"));
-                    ktd.setSupAgree(innerMap.get("supAgree"));
-                    ktd.setSupDept(userData.getDeptId());
-                    ktd.setSupUser(userData.getUserId());
-                    ktd.setSupDt(DateUtility.getNowDateTimeAsTimestamp().toLocalDateTime());
-                    keepTrkDtlDao.closeByTrkIDAndTrkObj(ktd);
+                    newKtd.setSupCont(innerMap.get("supCont"));
+                    newKtd.setSupAgree(innerMap.get("supAgree"));
+                    newKtd.setSupDept(userData.getDeptId());
+                    newKtd.setSupUser(userData.getUserId());
+                    newKtd.setSupDt(DateUtility.getNowDateTimeAsTimestamp().toLocalDateTime());
+                    keepTrkDtlDao.closeByTrkIDAndTrkObj(newKtd);
 
                     if (innerMap.get("supAgree").equals("Y")) {
                         int num = keepTrkDtlDao.selectDoingCase(mixCase.getTrkID());
                         if(num == 0){  //表示均已解列，可結案
                             KeepTrkMst ktm = new KeepTrkMst();
                             ktm.setTrkID(mixCase.getTrkID());
+                            ktm = keepTrkMstDao.selectDataByPrimaryKey(ktm);
                             ktm.setClsDt(DateUtility.getNowWestDate());
                             ktm.setTrkSts("9");
                             ktm.setUpdDept(userData.getDeptId());

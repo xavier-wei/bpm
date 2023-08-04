@@ -170,7 +170,6 @@ public class Eip06w030Service {
             periodEnd = periodEnd.substring(0,4) + "-" + periodEnd.substring(4,6) + "-" + periodEnd.substring(6);
             if(dateWeekMonth.equals("date")) {   //每天
                 datelist = getBeginAndEndDateBetween(periodStart, periodEnd);
-
             } else if (dateWeekMonth.equals("week")) {  //每周
                 datelist = getDayOfWeekWithinDateInterval(periodStart, periodEnd, day);
             } else if (dateWeekMonth.equals("month")) {  //每月第幾週
@@ -308,7 +307,9 @@ public class Eip06w030Service {
         Date dateEnd = sdf.parse(periodEnd);
         Calendar cd = Calendar.getInstance(); //用Calendar進行日期比較判斷
         cd.setTime(dateStart);
+        weekDays = weekDays == 7 ? 0 : weekDays;  //因為calendar 是 日~六 = 1~7
         while (dateStart.getTime() <= dateEnd.getTime()){
+            System.err.println((cd.get(Calendar.DAY_OF_WEEK)));
             if((cd.get(Calendar.DAY_OF_WEEK) - 1) == weekDays){
                 list.add(sdf.format(dateStart));
             }
@@ -393,16 +394,11 @@ public class Eip06w030Service {
      * @return
      */
     public void deleteMeeting(Eip06w030Case caseData){
-        List<Integer> meetingIds = new ArrayList<>();
-        caseData.getMeetingsNeedCancel().forEach(a -> {
-            meetingIds.add(Integer.parseInt(a.toString().substring(0,a.toString().indexOf("-")).replace("\"","")));
-        });
-
         Meeting mt = new Meeting();
         Meeting newMt = new Meeting();
 
-        for ( int meetingId : meetingIds) {
-            mt.setMeetingId(meetingId);
+        for ( Object meetingId : caseData.getMeetingsNeedCancel()) {
+            mt.setMeetingId(Integer.parseInt(meetingId.toString()));
             mt = meetingDao.selectDataByPrimaryKey(mt);
             BeanUtils.copyProperties(mt, newMt);
 

@@ -14,9 +14,6 @@
 </jsp:attribute>
 <jsp:attribute name="buttons">
 <!-- 選擇頁 -->
-<%--    <tags:button id="btnInsert">--%>
-<%--        新增<i class="fas fa-user-plus"></i>--%>
-<%--    </tags:button>--%>
 </jsp:attribute>
 
 <jsp:attribute name="contents">
@@ -27,32 +24,36 @@
                 <table class="table" id="tb1">
                     <thead data-orderable="true">
                     <tr>
-                        <th style="width: 15%">類別</th>
+<%--                        <th style="width: 15%">類別</th>--%>
                         <th style="width: 15%">編號</th>
                         <th style="width: 15%">名稱</th>
                         <th style="width: 15%">數量</th>
-                        <th style="width: 20%">狀態</th>
+                        <th style="width: 20%">目前狀態</th>
                         <th style="width: 20%">操作區</th>
                     </tr>
                     </thead>
                     <tbody>
                         <c:forEach items="${caseData.meetingCodeCaseList}" var="item" varStatus="status">
                             <tr>
-                                <td class="text-center align-middle">
-                                      <c:choose>
-                                        <c:when test="${item.itemTyp eq 'F'}">會議室</c:when>
-                                        <c:when test="${item.itemTyp eq 'FX'}">會議室</c:when>
-                                      </c:choose>
-                                </td>
+<%--                                <td class="text-center align-middle">--%>
+<%--                                      <c:choose>--%>
+<%--                                        <c:when test="${item.itemTyp eq 'F'}">會議室</c:when>--%>
+<%--                                        <c:when test="${item.itemTyp eq 'FX'}">會議室</c:when>--%>
+<%--                                      </c:choose>--%>
+<%--                                </td>--%>
                                 <td class="text-center align-middle"><c:out value="${item.itemId}" /></td>
                                 <td class="text-left align-middle"><c:out value="${item.itemName}" /></td>
                                 <td class="text-center align-middle"><c:out value="${item.qty}" /></td>
                                 <td class="text-center align-middle">
-                                    <input type="radio" name="itemTyp${status.index}" value="F" id="itemTypF${status.index}" <c:if test="${item.itemTyp == 'F'}">checked</c:if> class="button-spacing " onclick="return false;" readonly>
-                                    <label for="itemTypF${status.index}">啟用</label>
-                                    <label >   </label>
-                                    <input type="radio" name="itemTyp${status.index}" value="FX" id="itemTypFX${status.index}" <c:if test="${item.itemTyp == 'FX'}">checked</c:if> class="button-spacing " onclick="return false;" readonly>
-                                    <label for="itemTypFX${status.index}">禁用</label>
+                                    <c:choose>
+                                        <c:when test="${item.itemTyp eq 'F'}">啟用</c:when>
+                                        <c:when test="${item.itemTyp eq 'FX'}">禁用</c:when>
+                                    </c:choose>
+<%--                                    <input type="radio" name="itemTyp${status.index}" value="F" id="itemTypF${status.index}" <c:if test="${item.itemTyp == 'F'}">checked</c:if> class="button-spacing " onclick="return false;" readonly>--%>
+<%--                                    <label for="itemTypF${status.index}">啟用</label>--%>
+<%--                                    <label >   </label>--%>
+<%--                                    <input type="radio" name="itemTyp${status.index}" value="FX" id="itemTypFX${status.index}" <c:if test="${item.itemTyp == 'FX'}">checked</c:if> class="button-spacing " onclick="return false;" readonly>--%>
+<%--                                    <label for="itemTypFX${status.index}">禁用</label>--%>
                                 </td>
                                 <td data-itemid="${item.itemId}"
                                     data-itemname="${item.itemName}"
@@ -75,6 +76,9 @@
         </tags:form-row>
         <form:hidden path="itemId"/>
         <form:hidden path="itemName"/>
+        <tags:form-note>
+            <tags:form-note-item>「目前狀態」為「禁用」時，點選啟用，將清空部分啟用內容。</tags:form-note-item>
+        </tags:form-note>
     </form:form>
     </tags:fieldset>
 </jsp:attribute>

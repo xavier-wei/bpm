@@ -249,17 +249,7 @@ public class Eip06w060Service extends OnlineRegService {
         List<String> list = new ArrayList<>();
         LocalDate periodStartObject = LocalDate.parse(periodStart, format);
         LocalDate periodEndObject = LocalDate.parse(periodEnd, format);
-
-//        // 找出第一個符合的週
-//        LocalDate firstWeek = periodStartObject.with(TemporalAdjusters.dayOfWeekInMonth(week, DayOfWeek.of(day)));
-//
-//        for (LocalDate date = firstWeek; !date.isAfter(periodEndObject); date = date.plusWeeks(1)) {
-//            if (date.equals(periodStartObject)) {
-//                list.add(periodStartObject.format(format)); // 將LocalDate型態轉為String
-//            }
-//        }
-//        return list;
-
+        
         while (!periodStartObject.isAfter(periodEndObject)) {
             LocalDate date = periodStartObject.with(TemporalAdjusters.dayOfWeekInMonth(week, DayOfWeek.of(day)));
             if(periodStartObject.equals(date)){
@@ -279,18 +269,19 @@ public class Eip06w060Service extends OnlineRegService {
     public void validate(Eip06w060Case caseData, BindingResult result) {
         ObjectError error;
         if (isEmpty(caseData.getPeriodStart())) {
-            error = new ObjectError("periodStart","開始日期不得為空");
+            error = new ObjectError("periodStart","「日期」為必填");
             result.addError(error);
         }
 
         if (isEmpty(caseData.getMeetingBegin())) {
-            error = new ObjectError("meetingBegin","開啟時間不得為空");
+            error = new ObjectError("meetingBegin","「啟用時間起」為必填");
             result.addError(error);
         }
         if (isEmpty(caseData.getMeetingEnd())) {
-            error = new ObjectError("meetingEnd","關閉時間不得為空");
+            error = new ObjectError("meetingEnd","「啟用時間迄」為必填");
             result.addError(error);
         }
+
         if (isNotEmpty(caseData.getMeetingBegin()) && isNotEmpty(caseData.getMeetingEnd())){
             if (Integer.parseInt(caseData.getMeetingBegin()) >= Integer.parseInt(caseData.getMeetingEnd())){
                 error = new ObjectError("meetingEnd","「開啟時間」須早於「關閉時間」");
@@ -308,12 +299,6 @@ public class Eip06w060Service extends OnlineRegService {
     public void isableTime(Eip06w060Case caseData, BindingResult result) {
         //畫面民國年，資料庫西元年
         String periodStart=DateUtility.changeDateType(caseData.getPeriodStart());//periodStart等於isableData
-        String isableTime=timeConversionService.to48binary_isAble(caseData.getMeetingBegin(), caseData.getMeetingEnd());
-        int using=roomIsableDao.findByIsableTime(caseData.getItemId(), periodStart, isableTime);
-            if (using == 1) {
-                log.debug("輸入isableTime(啟用時間)已經存在");
-                result.rejectValue("isableTime", "W0031", new Object[]{"啟用時間"}, "");//{0}已存在，請重新輸入！
-            }
 
         //轉換輸入時間格式
         DateTimeFormatter format = DateTimeFormatter.ofPattern("HHmm");

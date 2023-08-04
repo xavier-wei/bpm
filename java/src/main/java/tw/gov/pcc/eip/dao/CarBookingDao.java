@@ -51,11 +51,11 @@ public interface CarBookingDao {
      * @param applydateEnd   申請日期迄日
      * 
      **/ 
-    List<CarBooking> selectByStatusIn234(Eip07w040Case caseData);
+    List<CarBooking> selectForEip07w040(Eip07w040Case caseData);
     
     public List<CarBooking> getDataByCarnoAndUsing_date(CarBooking carBooking);
     
-    public String checkTime(String using1 , String using2) ;
+    public CarBooking checkTime(String using1 , String using2) ;
     
     public CarBooking selectCarDriveDataBycarno(String carno1,String carno2);
 }

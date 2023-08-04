@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -99,16 +100,19 @@ public class Eip02w010Service {
      * @param caseData
      */
     public void query(Eip02w010Case caseData) {
-        List<addressBook> addressBook = usersDao.getEip02wUsers(trimToNull(caseData.getDept_id()),
-                trimToNull(caseData.getUser_name()), trimToNull(caseData.getUser_id()),
-                trimToNull(caseData.getUser_ename()), trimToNull(caseData.getEmail()),
-                trimToNull(caseData.getTitlename()));
+        boolean onOff = StringUtils.equals(" ", caseData.getOn_off()) ? true : false; // 有展開進階查詢才加條件
+        String deptId = onOff ? trimToNull(caseData.getDept_id()) : null;
+        String userId = onOff ? trimToNull(caseData.getUser_id()) : null;
+        String userEname = onOff ? trimToNull(caseData.getUser_ename()) : null;
+        String email = onOff ? trimToNull(caseData.getEmail()) : null;
+        String titlename = onOff ? trimToNull(caseData.getTitlename()) : null;
+        List<addressBook> addressBook = usersDao.getEip02wUsers(deptId, trimToNull(caseData.getUser_name()), userId,
+                userEname, email, titlename);
         String copyStr = addressBook.stream().map(m -> {
             return String.format("%s<%s>", m.getUser_name(), m.getEmail());
         }).collect(Collectors.joining(";"));
         caseData.setQryList(addressBook); // 查詢結果
         caseData.setCopyStr(copyStr); // 複製按鈕
-        String deptId = trimToNull(caseData.getDept_id());
         if (deptId != null) {
             String deptName = "";
             Optional<Depts> opt = Optional.ofNullable(deptsDao.findByPk(deptId));

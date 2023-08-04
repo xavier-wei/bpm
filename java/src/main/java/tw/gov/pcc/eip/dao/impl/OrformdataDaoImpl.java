@@ -170,7 +170,7 @@ public class OrformdataDaoImpl extends BaseDao<Orformdata> implements Orformdata
     }
 
     @Override
-    public List<Orformdata> getDataByStatus(List<String> statusList, String deptno) {
+    public List<Orformdata> getDataByStatus(List<String> statusList, String deptno, String jobtitle) {
         StringBuilder sql = new StringBuilder();
         sql.append(" SELECT ");
         sql.append(ALL_COLUMNS_SQL);
@@ -180,9 +180,14 @@ public class OrformdataDaoImpl extends BaseDao<Orformdata> implements Orformdata
         sql.append("        OR regisqual like :deptno + ',%' ");
         sql.append("        OR regisqual like '%,' + :deptno ");
         sql.append("        OR regisqual like '%,' + :deptno + ',%')");
+        sql.append("    OR (regisqual = :jobtitle ");
+        sql.append("        OR regisqual like :jobtitle + ',%' ");
+        sql.append("        OR regisqual like '%,' + :jobtitle ");
+        sql.append("        OR regisqual like '%,' + :jobtitle + ',%')");
         Map<String, Object> params = new HashMap<>();
         params.put("statusList", statusList);
         params.put("deptno", deptno);
+        params.put("jobtitle", jobtitle);
         List<Orformdata> list = getNamedParameterJdbcTemplate().query(sql.toString(),params,
                 BeanPropertyRowMapper.newInstance(Orformdata.class));
         return CollectionUtils.isEmpty(list) ? new ArrayList<>() : list;

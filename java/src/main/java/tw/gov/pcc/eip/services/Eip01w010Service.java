@@ -9,17 +9,19 @@ import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Optional;
 import java.util.function.Function;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
+import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.multipart.MultipartFile;
@@ -31,6 +33,7 @@ import tw.gov.pcc.eip.dao.MsgavaildepDao;
 import tw.gov.pcc.eip.dao.MsgdataDao;
 import tw.gov.pcc.eip.dao.MsgdepositDao;
 import tw.gov.pcc.eip.dao.MsgdepositdirDao;
+import tw.gov.pcc.eip.dao.StoredProcedureDao;
 import tw.gov.pcc.eip.dao.UsersDao;
 import tw.gov.pcc.eip.domain.Depts;
 import tw.gov.pcc.eip.domain.Eipcode;
@@ -69,6 +72,8 @@ public class Eip01w010Service {
     private MsgdepositDao msgdepositDao;
     @Autowired
     private MsgdepositdirDao msgdepositdirDao;
+    @Autowired
+    private StoredProcedureDao storedProcedureDao;
     DateTimeFormatter minguoDateTimeformatter = DateTimeFormatter.ofPattern("yyy/MM/dd HH:mm:ss")
             .withChronology(MinguoChronology.INSTANCE).withLocale(Locale.TAIWAN);
     DateTimeFormatter minguoDateformatter = DateTimeFormatter.ofPattern("yyy/MM/dd")
@@ -240,6 +245,7 @@ public class Eip01w010Service {
                 if (opt.isPresent()) {
                     detail.setAttributypeText(opt.get().getCodename());
                 }
+                detail.setCreatname(m.getCreatname());
                 return detail;
             }).collect(Collectors.toCollection(ArrayList::new));
             caseData.setQueryList(details);
@@ -301,9 +307,9 @@ public class Eip01w010Service {
         // 取得附檔清單
         List<Msgdeposit> fileList = msgdepositDao.findbyfseq(Arrays.asList(msgdata.getFseq()));
         Map<String, String> image = fileList.stream().filter(f -> "2".equals(f.getFiletype()))
-                .collect(Collectors.toMap(Msgdeposit::getSeq, Msgdeposit::getAttachfile));
+                .collect(Collectors.toMap(Msgdeposit::getSeq, Msgdeposit::getAttachfile, (n, o) -> n, LinkedHashMap::new));
         Map<String, String> file = fileList.stream().filter(f -> "1".equals(f.getFiletype()))
-                .collect(Collectors.toMap(Msgdeposit::getSeq, Msgdeposit::getAttachfile));
+                .collect(Collectors.toMap(Msgdeposit::getSeq, Msgdeposit::getAttachfile, (n, o) -> n, LinkedHashMap::new));
         caseData.setImageFileNameMap(image);
         caseData.setFileNameMap(file);
     }
@@ -375,17 +381,26 @@ public class Eip01w010Service {
      * @param result
      */
     public void checkOptions(Eip01w010Case caseData, BindingResult result) {
+        String fseq = caseData.getFseq();
+        String pagetype = caseData.getPagetype();
         String attr = caseData.getAttributype();
+        String mcontent = caseData.getMcontent();
         String contactunit = caseData.getContactunit();
-        if ("6".equals(attr)) {
-            if (msgdataDao.getEffectiveCount(attr, contactunit) != 0) {
-                result.rejectValue("attributype", "", "該聯絡單位已存在一筆此屬性資料，請修改「屬性」");
+        Msgdata m = msgdataDao.findbyfseq(fseq);
+        if (m != null && !StringUtils.equals(contactunit, trim(m.getContactunit()))) {
+            if ("6".equals(attr)) {
+                if (msgdataDao.getEffectiveCount(attr, contactunit) != 0) {
+                    result.rejectValue("attributype", "", "該聯絡單位已存在一筆單位簡介資料，請修改「屬性」");
+                }
+            }
+            if ("7".equals(attr)) {
+                if (msgdataDao.getEffectiveCount(attr, contactunit) != 0) {
+                    result.rejectValue("attributype", "", "該聯絡單位已存在一筆業務資訊資料，請修改「屬性」");
+                }
             }
         }
-        if ("7".equals(attr)) {
-            if (msgdataDao.getEffectiveCount(attr, contactunit) != 0) {
-                result.rejectValue("attributype", "", "該聯絡單位已存在一筆此屬性資料，請修改「屬性」");
-            }
+        if ("A".equals(pagetype) && StringUtils.isEmpty(mcontent)) {
+            result.rejectValue("mcontent", "", "「內文」為必填");
         }
     }
     /**
@@ -531,10 +546,11 @@ public class Eip01w010Service {
      * @param userId
      */
     public void update(Eip01w010Case caseData, String userId) {
+        String dir = eipCodeDao.findByCodeKindCodeNo("FILEDIR", "1").get().getCodename() + "\\"; // 檔案所在資料夾
+
         String fseq = caseData.getFseq();
         Msgdata m = msgdataDao.findbyfseq(fseq);
 
-        m.setPagetype(caseData.getPagetype()); // 頁面型態
         m.setStatus(caseData.getStatus()); // 狀態
         m.setAttributype(caseData.getAttributype()); // 屬性
         m.setMsgtype(caseData.getMsgtype()); // 訊息類別
@@ -558,12 +574,27 @@ public class Eip01w010Service {
         m.setIstop(caseData.getIstop()); // 是否置頂
         m.setIsfront(caseData.getIsfront()); // 前台是否顯示
         m.setSubject(caseData.getSubject()); // 主旨/連結網址
-        m.setMcontent(caseData.getMcontent()); // 內文
-        m.setOplink(caseData.getOplink()); // 是否需要另開視窗
-        m.setIndir(caseData.getIndir()); // 存放目錄
+        if ("A".equals(m.getPagetype()) && "B".equals(caseData.getPagetype())) {
+            m.setMcontent(null); // 內文
+            m.setIndir(null); // 存放目錄
 
-        // 存放目錄
-        insertMsgdepositdir(caseData.getAttributype(), caseData.getTmpPath(), caseData.getIndir());
+            List<Msgdeposit> files = msgdepositDao.findbyfseq(Arrays.asList(fseq));
+            files.stream().forEach(origin -> {
+                File file = new File(dir + origin.getRealfilename());
+                file.delete();
+                Msgdeposit ms = new Msgdeposit();
+                ms.setFseq(origin.getFseq());
+                ms.setSeq(origin.getSeq());
+                msgdepositDao.delete(ms); // 刪附檔
+            });
+        } else {
+            m.setMcontent(caseData.getMcontent()); // 內文
+            m.setIndir(caseData.getIndir()); // 存放目錄
+            // 存放目錄
+            insertMsgdepositdir(caseData.getAttributype(), caseData.getTmpPath(), caseData.getIndir());
+        }
+        m.setPagetype(caseData.getPagetype()); // 頁面型態
+        m.setOplink(caseData.getOplink()); // 是否需要另開視窗
 
         m.setReleasedt(DateUtility.changeDateTypeToWestDate(caseData.getReleasedt())); // 上架時間
         m.setOfftime(DateUtility.changeDateTypeToWestDate(caseData.getOfftime())); // 下架時間
@@ -601,11 +632,34 @@ public class Eip01w010Service {
         } else { // 明細頁
             fseqs = Arrays.asList(caseData.getFseq());
         }
-        // 更新
-        msgdataDao.updateStatus(fseqs, status);
+        if (!"X".equals(status)) {
+            // 更新
+            msgdataDao.updateStatus(fseqs, status);
+        } else {
+            // 實體刪除
+            String dir = eipCodeDao.findByCodeKindCodeNo("FILEDIR", "1").get().getCodename() + "\\"; // 檔案所在資料夾
+            fseqs.stream().forEach(f -> {
+                Msgdata data = new Msgdata();
+                data.setFseq(f);
+                msgdataDao.delete(data); // 刪文章
+                Msgavaildep dep = new Msgavaildep();
+                dep.setFseq(f);
+                msgavaildepDao.delete(dep); // 刪分眾
+                List<Msgdeposit> files = msgdepositDao.findbyfseq(Arrays.asList(f));
+                files.stream().forEach(origin -> {
+                    File file = new File(dir + origin.getRealfilename());
+                    file.delete();
+                    Msgdeposit m = new Msgdeposit();
+                    m.setFseq(origin.getFseq());
+                    m.setSeq(origin.getSeq());
+                    msgdepositDao.delete(m); // 刪附檔
+                });
+            });
+        }
         // 返回
         getQueryList(caseData);
         caseData.setKeep((caseData.getQueryList() != null && caseData.getQueryList().size() == 1) ? true : false);
+        caseData.setStatus(status);
         caseData.setStatusText(changeStatusText(status, true));
     }
 
@@ -637,45 +691,75 @@ public class Eip01w010Service {
      * @param caseData
      */
     public void insertDataUploadFiles(Eip01w010Case caseData) {
+        if ("B".equals(caseData.getPagetype())) return;
         String fseq = caseData.getFseq();
-        int seq = msgdepositDao.findbyfseq(Arrays.asList(fseq)).stream()
-                .sorted(Comparator.comparing(Msgdeposit::getSeq).reversed()).findFirst()
-                .map(m -> Integer.valueOf(m.getSeq())).orElse(0);
-        String dir = eipCodeDao.findByCodeKindCodeNo("FILEDIR", "1").get().getCodename() + "\\"; // 檔案所在資料夾
-        MultipartFile[] images = caseData.getImages();
-        MultipartFile[] files = caseData.getFiles();
-        // concat
-        List<MultipartFile> filesList = Stream.concat(Arrays.stream(images), Arrays.stream(files))
+        List<MultipartFile> imagesList = Arrays.stream(caseData.getImages())
                 .filter(f -> StringUtils.isNotBlank(f.getOriginalFilename())).collect(Collectors.toList());
-        for (MultipartFile f : filesList) {
+        List<MultipartFile> filesList = Arrays.stream(caseData.getFiles())
+                .filter(f -> StringUtils.isNotBlank(f.getOriginalFilename())).collect(Collectors.toList());
+
+        // 先找已上傳數量 再找最大編號往下編
+        Msgdeposit i = msgdepositDao.getCnt(fseq, "2");
+        Msgdeposit e = msgdepositDao.getCnt(fseq, "1");
+        uploadFiles(fseq, i.getCnt(), imagesList);
+        uploadFiles(fseq, e.getCnt(), filesList);
+        // 重新取得附檔清單
+        List<Msgdeposit> fileList = msgdepositDao.findbyfseq(Arrays.asList(fseq));
+        Map<String, String> image = fileList.stream().filter(f -> "2".equals(f.getFiletype()))
+                .collect(Collectors.toMap(Msgdeposit::getSeq, Msgdeposit::getAttachfile, (n, o) -> n, LinkedHashMap::new));
+        Map<String, String> file = fileList.stream().filter(f -> "1".equals(f.getFiletype()))
+                .collect(Collectors.toMap(Msgdeposit::getSeq, Msgdeposit::getAttachfile, (n, o) -> n, LinkedHashMap::new));
+        caseData.setImageFileNameMap(image);
+        caseData.setFileNameMap(file);
+    }
+
+    /**
+     * 上傳檔案
+     * 
+     * @param fseq
+     * @param cnt
+     * @param seq
+     * @param fileList
+     */
+    private void uploadFiles(String fseq, int cnt, List<MultipartFile> fileList) {
+        String dir = eipCodeDao.findByCodeKindCodeNo("FILEDIR", "1").get().getCodename() + "\\"; // 檔案所在資料夾
+
+        Comparator<Msgdeposit> customComparator = new Comparator<Msgdeposit>() {
+            @Override
+            public int compare(Msgdeposit o1, Msgdeposit o2) {
+                if (Integer.parseInt(o1.getSeq()) < Integer.parseInt(o2.getSeq()))
+                    return 1;
+                else
+                    return -1;
+            }
+        };
+        int seq = msgdepositDao.findbyfseq(Arrays.asList(fseq)).stream()
+                .sorted(customComparator).findFirst()
+                .map(m -> Integer.valueOf(m.getSeq())).orElse(0);
+        for (MultipartFile f : fileList) {
             String originFileName = f.getOriginalFilename();
             String fileExtension = StringUtils.substring(originFileName, originFileName.indexOf(".") + 1,
                     originFileName.length());
-            seq++;
-            String formatFileName = fseq + "_" + seq + "_" + originFileName;
-            Msgdeposit m = new Msgdeposit();
-            m.setFseq(fseq);
-            m.setSeq(String.valueOf(seq));
-            m.setFiletype(StringUtils.contains(f.getContentType(), "image") ? "2" : "1");
-            m.setAttachfile(originFileName); // 原始檔名
-            m.setAttachtype(fileExtension); // 副檔名
-            m.setRealfilename(formatFileName); // 格式化檔名
-            msgdepositDao.insert(m);
-            try {
-                File file = new File(dir + formatFileName);
-                f.transferTo(file);
-            } catch (Exception e) {
-                log.error(dir + formatFileName + "檔案上傳失敗", ExceptionUtility.getStackTrace(e));
+
+            if (cnt < 20) {
+                String formatFileName = fseq + "_" + (++seq) + "_" + originFileName;
+                Msgdeposit m = new Msgdeposit();
+                m.setFseq(fseq);
+                m.setSeq(String.valueOf(seq));
+                m.setFiletype(StringUtils.contains(f.getContentType(), "image") ? "2" : "1");
+                m.setAttachfile(originFileName); // 原始檔名
+                m.setAttachtype(fileExtension); // 副檔名
+                m.setRealfilename(formatFileName); // 格式化檔名
+                msgdepositDao.insert(m);
+                try {
+                    File file = new File(dir + formatFileName);
+                    f.transferTo(file);
+                } catch (Exception e) {
+                    log.error(dir + formatFileName + "檔案上傳失敗", ExceptionUtility.getStackTrace(e));
+                }
             }
+            cnt++;
         }
-        // 取得附檔清單
-        List<Msgdeposit> fileList = msgdepositDao.findbyfseq(Arrays.asList(fseq));
-        Map<String, String> image = fileList.stream().filter(f -> "2".equals(f.getFiletype()))
-                .collect(Collectors.toMap(Msgdeposit::getSeq, Msgdeposit::getAttachfile));
-        Map<String, String> file = fileList.stream().filter(f -> "1".equals(f.getFiletype()))
-                .collect(Collectors.toMap(Msgdeposit::getSeq, Msgdeposit::getAttachfile));
-        caseData.setImageFileNameMap(image);
-        caseData.setFileNameMap(file);
     }
 
     /**
@@ -728,5 +812,13 @@ public class Eip01w010Service {
             return detail;
         }
         return null;
+    }
+
+    /**
+     * msgdata更新後呼叫排程檢查是否狀態應為上架或下架
+     */
+    public void callSp_Eip01w010() {
+        SqlParameterSource param = new MapSqlParameterSource();
+        storedProcedureDao.callProcedure("USP_EIP01W010B", param);
     }
 }

@@ -70,7 +70,8 @@ public class Eip00w430Controller extends BaseController {
     public String register(@ModelAttribute(CASE_KEY) @Validated Eip00w430Case caseData, BindingResult result) {
         try {
             log.debug("處理報名");
-            eip00w430Service.validRegister(caseData,result);
+            // 20230804改為用畫面控管
+//            eip00w430Service.validRegister(caseData,result);
             if (result.hasErrors()) {
                 eip00w430Service.getAllList(caseData);
                 return MAIN_PAGE;
@@ -79,7 +80,6 @@ public class Eip00w430Controller extends BaseController {
             eip00w430Service.getAllList(caseData);
         } catch (Exception e) {
             log.error(ExceptionUtility.getStackTrace(e));
-            eip00w430Service.getAllList(caseData);
             setSystemMessage("報名失敗！");
             return MAIN_PAGE;
         }
@@ -96,7 +96,6 @@ public class Eip00w430Controller extends BaseController {
         } catch (Exception e) {
             log.error(ExceptionUtility.getStackTrace(e));
             setSystemMessage("取消報名失敗！");
-            eip00w430Service.getAllList(caseData);
             return MAIN_PAGE;
         }
         setSystemMessage("已取消報名。");

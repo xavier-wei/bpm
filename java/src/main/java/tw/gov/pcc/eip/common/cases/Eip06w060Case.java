@@ -26,9 +26,7 @@ public class Eip06w060Case implements Serializable {
     private String itemName;
     private Integer qty;
 
-//    @RequiredString(label = "日期")
     private String isableDate; //日期
-//    private String repeat;//是否重複 false不重複 true自訂
     private boolean isRepeat; //預約會議室是否重複 1=不重複false 2=自訂true(不重複)
     private String dateWeekMonth; //每日 週 月
     private int week; //第幾週 1-4
@@ -61,7 +59,6 @@ public class Eip06w060Case implements Serializable {
         private String isableDate;
         private String meetingBegin;
         private String meetingEnd;
-//        private String isableTime;
     }
     private List<RoomIsableCase> roomIsableCaseList = new ArrayList<>();
 

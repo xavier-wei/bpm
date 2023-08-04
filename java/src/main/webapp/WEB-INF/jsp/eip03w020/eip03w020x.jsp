@@ -307,7 +307,7 @@
         //返回btnBack
         $('#btnBack').click(function(e) {
             e.preventDefault();
-            $('#eip03w020Form').attr('action', '<c:url value="/Eip03w020_enter.action" />').submit();
+            $('#eip03w020Form').attr('action', '<c:url value="/Eip03w020_backHome.action" />').submit();
         });
 
         //儲存btnSave

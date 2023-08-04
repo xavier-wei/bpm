@@ -17,7 +17,7 @@
                 <tags:form-row>
                     <div class="col-md-3 d-flex">
                         <form:label cssClass="col-form-label star" path="meetingName">會議名稱：</form:label>
-                        <form:input path="meetingName" cssClass="form-control" size="9"/>
+                        <form:input path="meetingName" cssClass="form-control" size="21"/>
                     </div>
                     <div class="col-md-3 d-flex">
                          <form:label cssClass="col-form-label star" path="chairman">主持人：</form:label>

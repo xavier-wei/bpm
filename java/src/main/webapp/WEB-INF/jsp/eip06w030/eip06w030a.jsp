@@ -16,7 +16,7 @@
                 <tags:form-row>
                     <div class="col-md-3 d-flex">
                         <form:label cssClass="col-form-label star" path="meetingName">會議名稱：</form:label>
-                        <form:input path="meetingName" cssClass="form-control" size="9"/>
+                        <form:input path="meetingName" cssClass="form-control" size="21"/>
                     </div>
                     <div class="col-md-3 d-flex">
                          <form:label cssClass="col-form-label star" path="chairman">主持人：</form:label>
@@ -88,6 +88,7 @@
                             <form:option value="4">四</form:option>
                             <form:option value="5">五</form:option>
                             <form:option value="6">六</form:option>
+                            <form:option value="7">日</form:option>
                         </form:select>
                         <form:input id="periodStart"  name="periodStart"  path="periodStart" cssClass="form-control num_only ml-3 dateTW" size="8" maxlength="7" />
                         <span class="pt-2 mx-1">~</span>
@@ -254,11 +255,12 @@
                         contentType : 'application/json',
                         data: JSON.stringify(data),
                         success: function (data){
-                            data = JSON.stringify(data).replace("[","").replace("]","").replaceAll(",","\r\n").trim();
-                            if (data !== "\"no\"") {  //如果data有值是否繼續執行
-                                showConfirm("以下會議將被取消，是否仍要預訂?\r\n" + data, function() {
-                                    let newData = data.split("\r\n");
-                                    $('#meetingsNeedCancel').val(newData);
+
+                            var showData = JSON.stringify(data.show).replace("[","").replace("]","").replaceAll(",","\r\n").trim();
+                            if (showData !== "\"no\"") {  //如果data有值是否繼續執行
+                                showConfirm("以下會議將被取消，是否仍要預訂?\r\n" + showData, function() {
+                                    // let newData = data.split("\r\n");
+                                    $('#meetingsNeedCancel').val(data.hide);
                                     $('#eip06w030Form')
                                         .attr('action', '<c:url value="/Eip06w030_save.action" />')
                                         .submit();

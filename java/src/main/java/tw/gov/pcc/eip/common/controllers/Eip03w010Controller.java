@@ -71,6 +71,7 @@ public class Eip03w010Controller extends BaseController {
     @RequestMapping("/Eip03w010_enter.action")
     public String enter() {
         log.debug("導向重要列管事項_重要列管事項維護作業");
+        getEip03w010Case();
         return QUERY_PAGE;
     }
 
@@ -101,7 +102,6 @@ public class Eip03w010Controller extends BaseController {
     public String backHome(SessionStatus status) {
         log.debug("導回查詢頁");
         status.setComplete();
-        System.out.println(status);
         return "redirect:/Eip03w010_enter.action";
     }
 

@@ -56,15 +56,15 @@
 			<tags:form-row>
 						<label class="col-form-label text-left  star">用車事由:</label>
 					<div class="col-6 col-md form-inline text-left ">
-						<form:input id="apply_memo" name="apply_memo" path="detailsList[0].apply_memo" cssClass="form-control"   size="20"
-								maxlength="20" />
+						<form:input id="apply_memo" name="apply_memo" path="detailsList[0].apply_memo" cssClass="form-control"   size="50"
+								maxlength="50" />
 					</div>
 			</tags:form-row>
 			<tags:form-row>
 					<label class="col-form-label text-left  star">目的地:</label>
 				<div class="col-6 col-md form-inline">
-					<form:input id="destination" name="destination" path="detailsList[0].destination" cssClass="form-control"   size="20"
-								maxlength="20" />
+					<form:input id="destination" name="destination" path="detailsList[0].destination" cssClass="form-control"   size="50"
+								maxlength="50" />
 				</div>
 			</tags:form-row>
 			<tags:form-row>
@@ -163,7 +163,7 @@
 					</div>
 							<label class="col-form-label text-left ">手機號碼:</label>
 						<div class="col-6 col-md form-inline">
-							<form:input id="cellphone" name="cellphone" path="detailsList[0].cellphone" cssClass="form-control"    size="6" maxlength="6"/>
+							<form:input id="cellphone" name="cellphone" path="detailsList[0].cellphone" cssClass="form-control"    size="10" maxlength="10"/>
 						</div>
 				</tags:form-row>
 				<tags:form-row>
@@ -218,14 +218,14 @@
 				<tags:form-row>
 						<label class="col-form-label text-left  star">目的地:</label>
 					<div class="col-6 col-md form-inline" >
-							<form:input id="destination" name="destination" path="changeMkList[0].destination" cssClass="form-control"    size="6" maxlength="6"/>
+							<form:input id="destination" name="destination" path="changeMkList[0].destination" cssClass="form-control"    size="50" maxlength="50"/>
 
 					</div>
 				</tags:form-row>
 				<tags:form-row>
 						<label class="col-form-label text-left  star">用車事由:</label>
 					<div sclass="col-6 col-md form-inline" >
-							<form:input id="rmpply_memo" name="rmapply_memo" path="changeMkList[0].apply_memo" cssClass="form-control"    size="6" maxlength="6"/>
+							<form:input id="rmpply_memo" name="rmapply_memo" path="changeMkList[0].apply_memo" cssClass="form-control"    size="50" maxlength="50"/>
 					</div>
 				</tags:form-row>
 				<tags:form-row>
@@ -238,19 +238,19 @@
 	                        </c:forEach>
 	                    </form:select>
 					</div>
-							<label class="col-form-label text-left ">人數:</label>
+							<label class="col-form-label text-left star ">人數:</label>
 						<div class="col-6 col-md form-inline">
-							<form:input id="num_of_people" name="num_of_people" path="changeMkList[0].num_of_people" cssClass="form-control"    size="6" maxlength="6"/>
+							<form:input id="num_of_people" name="num_of_people" path="changeMkList[0].num_of_people" cssClass="form-control"    size="3" maxlength="3"/>
 						</div>
 				</tags:form-row>
 				<tags:form-row>
 						<label class="col-form-label text-left  star">用車日期:</label>
 						<div class="col-6 col-md form-inline">
-							<form:input id="usingDateMk" name="usingDateMk" path="detailsList[0].using_date" cssClass="form-control"    size="6" maxlength="6" disabled="true"/>
+							<form:input id="usingDateMk" name="usingDateMk" path="detailsList[0].using_date" cssClass="form-control"    size="7" maxlength="7" disabled="true"/>
 					</div>
 				</tags:form-row>
 				<div style="width:35%" class="d-flex">
-					<label class="col-form-label text-left  ">用車時間:</label>
+					<label class="col-form-label text-left star ">用車時間:</label>
 					<form:select id="starH"  name="starH"  path="changeMkList[0].starH" cssClass="form-control">
 					<form:option value=""></form:option>
 					<c:forEach var="hour" items="${caseData.hourList}" varStatus="status">

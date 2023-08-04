@@ -12,6 +12,7 @@ import tw.gov.pcc.eip.domain.CarBooking;
 import tw.gov.pcc.eip.framework.domain.UserBean;
 import tw.gov.pcc.eip.framework.spring.controllers.BaseController;
 import tw.gov.pcc.eip.framework.spring.support.FileOutputView;
+import tw.gov.pcc.eip.orderCar.Validator.Eip07w020Validator;
 import tw.gov.pcc.eip.orderCar.cases.Eip07w020Case;
 import tw.gov.pcc.eip.services.Eip07w020Service;
 import tw.gov.pcc.eip.util.ExceptionUtility;
@@ -44,8 +45,8 @@ public class Eip07w020Controller extends BaseController {
     private Eip07w020Service eip07w020Service;
     @Autowired
     private UserBean userData;
-//    @Autowired
-//    private Eip07w010Validator eip07w010Validator;
+    @Autowired
+    private Eip07w020Validator eip07w020Validator;
 
     @ModelAttribute(CASE_KEY)
     public Eip07w020Case getEip07w020Case() {
@@ -69,7 +70,6 @@ public class Eip07w020Controller extends BaseController {
         caseData.setUseDateEnd("");
         caseData.setApplyDateStar("");
         caseData.setApplyDateEnd("");
-//        caseData.setCheckMk("false");
         return new ModelAndView(QUERY_PAGE);
     }
 
@@ -79,11 +79,20 @@ public class Eip07w020Controller extends BaseController {
      * @return
      */
     @RequestMapping("/Eip07w020_addPage.action")
-    public ModelAndView addPage(@ModelAttribute(CASE_KEY) Eip07w020Case caseData) {
+    public  String  addPage(@ModelAttribute(CASE_KEY) Eip07w020Case caseData, BindingResult result) {
         log.debug("導向 Eip07w020_addPage 派車預約暨派車新增畫面");
-        eip07w020Service.getSelectList(caseData);
-        eip07w020Service.getTimeList(caseData);
-        return new ModelAndView(ADD_PAGE);
+        eip07w020Validator.eip07w020QValidate(caseData,result);
+        if (result.hasErrors()) {
+            return QUERY_PAGE;
+        }
+        try {
+            eip07w020Service.getSelectList(caseData);
+            eip07w020Service.getTimeList(caseData);
+        }catch (Exception e){
+            log.error("新增失敗，原因:{}", ExceptionUtility.getStackTrace(e));
+            return QUERY_PAGE;
+        }
+        return ADD_PAGE;
     }
 
     /**
@@ -94,6 +103,7 @@ public class Eip07w020Controller extends BaseController {
     @RequestMapping("/Eip07w020_inster.action")
     public String inster(@ModelAttribute(CASE_KEY) Eip07w020Case caseData, BindingResult result)  {
         log.debug("導向 Eip07w020_addPage 派車預約暨派車新增");
+        eip07w020Validator.eip07w020AValidate(caseData.getInsterList().get(0),result);
         if (result.hasErrors()) {
             return ADD_PAGE;
         }
@@ -117,6 +127,7 @@ public class Eip07w020Controller extends BaseController {
     @RequestMapping("/Eip07w020_quary.action")
     public String quary(@ModelAttribute(CASE_KEY) Eip07w020Case caseData, BindingResult result)  {
         log.debug("導向 Eip07w020_quary 派車預約暨派車查詢");
+        eip07w020Validator.eip07w020QValidate(caseData,result);
         if (result.hasErrors()) {
             return QUERY_PAGE;
         }
@@ -164,7 +175,7 @@ public class Eip07w020Controller extends BaseController {
     @RequestMapping("/Eip07w020_update.action")
     public String update(@Validated @ModelAttribute(CASE_KEY) Eip07w020Case caseData, BindingResult result) {
         log.debug("導向 Eip07w020_update 派車預約暨派車作業");
-//        eip07w010Validator.driverValidate(caseData.getEip07w010QueryDataList().get(0),result);
+        eip07w020Validator.updateValidate(caseData.getDetailsList().get(0),  result);
         if (result.hasErrors()) {
             return Details_PAGE;
         }
@@ -188,7 +199,7 @@ public class Eip07w020Controller extends BaseController {
     @RequestMapping("/Eip07w020_changeApplication.action")
     public String changeApplication(@Validated @ModelAttribute(CASE_KEY) Eip07w020Case caseData, BindingResult result) {
         log.debug("導向 Eip07w020_changeApplication 異動申請作業");
-//        eip07w010Validator.driverValidate(caseData.getEip07w010QueryDataList().get(0),result);
+        eip07w020Validator.eip07w020DValidate(caseData, result);
         if (result.hasErrors()) {
             return Details_PAGE;
         }

@@ -8,14 +8,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.BindingResult;
 import tw.gov.pcc.eip.common.cases.*;
-import tw.gov.pcc.eip.dao.OsformdataDao;
-import tw.gov.pcc.eip.dao.OsitemDao;
-import tw.gov.pcc.eip.dao.OsquestionDao;
-import tw.gov.pcc.eip.dao.OsresultDao;
-import tw.gov.pcc.eip.domain.Osformdata;
-import tw.gov.pcc.eip.domain.Ositem;
-import tw.gov.pcc.eip.domain.Osquestion;
-import tw.gov.pcc.eip.domain.Osresult;
+import tw.gov.pcc.eip.dao.*;
+import tw.gov.pcc.eip.domain.*;
 import tw.gov.pcc.eip.framework.domain.UserBean;
 
 import java.time.LocalDateTime;
@@ -43,6 +37,9 @@ public class Eip00w530Service extends OpinionSurveyService {
 
     @Autowired
     OsresultDao osresultDao;
+
+    @Autowired
+    EipcodeDao eipcodeDao;
     /**
      * 取得主畫面清單
      * @param caseData
@@ -83,12 +80,16 @@ public class Eip00w530Service extends OpinionSurveyService {
     public void getSingleFormData(Eip00w530Case caseData, Eip00w520ThemeCase themeCase) {
         Osformdata osformdata = osformdataDao.findByPk(caseData.getOsformno());
         themeCase.setTopicname(osformdata.getTopicname());
-        themeCase.setFullosfmdt(osformdata.getOsfmdt().format(simpleMinguoformatter));
-        themeCase.setFullosendt(osformdata.getOsendt().format(simpleMinguoformatter));
+        themeCase.setFullosfmdt(osformdata.getOsfmdt().format(minguoformatter));
+        themeCase.setFullosendt(osformdata.getOsendt().format(minguoformatter));
         caseData.setPromptmsg(osformdata.getPromptmsg());
     }
 
-    public void getPreviewData(Eip00w530Case caseData) {
+    /**
+     * 取得題目資料
+     * @param caseData
+     */
+    public void getTopicData(Eip00w530Case caseData) {
         List<Osquestion>questions = osquestionDao.getAllQuestionByOsformno(caseData.getOsformno());
         for(Osquestion ques : questions) {
             Eip00w520QuestionCase questionCase = new Eip00w520QuestionCase();
@@ -161,9 +162,19 @@ public class Eip00w530Service extends OpinionSurveyService {
         }
     }
 
+    /**
+     * 新增意見調查結果
+     * @param caseData
+     * @throws JsonProcessingException
+     */
     public void insertResult(Eip00w530Case caseData) throws JsonProcessingException {
         Osresult osresult = new Osresult();
         Integer wriseq = osresultDao.getMaximumWriseq(caseData.getOsformno());
+        Eipcode eipcode = eipcodeDao.findByCodeKind("DELETEDUPLICATE").get(0);
+        boolean isDelete = true;
+        if (eipcode != null){
+            isDelete = "Y".equals(eipcode.getCodename());
+        }
         osresult.setOsformno(caseData.getOsformno());
         osresult.setWriseq(wriseq);
         osresult.setWrijogtitle(userData.getTitleId());
@@ -192,7 +203,9 @@ public class Eip00w530Service extends OpinionSurveyService {
         osresult.setWricontent(wricontent);
         osresult.setCreuser(userData.getUserId());
         osresult.setCredt(LocalDateTime.now());
-//        osresultDao.deleteDataByCreuser(caseData.getOsformno(), userData.getUserId());
+        if (isDelete) {
+            osresultDao.deleteDataByCreuser(caseData.getOsformno(), userData.getUserId());
+        }
         osresultDao.insertData(osresult);
     }
 

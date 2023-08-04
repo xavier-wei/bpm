@@ -44,12 +44,14 @@ public class Eip07w040Service {
 	private Car_booking_recDao car_booking_recDao;
 	
 	/**
-	 * 依照申請日期起迄搜尋審核資料
-	 *
+	 * 依照申請日期、用車日期起迄搜尋審核資料
+	 *		將資料分類為 1.待處理派車案件：notHandleList(carprocessstatus=2)
+	 *				  2.秘書處已複核通過案件：HandledList(carProcessstatus=3,4)
 	 * @param caseData
 	 */
 	public void getData(Eip07w040Case caseData) throws Exception {
-		List<CarBooking> list = carBookingDao.selectByStatusIn234(caseData);
+		List<CarBooking> list = carBookingDao.selectForEip07w040(caseData);//取得資料
+
 		List<CarBooking> notHandleList = new ArrayList<>();
 		List<CarBooking> handledList = new ArrayList<>();
 		if (CollectionUtils.isNotEmpty(list)) {
@@ -65,11 +67,9 @@ public class Eip07w040Service {
 					notHandleList.add(car);
 				}
 				
-				
 				if(car.getCarprocess_status().startsWith("3")|| car.getCarprocess_status().startsWith("4")) {
 					handledList.add(car);
 				}
-
 			}
 		}
 		caseData.setNotHandleList(notHandleList);
@@ -77,10 +77,10 @@ public class Eip07w040Service {
 	}
 
 	/**
-	 * 複核資料
+	 * 取得案件明細資料
 	 * 
 	 * @param caseData
-	 * @return
+	 * 
 	 */
 	public void getDetailData(Eip07w040Case caseData) {
 		CarBooking carBookingDetailData = carBookingDao.selectByApplyId(caseData.getApplyid());
@@ -89,13 +89,20 @@ public class Eip07w040Service {
 		eipcode.setCodeno(carBookingDetailData.getCarprocess_status());
 		Eipcode code = eipcodeDao.selectDataByPrimaryKey(eipcode);
 		carBookingDetailData.setApply_car_type(code.getCodename());
-		caseData.setCarBookingDetailData(carBookingDetailData);
-		List<CarBase> carList = carBaseDao.getAllData();
+		caseData.setCarBookingDetailData(carBookingDetailData);//案件明細資料
+		
+		List<CarBase> carList = carBaseDao.getAllData();//取得所有非首長&&carstatus=1的車輛
 		List<CarBase>carnoList = carList.stream().filter(e -> "N".equals(e.getBoss_mk()) && "1".equals(e.getCarstatus())).collect(Collectors.toList());
 		caseData.setCarnoList(carnoList);
 
 	}
 	
+	/**
+	 * 以車輛號碼、用車日期取得今天是否有其他
+	 * 
+	 * @param caseData
+	 * 
+	 */
 	public void getUsingData(Eip07w040Case caseData) {
 		CarBooking cb = new CarBooking();
 		cb.setCarno1(caseData.getCarno().replaceAll("-",""));
@@ -104,51 +111,34 @@ public class Eip07w040Service {
 		List<CarBooking> list = carBookingDao.getDataByCarnoAndUsing_date(cb);
 		if(CollectionUtils.isNotEmpty(list)) {
 			caseData.setCarBookingList(list);
-			caseData.getUsing();
-			for(CarBooking carbooking : list) {
-				if("Y".equals(carBookingDao.checkTime(caseData.getUsing(),carbooking.getUsing()))) {
-					caseData.setTimeMK("Y");
+			for(CarBooking carbooking : list) {//caseData.getUsing()：本案件的用車時間，逐一比對當日是否有人同時要用車
+				if("Y".equals(carBookingDao.checkTime(caseData.getUsing(),carbooking.getUsing()).getUsing())) {
+					caseData.setTimeMK("Y");//顯示該用車時間已有人預約
 					break;
 				}
 			}
 		} else {
-			caseData.setCarBookingList(null);
+			caseData.setCarBookingList(null);//顯示今日尚未有人預約使用
 			caseData.setShowEmptyStr(true);
 		}
 		
 		if(StringUtils.isEmpty(caseData.getTimeMK())) {
-			caseData.setTimeMK("N");
+			caseData.setTimeMK("N");//顯示該用車時間無人預約
 		}
 		
-		
 		List<Eipcode> carStsList = eipcodeDao.findByCodeKind("CARPROSTS"); 
-		caseData.setCarprostsList(carStsList);
-		caseData.setShowButton(true);
+		caseData.setCarprostsList(carStsList);//派車狀態List
+		caseData.setShowButton(true);//選擇完車號，才顯示下方併單&派車的選項
 	}
 
+	/**
+	 * 更新eip07w040資料
+	 * 
+	 * @param caseData
+	 * 
+	 */
 	public void updateAll(Eip07w040Case caseData) {
 		String dateTime = DateUtility.getNowWestDateTime(true);
-//		update car_booking
-//	       Set carno1=[畫面鍵入].車號1
-//	           Carno2=[畫面鍵入].車號2
-//	       Name=sql2.name              --駕駛人姓名
-//	    Cellphone= sql2.Cellphone         --手機號碼 
-//		Cartype= sql2.cartype       --車輛種類: 1:4人座2:7人座
-//	    carcolor =sql2.carcolor            --顏色
-//	    Where applyid=sql1.派車單號;
-		
-//		  Step3:
-//		  @[畫面].併單:Y then
-//		     Update car_booking
-//		        Set combine_mk=Y
-//		            Combine_reason=[畫面鍵入].併單原因
-//		            Combine_apply_id=sql1.applyid
-//			[車輛相關資料]:
-//			 派車單號:
-//			 駕駛人姓名: [name]          手機號碼:[ cellphone]
-//			 車牌車號: [Carno1][ Carno2]    車輛種類: [cartype]          顏色:[carcolor]
-
-//		      Where applyid=[畫面鍵入].併單之派車單號;
 
 		CarBooking carBooking = carBookingDao.selectByApplyId(caseData.getCarBookingDetailData().getApplyid());
 		String [] carno = caseData.getCarno().split("-");
@@ -210,6 +200,12 @@ public class Eip07w040Service {
 		car_booking_recDao.insert(rec);
 	}
 	
+	/**
+	 * 列印報表
+	 * 
+	 * @param caseData
+	 * 
+	 */
 	public ByteArrayOutputStream getEip07w040LReport(Eip07w040Case caseData) throws Exception {
 		String printType = "";
 		if(StringUtils.isEmpty(caseData.getReprintApplyid())){

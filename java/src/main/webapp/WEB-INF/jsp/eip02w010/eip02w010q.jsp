@@ -142,6 +142,8 @@
     <jsp:attribute name="footers">
         <script type="text/javascript">
             $(function() {
+                let config = getDataTablesConfig();
+                var table = $("#qryListTable").DataTable(config);
                 // 控制進階查詢
                 var onOff = Boolean('<c:out value="${caseData.on_off }"/>');
                 onOff ? $('#condition').show() : $('#condition').hide();
@@ -157,7 +159,15 @@
                 });
                 // 複製
                 $('#btnCopy').click(function() {
-                	copyToClipboard('${caseData.copyStr }');
+//                     var ccc = ''; // 只複製當前頁碼內容
+//                     $('tbody tr:not(:hidden)').each(function(){ // tr[style*="display: none"]
+//                         var name = $.trim($(this).find('td:eq(1)').text());
+//                         var email = $.trim($(this).find('td:eq(5)').text());
+//                         ccc += name+'<'+email+'>;';
+//                     });
+//                     console.log(ccc.substring(0, ccc.length - 1));
+                    showMessageByMessageType('複製成功');
+                    copyToClipboard('${caseData.copyStr }');
                 });
                 // 清除
                 $('#btnClear').click(function() {
