@@ -31,8 +31,6 @@ export function formatDateYYYYMMDD(value: Ref<Date> | Date | null, delimiter?: s
 
 export function formatDate(value: Ref<Date> | Date | null, delimiter?: string): string {
 
-    console.log('value', value)
-
     const date: Date | null = unwrap(value);
     if (date) {
         const year =

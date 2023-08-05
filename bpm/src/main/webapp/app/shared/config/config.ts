@@ -48,6 +48,8 @@ import { accountStore } from '@/shared/config/store/account-store';
 
 import { envStore } from '@/shared/config/store/env-store';
 import {userStore} from "@/components/userStore/user-store";
+import {keepAliveStore} from "@/shared/config/store/keep-alive-store";
+import { axiosScrollStore } from '@/shared/config/store/axios-scroll-store';
 
 
 export function initVueApp(vue) {
@@ -106,6 +108,8 @@ export function initVueXStore(vue) {
       accountStore,
       envStore,
       userStore,
+      keepAliveStore,
+      axiosScrollStore
     },
   });
 }

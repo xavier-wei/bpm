@@ -1,4 +1,5 @@
-import axios from 'axios';
+import axios, {AxiosResponse} from 'axios';
+import { useStore } from '@u3u/vue-hooks';
 
 const TIMEOUT = 1000000;
 const onRequestSuccess = config => {
@@ -11,6 +12,7 @@ const onRequestSuccess = config => {
   }
   config.timeout = TIMEOUT;
   config.url = `${SERVER_API_URL}${config.url}`;
+  useStore().value.commit('setLoadingStatus', { status: true, url: config.url });
   return config;
 };
 const setupAxiosInterceptors = (onUnauthenticated, onServerError) => {
@@ -22,12 +24,16 @@ const setupAxiosInterceptors = (onUnauthenticated, onServerError) => {
     if (status >= 500) {
       return onServerError(err);
     }
+    useStore().value.commit('setLoadingStatus', { status: false, url: err.config ? err.config.url : '' });
     return Promise.reject(err);
   };
 
   if (axios.interceptors) {
     axios.interceptors.request.use(onRequestSuccess);
-    axios.interceptors.response.use(res => res, onResponseError);
+    axios.interceptors.response.use((response: AxiosResponse) => {
+      useStore().value.commit('setLoadingStatus', { status: false, url: response.config.url });
+      return response;
+    }, onResponseError);
   }
 };
 

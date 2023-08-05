@@ -28,17 +28,18 @@
               </template>
 
               <template #cell(fileSize)="row">
-                <b-form-input v-model="row.item.fileSize" maxlength="200"></b-form-input>
+                <b-form-input v-model="row.item.fileSize" maxlength="200" disabled></b-form-input>
               </template>
               <template #cell(upDataTime)="row">
                 <div v-model="row.item.upDataTime">{{ formatToString(row.item.updateTime, '/') }}</div>
               </template>
 
               <template #cell(authorName)="row">
-                <b-form-input v-model="row.item.authorName" maxlength="200"></b-form-input>
+                <b-form-input v-model="row.item.authorName" maxlength="200" disabled></b-form-input>
               </template>
               <template #cell(fileDescription)="row">
-                <b-form-input v-model="row.item.fileDescription" maxlength="200"></b-form-input>
+                <b-form-input v-model="row.item.fileDescription" maxlength="200"
+                              :disabled="row.item.file === undefined"></b-form-input>
               </template>
 
               <template #cell(action)="row">
@@ -47,12 +48,20 @@
                           v-if="appendixData.appendix.length > 1">刪除
                 </b-button>
                 <b-button class="submitFormBon" @click="addAnnouncement"
-                          v-if="row.index == appendixData.appendix.length - 1">新增
+                          v-if="row.index == appendixData.appendix.length - 1"
+                          :disabled="row.item.file === undefined">新增
                 </b-button>
 
               </template>
             </b-table>
           </div>
+
+          <b-container class="mt-3">
+            <b-row class="justify-content-center">
+              <b-button class="ml-2" style="background-color: #17a2b8" @click="reset()">清除</b-button>
+            </b-row>
+          </b-container>
+
         </div>
       </div>
     </section>
@@ -67,10 +76,6 @@ import {onMounted, reactive, ref, watch} from "@vue/composition-api";
 import {FileModel} from "@/shared/model/qua/fileModel,";
 import {formatToString} from "@/shared/date/minguo-calendar-utils";
 import {useGetters} from "@u3u/vue-hooks";
-import {useNotification} from '@/shared/notification';
-import axios from "axios";
-import {useBvModal} from "@/shared/modal";
-import {notificationErrorHandler} from '@/shared/http/http-response-helper';
 
 export default {
   name: "appendix",
@@ -86,9 +91,10 @@ export default {
   setup(props) {
 
     let filePathNameProp = reactive(props.vData);
+
     const userData = ref(useGetters(['getUserData']).getUserData).value.user;
-    const fideIndex = ref(0);
-    const notificationService = useNotification();
+    let appendixDataList = ref([]);
+
     onMounted(() => {
       doQuery();
     });
@@ -195,13 +201,37 @@ export default {
     // }
 
     async function upload(e, index, data) {
-      fideIndex.value += 1;
       data.file = e.target.files[0];
       data.fileSize = (e.target.files[0].size / 1024).toFixed(1)
     }
 
-    watch(fideIndex, () => {
-      Object.assign(filePathNameProp, appendixData.appendix)
+
+
+    function reset() {
+      appendixData.appendix = [];
+      appendixDataList.value = []
+      // 給畫面的[新增附件:]預設值
+      let fileModel = new FileModel()
+      fileModel.updateTime = new Date();
+      fileModel.createTime = new Date();
+      fileModel.authorName = userData
+      appendixData.appendix.push(fileModel);
+    }
+
+    watch(appendixData, () => {
+
+      appendixDataList.value = []
+      appendixData.appendix.forEach(i => {
+        if (i.file !== undefined) {
+          if (i.file.length > 0) {
+            appendixDataList.value.push(i)
+          }
+        }
+      })
+    })
+
+    watch(appendixDataList, () => {
+      Object.assign(filePathNameProp, appendixDataList)
     })
 
     return {
@@ -210,6 +240,7 @@ export default {
       addAnnouncement,
       formatToString,
       upload,
+      reset,
     };
   }
 }
@@ -219,7 +250,7 @@ export default {
 
 .card {
   padding: 5px;
-  margin: 0px auto 50px auto;
+  margin: 0 auto 50px auto;
 }
 
 .context {
@@ -234,19 +265,8 @@ export default {
   /* max-width: 768px; */
 }
 
-.card-header {
-  background-color: #f7f7f7;
-  border-bottom: 1px solid #dee2e6;
-}
-
 .card-body {
   padding: 15px;
-}
-
-.btn_login {
-  background-color: transparent;
-  border-style: none;
-  color: blue;
 }
 
 .submitFormBon {
