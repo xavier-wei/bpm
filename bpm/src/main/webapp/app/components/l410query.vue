@@ -217,13 +217,14 @@ export default defineComponent({
 
     function toEdit(i) {
       useStore().value.commit('syuan', { user: 'syuan' });
-      console.log(useStore().value);
+      // console.log(useStore().value);
       //todo:未做方法先放著
     }
 
     const toL410Apply = () => {
       navigateByNameAndParams('l410Apply', { isNotKeepAlive: false });
     };
+
 
     return {
       $v,

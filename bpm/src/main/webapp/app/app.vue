@@ -4,6 +4,7 @@
       <!-- 侧边栏内容 -->
       <Home></Home>
     </div>
+
     <!-- <div class="main">
       <Deal></Deal>
     </div> -->
@@ -11,6 +12,8 @@
     <div class="d-flex">
       <breadcrumb class="print-not-show"></breadcrumb>
     </div>
+
+    <block-ui :is-loading="isLoading"></block-ui>
 
     <div class="main">
       <router-view></router-view>
@@ -32,6 +35,7 @@ import MenuService from '@/core/menu/menu-service';
 import NotificationService from './shared/notification/notification-service';
 import axios from 'axios';
 import Breadcrumb from '@/core/menu/breadcrumb.vue';
+import BlockUi from '@/core/block-ui/block-ui.vue';
 
 const ALERT_HEADER = 'x-pwc-alert';
 const ALERT_MESSAGE = 'x-pwc-params';
@@ -45,6 +49,7 @@ export default {
     'jhi-footer': JhiFooter,
     Home,
     Breadcrumb,
+    BlockUi,
   },
   setup(prop, context) {
     provide<BvModal>('$bvModal', overrideBvModal(context.root.$bvModal));
@@ -72,6 +77,8 @@ export default {
     const padUpperLimit = computed(() => useGetters(['padUpperLimit']).padUpperLimit.value);
     const deskTopLowerLimit = computed(() => useGetters(['deskTopLowerLimit']).deskTopLowerLimit.value);
     // useStore().value.commit('initEnvProperties', process.env.ENV_PROFILE);
+    const routeData = computed(() => useGetters(['routeData']).routeData.value);
+
     const menuService = inject<() => MenuService>('menuService')();
     const notificationService = new NotificationService(context.root);
 
@@ -116,6 +123,10 @@ export default {
       dynamicSizeForDev();
       lockInputTypeNumberWheelEvent();
     });
+
+    return{
+      ...useGetters(['routeData', 'isLoading']),
+    }
   },
 };
 </script>
