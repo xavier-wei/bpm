@@ -52,9 +52,9 @@
                         </button>
                     </div>
                 </nav>
-                <div  class="box" draggable="true">
+                <!-- <div  class="box" draggable="true">
                     <div id="tableauContainer" class="row"></div>
-                </div>
+                </div> -->
 
                 <!-- <div class="box" draggable="true">
                     <div class="row">
