@@ -52,9 +52,9 @@
                         </button>
                     </div>
                 </nav>
-                <!-- <div  class="box" draggable="true">
+                <div  class="box" draggable="true">
                     <div id="tableauContainer" class="row"></div>
-                </div> -->
+                </div>
 
                 <!-- <div class="box" draggable="true">
                     <div class="row">
@@ -438,10 +438,10 @@
 
 
 
-            // $(function() {
-            //     getUserData();
-            //     getTicket()
-            // });
+            $(function() {
+                getUserData();
+                getTicket()
+            });
 
 
             // 假設後端資料
