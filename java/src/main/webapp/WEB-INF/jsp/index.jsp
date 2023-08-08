@@ -435,10 +435,10 @@
 
 
 
-            $(function() {
-                getUserData();
-                getTicket()
-            });
+            // $(function() {
+            //     getUserData();
+            //     getTicket()
+            // });
 
 
             // 假設後端資料
