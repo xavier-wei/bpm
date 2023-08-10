@@ -68,7 +68,7 @@ public class ProcessL414Resource {
         HashMap<String, Object> variables = new HashMap<>();
 
         variables.put("applier", "ApplyTester");
-        variables.put("isSubmit", 0);
+        variables.put("isSubmit", bpmIsmsL414DTO.getIsSubmit());
         variables.put("sectionChief", "ChiefTester");
         variables.put("director", "DirectorTester");
         variables.put("infoGroup", "InfoTester");
