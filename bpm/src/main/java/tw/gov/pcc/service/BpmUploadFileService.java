@@ -67,7 +67,7 @@ public class BpmUploadFileService {
         log.debug("Request to partially update BpmUploadFile : {}", bpmUploadFileDTO);
 
         return bpmUploadFileRepository
-                .findById(bpmUploadFileDTO.getUuid())
+                .findById(bpmUploadFileDTO.getId())
                 .map(existingBpmUploadFile -> {
                     bpmUploadFileMapper.partialUpdate(existingBpmUploadFile, bpmUploadFileDTO);
 
@@ -95,7 +95,7 @@ public class BpmUploadFileService {
      * @return the entity.
      */
     @Transactional(readOnly = true)
-    public Optional<BpmUploadFileDTO> findOne(UUID id) {
+    public Optional<BpmUploadFileDTO> findOne(Long id) {
         log.debug("Request to get BpmUploadFile : {}", id);
         return bpmUploadFileRepository.findById(id).map(bpmUploadFileMapper::toDto);
     }
@@ -105,7 +105,7 @@ public class BpmUploadFileService {
      *
      * @param id the id of the entity.
      */
-    public void delete(UUID id) {
+    public void delete(Long id) {
         log.debug("Request to delete BpmUploadFile : {}", id);
         bpmUploadFileRepository.deleteById(id);
     }
@@ -127,7 +127,6 @@ public class BpmUploadFileService {
 
     public BpmUploadFile saveFile(BpmUploadFile bpmUploadFile, MultipartFile file, String functionPath) throws IOException {
 
-
         Path path = Paths.get(dir + functionPath);
         if (!Files.exists(path)) createDirectoriesWithPermissions(path);
 
@@ -138,9 +137,8 @@ public class BpmUploadFileService {
             }
         }
 
-        if (StringUtils.isBlank(bpmUploadFile.getFileName())) {
-            bpmUploadFile.setFileName(file.getName());
-        }
+        bpmUploadFile.setFileName(file.getOriginalFilename());
+
         String randomUUID = UUID.randomUUID().toString();
         int index = randomUUID.lastIndexOf("-");
         String uuid = randomUUID.substring(0, index) + "." + randomUUID.substring(index + 1, randomUUID.length());
@@ -154,6 +152,8 @@ public class BpmUploadFileService {
         }
         file.transferTo(file1.getAbsoluteFile());
         setPermission(file1);
+
+        log.info("BpmUploadFileService.java - saveFile - 156 :: " + bpmUploadFile );
 
         return  bpmUploadFileRepository.save(bpmUploadFile);
     }

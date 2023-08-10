@@ -399,7 +399,7 @@
               </b-tab>
               <b-tab title="附件" :active="activeTab(1)" @click="changeTabIndex(1)">
 
-                <appendix :vData="appendixData">
+                <appendix :vData="appendixData" :formStatus="formStatusRef">
 
                 </appendix>
 
@@ -419,7 +419,7 @@
 
 
 import IDualDatePicker from '@/shared/i-date-picker/i-dual-date-picker.vue';
-import {reactive, ref, watch} from '@vue/composition-api';
+import {reactive, ref, toRef, watch} from '@vue/composition-api';
 import {useValidation, validateState} from '@/shared/form';
 import IFormGroupCheck from '@/shared/form/i-form-group-check.vue';
 import {required} from '@/shared/validators';
@@ -437,6 +437,12 @@ import { handleBack } from '@/router/router';
 
 export default {
   name: 'l414Apply',
+  props: {
+    formStatus: {
+      required: false,
+      type: String,
+    },
+  },
   components: {
     'i-form-group-check': IFormGroupCheck,
     'i-dual-date-picker': IDualDatePicker,
@@ -444,9 +450,10 @@ export default {
     appendix,
     flowChart,
   },
-  setup() {
+  setup(props) {
     const userData = ref(useGetters(['getUserData']).getUserData).value.user;
     console.log('userData : ', userData)
+    const formStatusRef = toRef(props, 'formStatus');
     const tabIndex = ref(0);
     const dual1 = ref(null);
     const dual2 = ref(null);
@@ -558,6 +565,10 @@ export default {
 
               const formData = new FormData();
 
+              form.isSubmit = isSubmit;
+
+              console.log('form',form)
+
               formData.append('form', new Blob([JSON.stringify(form)], {type: 'application/json'}));
 
 
@@ -571,9 +582,9 @@ export default {
               axios
                   .post(`/process/startL414`, formData, headers)
                   .then(({data}) => {
-                    filePathData.filePathName = 'http://localhost:8081/pic?processId=' + data;
+                    // filePathData.filePathName = 'http://localhost:8081/pic?processId=' + data;
                     $bvModal.msgBoxOk('表單新增完畢');
-                    navigateByNameAndParams('l414Query', { isNotKeepAlive: false });
+                    navigateByNameAndParams('l414Query', { isReload: false, isNotKeepAlive: true });
                   })
                   .catch(notificationErrorHandler(notificationService));
 
@@ -597,7 +608,7 @@ export default {
       }
     };
     function toQueryView() {
-      handleBack({ isReload: true, isNotKeepAlive: true });
+      handleBack({ isReload: false, isNotKeepAlive: true });
     }
 
     return {
@@ -616,6 +627,7 @@ export default {
       appendixData,
       toQueryView,
       reset,
+      formStatusRef,
     }
   }
 }

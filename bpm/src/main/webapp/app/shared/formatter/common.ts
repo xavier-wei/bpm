@@ -74,17 +74,21 @@ declare global {
  */
 
 export function downloadFile(response: AxiosResponse) {
+
   const blob = response.data;
   if (blob.size == 0) return;
 
   const content = String(response.headers['content-disposition']);
+
   const fileName = decodeURI(
     content
       .substring(content.lastIndexOf('filename*=') + 17)
       .replace(/"/g, '')
       .replace(/\+/g, '')
   );
+
   const extName = fileName.substring(fileName.lastIndexOf('.'));
+
   try {
     const file = new File([blob], fileName, { type: `text/${extName};charset=utf-8` });
     FileSaver.saveAs(file, fileName);

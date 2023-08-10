@@ -9,14 +9,19 @@
       <Deal></Deal>
     </div> -->
 
-    <div class="d-flex">
-      <breadcrumb class="print-not-show"></breadcrumb>
-    </div>
-
     <block-ui :is-loading="isLoading"></block-ui>
 
-    <div class="main">
-      <router-view></router-view>
+    <div class="d-flex">
+<!--      <breadcrumb class="print-not-show"></breadcrumb>-->
+<!--      <keep-alive :include="keepAlivePage">-->
+<!--        <router-view v-if="isContentAlive"></router-view>-->
+<!--      </keep-alive>-->
+      <div class="bg pb-3 col-md-10" >
+        <breadcrumb ></breadcrumb>
+        <keep-alive :include="keepAlivePage">
+          <router-view v-if="isContentAlive"></router-view>
+        </keep-alive>
+      </div>
     </div>
   </div>
 </template>
@@ -81,6 +86,7 @@ export default {
 
     const menuService = inject<() => MenuService>('menuService')();
     const notificationService = new NotificationService(context.root);
+    const isContentAlive = ref(true);
 
     const dynamicSizeForDev = () => {
       window.addEventListener('resize', e => {
@@ -125,7 +131,8 @@ export default {
     });
 
     return{
-      ...useGetters(['routeData', 'isLoading']),
+      isContentAlive,
+      ...useGetters(['routeData', 'isLoading','keepAlivePage']),
     }
   },
 };

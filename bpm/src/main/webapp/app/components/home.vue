@@ -5,7 +5,7 @@
         <router-link to="/l410Query">L410-共用系統使用者帳號申請單</router-link>
       </li>
       <li>
-        <router-link to="/l414Query">L414-網路服務連結申請單</router-link>
+        <router-link :to="{ path: '/l414Query', params: { isNotKeepAlive: true } }">L414-網路服務連結申請單</router-link>
       </li>
       <li>
         <router-link to="/pending">待處理表單</router-link>

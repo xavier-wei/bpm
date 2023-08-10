@@ -69,17 +69,17 @@
 
 <script lang="ts">
 import axios from 'axios';
-import {ref, reactive, defineComponent} from '@vue/composition-api';
-import IDatePicker from '../shared/i-date-picker/i-date-picker.vue';
-import ITable from '../shared/i-table/i-table.vue';
-import IFormGroupCheck from '../shared/form/i-form-group-check.vue';
+import {ref, reactive, defineComponent, onMounted, onActivated} from '@vue/composition-api';
+import IDatePicker from '../../shared/i-date-picker/i-date-picker.vue';
+import ITable from '../../shared/i-table/i-table.vue';
+import IFormGroupCheck from '../../shared/form/i-form-group-check.vue';
 import {useValidation, validateState} from '@/shared/form';
 import {navigateByNameAndParams} from '@/router/router';
 import {notificationErrorHandler} from "@/shared/http/http-response-helper";
 import {useNotification} from "@/shared/notification";
 import {newformatDate} from '@/shared/date/minguo-calendar-utils';
 
-export default defineComponent({
+export default {
   name: 'l414Query',
   components: {
     IDatePicker,
@@ -90,6 +90,13 @@ export default defineComponent({
     const iTable = ref(null);
     const queryStatus = ref(false);
     const notificationService = useNotification();
+
+    enum FormStatusEnum {
+      CREATE = '新增',
+      MODIFY = '編輯',
+      READONLY = '檢視',
+      VERIFY ='簽核'
+    }
 
     const formDefault = {
       word: '', //關鍵字
@@ -179,6 +186,10 @@ export default defineComponent({
       ],
     });
 
+    onActivated(() => {
+      toQuery();
+    });
+
     const toQuery = () => {
       table.data = [];
       const params = new URLSearchParams()
@@ -187,7 +198,6 @@ export default defineComponent({
 
       axios.get(`/eip/eip-bpm-isms-l414/findByWord?${params.toString()}`)
           .then(({data}) => {
-            console.log('data', data)
             queryStatus.value = true
             if (iTable.value) iTable.value.state.pagination.currentPage = 1;
             if (data) {
@@ -198,11 +208,18 @@ export default defineComponent({
     };
 
     const toL414Apply = () => {
-      navigateByNameAndParams('l414Apply', {isNotKeepAlive: false});
+      navigateByNameAndParams('l414Apply', {
+        formStatus: FormStatusEnum.CREATE,
+        isNotKeepAlive: true
+      });
     };
 
-    const toDetail = (any) => {
-      navigateByNameAndParams('l414Apply', {isNotKeepAlive: false});
+    const toDetail = (item) => {
+      navigateByNameAndParams('l414Revise', {
+        l414Data: item,
+        formStatus: FormStatusEnum.READONLY,
+        isNotKeepAlive: false
+      });
     };
 
     return {
@@ -220,7 +237,7 @@ export default defineComponent({
       queryStatus,
     };
   },
-});
+};
 </script>
 
 <style scoped>

@@ -64,11 +64,11 @@
 <script lang="ts">
 import axios from 'axios';
 import { ref, reactive, computed, toRefs, defineComponent } from '@vue/composition-api';
-import IDatePicker from '../shared/i-date-picker/i-date-picker.vue';
-import ITable from '../shared/i-table/i-table.vue';
-import IFormGroupCheck from '../shared/form/i-form-group-check.vue';
-import { useValidation, validateState } from '../shared/form';
-import { useBvModal } from '../shared/modal';
+import IDatePicker from '../../shared/i-date-picker/i-date-picker.vue';
+import ITable from '../../shared/i-table/i-table.vue';
+import IFormGroupCheck from '../../shared/form/i-form-group-check.vue';
+import { useValidation, validateState } from '../../shared/form';
+import { useBvModal } from '../../shared/modal';
 import { navigateByNameAndParams } from '@/router/router';
 import { useStore } from '@u3u/vue-hooks';
 import { Pagination } from '@/shared/pagination.model';

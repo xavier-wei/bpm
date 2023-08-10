@@ -86,6 +86,7 @@ router.beforeEach(async (to, from, next) => {
             isNotKeepAlive: Boolean(to.params.isNotKeepAlive),
         };
         store.commit('setRouteData', routeData);
+        accountService.currentFunctionId = '';
         routeGuard(to, from, next);
         to.meta.title = '工程會EIP_表單流程管理';
         document.title = to.meta.title;
@@ -109,6 +110,8 @@ function routeGuard(to, from, next) {
     } else if (from.name) {
         store.commit('addKeepAlivePage', from.name);
     }
+
+    accountService.currentFunctionId = to.meta.functionId;
 
 }
 

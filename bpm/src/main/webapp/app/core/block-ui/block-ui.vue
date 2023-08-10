@@ -18,10 +18,6 @@ export default {
     },
   },
   name: 'blockUI',
-  setup(props){
-    const filePathNameProp = ref(props.isLoading);
-    console.log('filePathNameProp',filePathNameProp.value)
-  }
 };
 </script>
 <style>

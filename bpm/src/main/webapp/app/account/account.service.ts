@@ -94,4 +94,13 @@ export default class AccountService {
     }
     return Promise.resolve(false);
   }
+
+  public set currentFunctionId(functionId: string) {
+    this.store.commit('setCurrentFunctionId', functionId);
+  }
+
+  public get currentFunctionId(): string {
+    return this.store.getters.account.currentFunctionId;
+  }
+
 }
