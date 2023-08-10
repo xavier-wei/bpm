@@ -6,6 +6,7 @@ export interface AccountStateStorable {
   authenticated: boolean;
   ribbonOnProfiles: string;
   activeProfiles: string;
+  currentFunctionId: '';
 }
 
 export const defaultAccountState: AccountStateStorable = {
@@ -14,6 +15,7 @@ export const defaultAccountState: AccountStateStorable = {
   authenticated: false,
   ribbonOnProfiles: '',
   activeProfiles: '',
+  currentFunctionId: '',
 };
 
 export const accountStore: Module<AccountStateStorable, any> = {
@@ -24,6 +26,7 @@ export const accountStore: Module<AccountStateStorable, any> = {
     authenticated: state => state.authenticated,
     activeProfiles: state => state.activeProfiles,
     ribbonOnProfiles: state => state.ribbonOnProfiles,
+    currentFunctionId: state => state.currentFunctionId,
   },
   mutations: {
     authenticate(state) {
@@ -44,6 +47,9 @@ export const accountStore: Module<AccountStateStorable, any> = {
     },
     setRibbonOnProfiles(state, ribbon) {
       state.ribbonOnProfiles = ribbon;
+    },
+    setCurrentFunctionId(state, functionId) {
+      state.currentFunctionId = functionId;
     },
   },
 };

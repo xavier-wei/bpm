@@ -9,6 +9,12 @@ const onRequestSuccess = config => {
       config.headers = {};
     }
     config.headers.Authorization = `Bearer ${token}`;
+
+    const functionId = useStore().value.getters.currentFunctionId;
+    if (functionId) {
+      config.headers['X-FUNCTION-ID'] = functionId;
+    }
+
   }
   config.timeout = TIMEOUT;
   config.url = `${SERVER_API_URL}${config.url}`;
