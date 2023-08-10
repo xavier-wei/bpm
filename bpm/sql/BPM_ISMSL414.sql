@@ -1,7 +1,7 @@
-create table dbo.EIP_BPM_ISMSL414
+create table dbo.BPM_ISMSL414
 (
     FORM_ID                 VARCHAR(50)                                       not null
-        constraint EIP_BPM_ISMSL414_pk
+        constraint BPM_ISMSL414_pk
             primary key,
     PROCESS_INSTANCE_ID     VARCHAR(50)                                       not null,
     APPLY_DATE              DATETIME                                          not null,

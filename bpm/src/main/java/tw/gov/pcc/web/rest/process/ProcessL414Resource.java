@@ -2,7 +2,6 @@ package tw.gov.pcc.web.rest.process;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
-import com.microsoft.sqlserver.jdbc.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,13 +16,15 @@ import tw.gov.pcc.service.dto.*;
 import tw.gov.pcc.service.mapper.BpmIsmsL414Mapper;
 import tw.gov.pcc.service.mapper.BpmUploadFileMapper;
 import tw.gov.pcc.utils.SeqNumber;
-import tw.gov.pcc.web.rest.errors.BadRequestAlertException;
 
 import javax.validation.Valid;
 import java.io.IOException;
 import java.lang.reflect.Type;
 import java.time.Instant;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 @RestController
@@ -60,16 +61,6 @@ public class ProcessL414Resource {
         log.info("ProcessL414Resource.java - start - 60 :: " + dto);
         log.info("ProcessL414Resource.java - start - 61 :: " + appendixFiles);
 
-        if (bpmIsmsL414DTO != null) {
-
-            // todo: 驗證資料
-            String appEmpid = bpmIsmsL414DTO.getAppEmpid();
-
-
-        } else {
-
-            return "";
-        }
 
 
         ProcessReqDTO processReqDTO = new ProcessReqDTO();
@@ -77,7 +68,7 @@ public class ProcessL414Resource {
         HashMap<String, Object> variables = new HashMap<>();
 
         variables.put("applier", "ApplyTester");
-        variables.put("isSubmit", 0);
+        variables.put("isSubmit", bpmIsmsL414DTO.getIsSubmit());
         variables.put("sectionChief", "ChiefTester");
         variables.put("director", "DirectorTester");
         variables.put("infoGroup", "InfoTester");
@@ -89,7 +80,7 @@ public class ProcessL414Resource {
         HttpEntity<String> requestEntity = new HttpEntity<>(json, headers);
 
         ResponseEntity<String> exchange = restTemplate.exchange(START_PROCESS_URL + "/startProcess", HttpMethod.POST, requestEntity, String.class);
-        String processInstanceId = null;
+        String processInstanceId;
         if (exchange.getStatusCodeValue() == 200) {
             processInstanceId = exchange.getBody();
         } else {
