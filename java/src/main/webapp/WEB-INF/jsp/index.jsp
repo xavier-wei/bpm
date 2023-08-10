@@ -508,7 +508,7 @@
             // 動態產生tableau div
             function createTableauElement(imageData) {
                 const tableauDiv = document.createElement("div");
-                tableauDiv.classList.add("col-md-2", "tableau_btn");
+                tableauDiv.classList.add("col-md-4", "tableau_btn");
                 tableauDiv.id = "tableau_btn_" + imageData.dashboardFigId;
 
                 const topDiv = document.createElement("div");
