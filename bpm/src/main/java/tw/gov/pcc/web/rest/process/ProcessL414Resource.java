@@ -9,6 +9,7 @@ import org.springframework.http.*;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.multipart.MultipartFile;
+import tw.gov.pcc.domain.SingerEnum;
 import tw.gov.pcc.repository.BpmIsmsL414Repository;
 import tw.gov.pcc.service.BpmIsmsL414Service;
 import tw.gov.pcc.service.BpmUploadFileService;
@@ -114,7 +115,7 @@ public class ProcessL414Resource {
         return processInstanceId;
     }
 
-    @PostMapping("/queryTask/{id}")
+    @RequestMapping("/queryTask/{id}")
     public List<BpmIsmsL414DTO> queryTask(@PathVariable String id) {
 //        String id="ApplyTester";
         HttpHeaders headers = new HttpHeaders();
@@ -129,7 +130,16 @@ public class ProcessL414Resource {
             assert taskDTOS != null;
             return taskDTOS.isEmpty() ? null :
                 taskDTOS.stream()
-                    .map(taskDTO -> bpmIsmsL414Mapper.toDto(bpmIsmsL414Repository.findFirstByProcessInstanceId(taskDTO.getProcessInstanceId())))
+                    .map(taskDTO -> {
+//                        System.out.println(taskDTO.getTaskId());
+                        BpmIsmsL414DTO dto = bpmIsmsL414Mapper.toDto(bpmIsmsL414Repository.findFirstByProcessInstanceId(taskDTO.getProcessInstanceId()));
+                        if (dto != null) {
+                            dto.setTaskId(taskDTO.getTaskId());
+                            System.out.println(taskDTO.getTaskName());
+                            dto.setTaskName(SingerEnum.getDecisionByName(taskDTO.getTaskName()));
+                        }
+                        return dto;
+                    })
                     .filter(Objects::nonNull)
                     .collect(Collectors.toList());
         }

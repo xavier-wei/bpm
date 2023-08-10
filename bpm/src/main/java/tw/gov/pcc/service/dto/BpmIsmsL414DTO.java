@@ -18,6 +18,11 @@ public class BpmIsmsL414DTO implements Serializable {
 
     @Size(max = 50)
     private String processInstanceId;
+    @Size(max = 50)
+    private String taskId;
+
+    @Size(max = 50)
+    private String taskName;
 
     @NotNull
     private Instant applyDate;
@@ -484,5 +489,22 @@ public class BpmIsmsL414DTO implements Serializable {
             ", createUser='" + getCreateUser() + "'" +
             ", createTime='" + getCreateTime() + "'" +
             "}";
+    }
+
+    public void setTaskId(String taskId) {
+        this.taskId = taskId;
+
+    }
+
+    public String getTaskId() {
+        return taskId;
+    }
+
+    public String getTaskName() {
+        return taskName;
+    }
+
+    public void setTaskName(String taskName) {
+        this.taskName = taskName;
     }
 }

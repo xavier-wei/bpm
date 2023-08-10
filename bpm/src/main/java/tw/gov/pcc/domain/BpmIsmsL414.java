@@ -1,9 +1,10 @@
 package tw.gov.pcc.domain;
 
+import javax.persistence.*;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 import java.io.Serializable;
 import java.time.Instant;
-import javax.persistence.*;
-import javax.validation.constraints.*;
 
 /**
  * A BpmIsmsL414.
@@ -22,6 +23,12 @@ public class BpmIsmsL414 implements Serializable {
     @Size(max = 50)
     @Column(name = "process_instance_id", length = 50, nullable = false)
     private String processInstanceId;
+
+    @Transient
+    private String taskId;
+
+    @Transient
+    private String taskName;
 
     @NotNull
     @Column(name = "apply_date", nullable = false)
