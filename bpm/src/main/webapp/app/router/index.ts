@@ -11,7 +11,7 @@ const Home = () => import('@/components/home.vue');
 const Deal = () => import('@/components/deal.vue');
 const Pending = () => import('@/components/pending.vue');
 const Notify = () => import('@/components/notify.vue');
-const L414Query = () => import('@/components/l414/l414query.vue');
+const L414Query = () => import('@/components/l414/l414Query.vue');
 const L410Query = () => import('@/components/l410/l410query.vue');
 import bpmRouter from "@/router/bpmRouter";
 Vue.use(Router);

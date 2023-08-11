@@ -179,10 +179,12 @@ public class BpmIsmsL414Resource {
     @GetMapping("/eip-bpm-isms-l414/findByWord")
     public List<BpmIsmsL414DTO> findByWord(
             @RequestParam(required = false) String word,
-            @RequestParam(required = false) String number
+            @RequestParam(required = false) String number,
+            @RequestParam(required = false) String appEmpid,
+            @RequestParam(required = false) String processInstanceStatus
     ) {
 
-        return bpmIsmsL414Repository.findByWord(word)
+        return bpmIsmsL414Repository.findByWord(word,appEmpid,processInstanceStatus)
                 .stream()
                 .map(bpmIsmsL414Mapper::toDto)
                 .collect(Collectors.toList());
