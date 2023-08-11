@@ -38,6 +38,7 @@ import {
   BFormRadioGroup,
   BFormRow,
   BRow,
+  BIcon,
 } from 'bootstrap-vue';
 
 export function initBootstrapVue(vue) {
@@ -81,5 +82,6 @@ export function initBootstrapVue(vue) {
   vue.component('b-form-radio-group', BFormRadioGroup);
   vue.component('b-form-row', BFormRow);
   vue.component('b-row', BRow);
+  vue.component('b-icon', BIcon);
 }
 

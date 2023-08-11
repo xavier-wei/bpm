@@ -1,6 +1,6 @@
 create table BPM_UPLOAD_FILE
 (
-    UUID             UNIQUEIDENTIFIER  default newid() not null
+    Id             bigint identity
         constraint BPM_UPLOAD_FILE_pk
             primary key,
     FORM_ID          VARCHAR(50)                                        not null,
@@ -24,7 +24,7 @@ exec sp_addextendedproperty 'MS_Description', N'表單附件檔案上傳清單',
 go
 
 exec sp_addextendedproperty 'MS_Description', N'唯一識別碼', 'SCHEMA', 'dbo', 'TABLE', 'BPM_UPLOAD_FILE', 'COLUMN',
-     'UUID'
+     'Id'
 go
 
 exec sp_addextendedproperty 'MS_Description', N'表單編號', 'SCHEMA', 'dbo', 'TABLE', 'BPM_UPLOAD_FILE', 'COLUMN',

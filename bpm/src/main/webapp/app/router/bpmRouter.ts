@@ -1,9 +1,10 @@
-const l414Apply =() => import('@/components/l414Apply.vue');
-const l410Apply =() => import('@/components/l410Apply.vue');
+const l414Apply =() => import('@/components/l414/l414Apply.vue');
+const l410Apply =() => import('@/components/l410/l410Apply.vue');
 const appendix =() => import('@/components/appendix.vue');
 const flowChart =() => import('@/components/flowChart.vue');
 
 const breadcrumb =() => import('../core/menu/breadcrumb.vue');
+const l414Revise =() => import('@/components/l414/l414Revise.vue');
 
 export default [
   {
@@ -48,6 +49,15 @@ export default [
     component: breadcrumb,
     meta: {
       functionId: 'breadcrumb',
+    },
+    props: true,
+  },
+  {
+    path: '/l414Revise',
+    name: 'l414Revise',
+    component: l414Revise,
+    meta: {
+      functionId: 'l414Revise',
     },
     props: true,
   },

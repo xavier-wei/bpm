@@ -4,16 +4,24 @@
       <!-- 侧边栏内容 -->
       <Home></Home>
     </div>
+
     <!-- <div class="main">
       <Deal></Deal>
     </div> -->
 
-    <div class="d-flex">
-      <breadcrumb class="print-not-show"></breadcrumb>
-    </div>
+    <block-ui :is-loading="isLoading"></block-ui>
 
-    <div class="main">
-      <router-view></router-view>
+    <div class="d-flex">
+<!--      <breadcrumb class="print-not-show"></breadcrumb>-->
+<!--      <keep-alive :include="keepAlivePage">-->
+<!--        <router-view v-if="isContentAlive"></router-view>-->
+<!--      </keep-alive>-->
+      <div class="bg pb-3 col-md-10" >
+        <breadcrumb ></breadcrumb>
+        <keep-alive :include="keepAlivePage">
+          <router-view v-if="isContentAlive"></router-view>
+        </keep-alive>
+      </div>
     </div>
   </div>
 </template>
@@ -32,6 +40,7 @@ import MenuService from '@/core/menu/menu-service';
 import NotificationService from './shared/notification/notification-service';
 import axios from 'axios';
 import Breadcrumb from '@/core/menu/breadcrumb.vue';
+import BlockUi from '@/core/block-ui/block-ui.vue';
 
 const ALERT_HEADER = 'x-pwc-alert';
 const ALERT_MESSAGE = 'x-pwc-params';
@@ -45,6 +54,7 @@ export default {
     'jhi-footer': JhiFooter,
     Home,
     Breadcrumb,
+    BlockUi,
   },
   setup(prop, context) {
     provide<BvModal>('$bvModal', overrideBvModal(context.root.$bvModal));
@@ -72,8 +82,11 @@ export default {
     const padUpperLimit = computed(() => useGetters(['padUpperLimit']).padUpperLimit.value);
     const deskTopLowerLimit = computed(() => useGetters(['deskTopLowerLimit']).deskTopLowerLimit.value);
     // useStore().value.commit('initEnvProperties', process.env.ENV_PROFILE);
+    const routeData = computed(() => useGetters(['routeData']).routeData.value);
+
     const menuService = inject<() => MenuService>('menuService')();
     const notificationService = new NotificationService(context.root);
+    const isContentAlive = ref(true);
 
     const dynamicSizeForDev = () => {
       window.addEventListener('resize', e => {
@@ -116,6 +129,11 @@ export default {
       dynamicSizeForDev();
       lockInputTypeNumberWheelEvent();
     });
+
+    return{
+      isContentAlive,
+      ...useGetters(['routeData', 'isLoading','keepAlivePage']),
+    }
   },
 };
 </script>

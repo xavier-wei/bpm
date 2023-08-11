@@ -51,6 +51,7 @@ export default {
     watch(
       () => form.user,
       () => {
+        console.log('更換:: ',form.user)
         useStore().value.commit('setUserData', { user: form.user });
       },
       { immediate: true }

@@ -1,6 +1,6 @@
 <template>
   <div>
-    <section class="container mt-2">
+    <section class="container mt-2" v-show="formStatusRef === FormStatusEnum.CREATE">
       <div class="card" style="background-color: #d3ede8">
         <div class="card-body">
 
@@ -28,17 +28,18 @@
               </template>
 
               <template #cell(fileSize)="row">
-                <b-form-input v-model="row.item.fileSize" maxlength="200"></b-form-input>
+                <b-form-input v-model="row.item.fileSize" maxlength="200" disabled></b-form-input>
               </template>
               <template #cell(upDataTime)="row">
                 <div v-model="row.item.upDataTime">{{ formatToString(row.item.updateTime, '/') }}</div>
               </template>
 
               <template #cell(authorName)="row">
-                <b-form-input v-model="row.item.authorName" maxlength="200"></b-form-input>
+                <b-form-input v-model="row.item.authorName" maxlength="200" disabled></b-form-input>
               </template>
               <template #cell(fileDescription)="row">
-                <b-form-input v-model="row.item.fileDescription" maxlength="200"></b-form-input>
+                <b-form-input v-model="row.item.fileDescription" maxlength="200"
+                              :disabled="row.item.file === undefined"></b-form-input>
               </template>
 
               <template #cell(action)="row">
@@ -47,15 +48,49 @@
                           v-if="appendixData.appendix.length > 1">刪除
                 </b-button>
                 <b-button class="submitFormBon" @click="addAnnouncement"
-                          v-if="row.index == appendixData.appendix.length - 1">新增
+                          v-if="row.index == appendixData.appendix.length - 1"
+                          :disabled="row.item.file === undefined">新增
                 </b-button>
 
               </template>
             </b-table>
           </div>
+
+          <b-container class="mt-3">
+            <b-row class="justify-content-center">
+              <b-button class="ml-2" style="background-color: #17a2b8" @click="reset()">清除</b-button>
+            </b-row>
+          </b-container>
+
         </div>
       </div>
     </section>
+
+    <section class="container mt-2" v-show="formStatusRef === FormStatusEnum.READONLY">
+      <div class="card" style="background-color: #d3ede8">
+        <div class="card-body">
+
+          <b-table sticky-header :items="table.data" :fields="table.fields" bordered responsive="sm">
+
+            <template #cell(fileName)="row">
+              <button class="btn_login"  @click="downloadBpmFile(row.item)">
+                {{row.item.fileName}}
+              </button>
+            </template>
+
+            <template #cell(action)="row">
+              <b-button class="ml-2" style="background-color: #17a2b8; color: white"
+                        variant="outline-secondary">刪除
+                <!--                        @click="submitDelete(row.item.id)"-->
+              </b-button>
+            </template>
+
+          </b-table>
+
+        </div>
+      </div>
+    </section>
+    <i-pdf-viewer ref="pdfViewer"/>
   </div>
 </template>
 
@@ -63,34 +98,61 @@
 <script lang="ts">
 
 import IButton from '@/shared/buttons/i-button.vue';
-import {onMounted, reactive, ref, watch} from "@vue/composition-api";
+import {onMounted, reactive, ref, toRef, watch} from "@vue/composition-api";
 import {FileModel} from "@/shared/model/qua/fileModel,";
 import {formatToString} from "@/shared/date/minguo-calendar-utils";
 import {useGetters} from "@u3u/vue-hooks";
-import {useNotification} from '@/shared/notification';
-import axios from "axios";
-import {useBvModal} from "@/shared/modal";
-import {notificationErrorHandler} from '@/shared/http/http-response-helper';
+import axios, {AxiosResponse} from 'axios';
+import {notificationErrorHandler} from "@/shared/http/http-response-helper";
+import {useNotification} from "@/shared/notification";
+import {downloadFile} from "@/shared/formatter/common";
+import IPdfViewer from "@/shared/report/i-pdf-viewer.vue";
 
 export default {
   name: "appendix",
   components: {
     IButton,
+    IPdfViewer,
   },
   props: {
     vData: {
       type: Object,
       required: false,
     },
+    fileDataId: {
+      type: Object,
+      required: false,
+    },
+    formStatus: {
+      type: String,
+      required: false,
+    },
   },
   setup(props) {
 
     let filePathNameProp = reactive(props.vData);
+    let fileDataIdProp = reactive(props.fileDataId);
+    const formStatusRef = toRef(props, 'formStatus');
     const userData = ref(useGetters(['getUserData']).getUserData).value.user;
-    const fideIndex = ref(0);
+    let appendixDataList = ref([]);
     const notificationService = useNotification();
+    const pdfViewer = ref(null);
+
+    enum FormStatusEnum {
+      CREATE = '新增',
+      MODIFY = '編輯',
+      READONLY = '檢視',
+      VERIFY = '簽核'
+    }
+
     onMounted(() => {
-      doQuery();
+      if (formStatusRef.value === FormStatusEnum.CREATE) {
+        doQuery();
+      } else if (formStatusRef.value === FormStatusEnum.READONLY) {
+        doReadonly();
+      } else if (formStatusRef.value === FormStatusEnum.VERIFY) {
+        doReadonly();
+      }
     });
 
     const appendixData: { appendix: FileModel[], fields: any } = reactive({
@@ -147,6 +209,49 @@ export default {
       ],
     });
 
+    const table = reactive({
+      fields: [
+        {
+          key: 'action',
+          label: '刪除',
+          sortable: false,
+          thClass: 'text-center',
+          tdClass: 'text-center align-middle ',
+          // formatter: (value: string) => formatToString(value, '/', '-'),
+        },
+        {
+          key: 'fileName',
+          label: '附件名稱',
+          sortable: false,
+          thClass: 'text-center',
+          tdClass: 'text-center align-middle ',
+        },
+        {
+          key: 'fileSize',
+          label: '大小',
+          sortable: false,
+          thClass: 'text-center',
+          tdClass: 'text-center align-middle ',
+        },
+        {
+          key: 'authorName',
+          label: '作者',
+          sortable: false,
+          thClass: 'text-center',
+          tdClass: 'text-center align-middle ',
+        },
+        {
+          key: 'fileDescription',
+          label: '附件說明',
+          sortable: false,
+          thClass: 'text-center',
+          tdClass: 'text-center align-middle ',
+        },
+      ],
+      data: undefined,
+      totalItems: undefined,
+    });
+
     function doQuery() {
       appendixData.appendix = [];
       // 給畫面的[新增附件:]預設值
@@ -155,6 +260,23 @@ export default {
       fileModel.createTime = new Date();
       fileModel.authorName = userData
       appendixData.appendix.push(fileModel);
+    }
+
+    function doReadonly() {
+      table.data = undefined;
+      table.data = [];
+
+      if (fileDataIdProp.fileId !== '') {
+        axios
+            .get(`/eip/bpm-upload-files/formId/${fileDataIdProp.fileId}`)
+            .then(({data}) => {
+              if (data) {
+                console.log('data',data)
+                table.data.splice(0, table.data.length, ...data);
+              }
+            })
+            .catch(notificationErrorHandler(notificationService));
+      }
     }
 
     function removeAnnouncement(index: number) {
@@ -169,40 +291,83 @@ export default {
       appendixData.appendix.push(fileModel);
     }
 
-    // function test() {
-    //
-    //   for (let i = 0; i < appendixData.appendix.length; i++) {
-    //
-    //     let body = {
-    //       formId: 'L414-112070001',
-    //       fileName: appendixData.appendix[i].file[0].name,
-    //       fileSize: appendixData.appendix[i].fileSize,
-    //       authorName: appendixData.appendix[i].authorName,
-    //       fileDescription: appendixData.appendix[i].fileDescription,
-    //     };
-    //
-    //     const params = new FormData();
-    //     params.append('dto', new Blob([JSON.stringify(body)], {type: 'application/json'}));
-    //     params.append('file', appendixData.appendix[i].file[0]);
-    //
-    //     axios
-    //         .post('/eip/bpmUploadFile', params)
-    //         .then(({data}) => {
-    //
-    //         })
-    //         .catch(notificationErrorHandler(notificationService));
-    //   }
-    // }
-
     async function upload(e, index, data) {
-      fideIndex.value += 1;
       data.file = e.target.files[0];
       data.fileSize = (e.target.files[0].size / 1024).toFixed(1)
     }
 
-    watch(fideIndex, () => {
-      Object.assign(filePathNameProp, appendixData.appendix)
-    })
+
+    function reset() {
+      appendixData.appendix = [];
+      appendixDataList.value = []
+      // 給畫面的[新增附件:]預設值
+      let fileModel = new FileModel()
+      fileModel.updateTime = new Date();
+      fileModel.createTime = new Date();
+      fileModel.authorName = userData
+      appendixData.appendix.push(fileModel);
+    }
+
+    function downloadBpmFile(item) {
+      axios
+          .get('/eip/bpm-upload-files/downloadFile/' + item.id, {responseType: 'blob'})
+          .then(res => {
+            console.log('res',res)
+            const content = String(res.headers['content-disposition']);
+            const fileName = decodeURI(
+                content
+                    .substring(content.lastIndexOf('filename*=') + 17)
+                    .replace(/"/g, '')
+                    .replace(/\+/g, '')
+            );
+            const extName = fileName.substring(fileName.lastIndexOf('.'));
+
+            // 檔案是pdf跳出預覽視窗，不是pdf則直接下載
+            if (extName === '.pdf') {
+              let blob = new Blob([res.data], {type: 'application/pdf'});
+              console.log('blob',blob)
+              let url = window.URL.createObjectURL(blob);
+              console.log('url',url)
+              pdfViewer.value.pdfSrc = url;
+              pdfViewer.value.isShowDia(url, true);
+            } else {
+              downloadFile(res);
+            }
+          })
+          .catch(notificationErrorHandler(notificationService));
+    }
+
+    watch(appendixData, () => {
+
+          appendixDataList.value = []
+          appendixData.appendix.forEach(i => {
+            if (i.file !== undefined) {
+              if (i.file.length > 0) {
+                appendixDataList.value.push(i)
+              }
+            }
+          })
+        },
+        {immediate: true}
+    )
+
+    watch(appendixDataList, () => {
+          Object.assign(filePathNameProp, appendixDataList)
+        },
+        {immediate: true}
+    )
+
+    watch(props, newValue => {
+          if (formStatusRef.value === FormStatusEnum.CREATE) {
+            doQuery();
+          } else if (formStatusRef.value === FormStatusEnum.READONLY) {
+            doReadonly();
+          } else if (formStatusRef.value === FormStatusEnum.VERIFY) {
+            doReadonly();
+          }
+        },
+        {immediate: true}
+    );
 
     return {
       appendixData,
@@ -210,6 +375,12 @@ export default {
       addAnnouncement,
       formatToString,
       upload,
+      reset,
+      table,
+      formStatusRef,
+      FormStatusEnum,
+      downloadBpmFile,
+      pdfViewer,
     };
   }
 }
@@ -219,7 +390,7 @@ export default {
 
 .card {
   padding: 5px;
-  margin: 0px auto 50px auto;
+  margin: 0 auto 50px auto;
 }
 
 .context {
@@ -234,25 +405,20 @@ export default {
   /* max-width: 768px; */
 }
 
-.card-header {
-  background-color: #f7f7f7;
-  border-bottom: 1px solid #dee2e6;
-}
-
 .card-body {
   padding: 15px;
-}
-
-.btn_login {
-  background-color: transparent;
-  border-style: none;
-  color: blue;
 }
 
 .submitFormBon {
   color: #fff;
   background-color: #17a2b8;
   border-color: #17a2b8;
+}
+
+.btn_login {
+  background-color: transparent;
+  border-style: none;
+  color: blue;
 }
 
 </style>

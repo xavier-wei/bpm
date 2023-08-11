@@ -150,3 +150,32 @@
   -webkit-animation-delay: 0s;
   animation-delay: 0s;
 }
+
+.scale-up-center {
+  -webkit-animation: scale-up-center 2s ease-in-out infinite alternate-reverse both;
+  animation: scale-up-center 2s ease-in-out infinite alternate-reverse both;
+  width: 200px !important;
+  height: 200px !important;
+  -webkit-transform: translate(-100px, -100px) scale(1) translate(100px, 100px);
+  transform: translate(-100px, -100px) scale(1) translate(100px, 100px);
+}
+@-webkit-keyframes scale-up-center {
+  0% {
+    -webkit-transform: scale(0.5);
+    transform: scale(0.5);
+  }
+  100% {
+    -webkit-transform: scale(1);
+    transform: scale(1);
+  }
+}
+@keyframes scale-up-center {
+  0% {
+    -webkit-transform: scale(0.5);
+    transform: scale(0.5);
+  }
+  100% {
+    -webkit-transform: scale(1);
+    transform: scale(1);
+  }
+}

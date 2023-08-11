@@ -2,7 +2,6 @@ package tw.gov.pcc.domain;
 
 import java.io.Serializable;
 import java.time.Instant;
-import java.util.UUID;
 import javax.persistence.*;
 import javax.validation.constraints.*;
 
@@ -15,11 +14,13 @@ public class BpmUploadFile implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
-    @NotNull
+    /**
+     * type: bigint
+     */
     @Id
-    @GeneratedValue
-    @Column(name = "uuid", nullable = false)
-    private UUID uuid;
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "bpmUploadFileSql")
+    @SequenceGenerator(name = "bpmUploadFileSql", sequenceName = "BPM_UPLOAD_FILE_SQL", allocationSize = 1)
+    private Long id;
 
     @NotNull
     @Size(max = 50)
@@ -68,17 +69,17 @@ public class BpmUploadFile implements Serializable {
 
     // jhipster-needle-entity-add-field - JHipster will add fields here
 
-    public UUID getUuid() {
-        return this.uuid;
-    }
-
-    public BpmUploadFile uuid(UUID uuid) {
-        this.setUuid(uuid);
+    public BpmUploadFile id(Long id) {
+        this.setId(id);
         return this;
     }
 
-    public void setUuid(UUID uuid) {
-        this.uuid = uuid;
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
     }
 
     public String getFormId() {
@@ -221,7 +222,7 @@ public class BpmUploadFile implements Serializable {
         if (!(o instanceof BpmUploadFile)) {
             return false;
         }
-        return uuid != null && uuid.equals(((BpmUploadFile) o).uuid);
+        return id != null && id.equals(((BpmUploadFile) o).id);
     }
 
     @Override
@@ -231,20 +232,21 @@ public class BpmUploadFile implements Serializable {
     }
 
     // prettier-ignore
+
     @Override
     public String toString() {
         return "BpmUploadFile{" +
-            "uuid=" + getUuid() +
-            ", formId='" + getFormId() + "'" +
-            ", fileName='" + getFileName() + "'" +
-            ", fileSize='" + getFileSize() + "'" +
-            ", authorName='" + getAuthorName() + "'" +
-            ", fileDescription='" + getFileDescription() + "'" +
-            ", filePath='" + getFilePath() + "'" +
-            ", updateUser='" + getUpdateUser() + "'" +
-            ", updateTime='" + getUpdateTime() + "'" +
-            ", createUser='" + getCreateUser() + "'" +
-            ", createTime='" + getCreateTime() + "'" +
-            "}";
+                "id=" + id +
+                ", formId='" + formId + '\'' +
+                ", fileName='" + fileName + '\'' +
+                ", fileSize='" + fileSize + '\'' +
+                ", authorName='" + authorName + '\'' +
+                ", fileDescription='" + fileDescription + '\'' +
+                ", filePath='" + filePath + '\'' +
+                ", updateUser='" + updateUser + '\'' +
+                ", updateTime=" + updateTime +
+                ", createUser='" + createUser + '\'' +
+                ", createTime=" + createTime +
+                '}';
     }
 }

@@ -1,7 +1,7 @@
 <template>
     <div>
       <section class="container">
-        <div class="card">
+        <div class="card m-2">
             <img :src=filePathNameProp.filePathName alt="" />
         </div>
       </section>

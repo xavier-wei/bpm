@@ -5,7 +5,6 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.Serializable;
 import java.time.Instant;
 import java.util.Objects;
-import java.util.UUID;
 import javax.validation.constraints.*;
 
 /**
@@ -13,7 +12,7 @@ import javax.validation.constraints.*;
  */
 public class BpmUploadFileDTO implements Serializable {
 
-    private UUID uuid;
+    private Long id;
 
     @Size(max = 50)
     private String formId;
@@ -42,12 +41,13 @@ public class BpmUploadFileDTO implements Serializable {
     private String createUser;
 
     private Instant createTime;
-    public UUID getUuid() {
-        return uuid;
+
+    public Long getId() {
+        return id;
     }
 
-    public void setUuid(UUID uuid) {
-        this.uuid = uuid;
+    public void setId(Long id) {
+        this.id = id;
     }
 
     public String getFormId() {
@@ -140,32 +140,33 @@ public class BpmUploadFileDTO implements Serializable {
         }
 
         BpmUploadFileDTO bpmUploadFileDTO = (BpmUploadFileDTO) o;
-        if (this.uuid == null) {
+        if (this.id == null) {
             return false;
         }
-        return Objects.equals(this.uuid, bpmUploadFileDTO.uuid);
+        return Objects.equals(this.id, bpmUploadFileDTO.id);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(this.uuid);
+        return Objects.hash(this.id);
     }
 
     // prettier-ignore
+
     @Override
     public String toString() {
         return "BpmUploadFileDTO{" +
-            "uuid='" + getUuid() + "'" +
-            ", formId='" + getFormId() + "'" +
-            ", fileName='" + getFileName() + "'" +
-            ", fileSize='" + getFileSize() + "'" +
-            ", authorName='" + getAuthorName() + "'" +
-            ", fileDescription='" + getFileDescription() + "'" +
-            ", filePath='" + getFilePath() + "'" +
-            ", updateUser='" + getUpdateUser() + "'" +
-            ", updateTime='" + getUpdateTime() + "'" +
-            ", createUser='" + getCreateUser() + "'" +
-            ", createTime='" + getCreateTime() + "'" +
-            "}";
+                "id=" + id +
+                ", formId='" + formId + '\'' +
+                ", fileName='" + fileName + '\'' +
+                ", fileSize='" + fileSize + '\'' +
+                ", authorName='" + authorName + '\'' +
+                ", fileDescription='" + fileDescription + '\'' +
+                ", filePath='" + filePath + '\'' +
+                ", updateUser='" + updateUser + '\'' +
+                ", updateTime=" + updateTime +
+                ", createUser='" + createUser + '\'' +
+                ", createTime=" + createTime +
+                '}';
     }
 }

@@ -24,4 +24,7 @@ public class CompleteReqDTO {
 
     private HashMap<String, Object> variables;
 
+    // 科長簽核：  "chiefDecision": "0"(不同意) || "1" (同意) || "2"(補件)
+    // 主管簽核：  "directorDecision": "0"(不同意) || "1" (同意) || "2"(補件)
+    // 簡任技正簽核： "seniorTechSpecialistDecision": "0"(不同意) || "1" (同意))
 }

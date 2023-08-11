@@ -422,7 +422,7 @@
               </b-tab>
               <b-tab title="附件" :active="activeTab(1)" @click="changeTabIndex(1)">
 
-                <appendix>
+                <appendix :vData="appendixData">
 
                 </appendix>
 
@@ -465,7 +465,7 @@ export default {
     flowChart,
   },
   setup() {
-
+    let appendixData = reactive({});
     const $bvModal = useBvModal();
     const formDefault = {
       formId: '',//表單編號
@@ -749,7 +749,7 @@ export default {
         if (isValid) {
           $bvModal.msgBoxConfirm('是否確認送出修改內容？').then((isOK: boolean) => {
             if (isOK) {
-              console.log('form', form)
+              // console.log('form', form)
             }
           });
         } else {
@@ -785,6 +785,7 @@ export default {
       mockdata,
       systemToName,
       fileData,
+      appendixData,
     }
   }
 }
