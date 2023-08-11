@@ -27,7 +27,6 @@ import mobileTel from './mobile-tel';
 import lineTel from './line-tel';
 import passwordGpo from './password-gpo';
 import tel from './tel';
-import checkPostAddress from './check-post-address';
 import address from './address';
 import file from './file';
 import verticalPicture from './vertical-picture';
@@ -44,7 +43,6 @@ import fax from './fax';
 import confNumber from './conf-number';
 
 export * from './vuelidate';
-export * from './eng/index';
 export {
   residentPermitId,
   nationalId,
@@ -73,7 +71,6 @@ export {
   lineTel,
   passwordGpo,
   tel,
-  checkPostAddress,
   address,
   file,
   verticalPicture,
