@@ -186,11 +186,15 @@ public class Eip03w010Service {
         }
         caseData.setTrkFromCombobox(newTkFromCombobox);
         caseData.setAllStDt(DateUtility.changeDateTypeToChineseDate(ktm.getAllStDt()));
-        caseData.setCreUser(ktm.getCreUser());
-        caseData.setCreDept(ktm.getCreDept());
+//        caseData.setCreUser(ktm.getCreUser());
+//        caseData.setCreDept(ktm.getCreDept());
+        caseData.setCreDept(deptsDao.findByPk(ktm.getCreDept()).getDept_name());
+        caseData.setCreUser(usersDao.selectByKey(ktm.getCreUser()).getUser_name());
         caseData.setCreDt(ktm.getCreDt());
-        caseData.setUpdUser(ktm.getUpdUser());
-        caseData.setUpdDept(ktm.getUpdDept());
+//        caseData.setUpdUser(ktm.getUpdUser());
+//        caseData.setUpdDept(ktm.getUpdDept());
+        caseData.setUpdUser(ktm.getUpdUser() != null? usersDao.selectByKey(ktm.getUpdUser()).getUser_name() : "");
+        caseData.setUpdDept(ktm.getUpdDept() != null? deptsDao.findByPk(ktm.getUpdDept()).getDept_name() : "");
         caseData.setUpdDt(ktm.getUpdDt());
 
         //KeepTrkDtl
@@ -333,11 +337,15 @@ public class Eip03w010Service {
         mixCase.setTrkFrom(km.getTrkFrom());
         mixCase.setAllStDt(km.getAllStDt()); //全案列管日期
         mixCase.setClsDt(km.getClsDt()); //結案日期
-        mixCase.setCreDept(km.getCreDept());
-        mixCase.setCreUser(km.getCreUser());
+//        mixCase.setCreDept(km.getCreDept());
+//        mixCase.setCreUser(km.getCreUser());
+        mixCase.setCreDept(deptsDao.findByPk(km.getCreDept()).getDept_name());
+        mixCase.setCreUser(usersDao.selectByKey(km.getCreUser()).getUser_name());
         mixCase.setCreDt(km.getCreDt() == null? "": km.getCreDt().format(fmt).replaceAll("-",""));
-        mixCase.setUpdDept(km.getUpdDept());
-        mixCase.setUpdUser(km.getUpdUser());
+//        mixCase.setUpdDept(km.getUpdDept());
+//        mixCase.setUpdUser(km.getUpdUser());
+        caseData.setUpdUser(km.getUpdUser() != null? usersDao.selectByKey(km.getUpdUser()).getUser_name() : "");
+        caseData.setUpdDept(km.getUpdDept() != null? deptsDao.findByPk(km.getUpdDept()).getDept_name() : "");
         mixCase.setUpdDt(km.getUpdDt() == null? "": km.getUpdDt().format(fmt).replaceAll("-",""));
 
         List<KeepTrkDtl> kdList = keepTrkDtlDao.selectDataByTrkIDAndTrkObj(caseData.getSelectedTrkID(),"");

@@ -336,6 +336,7 @@
         });
 
         // <span id="deptRow" data-deptcodes="04;15;">主任秘書室; 工程管理處; </span>
+        let obj;
         $('.clickDept').css('text-decoration', 'underline').click(function(e){
             e.preventDefault();
             $('#trkObj').val($(this).data('obj'));
@@ -349,7 +350,7 @@
                 $('#'+child+'1').hide();
             })
             // 顯示此次點擊需出現資料
-            var obj = $(this).data('obj');
+            obj = $(this).data('obj');
             $('#'+obj).show();
             $('#'+obj+'1').show();
 
@@ -367,9 +368,15 @@
         //插入代碼 btnInsertRptDept
         $('#btnInsertRptDept').click(function (e){
             var codes = $('#deptRow').attr('data-deptCodes');
+            var data = {
+                'trkObj': obj
+            };
+
             $.ajax({
                 url: 'Eip03w020_findRptDept.action',
-                method: 'GET'
+                type: 'POST',
+                contentType : 'application/json',
+                data: JSON.stringify(data)
             }).done(function (data) {
                 var count = 0;
                 var rowContent = $('<div class="row"/>');

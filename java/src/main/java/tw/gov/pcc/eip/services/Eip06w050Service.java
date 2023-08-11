@@ -33,6 +33,19 @@ public class Eip06w050Service extends OnlineRegService {
     Map<String, String> itemTyp;
 
     /**
+     * 初始值(新增)
+     * @param caseData
+     */
+    public  void initialize(Eip06w050Case caseData) {
+        caseData.setItemTyp("");
+        caseData.setItemId("");
+        caseData.setItemName("");
+        caseData.setQty(null);
+    }
+
+
+
+    /**
      * 查詢全部參數維護清單
      * @param caseData
      */

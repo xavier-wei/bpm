@@ -268,17 +268,35 @@ public class Eip06w060Service extends OnlineRegService {
      */
     public void validate(Eip06w060Case caseData, BindingResult result) {
         ObjectError error;
-        if (isEmpty(caseData.getPeriodStart())) {
-            error = new ObjectError("periodStart","「日期」為必填");
-            result.addError(error);
+        if(caseData.isRepeat()==false) {
+            if (isEmpty(caseData.getPeriodStart())) {
+                error = new ObjectError("periodStart", "「日期」為必填");
+                result.addError(error);
+            }
         }
+
+        if(caseData.isRepeat()==true){
+            if (isEmpty(caseData.getPeriodStart()) && isEmpty(caseData.getPeriodEnd())) {
+                error = new ObjectError("periodStart", "「日期」為必填");
+                result.addError(error);
+            } else if (isEmpty(caseData.getPeriodStart())) {
+                error = new ObjectError("periodStart", "「日期」為必填");
+                result.addError(error);
+            } else if (isEmpty(caseData.getPeriodEnd())) {
+                error = new ObjectError("periodEnd", "「日期」為必填");
+                result.addError(error);
+            } else if (Integer.parseInt(caseData.getPeriodStart()) >= Integer.parseInt(caseData.getPeriodEnd())){
+               error = new ObjectError("meetingEnd","「起日」須早於「訖日」");
+               result.addError(error);
+           }
+       }
 
         if (isEmpty(caseData.getMeetingBegin())) {
             error = new ObjectError("meetingBegin","「啟用時間起」為必填");
             result.addError(error);
         }
         if (isEmpty(caseData.getMeetingEnd())) {
-            error = new ObjectError("meetingEnd","「啟用時間迄」為必填");
+            error = new ObjectError("meetingEnd","「啟用時間訖」為必填");
             result.addError(error);
         }
 

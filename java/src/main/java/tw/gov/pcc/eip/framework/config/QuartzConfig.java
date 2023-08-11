@@ -13,6 +13,9 @@ import org.springframework.scheduling.quartz.JobDetailFactoryBean;
 import org.springframework.scheduling.quartz.SchedulerFactoryBean;
 
 import tw.gov.pcc.eip.jobs.ExecuteProcedureJob;
+import tw.gov.pcc.eip.jobs.ImportUsersJob;
+import tw.gov.pcc.eip.jobs.ResetSequenceJob;
+import tw.gov.pcc.eip.jobs.UpdStatusJob;
 /**
  * QUARTZ 排程設定 排程不會每次重啟就重置排程時間，謹首次運行未註冊時會。
  */
@@ -63,21 +66,21 @@ public class QuartzConfig {
 	 * @return scheduler
 	 */
 	@Bean
-	public SchedulerFactoryBean scheduler( CronTrigger spTrigger) {
+	public SchedulerFactoryBean quartzScheduler( CronTrigger spTrigger,CronTrigger resetSequenceTrigger, CronTrigger executeImportUsersJobTrigger, CronTrigger updStatusTrigger) {
 
 		SchedulerFactoryBean schedulerFactory = new SchedulerFactoryBean();
 		schedulerFactory.setConfigLocation(new ClassPathResource("quartz.properties"));
-		schedulerFactory.setTriggers( spTrigger);
+		schedulerFactory.setTriggers(spTrigger,resetSequenceTrigger,executeImportUsersJobTrigger,updStatusTrigger);
 //		schedulerFactory.setJobDetails(bebp0w010ReportJobDetail);
 		schedulerFactory.setOverwriteExistingJobs(false);
 		return schedulerFactory;
 	}
 	
     /**
-     * 重置Sequence
+     * 重置Sequence CronTriggerFactoryBean
      *
      * @param resetSequenceJobDetail 重置Sequence JOB
-     * @return cronTriggerFactoryBean`
+     * @return cronTriggerFactoryBean
      */
     @Bean
     public CronTriggerFactoryBean resetSequenceTrigger(JobDetail resetSequenceJobDetail) {
@@ -86,4 +89,78 @@ public class QuartzConfig {
         cronTriggerFactoryBean.setCronExpression("0 0 0 ? * *"); // 每日 00:00 時整
         return cronTriggerFactoryBean;
     }
+    
+	/**
+	 * 重置Sequence JobDetailFactoryBean
+	 *
+	 * @return jobDetailFactoryBean
+	 */
+	@Bean
+	public JobDetailFactoryBean resetSequenceJobDetail() {
+		JobDetailFactoryBean jobDetailFactoryBean = new JobDetailFactoryBean();
+		jobDetailFactoryBean.setJobClass(ResetSequenceJob.class);
+		jobDetailFactoryBean.setDescription("重置Sequence");
+		jobDetailFactoryBean.setName("ResetSequenceJob");
+		jobDetailFactoryBean.setGroup(COMMON_GROUP);
+		jobDetailFactoryBean.setDurability(true);
+		return jobDetailFactoryBean;
+	}
+	
+	/**
+	 * 執行ImportUsersJob排程 TRIGGER
+	 * @param executeImportUsersJob 執行ImportUsersJob排程 JOB
+	 * @return executeImportUsersJobTrigger
+	 */
+	@Bean
+	public CronTriggerFactoryBean executeImportUsersJobTrigger(JobDetail executeImportUsersJob) {
+		CronTriggerFactoryBean cronTriggerFactoryBean = new CronTriggerFactoryBean();
+		cronTriggerFactoryBean.setJobDetail(executeImportUsersJob);
+		cronTriggerFactoryBean.setCronExpression("0 30 0 ? * *"); // 每日 00:30 時整
+		return cronTriggerFactoryBean;
+	}
+	
+	/**
+	 * 執行ImportUsersJob排程
+	 * @return executeImportUsersJob
+	 */
+	@Bean
+	public JobDetailFactoryBean executeImportUsersJob() {
+		JobDetailFactoryBean jobDetailFactoryBean = new JobDetailFactoryBean();
+		jobDetailFactoryBean.setJobClass(ImportUsersJob.class);
+		jobDetailFactoryBean.setDescription("執行ImportUsersJob排程");
+		jobDetailFactoryBean.setName("executeImportUsersJob");
+		jobDetailFactoryBean.setGroup(COMMON_GROUP);
+		jobDetailFactoryBean.setDurability(true);
+		return jobDetailFactoryBean;
+	}
+
+	/**
+	 * 修改表單狀態排程
+	 *
+	 * @return updStatusJobDetail
+	 */
+	@Bean
+	public JobDetailFactoryBean updStatusJobDetail() {
+		JobDetailFactoryBean jobDetailFactoryBean = new JobDetailFactoryBean();
+		jobDetailFactoryBean.setJobClass(UpdStatusJob.class);
+		jobDetailFactoryBean.setDescription("修改表單狀態排程");
+		jobDetailFactoryBean.setName("UpdStatusJob");
+		jobDetailFactoryBean.setGroup(COMMON_GROUP);
+		jobDetailFactoryBean.setDurability(true);
+		return jobDetailFactoryBean;
+	}
+
+	/**
+	 * 修改表單狀態排程 TRIGGER
+	 *
+	 * @param updStatusJobDetail 修改表單狀態排程 JOB
+	 * @return updStatusTrigger
+	 */
+	@Bean
+	public CronTriggerFactoryBean updStatusTrigger(JobDetail updStatusJobDetail) {
+		CronTriggerFactoryBean cronTriggerFactoryBean = new CronTriggerFactoryBean();
+		cronTriggerFactoryBean.setJobDetail(updStatusJobDetail);
+		cronTriggerFactoryBean.setCronExpression("0 0/2 * * * ?"); // 每2分鐘執行一次任務
+		return cronTriggerFactoryBean;
+	}
 }

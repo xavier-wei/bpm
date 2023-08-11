@@ -134,11 +134,12 @@ public class Eip06w030Controller extends BaseController {
             if (result.hasErrors()){
                 return INSERT_ADMIN_PAGE;
             }
-            if(caseData.isRepeat()){
-                eip06w030Service.saveMultiMeeting(caseData);
-            }else {
-                eip06w030Service.saveMeeting(caseData);
-            }
+//            if(caseData.isRepeat()){
+            caseData.setRepeat(true);
+            eip06w030Service.saveMultiMeeting(caseData);
+//            }else {
+//                eip06w030Service.saveMeeting(caseData);
+//            }
             setSystemMessage(getSaveSuccessMessage());
         }catch (Exception e){
             log.error("新增失敗  - " + ExceptionUtility.getStackTrace(e));

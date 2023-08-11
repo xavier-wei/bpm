@@ -129,6 +129,12 @@ public class CarBase implements Serializable {
     @LogField
     private String upd_datetime;
 
+    /**
+     *主鍵值2
+     */
+    @LogField
+    private String carno;
+
 
     private String name;//for eip07w040
     private String cellphone;//for eip07w040

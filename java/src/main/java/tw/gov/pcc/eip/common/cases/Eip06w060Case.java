@@ -27,7 +27,7 @@ public class Eip06w060Case implements Serializable {
     private Integer qty;
 
     private String isableDate; //日期
-    private boolean isRepeat; //預約會議室是否重複 1=不重複false 2=自訂true(不重複)
+    private boolean isRepeat; //預約會議室是否重複 1=不重複false 2=自訂true(重複)
     private String dateWeekMonth; //每日 週 月
     private int week; //第幾週 1-4
     private int day;  //星期幾 mon tue wed thu fri sat

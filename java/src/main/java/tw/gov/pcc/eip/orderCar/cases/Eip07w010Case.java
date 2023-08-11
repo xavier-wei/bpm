@@ -3,6 +3,7 @@ package tw.gov.pcc.eip.orderCar.cases;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import tw.gov.pcc.common.annotation.LogField;
+import tw.gov.pcc.eip.domain.CarBase;
 import tw.gov.pcc.eip.domain.CaruseRec;
 import tw.gov.pcc.eip.domain.Eipcode;
 import tw.gov.pcc.eip.domain.GasRec;
@@ -35,6 +36,8 @@ public class Eip07w010Case implements Serializable {
 	private List<Eip07w010Case> oilList;//油料紀錄
 
 	private List<Eip07w010Case> mileageList;//里程紀錄
+
+	private List<CarBase> carnoList;//里程紀錄
 
 	/**
 	 * 處理種類 D:駕駛人資料 C:車籍資料
@@ -130,9 +133,34 @@ public class Eip07w010Case implements Serializable {
 	private String carno1;
 
 	/**
+	 *車牌號碼(新增)
+	 */
+	private String carno1A;
+
+	/**
+	 *車牌號碼(查詢)
+	 */
+	private String carno1Q;
+
+	/**
 	 *車牌號碼(預定保管車號)
 	 */
 	private String carno2;
+
+	/**
+	 *車牌號碼(新增)
+	 */
+	private String carno2A;
+
+	/**
+	 *車牌號碼(查詢)
+	 */
+	private String carno2Q;
+
+	/**
+	 *車牌號碼
+	 */
+	private String carno;
 
 	/**
 	 *代理人

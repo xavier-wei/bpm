@@ -9,10 +9,12 @@ import org.springframework.stereotype.Service;
 
 import tw.gov.pcc.eip.apply.cases.Eip08w040Case;
 import tw.gov.pcc.eip.dao.ApplyitemDao;
+import tw.gov.pcc.eip.dao.DeptsDao;
 import tw.gov.pcc.eip.dao.EipcodeDao;
 import tw.gov.pcc.eip.dao.ItemcodeDao;
 import tw.gov.pcc.eip.dao.ItemcodeuDao;
 import tw.gov.pcc.eip.domain.Applyitem;
+import tw.gov.pcc.eip.domain.Depts;
 import tw.gov.pcc.eip.domain.Eipcode;
 import tw.gov.pcc.eip.domain.Itemcode;
 import tw.gov.pcc.eip.framework.domain.UserBean;
@@ -38,6 +40,9 @@ public class Eip08w040Service {
 	
 	@Autowired
 	EipcodeDao eipcodeDao;
+	
+	@Autowired
+	private DeptsDao deptsDao;
 
 	/**
 	 * 查詢資料
@@ -53,7 +58,8 @@ public class Eip08w040Service {
 				Eip08w040Case data = new Eip08w040Case();
 				data.setApplyno(item.getApplyno());
 				data.setApply_user(item.getApply_user());
-				data.setUnit(item.getUnit());
+				Depts deptName = deptsDao.findByPk(item.getApply_dept());
+				data.setApply_dept(deptName.getDept_name());
 				Eipcode code = new Eipcode();
 				code.setCodekind("APPLYSTATUS");
 				code.setCodeno(item.getProcess_status());
@@ -77,7 +83,9 @@ public class Eip08w040Service {
 		List<Eip08w040Case>dataList = new ArrayList<>();
 		if(CollectionUtils.isNotEmpty(list)) {
 			caseData.setApply_user(list.get(0).getApply_user());
-			caseData.setApply_dept(list.get(0).getApply_dept());
+			
+			Depts deptName = deptsDao.findByPk(list.get(0).getApply_dept());
+			caseData.setApply_dept(deptName.getDept_name());
 			caseData.setApply_date(list.get(0).getApply_date());
 			caseData.setApply_memo(list.get(0).getApply_memo());
 			for(Itemcode itemcode : list) {

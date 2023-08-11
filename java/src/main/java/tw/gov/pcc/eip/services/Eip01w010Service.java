@@ -386,15 +386,29 @@ public class Eip01w010Service {
         String attr = caseData.getAttributype();
         String mcontent = caseData.getMcontent();
         String contactunit = caseData.getContactunit();
-        Msgdata m = msgdataDao.findbyfseq(fseq);
-        if (m != null && !StringUtils.equals(contactunit, trim(m.getContactunit()))) {
+        int cnt = msgdataDao.getEffectiveCount(attr, contactunit);
+        if ("".equals(fseq)) {
             if ("6".equals(attr)) {
-                if (msgdataDao.getEffectiveCount(attr, contactunit) != 0) {
+                if (cnt != 0) {
                     result.rejectValue("attributype", "", "該聯絡單位已存在一筆單位簡介資料，請修改「屬性」");
                 }
             }
             if ("7".equals(attr)) {
-                if (msgdataDao.getEffectiveCount(attr, contactunit) != 0) {
+                if (cnt != 0) {
+                    result.rejectValue("attributype", "", "該聯絡單位已存在一筆業務資訊資料，請修改「屬性」");
+                }
+            }
+        } else {
+            Msgdata m = msgdataDao.findbyfseq(fseq);
+            boolean isOwn = (m != null && StringUtils.equals(contactunit, trim(m.getContactunit())) && cnt == 1) ? true
+                    : false;
+            if ("6".equals(attr)) {
+                if (cnt != 0 && !isOwn) {
+                    result.rejectValue("attributype", "", "該聯絡單位已存在一筆單位簡介資料，請修改「屬性」");
+                }
+            }
+            if ("7".equals(attr)) {
+                if (cnt != 0 && !isOwn) {
                     result.rejectValue("attributype", "", "該聯絡單位已存在一筆業務資訊資料，請修改「屬性」");
                 }
             }
@@ -797,7 +811,7 @@ public class Eip01w010Service {
             }
             detail.setAttributype(attr);
             detail.setSubject(m.getSubject());
-            detail.setMcontent(m.getMcontent());
+            detail.setMcontent(StringUtils.replace(m.getMcontent(), "\r\n", "<br>"));
             Depts dept = deptsDao.findByPk(trim(m.getContactunit()));
             detail.setContactunit(dept == null ? "" : dept.getDept_name());
             detail.setUpddt(m.getUpddt() == null ? "" : m.getUpddt().format(minguoDateformatter));
@@ -807,7 +821,8 @@ public class Eip01w010Service {
             // 附檔
             List<Msgdeposit> files = msgdepositDao.findbyfseq(Arrays.asList(fseq));
             if (!CollectionUtils.isEmpty(files)) {
-                detail.setFile(files.stream().collect(Collectors.toMap(Msgdeposit::getSeq, Msgdeposit::getAttachfile)));
+                detail.setFile(files.stream().collect(Collectors.toMap(Msgdeposit::getSeq, Msgdeposit::getAttachfile,
+                        (n, o) -> n, LinkedHashMap::new)));
             }
             return detail;
         }

@@ -17,33 +17,36 @@
 </jsp:attribute>
 
 <jsp:attribute name="contents">
-    <tags:fieldset>
 		<form:form id="eip07w040Form" name="eip07w040Form" modelAttribute="${caseKey}" method="POST">
+     	 <fieldset>
+      	<legend>查詢條件</legend>
             <tags:form-row>
             <form:label path="carprocess_status" cssClass="col-form-label star">派車狀態：</form:label>
             <form:select path="carprocess_status" cssClass="form-control add">
                	  <form:option value=""></form:option>
                   <form:option value="1">1-未處理</form:option>
                   <form:option value="2">2-已處理</form:option>
-                  <form:option value="A">A-全部申請主管退單</form:option>
             </form:select>
             </tags:form-row>
             <tags:form-row>
             	<form:label cssClass="col-form-label star" path="applydateStart">申請日期：</form:label>
                 <div class="col-12 col-md d-flex align-items-center">
-                    <form:input path="applydateStart" cssClass="add form-control dateTW date num_only" />~
-                    <form:input path="applydateEnd" cssClass="add form-control dateTW date num_only" />
+                    <form:input path="applydateStart" cssClass="add form-control dateTW date num_only" maxlength="7"/>〜
+                    <form:input path="applydateEnd" cssClass="add form-control dateTW date num_only" maxlength="7" />
                 </div>
             </tags:form-row>
             <tags:form-row>
             	<form:label cssClass="col-form-label star" path="using_time_s">用車日期：</form:label>
                 <div class="col-12 col-md d-flex align-items-center">
-                    <form:input path="using_time_s" cssClass="add form-control dateTW date num_only" />~
-                    <form:input path="using_time_e" cssClass="add form-control dateTW date num_only" />
+                    <form:input path="using_time_s" cssClass="add form-control dateTW date num_only" maxlength="7" />〜
+                    <form:input path="using_time_e" cssClass="add form-control dateTW date num_only" maxlength="7" />
                 </div>
             </tags:form-row>
+            </fieldset>
+            
+            <fieldset>
+            <legend>待處理派車案件</legend>
             <tags:form-row>
-            <b>待處理派車案件</b>
             	    <table id="foodTable" class="table table-hover m-2">
                         <thead>
                             <th class="align-middle"  style="width: 10%">序號</th>
@@ -69,11 +72,13 @@
                         	</td>
                         	<td><func:minguo value="${item.using_date}"/></td>
                         	<td>
-	                        	<c:out value="${item.using_time_s}"/>~
+	                        	<c:out value="${item.using_time_s}"/>〜
 	                        	<c:out value="${item.using_time_e}"/>
                         	</td>
                         	<td class="text-left">
-								<c:out value="${item.apply_memo}"/>
+							<span class="ellipsisStr">
+		                 		<c:out value="${item.apply_memo}"/>
+		                 	</span>
                         	</td>
                         	<td>
                         		<c:out value="${item.carprocess_status}"/>
@@ -88,8 +93,12 @@
                         </c:forEach>
                     </table>
             </tags:form-row>
+            </fieldset>
+            
+            <fieldset>
+            <legend>秘書處已複核通過案件</legend>
             <tags:form-row>
-            <b>秘書處已複核通過案件</b>
+            
                        <table id="foodTable" class="table table-hover m-2">
                         <thead>
                             <th class="align-middle"  style="width: 10%">全選<input type="checkbox" id="handledListTabcheckAllP" name="handledListTabcheckAllP"></th>
@@ -111,7 +120,9 @@
                         <c:forEach items="${caseData.handledList}" var="item" varStatus="status">
                         <tbody>
                         	<td>
-                        	<form:checkbox path="applyids" name="applyids" value="${item.applyid}"/>
+                        	<c:if test="${empty item.print_mk}">
+                        		<form:checkbox path="applyids" name="applyids" value="${item.applyid}"/>
+                        	</c:if>
                         	</td>
                         	<td><c:out value="${item.applyid}"/></td>
                         	<td><c:out value="${item.apply_user}"/><br>
@@ -119,11 +130,12 @@
                         	</td>
                         	<td><func:minguo value="${item.using_date}"/></td>
                         	<td>
-	                        	<c:out value="${item.using_time_s}"/>~
-	                        	<c:out value="${item.using_time_e}"/>
+	                        	<c:out value="${item.using_time_s}"/>〜<c:out value="${item.using_time_e}"/>
                         	</td>
                         	<td class="text-left">
-								<c:out value="${item.apply_memo}"/>
+							<span class="ellipsisStr">
+		                 		<c:out value="${item.apply_memo}"/>
+		                 	</span>
                         	</td>
                         	<td>
                         		<c:out value="${item.print_mk}"/>
@@ -139,16 +151,17 @@
                         </c:forEach>
                     </table>
             </tags:form-row>
+                 </fieldset>
 			<form:hidden path="applyid"/>
 			<form:hidden path="reprintApplyid"/>
+
         </form:form>
-    </tags:fieldset>
+     
 </jsp:attribute>
 <jsp:attribute name="footers">
 <script>
         $(function() {
         	
-
             $('.btnDetail').click(function() {
 				$('#applyid').val($(this).val());
             	$('#eip07w040Form').attr('action', '<c:url value="/Eip07w040_query.action" />').submit();
@@ -166,7 +179,7 @@
             });
             
             $('#btnSearch').click(function() {
-            	$('#eip07w040Form').attr('action', '<c:url value="/Eip07w040_enter.action" />').submit();
+            	$('#eip07w040Form').attr('action', '<c:url value="/Eip07w040_search.action" />').submit();
             });
             
             //全選的切換
@@ -180,6 +193,7 @@
             
             $('#btnClear').click(function(){
             	$('.add').val('');
+            	$('#eip07w040Form').attr('action', '<c:url value="/Eip07w040_enter.action" />').submit();
             });
 
          });

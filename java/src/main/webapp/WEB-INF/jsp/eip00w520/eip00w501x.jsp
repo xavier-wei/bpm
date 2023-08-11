@@ -36,8 +36,7 @@
                         <tr>
                             <c:set var="rowspankey" value="${item.sectitleseq}" />
                             <td rowspan="${caseData.titleRowspanMap[rowspankey]}" class="text-left align-middle first-td"><c:out value="${item.sectitle}"/></td>
-                            <c:set var="quesrowspankey" value="${item.topic}" />
-                            <td rowspan="${caseData.quesRowspanMap[quesrowspankey]}" class="text-left align-middle sec-td"><c:out value="${item.topic}"/></td>
+                            <td rowspan="${caseData.quesRowspanMap[item.qseqno]}" class="text-left align-middle sec-td"><c:out value="${item.topic}"/></td>
                             <td class="text-left align-middle"><c:out value="${item.itemname}" /></td>
                             <c:set var="key" value="${item.no}" />
                             <td class="text-right align-middle">${caseData.multipleDataMap[key].count}</td>
@@ -46,7 +45,7 @@
                     </c:when>
                     <c:when test="${currSectitleseq ne prevSectitleseq and item.no eq '999'}">
                         <c:set var="prevSectitleseq" value="${currSectitleseq}" />
-                        <c:set var="prevTopic" value="${currTopic}" />
+                        <c:set var="prevTopic" value="${item.itemname}" />
                         <c:set var="rowspankey" value="${item.sectitleseq}" />
                         <c:set var="qseqnokey" value="${item.qseqno}" />
                         <c:set var="textList" value="${caseData.textUiMap[qseqnokey]}" />
@@ -84,8 +83,7 @@
                     <c:when test="${currSectitleseq eq prevSectitleseq and currTopic ne prevTopic and item.no ne '999'}">
                         <c:set var="prevTopic" value="${currTopic}" />
                         <tr>
-                            <c:set var="quesrowspankey" value="${item.topic}" />
-                            <td rowspan="${caseData.quesRowspanMap[quesrowspankey]}" class="text-left align-middle sec-td"><c:out value="${item.topic}"/></td>
+                            <td rowspan="${caseData.quesRowspanMap[item.qseqno]}" class="text-left align-middle sec-td"><c:out value="${item.topic}"/></td>
                             <td class="text-left align-middle"><c:out value="${item.itemname}" /></td>
                             <c:set var="key" value="${item.no}" />
                             <td class="text-right align-middle">${caseData.multipleDataMap[key].count}</td>
@@ -93,7 +91,7 @@
                         </tr>
                     </c:when>
                     <c:when test="${currSectitleseq eq prevSectitleseq and currTopic ne prevTopic and item.no eq '999'}">
-                        <c:set var="prevTopic" value="${currTopic}" />
+                        <c:set var="prevTopic" value="${item.itemname}" />
                         <c:set var="rowspankey" value="${item.sectitleseq}" />
                         <c:set var="qseqnokey" value="${item.qseqno}" />
                         <c:set var="textList" value="${caseData.textUiMap[qseqnokey]}" />

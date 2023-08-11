@@ -1,21 +1,19 @@
 package tw.gov.pcc.eip.dao.impl;
 
-import org.apache.commons.lang3.StringUtils;
+import java.util.List;
+
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.stereotype.Repository;
 import org.springframework.util.CollectionUtils;
+
 import tw.gov.pcc.common.annotation.DaoTable;
 import tw.gov.pcc.common.framework.dao.BaseDao;
 import tw.gov.pcc.eip.dao.CaruseRecDao;
-import tw.gov.pcc.eip.dao.GasRecDao;
 import tw.gov.pcc.eip.domain.CaruseRec;
-import tw.gov.pcc.eip.domain.GasRec;
 import tw.gov.pcc.eip.orderCar.cases.Eip07w010Case;
-
-import java.util.List;
 
 /**
  * 選單項目資料 DaoImpl
@@ -31,6 +29,25 @@ public class CaruseRecDaoImpl extends BaseDao<CaruseRec> implements CaruseRecDao
         + " t.milage_end, t.milage, t.gas_used, t.cre_user, t.cre_datetime "
         + " t.upd_user, t.upd_datetime ";
     }
+    
+	/**
+	 * 新增一筆資料
+	 *
+	 * @param caruseRec 新增資料
+	 */
+	@Override
+	public int insert(CaruseRec caruseRec) {
+		return getNamedParameterJdbcTemplate().update(" INSERT INTO " + TABLE_NAME + "("
+				+ " carno1, carno2, applyid, use_date, use_time_s, use_time_e, milage_start, "
+				+ " milage_end, milage, gas_used, driver_time_s, driver_time_e, drive_road, "
+				+ " cre_user, cre_datetime, upd_user, upd_datetime )" 
+				+ " VALUES ( "
+				+ " :carno1, :carno2, :applyid, :use_date, :use_time_s, :use_time_e, :milage_start, "
+				+ " :milage_end, :milage, :gas_used, :driver_time_s, :driver_time_e, :drive_road, "
+				+ " :cre_user, :cre_datetime, :upd_user, :upd_datetime )",
+
+				new BeanPropertySqlParameterSource(caruseRec));
+	}
 
     /**
      * 根據key選取資料(底層用)

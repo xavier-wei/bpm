@@ -5,29 +5,77 @@
 <c:set var="caseData" value="${sessionScope[caseKey]}" />
 <tags:layout>
 <jsp:attribute name="buttons">
-    <tags:button id="btnConfirm">
-    	確認<i class="fas fa-user-check"></i>
-    </tags:button>          
+    <tags:button id="btnSearch">
+    	查詢<i class="fas fa-search"></i>
+    </tags:button>
+    <tags:button id="btnSubmit">
+    	審核<i class="fas fa-user-check"></i>
+    </tags:button>
     <tags:button id="btnClear">
     	清除<i class="fas fa-eraser"></i>
     </tags:button>
 </jsp:attribute>
 
 <jsp:attribute name="contents">
-    <tags:fieldset>
 		<form:form id="eip07w050Form" name="eip07w050Form" modelAttribute="${caseKey}" method="POST">
+  		 	<fieldset>
+  		 		<legend>查詢條件</legend>
+	            <tags:form-row>
+	            	<form:label cssClass="col-form-label star" path="applydateStart">申請日期：</form:label>
+	                <div class="col-12 col-md d-flex align-items-center">
+	                    <form:input path="applydateStart" cssClass="add form-control dateTW date num_only" />~
+	                    <form:input path="applydateEnd" cssClass="add form-control dateTW date num_only" />
+	                </div>
+	            </tags:form-row>
+ 			</fieldset>
+    
+			<fieldset>
+			<legend>查詢結果</legend>
+          	  <div class="row">
+          	   <div class="col-md-3 col-xl-4 flex-fill">
+	              <tags:text-item label="複核選項">
+		            <label><input type="radio" name="agree"  value="agree">同意</label>
+	            	<label><input type="radio" name="agree"  value="disagree">不同意</label>
+	              </tags:text-item>
+	          </div>
+          </div>
             <tags:form-row>
-            	<form:label cssClass="col-form-label star" path="applydateStart">申請日期：</form:label>
-                <div class="col-12 col-md d-flex align-items-center">
-                    <form:input path="applydateStart" cssClass="add form-control dateTW date" />~
-                    <form:input path="applydateEnd" cssClass="add form-control dateTW date" />
-                </div>
+            	    <table id="foodTable" class="table table-hover m-2">
+                        <thead>
+                            <th class="align-middle"  style="width: 10%">全選<input type="checkbox" id="dataListTabcheckAllP" name="dataListTabcheckAllP"></th>
+                            <th class="align-middle"  style="width: 10%">派車單號</th>
+                            <th style="width: 10%">申請人<br>申請單位</th>
+                            <th style="width: 20%">用車日期<br>用車時間起迄</th>
+                            <th class="align-middle"  style="width: 40%">用車事由</th>
+                            <th class="align-middle"  style="width: 10%">表單狀態</th>
+                        </thead>
+                        <c:forEach items="${caseData.dataList}" var="item" varStatus="status">
+                        <tbody>
+                        	<td><form:checkbox path="dataList[${status.index}].Check"  value="applyid" cssClass="checkedgreen"/></td>
+                        	<td><c:out value="${item.applyid}"/></td>
+                        	<td><c:out value="${item.apply_user}"/><br>
+                        		<c:out value="${item.apply_dept}"/>
+                        	</td>
+                        	<td>
+	                        	<func:minguo value="${item.using_date}"/><br>
+	                        	<c:out value="${item.using_time_s}"/>~
+	                        	<c:out value="${item.using_time_e}"/>
+                        	</td>
+                        	<td class="text-left">
+								<span class="ellipsisStr">
+			                 		<c:out value="${item.apply_memo}"/>
+			                 	</span>
+                        	</td>
+                        	<td>
+                        		<c:out value="${item.carprocess_status}"/>
+                        	</td>
+                        </tbody>
+                        </c:forEach>
+                    </table>
             </tags:form-row>
-            <tags:form-note>
-                申請日期(起)為必填欄位
-            </tags:form-note>
+            </fieldset>
+
         </form:form>
-    </tags:fieldset>
 </jsp:attribute>
 <jsp:attribute name="footers">
 <script>
@@ -48,7 +96,17 @@
             $('#btnClear').click(function() {
                 $("#applydateStart").val('');
                 $("#applydateEnd").val('');
+                $('#eip07w050Form').attr('action', '<c:url value="/Eip07w050_enter.action" />').submit();
             });
+            
+            $('#btnSearch').click(function() {
+            	$('#eip07w050Form').attr('action', '<c:url value="/Eip07w050_query.action" />').submit();
+            });
+            
+            $('#btnSubmit').click(function() {
+            	$('#eip07w050Form').attr('action', '<c:url value="/Eip07w050_update.action" />').submit();
+            });
+            
             
          });
 </script>

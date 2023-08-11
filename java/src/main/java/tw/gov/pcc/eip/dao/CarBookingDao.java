@@ -49,13 +49,19 @@ public interface CarBookingDao {
      * 用派車狀態=2,3,4的資料
      * @param applydateStart 申請日期起日
      * @param applydateEnd   申請日期迄日
+     * @param dataCondition = 1 ， 第一次進入，查詢carprocess_status in 2,3,4 && using_date between 當月一號 ~ 99991231
+     * @param dataCondition = 2 ， 依照畫面鍵入條件來查詢
      * 
      **/ 
-    List<CarBooking> selectForEip07w040(Eip07w040Case caseData);
+    List<CarBooking> selectForEip07w040(Eip07w040Case caseData,String dataCondition);
     
     public List<CarBooking> getDataByCarnoAndUsing_date(CarBooking carBooking);
     
     public CarBooking checkTime(String using1 , String using2) ;
     
     public CarBooking selectCarDriveDataBycarno(String carno1,String carno2);
+    
+    public List<CarBooking> getEip07w070ReportData(CarBooking carBooking);
+
+    public CarBooking selectByApplyidAndStatusIn3467(String applyid);
 }

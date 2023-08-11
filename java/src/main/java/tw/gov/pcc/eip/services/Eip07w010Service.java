@@ -6,6 +6,7 @@ import org.springframework.stereotype.Service;
 import tw.gov.pcc.common.util.DateUtil;
 import tw.gov.pcc.eip.adm.cases.Eip00w010Case;
 import tw.gov.pcc.eip.dao.*;
+import tw.gov.pcc.eip.domain.CarBase;
 import tw.gov.pcc.eip.domain.Eipcode;
 import tw.gov.pcc.eip.domain.User_roles;
 import tw.gov.pcc.eip.framework.domain.UserBean;
@@ -68,6 +69,9 @@ public class Eip07w010Service {
         else {
         maxDriverid= 1;
         }
+        //將carNo拆分成carNo1 carNo2
+        caseData.setCarno1(StringUtils.substringBefore(caseData.getCarno(),"-"));
+        caseData.setCarno2(StringUtils.substringAfter(caseData.getCarno(),"-"));
 
        caseData.setDriverid("D"+String.format("%4s", maxDriverid).replace(' ', '0'));
        caseData.setUpdUser(userData.getUserId());
@@ -88,6 +92,7 @@ public class Eip07w010Service {
             date.setStartworkDate(DateUtility.changeDateType(date.getStartworkDate()));
             date.setEndworkDate(DateUtility.changeDateType(date.getEndworkDate()));
             date.setLicenceExpireDate(DateUtility.changeDateType(date.getLicenceExpireDate()));
+            date.setCarno(date.getCarno1()+"-"+date.getCarno2());
         }
 
         return driveIsExist;
@@ -99,11 +104,15 @@ public class Eip07w010Service {
      * @param caseData
      */
     public void getSelectList(Eip07w010Case caseData) {
-        List<Eipcode> getTitle = eipcodeDao.findByCodeKind("TITLE");
+        List<Eipcode> getTitle = eipcodeDao.findByCodeKind("DRIVETITLE");
         List<Eip07w010Case> tempStaff = driverBaseDao.getTempStaff();
+        List<CarBase> carNoList = carBaseDao.getCarno();
         caseData.setTitleList(getTitle);
         caseData.setTempStaffList(tempStaff);
+        caseData.setCarnoList(carNoList);
     }
+
+
 
     /**
      * 刪除資料依driverid
@@ -120,6 +129,9 @@ public class Eip07w010Service {
      * @param caseData
      */
     public void updateDriverBase(Eip07w010Case caseData)throws Exception {
+        //將carNo拆分成carNo1 carNo2
+        caseData.setCarno1(StringUtils.substringBefore(caseData.getCarno(),"-"));
+        caseData.setCarno2(StringUtils.substringAfter(caseData.getCarno(),"-"));
         caseData.setUpdUser(userData.getUserId());
         caseData.setUpdDatetime(sysDate);
         caseData.setBrdte(DateUtility.changeDateType(caseData.getBrdte()));
@@ -152,6 +164,7 @@ public class Eip07w010Service {
      * @param caseData
      */
     public  List<Eip07w010Case> quaryCarBase(Eip07w010Case caseData) throws Exception{
+
         List<Eip07w010Case> carData= carBaseDao.quaryCarBase(caseData);
 
         for (Eip07w010Case car:carData) {
@@ -202,8 +215,8 @@ public class Eip07w010Service {
     public void getCarDetails(Eip07w010Case caseData)throws Exception {
         List<Eip07w010Case> oilList= new ArrayList<>();
         List<Eip07w010Case> mileageList= new ArrayList<>();
-        oilList=caruseRecDao.quaryCaruseRec(caseData);
-        mileageList=gasRecDaol.quaryGasRec(caseData);
+        mileageList=caruseRecDao.quaryCaruseRec(caseData.getEip07w010QueryDataList().get(0));
+        oilList=gasRecDaol.quaryGasRec(caseData.getEip07w010QueryDataList().get(0));
         caseData.setOilList(oilList);
         caseData.setMileageList(mileageList);
     }

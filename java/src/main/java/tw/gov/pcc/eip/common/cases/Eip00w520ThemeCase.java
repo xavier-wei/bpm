@@ -36,7 +36,7 @@ public class Eip00w520ThemeCase implements Serializable {
 //    @RequiredString(label = "結束時間")
     private String fullosfmdt;
     private String osfmdtChksys;
-    @ChineseDate(label = "開始時間")
+    @ChineseDate(label = "結束時間")
     private String osendt;
 //    @RequiredString(label = "結束時間(時)")
     private String osendtHour;
@@ -74,18 +74,18 @@ public class Eip00w520ThemeCase implements Serializable {
         return true;
     }
 
-    @AssertTrue(message = "「開始時間」需小於「結束時間」")
-    private boolean isOsfmdtLessthanOsendt() {
-        // 如果其中一個欄位為NULL無法比較，讓其他驗證處理
-        if (StringUtils.isBlank(this.osfmdt) || StringUtils.isBlank(this.osendt)) {
-            return true;
-        }
-        LocalDateTime fmdt = DateUtil.toLocalDateTime(DateUtility.changeDateTypeToWestDate(this.osfmdt) + this.osfmdtHour + this.osfmdtMinute);
-        LocalDateTime endt = DateUtil.toLocalDateTime(DateUtility.changeDateTypeToWestDate(this.osendt) + this.osendtHour + this.osendtMinute);
-        if (endt.isBefore(fmdt) || endt.isEqual(fmdt)) {
-            return false;
-        }
-        return true;
-    }
+//    @AssertTrue(message = "「開始時間」需小於「結束時間」")
+//    private boolean isOsfmdtLessthanOsendt() {
+//        // 如果其中一個欄位為NULL無法比較，讓其他驗證處理
+//        if (StringUtils.isBlank(this.osfmdt) || StringUtils.isBlank(this.osendt)) {
+//            return true;
+//        }
+//        LocalDateTime fmdt = DateUtil.toLocalDateTime(DateUtility.changeDateTypeToWestDate(this.osfmdt) + this.osfmdtHour + this.osfmdtMinute);
+//        LocalDateTime endt = DateUtil.toLocalDateTime(DateUtility.changeDateTypeToWestDate(this.osendt) + this.osendtHour + this.osendtMinute);
+//        if (endt.isBefore(fmdt) || endt.isEqual(fmdt)) {
+//            return false;
+//        }
+//        return true;
+//    }
 
 }

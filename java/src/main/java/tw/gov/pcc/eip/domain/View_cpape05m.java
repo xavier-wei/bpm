@@ -1,11 +1,10 @@
 package tw.gov.pcc.eip.domain;
 
 import lombok.Data;
-import lombok.NoArgsConstructor;
 import tw.gov.pcc.common.annotation.LogField;
 import tw.gov.pcc.common.annotation.PkeyField;
 import tw.gov.pcc.common.annotation.Table;
-import tw.gov.pcc.eip.dao.Users_cpape05mDao;
+import tw.gov.pcc.eip.dao.View_cpape05mDao;
 import java.io.Serializable;
 import java.math.BigDecimal;
 
@@ -14,17 +13,15 @@ import java.math.BigDecimal;
 *
 * @author swho
 */
-@Table(Users_cpape05mDao.TABLE_NAME)
-@NoArgsConstructor
+@Table(View_cpape05mDao.TABLE_NAME)
 @Data
-public class Users_cpape05m implements Serializable {
+public class View_cpape05m implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
     /**
      * 員工編號
      */
-    @PkeyField
     @LogField
     private String pecard;
     
@@ -62,6 +59,7 @@ public class Users_cpape05m implements Serializable {
      * 登入帳號
      */
     @LogField
+    @PkeyField
     private String login_id;
         
     /**

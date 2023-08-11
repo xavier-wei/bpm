@@ -105,5 +105,4 @@ public class Car_booking_recDaoImpl extends BaseDao<Car_booking_rec> implements 
                 new BeanPropertySqlParameterSource(car_booking_rec));
     }
 
-
 }

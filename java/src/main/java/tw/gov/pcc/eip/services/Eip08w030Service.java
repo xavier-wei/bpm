@@ -9,9 +9,11 @@ import org.springframework.stereotype.Service;
 
 import tw.gov.pcc.eip.apply.cases.Eip08w030Case;
 import tw.gov.pcc.eip.dao.ApplyitemDao;
+import tw.gov.pcc.eip.dao.DeptsDao;
 import tw.gov.pcc.eip.dao.ItemcodeDao;
 import tw.gov.pcc.eip.dao.ItemcodeuDao;
 import tw.gov.pcc.eip.domain.Applyitem;
+import tw.gov.pcc.eip.domain.Depts;
 import tw.gov.pcc.eip.domain.Itemcode;
 import tw.gov.pcc.eip.framework.domain.UserBean;
 import tw.gov.pcc.eip.util.DateUtility;
@@ -39,6 +41,9 @@ public class Eip08w030Service {
 
 	@Autowired
 	ItemcodeService itemcodeService;
+	
+	@Autowired
+	private DeptsDao deptsDao;
 
 	private static final String PROCESS_STATUS_AGREE = "2";
 	private static final String PROCESS_STATUS_DISAGREE = "9";
@@ -60,7 +65,8 @@ public class Eip08w030Service {
 				Eip08w030Case data = new Eip08w030Case();
 				data.setApplyno(item.getApplyno());
 				data.setApply_user(item.getApply_user());
-				data.setApply_dept(item.getApply_dept());
+				Depts deptName = deptsDao.findByPk(item.getApply_dept());
+				data.setApply_dept(deptName.getDept_name());
 				dataList.add(data);
 			}
 		}

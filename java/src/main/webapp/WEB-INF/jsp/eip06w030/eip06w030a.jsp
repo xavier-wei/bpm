@@ -62,12 +62,12 @@
                 <tags:form-row>
                     <div class="col-md d-flex">
                         <form:label cssClass="col-form-label star" path="meetingdt">會議日期：</form:label>
-                        <form:select path="repeat" cssClass="form-control selector mr-5">
-                            <form:option value="false">不重複</form:option>
-                            <form:option value="true">自訂</form:option>
-                        </form:select>
+<%--                        <form:select path="repeat" cssClass="form-control selector mr-5">--%>
+<%--                            <form:option value="false">不重複</form:option>--%>
+<%--                            <form:option value="true">自訂</form:option>--%>
+<%--                        </form:select>--%>
                         <span class="pt-2">每</span>
-                        <form:select path="dateWeekMonth" cssClass="form-control selector mx-1" disabled="true">
+                        <form:select path="dateWeekMonth" cssClass="form-control selector mx-1">
                             <form:option value="date">日</form:option>
                             <form:option value="week">週</form:option>
                             <form:option value="month">月</form:option>
@@ -78,6 +78,7 @@
                             <form:option value="2">二</form:option>
                             <form:option value="3">三</form:option>
                             <form:option value="4">四</form:option>
+                            <form:option value="5">五</form:option>
                         </form:select>
                         <span class="pt-2">個</span>
                         <span class="pt-2 ml-3">星期</span>
@@ -152,16 +153,16 @@
         //初始化會議畫面
 
         $('#repeat, #dateWeekMonth').change(function () {
-            let repeat = $('#repeat').val();
+            let repeat = $('#repeat').val('true');
             let dateWeekMonth = $('#dateWeekMonth').val();
 
-            if(repeat === 'false'){
-                $('#dateWeekMonth').prop('disabled', true);
-                $('#week').prop('disabled', true);
-                $('#day').prop('disabled', true);
-                $('#periodEnd').prop('disabled', true);
-            }else {
-                $('#dateWeekMonth').prop('disabled', false);
+            // if(repeat === 'false'){
+            //     $('#dateWeekMonth').prop('disabled', true);
+            //     $('#week').prop('disabled', true);
+            //     $('#day').prop('disabled', true);
+            //     $('#periodEnd').prop('disabled', true);
+            // }else {
+            //     $('#dateWeekMonth').prop('disabled', false);
                 if(dateWeekMonth === 'date'){
                     $('#week').prop('disabled', true);
                     $('#day').prop('disabled', true);
@@ -175,7 +176,7 @@
                     $('#day').prop('disabled', false);
                     $('#periodEnd').prop('disabled', false);
                 }
-            }
+            // }
         })
 
         //btnsave
@@ -240,7 +241,7 @@
                     $('#food_Qty').val(JSON.stringify(food_Qtys));
 
                     var data = {};
-                    data["repeat"] = $('#repeat').val();
+                    data["repeat"] = $('#repeat').val('true');
                     data["meetingBegin"] = $('#meetingBegin').val();
                     data["meetingEnd"] = $('#meetingEnd').val();
                     data["periodStart"] = $('#periodStart').val();
@@ -292,7 +293,7 @@
             $('#meetingEnd').val("");
             $('#roomId').val("");
             $('#meetingQty').val("0").prop('disabled', true);
-            $('#repeat').val("false");
+            // $('#repeat').val("false");
             $('#dateWeekMonth').val("date").prop('disabled', true);
             $('#week').val("first").prop('disabled', true);
             $('#day').val("mon").prop('disabled', true);

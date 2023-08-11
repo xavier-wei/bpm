@@ -79,6 +79,24 @@ public class CaruseRec implements Serializable {
      */
     @LogField
     private String gas_used ;
+    
+    /**
+     *開車時間
+     */
+    @LogField
+    private String driver_time_s ;
+    
+    /**
+     *到達時間
+     */
+    @LogField
+    private String driver_time_e ;
+    
+    /**
+     *行駛路線
+     */
+    @LogField
+    private String drive_road ;
 
     /**
      *

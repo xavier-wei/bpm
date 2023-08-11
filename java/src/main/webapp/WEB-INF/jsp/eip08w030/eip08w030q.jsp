@@ -46,8 +46,7 @@
             });
             
             $('#btnClear').click(function() {
-                $("#applydateStart").val('');
-                $("#applydateEnd").val('');
+            	$('#eip08w030Form').attr('action', '<c:url value="/Eip08w030_enter.action" />').submit();
             });
             
          });

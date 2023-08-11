@@ -14,18 +14,30 @@
 </jsp:attribute>
 
 <jsp:attribute name="contents">
-    <tags:fieldset>
+    <tags:fieldset legend="查詢結果">
 		<form:form id="eip07w030Form" name="eip07w030Form" modelAttribute="${caseKey}" method="POST">
-            <tags:form-row>
-            	<div class="col-4 col-md-4">申請日期(起)：<c:out value="${caseData.applydateStart}"/></div>
-            	<div class="col-4 col-md-4">申請日期(迄)：<c:out value="${caseData.applydateEnd}"/></div>
-            </tags:form-row>
-            <tags:form-row>
-            	<div class="col-4 col-md-4">複核選項：
-            	<label><input type="radio" name="agree"  value="agree">同意</label>
+           
+          <div class="row">
+	          <div class="col-md-3 col-xl-4 flex-fill">
+	              <tags:text-item label="申請日期(起)">
+	                  <c:out value="${caseData.applydateStart}"/>
+	              </tags:text-item>
+	          </div>
+	          <div class="col-md-3 col-xl-4 flex-fill">
+	              <tags:text-item label="申請日期(迄)">
+	                  <c:out value="${caseData.applydateEnd}"/>
+	              </tags:text-item>
+	          </div>
+          </div> 
+          <div class="row mt-2">
+          	   <div class="col-md-3 col-xl-4 flex-fill">
+	              <tags:text-item label="審核選項">
+	            <label><input type="radio" name="agree"  value="agree">同意</label>
             	<label><input type="radio" name="agree"  value="disagree">不同意</label>
-            	</div>
-            </tags:form-row>
+	              </tags:text-item>
+	          </div>
+          </div>
+            
             <tags:form-row>
             	    <table id="foodTable" class="table table-hover m-2">
                         <thead>
@@ -45,11 +57,12 @@
                         	</td>
                         	<td>
 	                        	<func:minguo value="${item.using_date}"/><br>
-	                        	<c:out value="${item.using_time_s}"/>~
-	                        	<c:out value="${item.using_time_e}"/>
+	                        	<c:out value="${item.using_time_s}"/>~<c:out value="${item.using_time_e}"/>
                         	</td>
                         	<td class="text-left">
-								<c:out value="${item.apply_memo}"/>
+								<span class="ellipsisStr">
+			                 		<c:out value="${item.apply_memo}"/>
+			                 	</span>
                         	</td>
                         	<td>
                         		<c:out value="${item.carprocess_status}"/>

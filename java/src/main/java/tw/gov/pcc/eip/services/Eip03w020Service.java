@@ -149,11 +149,11 @@ public class Eip03w020Service {
         mixCase.setTrkFrom(km.getTrkFrom());
         mixCase.setAllStDt(km.getAllStDt()); //全案列管日期
         mixCase.setClsDt(km.getClsDt()); //結案日期
-        mixCase.setCreDept(km.getCreDept());
-        mixCase.setCreUser(km.getCreUser());
+        mixCase.setCreDept(deptsDao.findByPk(km.getCreDept()).getDept_name());
+        mixCase.setCreUser(usersDao.selectByKey(km.getCreUser()).getUser_name());
         mixCase.setCreDt(km.getCreDt() == null? "": km.getCreDt().format(fmt).replaceAll("-",""));
-        mixCase.setUpdDept(km.getUpdDept());
-        mixCase.setUpdUser(km.getUpdUser());
+        mixCase.setUpdDept(deptsDao.findByPk(km.getUpdDept()).getDept_name());
+        mixCase.setUpdUser(usersDao.selectByKey(km.getUpdUser()).getUser_name());
         mixCase.setUpdDt(km.getUpdDt() == null? "": km.getUpdDt().format(fmt).replaceAll("-",""));
 
         List<KeepTrkDtl> kdList = keepTrkDtlDao.selectDataByTrkIDAndTrkObj(caseData.getSelectedTrkID(),"");
@@ -231,7 +231,8 @@ public class Eip03w020Service {
             }
             innerMap.put("supDt", supDt);      //回應日期時間
 //            innerMap.put("isSameDept", trkObjNo.equals(userData.getDeptId())? "Y" : "N");      //TrkObj為登入者部室
-            a.setTrkObj(a.getTrkObj() + "-" + eipcodeDao.findByCodeKindCodeNo("TRKOBJ",trkObjNo).get().getCodename());
+//            a.setTrkObj(a.getTrkObj() + "-" + eipcodeDao.findByCodeKindCodeNo("TRKOBJ",trkObjNo).get().getCodename());
+            a.setTrkObj(a.getTrkObj() + "-" + deptsDao.findByPk(trkObjNo).getDept_name());
             doubleMap.put(a.getTrkObj().split("-")[0], innerMap);
         });
 

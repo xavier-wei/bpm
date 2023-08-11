@@ -8,6 +8,7 @@ import org.apache.commons.lang3.StringUtils;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import tw.gov.pcc.eip.domain.Eipcode;
+import tw.gov.pcc.eip.domain.Roles;
 import tw.gov.pcc.eip.domain.User_roles;
 import tw.gov.pcc.eip.domain.Users;
 
@@ -25,6 +26,8 @@ public class Eip00w020Case implements Serializable {
 	private Users users;
 	private List<Eipcode> titleidList;
 	private List<Eipcode> deptList;
+	private List<Roles> userRolesList;
+	private List<Roles> rolesList;
 	
 	private String user_id;//使用者代號
 	private String dept_id;//部門代號
@@ -36,7 +39,8 @@ public class Eip00w020Case implements Serializable {
 	private String title_id;//職稱代號
 	private String line_token;
 	private String userStatus;
-	
+	private String delRoleId;
+	private String addRoleid;
 	
 	
 	public void settingCase(Users users) {

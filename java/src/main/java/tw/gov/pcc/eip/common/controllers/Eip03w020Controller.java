@@ -68,6 +68,12 @@ public class Eip03w020Controller extends BaseController {
         log.debug("導向重要列管事項_填報辦理進度作業");
         status.setComplete();
         getEip03w020Case();
+        return "redirect:/Eip03w020_initQuery.action";
+    }
+
+    @RequestMapping("/Eip03w020_initQuery.action")
+    @SkipCSRFVerify
+    public String initQuery() {
         return QUERY_PAGE;
     }
 
@@ -126,8 +132,8 @@ public class Eip03w020Controller extends BaseController {
     @ResponseBody
     @SkipCSRFVerify
     @RequestMapping("Eip03w020_findRptDept.action")
-    public List<Map<String, String>> findRptDept(){
-        List<Depts> depts = deptsDao.getEip03wDepts("1", null);
+    public List<Map<String, String>> findRptDept( @RequestBody Map<String, String> dataMap){
+        List<Depts> depts = deptsDao.getEip03wDepts("2", dataMap.get("trkObj"));
         depts.sort(Comparator.comparing(Depts::getDept_id));
         List<Map<String, String>> deptCodes = new ArrayList<>();
         depts.forEach( a -> {

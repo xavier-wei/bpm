@@ -26,13 +26,17 @@ public class Eip08w060CaseValidator implements Validator {
 			if (StringUtils.isNotBlank(data.getItem())){
 				if (StringUtils.isBlank(data.getDesc_memo())){
 				errors.reject(null, "用途說明尚未輸入");
-				}else if(StringUtils.isBlank(data.getCnt())){
+				}
+				if(StringUtils.isBlank(data.getCnt())){
 				errors.reject(null, "數量尚未輸入");
-				}else if(StringUtility.stringRealLength(data.getDesc_memo())>200){
+				}
+				if(StringUtility.stringRealLength(data.getDesc_memo())>200){
 				errors.reject(null, "用途說明文字為100字");
-				}else if(StringUtility.stringRealLength(data.getItem())>100){
+				}
+				if(StringUtility.stringRealLength(data.getItem())>100){
 				errors.reject(null, "品名及規格上限為50字");
-				}else if(StringUtility.stringRealLength(data.getUnit())>8){
+				}
+				if(StringUtility.stringRealLength(data.getUnit())>8){
 					errors.reject(null, "單位上限為4字");
 				}
 			}

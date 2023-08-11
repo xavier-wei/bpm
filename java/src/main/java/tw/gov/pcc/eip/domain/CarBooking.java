@@ -1,13 +1,12 @@
 package tw.gov.pcc.eip.domain;
 
+import java.io.Serializable;
+
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import tw.gov.pcc.common.annotation.LogField;
 import tw.gov.pcc.common.annotation.Table;
 import tw.gov.pcc.eip.dao.CarBookingDao;
-import tw.gov.pcc.eip.dao.DriverBaseDao;
-
-import java.io.Serializable;
 
 /**
  * 
@@ -347,7 +346,25 @@ public class CarBooking implements Serializable {
 
     @LogField
     private String codeName;
+    
+    private String orderCondition;//eip07w070排序條件
+    private String using_rec;//eip07w040
+    private String using_date_s;
+    private String using_date_e;
+
+    private String carTyNm;
+    private String usingStr;//eip07w040
 
 
+    @LogField
+    private String rmStarH;
 
+    @LogField
+    private String rmStarM;
+
+    @LogField
+    private String rmEndH;
+
+    @LogField
+    private String rmEndM;
 }

@@ -1,6 +1,9 @@
 package tw.gov.pcc.eip.common.controllers;
 
 
+import java.util.*;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -18,15 +21,12 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 import tw.gov.pcc.eip.dao.EipcodeDao;
+import tw.gov.pcc.eip.dao.View_flowDao;
 import tw.gov.pcc.eip.domain.Eipcode;
+import tw.gov.pcc.eip.domain.View_flow;
 import tw.gov.pcc.eip.framework.domain.UserBean;
 import tw.gov.pcc.eip.util.BeanUtility;
 import tw.gov.pcc.eip.util.ExceptionUtility;
-
-import java.math.BigDecimal;
-import java.util.*;
-import java.util.stream.Collectors;
-import java.util.stream.IntStream;
 
 /**
  * 讀取 TITLE 介接其他系統API資料
@@ -36,11 +36,12 @@ import java.util.stream.IntStream;
 @Controller
 @Slf4j
 @AllArgsConstructor
-public class TitleController {
+public class Eip0aw010Controller {
 
     private static final PropertyPlaceholderHelper helper = new PropertyPlaceholderHelper("${", "}");
     private final UserBean userData;
     private final EipcodeDao eipcodeDao;
+    private final View_flowDao viewFlowDao;
 
 
     @RequestMapping(value = "/Common_getSysApi.action", method = RequestMethod.POST)
@@ -52,7 +53,14 @@ public class TitleController {
             return null;
         }
         List<ApiResult> result = new ArrayList<>();
-        IntStream.range(1, 3)
+        //第一個一定是差勤
+        try {
+            result.add(getIrtSql());
+        } catch (Exception e) {
+            log.error("取得差勤資料錯誤{}。",ExceptionUtility.getStackTrace(e));
+        }
+
+        IntStream.range(2, 5)
                 .mapToObj(x -> getSys_api(String.valueOf(x)))
                 .takeWhile(Objects::nonNull)
                 .forEach(sysApi -> {
@@ -66,16 +74,16 @@ public class TitleController {
                 .build();
     }
 
+    private ApiResult getIrtSql() {
+        String url = eipcodeDao.findByCodeKindCodeNo("SYS_API", "1_URL").map(Eipcode::getCodename).orElse(StringUtils.EMPTY);
+        return ApiResult.builder()
+            .click_url(url)
+            .cnt(viewFlowDao.selectCountByNext_person_id(View_flow.builder().next_person_id(userData.getUserId()).build()).toString()).build();
+    }
+
     private ApiParams getSys_api(String apiNumber) {
         ApiParams apiParam = null;
         try {
-            //todo
-            if (Optional.ofNullable(userData.getSysApiErrorTry())
-                    .orElse(BigDecimal.ZERO)
-                    .compareTo(new BigDecimal("3")) >= 0) {
-                log.warn("Retrying sys_api has stopped.");
-                return null;
-            }
             List<Eipcode> list = eipcodeDao.findByCodekindScodekindOrderByCodeno("SYS_API", apiNumber);
             Map<String, Eipcode> map = list.stream()
                     .collect(Collectors.toMap(x -> StringUtils.substringAfter(x.getCodeno(), "_"), x -> x));
@@ -111,9 +119,6 @@ public class TitleController {
                     .get(apiParams.res)
                     .toString());
         } catch (RestClientException e) {
-            userData.setSysApiErrorTry(Optional.ofNullable(userData.getSysApiErrorTry())
-                    .orElse(BigDecimal.ZERO)
-                    .add(BigDecimal.ONE));
             log.error("SYS_API 呼叫{} 錯誤 {}", apiParams, ExceptionUtility.getStackTrace(e));
         }
         return apiResult;

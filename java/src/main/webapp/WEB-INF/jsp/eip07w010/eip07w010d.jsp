@@ -54,71 +54,65 @@
 						<%-- 基本資料 --%>
 					<div class="tab-pane table-responsive" id="base" role="tabpanel" aria-labelledby="base-tab">
 						<tags:form-row>
-							<div style="width: 35%" class="d-flex" >
-								<label class="col-form-label text-left star">車牌號碼:</label>
+							<div class="col-md-4 d-flex">
+								<form:label cssClass="col-form-label star" path="carno1">車牌號碼:</form:label>
 								<table>
 									<tr>
-										<td><form:input id="carno1" name="carno1" path="eip07w010CarDataList[0].carno1" cssClass="form-control" size="3" maxlength="3" disabled="true"  oninput="value=value.replace(/[^\d]/g,'')"/></td>
+										<td><form:input id="carno1" name="carno1" path="eip07w010CarDataList[0].carno1" cssClass="form-control num_eng_only upCase" size="4" maxlength="3" disabled="true"  /></td>
 										<td>-</td>
-										<td><form:input id="carno2" name="carno2" path="eip07w010CarDataList[0].carno2" cssClass="form-control" size="4" maxlength="4" disabled="true"  oninput="value=value.replace(/[^\d]/g,'')"/></td>
+										<td><form:input id="carno2" name="carno2" path="eip07w010CarDataList[0].carno2" cssClass="form-control num_eng_only upCase" size="7" maxlength="4" disabled="true"  /></td>
 									</tr>
 								</table>
 							</div>
-								<label class="col-form-label text-left star">車輛種類:</label>
+							<div class="col-md-4 d-flex">
+								<form:label cssClass="col-form-label star" path="carType">車輛種類:</form:label>
 								<form:select id="carType" path="eip07w010CarDataList[0].carType" cssClass="form-control">
                     			<form:option value="1">1:4人座</form:option>
                     			<form:option value="2">2:7人座</form:option>
                   		 		</form:select>
+							</div>
 						</tags:form-row>
 						<tags:form-row>
-							<div style="width: 35%" class="d-flex">
-								<label class="col-form-label text-left star ">財產編號:</label>
-								<div>
+								<div class="col-md-4 d-flex">
+									<form:label cssClass="col-form-label star" path="owned">財產編號:</form:label>
 									<form:input id="owned" name="owned" path="eip07w010CarDataList[0].owned" cssClass="form-control" size="7" maxlength="6"/>
 								</div>
-							</div>
-
-								<label class="col-form-label text-left">購置年份:</label>
-									<div>
-										<form:input id="carYear" name="carYear" path="eip07w010CarDataList[0].carYear" cssClass="form-control form-control num_only padL" size="3" maxlength="3" />
-									</div>
+								<div class="col-md-4 d-flex">
+									<form:label cssClass="col-form-label" path="carYear">購置年份:</form:label>
+									<form:input id="carYear" name="carYear" path="eip07w010CarDataList[0].carYear" cssClass="form-control form-control num_only padL" size="3" maxlength="3" />
+								</div>
 			            </tags:form-row>
 						<tags:form-row>
-							<div style="width: 35%" class="d-flex">
-								<label class="col-form-label text-left ">車輛廠牌:</label>
-								<div>
-									<form:input id="carSource" name="carSource" path="eip07w010CarDataList[0].carSource" cssClass="form-control" size="7" maxlength="6"/>
-								</div>
+							<div class="col-md d-flex">
+								<form:label cssClass="col-form-label" path="bossMk">車輛廠牌:</form:label>
+								<form:input id="carSource" name="carSource" path="eip07w010CarDataList[0].carSource" cssClass="form-control" size="7" maxlength="6"/>
 							</div>
-								<label class="col-form-label text-left">顏色:</label>
-									<div>
-										<form:input id="carColor" name="carColor" path="eip07w010CarDataList[0].carColor" cssClass="form-control" size="7" maxlength="6"/>
-									</div>
-							&emsp;&emsp;&emsp;&emsp;
-								<label class="col-form-label text-left">排放量cc:</label>
-									<div>
-										<form:input id="ccSize" name="ccSize" path="eip07w010CarDataList[0].ccSize" cssClass="form-control num_only" size="7" maxlength="6"/>
-									</div>
+							<div class="col-md d-flex">
+								<form:label cssClass="col-form-label" path="carColor">顏色:</form:label>
+								<form:input id="carColor" name="carColor" path="eip07w010CarDataList[0].carColor" cssClass="form-control" size="7" maxlength="6"/>
+							</div>
+							<div class="col-md d-flex">
+								<form:label cssClass="col-form-label" path="ccSize">排放量cc:</form:label>
+								<form:input id="ccSize" name="ccSize" path="eip07w010CarDataList[0].ccSize" cssClass="form-control num_only" size="7" maxlength="6"/>
+							</div>
 						</tags:form-row>
 						<tags:form-row>
-							<div style="width: 35%" class="d-flex">
-								<label class="col-form-label text-left  star">首長專用車:</label>
-								<div>
-										<form:select id="bossMk" path="eip07w010CarDataList[0].bossMk" cssClass="form-control">
-										<form:option value="Y">是</form:option>
-										<form:option value="N">否</form:option>
-									</form:select>
-								</div>
+							<div  class="col-md-4 d-flex">
+								<form:label cssClass="col-form-label star" path="bossMk">首長專用車:</form:label>
+								<form:select id="bossMk" path="eip07w010CarDataList[0].bossMk" cssClass="form-control">
+									<form:option value="Y">是</form:option>
+									<form:option value="N">否</form:option>
+								</form:select>
 							</div>
-								<label class="col-form-label text-left">首長:</label>
-									<div>
-										<form:input id="bossName"  name="bossName"  path="eip07w010CarDataList[0].bossName" cssClass="form-control" size="7" maxlength="6"/>
-									</div>
+							<div class="col-md-4 d-flex">
+								<form:label cssClass="col-form-label" path="bossName">首長:</form:label>
+								<form:input id="bossName"  name="bossName"  path="eip07w010CarDataList[0].bossName" cssClass="form-control" size="7" maxlength="6"/>
+							</div>
 						</tags:form-row>
 
 						<tags:form-row>
-								<label class="col-form-label text-left">車輛狀態:</label>
-								<div>
+								<div  class="col-md d-flex">
+									<form:label cssClass="col-form-label" path="carStatus">車輛狀態:</form:label>
 									<form:select id="carStatus" path="eip07w010CarDataList[0].carStatus" cssClass="form-control">
 										<form:option value="1">1.可使用</form:option>
 										<form:option value="2">2.不可使用-首長</form:option>
@@ -129,31 +123,29 @@
 						</tags:form-row>
 
 						<tags:form-row>
-							<br>
-								<label class="col-form-label text-left">[保險資料]:</label>
-							<br>
-						</tags:form-row>
-
-						<tags:form-row>
-							<label class="col-form-label text-left">保險公司:</label>
-								<div>
-									<form:input id="insuranceCompany"  name="insuranceCompany"  path="eip07w010CarDataList[0].insuranceCompany" cssClass="form-control" size="40" maxlength="100"/>
-								</div>
-
-						</tags:form-row>
-
-						<tags:form-row>
-							<div style="width: 35%" class="d-flex">
-								<label class="col-form-label text-left">保險期間(起):</label>
-								<div>
-									<form:input id="insuranceStart"  name="insuranceStart"  path="eip07w010CarDataList[0].insuranceStart" cssClass="form-control num_only dateTW" size="7" maxlength="7"/>
-								</div>
+							<div  class="col-md d-flex">
+								<br>
+								<form:label cssClass="col-form-label" path="insuranceCompany">[保險資料]:</form:label>
+								<br>
 							</div>
+						</tags:form-row>
 
-							<label class="col-form-label text-left">保險期間(迄):</label>
-								<div>
-									<form:input id="InsuranceEnd"  name="InsuranceEnd"  path="eip07w010CarDataList[0].InsuranceEnd" cssClass="form-control num_only dateTW" size="7" maxlength="7"/>
-								</div>
+						<tags:form-row>
+							<div class="col-md d-flex">
+								<form:label cssClass="col-form-label" path="insuranceCompany">保險公司:</form:label>
+								<form:input id="insuranceCompany"  name="insuranceCompany"  path="eip07w010CarDataList[0].insuranceCompany" cssClass="form-control" size="40" maxlength="100"/>
+							</div>
+						</tags:form-row>
+
+						<tags:form-row>
+							<div class="col-md-4 d-flex">
+								<form:label cssClass="col-form-label" path="insuranceStart">保險期間(起):</form:label>
+								<form:input id="insuranceStart"  name="insuranceStart"  path="eip07w010CarDataList[0].insuranceStart" cssClass="form-control num_only dateTW" size="7" maxlength="7"/>
+							</div>
+							<div class="col-md-4 d-flex">
+								<form:label cssClass="col-form-label" path="InsuranceEnd">保險期間(迄):</form:label>
+								<form:input id="InsuranceEnd"  name="InsuranceEnd"  path="eip07w010CarDataList[0].InsuranceEnd" cssClass="form-control num_only dateTW" size="7" maxlength="7"/>
+							</div>
 						</tags:form-row>
 						<tags:form-row></tags:form-row>
 					</div>
@@ -162,7 +154,7 @@
 					<div class="tab-pane table-responsive" id="oilList" role="tabpanel" aria-labelledby="oilList-tab">
 			            <tags:form-row>
 							 <label class="col-form-label text-left col-3">車牌號碼：<c:out value="${caseData.eip07w010CarDataList[0].carno1}-${caseData.eip07w010CarDataList[0].carno2}"/></label>
-							<label class="col-form-label text-left col-3">車輛種類：<c:out value="${caseData.eip07w010CarDataList[0].carType}"/></label>
+							<label class="col-form-label text-left col-3">車輛種類：<c:out value="${caseData.eip07w010CarDataList[0].carTypeNm}"/></label>
 							<label class="col-form-label text-left col-3">財產編號：<c:out value="${caseData.eip07w010CarDataList[0].owned}"/></label>
 			            </tags:form-row>
 						<tags:form-row></tags:form-row>
@@ -178,7 +170,7 @@
 <%--							</tr>--%>
 							</thead>
 							<tbody>
-							<c:forEach items="${oilList}" var="data" varStatus="status">
+							<c:forEach items="${caseData.oilList}" var="data" varStatus="status">
 								        <tr>
 											<td class="text-left"><c:out value="${status.count }"/></td>
 											<td class="text-left"><c:out value="${data.fuelDate }"/></td>
@@ -195,7 +187,7 @@
 					<div class="tab-pane table-responsive" id="mileageListData" role="tabpanel" aria-labelledby="mileageListData-tab">
 			            <tags:form-row>
 			              	 <label class="col-form-label text-left col-3">車牌號碼：<c:out value="${caseData.eip07w010CarDataList[0].carno1}-${caseData.eip07w010CarDataList[0].carno2}"/></label>
-							<label class="col-form-label text-left col-3">車輛種類：<c:out value="${caseData.eip07w010CarDataList[0].carType}"/></label>
+							<label class="col-form-label text-left col-3">車輛種類：<c:out value="${caseData.eip07w010CarDataList[0].carTypeNm}"/></label>
 							<label class="col-form-label text-left col-3">財產編號：<c:out value="${caseData.eip07w010CarDataList[0].owned}"/></label>
 			            </tags:form-row>
 						<tags:form-row></tags:form-row>
@@ -213,7 +205,7 @@
 <%--							</tr>--%>
 							</thead>
 							<tbody>
-							<c:forEach items="${mileageList}" var="data" varStatus="status">
+							<c:forEach items="${caseData.mileageList}" var="data" varStatus="status">
 								        <tr>
 											<td class="text-left"><c:out value="${status.count }"/></td>
 											<td class="text-left"><c:out value="${data.useDate }"/></td>

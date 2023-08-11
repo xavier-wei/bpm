@@ -17,7 +17,10 @@ public class Eip07w020l00 extends PdfReportBase {
 	private static final org.slf4j.Logger log = org.slf4j.LoggerFactory.getLogger(Eip07w020l00.class);
 	private static final float PAGEWIDTH = 100.0F;
 	private static final int COLALL = 100;
+	private static final int TITLE_FONT_SIZE = 22;
+
 	private static final int SECOND_TITLE_FONT_SIZE = 14;//14
+
 	private static final int SIZE_12 = 12;//12
 
 	private PdfPTable table = new PdfPTable(COLALL); //新建table
@@ -78,8 +81,9 @@ public class Eip07w020l00 extends PdfReportBase {
 	 * @param caseData
 	 */
 	private void addHeader(CarBooking caseData) {
+		addCell(table, 100, 1, "派車預約單", TITLE_FONT_SIZE, 0, Element.ALIGN_CENTER);
 		addCell(table, 30, 1, "程式代號: EIP07W020L", SECOND_TITLE_FONT_SIZE, 0, Element.ALIGN_LEFT);
-		addCell(table, 70, 1, "表頭:派車預約單", SECOND_TITLE_FONT_SIZE, 0, Element.ALIGN_LEFT);
+		addCell(table, 70, 1, "", SECOND_TITLE_FONT_SIZE, 0, Element.ALIGN_LEFT);
 		addCell(table, 30, 1, "申請人:"+caseData.getApply_user(), SECOND_TITLE_FONT_SIZE, 0, Element.ALIGN_LEFT);
 		addCell(table, 40, 1, "申請單位:"+caseData.getApply_dept(), SECOND_TITLE_FONT_SIZE, 0, Element.ALIGN_LEFT);
 		addCell(table, 30, 1, "申請日期:"+caseData.getApply_date(), SECOND_TITLE_FONT_SIZE, 0, Element.ALIGN_LEFT);
@@ -88,8 +92,8 @@ public class Eip07w020l00 extends PdfReportBase {
 
 	private void addApplyData(CarBooking caseData) {
 		addCell(table, 100, 1, "[申請相關資料]:", SECOND_TITLE_FONT_SIZE, 0, Element.ALIGN_LEFT);
-		addCell(table, 100, 1, "用車事由:"+caseData.getApply_memo(), SECOND_TITLE_FONT_SIZE, 0, Element.ALIGN_LEFT);
-		addCell(table, 100, 1, "目的地:"+caseData.getDestination(), SECOND_TITLE_FONT_SIZE, 0, Element.ALIGN_LEFT);
+		addCell(table, 100, 1, "用車事由:\n"+"    "+caseData.getApply_memo(), SECOND_TITLE_FONT_SIZE, 0, Element.ALIGN_LEFT);
+		addCell(table, 100, 1, "目的地:\n"+"    "+caseData.getDestination(), SECOND_TITLE_FONT_SIZE, 0, Element.ALIGN_LEFT);
 		addCell(table, 30, 1, "車輛總類:"+ carty(caseData.getApply_car_type()), SECOND_TITLE_FONT_SIZE, 0, Element.ALIGN_LEFT);
 		addCell(table, 70, 1, "人數:"+caseData.getNum_of_people()+"人", SECOND_TITLE_FONT_SIZE, 0, Element.ALIGN_LEFT);
 		addCell(table, 100, 1, "用車日期:"+caseData.getUsing_date(), SECOND_TITLE_FONT_SIZE, 0, Element.ALIGN_LEFT);

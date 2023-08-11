@@ -15,6 +15,7 @@ import tw.gov.pcc.eip.framework.spring.support.FileOutputView;
 import tw.gov.pcc.eip.orderCar.Validator.Eip07w020Validator;
 import tw.gov.pcc.eip.orderCar.cases.Eip07w020Case;
 import tw.gov.pcc.eip.services.Eip07w020Service;
+import tw.gov.pcc.eip.util.DateUtility;
 import tw.gov.pcc.eip.util.ExceptionUtility;
 import tw.gov.pcc.eip.util.ObjectUtility;
 import java.io.ByteArrayOutputStream;
@@ -70,6 +71,8 @@ public class Eip07w020Controller extends BaseController {
         caseData.setUseDateEnd("");
         caseData.setApplyDateStar("");
         caseData.setApplyDateEnd("");
+        caseData.setCheckMk("false");
+        caseData.setInsterList(new ArrayList<>());
         return new ModelAndView(QUERY_PAGE);
     }
 
@@ -90,6 +93,7 @@ public class Eip07w020Controller extends BaseController {
             eip07w020Service.getTimeList(caseData);
         }catch (Exception e){
             log.error("新增失敗，原因:{}", ExceptionUtility.getStackTrace(e));
+            setSystemMessage(getSaveFailMessage());
             return QUERY_PAGE;
         }
         return ADD_PAGE;
@@ -103,16 +107,18 @@ public class Eip07w020Controller extends BaseController {
     @RequestMapping("/Eip07w020_inster.action")
     public String inster(@ModelAttribute(CASE_KEY) Eip07w020Case caseData, BindingResult result)  {
         log.debug("導向 Eip07w020_addPage 派車預約暨派車新增");
-        eip07w020Validator.eip07w020AValidate(caseData.getInsterList().get(0),result);
+        try {
+            eip07w020Validator.eip07w020AValidate(caseData.getInsterList().get(0),result);
         if (result.hasErrors()) {
             return ADD_PAGE;
         }
-        try {
+
             eip07w020Service.addReserve(caseData.getInsterList().get(0),caseData);
             setSystemMessage(getSaveSuccessMessage());
             caseData.setInsterList(new ArrayList<>());
         }catch (Exception e){
-            log.error("新增失敗，原因:{}", ExceptionUtility.getStackTrace(e));
+            result.reject(null, "新增失敗");
+            setSystemMessage(getSaveFailMessage());
             return ADD_PAGE;
         }
         return QUERY_PAGE;
@@ -135,13 +141,18 @@ public class Eip07w020Controller extends BaseController {
             List<Eip07w020Case> data =new ArrayList<>();
             data= eip07w020Service.quaryData(caseData);
             if (data.isEmpty()) {
-                result.reject(null, "查無資料");
+                caseData.setApplyDateStar(DateUtility.changeDateType(caseData.getApplyDateStar()));
+                caseData.setApplyDateEnd(DateUtility.changeDateType(caseData.getApplyDateEnd()));
+                caseData.setUseDateStar(DateUtility.changeDateType(caseData.getUseDateStar()));
+                caseData.setUseDateEnd(DateUtility.changeDateType(caseData.getUseDateEnd()));
+                setSystemMessage("查無資料");
                 return QUERY_PAGE;
             }
             caseData.setResultList(data);
             setSystemMessage(getQuerySuccessMessage());
         }catch (Exception e){
             log.error("查詢失敗，原因:{}", ExceptionUtility.getStackTrace(e));
+            setSystemMessage(getQueryFailMessage());
             return QUERY_PAGE;
         }
         return DATA_PAGE;
@@ -157,11 +168,18 @@ public class Eip07w020Controller extends BaseController {
             arrayList = new ArrayList<>();
             CarBooking detail = eip07w020Service.selectByApplyId(caseData.getApplyId());
             arrayList.add(detail);
+            if ("U".equals(detail.getCarprocess_status())){
+                caseData.setCheckMk("true");
+            }else {
+                caseData.setRmMemo("1");
+            }
         } catch (Exception e) {
+            setSystemMessage(getQueryFailMessage());
             log.error("查詢失敗，原因:{}", ExceptionUtility.getStackTrace(e));
             return DATA_PAGE;
         }
         caseData.setDetailsList(arrayList);
+        caseData.setChangeMkList(arrayList);
         return Details_PAGE;
     }
 
@@ -175,14 +193,16 @@ public class Eip07w020Controller extends BaseController {
     @RequestMapping("/Eip07w020_update.action")
     public String update(@Validated @ModelAttribute(CASE_KEY) Eip07w020Case caseData, BindingResult result) {
         log.debug("導向 Eip07w020_update 派車預約暨派車作業");
+        try {
         eip07w020Validator.updateValidate(caseData.getDetailsList().get(0),  result);
         if (result.hasErrors()) {
             return Details_PAGE;
         }
-        try {
+
             eip07w020Service.updateCarBooking(caseData.getDetailsList().get(0));
             setSystemMessage(getUpdateSuccessMessage());
         }catch (Exception e){
+            setSystemMessage(getUpdateFailMessage());
             log.error("修改失敗，原因:{}", ExceptionUtility.getStackTrace(e));
             return Details_PAGE;
         }
@@ -199,14 +219,16 @@ public class Eip07w020Controller extends BaseController {
     @RequestMapping("/Eip07w020_changeApplication.action")
     public String changeApplication(@Validated @ModelAttribute(CASE_KEY) Eip07w020Case caseData, BindingResult result) {
         log.debug("導向 Eip07w020_changeApplication 異動申請作業");
+        try {
         eip07w020Validator.eip07w020DValidate(caseData, result);
         if (result.hasErrors()) {
             return Details_PAGE;
         }
-        try {
+
             eip07w020Service.changeApplication(caseData);
             setSystemMessage(getUpdateSuccessMessage());
         }catch (Exception e){
+            setSystemMessage(getUpdateFailMessage());
             log.error("修改失敗，原因:{}", ExceptionUtility.getStackTrace(e));
             return Details_PAGE;
         }
@@ -230,6 +252,7 @@ public class Eip07w020Controller extends BaseController {
             eip07w020Service.delete(caseData);
             setSystemMessage(getDeleteSuccessMessage());
         }catch (Exception e){
+            setSystemMessage(getDeleteFailMessage());
             log.error("刪除失敗，原因:{}", ExceptionUtility.getStackTrace(e));
             return Details_PAGE;
         }

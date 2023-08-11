@@ -21,4 +21,5 @@ public interface Car_booking_recDao {
     public int updateByKey(Car_booking_rec car_booking_rec);
 
     public int deleteByKey(Car_booking_rec car_booking_rec);
+    
 }

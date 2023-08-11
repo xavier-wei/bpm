@@ -58,8 +58,7 @@ public class Eip07w040l00 extends PdfReportBase {
         addCell(table, 100, 4, "用車事由："+vo.getApply_memo() , subTitleFontSizeMid, 0, LEFT);
         addCell(table, 100, 4, "目的地："+vo.getDestination() , subTitleFontSizeMid, 0, LEFT);
         
-        addCell(table, 50, 4, "車輛種類："+vo.getApply_car_type() , subTitleFontSizeMid, 0, LEFT);
-        addCell(table, 50, 4, "人數："+vo.getNum_of_people() , subTitleFontSizeMid, 0, LEFT);
+        addCell(table, 100, 4, "人數："+vo.getNum_of_people() , subTitleFontSizeMid, 0, LEFT);
         
         addCell(table, 100, 4, "用車日期："+DateUtility.changeDateType(vo.getUsing_date()), subTitleFontSizeMid, 0, LEFT);
         addCell(table, 100, 4, "用車時間："+vo.getUsing_time_s() + "~" + vo.getUsing_time_e(), subTitleFontSizeMid, 0, LEFT);
@@ -74,9 +73,9 @@ public class Eip07w040l00 extends PdfReportBase {
         addCell(table, 50, 4, "駕駛人姓名："+vo.getName() , subTitleFontSizeMid, 0, LEFT);
         addCell(table, 50, 4, "手機號碼："+vo.getCellphone() , subTitleFontSizeMid, 0, LEFT);
         
-        addCell(table, 30, 4, "車牌車號："+vo.getCarno1()+vo.getCarno2() , subTitleFontSizeMid, 0, LEFT);
-        addCell(table, 40, 4, "車輛種類："+vo.getCartype() , subTitleFontSizeMid, 0, LEFT);
-        addCell(table, 30, 4, "顏色："+vo.getCarcolor() , subTitleFontSizeMid, 0, LEFT);
+        addCell(table, 50, 4, "車牌車號："+vo.getCarno1()+"-"+vo.getCarno2() , subTitleFontSizeMid, 0, LEFT);
+        addCell(table, 50, 4, "顏色："+vo.getCarcolor() , subTitleFontSizeMid, 0, LEFT);
+        addCell(table, 100, 4, "車輛種類："+vo.getApply_car_type() , subTitleFontSizeMid, 0, LEFT);
         document.add(table);
         return table;
     }

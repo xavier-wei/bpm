@@ -14,7 +14,8 @@
 </jsp:attribute>
 
 <jsp:attribute name="contents">
-    <tags:fieldset>
+     	<fieldset>
+      	<legend>領物單申請作業</legend>
 		<form:form id="eip08w020Form" name="eip08w020Form" modelAttribute="${caseKey}" method="POST">
             <tags:form-row>
             	<div class="col-4 col-md-4">申請人：<c:out value="${caseData.apply_user}"/></div>
@@ -67,7 +68,7 @@
                     </table>
             </tags:form-row>
         </form:form>
-    </tags:fieldset>
+        </fieldset>
 </jsp:attribute>
 <jsp:attribute name="footers">
 <script>

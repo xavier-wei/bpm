@@ -144,6 +144,7 @@ public class Eip08w060Controller extends BaseController {
             eip08W060Service.add(caseData);
             setSystemMessage(getSaveSuccessMessage()+"_請購單號:"+caseData.getItemId());
         }catch (Exception e){
+            setSystemMessage(getSaveFailMessage());
             log.error("新增失敗，原因:{}", ExceptionUtility.getStackTrace(e));
             return ADD_APGE;
         }
@@ -181,6 +182,7 @@ public class Eip08w060Controller extends BaseController {
             eip08W060Service.delete(caseData.getEip08w060CaseList().get(0));
             setSystemMessage(getDeleteSuccessMessage());
         }catch (Exception e){
+            setSystemMessage(getDeleteFailMessage());
             log.error("刪除失敗，原因:{}", ExceptionUtility.getStackTrace(e));
             return Details_DATA_APGE;
         }
@@ -206,6 +208,7 @@ public class Eip08w060Controller extends BaseController {
             }
             setSystemMessage(getUpdateSuccessMessage());
         }catch (Exception e){
+            setSystemMessage(getUpdateFailMessage());
             log.error("刪除失敗，原因:{}", ExceptionUtility.getStackTrace(e));
             return Details_DATA_APGE;
         }
@@ -228,7 +231,8 @@ public class Eip08w060Controller extends BaseController {
             ByteArrayOutputStream baoOutput = eip08W060Service.print(caseData);
             return new ModelAndView(new FileOutputView(baoOutput, "XPAV0W600.pdf", FileOutputView.PDF_FILE));
         } catch (Exception e) {
-            log.error("查詢部門名稱失敗原因", ExceptionUtility.getStackTrace(e));
+            setSystemMessage(getReportErrorMessage());
+            log.error("報表列印失敗原因", ExceptionUtility.getStackTrace(e));
             return null;
         }
     }

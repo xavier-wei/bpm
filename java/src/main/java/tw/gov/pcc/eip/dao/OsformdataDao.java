@@ -1,6 +1,5 @@
 package tw.gov.pcc.eip.dao;
 
-import tw.gov.pcc.eip.domain.Orformdata;
 import tw.gov.pcc.eip.domain.Osformdata;
 
 import java.util.List;
@@ -64,4 +63,10 @@ public interface OsformdataDao {
      * @return
      */
     public List<Osformdata> getListByStatus(List<String> statusList, String deptno);
+    
+    /**
+     * 批次更新狀態
+     * @return
+     */
+    public int updateStatusBatch();
 }

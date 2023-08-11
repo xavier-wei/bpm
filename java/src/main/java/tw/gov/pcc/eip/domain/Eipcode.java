@@ -46,4 +46,7 @@ public class Eipcode implements Serializable {
 
     @LogField("STAFF")
     private String staff;  // 異動者代號
+
+    @LogField("REMARK")
+    private String remark;
 }

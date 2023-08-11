@@ -1,6 +1,5 @@
 package tw.gov.pcc.eip.dao.impl;
 
-import org.apache.commons.lang3.ObjectUtils;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
@@ -11,6 +10,7 @@ import tw.gov.pcc.common.framework.dao.BaseDao;
 import tw.gov.pcc.eip.dao.OrformdataDao;
 import tw.gov.pcc.eip.domain.Orformdata;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -129,7 +129,7 @@ public class OrformdataDaoImpl extends BaseDao<Orformdata> implements Orformdata
         sql.append(ALL_COLUMNS_SQL);
         sql.append(" FROM " + TABLE_NAME);
         sql.append(" WHERE orccode = :orccode ");
-        sql.append("   AND status NOT IN ('N') ");
+//        sql.append("   AND status NOT IN ('N') ");
         Map<String, Object> params = new HashMap<>();
         params.put("orccode", orccode);
         List<Orformdata> list = getNamedParameterJdbcTemplate().query(sql.toString(),params,
@@ -176,14 +176,14 @@ public class OrformdataDaoImpl extends BaseDao<Orformdata> implements Orformdata
         sql.append(ALL_COLUMNS_SQL);
         sql.append(" FROM " + TABLE_NAME);
         sql.append(" WHERE status IN (:statusList) ");
-        sql.append("   AND (regisqual = :deptno ");
+        sql.append("   AND ((regisqual = :deptno ");
         sql.append("        OR regisqual like :deptno + ',%' ");
         sql.append("        OR regisqual like '%,' + :deptno ");
         sql.append("        OR regisqual like '%,' + :deptno + ',%')");
         sql.append("    OR (regisqual = :jobtitle ");
         sql.append("        OR regisqual like :jobtitle + ',%' ");
         sql.append("        OR regisqual like '%,' + :jobtitle ");
-        sql.append("        OR regisqual like '%,' + :jobtitle + ',%')");
+        sql.append("        OR regisqual like '%,' + :jobtitle + ',%'))");
         Map<String, Object> params = new HashMap<>();
         params.put("statusList", statusList);
         params.put("deptno", deptno);
@@ -191,5 +191,41 @@ public class OrformdataDaoImpl extends BaseDao<Orformdata> implements Orformdata
         List<Orformdata> list = getNamedParameterJdbcTemplate().query(sql.toString(),params,
                 BeanPropertyRowMapper.newInstance(Orformdata.class));
         return CollectionUtils.isEmpty(list) ? new ArrayList<>() : list;
+    }
+    
+    @Override
+    public int updateStatusBatch() {
+    	String sql = new StringBuffer()
+    			.append(" UPDATE " + TABLE_NAME)
+				.append(" SET STATUS = ( ")
+				.append(" 		CASE ")
+				.append(" 			WHEN STATUS = 'P' ")
+				.append(" 				THEN 'A' ")
+				.append(" 			WHEN STATUS = 'A' ")
+				.append(" 				THEN 'I' ")
+				.append(" 			WHEN STATUS = 'I' ")
+				.append(" 				THEN 'C' ")
+				.append(" 			ELSE STATUS ")
+				.append(" 			END ")
+				.append(" 		) ")
+				.append(" WHERE 1 = ( ")
+				.append(" 		CASE ")
+				.append(" 			WHEN STATUS = 'P' ")
+				.append(" 				AND REGISFMDT <= :curdttime ")
+				.append(" 				AND REGISENDT > :curdttime ")
+				.append(" 				THEN '1' ")
+				.append(" 			WHEN STATUS = 'A' ")
+				.append(" 				AND PROFMDT <= :curdttime ")
+				.append(" 				AND PROENDT > :curdttime ")
+				.append(" 				THEN '1' ")
+				.append(" 			WHEN STATUS = 'I' ")
+				.append(" 				AND PROENDT <= :curdttime ")
+				.append(" 				THEN '1' ")
+				.append(" 			ELSE '0' ")
+				.append(" 			END ")
+				.append(" 		) ").toString();
+        Map<String, Object> params = new HashMap<>();
+        params.put("curdttime", LocalDateTime.now());
+        return getNamedParameterJdbcTemplate().update(sql, params);
     }
 }

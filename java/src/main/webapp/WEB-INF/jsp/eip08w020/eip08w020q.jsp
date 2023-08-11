@@ -66,11 +66,7 @@
             });
             
             $('#btnClear').click(function() {
-                $("#apply_date").val('');
-                if($("input[name='SelectType']")[1].checked){
-                	$("#apply_dept").val('');
-                	$("#apply_user").val('');
-                }
+            	$('#eip08w020Form').attr('action', '<c:url value="/Eip08w020_enter.action" />').submit();
             });
             
          });

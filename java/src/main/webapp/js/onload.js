@@ -51,8 +51,8 @@ function inputFieldFocus(focusNames) {
 
 
 function beforeUnload() {
+    $('#msgarea').removeClass('newheight');
     $("#systemMessage").text(""); // 清空訊息區
-    $('.alert-danger').text(""); //清空多筆資料的錯誤訊息
     createBlockUiZone();
 
     if(!checkSocketStatus()){

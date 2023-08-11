@@ -85,6 +85,7 @@ $(function(){
             $('#itemTyp').prop('disabled', false);
         }
         $('#eip06w050Form').attr('action', '<c:url value="/Eip06w050_saveMeetingCodeModify.action" />').submit();
+
     })
     $('#btnReply').click(function(){
         $('#eip06w050Form').attr('action', '<c:url value="/Eip06w050_enter.action" />').submit();
@@ -98,9 +99,9 @@ $(function(){
     function cheitemTyp(){
         //類別(itemTyp)為物品(A)，隱藏數量相關欄位(qty)
         if($('#itemTyp').val()=='A' ){
-            $('#qtyRow').hide();
+            $('#qty').parent().parent().hide();
         }else{
-            $('#qtyRow').show();
+            $('#qty').parent().parent().show();
         }
 
         //類別(itemTyp)為會議室(F)或(FX)，數量改為人數(qty)

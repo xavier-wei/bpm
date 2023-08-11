@@ -60,6 +60,7 @@ public class Eip07w010Controller extends BaseController {
     @RequestMapping("/Eip07w010_enter.action")
     public ModelAndView enter(@ModelAttribute(CASE_KEY) Eip07w010Case caseData) {
         log.debug("導向 Eip07w010Case_enter 派車基本資料建置作業");
+        eip07w010Service.getSelectList(caseData);
         caseData.setProcessTy("D");
         caseData.setWorkTy("A");
         caseData.setEip07w010QueryDataList(new ArrayList<>());
@@ -85,7 +86,7 @@ public class Eip07w010Controller extends BaseController {
             }
             if (queryList.isEmpty()) {
                 if ("Q".equals(caseData.getWorkTy())) {
-                    result.reject(null, "查無資料");
+                    setSystemMessage(getQueryEmptyMessage());
                     return QUERY_PAGE;
                 }
             }else{
@@ -116,6 +117,7 @@ public class Eip07w010Controller extends BaseController {
 
         }catch (Exception e){
             log.error("查詢失敗，原因:{}", ExceptionUtility.getStackTrace(e));
+            setSystemMessage(getQueryFailMessage());
             return QUERY_PAGE;
         }
         return ADD_APGE;
@@ -139,7 +141,9 @@ public class Eip07w010Controller extends BaseController {
             eip07w010Service.add(caseData.getEip07w010QueryDataList().get(0));
             setSystemMessage(getSaveSuccessMessage());
             caseData.setEip07w010QueryDataList(new ArrayList<>());
+            caseData.setEip07w010CarDataList(new ArrayList<>());
         }catch (Exception e){
+            setSystemMessage(getSaveFailMessage());
             log.error("新增失敗，原因:{}", ExceptionUtility.getStackTrace(e));
             return ADD_APGE;
         }
@@ -165,6 +169,7 @@ public class Eip07w010Controller extends BaseController {
             setSystemMessage(getDeleteSuccessMessage());
             caseData.setEip07w010QueryDataList(new ArrayList<>());
         }catch (Exception e){
+            setSystemMessage(getDeleteFailMessage());
             log.error("刪除失敗，原因:{}", ExceptionUtility.getStackTrace(e));
             return ADD_APGE;
         }
@@ -191,6 +196,7 @@ public class Eip07w010Controller extends BaseController {
             setSystemMessage(getUpdateSuccessMessage());
             caseData.setEip07w010QueryDataList(new ArrayList<>());
         }catch (Exception e){
+            setSystemMessage(getUpdateFailMessage());
             log.error("修改失敗，原因:{}", ExceptionUtility.getStackTrace(e));
             return ADD_APGE;
         }
@@ -215,6 +221,7 @@ public class Eip07w010Controller extends BaseController {
             Detail=eip07w010Service.driveIsExist(caseData);
             caseData.setEip07w010QueryDataList(Detail);
         }catch (Exception e){
+            setSystemMessage(getQueryFailMessage());
             log.error("查詢失敗，原因:{}", ExceptionUtility.getStackTrace(e));
             return DATA_APGE;
         }
@@ -230,10 +237,23 @@ public class Eip07w010Controller extends BaseController {
         }
         try {
             List<Eip07w010Case> carDetail = new ArrayList<>();
-            carDetail = eip07w010Service.quaryCarBase(caseData.getEip07w010QueryDataList().get(0));
-            eip07w010Service.getCarDetails(caseData.getEip07w010QueryDataList().get(0));
+            Eip07w010Case quareData=caseData.getEip07w010QueryDataList().get(0);
+            if ("Q".equals(caseData.getWorkTy())){//將車牌分開
+                quareData.setCarno1(StringUtils.substringBefore(quareData.getCarno(),"-"));
+                quareData.setCarno2(StringUtils.substringAfter(quareData.getCarno(),"-"));
+            }
+
+            carDetail = eip07w010Service.quaryCarBase(quareData);
+            eip07w010Service.getCarDetails(caseData);
             if ("A".equals(caseData.getWorkTy())) {//新增
                 if (carDetail.isEmpty()) {
+                    List<Eip07w010Case> addCar = new ArrayList<>();
+                    Eip07w010Case addData =new Eip07w010Case();
+                    addData.setCarno1(quareData.getCarno1A());
+                    addData.setCarno2(quareData.getCarno2A());
+                    addData.setBossMk("N");
+                    addCar.add(addData);
+                    caseData.setEip07w010CarDataList(addCar);
                     return ADD_CAR;
                 } else if (carDetail.get(0).getCarno1().equals(caseData.getEip07w010QueryDataList().get(0).getCarno1())) {
                     result.reject(null, "此車牌已存在，不可新增");
@@ -255,6 +275,7 @@ public class Eip07w010Controller extends BaseController {
                 }
             }
         } catch (Exception e) {
+            setSystemMessage(getQueryFailMessage());
             log.error("查詢失敗，原因:{}", ExceptionUtility.getStackTrace(e));
             return DATA_APGE;
         }
@@ -271,15 +292,17 @@ public class Eip07w010Controller extends BaseController {
     @RequestMapping("/Eip07w010_carInster.action")
     public String carInster(@Validated @ModelAttribute(CASE_KEY) Eip07w010Case caseData, BindingResult result) {
         log.debug("導向    Eip07w010Case_enter 派車基本車輛資料作業");
+        try {
         eip07w010Validator.carValidate(caseData.getEip07w010CarDataList().get(0),result);
         if (result.hasErrors()) {
             return ADD_CAR;
         }
-        try {
+
             eip07w010Service.addCarData(caseData.getEip07w010CarDataList().get(0));
             setSystemMessage(getSaveSuccessMessage());
             caseData.setEip07w010QueryDataList(new ArrayList<>());
         }catch (Exception e){
+            setSystemMessage(getSaveFailMessage());
             log.error("新增失敗，原因:{}", ExceptionUtility.getStackTrace(e));
             return ADD_CAR;
         }
@@ -297,15 +320,17 @@ public class Eip07w010Controller extends BaseController {
     @RequestMapping("/Eip07w010_updateCar.action")
     public String updateCar(@Validated @ModelAttribute(CASE_KEY) Eip07w010Case caseData, BindingResult result) {
         log.debug("導向    Eip07w010Case_update 派車基本資料建置作業  車籍資料更新作業");
+        try {
         eip07w010Validator.carValidate(caseData.getEip07w010CarDataList().get(0),result);
         if (result.hasErrors()) {
             return ADD_APGE;
         }
-        try {
+
             eip07w010Service.updateCarBase(caseData.getEip07w010CarDataList().get(0));
             setSystemMessage(getUpdateSuccessMessage());
             caseData.setEip07w010QueryDataList(new ArrayList<>());
         }catch (Exception e){
+            setSystemMessage(getUpdateFailMessage());
             log.error("修改失敗，原因:{}", ExceptionUtility.getStackTrace(e));
             return ADD_APGE;
         }
@@ -333,6 +358,7 @@ public class Eip07w010Controller extends BaseController {
             caseData.setEip07w010CarDataList(carDetail);
             eip07w010Service.getCarDetails(caseData);
         }catch (Exception e){
+            setSystemMessage(getQueryFailMessage());
             log.error("查詢失敗，原因:{}", ExceptionUtility.getStackTrace(e));
             return DATA_APGE;
         }
@@ -361,6 +387,7 @@ public class Eip07w010Controller extends BaseController {
             setSystemMessage(getDeleteSuccessMessage());
             caseData.setEip07w010QueryDataList(new ArrayList<>());
         }catch (Exception e){
+            setSystemMessage(getDeleteFailMessage());
             log.error("刪除失敗，原因:{}", ExceptionUtility.getStackTrace(e));
             return ADD_APGE;
         }

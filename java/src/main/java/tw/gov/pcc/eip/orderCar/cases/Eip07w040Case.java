@@ -31,7 +31,6 @@ public class Eip07w040Case implements Serializable {
 
 	public interface Update extends Default {}
 
-	@RequiredString(label = "派車結果選項", groups = { Update.class })
 	private String carprocess_status;// 派車狀態
 	private String applydateStart;// 申請日期(起)
 	private String applydateEnd;// 申請日期(迄)
@@ -88,4 +87,8 @@ public class Eip07w040Case implements Serializable {
 		return true;
 	}
 
+	private String mergeApplyid;
+	@RequiredString(label = "派車結果選項", groups = { Update.class })
+	private String status;
+	
 }

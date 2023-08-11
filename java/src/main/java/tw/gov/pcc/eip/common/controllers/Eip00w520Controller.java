@@ -135,6 +135,9 @@ public class Eip00w520Controller extends BaseController {
             log.debug("新增或修改意見調查表單");
             eip00w520Service.init(caseData);
             String msg = "A".equals(caseData.getMode()) ? getSaveSuccessMessage() : getUpdateSuccessMessage();
+            if (result.hasErrors()) {
+                return THEME_PAGE;
+            }
             eip00w520Service.advancedValidate(themeCaseData, result);
             if (result.hasErrors()) {
                 return THEME_PAGE;
@@ -276,7 +279,7 @@ public class Eip00w520Controller extends BaseController {
 
     @RequestMapping("/Eip00w520_optionInsertUpdate.action")
     public String optionInsert(@ModelAttribute(CASE_KEY) Eip00w520Case caseData,
-                              @Validated @ModelAttribute(OPTION_CASE_KEY) Eip00w520OptionCase optionCase,
+                              @Validated(Eip00w520OptionCase.update.class) @ModelAttribute(OPTION_CASE_KEY) Eip00w520OptionCase optionCase,
                               BindingResult result) {
         try {
             log.debug("新增或修改選項");

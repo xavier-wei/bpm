@@ -62,4 +62,10 @@ public interface OrformdataDao {
      * @return
      */
     public List<Orformdata> getDataByStatus(List<String>statusList, String deptno, String jobtitle);
+    
+    /**
+     * 批次更新狀態
+     * @return
+     */
+    public int updateStatusBatch();
 }

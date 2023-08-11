@@ -83,7 +83,7 @@
                             <a href="<c:url value='/Common_sitemap.action' />">
                                 <img src="./images/top_icon2.png" alt="" class="d-inline-block align-middle">
                                 <div class="d-inline-block align-middle text-center">
-                                    <span class="title_04">網頁導覽</span>
+                                    <span class="title_04">網站導覽</span>
                                 </div>
                             </a>
                         </div>
@@ -185,7 +185,7 @@
                         <div id="msgarea" class="infoarea TframeDiv" style="width:100%;display:flex">
                             <div id="footer" class="footer">
                                 <div class="ifon infotitle"><i class="fas fa-caret-down"></i><b>【訊息區】</b></div>
-                                <div class="prog infoword"><sys:systemMessage/></div>
+                                <div id="sysyemMessage" class="prog infoword"><sys:systemMessage/></div>
                             </div>
                         </div>
                     </div>
@@ -300,11 +300,13 @@
                     contentType: "application/json",
                     success: function (data) {
                         let $titleStatus = $('#title_status .title_status');
-                        interval = data.interval;
-                        $(data.apiResultList.reverse()).each((i, x) => {
-                            $($titleStatus.find('.title_02').get(i)).text(x.cnt);
-                            $($titleStatus.find('.title_05').get(i)).prop('href', x.click_url);
+                        let t02 = $titleStatus.find('.title_02').get().reverse();
+                        let t05 = $titleStatus.find('.title_05').get().reverse();
+                        $(data.apiResultList).each((i, x) => {
+                            $(t02[i]).text(x.cnt);
+                            $(t05[i]).prop('href', x.click_url);
                         });
+                        interval = data.interval;
                     },
                     error: function (xhr, ajaxOptions, thrownError) {
                         console.log(xhr.status + " " + thrownError);

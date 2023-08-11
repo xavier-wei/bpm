@@ -84,7 +84,7 @@
 										<c:out value='${item.carno2}'/>
 									</td>
 									<td id="carType">
-										<c:out value='${item.carType}'/>-<c:out value='${item.carTypeNm}'/>
+										<c:out value='${item.carTypeNm}'/>
 									</td>
 									<td id="bossMk">
 										<c:out value='${item.bossMk}'/><c:out value='${item.bossMkNm}'/>
@@ -106,7 +106,7 @@
                             </c:forEach>
 				</tbody>
 			</table>
-		</div>
+
 		<form:hidden id="carno1" path="carno1" />
 		<form:hidden id="carno2" path="carno2" />
 		<form:hidden id="driveridDetail" path="driveridDetail" />

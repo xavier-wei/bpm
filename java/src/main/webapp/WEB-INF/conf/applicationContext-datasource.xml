@@ -13,6 +13,8 @@
 
     <jee:jndi-lookup id="dataSource" jndi-name="jdbc/eipDS" proxy-interface="javax.sql.DataSource" />
 
+    <jee:jndi-lookup id="itrDataSource" jndi-name="jdbc/itrDS" proxy-interface="javax.sql.DataSource" />
+
     <tx:advice id="transactionAdvice" transaction-manager="transactionManager">
         <tx:attributes>
             <tx:method name="get*" read-only="true" propagation="SUPPORTS" />

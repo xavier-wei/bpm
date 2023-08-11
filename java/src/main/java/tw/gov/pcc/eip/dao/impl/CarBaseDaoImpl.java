@@ -18,6 +18,7 @@ import tw.gov.pcc.eip.dao.CarBaseDao;
 import tw.gov.pcc.eip.domain.CarBase;
 import tw.gov.pcc.eip.orderCar.cases.Eip07w010Case;
 
+
 /**
  * 選單項目資料 DaoImpl
  */
@@ -106,7 +107,7 @@ public class CarBaseDaoImpl extends BaseDao<CarBase> implements CarBaseDao {
     @Override
     public List<Eip07w010Case> quaryCarBase(Eip07w010Case caseData) {
         StringBuilder sql = new StringBuilder();
-        sql.append(" select   *  from CarBase ");
+        sql.append(" select   *  from  ").append(TABLE_NAME);
         if (StringUtils.isNotBlank(caseData.getCarno1())){
             sql.append(" WHERE carno1  = :carno1 ");
             sql.append(" AND carno2 =:carno2 ");
@@ -199,6 +200,18 @@ public class CarBaseDaoImpl extends BaseDao<CarBase> implements CarBaseDao {
         return CollectionUtils.isEmpty(list)? null : list.get(0);
 
 	}
+	
+	@Override
+	public List<CarBase> selectBosscarList() {
+        StringBuilder sql = new StringBuilder();
+        
+        sql.append(" Select * from " + TABLE_NAME);
+        sql.append(" WHERE BOSS_MK = 'Y' ");
+
+        return  getNamedParameterJdbcTemplate().query(sql.toString(), new HashMap<String, String>(),
+                BeanPropertyRowMapper.newInstance(CarBase.class));
+
+	}
 
 	@Override
 	public CarBase selectCarAndDriverByCarno(String carno1, String carno2) {
@@ -220,5 +233,14 @@ public class CarBaseDaoImpl extends BaseDao<CarBase> implements CarBaseDao {
 
         return CollectionUtils.isEmpty(list) ? null : list.get(0);
 	}
+
+    @Override
+    public List<CarBase> getCarno() {
+        StringBuilder sql = new StringBuilder();
+        sql.append(" SELECT DISTINCT CONCAT(carno1, '-', carno2) AS carno from  "+ TABLE_NAME);
+
+        SqlParameterSource params = new MapSqlParameterSource();
+        return getNamedParameterJdbcTemplate().query(sql.toString(),params, BeanPropertyRowMapper.newInstance(CarBase.class));
+    }
 
 }

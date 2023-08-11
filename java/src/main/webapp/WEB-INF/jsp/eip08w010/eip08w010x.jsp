@@ -21,7 +21,7 @@
 </jsp:attribute>
 
 <jsp:attribute name="contents">
-    <tags:fieldset>
+    <tags:fieldset  legend="查詢結果">
 		<form:form id="eip08w010Form" name="eip08w010Form" modelAttribute="${caseKey}" method="POST">
             <tags:form-row>
                  <form:label path="addMainItemname" cssClass="col-form-label">品名大類：</form:label>

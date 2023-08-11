@@ -14,7 +14,7 @@
 </jsp:attribute>
 
 <jsp:attribute name="contents">
-    <tags:fieldset>
+    <tags:fieldset legend="查詢結果">
 		<form:form id="eip08w050Form" name="eip08w050Form" modelAttribute="${caseKey}" method="POST">
             <tags:form-row>
             	<div class="col-12 col-md-12">申請年月:<c:out value="${caseData.applyYearMonth}"/></div>

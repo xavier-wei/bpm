@@ -24,31 +24,31 @@
     <tags:fieldset>
 		<form:form id="eip07w020Form" name="eip07w020Form" modelAttribute="${caseKey}" method="POST">
 			<tags:form-row>
-				<label class="col-form-label text-left star">功能:</label>
-				<div class="d-flex align-items-center">
+				<div class="col-md-4 d-flex align-items-center">
+					<form:label cssClass="col-form-label star" path="workTy">功能：</form:label>
 					<form:radiobutton id="workTy" cssClass="checkedgreen" value="A" path="workTy"/>新增預約
 					&nbsp;&nbsp;&nbsp;
 					<form:radiobutton id="workTy" cssClass="checkedgreen" value="Q" path="workTy"/>查詢派車結果
 				</div>
 			</tags:form-row>
 			<tags:form-row>
-				<label class="col-form-label text-left  star">申請人:</label>
-				<div class="col-sm-2">
-					<form:input id="applyName" name="applyName" path="applyName" cssClass="form-control"   size="8"
+				<div class="col-md-4 d-flex">
+					<form:label cssClass="col-form-label  star" path="applyName">申請人：</form:label>
+					<form:input id="applyName" name="applyName" path="applyName" cssClass="form-control"   size="8" disabled="true"
 								maxlength="8" />
 				</div>
 			</tags:form-row>
 				<tags:form-row>
-				<label class="col-form-label text-left  star">申請單位:</label>
-				<div class="col-sm-2">
-					<form:input id="applyUnit" name="applyUnit" path="applyUnit" cssClass="form-control"   size="8"
+				<div class="col-md-4 d-flex">
+					<form:label cssClass="col-form-label star" path="applyUnit">申請單位：</form:label>
+					<form:input id="applyUnit" name="applyUnit" path="applyUnit" cssClass="form-control"   size="8" disabled="true"
 								maxlength="8" />
 				</div>
 			</tags:form-row>
 			<div id="A">
 				<tags:form-row>
-				<label class="col-form-label text-left  star">申請日期:</label>
-				<div class="col-sm-2">
+				<div class="col-md-4 d-flex">
+					<form:label cssClass="col-form-label star" path="applyDate">申請日期：</form:label>
 					<form:input id="applyDate" name="applyDate" path="applyDate" cssClass="form-control num_only dateTW"   size="7"
 								maxlength="7" />
 				</div>
@@ -57,25 +57,25 @@
 
 			<div id="Q">
 			<tags:form-row>
-				<label class="col-form-label text-left ">申請日期(起):</label>
-				<div class="col-sm-2">
+				<div class="col-md-4 d-flex">
+					<form:label cssClass="col-form-label" path="applyDateStar">申請日期(起)：</form:label>
 					<form:input id="applyDateStar" name="applyDateStar" path="applyDateStar" cssClass="form-control num_only dateTW"   size="7"
 								maxlength="7" />
 				</div>
-				<label class="col-form-label text-left">申請日期(迄):</label>
-				<div class="col-sm-2">
+				<div class="col-md-4 d-flex">
+					<form:label cssClass="col-form-label" path="applyDateEnd">申請日期(迄)：</form:label>
 					<form:input id="applyDateEnd" name="applyDateEnd" path="applyDateEnd" cssClass="form-control num_only dateTW"   size="7"
 								maxlength="7" />
 				</div>
 			</tags:form-row>
 			<tags:form-row>
-				<label class="col-form-label text-left ">用車日期(起):</label>
-				<div class="col-sm-2">
+				<div class="col-md-4 d-flex">
+					<form:label cssClass="col-form-label" path="useDateStar">用車日期(起)：</form:label>
 					<form:input id="useDateStar" name="useDateStar" path="useDateStar" cssClass="form-control num_only dateTW"   size="7"
 								maxlength="7" />
 				</div>
-				<label class="col-form-label text-left ">用車日期(迄):</label>
-				<div class="col-sm-2">
+				<div class="col-md-4 d-flex">
+					<form:label cssClass="col-form-label" path="useDateEnd">用車日期(迄)：</form:label>
 					<form:input id="useDateEnd" name="useDateEnd" path="useDateEnd" cssClass="form-control num_only dateTW"   size="7"
 								maxlength="7" />
 				</div>

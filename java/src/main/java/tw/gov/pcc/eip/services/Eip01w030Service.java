@@ -7,12 +7,14 @@ import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 
 import lombok.extern.slf4j.Slf4j;
 import tw.gov.pcc.eip.dao.EipcodeDao;
@@ -91,8 +93,10 @@ public class Eip01w030Service {
     public Eip01wPopCase query(String fseq) {
         Eip01wPopCase detail = msgdataDao.getEip01wDetail(fseq, "1");
         if (detail != null) {
+            detail.setMcontent(StringUtils.replace(detail.getMcontent(), "\r\n", "<br>"));
             detail.setFile(msgdepositDao.findbyfseq(Arrays.asList(fseq)).stream()
-                    .collect(Collectors.toMap(Msgdeposit::getSeq, Msgdeposit::getAttachfile)));
+                    .collect(Collectors.toMap(Msgdeposit::getSeq, Msgdeposit::getAttachfile, (n, o) -> n,
+                            LinkedHashMap::new)));
         }
         return detail;
     }

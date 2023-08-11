@@ -4,6 +4,7 @@ import java.time.chrono.MinguoChronology;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.regex.Matcher;
@@ -197,8 +198,10 @@ public class Eip01w040Service {
     public Eip01wPopCase getDetail(String fseq) {
         Eip01wPopCase detail = msgdataDao.getEip01wDetail(fseq, "4");
         if (detail != null) {
+            detail.setMcontent(StringUtils.replace(detail.getMcontent(), "\r\n", "<br>"));
             detail.setFile(msgdepositDao.findbyfseq(Arrays.asList(fseq)).stream()
-                    .collect(Collectors.toMap(Msgdeposit::getSeq, Msgdeposit::getAttachfile)));
+                    .collect(Collectors.toMap(Msgdeposit::getSeq, Msgdeposit::getAttachfile, (n, o) -> n,
+                            LinkedHashMap::new)));
         }
         return detail;
     }

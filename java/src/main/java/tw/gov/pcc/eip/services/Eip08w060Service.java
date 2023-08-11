@@ -47,14 +47,10 @@ public class Eip08w060Service {
 //		String sysDate = sysDateTime.substring(0, 8);
 		//計算流水號
 		List<Roitem> count =roitemDao.count(caseData.getApply_date());
-		String number = "01";
+		int number = 1;
 		if (!count.isEmpty()){
-		int	size=Integer.valueOf(count.get(0).getItemid().substring(10));
-			if (size<9){
-				number = "0"+String.valueOf(size+1);
-			}else{
-				number = String.valueOf(size+1);
-			}
+			number=Integer.valueOf(count.get(0).getItemid().substring(10));
+			number=number+1;
 		}
 
 		int itemNO =0;
@@ -63,7 +59,7 @@ public class Eip08w060Service {
 				break;
 			}
 			Roitem roitem= new Roitem();
-			roitem.setItemid("RO"+caseData.getApply_date()+number);
+			roitem.setItemid("RO"+caseData.getApply_date()+String.format("%3s", number).replace(' ', '0'));
 			roitem.setItemno(String.valueOf(++itemNO));
 			roitem.setItem(eip08W060Case.getItem());
 			roitem.setDesc_memo(eip08W060Case.getDesc_memo());

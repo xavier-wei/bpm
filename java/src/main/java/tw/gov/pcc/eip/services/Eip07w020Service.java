@@ -72,8 +72,8 @@ public class Eip07w020Service {
         insterData.setProcessStaus("1");
         insterData.setUpdUser(userData.getUserId());
         insterData.setCreUser(userData.getUserId());
-        insterData.setCreDatetime(sysDate);
-        insterData.setUpdDatetime(sysDate);
+        insterData.setCreDatetime(sysDateTime);
+        insterData.setUpdDatetime(sysDateTime);
         insterData.setApplyName(caseData.getApplyName());
         insterData.setApplyUnit(caseData.getApplyUnit());
         insterData.setApplyDate(DateUtility.changeDateType(caseData.getApplyDate()));
@@ -135,6 +135,7 @@ public class Eip07w020Service {
         caseData.setUseDateStar(DateUtility.changeDateType(caseData.getUseDateStar()));
         caseData.setUseDateEnd(DateUtility.changeDateType(caseData.getUseDateEnd()));
 
+
         List<CarBooking> quaryList= carBookingDao.quaryData(caseData);
         List<Eip07w020Case> resulList =new ArrayList<>();
         for (CarBooking data:quaryList) {
@@ -167,6 +168,10 @@ public class Eip07w020Service {
     public void updateCarBooking( CarBooking updateData)throws Exception {
         updateData.setUsing_time_s(updateData.getStarH()+updateData.getStarM());
         updateData.setUsing_time_e(updateData.getEndH()+updateData.getEndM());
+        updateData.setApply_date(DateUtility.changeDateType(updateData.getApply_date()));
+        updateData.setUsing_date(DateUtility.changeDateType(updateData.getUsing_date()));
+        updateData.setUpd_user(userData.getUserId());
+        updateData.setUpd_datetime(sysDateTime);
         carBookingDao.updateByKey(updateData);
     }
 
@@ -210,6 +215,8 @@ public class Eip07w020Service {
             oldData.setName("");
             oldData.setCellphone("");
             oldData.setCartype("");
+            oldData.setApply_date(DateUtility.changeDateType(oldData.getApply_date()));
+            oldData.setUsing_date(DateUtility.changeDateType(oldData.getUsing_date()));
             carBookingDao.updateByKey(oldData);
             data.setDetailsList(Collections.singletonList(oldData));
         }else {//2取消申請
@@ -217,6 +224,8 @@ public class Eip07w020Service {
             oldData.setChange_mk("Y");
             oldData.setChange_reason("2");
             oldData.setCarprocess_status("C");
+            oldData.setApply_date(DateUtility.changeDateType(oldData.getApply_date()));
+            oldData.setUsing_date(DateUtility.changeDateType(oldData.getUsing_date()));
             carBookingDao.updateByKey(oldData);
         }
     }
@@ -242,9 +251,12 @@ public class Eip07w020Service {
             }
             return time;
         }else {
-            if (M>=30){
+            if (M>30){
                 time= String.format("%2s",H+1).replace(' ', '0')+"00";
-            }else {
+            }else if (M==0){//如果等於0
+                time= String.format("%2s", H).replace(' ', '0')+"00";
+            }
+            else {
                 time= String.format("%2s", H).replace(' ', '0')+"30";
             }
             return time;
@@ -260,12 +272,23 @@ public class Eip07w020Service {
         CarBooking detail= carBookingDao.selectByApplyId( applyId);
         Optional<Eipcode> codeName= eipcodeDao.findByCodeKindCodeNo("CARPROCESSSTATUS",detail.getCarprocess_status());
         detail.setCodeName(codeName.get().getCodeno()+"-"+codeName.get().getCodename());
+
+        if (StringUtils.isNotBlank(detail.getCartype())){//有些資料可能尚未派車
+            Optional<Eipcode> carTyNm= eipcodeDao.findByCodeKindCodeNo("CARTYPE",detail.getCartype());
+            detail.setCarTyNm(carTyNm.get().getCodename());
+        }
         detail.setStarH(StringUtils.substring(detail.getUsing_time_s(),0,2));
         detail.setStarM(StringUtils.substring(detail.getUsing_time_s(),2));
         detail.setEndH(StringUtils.substring(detail.getUsing_time_e(),0,2));
         detail.setEndM(StringUtils.substring(detail.getUsing_time_e(),2));
         detail.setUsing_date(DateUtility.changeDateType(detail.getUsing_date()));
         detail.setApply_date(DateUtility.changeDateType(detail.getApply_date()));
+        if ("U".equals(detail.getCarprocess_status())){
+            detail.setRmStarH(StringUtils.substring(detail.getB_apply_time_s(),0,2));
+            detail.setRmStarM(StringUtils.substring(detail.getB_apply_time_s(),2));
+            detail.setRmEndH(StringUtils.substring(detail.getB_apply_time_e(),0,2));
+            detail.setRmEndM(StringUtils.substring(detail.getB_apply_time_e(),2));
+        }
         return detail;
     }
 

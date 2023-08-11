@@ -145,7 +145,7 @@ public class Eip00w430Service extends OnlineRegService {
         orresult.setRegisbrth("");
         orresult.setRegisemail(userData.getEmail());
         //取不到dept名稱就直接exception
-        orresult.setDept(eipcodeDao.findByCodeKindCodeNo("REGISQUAL", userData.getDeptId()).get().getCodename());
+        orresult.setDept(getRegisqualDept().get("D" + userData.getDeptId()));
         orresult.setCompany(eipcodeDao.findByCodeKindCodeNo("ORG", userData.getOrgId()).get().getCodename());
         orresult.setJogtitle(eipcodeDao.findByCodeKindCodeNo("TITLE", userData.getTitleId()).get().getCodename());
         orresult.setRegisphone(userData.getTel1());

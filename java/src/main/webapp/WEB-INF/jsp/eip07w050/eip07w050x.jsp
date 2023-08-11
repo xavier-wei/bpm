@@ -14,7 +14,7 @@
 </jsp:attribute>
 
 <jsp:attribute name="contents">
-    <tags:fieldset>
+    <tags:fieldset legend="查詢結果">
 		<form:form id="eip07w050Form" name="eip07w050Form" modelAttribute="${caseKey}" method="POST">
             <tags:form-row>
             	<div class="col-4 col-md-4">申請日期(起)：<c:out value="${caseData.applydateStart}"/></div>
@@ -49,7 +49,9 @@
 	                        	<c:out value="${item.using_time_e}"/>
                         	</td>
                         	<td class="text-left">
-								<c:out value="${item.apply_memo}"/>
+								<span class="ellipsisStr">
+			                 		<c:out value="${item.apply_memo}"/>
+			                 	</span>
                         	</td>
                         	<td>
                         		<c:out value="${item.carprocess_status}"/>

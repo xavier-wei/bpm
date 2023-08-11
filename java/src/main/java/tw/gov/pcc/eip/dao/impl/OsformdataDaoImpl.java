@@ -10,6 +10,7 @@ import tw.gov.pcc.common.framework.dao.BaseDao;
 import tw.gov.pcc.eip.dao.OsformdataDao;
 import tw.gov.pcc.eip.domain.Osformdata;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -119,7 +120,7 @@ public class OsformdataDaoImpl extends BaseDao<Osformdata> implements Osformdata
         sql.append(ALL_COLUMNS_SQL);
         sql.append(" FROM " + TABLE_NAME);
         sql.append(" WHERE osccode = :osccode ");
-        sql.append("   AND status NOT IN ('N') ");
+//        sql.append("   AND status NOT IN ('N') ");
         Map<String, Object> params = new HashMap<>();
         params.put("osccode", osccode);
         List<Osformdata> list = getNamedParameterJdbcTemplate().query(sql.toString(),params,
@@ -144,6 +145,36 @@ public class OsformdataDaoImpl extends BaseDao<Osformdata> implements Osformdata
         List<Osformdata> list = getNamedParameterJdbcTemplate().query(sql.toString(),params,
                 BeanPropertyRowMapper.newInstance(Osformdata.class));
         return CollectionUtils.isEmpty(list) ? new ArrayList<>() : list;
+    }
+    
+    @Override
+    public int updateStatusBatch() {
+    	String sql = new StringBuffer()
+    			.append(" UPDATE " + TABLE_NAME)
+				.append(" SET STATUS = ( ")
+				.append(" 		CASE ")
+				.append(" 			WHEN STATUS = 'P' ")
+				.append(" 				THEN 'I' ")
+				.append(" 			WHEN STATUS = 'I' ")
+				.append(" 				THEN 'C' ")
+				.append(" 			ELSE STATUS ")
+				.append(" 			END ")
+				.append(" 		) ")
+				.append(" WHERE 1 = ( ")
+				.append(" 		CASE ")
+				.append(" 			WHEN STATUS = 'P' ")
+				.append(" 				AND OSFMDT <= :curdttime ")
+				.append(" 				AND OSENDT > :curdttime ")
+				.append(" 				THEN '1' ")
+				.append(" 			WHEN STATUS = 'I' ")
+				.append(" 				AND OSENDT <= :curdttime ")
+				.append(" 				THEN '1' ")
+				.append(" 			ELSE '0' ")
+				.append(" 			END ")
+				.append(" 		) ").toString();
+        Map<String, Object> params = new HashMap<>();
+        params.put("curdttime", LocalDateTime.now());
+        return getNamedParameterJdbcTemplate().update(sql, params);
     }
 
 }

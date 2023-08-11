@@ -117,3 +117,18 @@
         jQuery('body').iisiCommonHandler();
     });
 </script>
+
+<%-- 超過50個字以"..."取代，滑鼠移過去會顯示完整字串 --%>
+<script>
+$(function(){
+    var len = 51; 
+    $(".ellipsisStr").each(function(i){
+        if($(this).text().trim().length>len){
+        	$(this).attr("title",$(this).text().trim());
+            var text=$(this).text().trim().substring(0,len-1)+"...";
+            $(this).text(text);
+            console.log(text);
+        }
+    });
+});
+</script>

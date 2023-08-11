@@ -75,6 +75,7 @@ public class Eip06w050Controller extends BaseController {
     public String selectAction(@ModelAttribute(CASE_KEY) Eip06w050Case caseData) {
         try {
             log.debug("新增 會議室參數維護");
+            eip06w050Service.initialize(caseData);
             //新增時移除D(預約天數)、FX(會議室取消)，已包含於F(會議室邏輯)
             Map<String, String> map =  eip06w050Service.initializeOptionAll(caseData);
             map.entrySet().removeIf(entry -> entry.getKey().equals("D")|| entry.getKey().equals("FX"));
@@ -179,6 +180,7 @@ public class Eip06w050Controller extends BaseController {
             }
             return MODIFY_PAGE;
         }
+        eip06w050Service.initialize(caseData);
         eip06w050Service.initializeOption(caseData);//查詢頁類別
         return MAIN_PAGE;
 

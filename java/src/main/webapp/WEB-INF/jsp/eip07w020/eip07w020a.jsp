@@ -21,62 +21,60 @@
 		<form:form id="eip07w020Form" name="eip07w020Form" modelAttribute="${caseKey}" method="POST">
 
 			<tags:form-row>
-				<label class="col-form-label text-left  ">申請人:</label>
-				<div class="col-sm-2">
+				<div  class="col-md d-flex">
+					<form:label cssClass="col-form-label" path="applyName">申請人：</form:label>
 					<form:input id="applyName" name="applyName" path="applyName" cssClass="form-control"   size="8"
 								maxlength="8" disabled="true"/>
 				</div>
-				<label class="col-form-label text-left ">申請單位:</label>
-				<div class="col-sm-2">
+				<div  class="col-md d-flex">
+					<form:label cssClass="col-form-label" path="applyUnit">申請單位：</form:label>
 					<form:input id="applyUnit" name="applyUnit" path="applyUnit" cssClass="form-control"   size="8"
 								maxlength="8" disabled="true"/>
 				</div>
-				<label class="col-form-label text-left  ">申請日期:</label>
-				<div class="col-sm-2">
+				<div  class="col-md d-flex">
+					<form:label cssClass="col-form-label" path="applyDate">申請日期：</form:label>
 					<form:input id="applyDate" name="applyDate" path="applyDate" cssClass="form-control"   size="7"
 								maxlength="7" disabled="true"/>
 				</div>
 			</tags:form-row>
 			<tags:form-row>
-				<label class="col-form-label text-left  star">用車事由:</label>
-				<div class="col-sm-2">
-					<form:input id="useCarMemo" name="useCarMemo" path="insterList[0].useCarMemo" cssClass="form-control"   size="50"
-								maxlength="50" />
+				<div  class="col-md d-flex">
+					<form:label cssClass="col-form-label star" path="useCarMemo">用車事由：</form:label>
+					<form:textarea path="insterList[0].useCarMemo" cssClass="form-control" cols="70" rows="3" maxlength="100"/>
 				</div>
 			</tags:form-row>
 			<tags:form-row>
-				<label class="col-form-label text-left  star">目的地:</label>
-				<div class="col-sm-2">
-					<form:input id="destination" name="destination" path="insterList[0].destination" cssClass="form-control"   size="50"
-								maxlength="50" />
+				<div  class="col-md d-flex">
+					<form:label cssClass="col-form-label star" path="destination">目的地：</form:label>
+					<form:textarea path="insterList[0].destination" cssClass="form-control" cols="70" rows="3" maxlength="100"/>
 				</div>
 			</tags:form-row>
 			<tags:form-row>
-					<label class="col-form-label text-left">車輛總類:</label>
-				   <div>
-	                    <form:select id="carTy"  name="carTy"  path="insterList[0].carTy" cssClass="form-control">
+					<div class="col-md-4 d-flex">
+					   <form:label cssClass="col-form-label" path="carTy">車輛總類：</form:label>
+					   <form:select id="carTy"  name="carTy"  path="insterList[0].carTy" cssClass="form-control">
 	                    	<form:option value="1">4人座</form:option>
 	                        <c:forEach var="item" items="${caseData.carTyList}" varStatus="status">
 	                            <form:option value="${item.codeno}"><c:out value="${item.codename}"/></form:option>
 	                        </c:forEach>
 	                    </form:select>
 				   </div>
-					<label class="col-form-label text-left  star">人數:</label>
-						<div class="col-sm-2">
-							<form:input id="number" name="number" path="insterList[0].number" cssClass="form-control"   size="3"
-										maxlength="3" />
-						</div>
+					<div class="col-md-4 d-flex">
+						<form:label cssClass="col-form-label star" path="number">人數：</form:label>
+						<form:input id="number" name="number" path="insterList[0].number" cssClass="form-control num_only"   size="3"
+									maxlength="3" />
+					</div>
 			</tags:form-row>
 			<tags:form-row>
-						<label class="col-form-label text-left   star ">用車日期:</label>
-					<div class="col-sm-2">
+					<div  class="col-md d-flex">
+						<form:label cssClass="col-form-label star" path="useDate">用車日期：</form:label>
 						<form:input id="useDate" name="useDate" path="insterList[0].useDate" cssClass="form-control num_only dateTW"   size="7"
 									maxlength="7" />
 					</div>
 			</tags:form-row>
-					 <div class="d-flex">
-						 <label class="col-form-label text-left   star ">用車時間:</label>
-						   <form:select id="starH"  name="starH"  path="insterList[0].starH" cssClass="form-control">
+					 <div  class="col-md d-flex text-left" style="margin: 0; padding: 0;">
+						 <form:label cssClass="col-form-label star" path="starH">用車時間：</form:label>
+						 <form:select id="starH"  name="starH"  path="insterList[0].starH" cssClass="form-control">
 	                    	<form:option value=""></form:option>
 	                        <c:forEach var="hour" items="${caseData.hourList}" varStatus="status">
 	                            <form:option value="${hour}"><c:out value="${hour}"/></form:option>

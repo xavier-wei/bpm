@@ -60,7 +60,7 @@
 				</tbody>
 			</table>
 		</div>
-		</div>
+
 		<form:hidden id="applyId" path="applyId" />
         </form:form>
     </tags:fieldset>

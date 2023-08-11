@@ -21,7 +21,7 @@
 </jsp:attribute>
 
 <jsp:attribute name="contents">
-    <tags:fieldset>
+    <tags:fieldset  legend="查詢結果">
 		<form:form id="eip08w011Form" name="eip08w011Form" modelAttribute="${caseKey}" method="POST">
             <tags:form-row>
                  <div class="col-6 col-md form-inline"> 

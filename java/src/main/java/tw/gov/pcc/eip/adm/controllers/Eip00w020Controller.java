@@ -80,6 +80,8 @@ public class Eip00w020Controller extends BaseController {
         		caseData.setUserStatus(users.getAcnt_is_valid());
         		caseData.setTitleidList(eip00w020Service.findTitleIdList());//職稱代號下拉式選單datalist
         		caseData.setDeptList(eip00w020Service.findDeptIdList());//部門代號下拉式選單datalist
+        		caseData.setUserRolesList(eip00w020Service.findUserRoleList(caseData.getUser_id()));
+        		caseData.setRolesList(eip00w020Service.findAddRolesList(caseData));//新增角色rolelist
         		return new ModelAndView(EDIT_PAGE);
         	}else {
         		super.setSystemMessage(getQueryEmptyMessage());
@@ -111,4 +113,42 @@ public class Eip00w020Controller extends BaseController {
 			return new ModelAndView(QUERY_PAGE);
 		}
    }
+   
+   /**
+   * 刪除帳戶角色
+   *
+   * @return
+   */
+  @RequestMapping("/Eip00w020_delUserRole.action")
+  public ModelAndView delUserRole(@ModelAttribute(CASE_KEY) Eip00w020Case caseData) {
+        
+         try {
+	       	 eip00w020Service.deleteUserRoles(caseData);
+	       	 super.setSystemMessage(getUpdateSuccessMessage());
+	       	 return edit(caseData);
+		 } catch (Exception e) {
+			 log.error("角色刪除失敗 - {}", ExceptionUtility.getStackTrace(e));
+			 super.setSystemMessage(getUpdateFailMessage());
+			 return edit(caseData);
+		 }
+   }
+  
+  /**
+  * 新增帳戶角色
+  *
+  * @return
+  */
+  @RequestMapping("/Eip00w020_addUserRole.action")
+  public ModelAndView addUserRole(@ModelAttribute(CASE_KEY) Eip00w020Case caseData) {
+       
+        try {
+	      	eip00w020Service.addUserRoles(caseData);
+	      	super.setSystemMessage(getUpdateSuccessMessage());
+	      	return edit(caseData);
+		} catch (Exception e) {
+			log.error("角色新增失敗 - {}", ExceptionUtility.getStackTrace(e));
+			super.setSystemMessage(getUpdateFailMessage());
+			return edit(caseData);
+		}
+  }
 }

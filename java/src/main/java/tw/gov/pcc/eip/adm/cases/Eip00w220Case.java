@@ -1,13 +1,11 @@
 package tw.gov.pcc.eip.adm.cases;
 
+import java.io.Serializable;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.io.Serializable;
-
-
 /**
- * 網頁導覽
+ * 網站導覽
  *
  * @author swho
  */
@@ -15,5 +13,5 @@ import java.io.Serializable;
 @NoArgsConstructor
 public class Eip00w220Case implements Serializable {
     private static final long serialVersionUID = 1L;
-    private String rawResult;
+    private String level;
 }

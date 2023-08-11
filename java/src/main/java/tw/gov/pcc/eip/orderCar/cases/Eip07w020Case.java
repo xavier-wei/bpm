@@ -218,6 +218,12 @@ public class Eip07w020Case implements Serializable {
 	@LogField
 	private String rmMemo;
 
+	/**
+	 *標籤
+	 */
+	@LogField
+	private String lable;
+
 
 	public interface Query {
 	}

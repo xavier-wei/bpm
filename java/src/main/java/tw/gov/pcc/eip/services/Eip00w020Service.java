@@ -1,16 +1,24 @@
 package tw.gov.pcc.eip.services;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collector;
+import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.poi.util.StringUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import tw.gov.pcc.eip.adm.cases.Eip00w020Case;
 import tw.gov.pcc.eip.dao.EipcodeDao;
+import tw.gov.pcc.eip.dao.RolesDao;
+import tw.gov.pcc.eip.dao.User_rolesDao;
 import tw.gov.pcc.eip.dao.UsersDao;
 import tw.gov.pcc.eip.domain.Eipcode;
+import tw.gov.pcc.eip.domain.Roles;
+import tw.gov.pcc.eip.domain.User_roles;
 import tw.gov.pcc.eip.domain.Users;
 import tw.gov.pcc.eip.framework.domain.UserBean;
 
@@ -29,6 +37,10 @@ public class Eip00w020Service {
     private UsersDao usersDao;
     @Autowired
     private EipcodeDao eipcodeDao;
+    @Autowired
+    private User_rolesDao user_rolesDao;
+    @Autowired
+    private RolesDao rolesDao;
     
     public void init(Eip00w020Case eip00w020Case) {
     	eip00w020Case.setUser_id(null);
@@ -49,6 +61,21 @@ public class Eip00w020Service {
      */
     public Users findUser(Eip00w020Case eip00w020Case) {
     	return usersDao.selectByKey(eip00w020Case.getUser_id());
+    }
+    
+    
+    /**
+     * 查詢可新增角色清單
+     *
+     */
+    public List<Roles> findAddRolesList(Eip00w020Case eip00w020Case) {
+    	
+    	//查詢出所有角色-此userid已有角色
+    	List<Roles> allRoles = rolesDao.selectDataList(null);
+    	List<String> userroleList = user_rolesDao.selectDataByUserId(eip00w020Case.getUser_id())
+    			                    .stream().map(m -> m.getRole_id()).collect(Collectors.toCollection(ArrayList::new));
+    	
+    	return allRoles.stream().filter(a -> !userroleList.contains(a.getRole_id())).collect(Collectors.toList());
     }
     
     /**
@@ -82,12 +109,58 @@ public class Eip00w020Service {
     	usersDao.updateByKey(users);
     }
     
+    /**
+    *
+    * 刪除user_roles資料
+    */
+    public void deleteUserRoles(Eip00w020Case eip00w020Case) {
+	    Users user = eip00w020Case.getUsers();
+	    String deleteRoleid = eip00w020Case.getDelRoleId();
+	   
+	    User_roles userroles  = new User_roles();
+	    userroles.setUser_id(user.getUser_id());
+	    userroles.setSys_id("EI");
+	    userroles.setDept_id(user.getDept_id());
+	    userroles.setRole_id(deleteRoleid);
+	    user_rolesDao.deleteByKey(userroles);
+    }
+    
+    /**
+    *
+    * 新增user_roles資料
+    */
+    public void addUserRoles(Eip00w020Case eip00w020Case) {
+	    Users user = eip00w020Case.getUsers();
+	    String addRoleid = eip00w020Case.getAddRoleid();
+	    if(StringUtils.isNotBlank(addRoleid)) {
+			User_roles addUserRoles = new User_roles();
+			addUserRoles.setUser_id(user.getUser_id());
+			addUserRoles.setSys_id("EI");
+			addUserRoles.setDept_id(user.getDept_id());
+			addUserRoles.setRole_id(addRoleid);
+			addUserRoles.setCreate_user_id(userData.getUserId());
+			addUserRoles.setCreate_timestamp(LocalDateTime.now());
+			user_rolesDao.insert(addUserRoles);
+	    }
+    }
+    
     public List<Eipcode> findTitleIdList(){
     	return eipcodeDao.findByCodeKind("TITLE");
     }
     
     public List<Eipcode> findDeptIdList(){
     	return eipcodeDao.findByCodeKind("DEPT");
+    }
+    
+    //查詢此user_id底下有哪些roles
+    public List<Roles> findUserRoleList(String user_id){
+    	List<User_roles> userroles= user_rolesDao.selectDataByUserId(user_id);
+    	List<Roles> rolesList = new ArrayList<Roles>();
+    	for(User_roles ur:userroles) {
+    		List<Roles> roless = rolesDao.selectDataList(ur.getRole_id());
+    		rolesList.addAll(roless);
+    	}
+    	return rolesList;
     }
     
 }

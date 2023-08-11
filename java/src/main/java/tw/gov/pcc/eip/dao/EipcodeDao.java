@@ -92,4 +92,6 @@ public interface EipcodeDao {
     public List<Eipcode> findByCodeKindAndExcludeScodekind(String codeKind, String scodekind);
     
     public Eipcode selectDataByPrimaryKey(Eipcode eipcode);
+
+    int updateByKey(Eipcode eipcode);
 }

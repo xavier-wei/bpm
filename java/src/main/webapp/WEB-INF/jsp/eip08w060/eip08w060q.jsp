@@ -25,8 +25,8 @@
     <tags:fieldset>
 		<form:form id="eip08W060Form" name="eip08W060Form" modelAttribute="${caseKey}" method="POST">
 			<tags:form-row>
-				<label class="col-form-label text-left star">選項:</label>
-				<div class="d-flex align-items-center">
+				<div class="col-md d-flex  align-items-center">
+					<form:label cssClass="col-form-label star" path="user">選項:</form:label>
 					<form:radiobutton id="reportType" cssClass="checkedgreen" value="I-物品請購單" path="applyTpNm"/>物品請購單
 					&nbsp;&nbsp;&nbsp;
 					<form:radiobutton id="reportType" cssClass="checkedgreen" value="F-修繕請修單" path="applyTpNm"/>修繕請修單
@@ -35,24 +35,24 @@
 				</div>
 			</tags:form-row>
 			<tags:form-row>
-				<label class="col-form-label text-left star ">申請人:</label>
-				<div class="col-sm-2">
+				<div class="col-md-4 d-flex">
+					<form:label cssClass="col-form-label star" path="user">申請人:</form:label>
 					<form:input id="user" name="user" path="user" cssClass="form-control"   size="12"
 								maxlength="12" disabled="true" />
 				</div>
             </tags:form-row>
 
 			<tags:form-row>
-				<label class="col-form-label text-left star ">申請日期:</label>
-				<div class="col-sm-2">
-					<form:input id="applyDate" name="applyDate" path="applyDate" cssClass="form-control num_only dateTW" size="8" maxlength="7"/>
+					<div class="col-md-4 d-flex">
+						<form:label cssClass="col-form-label star" path="applyDate">申請日期:</form:label>
+						<form:input id="applyDate" name="applyDate" path="applyDate" cssClass="form-control num_only dateTW" size="8" maxlength="7"/>
 				</div>
             </tags:form-row>
 
 			<tags:form-row>
-                <label class="col-form-label text-left star">暫存:</label>
-                <div>
-                    <form:select id="workType" path="save" cssClass="form-control">
+					<div class="col-md-4 d-flex">
+						<form:label cssClass="col-form-label star" path="save">暫存:</form:label>
+						<form:select id="workType" path="save" cssClass="form-control">
                     	<form:option value="N">N否</form:option>
                     	<form:option value="Y">Y是</form:option>
                     </form:select>

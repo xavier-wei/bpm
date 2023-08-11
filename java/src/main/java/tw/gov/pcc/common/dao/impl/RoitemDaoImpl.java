@@ -102,10 +102,12 @@ public class RoitemDaoImpl extends BaseDao<Roitem> implements RoitemDao {
         sql.append(" WHERE apply_type  = :apply_type ");
         sql.append(" AND apply_staff =:apply_staff ");
         sql.append(" and apply_date =:apply_date ");
+        sql.append(" and TEMPMK =:save ");
         sql.append(" order by ITEMID ,ITEMNO ");
         SqlParameterSource params = new MapSqlParameterSource("apply_type",caseData.getApplyTpNm().substring(0,1))
                 .addValue("apply_staff", caseData.getUser())
-                .addValue("apply_date", caseData.getApplyDate());
+                .addValue("apply_date", caseData.getApplyDate())
+                .addValue("save", caseData.getSave());
         return getNamedParameterJdbcTemplate().query(sql.toString(),params, BeanPropertyRowMapper.newInstance(Eip08w060Case.class));
     }
 
@@ -140,10 +142,12 @@ public class RoitemDaoImpl extends BaseDao<Roitem> implements RoitemDao {
         sql.append(" WHERE apply_type  = :apply_type ");
         sql.append(" AND apply_staff =:apply_staff ");
         sql.append(" and apply_date =:apply_date ");
+        sql.append(" and TEMPMK =:save");
         sql.append(" order by ITEMID  ");
         SqlParameterSource params = new MapSqlParameterSource("apply_type",caseData.getApplyTpNm().substring(0,1))
                 .addValue("apply_staff", caseData.getUser())
-                .addValue("apply_date", caseData.getApplyDate());
+                .addValue("apply_date", caseData.getApplyDate())
+                .addValue("save", caseData.getSave());
         return getNamedParameterJdbcTemplate().query(sql.toString(),params, BeanPropertyRowMapper.newInstance(Eip08w060Case.class));
     }
 }

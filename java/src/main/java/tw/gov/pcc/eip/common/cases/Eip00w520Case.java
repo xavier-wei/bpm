@@ -81,7 +81,7 @@ public class Eip00w520Case implements Serializable {
 
     Map<String,Integer> titleRowspanMap = new HashMap<>();//合併列數資料，根據sectitleseq分類，供統計使用
 
-    Map<String,Integer> quesRowspanMap = new HashMap<>();//合併列數資料，根據topic分類，供統計使用
+    Map<String,Integer> quesRowspanMap = new HashMap<>();//合併列數資料，根據qseno分類，供統計使用
 
     List<String>writeContentTitle = new ArrayList<>();//填寫內容表頭
 

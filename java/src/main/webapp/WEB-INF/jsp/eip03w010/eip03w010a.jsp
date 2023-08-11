@@ -225,8 +225,8 @@
             '<td id="itemContentTxt" class="text-left">' +  selectedText + '</td>'+
             '<td id="itemContent" style="display: none;">' +  selectedID + '</td>'+
             '<td >' +  "待處理" + '</td>'+
-            '<td >' +  '<input path="stDt" class="form-control num_only ml-3 stDt" size="7" maxlength="7" value="' + stDt + '"/>' + '</td>'+
-            '<td >' +  '<input path="endDt" class="form-control num_only ml-3 endDt" size="7" maxlength="7" value="' + endDt + '"/>' + '</td>'+
+            '<td >' +  '<input path="stDt" class="form-control num_only ml-5 stDt" size="7" maxlength="7" value="' + stDt + '"/>' + '</td>'+
+            '<td >' +  '<input path="endDt" class="form-control num_only ml-5 endDt" size="7" maxlength="7" value="' + endDt + '"/>' + '</td>'+
             '<td>' + buildDeleteItemButton(rowCount).prop('outerHTML') + '</td>'+
             '</tr>';
         $('#trkObjTable > tbody').append(rowHtml);

@@ -564,9 +564,9 @@ public class Eip00w520Service extends OpinionSurveyService{
             mixCase.setTopicseq(item.getTopicseq());
             caseData.getReviews().add(mixCase);
             titleRowspanMap.putIfAbsent(String.valueOf(item.getSectitleseq()),0);
-            quesRowspanMap.putIfAbsent(String.valueOf(item.getTopic()),0);
+            quesRowspanMap.putIfAbsent(String.valueOf(item.getQseqno()),0);
             titleRowspanMap.computeIfPresent(String.valueOf(item.getSectitleseq()), (key, value) -> value + 1);
-            quesRowspanMap.computeIfPresent(String.valueOf(item.getTopic()), (key, value) -> value + 1);
+            quesRowspanMap.computeIfPresent(String.valueOf(item.getQseqno()), (key, value) -> value + 1);
         }
 //        for (String qseqno : qseqnoEmptyTextList) {
 //            Osquestion osquestion = osquestionDao.findByPk(caseData.getOsformno(), Integer.valueOf(qseqno));
@@ -583,6 +583,8 @@ public class Eip00w520Service extends OpinionSurveyService{
         }
         caseData.setTitleRowspanMap(titleRowspanMap);
         caseData.setQuesRowspanMap(quesRowspanMap);
+        log.debug("===titleRowspanMap===:"+titleRowspanMap);
+        log.debug("===quesRowspanMap===:"+quesRowspanMap);
 //        caseData.setQseqnoTextMap(qseqnoTextMap);
     }
 
@@ -594,8 +596,14 @@ public class Eip00w520Service extends OpinionSurveyService{
     public String getWriteContents(Eip00w520Case caseData) throws JsonProcessingException {
         List<Osresult>osresultList = osresultDao.getListByOsformno(caseData.getOsformno());
         List<Integer>wriseqList = new ArrayList<>();
-        List<String>topicList = caseData.getReviewTextcontents().stream().map(Eip00w520Case.Textcontent::getQseqno)
-                .filter(StringUtils::isNotBlank).collect(Collectors.toList());
+        List<String>topicList = new ArrayList<>();
+        if (!CollectionUtils.isEmpty(caseData.getReviewTextcontents())) {
+            caseData.getReviewTextcontents().forEach(s->{
+                if (StringUtils.isNotBlank(s.getQseqno())) {
+                    topicList.add(String.valueOf(s.getQseqno()));
+                }
+            });
+        }
         if (!CollectionUtils.isEmpty(caseData.getReviewMultiplecontents())) {
             caseData.getReviewMultiplecontents().forEach(s->{
                 Ositem ositem = ositemDao.findByPk(caseData.getOsformno(),Integer.valueOf(s));
@@ -622,24 +630,26 @@ public class Eip00w520Service extends OpinionSurveyService{
                 }
             }
         }
-        boolean isBreak = false;
-        for (Eip00w520Case.Textcontent textcontent : caseData.getReviewTextcontents()) {
-            for (Osresult osresult : osresultList) {
-                if (StringUtils.isNotBlank(textcontent.getQseqno()) && StringUtils.isBlank(textcontent.getText())) {
-                    wriseqList = osresultDao.getListByOsformno(caseData.getOsformno()).stream()
-                            .map(Osresult::getWriseq).collect(Collectors.toList());
-                    isBreak = true;
-                    break;
-                } else if (StringUtils.isNotBlank(textcontent.getQseqno()) && StringUtils.isNotBlank(textcontent.getText())) {
-                    if (StringUtils.contains(osresult.getWricontent(), "\"n\":\"" + textcontent.getQseqno() + "\"" + ",\"t\":\"" + textcontent.getText() + "\"")) {
-                        if (!wriseqList.contains(osresult.getWriseq())) {
-                            wriseqList.add(osresult.getWriseq());
+        if (!CollectionUtils.isEmpty(caseData.getReviewTextcontents())) {
+            boolean isBreak = false;
+            for (Eip00w520Case.Textcontent textcontent : caseData.getReviewTextcontents()) {
+                for (Osresult osresult : osresultList) {
+                    if (StringUtils.isNotBlank(textcontent.getQseqno()) && StringUtils.isBlank(textcontent.getText())) {
+                        wriseqList = osresultDao.getListByOsformno(caseData.getOsformno()).stream()
+                                .map(Osresult::getWriseq).collect(Collectors.toList());
+                        isBreak = true;
+                        break;
+                    } else if (StringUtils.isNotBlank(textcontent.getQseqno()) && StringUtils.isNotBlank(textcontent.getText())) {
+                        if (StringUtils.contains(osresult.getWricontent(), "\"n\":\"" + textcontent.getQseqno() + "\"" + ",\"t\":\"" + textcontent.getText() + "\"")) {
+                            if (!wriseqList.contains(osresult.getWriseq())) {
+                                wriseqList.add(osresult.getWriseq());
+                            }
                         }
                     }
                 }
-            }
-            if (isBreak) {
-                break;
+                if (isBreak) {
+                    break;
+                }
             }
         }
         if (!wriseqList.isEmpty()) {
@@ -940,28 +950,55 @@ public class Eip00w520Service extends OpinionSurveyService{
     public void advancedValidate(Eip00w520ThemeCase themeCase, BindingResult result) {
         if (StringUtils.isBlank(themeCase.getOsfmdtChksys())) {
             if (StringUtils.isBlank(themeCase.getOsfmdt())) {
-                result.rejectValue(themeCase.getOsfmdt(), "", "「開始時間」為必填");
+                result.rejectValue("osfmdt", "", "「開始時間」為必填");
             }
             if (StringUtils.isBlank(themeCase.getOsfmdtHour())) {
-                result.rejectValue(themeCase.getOsfmdtHour(), "", "「開始時間(時)」為必填");
+                result.rejectValue("osfmdtHour", "", "「開始時間(時)」為必填");
             }
             if (StringUtils.isBlank(themeCase.getOsfmdtMinute())) {
-                result.rejectValue(themeCase.getOsfmdtMinute(), "", "「開始時間(分)」為必填");
+                result.rejectValue("osfmdtMinute", "", "「開始時間(分)」為必填");
             }
         }
 
         if (StringUtils.isBlank(themeCase.getOsendtChksys())) {
             if (StringUtils.isBlank(themeCase.getOsendt())) {
-                result.rejectValue(themeCase.getOsendt(), "", "「結束時間」為必填");
+                result.rejectValue("osendt", "", "「結束時間」為必填");
             }
             if (StringUtils.isBlank(themeCase.getOsendtHour())) {
-                result.rejectValue(themeCase.getOsendtHour(), "", "「結束時間(時)」為必填");
+                result.rejectValue("osendtHour", "", "「結束時間(時)」為必填");
             }
             if (StringUtils.isBlank(themeCase.getOsendtMinute())) {
-                result.rejectValue(themeCase.getOsendtMinute(), "", "「結束時間(分)」為必填");
+                result.rejectValue("osendtMinute", "", "「結束時間(分)」為必填");
             }
         }
 
+        if (StringUtils.isNotBlank(themeCase.getOsfmdtChksys()) && StringUtils.isNotBlank(themeCase.getOsendtChksys())) {
+            result.rejectValue("osfmdtChksys", "", "「開始時間」需小於「結束時間」");
+        }
+
+        if (StringUtils.isBlank(themeCase.getOsfmdtChksys()) && StringUtils.isNotBlank(themeCase.getOsendtChksys())) {
+            LocalDateTime fmdt = LocalDateTime.of(DateUtility.westDateToLocalDate(DateUtility.changeDateTypeToWestDate(themeCase.getOsfmdt())), LocalTime.of(Integer.parseInt(themeCase.getOsfmdtHour()), Integer.parseInt(themeCase.getOsfmdtMinute())));
+            LocalDateTime nowTime = LocalDateTime.now().withSecond(0).withNano(0);
+            if (fmdt.isAfter(nowTime) || fmdt.equals(nowTime)) {
+                result.rejectValue("osfmdtMinute", "", "「開始時間」需小於「結束時間」");
+            }
+        }
+
+        if (StringUtils.isNotBlank(themeCase.getOsfmdtChksys()) && StringUtils.isBlank(themeCase.getOsendtChksys())) {
+            LocalDateTime endt = LocalDateTime.of(DateUtility.westDateToLocalDate(DateUtility.changeDateTypeToWestDate(themeCase.getOsendt())), LocalTime.of(Integer.parseInt(themeCase.getOsendtHour()), Integer.parseInt(themeCase.getOsendtMinute())));
+            LocalDateTime nowTime = LocalDateTime.now().withSecond(0).withNano(0);
+            if (endt.isBefore(nowTime) || endt.equals(nowTime)) {
+                result.rejectValue("osendtMinute", "", "「開始時間」需小於「結束時間」");
+            }
+        }
+
+        if (StringUtils.isBlank(themeCase.getOsfmdtChksys()) && StringUtils.isBlank(themeCase.getOsendtChksys())) {
+            LocalDateTime fmdt = LocalDateTime.of(DateUtility.westDateToLocalDate(DateUtility.changeDateTypeToWestDate(themeCase.getOsfmdt())), LocalTime.of(Integer.parseInt(themeCase.getOsfmdtHour()), Integer.parseInt(themeCase.getOsfmdtMinute())));
+            LocalDateTime endt = LocalDateTime.of(DateUtility.westDateToLocalDate(DateUtility.changeDateTypeToWestDate(themeCase.getOsendt())), LocalTime.of(Integer.parseInt(themeCase.getOsendtHour()), Integer.parseInt(themeCase.getOsendtMinute())));
+            if (fmdt.isAfter(endt) || fmdt.equals(endt)) {
+                result.rejectValue("osfmdtMinute", "", "「開始時間」需小於「結束時間」");
+            }
+        }
     }
 
     /**

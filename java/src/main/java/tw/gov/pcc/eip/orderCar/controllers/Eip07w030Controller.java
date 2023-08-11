@@ -70,9 +70,8 @@ public class Eip07w030Controller extends BaseController {
 			eip07w030Service.getData(caseData);
 			if(CollectionUtils.isEmpty(caseData.getDataList())) {
 				setSystemMessage("查無資料");
-			} else {
-				return new ModelAndView(LIST_PAGE);
-			}
+				return new ModelAndView(QUERY_PAGE);
+			} 
 		} catch (Exception e) {
 			log.error("Eip07w030Controller查詢失敗" + ExceptionUtility.getStackTrace(e));
 			setSystemMessage("查詢失敗");

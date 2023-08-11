@@ -7,6 +7,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import javax.sql.DataSource;
+
+import lombok.Getter;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,6 +31,7 @@ import tw.gov.pcc.common.annotation.Table;
  *
  * @author Goston
  */
+@Getter
 public abstract class BaseDao<T> {
 	private static final org.slf4j.Logger log = org.slf4j.LoggerFactory.getLogger(BaseDao.class);
 
@@ -44,25 +47,17 @@ public abstract class BaseDao<T> {
 		this.namedParameterJdbcTemplate = new NamedParameterJdbcTemplate(dataSource);
 	}
 
-	public final JdbcTemplate getJdbcTemplate() {
-		return this.jdbcTemplate;
-	}
-
-	public final NamedParameterJdbcTemplate getNamedParameterJdbcTemplate() {
-		return this.namedParameterJdbcTemplate;
-	}
-
-	public final DataSource getDataSource() {
+    public  DataSource getDataSource() {
 		return (this.jdbcTemplate != null ? this.jdbcTemplate.getDataSource() : null);
 	}
 
-	protected final Connection getConnection() throws CannotGetJdbcConnectionException {
+	protected  Connection getConnection() throws CannotGetJdbcConnectionException {
 		DataSource dataSource = getDataSource();
 		Assert.state(dataSource != null, "No DataSource set");
 		return DataSourceUtils.getConnection(dataSource);
 	}
 
-	protected final void releaseConnection(Connection con) {
+	protected  void releaseConnection(Connection con) {
 		DataSourceUtils.releaseConnection(con, getDataSource());
 	}
 
@@ -156,11 +151,11 @@ public abstract class BaseDao<T> {
 			fieldSql.append(":").append(field.getName()).append(",");
 		});
 		String _fieldSql = fieldSql.substring(0, fieldSql.length() - 1);
-		StringBuilder sql = new StringBuilder("INSERT INTO ");
-		sql.append(tableName).append("( ").append(_columnSql).append(") VALUES (").append(_fieldSql).append(")");
-//		log.debug("insert sql :[{}]",sql.toString());
+        //		log.debug("insert sql :[{}]",sql.toString());
 		SqlParameterSource params = new BeanPropertySqlParameterSource(t);
-		return getNamedParameterJdbcTemplate().update(sql.toString(), params);
+		return getNamedParameterJdbcTemplate().update("INSERT INTO " + tableName + "( " + _columnSql + ") VALUES (" + _fieldSql + ")"
+//		log.debug("insert sql :[{}]",sql.toString());
+                , params);
 	}
 
 	/**
@@ -224,7 +219,7 @@ public abstract class BaseDao<T> {
 			columns.append("T.").append(columnName.toUpperCase()).append(" as ").append(columnName.toLowerCase()).append(",");
 		});
 		columns.setLength(columns.length() - 1);
-		sql.append(" SELECT ").append(columns.toString()).append(" FROM " + tableName + " T ").append(" WHERE ").append(conditions.toString());
+		sql.append(" SELECT ").append(columns).append(" FROM " + tableName + " T ").append(" WHERE ").append(conditions);
 		log.debug(sql.toString());
 		SqlParameterSource params = new BeanPropertySqlParameterSource(t);
 		return (List<T>) getNamedParameterJdbcTemplate().query(sql.toString(), params, BeanPropertyRowMapper.newInstance(t.getClass()));
@@ -243,7 +238,7 @@ public abstract class BaseDao<T> {
 			conditions.append("T.").append(columnName.toUpperCase()).append(" = ").append(":").append(columnName.toLowerCase()).append(" AND ");
 		});
 		conditions.setLength(conditions.length() - 5);
-		List<T> list = (List<T>) selectDataByWhereCondition(t, conditions.toString());
+		List<T> list = selectDataByWhereCondition(t, conditions.toString());
 		return CollectionUtils.isEmpty(list) ? null : list.get(0);
 	}
 
@@ -270,7 +265,7 @@ public abstract class BaseDao<T> {
 		columns.setLength(columns.length() - 1);
 		conditions.setLength(conditions.length() - 5);
 		paramsAllEmptyThrowException(t, conditions.toString());
-		sql.append(" UPDATE ").append(tableName).append(" SET ").append(columns.toString()).append(" WHERE ").append(conditions.toString());
+		sql.append(" UPDATE ").append(tableName).append(" SET ").append(columns).append(" WHERE ").append(conditions);
 		log.debug(sql.toString());
 		SqlParameterSource params = new BeanPropertySqlParameterSource(t);
 		return getNamedParameterJdbcTemplate().update(sql.toString(), params);
@@ -299,7 +294,7 @@ public abstract class BaseDao<T> {
 		columns.setLength(columns.length() - 1);
 		conditions.setLength(conditions.length() - 5);
 		paramsAllEmptyThrowException(t, conditions.toString());
-		sql.append(" UPDATE ").append(tableName).append(" SET ").append(columns.toString()).append(" WHERE ").append(conditions.toString());
+		sql.append(" UPDATE ").append(tableName).append(" SET ").append(columns).append(" WHERE ").append(conditions);
 		log.debug(sql.toString());
 		SqlParameterSource params = new BeanPropertySqlParameterSource(t);
 		return getNamedParameterJdbcTemplate().update(sql.toString(), params);
@@ -324,7 +319,7 @@ public abstract class BaseDao<T> {
 		paramsAllEmptyThrowException(t, conditions.toString());
 		sql.append(" DELETE ").append(tableName);
 		sql.append(" WHERE ");
-		sql.append(conditions.toString());
+		sql.append(conditions);
 		log.debug(sql.toString());
 		SqlParameterSource params = new BeanPropertySqlParameterSource(t);
 		return getNamedParameterJdbcTemplate().update(sql.toString(), params);

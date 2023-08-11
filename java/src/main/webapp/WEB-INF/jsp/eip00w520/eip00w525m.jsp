@@ -64,7 +64,7 @@
     <tags:form-row>
         <div class="col-md-6 d-flex">
             <form:label cssClass="col-form-label star" path="itemseq">選項排序：</form:label>
-            <form:input path="itemseq" cssClass="form-control d-inline-block" size="3" maxlength="2"/>
+            <form:input path="itemseq" cssClass="form-control d-inline-block num_only" size="3" maxlength="2"/>
         </div>
     </tags:form-row>
     <tags:form-row>
@@ -122,6 +122,7 @@
 </form:form>
 <tags:form-note>
 <tags:form-note-item><span class="red">＊</span>為必填欄位。</tags:form-note-item>
+<tags:form-note-item>修改僅限選擇一筆。</tags:form-note-item>
 </tags:form-note>
 </tags:fieldset>
 </jsp:attribute>
@@ -139,6 +140,7 @@ $(function(){
     })
     $('#btnUpdate').click(function(e){
         e.preventDefault();
+        $('#iseqno').val($("input[name^='iseqnoList']:checked").val());
         $('#mode').val('U');
         $('#eip00w520Form').attr('action', '<c:url value="/Eip00w520_optionInsertUpdate.action" />').submit();
     })
@@ -168,7 +170,9 @@ $(function(){
                 $(this).prop("checked", false);
             });
         }
+        changeButtonStatus();
     });
+
     $("input[name^='iseqnoList']").click(function() {
         var numberOfChecked = $("input[name^='iseqnoList']:checked").length;
         var allcheckbox = $("input[name^='iseqnoList']").length;
@@ -177,19 +181,55 @@ $(function(){
         }else {
             $("#selectAll").prop("checked",false);
         }
+        changeButtonStatus();
+        if ($(this).is(':checked')) {
+            $('#itemseq').val($(this).parent().parent().children().eq(1).text());
+            $('#itemdesc').val($(this).parent().parent().children().eq(2).text());
+            let isaddtext = $(this).parent().parent().children().eq(3).text();
+            if (isaddtext === 'Y') {
+                $("input[name$='isaddtext'][value='Y']").prop("checked",true);
+            } else if (isaddtext === 'N') {
+                $("input[name$='isaddtext'][value='N']").prop("checked", true);
+            }
+        } else {
+            $('#itemseq').val('');
+            $('#itemdesc').val('');
+            $("input[name$='isaddtext']").prop("checked",false);
+        }
+
     });
 
-    $('.checktr').click(function() {
-        $('#iseqno').val($(this).children('td').eq(0).children().val());
-        $('#itemseq').val($(this).children('td').eq(1).text());
-        $('#itemdesc').val($(this).children('td').eq(2).text());
-        let isaddtext = $(this).children('td').eq(3).text();
-        if (isaddtext === 'Y') {
-            $("input[name$='isaddtext'][value='Y']").prop("checked",true);
-        } else if (isaddtext === 'N') {
-            $("input[name$='isaddtext'][value='N']").prop("checked", true);
+    // $('.checktr').click(function() {
+    //     $('#iseqno').val($(this).children('td').eq(0).children().val());
+    //     $('#itemseq').val($(this).children('td').eq(1).text());
+    //     $('#itemdesc').val($(this).children('td').eq(2).text());
+    //     let isaddtext = $(this).children('td').eq(3).text();
+    //     if (isaddtext === 'Y') {
+    //         $("input[name$='isaddtext'][value='Y']").prop("checked",true);
+    //     } else if (isaddtext === 'N') {
+    //         $("input[name$='isaddtext'][value='N']").prop("checked", true);
+    //     }
+    // });
+
+    function changeButtonStatus() {
+        let checkedNumber = $("input[name^='iseqnoList']:checked").length;
+        // alert(checkedNumber);
+        if(checkedNumber === 1) {
+            $('#btnUpdate').prop('disabled', false);
+            $('#btnDelete').prop('disabled', false);
+        } else if (checkedNumber > 1) {
+            $('#btnUpdate').prop('disabled', true);
+            $('#btnDelete').prop('disabled', false);
+        } else {
+            $('#btnUpdate').prop('disabled',true);
+            $('#btnDelete').prop('disabled',true);
         }
-    });
+    }
+
+    // 初始化
+    $('#btnUpdate').prop('disabled',true);
+    $('#btnDelete').prop('disabled',true);
+    changeButtonStatus();
 })
 </script>
 </jsp:attribute>

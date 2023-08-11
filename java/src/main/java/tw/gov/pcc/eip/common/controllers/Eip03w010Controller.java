@@ -22,6 +22,7 @@ import tw.gov.pcc.eip.common.cases.Eip03w030MixCase;
 import tw.gov.pcc.eip.dao.KeepTrkDtlDao;
 import tw.gov.pcc.eip.dao.KeepTrkMstDao;
 import tw.gov.pcc.eip.framework.domain.UserBean;
+import tw.gov.pcc.eip.framework.spring.annotation.SkipCSRFVerify;
 import tw.gov.pcc.eip.framework.spring.controllers.BaseController;
 import tw.gov.pcc.eip.services.Eip03w010Service;
 import tw.gov.pcc.eip.services.Eip03w030Service;
@@ -53,8 +54,6 @@ public class Eip03w010Controller extends BaseController {
     @Autowired
     private Eip03w010Service eip03w010Service;
     @Autowired
-    private Eip03w030Service eip03w030Service;
-    @Autowired
     private KeepTrkDtlDao keepTrkDtlDao;
 
     @ModelAttribute(CASE_KEY)
@@ -69,9 +68,16 @@ public class Eip03w010Controller extends BaseController {
      *
      */
     @RequestMapping("/Eip03w010_enter.action")
-    public String enter() {
+    public String enter(SessionStatus status) {
         log.debug("導向重要列管事項_重要列管事項維護作業");
-        getEip03w010Case();
+//        getEip03w010Case();
+        status.setComplete();
+        return "redirect:/Eip03w010_initQuery.action";
+    }
+
+    @RequestMapping("/Eip03w010_initQuery.action")
+    @SkipCSRFVerify
+    public String initQuery() {
         return QUERY_PAGE;
     }
 

@@ -117,8 +117,7 @@ public class DriverbaseDaoImpl extends BaseDao<DriverBase> implements DriverBase
     public int delete(Eip07w010Case caseData)  {
         return getNamedParameterJdbcTemplate().update(
                 new StringBuilder()
-                        .append(" DELETE  from " ) .append(TABLE_NAME ).append( " WHERE driverid=:driverid ")
-                        .append( " AND still_work ='Y' ").toString(),
+                        .append(" DELETE  from " ) .append(TABLE_NAME ).append( " WHERE driverid=:driverid ").toString(),
                 new BeanPropertySqlParameterSource(caseData));
     }
     @Override
@@ -134,6 +133,18 @@ public class DriverbaseDaoImpl extends BaseDao<DriverBase> implements DriverBase
                         .append(" WHERE driverid=:driverid  ")
                         .toString(),
                 new BeanPropertySqlParameterSource(updateDate));
+    }
+    @Override
+    public DriverBase getDataByCarno12(DriverBase driverbase) {
+        StringBuilder sql = new StringBuilder();
+        sql.append(" Select * " );
+        sql.append(" FROM driver_base t ");
+        sql.append(" WHERE CARNO1 = :carno1 ");
+        sql.append("   AND CARNO2 = :carno2 ");
+        SqlParameterSource params = new MapSqlParameterSource("carno1",driverbase.getCarno1()).addValue("carno2", driverbase.getCarno2());
+        List<DriverBase> list = getNamedParameterJdbcTemplate().query(sql.toString(),params, BeanPropertyRowMapper.newInstance(DriverBase.class));
+        
+        return CollectionUtils.isEmpty(list) ? null : list.get(0);
     }
 
 

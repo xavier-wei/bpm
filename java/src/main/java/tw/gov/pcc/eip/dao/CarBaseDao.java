@@ -39,4 +39,8 @@ public interface CarBaseDao {
     
     public CarBase selectCarAndDriverByCarno(String carno1,String carno2);
 
+    public List<CarBase> getCarno();
+
+    public List<CarBase> selectBosscarList();
+
 }

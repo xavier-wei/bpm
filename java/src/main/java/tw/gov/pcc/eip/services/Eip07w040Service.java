@@ -13,10 +13,12 @@ import org.springframework.stereotype.Service;
 import tw.gov.pcc.eip.dao.CarBaseDao;
 import tw.gov.pcc.eip.dao.CarBookingDao;
 import tw.gov.pcc.eip.dao.Car_booking_recDao;
+import tw.gov.pcc.eip.dao.DeptsDao;
 import tw.gov.pcc.eip.dao.EipcodeDao;
 import tw.gov.pcc.eip.domain.CarBase;
 import tw.gov.pcc.eip.domain.CarBooking;
 import tw.gov.pcc.eip.domain.Car_booking_rec;
+import tw.gov.pcc.eip.domain.Depts;
 import tw.gov.pcc.eip.domain.Eipcode;
 import tw.gov.pcc.eip.framework.domain.UserBean;
 import tw.gov.pcc.eip.orderCar.cases.Eip07w040Case;
@@ -42,6 +44,11 @@ public class Eip07w040Service {
 	private CarBaseDao carBaseDao;
 	@Autowired
 	private Car_booking_recDao car_booking_recDao;
+	@Autowired
+	private DeptsDao deptsDao;
+	@Autowired
+	private TimeConversionService timeConversionService;
+	
 	
 	/**
 	 * 依照申請日期、用車日期起迄搜尋審核資料
@@ -49,27 +56,32 @@ public class Eip07w040Service {
 	 *				  2.秘書處已複核通過案件：HandledList(carProcessstatus=3,4)
 	 * @param caseData
 	 */
-	public void getData(Eip07w040Case caseData) throws Exception {
-		List<CarBooking> list = carBookingDao.selectForEip07w040(caseData);//取得資料
+	public void getData(Eip07w040Case caseData,String dataCondition) throws Exception {
+		List<CarBooking> list = carBookingDao.selectForEip07w040(caseData,dataCondition);//取得資料
 
 		List<CarBooking> notHandleList = new ArrayList<>();
 		List<CarBooking> handledList = new ArrayList<>();
 		if (CollectionUtils.isNotEmpty(list)) {
 			for (CarBooking car : list) {
+				//撈表單狀態中文
 				Eipcode eipcode = new Eipcode();
 				eipcode.setCodekind("CARPROCESSSTATUS");
 				eipcode.setCodeno(car.getCarprocess_status());
 				Eipcode code = eipcodeDao.selectDataByPrimaryKey(eipcode);
 				car.setCarprocess_status(code.getCodeno() + "-" + code.getCodename());//表單狀態
 				car.setPrint_mk(StringUtils.isEmpty(car.getPrint_mk())? "" : car.getPrint_mk());
+				//撈單位名稱中文
+				Depts deptName = deptsDao.findByPk(car.getApply_dept());
+				car.setApply_dept(deptName.getDept_name());
+//				//轉換使用時間起迄
+//				String[] usingTime = timeConversionService.timeStringToBeginEndTime(car.getUsing());
 				
 				if(car.getCarprocess_status().startsWith("2")) {
 					notHandleList.add(car);
-				}
-				
-				if(car.getCarprocess_status().startsWith("3")|| car.getCarprocess_status().startsWith("4")) {
+				} else {
 					handledList.add(car);
 				}
+				
 			}
 		}
 		caseData.setNotHandleList(notHandleList);
@@ -86,9 +98,15 @@ public class Eip07w040Service {
 		CarBooking carBookingDetailData = carBookingDao.selectByApplyId(caseData.getApplyid());
 		Eipcode eipcode = new Eipcode();
 		eipcode.setCodekind("CARTYPE");
-		eipcode.setCodeno(carBookingDetailData.getCarprocess_status());
+		eipcode.setCodeno(carBookingDetailData.getApply_car_type());
 		Eipcode code = eipcodeDao.selectDataByPrimaryKey(eipcode);
 		carBookingDetailData.setApply_car_type(code.getCodename());
+		
+		String[] usingTime = timeConversionService.timeStringToBeginEndTime(carBookingDetailData.getUsing());
+		carBookingDetailData.setUsingStr(usingTime[0]+"~"+usingTime[1].trim());
+		
+		Depts deptName = deptsDao.findByPk(carBookingDetailData.getApply_dept());
+		carBookingDetailData.setApply_dept(deptName.getDept_name());
 		caseData.setCarBookingDetailData(carBookingDetailData);//案件明細資料
 		
 		List<CarBase> carList = carBaseDao.getAllData();//取得所有非首長&&carstatus=1的車輛
@@ -107,15 +125,20 @@ public class Eip07w040Service {
 		CarBooking cb = new CarBooking();
 		cb.setCarno1(caseData.getCarno().replaceAll("-",""));
 		cb.setCarno2("");
-		cb.setUsing_date(DateUtility.changeDateType(caseData.getUsing_date()));
+		cb.setUsing_date(caseData.getUsing_date());
 		List<CarBooking> list = carBookingDao.getDataByCarnoAndUsing_date(cb);
 		if(CollectionUtils.isNotEmpty(list)) {
 			caseData.setCarBookingList(list);
 			for(CarBooking carbooking : list) {//caseData.getUsing()：本案件的用車時間，逐一比對當日是否有人同時要用車
-				if("Y".equals(carBookingDao.checkTime(caseData.getUsing(),carbooking.getUsing()).getUsing())) {
+				CarBooking check = carBookingDao.checkTime(caseData.getUsing(),carbooking.getUsing_rec());
+				if("Y".equals(check.getUsing())) {
 					caseData.setTimeMK("Y");//顯示該用車時間已有人預約
-					break;
 				}
+				Depts deptName = deptsDao.findByPk(carbooking.getApply_dept());
+				carbooking.setApply_dept(deptName.getDept_name());
+				String[] usingTime = timeConversionService.timeStringToBeginEndTime(carbooking.getUsing_rec());
+				carbooking.setUsing_time_s(usingTime[0]);
+				carbooking.setUsing_time_e(usingTime[1].trim());
 			}
 		} else {
 			caseData.setCarBookingList(null);//顯示今日尚未有人預約使用
@@ -149,7 +172,7 @@ public class Eip07w040Service {
 		carBooking.setCarcolor(queryData.getCarcolor());
 		carBooking.setCombine_mk(caseData.getMerge());
 		if("Y".equals(caseData.getMerge()) && CollectionUtils.isNotEmpty(caseData.getCarBookingList())) {
-			carBooking.setCombine_applyid(caseData.getCarBookingList().get(0).getApplyid());
+			carBooking.setCombine_applyid(caseData.getMergeApplyid());
 			carBooking.setCombine_reason(caseData.getMergeReason());
 		}
 		
@@ -166,15 +189,15 @@ public class Eip07w040Service {
 //		@派車結果選項:若為1，則表單狀態=3派全程，若為2，則表單狀態=4派單程，若為3，則表單狀態=5已派滿
 //					 若為4，則表單狀態=6併單,派全程，若為5，則表單狀態=7併單,派單程
 		String sts = "";
-		if("1".equals(caseData.getCarprocess_status())){
+		if("1".equals(caseData.getStatus())){
 			sts = "3";
-		} else if ("2".equals(caseData.getCarprocess_status())){
+		} else if ("2".equals(caseData.getStatus())){
 			sts = "4";
-		} else if ("3".equals(caseData.getCarprocess_status())){
+		} else if ("3".equals(caseData.getStatus())){
 			sts = "5";
-		} else if ("4".equals(caseData.getCarprocess_status())){
+		} else if ("4".equals(caseData.getStatus())){
 			sts = "6";
-		} else if ("5".equals(caseData.getCarprocess_status())){
+		} else if ("5".equals(caseData.getStatus())){
 			sts = "7";
 		}
 		carBooking.setCarprocess_status(sts);
@@ -208,21 +231,23 @@ public class Eip07w040Service {
 	 */
 	public ByteArrayOutputStream getEip07w040LReport(Eip07w040Case caseData) throws Exception {
 		String printType = "";
+		List<String> applyids = new ArrayList<>();
 		if(StringUtils.isEmpty(caseData.getReprintApplyid())){
 			printType = "1";//列印
+			applyids = caseData.getApplyids().stream().filter(it -> StringUtils.isNotBlank(it)).collect(Collectors.toList());
+			caseData.setApplyids(applyids);
 		} else{
-			caseData.getApplyids().add(caseData.getReprintApplyid());
+			applyids.add(caseData.getReprintApplyid());
 			printType = "2";//補印
 		}
-		
-		List<String> applyids = caseData.getApplyids().stream().filter(it -> StringUtils.isNotBlank(it)).collect(Collectors.toList());
-		caseData.setApplyids(applyids);
+
 		List<Eip07w040L_Vo>reportList = new ArrayList<>();
 		for(String applyid : applyids) {
 			Eip07w040L_Vo vo = new Eip07w040L_Vo();
 			CarBooking data = carBookingDao.selectByApplyId(applyid);
 			vo.setApply_user(data.getApply_user());//申請人
-			vo.setApply_dept(data.getApply_dept());//申請單位
+			Depts deptName = deptsDao.findByPk(data.getApply_dept());
+			vo.setApply_dept(deptName.getDept_name());
 			vo.setApply_date(data.getApply_date());//申請日期
 			vo.setApply_memo(data.getApply_memo());//用車事由
 			vo.setDestination(data.getDestination());//目的地

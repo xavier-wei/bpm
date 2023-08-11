@@ -1,10 +1,12 @@
 package tw.gov.pcc.eip.services;
 
 import java.util.Arrays;
+import java.util.LinkedHashMap;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 
 import lombok.extern.slf4j.Slf4j;
 import tw.gov.pcc.eip.dao.MsgdataDao;
@@ -46,9 +48,11 @@ public class Eip01w050Service {
      */
     public Eip01wPopCase query(String fseq) {
         Eip01wPopCase detail = msgdataDao.getEip01wDetail(fseq, "5");
+        detail.setMcontent(StringUtils.replace(detail.getMcontent(), "\r\n", "<br>") );
         if (detail != null) {
             detail.setFile(msgdepositDao.findbyfseq(Arrays.asList(fseq)).stream()
-                    .collect(Collectors.toMap(Msgdeposit::getSeq, Msgdeposit::getAttachfile)));
+                    .collect(Collectors.toMap(Msgdeposit::getSeq, Msgdeposit::getAttachfile, (n, o) -> n,
+                            LinkedHashMap::new)));
         }
         return detail;
     }

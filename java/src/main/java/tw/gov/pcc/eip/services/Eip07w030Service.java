@@ -8,8 +8,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import tw.gov.pcc.eip.dao.CarBookingDao;
+import tw.gov.pcc.eip.dao.DeptsDao;
 import tw.gov.pcc.eip.dao.EipcodeDao;
 import tw.gov.pcc.eip.domain.CarBooking;
+import tw.gov.pcc.eip.domain.Depts;
 import tw.gov.pcc.eip.domain.Eipcode;
 import tw.gov.pcc.eip.framework.domain.UserBean;
 import tw.gov.pcc.eip.orderCar.cases.Eip07w030Case;
@@ -29,6 +31,8 @@ public class Eip07w030Service {
 	private EipcodeDao eipcodeDao;
 	@Autowired
 	private CarBookingDao carBookingDao;
+	@Autowired
+	private DeptsDao deptsDao;
 	
 	/**
 	 * 依照申請日期起迄搜尋審核資料
@@ -44,7 +48,9 @@ public class Eip07w030Service {
 				Eip07w030Case data = new Eip07w030Case();
 				data.setApplyid(car.getApplyid());
 				data.setApply_user(car.getApply_user());
-				data.setApply_dept(car.getApply_dept());
+				//撈單位名稱中文
+				Depts deptName = deptsDao.findByPk(car.getApply_dept());
+				data.setApply_dept(deptName.getDept_name());
 				data.setUsing_date(car.getUsing_date());
 				data.setUsing_time_s(car.getUsing_time_s());
 				data.setUsing_time_e(car.getUsing_time_e());

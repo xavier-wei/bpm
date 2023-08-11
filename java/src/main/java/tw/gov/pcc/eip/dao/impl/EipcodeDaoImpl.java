@@ -12,9 +12,7 @@ import tw.gov.pcc.common.framework.dao.BaseDao;
 import tw.gov.pcc.eip.dao.EipcodeDao;
 import tw.gov.pcc.eip.domain.Eipcode;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -267,6 +265,20 @@ public class EipcodeDaoImpl extends BaseDao<Eipcode> implements EipcodeDao {
         SqlParameterSource params = new MapSqlParameterSource("codekind", codeKind).addValue("scodekind",scodekind);
         return getNamedParameterJdbcTemplate()
                 .query(sql.toString(), params,BeanPropertyRowMapper.newInstance(Eipcode.class));
+    }
+
+    @Override
+    public int updateByKey(Eipcode eipcode) {
+        return getNamedParameterJdbcTemplate().update(
+                new StringBuilder()
+                        .append(" UPDATE ").append(TABLE_NAME)
+                        .append(" SET ")
+                        .append(" scodekind = :scodekind, scodeno = :scodeno, ")
+                        .append(" codename = :codename, staff = :staff, ")
+                        .append(" prcdat = :prcdat ")
+                        .append(" WHERE codekind = :codekind AND codeno = :codeno ")
+                        .toString(),
+                new BeanPropertySqlParameterSource(eipcode));
     }
 
 }

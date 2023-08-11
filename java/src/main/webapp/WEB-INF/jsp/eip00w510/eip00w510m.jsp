@@ -52,7 +52,7 @@
         <form:hidden path="mode"/>
         <form:hidden path="osccode"/>
         <tags:form-note>
-        <tags:form-note-item>如所屬分類項目之調查已上架，將無法刪除。</tags:form-note-item>
+        <tags:form-note-item>如所屬分類項目已被使用，將無法刪除。</tags:form-note-item>
         </tags:form-note>
     </form:form>
     </tags:fieldset>
@@ -82,7 +82,7 @@ $(function(){
             }
         });
         if (isExistsStarting) {
-            showAlert("所選分類已有上架項目，無法刪除！");
+            showAlert("所選分類已被使用，無法刪除！");
             return;
         }
         showConfirm('確定刪除嗎？',()=>{

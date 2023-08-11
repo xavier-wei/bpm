@@ -78,7 +78,7 @@ public class LoginController extends BaseController {
         };
     }
 
-    @RequestMapping("/Login.action")
+    @RequestMapping({"/Login.action", "/"})
     public String login(HttpServletRequest request) {
         try {
             if (loginService.getUserLoginData(userData, request)) {

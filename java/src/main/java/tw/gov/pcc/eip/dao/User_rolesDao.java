@@ -28,4 +28,6 @@ public interface User_rolesDao {
 
     List<User_roles> selectDataByRoleId(String role_id);
 
+	List<User_roles> selectDataByUserId(String user_id);
+
 }

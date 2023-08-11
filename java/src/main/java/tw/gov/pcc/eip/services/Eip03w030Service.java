@@ -119,11 +119,11 @@ public class Eip03w030Service {
         mixCase.setTrkFrom(km.getTrkFrom());
         mixCase.setAllStDt(km.getAllStDt()); //全案列管日期
         mixCase.setClsDt(km.getClsDt()); //結案日期
-        mixCase.setCreDept(km.getCreDept());
-        mixCase.setCreUser(km.getCreUser());
+        mixCase.setCreDept(deptsDao.findByPk(km.getCreDept()).getDept_name());
+        mixCase.setCreUser(usersDao.selectByKey(km.getCreUser()).getUser_name());
         mixCase.setCreDt(km.getCreDt() == null? "": km.getCreDt().format(fmt).replaceAll("-",""));
-        mixCase.setUpdDept(km.getUpdDept());
-        mixCase.setRptUpdUser(km.getUpdUser());
+        mixCase.setUpdDept(deptsDao.findByPk(km.getUpdDept()).getDept_name());
+        mixCase.setRptUpdUser(usersDao.selectByKey(km.getUpdUser()).getUser_name());
         mixCase.setUpdDt(km.getUpdDt() == null? "": km.getUpdDt().format(fmt).replaceAll("-",""));
 
         List<KeepTrkDtl> kdList = keepTrkDtlDao.selectDataByTrkIDAndTrkObj(caseData.getSelectedTrkID(),"");
