@@ -277,13 +277,13 @@
                       <!--處理意見 : agreeType-->
                       <i-form-group-check class="col-sm-12" label-cols="2" content-cols="10" :label="'處理意見：'">
                         <b-form-radio-group v-model="$v.agreeType.$model"
-                                            :disabled="userData != 'InfoTester' && formStatusRef === FormStatusEnum.READONLY">
+                                            :disabled="userData != 'InfoTester' && formStatusRef !== FormStatusEnum.READONLY">
                           <!--預定完成日期 : scheduleDate-->
                           <b-form-radio class="col-12" value="1">
                             <b-input-group>
                               <div>同意設定 : 預定完成日期 : 　</div>
                               <i-date-picker
-                                :disabled="$v.agreeType.$model !== '1' && userData != 'InfoTester' && formStatusRef === FormStatusEnum.READONLY"
+                                :disabled="$v.agreeType.$model !== '1' && userData !== 'InfoTester' && formStatusRef !== FormStatusEnum.READONLY"
                                 placeholder="yyy/MM/dd"
                                 v-model="$v.scheduleDate.$model"
                                 :state="validateState($v.scheduleDate)"
@@ -298,7 +298,7 @@
                             <b-input-group>
                               <div>部分同意設定 : 原因 :　　 　</div>
                               <b-form-textarea
-                                :disabled="$v.agreeType.$model !== '2' && userData != 'InfoTester' && formStatusRef === FormStatusEnum.READONLY"
+                                :disabled="$v.agreeType.$model !== '2' && userData != 'InfoTester' && formStatusRef !== FormStatusEnum.READONLY"
                                 v-model="$v.partialAgreeReason.$model"
                                 rows="1"
                                 maxlength="2000"
@@ -313,7 +313,7 @@
                             <b-input-group>
                               <div>不同意設定 : 原因 :　　　 　</div>
                               <b-form-textarea
-                                :disabled="$v.agreeType.$model !== '3' && userData != 'InfoTester' && formStatusRef === FormStatusEnum.READONLY"
+                                :disabled="$v.agreeType.$model !== '3' && userData != 'InfoTester' && formStatusRef !== FormStatusEnum.READONLY"
                                 v-model="$v.notAgreeReason.$model"
                                 rows="1"
                                 maxlength="2000"
@@ -333,12 +333,12 @@
                         <b-input-group>
                           <!--是否為外部防火牆 : isExternalFirewall-->
                           <b-form-checkbox v-model="$v.isExternalFirewall.$model" value="Y" unchecked-value="N"
-                                           :disabled="userData != 'InfoTester' && formStatusRef === FormStatusEnum.READONLY">
+                                           :disabled="userData !== 'InfoTester' && formStatusRef !== FormStatusEnum.READONLY">
                             外部防火牆
                           </b-form-checkbox>
                           <!--變更設備：是否為內部防火牆 : isInternalFirewall-->
                           <b-form-checkbox v-model="$v.isInternalFirewall.$model" value="Y" unchecked-value="N"
-                                           :disabled="userData != 'InfoTester' && formStatusRef === FormStatusEnum.READONLY">
+                                           :disabled="userData !== 'InfoTester' && formStatusRef !== FormStatusEnum.READONLY">
                             外部防火牆
                           </b-form-checkbox>
                         </b-input-group>
@@ -356,7 +356,7 @@
                       >
                         <!--設定內容 : firewallContent-->
                         <b-form-textarea v-model="$v.firewallContent.$model" rows="1" maxlength="2000" trim lazy
-                                         :disabled="userData != 'InfoTester' && formStatusRef === FormStatusEnum.READONLY"/>
+                                         :disabled="userData !== 'InfoTester' && formStatusRef !== FormStatusEnum.READONLY"/>
                       </i-form-group-check>
                     </b-form-row>
 
@@ -449,11 +449,12 @@ import {useBvModal} from '@/shared/modal';
 import {useNotification} from '@/shared/notification';
 import {useGetters} from '@u3u/vue-hooks';
 import {handleBack} from '@/router/router';
+
 const appendix = () => import('@/components/appendix.vue');
 const flowChart = () => import('@/components/flowChart.vue');
 
 export default {
-  name: 'l414Revise',
+  name: 'l414Edit',
   props: {
     l414Data: {
       type: Object,
@@ -488,8 +489,8 @@ export default {
       CREATE = '新增',
       MODIFY = '編輯',
       READONLY = '檢視',
-      VERIFY ='簽核'
-  }
+      VERIFY = '簽核'
+    }
 
     let appendixData = reactive({});
     let fileDataId = reactive({
@@ -614,7 +615,7 @@ export default {
 
       $bvModal.msgBoxConfirm('是否確認送出修改內容？').then((isOK: boolean) => {
         if (isOK) {
-          console.log('isSubmit',isSubmit)
+          console.log('isSubmit', isSubmit)
 
         }
       });

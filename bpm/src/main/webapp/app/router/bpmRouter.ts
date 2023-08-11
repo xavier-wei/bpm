@@ -4,7 +4,7 @@ const appendix =() => import('@/components/appendix.vue');
 const flowChart =() => import('@/components/flowChart.vue');
 
 const breadcrumb =() => import('../core/menu/breadcrumb.vue');
-const l414Revise =() => import('@/components/l414/l414Revise.vue');
+const l414Edit =() => import('@/components/l414/l414Edit.vue');
 
 export default [
   {
@@ -53,11 +53,11 @@ export default [
     props: true,
   },
   {
-    path: '/l414Revise',
-    name: 'l414Revise',
-    component: l414Revise,
+    path: '/l414Edit',
+    name: 'l414Edit',
+    component: l414Edit,
     meta: {
-      functionId: 'l414Revise',
+      functionId: 'l414Edit',
     },
     props: true,
   },

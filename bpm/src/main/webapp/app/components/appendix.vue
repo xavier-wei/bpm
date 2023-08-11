@@ -271,7 +271,6 @@ export default {
             .get(`/eip/bpm-upload-files/formId/${fileDataIdProp.fileId}`)
             .then(({data}) => {
               if (data) {
-                console.log('data',data)
                 table.data.splice(0, table.data.length, ...data);
               }
             })
@@ -312,7 +311,6 @@ export default {
       axios
           .get('/eip/bpm-upload-files/downloadFile/' + item.id, {responseType: 'blob'})
           .then(res => {
-            console.log('res',res)
             const content = String(res.headers['content-disposition']);
             const fileName = decodeURI(
                 content
@@ -325,9 +323,7 @@ export default {
             // 檔案是pdf跳出預覽視窗，不是pdf則直接下載
             if (extName === '.pdf') {
               let blob = new Blob([res.data], {type: 'application/pdf'});
-              console.log('blob',blob)
               let url = window.URL.createObjectURL(blob);
-              console.log('url',url)
               pdfViewer.value.pdfSrc = url;
               pdfViewer.value.isShowDia(url, true);
             } else {

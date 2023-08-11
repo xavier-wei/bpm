@@ -22,8 +22,10 @@ public interface BpmIsmsL414Repository extends JpaRepository<BpmIsmsL414, String
     BpmIsmsL414 findFirstByProcessInstanceId(String processInstanceId);
 
     @Query("SELECT l414 FROM BpmIsmsL414 l414 " +
-            "WHERE (LENGTH(COALESCE(:word,'')) = 0 OR l414.formId = :word) ")
-    List<BpmIsmsL414> findByWord(@Param("word") String word);
+            "WHERE (LENGTH(COALESCE(:word,'')) = 0 OR l414.formId = :word) " +
+            "AND (LENGTH(COALESCE(:appEmpid,'')) = 0 OR l414.appEmpid = :appEmpid)" +
+            "AND (LENGTH(COALESCE(:processInstanceStatus,'')) = 0 OR l414.processInstanceStatus = :processInstanceStatus)")
+    List<BpmIsmsL414> findByWord(@Param("word") String word,@Param("appEmpid") String appEmpid,@Param("processInstanceStatus") String processInstanceStatus);
 
 
 

@@ -195,6 +195,7 @@ export default {
       const params = new URLSearchParams()
       params.append('word', form.word)
       params.append('number', form.number)
+      params.append('processInstanceStatus', '1')
 
       axios.get(`/eip/eip-bpm-isms-l414/findByWord?${params.toString()}`)
           .then(({data}) => {
@@ -215,7 +216,7 @@ export default {
     };
 
     const toDetail = (item) => {
-      navigateByNameAndParams('l414Revise', {
+      navigateByNameAndParams('l414Edit', {
         l414Data: item,
         formStatus: FormStatusEnum.READONLY,
         isNotKeepAlive: false

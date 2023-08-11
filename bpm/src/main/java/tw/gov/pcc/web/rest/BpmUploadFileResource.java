@@ -210,20 +210,11 @@ public class BpmUploadFileResource {
     @GetMapping("/eip/bpm-upload-files/downloadFile/{id}")
     public DownloadableResource downloadFile(@PathVariable Long id) throws IOException {
 
-        log.info("BpmUploadFileResource.java - downloadFile - 216 :: " + id );
-
         Optional<BpmUploadFile> bpmFile = bpmUploadFileRepository.findById(id);
-
-        log.info("BpmUploadFileResource.java - downloadFile - 218 :: " + bpmFile );
 
         if (bpmFile.isPresent()) {
             Path path = Path.of(normalizePath(bpmFile.get().getFilePath()));
             if (path.toFile().exists()) {
-                log.info("BpmUploadFileResource.java - downloadFile - 222 :: " + bpmFile.get().getFilePath() );
-
-                log.info("BpmUploadFileResource.java - downloadFile - 223 :: " + path );
-                log.info("BpmUploadFileResource.java - downloadFile - 224 :: " + bpmFile.get().getFileName() );
-
                 return new DownloadableResource(new ByteArrayResource(Files.readAllBytes(path)), bpmFile.get().getFileName());
             } else {
                 return null;

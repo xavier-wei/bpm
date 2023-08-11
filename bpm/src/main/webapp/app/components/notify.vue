@@ -6,7 +6,7 @@
           <div class="row align-items-center">
             <div class="col-sm-11 p-0">
               <h5 class="m-0">
-                <font-awesome-icon icon="search" />
+                <font-awesome-icon icon="search"/>
                 查詢條件
               </h5>
             </div>
@@ -55,9 +55,11 @@
           </b-form-row>
           <!-- 填表日期 -->
           <b-form-row>
-            <i-form-group-check :label="'期間：'" class="col-8" label-cols="2" content-cols="6" :dual1="$v.seqDate" :dual2="$v.seqDateEnd">
+            <i-form-group-check :label="'期間：'" class="col-8" label-cols="2" content-cols="6" :dual1="$v.seqDate"
+                                :dual2="$v.seqDateEnd">
               <b-input-group>
-                <i-date-picker v-model="$v.seqDate.$model" placeholder="yyy/MM/dd" :disabled-date="notAfterPublicDateEnd"></i-date-picker>
+                <i-date-picker v-model="$v.seqDate.$model" placeholder="yyy/MM/dd"
+                               :disabled-date="notAfterPublicDateEnd"></i-date-picker>
                 <b-input-group-text>至</b-input-group-text>
                 <i-date-picker
                   v-model="$v.seqDateEnd.$model"
@@ -76,7 +78,7 @@
       </div>
     </section>
 
-    <section class="mt-2">
+    <section class="mt-2" v-show="queryStatus">
       <div class="container">
         <i-table
           ref="iTable"
@@ -98,15 +100,15 @@
 
 <script lang="ts">
 import axios from 'axios';
-import { ref, reactive, computed, toRefs, defineComponent } from '@vue/composition-api';
+import {ref, reactive, computed, toRefs, defineComponent} from '@vue/composition-api';
 import IDatePicker from '../shared/i-date-picker/i-date-picker.vue';
 import ITable from '../shared/i-table/i-table.vue';
 import IFormGroupCheck from '../shared/form/i-form-group-check.vue';
-import { useValidation, validateState } from '../shared/form';
-import { useBvModal } from '../shared/modal';
-import { required } from '@/shared/validators';
-import { Pagination } from '@/shared/model/pagination.model';
-import { useGetters, useStore } from '@u3u/vue-hooks';
+import {useValidation, validateState} from '../shared/form';
+import {useBvModal} from '../shared/modal';
+import {required} from '@/shared/validators';
+import {Pagination} from '@/shared/model/pagination.model';
+import {useGetters, useStore} from '@u3u/vue-hooks';
 
 export default defineComponent({
   name: 'notify',
@@ -118,6 +120,7 @@ export default defineComponent({
   setup() {
     const iTable = ref(null);
     const stepVisible = ref(true);
+    const queryStatus = ref(false);
     const $bvModal = useBvModal();
 
     function notBeforePublicDateStart(date: Date) {
@@ -145,13 +148,13 @@ export default defineComponent({
       dept: {},
       createUser: {},
       formCase: {},
-      status: { notnull: required },
+      status: {notnull: required},
       formType: {},
       seqDate: {},
       seqDateEnd: {},
     });
 
-    const { $v, checkValidity, reset } = useValidation(rules, form, formDefault);
+    const {$v, checkValidity, reset} = useValidation(rules, form, formDefault);
 
     const table = reactive({
       fields: [
@@ -243,13 +246,13 @@ export default defineComponent({
     // 下拉選單選項
     const queryOptions = reactive({
       status: [
-        { value: '0', text: '申請' },
-        { value: '1', text: '處理中' },
-        { value: '2', text: '處理過' },
+        {value: '0', text: '申請'},
+        {value: '1', text: '處理中'},
+        {value: '2', text: '處理過'},
       ],
       formCase: [
-        { value: '0', text: 'L410-共用系統使用者帳號申請單' },
-        { value: '1', text: 'L414-網路服務連結申請單' },
+        {value: '0', text: 'L410-共用系統使用者帳號申請單'},
+        {value: '1', text: 'L414-網路服務連結申請單'},
       ],
     });
 
@@ -258,35 +261,12 @@ export default defineComponent({
       const usegetters = useGetters;
       console.log('useGetters', useGetters);
       const id = 'ApplyTester';
-      stepVisible.value = true;
-      checkValidity().then((isValid: boolean) => {
-        if (isValid) {
-          $bvModal.msgBoxConfirm('是否確認送出修改內容？').then((isOK: boolean) => {
-            if (isOK) {
-              axios.post(`/process/queryTask/${id}`).then(data => {
-                console.log('data', data.data);
-                table.data = data.data.slice(0, data.data.length); //前端分頁(後端資料回傳)
-                table.totalItems = data.data.length;
-              });
-            }
-          });
-        } else {
-          $bvModal.msgBoxOk('欄位尚未填寫完畢，請於輸入完畢後再行送出。');
-        }
+      axios.post(`/process/queryTask/${id}`).then(data => {
+        console.log('data', data.data);
+        queryStatus.value = true;
+        table.data = data.data.slice(0, data.data.length); //前端分頁(後端資料回傳)
+        table.totalItems = data.data.length;
       });
-      // axios;
-      // .post('/find/iwgHosts', formDefault)
-      // .then(data => {
-      //   // ele.forEach((e) => {});
-      //   table.data = data.data;
-      // })
-      // .catch(error => {
-      //   console.log('catch', error);
-      // });
-
-      // table.data = [];
-      // table.totalItems = 1;
-      // table.data.splice(0, table.data.length, ...mockdata);
     };
 
     const handlePaginationChanged = (pagination: Pagination) => {
@@ -313,6 +293,7 @@ export default defineComponent({
       notAfterPublicDateEnd,
       toEdit,
       handlePaginationChanged,
+      queryStatus,
     };
   },
 });
