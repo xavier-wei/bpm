@@ -5,7 +5,6 @@ import tw.gov.pcc.domain.BpmIsmsL414;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.io.Serializable;
-import java.sql.Timestamp;
 import java.time.Instant;
 import java.util.Objects;
 
@@ -26,7 +25,7 @@ public class BpmIsmsL414DTO implements Serializable {
     private String taskName;
 
     @NotNull
-    private Timestamp applyDate;
+    private Instant applyDate;
 
     @NotNull
     @Size(max = 20)
@@ -71,14 +70,14 @@ public class BpmIsmsL414DTO implements Serializable {
     @Size(max = 1)
     private String selecteEdateType;
 
-    private Timestamp sdate;
+    private Instant sdate;
 
-    private Timestamp edate;
+    private Instant edate;
 
     @Size(max = 100)
     private String othereEdate;
 
-    private Timestamp delEnableDate;
+    private Instant delEnableDate;
 
     @Size(max = 100)
     private String sourceIp;
@@ -101,7 +100,7 @@ public class BpmIsmsL414DTO implements Serializable {
     @Size(max = 1)
     private String agreeType;
 
-    private Timestamp scheduleDate;
+    private Instant scheduleDate;
 
     @Size(max = 200)
     private String settingReason;
@@ -115,7 +114,7 @@ public class BpmIsmsL414DTO implements Serializable {
     @Size(max = 1000)
     private String firewallContent;
 
-    private Timestamp finishDatetime;
+    private Instant finishDatetime;
 
     @Size(max = 1)
     private String processInstanceStatus;
@@ -123,12 +122,12 @@ public class BpmIsmsL414DTO implements Serializable {
     @Size(max = 20)
     private String updateUser;
 
-    private Timestamp updateTime;
+    private Instant updateTime;
 
     @Size(max = 20)
     private String createUser;
 
-    private Timestamp createTime;
+    private Instant createTime;
     private String FormName;
 
 
@@ -188,11 +187,11 @@ public class BpmIsmsL414DTO implements Serializable {
         this.taskName = taskName;
     }
 
-    public Timestamp getApplyDate() {
+    public Instant getApplyDate() {
         return applyDate;
     }
 
-    public void setApplyDate(Timestamp applyDate) {
+    public void setApplyDate(Instant applyDate) {
         this.applyDate = applyDate;
     }
 
@@ -284,19 +283,19 @@ public class BpmIsmsL414DTO implements Serializable {
         this.selecteEdateType = selecteEdateType;
     }
 
-    public Timestamp getSdate() {
+    public Instant getSdate() {
         return sdate;
     }
 
-    public void setSdate(Timestamp sdate) {
+    public void setSdate(Instant sdate) {
         this.sdate = sdate;
     }
 
-    public Timestamp getEdate() {
+    public Instant getEdate() {
         return edate;
     }
 
-    public void setEdate(Timestamp edate) {
+    public void setEdate(Instant edate) {
         this.edate = edate;
     }
 
@@ -308,11 +307,11 @@ public class BpmIsmsL414DTO implements Serializable {
         this.othereEdate = othereEdate;
     }
 
-    public Timestamp getDelEnableDate() {
+    public Instant getDelEnableDate() {
         return delEnableDate;
     }
 
-    public void setDelEnableDate(Timestamp delEnableDate) {
+    public void setDelEnableDate(Instant delEnableDate) {
         this.delEnableDate = delEnableDate;
     }
 
@@ -372,11 +371,11 @@ public class BpmIsmsL414DTO implements Serializable {
         this.agreeType = agreeType;
     }
 
-    public Timestamp getScheduleDate() {
+    public Instant getScheduleDate() {
         return scheduleDate;
     }
 
-    public void setScheduleDate(Timestamp scheduleDate) {
+    public void setScheduleDate(Instant scheduleDate) {
         this.scheduleDate = scheduleDate;
     }
 
@@ -412,11 +411,11 @@ public class BpmIsmsL414DTO implements Serializable {
         this.firewallContent = firewallContent;
     }
 
-    public Timestamp getFinishDatetime() {
+    public Instant getFinishDatetime() {
         return finishDatetime;
     }
 
-    public void setFinishDatetime(Timestamp finishDatetime) {
+    public void setFinishDatetime(Instant finishDatetime) {
         this.finishDatetime = finishDatetime;
     }
 
@@ -436,11 +435,11 @@ public class BpmIsmsL414DTO implements Serializable {
         this.updateUser = updateUser;
     }
 
-    public Timestamp getUpdateTime() {
+    public Instant getUpdateTime() {
         return updateTime;
     }
 
-    public void setUpdateTime(Timestamp updateTime) {
+    public void setUpdateTime(Instant updateTime) {
         this.updateTime = updateTime;
     }
 
@@ -452,11 +451,11 @@ public class BpmIsmsL414DTO implements Serializable {
         this.createUser = createUser;
     }
 
-    public Timestamp getCreateTime() {
+    public Instant getCreateTime() {
         return createTime;
     }
 
-    public void setCreateTime(Timestamp createTime) {
+    public void setCreateTime(Instant createTime) {
         this.createTime = createTime;
     }
 

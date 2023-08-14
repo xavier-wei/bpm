@@ -4,7 +4,7 @@ import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.io.Serializable;
-import java.sql.Timestamp;
+import java.time.Instant;
 
 /**
  * A BpmIsmsL414.
@@ -32,7 +32,7 @@ public class BpmIsmsL414 implements Serializable {
 
     @NotNull
     @Column(name = "apply_date", nullable = false)
-    private Timestamp applyDate;
+    private Instant applyDate;
 
     @NotNull
     @Size(max = 20)
@@ -89,17 +89,17 @@ public class BpmIsmsL414 implements Serializable {
     private String selecteEdateType;
 
     @Column(name = "sdate")
-    private Timestamp sdate;
+    private Instant sdate;
 
     @Column(name = "edate")
-    private Timestamp edate;
+    private Instant edate;
 
     @Size(max = 100)
     @Column(name = "othere_edate", length = 100)
     private String othereEdate;
 
     @Column(name = "del_enable_date")
-    private Timestamp delEnableDate;
+    private Instant delEnableDate;
 
     @Size(max = 100)
     @Column(name = "source_ip", length = 100)
@@ -130,7 +130,7 @@ public class BpmIsmsL414 implements Serializable {
     private String agreeType;
 
     @Column(name = "schedule_date")
-    private Timestamp scheduleDate;
+    private Instant scheduleDate;
 
     @Size(max = 200)
     @Column(name = "setting_reason", length = 200)
@@ -149,7 +149,7 @@ public class BpmIsmsL414 implements Serializable {
     private String firewallContent;
 
     @Column(name = "finish_datetime")
-    private Timestamp finishDatetime;
+    private Instant finishDatetime;
 
     @NotNull
     @Size(max = 1)
@@ -161,7 +161,7 @@ public class BpmIsmsL414 implements Serializable {
     private String updateUser;
 
     @Column(name = "update_time")
-    private Timestamp updateTime;
+    private Instant updateTime;
 
     @NotNull
     @Size(max = 20)
@@ -170,7 +170,7 @@ public class BpmIsmsL414 implements Serializable {
 
     @NotNull
     @Column(name = "create_time", nullable = false)
-    private Timestamp createTime;
+    private Instant createTime;
 
     // jhipster-needle-entity-add-field - JHipster will add fields here
 
@@ -200,16 +200,16 @@ public class BpmIsmsL414 implements Serializable {
         this.processInstanceId = processInstanceId;
     }
 
-    public Timestamp getApplyDate() {
+    public Instant getApplyDate() {
         return this.applyDate;
     }
 
-    public BpmIsmsL414 applyDate(Timestamp applyDate) {
+    public BpmIsmsL414 applyDate(Instant applyDate) {
         this.setApplyDate(applyDate);
         return this;
     }
 
-    public void setApplyDate(Timestamp applyDate) {
+    public void setApplyDate(Instant applyDate) {
         this.applyDate = applyDate;
     }
 
@@ -356,29 +356,29 @@ public class BpmIsmsL414 implements Serializable {
         this.selecteEdateType = selecteEdateType;
     }
 
-    public Timestamp getSdate() {
+    public Instant getSdate() {
         return this.sdate;
     }
 
-    public BpmIsmsL414 sdate(Timestamp sdate) {
+    public BpmIsmsL414 sdate(Instant sdate) {
         this.setSdate(sdate);
         return this;
     }
 
-    public void setSdate(Timestamp sdate) {
+    public void setSdate(Instant sdate) {
         this.sdate = sdate;
     }
 
-    public Timestamp getEdate() {
+    public Instant getEdate() {
         return this.edate;
     }
 
-    public BpmIsmsL414 edate(Timestamp edate) {
+    public BpmIsmsL414 edate(Instant edate) {
         this.setEdate(edate);
         return this;
     }
 
-    public void setEdate(Timestamp edate) {
+    public void setEdate(Instant edate) {
         this.edate = edate;
     }
 
@@ -395,16 +395,16 @@ public class BpmIsmsL414 implements Serializable {
         this.othereEdate = othereEdate;
     }
 
-    public Timestamp getDelEnableDate() {
+    public Instant getDelEnableDate() {
         return this.delEnableDate;
     }
 
-    public BpmIsmsL414 delEnableDate(Timestamp delEnableDate) {
+    public BpmIsmsL414 delEnableDate(Instant delEnableDate) {
         this.setDelEnableDate(delEnableDate);
         return this;
     }
 
-    public void setDelEnableDate(Timestamp delEnableDate) {
+    public void setDelEnableDate(Instant delEnableDate) {
         this.delEnableDate = delEnableDate;
     }
 
@@ -499,16 +499,16 @@ public class BpmIsmsL414 implements Serializable {
         this.agreeType = agreeType;
     }
 
-    public Timestamp getScheduleDate() {
+    public Instant getScheduleDate() {
         return this.scheduleDate;
     }
 
-    public BpmIsmsL414 scheduleDate(Timestamp scheduleDate) {
+    public BpmIsmsL414 scheduleDate(Instant scheduleDate) {
         this.setScheduleDate(scheduleDate);
         return this;
     }
 
-    public void setScheduleDate(Timestamp scheduleDate) {
+    public void setScheduleDate(Instant scheduleDate) {
         this.scheduleDate = scheduleDate;
     }
 
@@ -564,16 +564,16 @@ public class BpmIsmsL414 implements Serializable {
         this.firewallContent = firewallContent;
     }
 
-    public Timestamp getFinishDatetime() {
+    public Instant getFinishDatetime() {
         return this.finishDatetime;
     }
 
-    public BpmIsmsL414 finishDatetime(Timestamp finishDatetime) {
+    public BpmIsmsL414 finishDatetime(Instant finishDatetime) {
         this.setFinishDatetime(finishDatetime);
         return this;
     }
 
-    public void setFinishDatetime(Timestamp finishDatetime) {
+    public void setFinishDatetime(Instant finishDatetime) {
         this.finishDatetime = finishDatetime;
     }
 
@@ -603,16 +603,16 @@ public class BpmIsmsL414 implements Serializable {
         this.updateUser = updateUser;
     }
 
-    public Timestamp getUpdateTime() {
+    public Instant getUpdateTime() {
         return this.updateTime;
     }
 
-    public BpmIsmsL414 updateTime(Timestamp updateTime) {
+    public BpmIsmsL414 updateTime(Instant updateTime) {
         this.setUpdateTime(updateTime);
         return this;
     }
 
-    public void setUpdateTime(Timestamp updateTime) {
+    public void setUpdateTime(Instant updateTime) {
         this.updateTime = updateTime;
     }
 
@@ -629,16 +629,16 @@ public class BpmIsmsL414 implements Serializable {
         this.createUser = createUser;
     }
 
-    public Timestamp getCreateTime() {
+    public Instant getCreateTime() {
         return this.createTime;
     }
 
-    public BpmIsmsL414 createTime(Timestamp createTime) {
+    public BpmIsmsL414 createTime(Instant createTime) {
         this.setCreateTime(createTime);
         return this;
     }
 
-    public void setCreateTime(Timestamp createTime) {
+    public void setCreateTime(Instant createTime) {
         this.createTime = createTime;
     }
 

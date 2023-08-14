@@ -2,6 +2,7 @@ package tw.gov.pcc.domain;
 
 import java.io.Serializable;
 import java.sql.Timestamp;
+import java.time.Instant;
 import javax.persistence.*;
 import javax.validation.constraints.*;
 
@@ -100,7 +101,7 @@ public class BpmFunction implements Serializable {
      */
     @NotNull
     @Column(name = "update_time", nullable = false)
-    private Timestamp updateTime;
+    private Instant updateTime;
 
     public Long getId() {
         return id;
@@ -183,11 +184,11 @@ public class BpmFunction implements Serializable {
         this.updateUser = updateUser;
     }
 
-    public Timestamp getUpdateTime() {
+    public Instant getUpdateTime() {
         return updateTime;
     }
 
-    public void setUpdateTime(Timestamp updateTime) {
+    public void setUpdateTime(Instant updateTime) {
         this.updateTime = updateTime;
     }
 

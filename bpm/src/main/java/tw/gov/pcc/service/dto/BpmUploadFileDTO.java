@@ -1,9 +1,7 @@
 package tw.gov.pcc.service.dto;
 
-import org.springframework.web.multipart.MultipartFile;
-
 import java.io.Serializable;
-import java.sql.Timestamp;
+import java.time.Instant;
 import java.util.Objects;
 import javax.validation.constraints.*;
 
@@ -35,12 +33,12 @@ public class BpmUploadFileDTO implements Serializable {
     @Size(max = 20)
     private String updateUser;
 
-    private Timestamp updateTime;
+    private Instant updateTime;
 
     @Size(max = 20)
     private String createUser;
 
-    private Timestamp createTime;
+    private Instant createTime;
 
     public Long getId() {
         return id;
@@ -106,11 +104,11 @@ public class BpmUploadFileDTO implements Serializable {
         this.updateUser = updateUser;
     }
 
-    public Timestamp getUpdateTime() {
+    public Instant getUpdateTime() {
         return updateTime;
     }
 
-    public void setUpdateTime(Timestamp updateTime) {
+    public void setUpdateTime(Instant updateTime) {
         this.updateTime = updateTime;
     }
 
@@ -122,11 +120,11 @@ public class BpmUploadFileDTO implements Serializable {
         this.createUser = createUser;
     }
 
-    public Timestamp getCreateTime() {
+    public Instant getCreateTime() {
         return createTime;
     }
 
-    public void setCreateTime(Timestamp createTime) {
+    public void setCreateTime(Instant createTime) {
         this.createTime = createTime;
     }
 

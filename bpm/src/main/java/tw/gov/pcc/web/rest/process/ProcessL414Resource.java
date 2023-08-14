@@ -107,9 +107,9 @@ public class ProcessL414Resource {
         //存入table
         bpmIsmsL414DTO.setProcessInstanceId(processInstanceId);
         bpmIsmsL414DTO.setProcessInstanceStatus("0");
-        bpmIsmsL414DTO.setUpdateTime(Timestamp.valueOf(LocalDateTime.now(ZoneId.of("GMT+8"))));
+        bpmIsmsL414DTO.setUpdateTime(Instant.now());
         bpmIsmsL414DTO.setUpdateUser(bpmIsmsL414DTO.getFilName());
-        bpmIsmsL414DTO.setCreateTime(Timestamp.valueOf(LocalDateTime.now(ZoneId.of("GMT+8"))));
+        bpmIsmsL414DTO.setCreateTime(Instant.now());
         bpmIsmsL414DTO.setCreateUser(bpmIsmsL414DTO.getFilName());
         bpmIsmsL414Service.save(bpmIsmsL414DTO);
 
@@ -136,7 +136,7 @@ public class ProcessL414Resource {
         log.info("ProcessL414Resource.java - start - 61 :: " + appendixFiles);
 
         //存入table
-        bpmIsmsL414DTO.setUpdateTime(Timestamp.valueOf(LocalDateTime.now(ZoneId.of("GMT+8"))));
+        bpmIsmsL414DTO.setUpdateTime(Instant.now());
         bpmIsmsL414DTO.setUpdateUser(bpmIsmsL414DTO.getFilName());
         BpmIsmsL414DTO newBpmIsmsL414DTO =  bpmIsmsL414Service.save(bpmIsmsL414DTO);
 
