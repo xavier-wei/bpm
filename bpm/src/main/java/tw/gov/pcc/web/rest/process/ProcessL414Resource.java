@@ -21,7 +21,10 @@ import tw.gov.pcc.utils.SeqNumber;
 import javax.validation.Valid;
 import java.io.IOException;
 import java.lang.reflect.Type;
+import java.sql.Timestamp;
 import java.time.Instant;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -53,6 +56,12 @@ public class ProcessL414Resource {
     private final String START_PROCESS_URL = "http://localhost:8081/process";
     private final RestTemplate restTemplate = new RestTemplate();
 
+    public static void main(String[] args) {
+
+        // get now time which is GMT+8
+        Timestamp timestamp=Timestamp.valueOf(LocalDateTime.now(ZoneId.of("GMT+8")));
+        System.out.println(timestamp);
+    }
     @PostMapping(path = "/startL414", consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
     public String start(
         @Valid @RequestPart("form") BpmIsmsL414DTO bpmIsmsL414DTO,

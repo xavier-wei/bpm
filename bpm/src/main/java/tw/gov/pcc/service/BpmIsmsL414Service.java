@@ -1,9 +1,5 @@
 package tw.gov.pcc.service;
 
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Optional;
-import java.util.stream.Collectors;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -13,11 +9,16 @@ import tw.gov.pcc.repository.BpmIsmsL414Repository;
 import tw.gov.pcc.service.dto.BpmIsmsL414DTO;
 import tw.gov.pcc.service.mapper.BpmIsmsL414Mapper;
 
+import java.sql.SQLException;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
+
 /**
  * Service Implementation for managing {@link BpmIsmsL414}.
  */
 @Service
-@Transactional
 public class BpmIsmsL414Service {
 
     private final Logger log = LoggerFactory.getLogger(BpmIsmsL414Service.class);
@@ -37,10 +38,13 @@ public class BpmIsmsL414Service {
      * @param bpmIsmsL414DTO the entity to save.
      * @return the persisted entity.
      */
-    public BpmIsmsL414DTO save(BpmIsmsL414DTO bpmIsmsL414DTO) {
+    @Transactional(rollbackFor = SQLException.class)
+    public BpmIsmsL414DTO save(BpmIsmsL414DTO bpmIsmsL414DTO){
         log.debug("Request to save EipBpmIsmsL414 : {}", bpmIsmsL414DTO);
         BpmIsmsL414 bpmIsmsL414 = bpmIsmsL414Mapper.toEntity(bpmIsmsL414DTO);
+        System.out.println("save前");
         bpmIsmsL414 = bpmIsmsL414Repository.save(bpmIsmsL414);
+        System.out.println("save後");
         return bpmIsmsL414Mapper.toDto(bpmIsmsL414);
     }
 
@@ -50,6 +54,7 @@ public class BpmIsmsL414Service {
      * @param bpmIsmsL414DTO the entity to update partially.
      * @return the persisted entity.
      */
+    @Transactional
     public Optional<BpmIsmsL414DTO> partialUpdate(BpmIsmsL414DTO bpmIsmsL414DTO) {
         log.debug("Request to partially update EipBpmIsmsL414 : {}", bpmIsmsL414DTO);
 
@@ -96,6 +101,7 @@ public class BpmIsmsL414Service {
      *
      * @param id the id of the entity.
      */
+    @Transactional
     public void delete(String id) {
         log.debug("Request to delete EipBpmIsmsL414 : {}", id);
         bpmIsmsL414Repository.deleteById(id);
