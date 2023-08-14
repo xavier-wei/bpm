@@ -1,7 +1,6 @@
 package tw.gov.pcc.domain;
 
 import java.io.Serializable;
-import java.sql.Timestamp;
 import java.time.Instant;
 import javax.persistence.*;
 import javax.validation.constraints.*;
