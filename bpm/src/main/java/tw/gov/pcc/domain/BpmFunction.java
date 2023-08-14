@@ -1,10 +1,7 @@
 package tw.gov.pcc.domain;
 
-import org.hibernate.sql.ordering.antlr.GeneratedOrderByFragmentParser;
-
 import java.io.Serializable;
-import java.math.BigDecimal;
-import java.time.Instant;
+import java.sql.Timestamp;
 import javax.persistence.*;
 import javax.validation.constraints.*;
 
@@ -103,7 +100,7 @@ public class BpmFunction implements Serializable {
      */
     @NotNull
     @Column(name = "update_time", nullable = false)
-    private Instant updateTime;
+    private Timestamp updateTime;
 
     public Long getId() {
         return id;
@@ -186,11 +183,11 @@ public class BpmFunction implements Serializable {
         this.updateUser = updateUser;
     }
 
-    public Instant getUpdateTime() {
+    public Timestamp getUpdateTime() {
         return updateTime;
     }
 
-    public void setUpdateTime(Instant updateTime) {
+    public void setUpdateTime(Timestamp updateTime) {
         this.updateTime = updateTime;
     }
 

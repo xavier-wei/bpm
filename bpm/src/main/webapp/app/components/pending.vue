@@ -91,7 +91,8 @@
           </template>
 
           <template #cell(action)="row">
-            <b-button class="ml-2" style="background-color: #17a2b8" @click="toEdit(row.item)">處理</b-button>
+            <b-button class="ml-1" v-if="userData === row.item.appName" style="background-color: #17a2b8" @click="toEdit(row.item,'0')">編輯</b-button>
+            <b-button class="ml-1" v-if="userData !== 'ApplyTester'" style="background-color: #17a2b8" @click="toEdit(row.item,'1')">處理</b-button>
           </template>
         </i-table>
       </div>
@@ -101,7 +102,7 @@
 
 <script lang="ts">
 import axios from 'axios';
-import {ref, reactive, computed, toRefs, defineComponent} from '@vue/composition-api';
+import {ref, reactive, computed, toRefs, defineComponent, onActivated} from '@vue/composition-api';
 import IDatePicker from '../shared/i-date-picker/i-date-picker.vue';
 import ITable from '../shared/i-table/i-table.vue';
 import IFormGroupCheck from '../shared/form/i-form-group-check.vue';
@@ -137,6 +138,11 @@ export default defineComponent({
       VERIFY ='簽核'
     }
 
+    onActivated(() => {
+      toQuery();
+    });
+
+
     function notBeforePublicDateStart(date: Date) {
       if (form.seqDate) return date < new Date(form.seqDate);
     }
@@ -170,7 +176,7 @@ export default defineComponent({
       fields: [
         {
           key: 'action',
-          label: '',
+          label: '動作',
           sortable: false,
           thClass: 'text-center',
           tdClass: 'text-center align-middle',
@@ -224,19 +230,18 @@ export default defineComponent({
       table.data = [];
       axios.post(`/process/queryTask/${userData}`).then(({data}) => {
         console.log('data+++', data);
-
-        if(data.length <= 0) return;
         queryStatus.value = true;
+        if(data.length <= 0) return;
         table.data = data.slice(0, data.length);
         table.totalItems = data.length;
       });
     };
 
-    function toEdit(item) {
+    function toEdit(item,i) {
       console.log('item',item.appName)
       console.log('userData',userData)
 
-      if (userData === item.appName) {
+      if (i === '0') {
         navigateByNameAndParams('l414Edit', {
           l414Data: item,
           formStatus: FormStatusEnum.MODIFY,
@@ -266,6 +271,7 @@ export default defineComponent({
       notAfterPublicDateEnd,
       toEdit,
       queryStatus,
+      userData,
     };
   },
 });
