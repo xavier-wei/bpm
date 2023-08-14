@@ -5,6 +5,7 @@ import tw.gov.pcc.domain.BpmIsmsL414;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.io.Serializable;
+import java.sql.Timestamp;
 import java.time.Instant;
 import java.util.Objects;
 
@@ -25,7 +26,7 @@ public class BpmIsmsL414DTO implements Serializable {
     private String taskName;
 
     @NotNull
-    private Instant applyDate;
+    private Timestamp applyDate;
 
     @NotNull
     @Size(max = 20)
@@ -70,14 +71,14 @@ public class BpmIsmsL414DTO implements Serializable {
     @Size(max = 1)
     private String selecteEdateType;
 
-    private Instant sdate;
+    private Timestamp sdate;
 
-    private Instant edate;
+    private Timestamp edate;
 
     @Size(max = 100)
     private String othereEdate;
 
-    private Instant delEnableDate;
+    private Timestamp delEnableDate;
 
     @Size(max = 100)
     private String sourceIp;
@@ -100,7 +101,7 @@ public class BpmIsmsL414DTO implements Serializable {
     @Size(max = 1)
     private String agreeType;
 
-    private Instant scheduleDate;
+    private Timestamp scheduleDate;
 
     @Size(max = 200)
     private String settingReason;
@@ -114,7 +115,7 @@ public class BpmIsmsL414DTO implements Serializable {
     @Size(max = 1000)
     private String firewallContent;
 
-    private Instant finishDatetime;
+    private Timestamp finishDatetime;
 
     @Size(max = 1)
     private String processInstanceStatus;
@@ -122,22 +123,38 @@ public class BpmIsmsL414DTO implements Serializable {
     @Size(max = 20)
     private String updateUser;
 
-    private Instant updateTime;
+    private Timestamp updateTime;
 
     @Size(max = 20)
     private String createUser;
 
-    private Instant createTime;
+    private Timestamp createTime;
+    private String FormName;
 
-    public String getFormName() {
-        return formName;
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (!(o instanceof BpmIsmsL414DTO)) {
+            return false;
+        }
+
+        BpmIsmsL414DTO bpmIsmsL414DTO = (BpmIsmsL414DTO) o;
+        if (this.formId == null) {
+            return false;
+        }
+        return Objects.equals(this.formId, bpmIsmsL414DTO.formId);
     }
 
-    public void setFormName(String formName) {
-        this.formName = formName;
+    @Override
+    public int hashCode() {
+        return Objects.hash(this.formId);
     }
 
-    private String formName;
+    // prettier-ignore
+
 
     public String getFormId() {
         return formId;
@@ -155,11 +172,27 @@ public class BpmIsmsL414DTO implements Serializable {
         this.processInstanceId = processInstanceId;
     }
 
-    public Instant getApplyDate() {
+    public String getTaskId() {
+        return taskId;
+    }
+
+    public void setTaskId(String taskId) {
+        this.taskId = taskId;
+    }
+
+    public String getTaskName() {
+        return taskName;
+    }
+
+    public void setTaskName(String taskName) {
+        this.taskName = taskName;
+    }
+
+    public Timestamp getApplyDate() {
         return applyDate;
     }
 
-    public void setApplyDate(Instant applyDate) {
+    public void setApplyDate(Timestamp applyDate) {
         this.applyDate = applyDate;
     }
 
@@ -251,19 +284,19 @@ public class BpmIsmsL414DTO implements Serializable {
         this.selecteEdateType = selecteEdateType;
     }
 
-    public Instant getSdate() {
+    public Timestamp getSdate() {
         return sdate;
     }
 
-    public void setSdate(Instant sdate) {
+    public void setSdate(Timestamp sdate) {
         this.sdate = sdate;
     }
 
-    public Instant getEdate() {
+    public Timestamp getEdate() {
         return edate;
     }
 
-    public void setEdate(Instant edate) {
+    public void setEdate(Timestamp edate) {
         this.edate = edate;
     }
 
@@ -275,11 +308,11 @@ public class BpmIsmsL414DTO implements Serializable {
         this.othereEdate = othereEdate;
     }
 
-    public Instant getDelEnableDate() {
+    public Timestamp getDelEnableDate() {
         return delEnableDate;
     }
 
-    public void setDelEnableDate(Instant delEnableDate) {
+    public void setDelEnableDate(Timestamp delEnableDate) {
         this.delEnableDate = delEnableDate;
     }
 
@@ -339,11 +372,11 @@ public class BpmIsmsL414DTO implements Serializable {
         this.agreeType = agreeType;
     }
 
-    public Instant getScheduleDate() {
+    public Timestamp getScheduleDate() {
         return scheduleDate;
     }
 
-    public void setScheduleDate(Instant scheduleDate) {
+    public void setScheduleDate(Timestamp scheduleDate) {
         this.scheduleDate = scheduleDate;
     }
 
@@ -379,11 +412,11 @@ public class BpmIsmsL414DTO implements Serializable {
         this.firewallContent = firewallContent;
     }
 
-    public Instant getFinishDatetime() {
+    public Timestamp getFinishDatetime() {
         return finishDatetime;
     }
 
-    public void setFinishDatetime(Instant finishDatetime) {
+    public void setFinishDatetime(Timestamp finishDatetime) {
         this.finishDatetime = finishDatetime;
     }
 
@@ -403,11 +436,11 @@ public class BpmIsmsL414DTO implements Serializable {
         this.updateUser = updateUser;
     }
 
-    public Instant getUpdateTime() {
+    public Timestamp getUpdateTime() {
         return updateTime;
     }
 
-    public void setUpdateTime(Instant updateTime) {
+    public void setUpdateTime(Timestamp updateTime) {
         this.updateTime = updateTime;
     }
 
@@ -419,92 +452,64 @@ public class BpmIsmsL414DTO implements Serializable {
         this.createUser = createUser;
     }
 
-    public Instant getCreateTime() {
+    public Timestamp getCreateTime() {
         return createTime;
     }
 
-    public void setCreateTime(Instant createTime) {
+    public void setCreateTime(Timestamp createTime) {
         this.createTime = createTime;
     }
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) {
-            return true;
-        }
-        if (!(o instanceof BpmIsmsL414DTO)) {
-            return false;
-        }
-
-        BpmIsmsL414DTO bpmIsmsL414DTO = (BpmIsmsL414DTO) o;
-        if (this.formId == null) {
-            return false;
-        }
-        return Objects.equals(this.formId, bpmIsmsL414DTO.formId);
+    public String getFormName() {
+        return FormName;
     }
 
-    @Override
-    public int hashCode() {
-        return Objects.hash(this.formId);
+    public void setFormName(String formName) {
+        FormName = formName;
     }
 
-    // prettier-ignore
     @Override
     public String toString() {
-        return "EipBpmIsmsL414DTO{" +
-            "formId='" + getFormId() + "'" +
-            ", processInstanceId='" + getProcessInstanceId() + "'" +
-            ", applyDate='" + getApplyDate() + "'" +
-            ", filEmpid='" + getFilEmpid() + "'" +
-            ", filName='" + getFilName() + "'" +
-            ", filUnit='" + getFilUnit() + "'" +
-            ", appEmpid='" + getAppEmpid() + "'" +
-            ", appName='" + getAppName() + "'" +
-            ", appUnit='" + getAppUnit() + "'" +
-            ", isSubmit='" + getIsSubmit() + "'" +
-            ", isEnable='" + getIsEnable() + "'" +
-            ", enableTime='" + getEnableTime() + "'" +
-            ", otherEnableTime='" + getOtherEnableTime() + "'" +
-            ", selecteEdateType='" + getSelecteEdateType() + "'" +
-            ", sdate='" + getSdate() + "'" +
-            ", edate='" + getEdate() + "'" +
-            ", othereEdate='" + getOthereEdate() + "'" +
-            ", delEnableDate='" + getDelEnableDate() + "'" +
-            ", sourceIp='" + getSourceIp() + "'" +
-            ", targetIp='" + getTargetIp() + "'" +
-            ", port='" + getPort() + "'" +
-            ", isTcp='" + getIsTcp() + "'" +
-            ", isUdp='" + getIsUdp() + "'" +
-            ", instructions='" + getInstructions() + "'" +
-            ", agreeType='" + getAgreeType() + "'" +
-            ", scheduleDate='" + getScheduleDate() + "'" +
-            ", settingReason='" + getSettingReason() + "'" +
-            ", isExternalFirewall='" + getIsExternalFirewall() + "'" +
-            ", isInternalFirewall='" + getIsInternalFirewall() + "'" +
-            ", firewallContent='" + getFirewallContent() + "'" +
-            ", finishDatetime='" + getFinishDatetime() + "'" +
-            ", processInstanceStatus='" + getProcessInstanceStatus() + "'" +
-            ", updateUser='" + getUpdateUser() + "'" +
-            ", updateTime='" + getUpdateTime() + "'" +
-            ", createUser='" + getCreateUser() + "'" +
-            ", createTime='" + getCreateTime() + "'" +
-            "}";
-    }
-
-    public void setTaskId(String taskId) {
-        this.taskId = taskId;
-
-    }
-
-    public String getTaskId() {
-        return taskId;
-    }
-
-    public String getTaskName() {
-        return taskName;
-    }
-
-    public void setTaskName(String taskName) {
-        this.taskName = taskName;
+        return "BpmIsmsL414DTO{" +
+                "formId='" + formId + '\'' +
+                ", processInstanceId='" + processInstanceId + '\'' +
+                ", taskId='" + taskId + '\'' +
+                ", taskName='" + taskName + '\'' +
+                ", applyDate=" + applyDate +
+                ", filEmpid='" + filEmpid + '\'' +
+                ", filName='" + filName + '\'' +
+                ", filUnit='" + filUnit + '\'' +
+                ", appEmpid='" + appEmpid + '\'' +
+                ", appName='" + appName + '\'' +
+                ", appUnit='" + appUnit + '\'' +
+                ", isSubmit='" + isSubmit + '\'' +
+                ", isEnable='" + isEnable + '\'' +
+                ", enableTime='" + enableTime + '\'' +
+                ", otherEnableTime='" + otherEnableTime + '\'' +
+                ", selecteEdateType='" + selecteEdateType + '\'' +
+                ", sdate=" + sdate +
+                ", edate=" + edate +
+                ", othereEdate='" + othereEdate + '\'' +
+                ", delEnableDate=" + delEnableDate +
+                ", sourceIp='" + sourceIp + '\'' +
+                ", targetIp='" + targetIp + '\'' +
+                ", port='" + port + '\'' +
+                ", isTcp='" + isTcp + '\'' +
+                ", isUdp='" + isUdp + '\'' +
+                ", instructions='" + instructions + '\'' +
+                ", agreeType='" + agreeType + '\'' +
+                ", scheduleDate=" + scheduleDate +
+                ", settingReason='" + settingReason + '\'' +
+                ", isExternalFirewall='" + isExternalFirewall + '\'' +
+                ", isInternalFirewall='" + isInternalFirewall + '\'' +
+                ", firewallContent='" + firewallContent + '\'' +
+                ", finishDatetime=" + finishDatetime +
+                ", processInstanceStatus='" + processInstanceStatus + '\'' +
+                ", updateUser='" + updateUser + '\'' +
+                ", updateTime=" + updateTime +
+                ", createUser='" + createUser + '\'' +
+                ", createTime=" + createTime +
+                ", FormName='" + FormName + '\'' +
+                '}';
     }
 }

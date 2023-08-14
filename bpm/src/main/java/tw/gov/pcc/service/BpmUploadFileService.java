@@ -8,7 +8,10 @@ import java.nio.file.Paths;
 import java.nio.file.attribute.FileAttribute;
 import java.nio.file.attribute.PosixFilePermission;
 import java.nio.file.attribute.PosixFilePermissions;
+import java.sql.Timestamp;
 import java.time.Instant;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.stream.Collectors;
@@ -114,9 +117,9 @@ public class BpmUploadFileService {
 
         String path = "/bpmUploadFile";
 
-        bpmUploadFile.setCreateTime(Instant.now());
+        bpmUploadFile.setCreateTime(Timestamp.valueOf(LocalDateTime.now(ZoneId.of("GMT+8"))));
         bpmUploadFile.setCreateUser("SYS");
-        bpmUploadFile.setUpdateTime(Instant.now());
+        bpmUploadFile.setUpdateTime(Timestamp.valueOf(LocalDateTime.now(ZoneId.of("GMT+8"))));
         bpmUploadFile.setUpdateUser("SYS");
 
         BpmUploadFile result = saveFile(bpmUploadFile, file, path);

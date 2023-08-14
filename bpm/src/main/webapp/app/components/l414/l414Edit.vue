@@ -21,12 +21,12 @@
                                           :item="$v.applyDate">
                         <!--申請日期 : applyDate-->
                         <i-date-picker
-                          placeholder="yyy/MM/dd"
-                          v-model="$v.applyDate.$model"
-                          :state="validateState($v.applyDate)"
-                          lazy
-                          trim
-                          :disabled="formStatusRef === FormStatusEnum.READONLY"
+                            placeholder="yyy/MM/dd"
+                            v-model="$v.applyDate.$model"
+                            :state="validateState($v.applyDate)"
+                            lazy
+                            trim
+                            :disabled="formStatusRef === FormStatusEnum.READONLY"
                         ></i-date-picker>
                       </i-form-group-check>
 
@@ -44,11 +44,11 @@
 
                     <b-form-row>
                       <i-form-group-check
-                        class="col-sm-5"
-                        label-cols="5"
-                        content-cols="7"
-                        :label="'填表人：員工編號：'"
-                        :item="$v.filEmpid"
+                          class="col-sm-5"
+                          label-cols="5"
+                          content-cols="7"
+                          :label="'填表人：員工編號：'"
+                          :item="$v.filEmpid"
                       >
                         <!--填表人員工編號 : filEmpid-->
                         <b-form-input v-model="$v.filEmpid.$model"
@@ -77,11 +77,11 @@
 
                     <b-form-row>
                       <i-form-group-check
-                        class="col-sm-5"
-                        label-cols="5"
-                        content-cols="7"
-                        :label="'申請人：員工編號：'"
-                        :item="$v.appEmpid"
+                          class="col-sm-5"
+                          label-cols="5"
+                          content-cols="7"
+                          :label="'申請人：員工編號：'"
+                          :item="$v.appEmpid"
                       >
                         <!--申請人員工編號 : appEmpid-->
                         <b-form-input v-model="$v.appEmpid.$model"
@@ -116,12 +116,12 @@
                                             :item="$v.isEnable">
                           <!--規則 : isEnable-->
                           <b-form-radio-group
-                            v-model="$v.isEnable.$model"
-                            :options="[
+                              v-model="$v.isEnable.$model"
+                              :options="[
                               { value: '1', text: '啟用' },
                               { value: '0', text: '停用' },
                             ]"
-                            :disabled="formStatusRef === FormStatusEnum.READONLY"
+                              :disabled="formStatusRef === FormStatusEnum.READONLY"
                           />
                         </i-form-group-check>
 
@@ -138,27 +138,27 @@
                               <div style="height: 34px">每周一至周五 :</div>
                               <!--每周一至周五使用時段內容 : specifyEnableTime-->
                               <b-form-input
-                                :disabled="$v.enableTime.$model !== '2' && formStatusRef === FormStatusEnum.READONLY"
-                                v-model="$v.specifyEnableTime.$model"/>
+                                  :disabled="$v.enableTime.$model !== '2' && formStatusRef === FormStatusEnum.READONLY"
+                                  v-model="$v.specifyEnableTime.$model"/>
                             </b-form-radio>
 
                             <b-form-radio value="3">
                               <div style="height: 34px">特殊時段 :</div>
                               <!--使用特殊時段內容 : otherEnableTime-->
                               <b-form-input
-                                :disabled="$v.enableTime.$model !== '3' && formStatusRef === FormStatusEnum.READONLY"
-                                v-model="$v.otherEnableTime.$model"/>
+                                  :disabled="$v.enableTime.$model !== '3' && formStatusRef === FormStatusEnum.READONLY"
+                                  v-model="$v.otherEnableTime.$model"/>
                             </b-form-radio>
                           </b-form-radio-group>
                         </i-form-group-check>
                       </b-col>
                       <b-col>
                         <i-form-group-check
-                          class="col-sm-12"
-                          label-cols="2"
-                          content-cols="10"
-                          :label="`啟用期間：`"
-                          :item="$v.selecteEdateType"
+                            class="col-sm-12"
+                            label-cols="2"
+                            content-cols="10"
+                            :label="`啟用期間：`"
+                            :item="$v.selecteEdateType"
                         >
                           <!--啟用期間類別 : selecteEdateType-->
                           <b-form-radio-group v-model="$v.selecteEdateType.$model"
@@ -166,9 +166,9 @@
                             <b-form-radio value="1">
                               <!--啟用期間開始時間 : sDate 、啟用期間結束時間 : eDate-->
                               <i-dual-date-picker
-                                :disabled="$v.selecteEdateType.$model !== '1'"
-                                :dual1.sync="$v.sDate.$model"
-                                :dual2.sync="$v.eDate.$model"
+                                  :disabled="$v.selecteEdateType.$model !== '1'"
+                                  :dual1.sync="$v.sDate.$model"
+                                  :dual2.sync="$v.eDate.$model"
                               />
                             </b-form-radio>
                             <b-form-radio value="2">
@@ -184,11 +184,11 @@
                         </i-form-group-check>
 
                         <i-form-group-check
-                          class="col-sm-12"
-                          label-cols="2"
-                          content-cols="10"
-                          :label="`停用期間：`"
-                          :item="$v.selecteEdateType"
+                            class="col-sm-12"
+                            label-cols="2"
+                            content-cols="10"
+                            :label="`停用期間：`"
+                            :item="$v.selecteEdateType"
                         >
                           <!--啟用期間類別 : selecteEdateType-->
                           <b-form-radio-group v-model="$v.selecteEdateType.$model"
@@ -197,12 +197,12 @@
                               <!--刪除規則時間 : delEnableDate-->
                               <b-input-group>
                                 <i-date-picker
-                                  :disabled="$v.selecteEdateType.$model !== '4' && formStatusRef === FormStatusEnum.READONLY"
-                                  placeholder="yyy/MM/dd"
-                                  v-model="$v.delEnableDate.$model"
-                                  :state="validateState($v.delEnableDate)"
-                                  lazy
-                                  trim
+                                    :disabled="$v.selecteEdateType.$model !== '4' && formStatusRef === FormStatusEnum.READONLY"
+                                    placeholder="yyy/MM/dd"
+                                    v-model="$v.delEnableDate.$model"
+                                    :state="validateState($v.delEnableDate)"
+                                    lazy
+                                    trim
                                 ></i-date-picker>
                                 <span class="m-2">刪除規則</span>
                               </b-input-group>
@@ -252,12 +252,12 @@
 
                     <b-form-row>
                       <i-form-group-check
-                        class="col-sm-12"
-                        label-cols="2"
-                        content-cols="8"
-                        :label="'用途說明 ：'"
-                        :item="$v.instructions"
-                        style="margin-left: 7px"
+                          class="col-sm-12"
+                          label-cols="2"
+                          content-cols="8"
+                          :label="'用途說明 ：'"
+                          :item="$v.instructions"
+                          style="margin-left: 7px"
                       >
                         <!--用途說明 : instructions-->
                         <b-form-textarea v-model="$v.instructions.$model" rows="3" maxlength="2000" trim lazy
@@ -283,12 +283,12 @@
                             <b-input-group>
                               <div>同意設定 : 預定完成日期 : 　</div>
                               <i-date-picker
-                                :disabled="$v.agreeType.$model !== '1' && userData !== 'InfoTester' && formStatusRef !== FormStatusEnum.READONLY"
-                                placeholder="yyy/MM/dd"
-                                v-model="$v.scheduleDate.$model"
-                                :state="validateState($v.scheduleDate)"
-                                lazy
-                                trim
+                                  :disabled="$v.agreeType.$model !== '1' && userData !== 'InfoTester' && formStatusRef !== FormStatusEnum.READONLY"
+                                  placeholder="yyy/MM/dd"
+                                  v-model="$v.scheduleDate.$model"
+                                  :state="validateState($v.scheduleDate)"
+                                  lazy
+                                  trim
                               ></i-date-picker>
                             </b-input-group>
                           </b-form-radio>
@@ -298,12 +298,12 @@
                             <b-input-group>
                               <div>部分同意設定 : 原因 :　　 　</div>
                               <b-form-textarea
-                                :disabled="$v.agreeType.$model !== '2' && userData != 'InfoTester' && formStatusRef !== FormStatusEnum.READONLY"
-                                v-model="$v.partialAgreeReason.$model"
-                                rows="1"
-                                maxlength="2000"
-                                trim
-                                lazy
+                                  :disabled="$v.agreeType.$model !== '2' && userData != 'InfoTester' && formStatusRef !== FormStatusEnum.READONLY"
+                                  v-model="$v.partialAgreeReason.$model"
+                                  rows="1"
+                                  maxlength="2000"
+                                  trim
+                                  lazy
                               />
                             </b-input-group>
                           </b-form-radio>
@@ -313,12 +313,12 @@
                             <b-input-group>
                               <div>不同意設定 : 原因 :　　　 　</div>
                               <b-form-textarea
-                                :disabled="$v.agreeType.$model !== '3' && userData != 'InfoTester' && formStatusRef !== FormStatusEnum.READONLY"
-                                v-model="$v.notAgreeReason.$model"
-                                rows="1"
-                                maxlength="2000"
-                                trim
-                                lazy
+                                  :disabled="$v.agreeType.$model !== '3' && userData != 'InfoTester' && formStatusRef !== FormStatusEnum.READONLY"
+                                  v-model="$v.notAgreeReason.$model"
+                                  rows="1"
+                                  maxlength="2000"
+                                  trim
+                                  lazy
                               />
                             </b-input-group>
                           </b-form-radio>
@@ -347,12 +347,12 @@
 
                     <b-form-row>
                       <i-form-group-check
-                        class="col-sm-12"
-                        label-cols="2"
-                        content-cols="8"
-                        :label="'設定內容 ：'"
-                        :item="$v.firewallContent"
-                        style="margin-left: 7px"
+                          class="col-sm-12"
+                          label-cols="2"
+                          content-cols="8"
+                          :label="'設定內容 ：'"
+                          :item="$v.firewallContent"
+                          style="margin-left: 7px"
                       >
                         <!--設定內容 : firewallContent-->
                         <b-form-textarea v-model="$v.firewallContent.$model" rows="1" maxlength="2000" trim lazy
@@ -362,22 +362,22 @@
 
                     <b-form-row>
                       <i-form-group-check
-                        class="col-sm-12"
-                        label-cols="2"
-                        content-cols="8"
-                        :label="'實際完成日期 : '"
-                        :item="$v.finishDatetime"
+                          class="col-sm-12"
+                          label-cols="2"
+                          content-cols="8"
+                          :label="'實際完成日期 : '"
+                          :item="$v.finishDatetime"
                       >
                         <!--實際完成日期 : finishDatetime-->
                         <b-input-group>
                           <i-date-picker
-                            class="col-3"
-                            placeholder="yyy/MM/dd"
-                            v-model="$v.finishDatetime.$model"
-                            :state="validateState($v.finishDatetime)"
-                            lazy
-                            trim
-                            :disabled="userData != 'InfoTester' && formStatusRef === FormStatusEnum.READONLY"
+                              class="col-3"
+                              placeholder="yyy/MM/dd"
+                              v-model="$v.finishDatetime.$model"
+                              :state="validateState($v.finishDatetime)"
+                              lazy
+                              trim
+                              :disabled="userData != 'InfoTester' && formStatusRef === FormStatusEnum.READONLY"
                           ></i-date-picker>
                           <span class="m-1">，並以電話通知申請單位。</span>
                         </b-input-group>
@@ -396,12 +396,22 @@
                     <b-row class="justify-content-center">
                       <b-button class="ml-2" style="background-color: #17a2b8; color: white"
                                 variant="outline-secondary"
+                                @click="submitForm('0')"
+                                v-show="formStatusRef === FormStatusEnum.MODIFY">暫存
+                      </b-button>
+                      <b-button class="ml-2" style="background-color: #17a2b8; color: white"
+                                variant="outline-secondary"
                                 @click="submitForm('1')"
+                                v-show="formStatusRef === FormStatusEnum.MODIFY">儲存
+                      </b-button>
+                      <b-button class="ml-2" style="background-color: #17a2b8; color: white"
+                                variant="outline-secondary"
+                                @click="reviewStart('1')"
                                 v-show="formStatusRef === FormStatusEnum.VERIFY">同意
                       </b-button>
                       <b-button class="ml-2" style="background-color: #17a2b8; color: white"
                                 variant="outline-secondary"
-                                @click="submitForm('0')"
+                                @click="reviewStart('0')"
                                 v-show="formStatusRef === FormStatusEnum.VERIFY">不同意
                       </b-button>
                       <b-button class="ml-2" style="background-color: #17a2b8; color: white"
@@ -448,7 +458,9 @@ import IDatePicker from '@/shared/i-date-picker/i-date-picker.vue';
 import {useBvModal} from '@/shared/modal';
 import {useNotification} from '@/shared/notification';
 import {useGetters} from '@u3u/vue-hooks';
-import {handleBack} from '@/router/router';
+import {handleBack, navigateByNameAndParams} from '@/router/router';
+import axios from "axios";
+import {notificationErrorHandler} from "@/shared/http/http-response-helper";
 
 const appendix = () => import('@/components/appendix.vue');
 const flowChart = () => import('@/components/flowChart.vue');
@@ -531,6 +543,9 @@ export default {
       firewallContent: '', //	設定內容
       finishDatetime: '', //	實際完成日期
       formName: 'L414',
+      processInstanceId: '', //流程實體編號
+      taskId: '',
+      taskName: '',
     };
     const form = reactive(Object.assign({}, formDefault));
     const rules = {
@@ -616,9 +631,81 @@ export default {
       $bvModal.msgBoxConfirm('是否確認送出修改內容？').then((isOK: boolean) => {
         if (isOK) {
           console.log('isSubmit', isSubmit)
+          const formData = new FormData();
+
+          form.isSubmit = isSubmit;
+
+          console.log('form', form)
+          console.log('appendixData.value', appendixData.value)
+
+          formData.append('form', new Blob([JSON.stringify(form)], {type: 'application/json'}));
+
+          if (JSON.stringify(appendixData.value) !== '[]') {
+            for (let i in appendixData.value) {
+              formData.append('appendixFiles', appendixData.value[i].file[0]);
+            }
+            formData.append('fileDto', new Blob([JSON.stringify(appendixData.value)], {type: 'application/json'}));
+          }
+
+          axios
+              .patch(`/process/startL414/patch`, formData, headers)
+              .then(({data}) => {
+                // filePathData.filePathName = 'http://localhost:8081/pic?processId=' + data;
+
+
+                if (isSubmit === '1') {
+                  reviewStart(isSubmit);
+                } else {
+                  $bvModal.msgBoxOk('表單更新完畢');
+                  navigateByNameAndParams('pending', {});
+                }
+
+              })
+              .catch(notificationErrorHandler(notificationService));
 
         }
       });
+    }
+
+    function reviewStart(item) {
+
+      let body = {
+        signer: null,
+        signerId: null,
+        signUnit: null,
+        processInstanceId: form.processInstanceId,
+        taskId: form.taskId,
+        variables: {}
+      };
+
+      console.log('userData',userData)
+
+      if (form.taskName !== null) {
+        body['variables'][form.taskName] = item;
+      }
+
+      if(userData.toString() == 'InfoTester ') {
+        console.log('問號??')
+        form.taskName = 'seniorTechSpecialist';
+        body['variables'][form.taskName] = item;
+      }
+
+      console.log('body',body)
+
+      // axios
+      //     .post(`/process/completeTask`, body)
+      //     .then(({data}) => {
+      //       console.log('data', data)
+      //       if (item === '1') {
+      //         $bvModal.msgBoxOk('表單儲存完畢');
+      //         navigateByNameAndParams('pending', {});
+      //       } else {
+      //         $bvModal.msgBoxOk('表單審核完畢');
+      //         navigateByNameAndParams('pending', {});
+      //       }
+      //
+      //     })
+      //     .catch(notificationErrorHandler(notificationService));
     }
 
     const changeTabIndex = (index: number) => {
@@ -661,6 +748,7 @@ export default {
       FormStatusEnum,
       fileDataId,
       signature,
+      reviewStart,
     }
   }
 }

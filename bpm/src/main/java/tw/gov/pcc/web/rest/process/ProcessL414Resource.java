@@ -21,7 +21,10 @@ import tw.gov.pcc.utils.SeqNumber;
 import javax.validation.Valid;
 import java.io.IOException;
 import java.lang.reflect.Type;
+import java.sql.Timestamp;
 import java.time.Instant;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -73,6 +76,7 @@ public class ProcessL414Resource {
         variables.put("sectionChief", "ChiefTester");
         variables.put("director", "DirectorTester");
         variables.put("infoGroup", "InfoTester");
+        variables.put("seniorTechSpecialist", "seniorTechSpecialistTester");
         processReqDTO.setVariables(variables);
         Gson gson = new Gson();
         String json = gson.toJson(processReqDTO);
@@ -97,9 +101,9 @@ public class ProcessL414Resource {
         //存入table
         bpmIsmsL414DTO.setProcessInstanceId(processInstanceId);
         bpmIsmsL414DTO.setProcessInstanceStatus("0");
-        bpmIsmsL414DTO.setUpdateTime(Instant.now());
+        bpmIsmsL414DTO.setUpdateTime(Timestamp.valueOf(LocalDateTime.now(ZoneId.of("GMT+8"))));
         bpmIsmsL414DTO.setUpdateUser(bpmIsmsL414DTO.getFilName());
-        bpmIsmsL414DTO.setCreateTime(Instant.now());
+        bpmIsmsL414DTO.setCreateTime(Timestamp.valueOf(LocalDateTime.now(ZoneId.of("GMT+8"))));
         bpmIsmsL414DTO.setCreateUser(bpmIsmsL414DTO.getFilName());
         bpmIsmsL414Service.save(bpmIsmsL414DTO);
 
@@ -114,6 +118,34 @@ public class ProcessL414Resource {
 
         return processInstanceId;
     }
+
+
+    @PatchMapping(path = "/startL414/patch", consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
+    public BpmIsmsL414DTO startPatch(
+        @Valid @RequestPart("form") BpmIsmsL414DTO bpmIsmsL414DTO,
+        @Valid @RequestPart(name = "fileDto", required = false) List<BpmUploadFileDTO> dto,
+        @RequestPart(name = "appendixFiles", required = false) List<MultipartFile> appendixFiles) throws IOException {
+        log.info("ProcessL414Resource.java - start - 59 :: " + bpmIsmsL414DTO);
+        log.info("ProcessL414Resource.java - start - 60 :: " + dto);
+        log.info("ProcessL414Resource.java - start - 61 :: " + appendixFiles);
+
+        //存入table
+        bpmIsmsL414DTO.setUpdateTime(Timestamp.valueOf(LocalDateTime.now(ZoneId.of("GMT+8"))));
+        bpmIsmsL414DTO.setUpdateUser(bpmIsmsL414DTO.getFilName());
+        BpmIsmsL414DTO newBpmIsmsL414DTO =  bpmIsmsL414Service.save(bpmIsmsL414DTO);
+
+        //儲存照片
+        if (appendixFiles != null) {
+            for (int i = 0; i < appendixFiles.size(); i++) {
+                dto.get(i).setFormId(bpmIsmsL414DTO.getFormId());
+                dto.get(i).setFileName(appendixFiles.get(i).getName());
+                bpmUploadFileService.bpmUploadFile(bpmUploadFileMapper.toEntity(dto.get(i)), appendixFiles.get(i));
+            }
+        }
+
+        return newBpmIsmsL414DTO;
+    }
+
 
     @RequestMapping("/queryTask/{id}")
     public List<BpmIsmsL414DTO> queryTask(@PathVariable String id) {
@@ -150,6 +182,8 @@ public class ProcessL414Resource {
 
     @RequestMapping("/completeTask")
     public String completeTask(@RequestBody CompleteReqDTO completeReqDTO) {
+        log.info("ProcessL414Resource.java - completeTask - 183 :: " + completeReqDTO );
+        System.out.println(completeReqDTO.getVariables().get("chiefDecision"));
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
         Gson gson = new Gson();

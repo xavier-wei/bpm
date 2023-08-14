@@ -1,6 +1,6 @@
 <template>
   <div>
-    <section class="container mt-2" v-show="formStatusRef === FormStatusEnum.CREATE">
+    <section class="container mt-2" v-show="applyAppendix">
       <div class="card" style="background-color: #d3ede8">
         <div class="card-body">
 
@@ -66,21 +66,23 @@
       </div>
     </section>
 
-    <section class="container mt-2" v-show="formStatusRef === FormStatusEnum.READONLY">
+    <section class="container mt-2" v-show="readAppendix">
       <div class="card" style="background-color: #d3ede8">
         <div class="card-body">
 
           <b-table sticky-header :items="table.data" :fields="table.fields" bordered responsive="sm">
 
             <template #cell(fileName)="row">
-              <button class="btn_login"  @click="downloadBpmFile(row.item)">
-                {{row.item.fileName}}
+              <button class="btn_login" @click="downloadBpmFile(row.item)">
+                {{ row.item.fileName }}
               </button>
             </template>
 
             <template #cell(action)="row">
               <b-button class="ml-2" style="background-color: #17a2b8; color: white"
-                        variant="outline-secondary">刪除
+                        variant="outline-secondary"
+                        :disabled="formStatusRef !== FormStatusEnum.MODIFY"
+              >刪除
                 <!--                        @click="submitDelete(row.item.id)"-->
               </b-button>
             </template>
@@ -137,21 +139,32 @@ export default {
     let appendixDataList = ref([]);
     const notificationService = useNotification();
     const pdfViewer = ref(null);
+    const applyAppendix = ref(false);
+    const readAppendix = ref(false);
+
 
     enum FormStatusEnum {
       CREATE = '新增',
-      MODIFY = '編輯',
       READONLY = '檢視',
+      MODIFY = '編輯',
       VERIFY = '簽核'
     }
 
     onMounted(() => {
       if (formStatusRef.value === FormStatusEnum.CREATE) {
+        applyAppendix.value = true;
         doQuery();
       } else if (formStatusRef.value === FormStatusEnum.READONLY) {
         doReadonly();
+        readAppendix.value = true;
+      } else if (formStatusRef.value === FormStatusEnum.MODIFY) {
+        applyAppendix.value = true;
+        readAppendix.value = true;
+        doQuery();
+        doReadonly();
       } else if (formStatusRef.value === FormStatusEnum.VERIFY) {
         doReadonly();
+        readAppendix.value = true;
       }
     });
 
@@ -355,11 +368,19 @@ export default {
 
     watch(props, newValue => {
           if (formStatusRef.value === FormStatusEnum.CREATE) {
+            applyAppendix.value = true;
             doQuery();
           } else if (formStatusRef.value === FormStatusEnum.READONLY) {
             doReadonly();
+            readAppendix.value = true;
+          } else if (formStatusRef.value === FormStatusEnum.MODIFY) {
+            applyAppendix.value = true;
+            readAppendix.value = true;
+            doQuery();
+            doReadonly();
           } else if (formStatusRef.value === FormStatusEnum.VERIFY) {
             doReadonly();
+            readAppendix.value = true;
           }
         },
         {immediate: true}
@@ -377,6 +398,8 @@ export default {
       FormStatusEnum,
       downloadBpmFile,
       pdfViewer,
+      applyAppendix,
+      readAppendix
     };
   }
 }

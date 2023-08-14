@@ -1,7 +1,7 @@
 package tw.gov.pcc.domain;
 
 import java.io.Serializable;
-import java.time.Instant;
+import java.sql.Timestamp;
 import javax.persistence.*;
 import javax.validation.constraints.*;
 
@@ -56,7 +56,7 @@ public class BpmUploadFile implements Serializable {
     private String updateUser;
 
     @Column(name = "update_time")
-    private Instant updateTime;
+    private Timestamp updateTime;
 
     @NotNull
     @Size(max = 20)
@@ -65,7 +65,7 @@ public class BpmUploadFile implements Serializable {
 
     @NotNull
     @Column(name = "create_time", nullable = false)
-    private Instant createTime;
+    private Timestamp createTime;
 
     // jhipster-needle-entity-add-field - JHipster will add fields here
 
@@ -173,16 +173,16 @@ public class BpmUploadFile implements Serializable {
         this.updateUser = updateUser;
     }
 
-    public Instant getUpdateTime() {
+    public Timestamp getUpdateTime() {
         return this.updateTime;
     }
 
-    public BpmUploadFile updateTime(Instant updateTime) {
+    public BpmUploadFile updateTime(Timestamp updateTime) {
         this.setUpdateTime(updateTime);
         return this;
     }
 
-    public void setUpdateTime(Instant updateTime) {
+    public void setUpdateTime(Timestamp updateTime) {
         this.updateTime = updateTime;
     }
 
@@ -199,16 +199,16 @@ public class BpmUploadFile implements Serializable {
         this.createUser = createUser;
     }
 
-    public Instant getCreateTime() {
+    public Timestamp getCreateTime() {
         return this.createTime;
     }
 
-    public BpmUploadFile createTime(Instant createTime) {
+    public BpmUploadFile createTime(Timestamp createTime) {
         this.setCreateTime(createTime);
         return this;
     }
 
-    public void setCreateTime(Instant createTime) {
+    public void setCreateTime(Timestamp createTime) {
         this.createTime = createTime;
     }
 

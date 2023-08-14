@@ -2,6 +2,7 @@ package tw.gov.pcc.service.dto;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.sql.Timestamp;
 import java.time.Instant;
 import java.util.Objects;
 import javax.validation.constraints.*;
@@ -85,7 +86,7 @@ public class BpmFunctionDTO implements Serializable {
      * type: datetime
      */
     @NotNull
-    private Instant updateTime;
+    private Timestamp updateTime;
 
     public Long getId() {
         return id;
@@ -167,11 +168,11 @@ public class BpmFunctionDTO implements Serializable {
         this.updateUser = updateUser;
     }
 
-    public Instant getUpdateTime() {
+    public Timestamp getUpdateTime() {
         return updateTime;
     }
 
-    public void setUpdateTime(Instant updateTime) {
+    public void setUpdateTime(Timestamp updateTime) {
         this.updateTime = updateTime;
     }
 
