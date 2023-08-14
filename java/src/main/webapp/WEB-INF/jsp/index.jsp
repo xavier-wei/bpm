@@ -399,6 +399,72 @@
             });
 
           });
+
+            // 動態產生tableau div
+            function createTableauElement(imageData) {
+                const tableauDiv = document.createElement("div");
+                tableauDiv.classList.add("col-md-4", "tableau_btn");
+                tableauDiv.id = "tableau_btn_" + imageData.dashboardFigId;
+
+                const topDiv = document.createElement("div");
+                topDiv.classList.add("top", "pic-scale-up");
+
+                const link = document.createElement("a");
+                link.href = "#";
+                link.onclick = function() {
+                    openTableau(imageData.dashboardFigId);
+                };
+
+                const imgDiv = document.createElement("div");
+                imgDiv.classList.add("d-inline-block", "align-middle", "text-center");
+                const img = document.createElement("img");
+                const base64String = imageData.imageBase64String;
+                img.src = "data:image/png;base64," + base64String;
+                img.style.borderRadius = "10px";
+                img.style.maxWidth = "100%";
+                img.style.maxHeight = "100%";
+                img.alt = "儀錶板";
+
+
+                imgDiv.appendChild(img);
+                link.appendChild(imgDiv);
+                topDiv.appendChild(link);
+                tableauDiv.appendChild(topDiv);
+                return tableauDiv;
+            }
+
+
+            let ticket;
+            //獲取tableau授權碼，不用再二次登入
+            function getTicket() {
+             $.ajax({
+                    url: '<c:url value="/get-ticket" />',
+                    type: 'POST',
+                    async: true,
+                    timeout: 100000,
+                    success: function(response) {
+                        if (response) {
+                            ticket = response.ticket;  
+                            console.log("ticket",ticket);
+                        }
+                    },
+                    error: function(error) {
+                        console.error(error);
+                    }
+                });
+            }
+
+          function arrayBufferToBase64(buffer) {
+            console.log("buffer", buffer); // 檢查 buffer 是否有值
+            const bytes = new Uint8Array(buffer);
+            console.log("bytes", bytes); // 檢查 bytes 是否有值
+            let binary = '';
+            for (let i = 0; i < bytes.length; i++) {
+                binary += String.fromCharCode(bytes[i]);
+            }
+            return window.btoa(binary);
+        }
+
         </script>
     </jsp:attribute>
 </tags:layout>
