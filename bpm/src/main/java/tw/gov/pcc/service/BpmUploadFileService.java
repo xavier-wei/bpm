@@ -117,9 +117,9 @@ public class BpmUploadFileService {
 
         String path = "/bpmUploadFile";
 
-        bpmUploadFile.setCreateTime(Timestamp.valueOf(LocalDateTime.now(ZoneId.of("GMT+8"))));
+        bpmUploadFile.setCreateTime(Instant.now());
         bpmUploadFile.setCreateUser("SYS");
-        bpmUploadFile.setUpdateTime(Timestamp.valueOf(LocalDateTime.now(ZoneId.of("GMT+8"))));
+        bpmUploadFile.setUpdateTime(Instant.now());
         bpmUploadFile.setUpdateUser("SYS");
 
         BpmUploadFile result = saveFile(bpmUploadFile, file, path);
