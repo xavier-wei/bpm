@@ -81,12 +81,27 @@ public class TableauService {
             dashboardList = tableauDashboardInfoDao.selectByDashboardFigId(figIdList);
         }
         log.info("使用者應顯示的儀表板為:{}", dashboardList.toString());
+        String tableauFolderPathPrefix = "";
+        String env = System.getenv("spring.profiles.active");
+        if ("dev".equals(env)) {
+            log.info("環境為==dev==");
+            tableauFolderPathPrefix = "D:/";
+        }
+//        else if ("prod".equals(env)) {
+//            log.info("環境為==prod==");
+//            tableauFolderPathPrefix = "/mnt/stsdat/eip/";
+//        }
+        log.info("tableauFolderPathPrefix:{}", tableauFolderPathPrefix);
         for (TableauDashboardInfo dashboard : dashboardList) {
             TableauDataCase tableauDataCase = new TableauDataCase();
             tableauDataCase.setDashboardFigId(dashboard.getDashboard_fig_id());
             tableauDataCase.setImageUrl(dashboard.getDashboard_fig_folder() + "/" + dashboard.getDashboard_fig_file_nm());
             String path = dashboard.getDashboard_fig_folder().replaceAll("/", "\\" + File.separator) + File.separator + dashboard.getDashboard_fig_file_nm();
-            tableauDataCase.setImageBase64String(getImageBase64String(path));
+            if ("dev".equals(env)) {
+                tableauDataCase.setImageBase64String(getImageBase64String(tableauFolderPathPrefix.replaceAll("/", "\\" + File.separator) + path.replace("\\mnt\\stsdat\\eip\\","")));
+            }else{
+                tableauDataCase.setImageBase64String(getImageBase64String(path));
+            }
             tableauDataCase.setTableauUrl(dashboard.getDashboard_url());
             resultList.add(tableauDataCase);
         }
