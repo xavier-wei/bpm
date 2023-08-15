@@ -5,10 +5,12 @@ import com.google.gson.reflect.TypeToken;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.*;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.multipart.MultipartFile;
+import tw.gov.pcc.domain.BpmIsmsL414;
 import tw.gov.pcc.domain.SingerEnum;
 import tw.gov.pcc.repository.BpmIsmsL414Repository;
 import tw.gov.pcc.service.BpmIsmsL414Service;
@@ -50,6 +52,9 @@ public class ProcessL414Resource {
 
     @Autowired
     private BpmUploadFileMapper bpmUploadFileMapper;
+
+    @Value("${bpm.endToken}")
+    private String END_TOKEN;
     private final String START_PROCESS_URL = "http://localhost:8081/process";
     private final RestTemplate restTemplate = new RestTemplate();
 
@@ -61,7 +66,6 @@ public class ProcessL414Resource {
         log.info("ProcessL414Resource.java - start - 59 :: " + bpmIsmsL414DTO);
         log.info("ProcessL414Resource.java - start - 60 :: " + dto);
         log.info("ProcessL414Resource.java - start - 61 :: " + appendixFiles);
-
 
 
         ProcessReqDTO processReqDTO = new ProcessReqDTO();
@@ -132,7 +136,7 @@ public class ProcessL414Resource {
         //存入table
         bpmIsmsL414DTO.setUpdateTime(Instant.now());
         bpmIsmsL414DTO.setUpdateUser(bpmIsmsL414DTO.getFilName());
-        BpmIsmsL414DTO newBpmIsmsL414DTO =  bpmIsmsL414Service.save(bpmIsmsL414DTO);
+        BpmIsmsL414DTO newBpmIsmsL414DTO = bpmIsmsL414Service.save(bpmIsmsL414DTO);
 
         //儲存照片
         if (appendixFiles != null) {
@@ -182,7 +186,7 @@ public class ProcessL414Resource {
 
     @RequestMapping("/completeTask")
     public String completeTask(@RequestBody CompleteReqDTO completeReqDTO) {
-        log.info("ProcessL414Resource.java - completeTask - 183 :: " + completeReqDTO );
+        log.info("ProcessL414Resource.java - completeTask - 183 :: " + completeReqDTO);
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
         Gson gson = new Gson();
@@ -195,5 +199,14 @@ public class ProcessL414Resource {
         return "伺服器忙碌中或查無任務，請稍候再試";
     }
 
+    @PostMapping("/receiveEndEvent")
+    public void receiveEndEvent(@RequestBody EndEventDTO endEventDTO) {
+        log.info("ProcessL414Resource.java - receiveEndEvent - 196 :: " + endEventDTO.getProcessInstanceId());
+        if (END_TOKEN.equals(endEventDTO.getToken())) {
+            BpmIsmsL414 bpmIsmsL414 = bpmIsmsL414Repository.findFirstByProcessInstanceId(endEventDTO.getProcessInstanceId());
+            bpmIsmsL414.setProcessInstanceStatus(endEventDTO.getProcessStatus());
+            bpmIsmsL414Repository.save(bpmIsmsL414);
+        }
+    }
 
 }
