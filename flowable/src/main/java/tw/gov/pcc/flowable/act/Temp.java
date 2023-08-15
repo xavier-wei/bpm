@@ -12,10 +12,6 @@ public class Temp implements JavaDelegate {
     @Override
     public void execute(DelegateExecution execution) {
         // get jndi Datasource which pool name is hikari and dbname is eip
-        try {
-            DataSource dataSource = (DataSource) new JndiTemplate().lookup("java:comp/env/jdbc/hikari");
-        } catch (NamingException e) {
-            throw new RuntimeException(e);
-        }
+
     }
 }

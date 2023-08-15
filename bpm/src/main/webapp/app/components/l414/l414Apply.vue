@@ -32,7 +32,7 @@
                       <i-form-group-check class="col-sm-3" label-cols="5" content-cols="7" :label="`表單編號：`"
                                           :item="$v.formId">
                         <!--表單編號 : formId -->
-                        <b-form-input v-model="$v.formId.$model"/>
+                        <b-form-input v-model="$v.formId.$model" disabled/>
                       </i-form-group-check>
 
                       <i-form-group-check class="col-sm-4" label-cols="5" content-cols="7" :label="`註：`">

@@ -46,10 +46,10 @@
     <userTask id="serverRoomManager" name="機房管理人員" flowable:candidateUsers="${serverRoomManager}"/>
     <serviceTask id="applySuccess" flowable:exclusive="true" name="寄送申請成功通知" flowable:class="tw.gov.pcc.flowable.act.Temp"/>
     <sequenceFlow id="sid-28a118ce-22c1-478f-8db2-2ae6b71e3dee" sourceRef="sid-33c0400d-ddf4-4c58-aa18-89595f34b830" targetRef="infoGroupRejectMail">
-      <conditionExpression xsi:type="tFormalExpression"><![CDATA[${seniorTechSpecialistDecision=="0"}]]></conditionExpression>
+      <conditionExpression xsi:type="tFormalExpression"><![CDATA[${infoGroupDecision=="0"}]]></conditionExpression>
     </sequenceFlow>
     <sequenceFlow id="sid-fb4cee9d-7c60-4d82-9e27-24555df8750d" sourceRef="sid-33c0400d-ddf4-4c58-aa18-89595f34b830" targetRef="serverRoomOperatorSetting">
-      <conditionExpression xsi:type="tFormalExpression"><![CDATA[${seniorTechSpecialistDecision=="1"}]]></conditionExpression>
+      <conditionExpression xsi:type="tFormalExpression"><![CDATA[${infoGroupDecision=="1"}]]></conditionExpression>
     </sequenceFlow>
     <sequenceFlow id="sid-4ae6d9cb-6c24-4227-8f58-2e49071b99b6" sourceRef="serverRoomOperatorSetting" targetRef="reviewStaff"/>
     <sequenceFlow id="sid-0d1941a9-7488-4fbd-b5df-bcd660b13451" sourceRef="reviewStaff" targetRef="serverRoomManager"/>

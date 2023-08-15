@@ -77,10 +77,10 @@
 
           <template #cell(filAndApp)="row">
             <div v-if="row.item.appEmpid === row.item.filEmpid">
-              {{ row.item.appEmpid }}
+              {{ row.item.appName }}
             </div>
             <div v-else>
-              {{ row.item.appEmpid }} / {{ row.item.filEmpid }}
+              {{ row.item.appName }} / {{ row.item.filName }}
             </div>
           </template>
 

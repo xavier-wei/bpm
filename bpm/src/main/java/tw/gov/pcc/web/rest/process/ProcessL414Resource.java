@@ -74,6 +74,9 @@ public class ProcessL414Resource {
         variables.put("director", "DirectorTester");
         variables.put("infoGroup", "InfoTester");
         variables.put("seniorTechSpecialist", "seniorTechSpecialistTester");
+        variables.put("serverRoomOperator", "serverRoomOperatorTester");
+        variables.put("reviewStaff", "reviewStaffTester");
+        variables.put("serverRoomManager", "serverRoomManagerTester");
         processReqDTO.setVariables(variables);
         Gson gson = new Gson();
         String json = gson.toJson(processReqDTO);
@@ -180,7 +183,6 @@ public class ProcessL414Resource {
     @RequestMapping("/completeTask")
     public String completeTask(@RequestBody CompleteReqDTO completeReqDTO) {
         log.info("ProcessL414Resource.java - completeTask - 183 :: " + completeReqDTO );
-        System.out.println(completeReqDTO.getVariables().get("chiefDecision"));
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
         Gson gson = new Gson();

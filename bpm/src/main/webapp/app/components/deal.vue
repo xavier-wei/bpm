@@ -45,6 +45,10 @@ export default {
         { value: 'ChiefTester', text: '科長' },
         { value: 'DirectorTester', text: '主管' },
         { value: 'InfoTester', text: '資推' },
+        { value: 'seniorTechSpecialistTester', text: '簡任技正/科長' },
+        { value: 'serverRoomOperatorTester', text: '機房操作人員' },
+        { value: 'reviewStaffTester', text: '複核人員' },
+        { value: 'serverRoomManagerTester', text: '機房管理人員' },
       ],
     });
 
