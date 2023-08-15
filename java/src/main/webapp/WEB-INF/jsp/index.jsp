@@ -15,6 +15,17 @@
           .dataTables_wrapper label {
             margin: 0;
           }
+
+          .pic-scale-up {
+            position: relative; /* 設定定位上下文，使 z-index 生效 */
+            z-index: 1; /* 設定 z-index 值為 1，放在其他元素之上 */
+          }
+
+          .pic-scale-up:hover {
+            transform: translate(100%, 50%) scale(3, 3);
+            transition: transform 0.25s ease;
+            z-index: 2; /* 懸停時，將 z-index 值提高到 2，使其放在最外層 */
+          }
         </style>
     </jsp:attribute>
     <jsp:attribute name="contents">
