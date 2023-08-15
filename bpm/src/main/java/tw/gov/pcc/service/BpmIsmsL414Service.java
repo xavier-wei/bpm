@@ -42,9 +42,7 @@ public class BpmIsmsL414Service {
     public BpmIsmsL414DTO save(BpmIsmsL414DTO bpmIsmsL414DTO){
         log.debug("Request to save EipBpmIsmsL414 : {}", bpmIsmsL414DTO);
         BpmIsmsL414 bpmIsmsL414 = bpmIsmsL414Mapper.toEntity(bpmIsmsL414DTO);
-        System.out.println("save前");
         bpmIsmsL414 = bpmIsmsL414Repository.save(bpmIsmsL414);
-        System.out.println("save後");
         return bpmIsmsL414Mapper.toDto(bpmIsmsL414);
     }
 
@@ -106,4 +104,5 @@ public class BpmIsmsL414Service {
         log.debug("Request to delete EipBpmIsmsL414 : {}", id);
         bpmIsmsL414Repository.deleteById(id);
     }
+
 }
