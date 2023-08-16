@@ -12,22 +12,23 @@ import org.springframework.web.client.RestTemplate;
 import org.springframework.web.multipart.MultipartFile;
 import tw.gov.pcc.domain.BpmIsmsL414;
 import tw.gov.pcc.domain.SingerEnum;
+import tw.gov.pcc.domain.entity.BpmSignStatus;
 import tw.gov.pcc.repository.BpmIsmsL414Repository;
 import tw.gov.pcc.service.BpmIsmsL414Service;
+import tw.gov.pcc.service.BpmSignStatusService;
 import tw.gov.pcc.service.BpmUploadFileService;
 import tw.gov.pcc.service.dto.*;
 import tw.gov.pcc.service.mapper.BpmIsmsL414Mapper;
+import tw.gov.pcc.service.mapper.BpmSignStatusMapper;
 import tw.gov.pcc.service.mapper.BpmUploadFileMapper;
 import tw.gov.pcc.utils.SeqNumber;
 
 import javax.validation.Valid;
 import java.io.IOException;
 import java.lang.reflect.Type;
+import java.sql.Timestamp;
 import java.time.Instant;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @RestController
@@ -53,9 +54,17 @@ public class ProcessL414Resource {
     @Autowired
     private BpmUploadFileMapper bpmUploadFileMapper;
 
-    @Value("${bpm.endToken}")
-    private String END_TOKEN;
-    private final String START_PROCESS_URL = "http://localhost:8081/process";
+    @Autowired
+    private BpmSignStatusMapper bpmSignStatusMapper;
+
+    @Autowired
+    private BpmSignStatusService bpmSignStatusService;
+
+    @Value("${bpm.token}")
+    private String TOKEN;
+    private final Gson gson = new Gson();
+    // todo
+    private final String FLOWABLE_PROCESS_URL = "http://localhost:8081/process";
     private final RestTemplate restTemplate = new RestTemplate();
 
     @PostMapping(path = "/startL414", consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
@@ -82,25 +91,32 @@ public class ProcessL414Resource {
         variables.put("reviewStaff", "reviewStaffTester");
         variables.put("serverRoomManager", "serverRoomManagerTester");
         processReqDTO.setVariables(variables);
-        Gson gson = new Gson();
         String json = gson.toJson(processReqDTO);
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
         HttpEntity<String> requestEntity = new HttpEntity<>(json, headers);
 
-        ResponseEntity<String> exchange = restTemplate.exchange(START_PROCESS_URL + "/startProcess", HttpMethod.POST, requestEntity, String.class);
+
+        // 到flowable啟動流程
+        ResponseEntity<String> exchange = restTemplate.exchange(FLOWABLE_PROCESS_URL + "/startProcess", HttpMethod.POST, requestEntity, String.class);
+
         String processInstanceId;
+        TaskDTO taskDTO;
         if (exchange.getStatusCodeValue() == 200) {
-            processInstanceId = exchange.getBody();
+            taskDTO = gson.fromJson(exchange.getBody(), TaskDTO.class);
+            processInstanceId = taskDTO.getProcessInstanceId();
         } else {
             return "流程引擎忙碌中，請稍候再試";
         }
 
+
+
         bpmIsmsL414DTO.setProcessInstanceId(processInstanceId);
 
         //取得表單最後的流水號
-        String lastFormId = bpmIsmsL414Repository.getMaxFormId().size() > 0 ? bpmIsmsL414Repository.getMaxFormId().get(0).getFormId() : null;
-        bpmIsmsL414DTO.setFormId(bpmIsmsL414DTO.getFormName() + "-" + new SeqNumber().getNewSeq(lastFormId));
+        String lastFormId = !bpmIsmsL414Repository.getMaxFormId().isEmpty() ? bpmIsmsL414Repository.getMaxFormId().get(0).getFormId() : null;
+        String formId = bpmIsmsL414DTO.getFormName() + "-" + new SeqNumber().getNewSeq(lastFormId);
+        bpmIsmsL414DTO.setFormId(formId);
 
         //存入table
         bpmIsmsL414DTO.setProcessInstanceId(processInstanceId);
@@ -120,7 +136,29 @@ public class ProcessL414Resource {
             }
         }
 
+        if ("1".equals(bpmIsmsL414DTO.getIsSubmit())) {
+            saveApplierSignStatus(bpmIsmsL414DTO, formId, processInstanceId, taskDTO);
+        }
+
+
+
         return processInstanceId;
+    }
+
+    private void saveApplierSignStatus(BpmIsmsL414DTO bpmIsmsL414DTO, String formId, String processInstanceId, TaskDTO taskDTO) {
+        BpmSignStatusDTO bpmSignStatusDTO = new BpmSignStatusDTO();
+        bpmSignStatusDTO.setFormId(formId);
+        bpmSignStatusDTO.setProcessInstanceId(processInstanceId);
+        bpmSignStatusDTO.setTaskId(taskDTO.getTaskId());
+        bpmSignStatusDTO.setTaskName(taskDTO.getTaskName());
+        bpmSignStatusDTO.setSignerId(bpmIsmsL414DTO.getAppEmpid());
+        bpmSignStatusDTO.setSigner(bpmIsmsL414DTO.getAppName());
+        bpmSignStatusDTO.setSignUnit(bpmIsmsL414DTO.getAppUnit());
+        bpmSignStatusDTO.setSignResult("1");
+        bpmSignStatusDTO.setSigningDatetime(Timestamp.from(Instant.now()));
+        BpmSignStatus bpmSignStatus = bpmSignStatusMapper.toEntity(bpmSignStatusDTO);
+
+        bpmSignStatusService.saveBpmSignStatus(bpmSignStatus);
     }
 
 
@@ -157,7 +195,7 @@ public class ProcessL414Resource {
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
         HttpEntity<String> requestEntity = new HttpEntity<>(id, headers);
-        ResponseEntity<String> exchange = restTemplate.exchange(START_PROCESS_URL + "/queryProcessingTask", HttpMethod.POST, requestEntity, String.class);
+        ResponseEntity<String> exchange = restTemplate.exchange(FLOWABLE_PROCESS_URL + "/queryProcessingTask", HttpMethod.POST, requestEntity, String.class);
         if (exchange.getStatusCodeValue() == 200) {
             String body = exchange.getBody();
             Type listType = new TypeToken<ArrayList<TaskDTO>>() {
@@ -167,12 +205,11 @@ public class ProcessL414Resource {
             return taskDTOS.isEmpty() ? null :
                 taskDTOS.stream()
                     .map(taskDTO -> {
-//                        System.out.println(taskDTO.getTaskId());
                         BpmIsmsL414DTO dto = bpmIsmsL414Mapper.toDto(bpmIsmsL414Repository.findFirstByProcessInstanceId(taskDTO.getProcessInstanceId()));
                         if (dto != null) {
                             dto.setTaskId(taskDTO.getTaskId());
-                            System.out.println(taskDTO.getTaskName());
-                            dto.setTaskName(SingerEnum.getDecisionByName(taskDTO.getTaskName()));
+                            dto.setTaskName(taskDTO.getTaskName());
+                            dto.setDecisionRole(SingerEnum.getDecisionByName(taskDTO.getTaskName()));
                         }
                         return dto;
                     })
@@ -186,27 +223,68 @@ public class ProcessL414Resource {
 
     @RequestMapping("/completeTask")
     public String completeTask(@RequestBody CompleteReqDTO completeReqDTO) {
+
         log.info("ProcessL414Resource.java - completeTask - 183 :: " + completeReqDTO);
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
-        Gson gson = new Gson();
         HttpEntity<String> requestEntity = new HttpEntity<>(gson.toJson(completeReqDTO), headers);
-        ResponseEntity<String> exchange = restTemplate.exchange(START_PROCESS_URL + "/completeTask", HttpMethod.POST, requestEntity, String.class);
+        ResponseEntity<String> exchange = restTemplate.exchange(FLOWABLE_PROCESS_URL + "/completeTask", HttpMethod.POST, requestEntity, String.class);
         if (exchange.getStatusCodeValue() == 200) {
-            // todo 寫入表單審核紀錄
+            BpmSignStatusDTO bpmSignStatusDTO = getBpmSignStatusDTO(completeReqDTO);
+            BpmSignStatus bpmSignStatus = bpmSignStatusMapper.toEntity(bpmSignStatusDTO);
+            bpmSignStatusService.saveBpmSignStatus(bpmSignStatus);
             return exchange.getBody();
         }
         return "伺服器忙碌中或查無任務，請稍候再試";
     }
 
+
+
+    private static BpmSignStatusDTO getBpmSignStatusDTO(CompleteReqDTO completeReqDTO) {
+        BpmSignStatusDTO bpmSignStatusDTO = new BpmSignStatusDTO();
+        bpmSignStatusDTO.setFormId(completeReqDTO.getBpmIsmsL414DTO().getFormId());
+        bpmSignStatusDTO.setProcessInstanceId(completeReqDTO.getProcessInstanceId());
+        bpmSignStatusDTO.setTaskId(completeReqDTO.getTaskId());
+        bpmSignStatusDTO.setTaskName(completeReqDTO.getTaskName());
+        bpmSignStatusDTO.setSignerId(completeReqDTO.getSignerId());
+        bpmSignStatusDTO.setSigner(completeReqDTO.getSigner());
+        bpmSignStatusDTO.setSignUnit(completeReqDTO.getSignUnit());
+
+        if (completeReqDTO.getVariables().isEmpty()) {
+            bpmSignStatusDTO.setSignResult("1");
+        }else {
+            Set<String> strings = completeReqDTO.getVariables().keySet();
+            Iterator<String> iterator = strings.iterator();
+            if (iterator.hasNext()) {
+                bpmSignStatusDTO.setTaskId((String) completeReqDTO.getVariables().get(iterator.next()));
+            }
+        }
+        return bpmSignStatusDTO;
+    }
+
     @PostMapping("/receiveEndEvent")
     public void receiveEndEvent(@RequestBody EndEventDTO endEventDTO) {
         log.info("ProcessL414Resource.java - receiveEndEvent - 196 :: " + endEventDTO.getProcessInstanceId());
-        if (END_TOKEN.equals(endEventDTO.getToken())) {
+        if (TOKEN.equals(endEventDTO.getToken())) {
             BpmIsmsL414 bpmIsmsL414 = bpmIsmsL414Repository.findFirstByProcessInstanceId(endEventDTO.getProcessInstanceId());
             bpmIsmsL414.setProcessInstanceStatus(endEventDTO.getProcessStatus());
             bpmIsmsL414Repository.save(bpmIsmsL414);
+            return;
         }
+        log.warn("ProcessL414Resource.java - receiveEndEvent - 203 ::{} " , "流程發生意外終止");
     }
 
+    @RequestMapping("/deleteProcessInstance/{processInstanceId}")
+    public void deleteProcessInstance(@PathVariable String processInstanceId) {
+        log.info("ProcessL414Resource.java - deleteProcessInstance - 206 :: " + processInstanceId);
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+
+        HashMap<String,String> deleteRequest = new HashMap<>();
+        deleteRequest.put("processInstanceId",processInstanceId);
+        deleteRequest.put("token",TOKEN);
+        HttpEntity<String> requestEntity = new HttpEntity<>(gson.toJson(deleteRequest), headers);
+        ResponseEntity<String> exchange = restTemplate.exchange(FLOWABLE_PROCESS_URL + "/deleteProcess", HttpMethod.POST, requestEntity, String.class);
+
+    }
 }

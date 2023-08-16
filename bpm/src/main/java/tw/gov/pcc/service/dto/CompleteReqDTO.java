@@ -1,7 +1,5 @@
 package tw.gov.pcc.service.dto;
 
-import lombok.Data;
-
 import javax.validation.constraints.NotNull;
 import java.util.HashMap;
 import java.util.Objects;
@@ -21,8 +19,11 @@ public class CompleteReqDTO {
     @NotNull
     private String taskId;
 
+    @NotNull
+    private String taskName;
     private HashMap<String, Object> variables;
 
+    @NotNull
     private BpmIsmsL414DTO bpmIsmsL414DTO;
 
     // 科長簽核：  "chiefDecision": "0"(不同意) || "1" (同意) || "2"(補件)
@@ -30,30 +31,19 @@ public class CompleteReqDTO {
     // 簡任技正簽核： "seniorTechSpecialistDecision": "0"(不同意) || "1" (同意))
 
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        CompleteReqDTO that = (CompleteReqDTO) o;
-        return Objects.equals(bpmIsmsL414DTO, that.bpmIsmsL414DTO) && Objects.equals(signer, that.signer) && Objects.equals(signerId, that.signerId) && Objects.equals(signUnit, that.signUnit) && Objects.equals(processInstanceId, that.processInstanceId) && Objects.equals(taskId, that.taskId) && Objects.equals(variables, that.variables);
+    public CompleteReqDTO() {
     }
 
-    @Override
-    public int hashCode() {
-        return Objects.hash(bpmIsmsL414DTO, signer, signerId, signUnit, processInstanceId, taskId, variables);
-    }
 
-    @Override
-    public String toString() {
-        return "CompleteReqDTO{" +
-                "bpmIsmsL414DTO=" + bpmIsmsL414DTO +
-                ", signer='" + signer + '\'' +
-                ", signerId='" + signerId + '\'' +
-                ", signUnit='" + signUnit + '\'' +
-                ", processInstanceId='" + processInstanceId + '\'' +
-                ", taskId='" + taskId + '\'' +
-                ", variables=" + variables +
-                '}';
+    public CompleteReqDTO(String signer, String signerId, String signUnit, String processInstanceId, String taskId, String taskName, HashMap<String, Object> variables, BpmIsmsL414DTO bpmIsmsL414DTO) {
+        this.signer = signer;
+        this.signerId = signerId;
+        this.signUnit = signUnit;
+        this.processInstanceId = processInstanceId;
+        this.taskId = taskId;
+        this.taskName = taskName;
+        this.variables = variables;
+        this.bpmIsmsL414DTO = bpmIsmsL414DTO;
     }
 
     public String getSigner() {
@@ -96,6 +86,14 @@ public class CompleteReqDTO {
         this.taskId = taskId;
     }
 
+    public String getTaskName() {
+        return taskName;
+    }
+
+    public void setTaskName(String taskName) {
+        this.taskName = taskName;
+    }
+
     public HashMap<String, Object> getVariables() {
         return variables;
     }
@@ -110,5 +108,18 @@ public class CompleteReqDTO {
 
     public void setBpmIsmsL414DTO(BpmIsmsL414DTO bpmIsmsL414DTO) {
         this.bpmIsmsL414DTO = bpmIsmsL414DTO;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        CompleteReqDTO that = (CompleteReqDTO) o;
+        return Objects.equals(signer, that.signer) && Objects.equals(signerId, that.signerId) && Objects.equals(signUnit, that.signUnit) && Objects.equals(processInstanceId, that.processInstanceId) && Objects.equals(taskId, that.taskId) && Objects.equals(taskName, that.taskName) && Objects.equals(variables, that.variables) && Objects.equals(bpmIsmsL414DTO, that.bpmIsmsL414DTO);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(signer, signerId, signUnit, processInstanceId, taskId, taskName, variables, bpmIsmsL414DTO);
     }
 }

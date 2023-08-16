@@ -20,3 +20,5 @@ flowable:
 server:
   port: 8081
 
+bpm:
+  token: QAZWSXEDCRffvYTHnujkljkfyffd14651456uhweuhuijwdijoichchuhqiheciqhoieh

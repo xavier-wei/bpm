@@ -44,7 +44,7 @@ public class BpmSignStatus implements Serializable {
     @Column(name="DIRECTIONS")
     private String directions;
 
-    @Column(name = "SIGNING_DATETIME", nullable = false)
+    @Column(name = "SIGNING_DATETIME")
     private Timestamp signingDatetime;
 
     public BpmSignStatus() {
@@ -92,5 +92,101 @@ public class BpmSignStatus implements Serializable {
             ", directions='" + directions + '\'' +
             ", signingDatetime=" + signingDatetime +
             '}';
+    }
+
+    public UUID getUuid() {
+        return uuid;
+    }
+
+    public void setUuid(UUID uuid) {
+        this.uuid = uuid;
+    }
+
+    public String getFormId() {
+        return formId;
+    }
+
+    public void setFormId(String formId) {
+        this.formId = formId;
+    }
+
+    public String getProcessInstanceId() {
+        return processInstanceId;
+    }
+
+    public void setProcessInstanceId(String processInstanceId) {
+        this.processInstanceId = processInstanceId;
+    }
+
+    public String getTaskId() {
+        return taskId;
+    }
+
+    public void setTaskId(String taskId) {
+        this.taskId = taskId;
+    }
+
+    public String getTaskName() {
+        return taskName;
+    }
+
+    public void setTaskName(String taskName) {
+        this.taskName = taskName;
+    }
+
+    public String getSignerId() {
+        return signerId;
+    }
+
+    public void setSignerId(String signerId) {
+        this.signerId = signerId;
+    }
+
+    public String getSigner() {
+        return signer;
+    }
+
+    public void setSigner(String signer) {
+        this.signer = signer;
+    }
+
+    public String getSignUnit() {
+        return signUnit;
+    }
+
+    public void setSignUnit(String signUnit) {
+        this.signUnit = signUnit;
+    }
+
+    public String getSignResult() {
+        return signResult;
+    }
+
+    public void setSignResult(String signResult) {
+        this.signResult = signResult;
+    }
+
+    public String getOpinion() {
+        return opinion;
+    }
+
+    public void setOpinion(String opinion) {
+        this.opinion = opinion;
+    }
+
+    public String getDirections() {
+        return directions;
+    }
+
+    public void setDirections(String directions) {
+        this.directions = directions;
+    }
+
+    public Timestamp getSigningDatetime() {
+        return signingDatetime;
+    }
+
+    public void setSigningDatetime(Timestamp signingDatetime) {
+        this.signingDatetime = signingDatetime;
     }
 }
