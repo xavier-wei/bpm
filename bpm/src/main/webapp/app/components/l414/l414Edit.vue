@@ -403,7 +403,7 @@
                       <b-button class="ml-2" style="background-color: #17a2b8; color: white"
                                 variant="outline-secondary"
                                 @click="submitForm('1')"
-                                v-show="formStatusRef === FormStatusEnum.MODIFY">儲存
+                                v-show="formStatusRef === FormStatusEnum.MODIFY">送出
                       </b-button>
                       <b-button class="ml-2" style="background-color: #17a2b8; color: white"
                                 variant="outline-secondary"
@@ -417,8 +417,8 @@
                       </b-button>
                       <b-button class="ml-2" style="background-color: #17a2b8; color: white"
                                 variant="outline-secondary"
-                                @click="signature"
-                                v-show="formStatusRef === FormStatusEnum.VERIFY">加簽
+                                @click="reviewStart('2')"
+                                v-show="formStatusRef === FormStatusEnum.VERIFY && userData !== 'ChiefTester' || userData !== 'DirectorTester'">補件
                       </b-button>
                       <b-button class="ml-2" style="background-color: #17a2b8; color: white"
                                 variant="outline-secondary"
@@ -554,6 +554,7 @@ export default {
       processInstanceId: '', //流程實體編號
       taskId: '',
       taskName: '',
+      decisionRole: '',
     };
     const form = reactive(Object.assign({}, formDefault));
     const rules = {
@@ -666,20 +667,22 @@ export default {
 
       let variables = {};
 
-      if (form.taskName !== null) {
+      if (form.decisionRole !== null) {
         let mapData = new Map<string, object>();
-        mapData.set(form.taskName, item)
+        mapData.set(form.decisionRole, item)
         let arrData = Array.from(mapData);
         variables = Object.fromEntries(arrData)
       }
 
       let body = {
-        signer: null,
-        signerId: null,
-        signUnit: null,
+        signer: form.appName,
+        signerId: form.appEmpid,
+        signUnit: form.appUnit,
         processInstanceId: form.processInstanceId,
         taskId: form.taskId,
+        taskName: form.taskName,
         variables,
+        bpmIsmsL414DTO:form
       };
 
       axios
@@ -688,10 +691,10 @@ export default {
             console.log('data', data)
             if (item === '1') {
               $bvModal.msgBoxOk('表單儲存完畢');
-              navigateByNameAndParams('pending', {});
+              navigateByNameAndParams('pending', {isNotKeepAlive: false});
             } else {
               $bvModal.msgBoxOk('表單審核完畢');
-              navigateByNameAndParams('pending', {});
+              navigateByNameAndParams('pending', {isNotKeepAlive: false});
             }
 
           })

@@ -35,7 +35,7 @@ import java.util.stream.Collectors;
 @RequestMapping("/api/process")
 public class ProcessL414Resource {
 
-    private final Logger log = LoggerFactory.getLogger(ProcessL414Resource.class);
+    private static final Logger log = LoggerFactory.getLogger(ProcessL414Resource.class);
 
     @Autowired
     private BpmIsmsL414Service bpmIsmsL414Service;
@@ -249,16 +249,17 @@ public class ProcessL414Resource {
         bpmSignStatusDTO.setSignerId(completeReqDTO.getSignerId());
         bpmSignStatusDTO.setSigner(completeReqDTO.getSigner());
         bpmSignStatusDTO.setSignUnit(completeReqDTO.getSignUnit());
-
+        bpmSignStatusDTO.setSigningDatetime(Timestamp.from(Instant.now()));
         if (completeReqDTO.getVariables().isEmpty()) {
             bpmSignStatusDTO.setSignResult("1");
         }else {
             Set<String> strings = completeReqDTO.getVariables().keySet();
             Iterator<String> iterator = strings.iterator();
             if (iterator.hasNext()) {
-                bpmSignStatusDTO.setTaskId((String) completeReqDTO.getVariables().get(iterator.next()));
+                bpmSignStatusDTO.setSignResult((String) completeReqDTO.getVariables().get(iterator.next()));
             }
         }
+
         return bpmSignStatusDTO;
     }
 
@@ -268,6 +269,7 @@ public class ProcessL414Resource {
         if (TOKEN.equals(endEventDTO.getToken())) {
             BpmIsmsL414 bpmIsmsL414 = bpmIsmsL414Repository.findFirstByProcessInstanceId(endEventDTO.getProcessInstanceId());
             bpmIsmsL414.setProcessInstanceStatus(endEventDTO.getProcessStatus());
+            bpmIsmsL414.setUpdateTime(Instant.now());
             bpmIsmsL414Repository.save(bpmIsmsL414);
             return;
         }

@@ -122,4 +122,18 @@ public class CompleteReqDTO {
     public int hashCode() {
         return Objects.hash(signer, signerId, signUnit, processInstanceId, taskId, taskName, variables, bpmIsmsL414DTO);
     }
+
+    @Override
+    public String toString() {
+        return "CompleteReqDTO{" +
+            "signer='" + signer + '\'' +
+            ", signerId='" + signerId + '\'' +
+            ", signUnit='" + signUnit + '\'' +
+            ", processInstanceId='" + processInstanceId + '\'' +
+            ", taskId='" + taskId + '\'' +
+            ", taskName='" + taskName + '\'' +
+            ", variables=" + variables +
+            ", bpmIsmsL414DTO=" + bpmIsmsL414DTO +
+            '}';
+    }
 }
