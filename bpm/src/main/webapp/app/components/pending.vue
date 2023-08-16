@@ -114,7 +114,7 @@ import {notificationErrorHandler} from "@/shared/http/http-response-helper";
 import {useNotification} from "@/shared/notification";
 import { newformatDate} from "@/shared/date/minguo-calendar-utils";
 import { changeSubject} from "@/shared/word/change-word-utils";
-import {useGetters} from "@u3u/vue-hooks";
+import {useGetters, useStore} from "@u3u/vue-hooks";
 import {navigateByNameAndParams} from "@/router/router";
 
 export default defineComponent({
@@ -127,6 +127,7 @@ export default defineComponent({
   },
   setup() {
     const userData = ref(useGetters(['getUserData']).getUserData).value.user;
+
     const iTable = ref(null);
     const queryStatus = ref(false);
     const notificationService = useNotification();
@@ -238,20 +239,19 @@ export default defineComponent({
     };
 
     function toEdit(item,i) {
-      console.log('item',item.appName)
-      console.log('userData',userData)
-
       if (i === '0') {
         navigateByNameAndParams('l414Edit', {
           l414Data: item,
           formStatus: FormStatusEnum.MODIFY,
-          isNotKeepAlive: false
+          isNotKeepAlive: false,
+          stateStatus : userData !== 'InfoTester'
         });
       }else {
         navigateByNameAndParams('l414Edit', {
           l414Data: item,
           formStatus: FormStatusEnum.VERIFY,
-          isNotKeepAlive: false
+          isNotKeepAlive: false,
+          stateStatus : userData !== 'InfoTester'
         });
       }
 

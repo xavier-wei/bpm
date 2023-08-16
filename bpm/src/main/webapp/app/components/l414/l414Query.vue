@@ -78,6 +78,7 @@ import {navigateByNameAndParams} from '@/router/router';
 import {notificationErrorHandler} from "@/shared/http/http-response-helper";
 import {useNotification} from "@/shared/notification";
 import {newformatDate} from '@/shared/date/minguo-calendar-utils';
+import {useGetters} from "@u3u/vue-hooks";
 
 export default {
   name: 'l414Query',
@@ -90,7 +91,7 @@ export default {
     const iTable = ref(null);
     const queryStatus = ref(false);
     const notificationService = useNotification();
-
+    const userData = ref(useGetters(['getUserData']).getUserData).value.user;
     enum FormStatusEnum {
       CREATE = '新增',
       MODIFY = '編輯',
@@ -202,6 +203,7 @@ export default {
             queryStatus.value = true
             if (iTable.value) iTable.value.state.pagination.currentPage = 1;
             if (data) {
+              console.log('l414Query - data :: ',data)
               table.data = data
             }
           })
@@ -219,7 +221,8 @@ export default {
       navigateByNameAndParams('l414Edit', {
         l414Data: item,
         formStatus: FormStatusEnum.READONLY,
-        isNotKeepAlive: false
+        isNotKeepAlive: false,
+        stateStatus : userData === 'InfoTester'
       });
     };
 

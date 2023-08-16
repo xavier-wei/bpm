@@ -1,7 +1,7 @@
 export interface IFileModel {
     formId?: string | null;           //表單編號
     fileName?: string | null;         //附件名稱
-    file?: File | null;           //附件
+    file?: File | null;               //附件
     fileSize?: string | null;         //大小
     authorName?: string | null;       //作者姓名
     fileDescription?: string | null;  //附件說明
@@ -17,7 +17,7 @@ export class FileModel implements IFileModel {
     constructor(
         public formId                   ?: string | null,     //表單編號
         public fileName                 ?: string | null,     //附件名稱
-        public file                     ?: File | null,     //附件
+        public file                     ?: File | null,       //附件
         public fileSize                 ?: string | null,     //大小
         public authorName               ?: string | null,     //作者姓名
         public fileDescription          ?: string | null,     //附件說明
