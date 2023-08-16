@@ -81,7 +81,7 @@ public class ProcessL414Resource {
         processReqDTO.setFormName("L414");
         HashMap<String, Object> variables = new HashMap<>();
 
-        variables.put("applier", "ApplyTester");
+        variables.put("applier", bpmIsmsL414DTO.getAppName());
         variables.put("isSubmit", bpmIsmsL414DTO.getIsSubmit());
         variables.put("sectionChief", "ChiefTester");
         variables.put("director", "DirectorTester");

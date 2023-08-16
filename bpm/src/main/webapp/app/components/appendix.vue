@@ -101,7 +101,7 @@
 
 import IButton from '@/shared/buttons/i-button.vue';
 import {onMounted, reactive, ref, toRef, watch} from "@vue/composition-api";
-import {FileModel} from "@/shared/model/qua/fileModel,";
+import {FileModel} from "@/shared/model/bpm/fileModel";
 import {formatToString} from "@/shared/date/minguo-calendar-utils";
 import {useGetters} from "@u3u/vue-hooks";
 import axios, {AxiosResponse} from 'axios';

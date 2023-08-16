@@ -62,10 +62,9 @@
                       <i-form-group-check class="col-sm-4" label-cols="5" content-cols="7" :label="`單位：`"
                                           :item="$v.filUnit">
                         <!--填表人單位名稱　: filUnit-->
-                        <b-form-select v-model="$v.filUnit.$model" :options="options.filUnitOptions">
+                        <b-form-select v-model="$v.filUnit.$model" :options="bpmUnitOptions">
                           <template #first>
-                            <b-form-select-option value="null" disabled>請選擇</b-form-select-option>
-                            <b-form-select-option value="">全部</b-form-select-option>
+                            <b-form-select-option value="" disabled>請選擇</b-form-select-option>
                           </template>
                         </b-form-select>
                       </i-form-group-check>
@@ -92,10 +91,9 @@
                       <i-form-group-check class="col-sm-4" label-cols="5" content-cols="7" :label="`單位：`"
                                           :item="$v.appUnit">
                         <!--申請人單位名稱 : appUnit-->
-                        <b-form-select v-model="$v.appUnit.$model" :options="options.appUnitOptions">
+                        <b-form-select v-model="$v.appUnit.$model" :options="bpmUnitOptions">
                           <template #first>
-                            <b-form-select-option value="null" disabled>請選擇</b-form-select-option>
-                            <b-form-select-option value="">全部</b-form-select-option>
+                            <b-form-select-option value="" disabled>請選擇</b-form-select-option>
                           </template>
                         </b-form-select>
                       </i-form-group-check>
@@ -258,13 +256,13 @@
                     <b-form-row>
                       <!--處理意見 : agreeType-->
                       <i-form-group-check class="col-sm-12" label-cols="2" content-cols="10" :label="'處理意見：'">
-                        <b-form-radio-group v-model="$v.agreeType.$model" :disabled="userData != 'InfoTester'">
+                        <b-form-radio-group v-model="$v.agreeType.$model" :disabled="userData !== 'InfoTester'">
                           <!--預定完成日期 : scheduleDate-->
                           <b-form-radio class="col-12" value="1">
                             <b-input-group>
                               <div>同意設定 : 預定完成日期 : 　</div>
                               <i-date-picker
-                                  :disabled="$v.agreeType.$model !== '1' && userData != 'InfoTester'"
+                                  :disabled="$v.agreeType.$model !== '1' && userData !== 'InfoTester'"
                                   placeholder="yyy/MM/dd"
                                   v-model="$v.scheduleDate.$model"
                                   :state="validateState($v.scheduleDate)"
@@ -279,7 +277,7 @@
                             <b-input-group>
                               <div>部分同意設定 : 原因 :　　 　</div>
                               <b-form-textarea
-                                  :disabled="$v.agreeType.$model !== '2' && userData != 'InfoTester'"
+                                  :disabled="$v.agreeType.$model !== '2' && userData !== 'InfoTester'"
                                   v-model="$v.partialAgreeReason.$model"
                                   rows="1"
                                   maxlength="2000"
@@ -294,7 +292,7 @@
                             <b-input-group>
                               <div>不同意設定 : 原因 :　　　 　</div>
                               <b-form-textarea
-                                  :disabled="$v.agreeType.$model !== '3' && userData != 'InfoTester'"
+                                  :disabled="$v.agreeType.$model !== '3' && userData !== 'InfoTester'"
                                   v-model="$v.notAgreeReason.$model"
                                   rows="1"
                                   maxlength="2000"
@@ -314,12 +312,12 @@
                         <b-input-group>
                           <!--是否為外部防火牆 : isExternalFirewall-->
                           <b-form-checkbox v-model="$v.isExternalFirewall.$model" value="Y" unchecked-value="N"
-                                           :disabled="userData != 'InfoTester'">
+                                           :disabled="userData !== 'InfoTester'">
                             外部防火牆
                           </b-form-checkbox>
                           <!--變更設備：是否為內部防火牆 : isInternalFirewall-->
                           <b-form-checkbox v-model="$v.isInternalFirewall.$model" value="Y" unchecked-value="N"
-                                           :disabled="userData != 'InfoTester'">
+                                           :disabled="userData !== 'InfoTester'">
                             外部防火牆
                           </b-form-checkbox>
                         </b-input-group>
@@ -337,7 +335,7 @@
                       >
                         <!--設定內容 : firewallContent-->
                         <b-form-textarea v-model="$v.firewallContent.$model" rows="1" maxlength="2000" trim lazy
-                                         :disabled="userData != 'InfoTester'"/>
+                                         :disabled="userData !== 'InfoTester'"/>
                       </i-form-group-check>
                     </b-form-row>
 
@@ -358,7 +356,7 @@
                               :state="validateState($v.finishDatetime)"
                               lazy
                               trim
-                              :disabled="userData != 'InfoTester'"
+                              :disabled="userData !== 'InfoTester'"
                           ></i-date-picker>
                           <span class="m-1">，並以電話通知申請單位。</span>
                         </b-input-group>
@@ -452,6 +450,7 @@ export default {
   },
   setup(props) {
     const userData = ref(useGetters(['getUserData']).getUserData).value.user;
+    const bpmUnitOptions = ref(useGetters(['getBpmUnitOptions']).getBpmUnitOptions).value;
     console.log('userData : ', userData)
     const formStatusRef = toRef(props, 'formStatus');
     const tabIndex = ref(0);
@@ -537,19 +536,6 @@ export default {
     };
     const {$v, checkValidity, reset} = useValidation(rules, form, formDefault);
 
-    const options = reactive({
-      filUnitOptions: [
-        {value: '0', text: '主計室'},
-        {value: '1', text: '資訊推動小組'},
-        {value: '2', text: '主任委員室'},
-      ],
-      appUnitOptions: [
-        {value: '0', text: '主計室'},
-        {value: '1', text: '資訊推動小組'},
-        {value: '2', text: '主任委員室'},
-      ],
-    });
-
     const headers = {
       headers: {
         'Content-Type': 'multipart/form-data',
@@ -616,7 +602,6 @@ export default {
       form,
       checkValidity,
       validateState,
-      options,
       submitForm,
       changeTabIndex,
       activeTab,
@@ -628,6 +613,7 @@ export default {
       toQueryView,
       reset,
       formStatusRef,
+      bpmUnitOptions
     }
   }
 }

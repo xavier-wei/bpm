@@ -50,6 +50,7 @@ import { envStore } from '@/shared/config/store/env-store';
 import {userStore} from "@/components/userStore/user-store";
 import {keepAliveStore} from "@/shared/config/store/keep-alive-store";
 import { axiosScrollStore } from '@/shared/config/store/axios-scroll-store';
+import {bpmUnitOptionsStore} from "@/shared/config/store/bpm-unit-options-store";
 
 
 export function initVueApp(vue) {
@@ -109,7 +110,8 @@ export function initVueXStore(vue) {
       envStore,
       userStore,
       keepAliveStore,
-      axiosScrollStore
+      axiosScrollStore,
+      bpmUnitOptionsStore
     },
   });
 }
