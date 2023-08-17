@@ -12,6 +12,8 @@ public class CompleteReqDTO {
     private String signerId;
 
     private String signUnit;
+    private String directions;
+    private String opinion;
 
     @NotNull
     private String processInstanceId;
@@ -35,7 +37,7 @@ public class CompleteReqDTO {
     }
 
 
-    public CompleteReqDTO(String signer, String signerId, String signUnit, String processInstanceId, String taskId, String taskName, HashMap<String, Object> variables, BpmIsmsL414DTO bpmIsmsL414DTO) {
+    public CompleteReqDTO(String signer, String signerId, String signUnit, String processInstanceId, String taskId, String taskName, HashMap<String, Object> variables, BpmIsmsL414DTO bpmIsmsL414DTO,String directions,String opinion) {
         this.signer = signer;
         this.signerId = signerId;
         this.signUnit = signUnit;
@@ -44,6 +46,8 @@ public class CompleteReqDTO {
         this.taskName = taskName;
         this.variables = variables;
         this.bpmIsmsL414DTO = bpmIsmsL414DTO;
+        this.directions = directions;
+        this.opinion = opinion;
     }
 
     public String getSigner() {
@@ -110,30 +114,48 @@ public class CompleteReqDTO {
         this.bpmIsmsL414DTO = bpmIsmsL414DTO;
     }
 
+    public String getDirections() {
+        return directions;
+    }
+
+    public void setDirections(String directions) {
+        this.directions = directions;
+    }
+
+    public String getOpinion() {
+        return opinion;
+    }
+
+    public void setOpinion(String opinion) {
+        this.opinion = opinion;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         CompleteReqDTO that = (CompleteReqDTO) o;
-        return Objects.equals(signer, that.signer) && Objects.equals(signerId, that.signerId) && Objects.equals(signUnit, that.signUnit) && Objects.equals(processInstanceId, that.processInstanceId) && Objects.equals(taskId, that.taskId) && Objects.equals(taskName, that.taskName) && Objects.equals(variables, that.variables) && Objects.equals(bpmIsmsL414DTO, that.bpmIsmsL414DTO);
+        return Objects.equals(signer, that.signer) && Objects.equals(signerId, that.signerId) && Objects.equals(signUnit, that.signUnit) && Objects.equals(directions, that.directions) && Objects.equals(opinion, that.opinion) && Objects.equals(processInstanceId, that.processInstanceId) && Objects.equals(taskId, that.taskId) && Objects.equals(taskName, that.taskName) && Objects.equals(variables, that.variables) && Objects.equals(bpmIsmsL414DTO, that.bpmIsmsL414DTO);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(signer, signerId, signUnit, processInstanceId, taskId, taskName, variables, bpmIsmsL414DTO);
+        return Objects.hash(signer, signerId, signUnit, directions, opinion, processInstanceId, taskId, taskName, variables, bpmIsmsL414DTO);
     }
 
     @Override
     public String toString() {
         return "CompleteReqDTO{" +
-            "signer='" + signer + '\'' +
-            ", signerId='" + signerId + '\'' +
-            ", signUnit='" + signUnit + '\'' +
-            ", processInstanceId='" + processInstanceId + '\'' +
-            ", taskId='" + taskId + '\'' +
-            ", taskName='" + taskName + '\'' +
-            ", variables=" + variables +
-            ", bpmIsmsL414DTO=" + bpmIsmsL414DTO +
-            '}';
+                "signer='" + signer + '\'' +
+                ", signerId='" + signerId + '\'' +
+                ", signUnit='" + signUnit + '\'' +
+                ", directions='" + directions + '\'' +
+                ", opinion='" + opinion + '\'' +
+                ", processInstanceId='" + processInstanceId + '\'' +
+                ", taskId='" + taskId + '\'' +
+                ", taskName='" + taskName + '\'' +
+                ", variables=" + variables +
+                ", bpmIsmsL414DTO=" + bpmIsmsL414DTO +
+                '}';
     }
 }

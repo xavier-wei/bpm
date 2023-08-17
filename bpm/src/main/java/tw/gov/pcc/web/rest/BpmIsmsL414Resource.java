@@ -1,13 +1,5 @@
 package tw.gov.pcc.web.rest;
 
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.stream.Collectors;
-import javax.validation.Valid;
-import javax.validation.constraints.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -17,10 +9,22 @@ import tech.jhipster.web.util.HeaderUtil;
 import tech.jhipster.web.util.ResponseUtil;
 import tw.gov.pcc.domain.BpmIsmsL414;
 import tw.gov.pcc.repository.BpmIsmsL414Repository;
+import tw.gov.pcc.repository.BpmSignStatusRepository;
 import tw.gov.pcc.service.BpmIsmsL414Service;
 import tw.gov.pcc.service.dto.BpmIsmsL414DTO;
+import tw.gov.pcc.service.dto.BpmSignStatusDTO;
 import tw.gov.pcc.service.mapper.BpmIsmsL414Mapper;
+import tw.gov.pcc.service.mapper.BpmSignStatusMapper;
 import tw.gov.pcc.web.rest.errors.BadRequestAlertException;
+
+import javax.validation.Valid;
+import javax.validation.constraints.NotNull;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 /**
  * REST controller for managing {@link BpmIsmsL414}.
@@ -42,10 +46,16 @@ public class BpmIsmsL414Resource {
 
     private final BpmIsmsL414Mapper bpmIsmsL414Mapper;
 
-    public BpmIsmsL414Resource(BpmIsmsL414Service bpmIsmsL414Service, BpmIsmsL414Repository bpmIsmsL414Repository, BpmIsmsL414Mapper bpmIsmsL414Mapper) {
+    private final BpmSignStatusRepository bpmSignStatusRepository;
+
+    private final BpmSignStatusMapper bpmSignStatusMapper;
+
+    public BpmIsmsL414Resource(BpmIsmsL414Service bpmIsmsL414Service, BpmIsmsL414Repository bpmIsmsL414Repository, BpmIsmsL414Mapper bpmIsmsL414Mapper, BpmSignStatusRepository bpmSignStatusRepository, BpmSignStatusMapper bpmSignStatusMapper) {
         this.bpmIsmsL414Service = bpmIsmsL414Service;
         this.bpmIsmsL414Repository = bpmIsmsL414Repository;
         this.bpmIsmsL414Mapper = bpmIsmsL414Mapper;
+        this.bpmSignStatusRepository = bpmSignStatusRepository;
+        this.bpmSignStatusMapper = bpmSignStatusMapper;
     }
 
     /**
@@ -188,6 +198,22 @@ public class BpmIsmsL414Resource {
                 .stream()
                 .map(bpmIsmsL414Mapper::toDto)
                 .collect(Collectors.toList());
+    }
+
+
+    @GetMapping("/getBpmSignStatus/{id}")
+    public List<BpmSignStatusDTO> findByBpmSignStatus(
+            @PathVariable String id
+    ) {
+
+        List<BpmSignStatusDTO> bpmSignStatus = bpmSignStatusRepository.findByFormIdOrderBySigningDatetime(id)
+                .stream()
+                .map(bpmSignStatusMapper::toDto)
+                .collect(Collectors.toList());
+
+        log.info("BpmIsmsL414Resource.java - findByBpmSignStatus - 212 :: " + bpmSignStatus );
+
+        return bpmSignStatus;
     }
 
 

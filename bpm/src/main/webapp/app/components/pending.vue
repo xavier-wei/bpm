@@ -245,14 +245,14 @@ export default defineComponent({
         navigateByNameAndParams('l414Edit', {
           l414Data: item,
           formStatus: FormStatusEnum.MODIFY,
-          isNotKeepAlive: true,
+          isNotKeepAlive: false,
           stateStatus : userData !== 'InfoTester'
         });
       }else {
         navigateByNameAndParams('l414Edit', {
           l414Data: item,
           formStatus: FormStatusEnum.VERIFY,
-          isNotKeepAlive: true,
+          isNotKeepAlive: false,
           stateStatus : userData !== 'InfoTester'
         });
       }

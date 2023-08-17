@@ -69,9 +69,9 @@ public class ProcessL414Resource {
 
     @PostMapping(path = "/startL414", consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
     public String start(
-        @Valid @RequestPart("form") BpmIsmsL414DTO bpmIsmsL414DTO,
-        @Valid @RequestPart(name = "fileDto", required = false) List<BpmUploadFileDTO> dto,
-        @RequestPart(name = "appendixFiles", required = false) List<MultipartFile> appendixFiles) throws IOException {
+            @Valid @RequestPart("form") BpmIsmsL414DTO bpmIsmsL414DTO,
+            @Valid @RequestPart(name = "fileDto", required = false) List<BpmUploadFileDTO> dto,
+            @RequestPart(name = "appendixFiles", required = false) List<MultipartFile> appendixFiles) throws IOException {
         log.info("ProcessL414Resource.java - start - 59 :: " + bpmIsmsL414DTO);
         log.info("ProcessL414Resource.java - start - 60 :: " + dto);
         log.info("ProcessL414Resource.java - start - 61 :: " + appendixFiles);
@@ -110,7 +110,6 @@ public class ProcessL414Resource {
         }
 
 
-
         bpmIsmsL414DTO.setProcessInstanceId(processInstanceId);
 
         //取得表單最後的流水號
@@ -141,7 +140,6 @@ public class ProcessL414Resource {
         }
 
 
-
         return processInstanceId;
     }
 
@@ -164,9 +162,9 @@ public class ProcessL414Resource {
 
     @PatchMapping(path = "/startL414/patch", consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
     public BpmIsmsL414DTO startPatch(
-        @Valid @RequestPart("form") BpmIsmsL414DTO bpmIsmsL414DTO,
-        @Valid @RequestPart(name = "fileDto", required = false) List<BpmUploadFileDTO> dto,
-        @RequestPart(name = "appendixFiles", required = false) List<MultipartFile> appendixFiles) throws IOException {
+            @Valid @RequestPart("form") BpmIsmsL414DTO bpmIsmsL414DTO,
+            @Valid @RequestPart(name = "fileDto", required = false) List<BpmUploadFileDTO> dto,
+            @RequestPart(name = "appendixFiles", required = false) List<MultipartFile> appendixFiles) throws IOException {
         log.info("ProcessL414Resource.java - start - 59 :: " + bpmIsmsL414DTO);
         log.info("ProcessL414Resource.java - start - 60 :: " + dto);
         log.info("ProcessL414Resource.java - start - 61 :: " + appendixFiles);
@@ -190,9 +188,8 @@ public class ProcessL414Resource {
 
 
     @RequestMapping("/queryTask/{id}")
-    public List<BpmIsmsL414DTO> queryTask(@PathVariable String id,@Valid @RequestPart(required = false) BpmFormQueryDto bpmFormQueryDto) {
-        log.info("ProcessL414Resource.java - queryTask - 194 :: " + bpmFormQueryDto );
-
+    public List<BpmIsmsL414DTO> queryTask(@PathVariable String id, @Valid @RequestPart(required = false) BpmFormQueryDto bpmFormQueryDto) {
+        log.info("ProcessL414Resource.java - queryTask - 194 :: " + bpmFormQueryDto);
 
 
 //        String id="ApplyTester";
@@ -207,19 +204,19 @@ public class ProcessL414Resource {
             List<TaskDTO> taskDTOS = new Gson().fromJson(body, listType);
             assert taskDTOS != null;
             return taskDTOS.isEmpty() ? null :
-                taskDTOS.stream()
-                    .map(taskDTO -> {
+                    taskDTOS.stream()
+                            .map(taskDTO -> {
 //                        BpmIsmsL414DTO dto = bpmIsmsL414Mapper.toDto(bpmIsmsL414Repository.findFirstByProcessInstanceId(taskDTO.getProcessInstanceId()));
-                        BpmIsmsL414DTO dto =  bpmIsmsL414Repository.findByBpmIsmsL414(bpmFormQueryDto, taskDTO.getProcessInstanceId());
-                        if (dto != null) {
-                            dto.setTaskId(taskDTO.getTaskId());
-                            dto.setTaskName(taskDTO.getTaskName());
-                            dto.setDecisionRole(SingerEnum.getDecisionByName(taskDTO.getTaskName()));
-                        }
-                        return dto;
-                    })
-                    .filter(Objects::nonNull)
-                    .collect(Collectors.toList());
+                                BpmIsmsL414DTO dto = bpmIsmsL414Repository.findByBpmIsmsL414(bpmFormQueryDto, taskDTO.getProcessInstanceId());
+                                if (dto != null) {
+                                    dto.setTaskId(taskDTO.getTaskId());
+                                    dto.setTaskName(taskDTO.getTaskName());
+                                    dto.setDecisionRole(SingerEnum.getDecisionByName(taskDTO.getTaskName()));
+                                }
+                                return dto;
+                            })
+                            .filter(Objects::nonNull)
+                            .collect(Collectors.toList());
         }
 
         return null;
@@ -244,7 +241,6 @@ public class ProcessL414Resource {
     }
 
 
-
     private static BpmSignStatusDTO getBpmSignStatusDTO(CompleteReqDTO completeReqDTO) {
         BpmSignStatusDTO bpmSignStatusDTO = new BpmSignStatusDTO();
         bpmSignStatusDTO.setFormId(completeReqDTO.getBpmIsmsL414DTO().getFormId());
@@ -255,9 +251,11 @@ public class ProcessL414Resource {
         bpmSignStatusDTO.setSigner(completeReqDTO.getSigner());
         bpmSignStatusDTO.setSignUnit(completeReqDTO.getSignUnit());
         bpmSignStatusDTO.setSigningDatetime(Timestamp.from(Instant.now()));
+        bpmSignStatusDTO.setOpinion(completeReqDTO.getOpinion());
+        bpmSignStatusDTO.setDirections(completeReqDTO.getDirections());
         if (completeReqDTO.getVariables().isEmpty()) {
             bpmSignStatusDTO.setSignResult("1");
-        }else {
+        } else {
             Set<String> strings = completeReqDTO.getVariables().keySet();
             Iterator<String> iterator = strings.iterator();
             if (iterator.hasNext()) {
@@ -278,7 +276,7 @@ public class ProcessL414Resource {
             bpmIsmsL414Repository.save(bpmIsmsL414);
             return;
         }
-        log.warn("ProcessL414Resource.java - receiveEndEvent - 203 ::{} " , "流程發生意外終止");
+        log.warn("ProcessL414Resource.java - receiveEndEvent - 203 ::{} ", "流程發生意外終止");
     }
 
     @RequestMapping("/deleteProcessInstance/{processInstanceId}")
@@ -287,9 +285,9 @@ public class ProcessL414Resource {
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
 
-        HashMap<String,String> deleteRequest = new HashMap<>();
-        deleteRequest.put("processInstanceId",processInstanceId);
-        deleteRequest.put("token",TOKEN);
+        HashMap<String, String> deleteRequest = new HashMap<>();
+        deleteRequest.put("processInstanceId", processInstanceId);
+        deleteRequest.put("token", TOKEN);
         HttpEntity<String> requestEntity = new HttpEntity<>(gson.toJson(deleteRequest), headers);
         ResponseEntity<String> exchange = restTemplate.exchange(FLOWABLE_PROCESS_URL + "/deleteProcess", HttpMethod.POST, requestEntity, String.class);
 

@@ -11,5 +11,6 @@ import java.util.UUID;
 public interface BpmSignStatusRepository extends JpaRepository<BpmSignStatus, UUID> {
 
     List<BpmSignStatus> findByProcessInstanceId(String processInstanceId);
+    List<BpmSignStatus> findByFormIdOrderBySigningDatetime(String formId);
 
 }
