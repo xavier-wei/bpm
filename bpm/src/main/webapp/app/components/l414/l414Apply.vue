@@ -466,7 +466,7 @@ export default {
 
     const formDefault = {
       formId: '', //表單編號
-      applyDate: new Date(new Date().getFullYear(), 0, 1), //	申請日期
+      applyDate: new Date(new Date().getFullYear(), new Date().getMonth(), new Date().getDate()), //	申請日期
       filEmpid: '', //	填表人員工編號
       filName: '', //	填表人姓名
       filUnit: '', //	填表人單位名稱
@@ -570,6 +570,7 @@ export default {
                   .then(({data}) => {
                     // filePathData.filePathName = 'http://localhost:8081/pic?processId=' + data;
                     $bvModal.msgBoxOk('表單新增完畢');
+                    reset();
                     navigateByNameAndParams('l414Query', { isReload: false, isNotKeepAlive: true });
                   })
                   .catch(notificationErrorHandler(notificationService));

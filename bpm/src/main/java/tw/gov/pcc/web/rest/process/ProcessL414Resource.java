@@ -190,7 +190,11 @@ public class ProcessL414Resource {
 
 
     @RequestMapping("/queryTask/{id}")
-    public List<BpmIsmsL414DTO> queryTask(@PathVariable String id) {
+    public List<BpmIsmsL414DTO> queryTask(@PathVariable String id,@Valid @RequestPart(required = false) BpmFormQueryDto bpmFormQueryDto) {
+        log.info("ProcessL414Resource.java - queryTask - 194 :: " + bpmFormQueryDto );
+
+
+
 //        String id="ApplyTester";
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
@@ -205,7 +209,8 @@ public class ProcessL414Resource {
             return taskDTOS.isEmpty() ? null :
                 taskDTOS.stream()
                     .map(taskDTO -> {
-                        BpmIsmsL414DTO dto = bpmIsmsL414Mapper.toDto(bpmIsmsL414Repository.findFirstByProcessInstanceId(taskDTO.getProcessInstanceId()));
+//                        BpmIsmsL414DTO dto = bpmIsmsL414Mapper.toDto(bpmIsmsL414Repository.findFirstByProcessInstanceId(taskDTO.getProcessInstanceId()));
+                        BpmIsmsL414DTO dto =  bpmIsmsL414Repository.findByBpmIsmsL414(bpmFormQueryDto, taskDTO.getProcessInstanceId());
                         if (dto != null) {
                             dto.setTaskId(taskDTO.getTaskId());
                             dto.setTaskName(taskDTO.getTaskName());
