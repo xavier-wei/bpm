@@ -46,7 +46,7 @@
               </b-form-select>
             </i-form-group-check>
             <i-form-group-check class="col-4" label-cols="4" content-cols="8" label="表單分類：" :item="$v.formType">
-              <b-form-select v-model="$v.formType.$model">
+              <b-form-select v-model="$v.formType.$model" :options="queryOptions.formTypeList">
                 <template #first>
                   <option value="">請選擇</option>
                 </template>
@@ -87,7 +87,6 @@
           :fields="table.fields"
           :totalItems="table.totalItems"
           :is-server-side-paging="true"
-          @changePagination="handlePaginationChanged($event)"
         >
           <template #cell(action)="row">
             <b-button class="ml-2" style="background-color: #17a2b8" @click="toEdit(row)">檢視</b-button>
@@ -109,6 +108,8 @@ import {useBvModal} from '../shared/modal';
 import {required} from '@/shared/validators';
 import {Pagination} from '@/shared/model/pagination.model';
 import {useGetters, useStore} from '@u3u/vue-hooks';
+import {notificationErrorHandler} from "@/shared/http/http-response-helper";
+import {useNotification} from "@/shared/notification";
 
 export default defineComponent({
   name: 'notify',
@@ -118,10 +119,12 @@ export default defineComponent({
     IFormGroupCheck,
   },
   setup() {
+    const userData = ref(useGetters(['getUserData']).getUserData).value.user;
     const iTable = ref(null);
     const stepVisible = ref(true);
     const queryStatus = ref(false);
     const $bvModal = useBvModal();
+    const notificationService = useNotification();
 
     function notBeforePublicDateStart(date: Date) {
       if (form.dateStart) return date < new Date(form.dateStart);
@@ -213,35 +216,6 @@ export default defineComponent({
       totalItems: 0,
     });
 
-    const mockdata = [
-      {
-        action: '4,02.03.04',
-        formId: '林一郎/楊助理',
-        hostname: 'L410-共用系統使用者帳號申請單',
-        applyDate: '112/05/23 10:23:43',
-        port: '',
-        active2: '已處理完畢',
-        active3: 'L410-共用系統使用者帳號申請單(L410-11205-0001)',
-      },
-      {
-        action: '4,02.03.04',
-        formId: '林一郎/楊助理',
-        hostname: 'L410-共用系統使用者帳號申請單',
-        applyDate: '112/05/25 11:43:13',
-        port: '張為寬(直屬主管)',
-        active2: '處理中',
-        active3: 'L410-共用系統使用者帳號申請單(L410-11205-0002)',
-      },
-      {
-        action: '4,02.03.04',
-        formId: '林一郎/楊助理',
-        hostname: 'L414-網路服務連結申請單',
-        applyDate: '112/05/24 14:51:02',
-        port: '',
-        active2: '已處理完畢',
-        active3: 'L414-網路服務連結申請單(L414-11205-0001)',
-      },
-    ];
 
     // 下拉選單選項
     const queryOptions = reactive({
@@ -251,27 +225,36 @@ export default defineComponent({
         {value: '2', text: '處理過'},
       ],
       formCase: [
-        {value: '0', text: 'L410-共用系統使用者帳號申請單'},
-        {value: '1', text: 'L414-網路服務連結申請單'},
+        {value: 'L410', text: 'L410-共用系統使用者帳號申請單'},
+        {value: 'L414', text: 'L414-網路服務連結申請單'},
+      ],
+      formTypeList: [
+        {value: '0', text: 'ISMS簽核表單'},
       ],
     });
 
     const toQuery = () => {
+      // table.data = [];
+      // const params = new FormData();
+      // params.append('bpmFormQueryDto', new Blob([JSON.stringify(form)], { type: 'application/json' }));
+      // axios.post(`/process/queryTask/${userData}`,params).then(({data}) => {
+      //   console.log('data+++', data);
+      //   queryStatus.value = true;
+      //   if(data.length <= 0) return;
+      //   table.data = data.slice(0, data.length);
+      //   table.totalItems = data.length;
+      // }).catch(notificationErrorHandler(notificationService));
+
       table.data = undefined;
-      const usegetters = useGetters;
-      console.log('useGetters', useGetters);
       const id = 'ApplyTester';
       axios.post(`/process/queryTask/${id}`).then(data => {
         console.log('data', data.data);
         queryStatus.value = true;
         table.data = data.data.slice(0, data.data.length); //前端分頁(後端資料回傳)
         table.totalItems = data.data.length;
-      });
+      }).catch(notificationErrorHandler(notificationService));
     };
 
-    const handlePaginationChanged = (pagination: Pagination) => {
-      //todo:未做方法先放著
-    };
 
     function toEdit(i) {
       //todo:未做方法先放著
@@ -286,13 +269,11 @@ export default defineComponent({
       toQuery,
       reset,
       table,
-      mockdata,
       queryOptions,
       iTable,
       notBeforePublicDateStart,
       notAfterPublicDateEnd,
       toEdit,
-      handlePaginationChanged,
       queryStatus,
     };
   },

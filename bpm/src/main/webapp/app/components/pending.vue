@@ -236,7 +236,8 @@ export default defineComponent({
         if(data.length <= 0) return;
         table.data = data.slice(0, data.length);
         table.totalItems = data.length;
-      });
+      })
+        .catch(notificationErrorHandler(notificationService));
     };
 
     function toEdit(item,i) {
