@@ -22,7 +22,7 @@
           }
 
           .pic-scale-up:hover {
-            transform: translate(100%, 50%) scale(3, 3);
+            transform: scale(3,3);
             transition: transform 0.25s ease;
             z-index: 2; /* 懸停時，將 z-index 值提高到 2，使其放在最外層 */
           }
@@ -430,7 +430,7 @@
                  const dashboardFigId = type;
                  const foundImage = backendResponse.find(item => item.dashboardFigId === dashboardFigId);
                  if (foundImage) {
-                     foundImage.tableauNewUrl = foundImage.tableauUrl.replace("#","/trusted/"+ticket)
+                     foundImage.tableauNewUrl = foundImage.tableauUrl.replace("#","trusted/"+ticket)
                      console.log(foundImage.tableauNewUrl)
                      window.open(foundImage.tableauNewUrl, "_blank");
                  } else {
@@ -440,10 +440,10 @@
            }
 
 
-           //取得userId
+           //取得使用者訂閱的儀表板
            function getUserData() {
            $.ajax({
-                url: '<c:url value="/get-tableau-data" />',
+                url: '<c:url value="/get-tableau-data-by-user" />',
                 type: 'POST',
                 async: true,
                 timeout: 100000,
