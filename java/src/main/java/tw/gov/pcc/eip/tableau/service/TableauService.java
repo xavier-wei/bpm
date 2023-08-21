@@ -116,7 +116,7 @@ public class TableauService {
         BufferedReader in = null;
         try {
             // TODO: 2023/8/2  wgserver要改成定義在properties檔?
-            String wgserver = "http://223.200.84.115/";
+            String wgserver = "http://223.200.84.115";
             StringBuilder reqUrl = new StringBuilder();
             reqUrl.append(URLEncoder.encode("username", "UTF-8"));
             reqUrl.append("=");
