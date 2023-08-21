@@ -430,9 +430,9 @@
                  const dashboardFigId = type;
                  const foundImage = backendResponse.find(item => item.dashboardFigId === dashboardFigId);
                  if (foundImage) {
-                     foundImage.tableauUrl = foundImage.tableauUrl.replace("#","/trusted/"+ticket)
-                     console.log(foundImage.tableauUrl)
-                     window.open(foundImage.tableauUrl, "_blank");
+                     foundImage.tableauNewUrl = foundImage.tableauUrl.replace("#","/trusted/"+ticket)
+                     console.log(foundImage.tableauNewUrl)
+                     window.open(foundImage.tableauNewUrl, "_blank");
                  } else {
                            alert('找不到對應的儀錶板網址');
                  }
