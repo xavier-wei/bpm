@@ -269,6 +269,8 @@ export function parseStringDate(date, isCh = false): string {
 
 }
 
+
+//bpm時間轉換器，
 export function newformatDate(value: Ref<Date> | Date | null, delimiter?: string): string {
 
     const colon = ':'
@@ -282,12 +284,12 @@ export function newformatDate(value: Ref<Date> | Date | null, delimiter?: string
         const day = date.getDate().toString().padStart(2, '0');
 
         const hours = date.getUTCHours();
-        const minutes = date.getMinutes();
-        const seconds = date.getSeconds();
+        const minutes = date.getMinutes().toString().padStart(2, '0');
+        const seconds = date.getSeconds().toString().padStart(2, '0');
         const timeValue = "" + ((hours >= 12) ? "下午" : "上午")
 
         if (delimiter) {
-            return `${year}${delimiter}${month}${delimiter}${day}` + ' ' + `${timeValue}` + ' ' + `${hours}${colon}${minutes}${colon}${seconds}`;
+            return `${year}${delimiter}${month}${delimiter}${day}` + ' ' + `${timeValue}` + ' ' + `${hours.toString().padStart(2, '0')}${colon}${minutes}${colon}${seconds}`;
         }
         return `${year}${month}${day}`;
     }

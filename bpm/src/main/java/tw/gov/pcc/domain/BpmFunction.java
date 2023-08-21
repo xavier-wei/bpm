@@ -1,9 +1,6 @@
 package tw.gov.pcc.domain;
 
-import org.hibernate.sql.ordering.antlr.GeneratedOrderByFragmentParser;
-
 import java.io.Serializable;
-import java.math.BigDecimal;
 import java.time.Instant;
 import javax.persistence.*;
 import javax.validation.constraints.*;

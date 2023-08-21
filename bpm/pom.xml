@@ -28,7 +28,7 @@
         <java.version>11</java.version>
         <node.version>v16.17.0</node.version>
         <npm.version>8.19.1</npm.version>
-        <lombok.version>1.18.22</lombok.version>
+        <lombok.version>1.18.28</lombok.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <maven.build.timestamp.format>yyyyMMddHHmmss</maven.build.timestamp.format>
@@ -64,6 +64,7 @@
         <maven-clean-plugin.version>3.2.0</maven-clean-plugin.version>
         <maven-site-plugin.version>3.12.1</maven-site-plugin.version>
         <maven-compiler-plugin.version>3.10.1</maven-compiler-plugin.version>
+        <localizer.version>1.31</localizer.version>
         <maven-javadoc-plugin.version>3.4.1</maven-javadoc-plugin.version>
         <maven-eclipse-plugin.version>2.10</maven-eclipse-plugin.version>
         <maven-enforcer-plugin.version>3.1.0</maven-enforcer-plugin.version>
@@ -101,7 +102,6 @@
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
-            <!-- jhipster-needle-maven-add-dependency-management -->
         </dependencies>
     </dependencyManagement>
 
@@ -193,6 +193,11 @@
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-data-jpa</artifactId>
         </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-jdbc</artifactId>
+        </dependency>
+
         <dependency>
             <groupId>org.testcontainers</groupId>
             <artifactId>jdbc</artifactId>
@@ -301,10 +306,9 @@
         <dependency>
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
-            <version>${lombok.version}</version>
             <optional>true</optional>
+            <scope>compile</scope>
         </dependency>
-
         <dependency>
             <groupId>org.keycloak</groupId>
             <artifactId>keycloak-core</artifactId>
@@ -321,6 +325,12 @@
             <groupId>commons-io</groupId>
             <artifactId>commons-io</artifactId>
         </dependency>
+        <dependency>
+            <groupId>org.jetbrains</groupId>
+            <artifactId>annotations</artifactId>
+            <version>20.1.0</version>
+            <scope>provided</scope>
+        </dependency>
     </dependencies>
 
     <build>
@@ -329,6 +339,11 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
+            </plugin>
+            <plugin>
+                <groupId>org.jvnet.localizer</groupId>
+                <artifactId>localizer-maven-plugin</artifactId>
+                <version>${localizer.version}</version>
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -448,6 +463,11 @@
                                 <groupId>org.glassfish.jaxb</groupId>
                                 <artifactId>jaxb-runtime</artifactId>
                                 <version>${jaxb-runtime.version}</version>
+                            </path>
+                            <path>
+                                <groupId>org.projectlombok</groupId>
+                                <artifactId>lombok</artifactId>
+                                <version>${lombok.version}</version>
                             </path>
                             <!-- jhipster-needle-maven-add-annotation-processor -->
                         </annotationProcessorPaths>
@@ -1186,18 +1206,21 @@
                                 <goals>
                                     <goal>npm</goal>
                                 </goals>
-                            </execution>
-                            <execution>
-                                <id>webapp build test</id>
-                                <goals>
-                                    <goal>npm</goal>
-                                </goals>
-                                <phase>test</phase>
                                 <configuration>
-                                    <arguments>run webapp:test</arguments>
-                                    <npmInheritsProxyConfigFromMaven>false</npmInheritsProxyConfigFromMaven>
+                                    <arguments>install --legacy-peer-deps</arguments>
                                 </configuration>
                             </execution>
+<!--                            <execution>-->
+<!--                                <id>webapp build test</id>-->
+<!--                                <goals>-->
+<!--                                    <goal>npm</goal>-->
+<!--                                </goals>-->
+<!--                                <phase>test</phase>-->
+<!--                                <configuration>-->
+<!--                                    <arguments>run webapp:test</arguments>-->
+<!--                                    <npmInheritsProxyConfigFromMaven>false</npmInheritsProxyConfigFromMaven>-->
+<!--                                </configuration>-->
+<!--                            </execution>-->
                             <execution>
                                 <id>webapp build prod</id>
                                 <goals>

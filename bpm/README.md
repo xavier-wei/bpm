@@ -15,7 +15,8 @@ cd bpm
 npm start
 ```
 ## 2. 正式環境打包
+
 ```bash
-cd bpm
+mvn clean
 mvn package -P prod,no-liquibase
 ```

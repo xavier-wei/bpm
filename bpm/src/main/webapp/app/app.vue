@@ -1,23 +1,17 @@
 <template>
   <div class="app">
     <div class="sidebar">
-      <!-- 侧边栏内容 -->
-      <Home></Home>
+      <!-- 側邊攔内容 -->
+      <Home @reloadContent="reload"></Home>
     </div>
 
-    <!-- <div class="main">
-      <Deal></Deal>
-    </div> -->
-
+    <!--Loading畫面-->
     <block-ui :is-loading="isLoading"></block-ui>
 
+    <!--麵包屑-->
     <div class="d-flex">
-<!--      <breadcrumb class="print-not-show"></breadcrumb>-->
-<!--      <keep-alive :include="keepAlivePage">-->
-<!--        <router-view v-if="isContentAlive"></router-view>-->
-<!--      </keep-alive>-->
-      <div class="bg pb-3 col-md-10" >
-        <breadcrumb ></breadcrumb>
+      <div class="bg pb-3 col-md-10">
+        <breadcrumb></breadcrumb>
         <keep-alive :include="keepAlivePage">
           <router-view v-if="isContentAlive"></router-view>
         </keep-alive>
@@ -26,16 +20,16 @@
   </div>
 </template>
 
-<script lang="ts" >
+<script lang="ts">
 import Ribbon from '../app/core/ribbon/ribbon.vue';
 import JhiFooter from '../app/core/jhi-footer/jhi-footer.vue';
 import JhiNavbar from '../app/core/jhi-navbar/jhi-navbar.vue';
 import LoginForm from '../app/account/login-form/login-form.vue';
 import Home from '@/components/home.vue';
-import { computed, nextTick, onMounted, provide, reactive, ref, watch, inject } from '@vue/composition-api';
-import { BButton, BIcon, BSidebar, BvModal, BRow, BFormSelect, BFormSelectOption } from 'bootstrap-vue';
+import {computed, nextTick, onMounted, provide, reactive, ref, watch, inject} from '@vue/composition-api';
+import {BButton, BIcon, BSidebar, BvModal, BRow, BFormSelect, BFormSelectOption} from 'bootstrap-vue';
 import '@/shared/config/dayjs';
-import { useGetters, useRouter, useStore } from '@u3u/vue-hooks';
+import {useGetters, useRouter, useStore} from '@u3u/vue-hooks';
 import MenuService from '@/core/menu/menu-service';
 import NotificationService from './shared/notification/notification-service';
 import axios from 'axios';
@@ -76,6 +70,7 @@ export default {
         hide: id => bvModal.hide(id),
       };
     }
+
     const mobileUpperLimit = computed(() => useGetters(['mobileUpperLimit']).mobileUpperLimit.value);
     const currentWidth = computed(() => useGetters(['currentWidth']).currentWidth.value);
     const padLowerLimit = computed(() => useGetters(['padLowerLimit']).padLowerLimit.value);
@@ -121,6 +116,11 @@ export default {
       });
     };
 
+    const reload = () => {
+      isContentAlive.value = false;
+      nextTick(() => (isContentAlive.value = true));
+    };
+
     provide('menuService', menuService);
     provide<NotificationService>('notificationService', notificationService);
     provide<BvModal>('$bvModal', overrideBvModal(context.root.$bvModal));
@@ -130,9 +130,10 @@ export default {
       lockInputTypeNumberWheelEvent();
     });
 
-    return{
+    return {
       isContentAlive,
-      ...useGetters(['routeData', 'isLoading','keepAlivePage']),
+      ...useGetters(['routeData', 'isLoading', 'keepAlivePage']),
+      reload
     }
   },
 };

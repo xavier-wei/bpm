@@ -25,9 +25,11 @@
 import { reactive, ref, watch } from '@vue/composition-api';
 import { useStore } from '@u3u/vue-hooks';
 import IFormGroupCheck from '@/shared/form/i-form-group-check.vue';
+import {changeUnit} from "@/shared/word/directions";
 
 export default {
   name: 'deal',
+  methods:{changeUnit},
   components: {
     'i-form-group-check': IFormGroupCheck,
   },
@@ -45,6 +47,10 @@ export default {
         { value: 'ChiefTester', text: '科長' },
         { value: 'DirectorTester', text: '主管' },
         { value: 'InfoTester', text: '資推' },
+        { value: 'seniorTechSpecialistTester', text: '簡任技正/科長' },
+        { value: 'serverRoomOperatorTester', text: '機房操作人員' },
+        { value: 'reviewStaffTester', text: '複核人員' },
+        { value: 'serverRoomManagerTester', text: '機房管理人員' },
       ],
     });
 
@@ -52,7 +58,7 @@ export default {
       () => form.user,
       () => {
         console.log('更換:: ',form.user)
-        useStore().value.commit('setUserData', { user: form.user });
+        useStore().value.commit('setUserData', { user: form.user,unit:changeUnit(form.user) });
       },
       { immediate: true }
     );

@@ -1,6 +1,6 @@
 <template>
   <div>
-    <section class="container mt-2" v-show="formStatusRef === FormStatusEnum.CREATE">
+    <section class="container mt-2" v-show="applyAppendix">
       <div class="card" style="background-color: #d3ede8">
         <div class="card-body">
 
@@ -66,21 +66,23 @@
       </div>
     </section>
 
-    <section class="container mt-2" v-show="formStatusRef === FormStatusEnum.READONLY">
+    <section class="container mt-2" v-show="readAppendix">
       <div class="card" style="background-color: #d3ede8">
         <div class="card-body">
 
           <b-table sticky-header :items="table.data" :fields="table.fields" bordered responsive="sm">
 
             <template #cell(fileName)="row">
-              <button class="btn_login"  @click="downloadBpmFile(row.item)">
-                {{row.item.fileName}}
+              <button class="btn_login" @click="downloadBpmFile(row.item)">
+                {{ row.item.fileName }}
               </button>
             </template>
 
             <template #cell(action)="row">
               <b-button class="ml-2" style="background-color: #17a2b8; color: white"
-                        variant="outline-secondary">刪除
+                        variant="outline-secondary"
+                        :disabled="formStatusRef !== FormStatusEnum.MODIFY"
+              >刪除
                 <!--                        @click="submitDelete(row.item.id)"-->
               </b-button>
             </template>
@@ -99,7 +101,7 @@
 
 import IButton from '@/shared/buttons/i-button.vue';
 import {onMounted, reactive, ref, toRef, watch} from "@vue/composition-api";
-import {FileModel} from "@/shared/model/qua/fileModel,";
+import {FileModel} from "@/shared/model/bpm/fileModel";
 import {formatToString} from "@/shared/date/minguo-calendar-utils";
 import {useGetters} from "@u3u/vue-hooks";
 import axios, {AxiosResponse} from 'axios';
@@ -137,21 +139,32 @@ export default {
     let appendixDataList = ref([]);
     const notificationService = useNotification();
     const pdfViewer = ref(null);
+    const applyAppendix = ref(false);
+    const readAppendix = ref(false);
+
 
     enum FormStatusEnum {
       CREATE = '新增',
-      MODIFY = '編輯',
       READONLY = '檢視',
+      MODIFY = '編輯',
       VERIFY = '簽核'
     }
 
     onMounted(() => {
       if (formStatusRef.value === FormStatusEnum.CREATE) {
+        applyAppendix.value = true;
         doQuery();
       } else if (formStatusRef.value === FormStatusEnum.READONLY) {
         doReadonly();
+        readAppendix.value = true;
+      } else if (formStatusRef.value === FormStatusEnum.MODIFY) {
+        applyAppendix.value = true;
+        readAppendix.value = true;
+        doQuery();
+        doReadonly();
       } else if (formStatusRef.value === FormStatusEnum.VERIFY) {
         doReadonly();
+        readAppendix.value = true;
       }
     });
 
@@ -271,7 +284,6 @@ export default {
             .get(`/eip/bpm-upload-files/formId/${fileDataIdProp.fileId}`)
             .then(({data}) => {
               if (data) {
-                console.log('data',data)
                 table.data.splice(0, table.data.length, ...data);
               }
             })
@@ -312,7 +324,6 @@ export default {
       axios
           .get('/eip/bpm-upload-files/downloadFile/' + item.id, {responseType: 'blob'})
           .then(res => {
-            console.log('res',res)
             const content = String(res.headers['content-disposition']);
             const fileName = decodeURI(
                 content
@@ -325,9 +336,7 @@ export default {
             // 檔案是pdf跳出預覽視窗，不是pdf則直接下載
             if (extName === '.pdf') {
               let blob = new Blob([res.data], {type: 'application/pdf'});
-              console.log('blob',blob)
               let url = window.URL.createObjectURL(blob);
-              console.log('url',url)
               pdfViewer.value.pdfSrc = url;
               pdfViewer.value.isShowDia(url, true);
             } else {
@@ -359,11 +368,19 @@ export default {
 
     watch(props, newValue => {
           if (formStatusRef.value === FormStatusEnum.CREATE) {
+            applyAppendix.value = true;
             doQuery();
           } else if (formStatusRef.value === FormStatusEnum.READONLY) {
             doReadonly();
+            readAppendix.value = true;
+          } else if (formStatusRef.value === FormStatusEnum.MODIFY) {
+            applyAppendix.value = true;
+            readAppendix.value = true;
+            doQuery();
+            doReadonly();
           } else if (formStatusRef.value === FormStatusEnum.VERIFY) {
             doReadonly();
+            readAppendix.value = true;
           }
         },
         {immediate: true}
@@ -381,6 +398,8 @@ export default {
       FormStatusEnum,
       downloadBpmFile,
       pdfViewer,
+      applyAppendix,
+      readAppendix
     };
   }
 }

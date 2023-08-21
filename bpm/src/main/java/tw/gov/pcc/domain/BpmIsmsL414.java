@@ -30,6 +30,9 @@ public class BpmIsmsL414 implements Serializable {
     @Transient
     private String taskName;
 
+    @Transient
+    private String decisionRole;
+
     @NotNull
     @Column(name = "apply_date", nullable = false)
     private Instant applyDate;

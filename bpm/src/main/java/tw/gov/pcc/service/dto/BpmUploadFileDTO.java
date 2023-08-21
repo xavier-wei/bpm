@@ -1,7 +1,5 @@
 package tw.gov.pcc.service.dto;
 
-import org.springframework.web.multipart.MultipartFile;
-
 import java.io.Serializable;
 import java.time.Instant;
 import java.util.Objects;

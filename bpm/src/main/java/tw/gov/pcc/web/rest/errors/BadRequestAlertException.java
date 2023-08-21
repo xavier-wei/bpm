@@ -1,10 +1,12 @@
 package tw.gov.pcc.web.rest.errors;
 
-import java.net.URI;
-import java.util.HashMap;
-import java.util.Map;
 import org.zalando.problem.AbstractThrowableProblem;
 import org.zalando.problem.Status;
+
+import java.net.URI;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 @SuppressWarnings("java:S110") // Inheritance tree of classes should not be too deep
 public class BadRequestAlertException extends AbstractThrowableProblem {
@@ -25,6 +27,11 @@ public class BadRequestAlertException extends AbstractThrowableProblem {
         this.errorKey = errorKey;
     }
 
+    public BadRequestAlertException(String title, List<String> detailArr) {
+        super(ErrorConstants.DEFAULT_TYPE, title, Status.BAD_REQUEST, String.join("\n", detailArr), null, null, getAlertParameters("defaultName", "defaultKey"));
+        this.entityName = "defaultName";
+        this.errorKey = "defaultKey";
+    }
     public String getEntityName() {
         return entityName;
     }
