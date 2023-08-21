@@ -87,7 +87,7 @@ public class TableauService {
             log.info("環境為==dev==");
             tableauFolderPathPrefix = "D:/";
         }
-        else if ("prod".equals(env)) {
+        else{
             log.info("環境為==prod==");
             tableauFolderPathPrefix = "/mnt/stsdat/eip/";
         }
