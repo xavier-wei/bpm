@@ -48,7 +48,7 @@ public class TableauService {
     private TableauDashboardInfoDao tableauDashboardInfoDao;
 
 
-    public List<TableauDataCase> findTableauData(String userId) throws IOException {
+    public List<TableauDataCase> findTableauDataByUser(String userId) throws IOException {
         List<TableauUserInfo> subscribedData = tableauUserInfoDao.selectByUserId(userId);
         List<TableauDataCase> resultList = new ArrayList<>();
         List<TableauDashboardInfo> dashboardList;
@@ -86,8 +86,7 @@ public class TableauService {
         if ("dev".equals(env)) {
             log.info("環境為==dev==");
             tableauFolderPathPrefix = "D:/";
-        }
-        else{
+        } else {
             log.info("環境為==prod==");
             tableauFolderPathPrefix = "/mnt/stsdat/eip/";
         }
@@ -103,6 +102,20 @@ public class TableauService {
 //                tableauDataCase.setImageBase64String(getImageBase64String(path));
 //            }
             tableauDataCase.setImageBase64String(getImageBase64String(tableauFolderPathPrefix.replaceAll("/", "\\" + File.separator) + path));
+            tableauDataCase.setTableauUrl(dashboard.getDashboard_url());
+            resultList.add(tableauDataCase);
+        }
+        return resultList;
+    }
+
+
+    public List<TableauDataCase> findTableauData() throws IOException {
+        List<TableauDataCase> resultList = new ArrayList<>();
+        List<TableauDashboardInfo> dashboardList = tableauDashboardInfoDao.selectAll();
+        log.info("使用者應顯示的儀表板為:{}", dashboardList.toString());
+        for (TableauDashboardInfo dashboard : dashboardList) {
+            TableauDataCase tableauDataCase = new TableauDataCase();
+            tableauDataCase.setDashboardFigId(dashboard.getDashboard_fig_id());
             tableauDataCase.setTableauUrl(dashboard.getDashboard_url());
             resultList.add(tableauDataCase);
         }

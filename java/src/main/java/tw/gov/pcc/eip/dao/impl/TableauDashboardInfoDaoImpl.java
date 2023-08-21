@@ -25,6 +25,14 @@ public class TableauDashboardInfoDaoImpl extends BaseDao<TableauDashboardInfo> i
     }
 
     @Override
+    public List<TableauDashboardInfo> selectAll() {
+        StringBuilder sql = new StringBuilder();
+        sql.append("SELECT * FROM " + TABLE_NAME);
+        List<TableauDashboardInfo> list = getNamedParameterJdbcTemplate().query(sql.toString(), BeanPropertyRowMapper.newInstance(TableauDashboardInfo.class));
+        return list;
+    }
+
+    @Override
     public TableauDashboardInfo selectDataByPrimaryKey(TableauDashboardInfo tableauDashboardInfo) {
         return null;
     }
