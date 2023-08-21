@@ -68,6 +68,9 @@ public class Eip07w040Case implements Serializable {
 	private List<String> applyids;
 	private List<Eip07w040L_Vo> reportList;
 	private String reprintApplyid;// 補印編號
+	
+	private String using_time_sStr;// 用車時間起(顯示於query畫面的標題)
+	private String using_time_eStr;// 用車時間迄(顯示於query畫面的標題)
 
 	@AssertTrue(message = "申請日期起日不得大於迄日", groups = { Print.class })
 	private boolean isApplydateStartAndApplydateEnd() {

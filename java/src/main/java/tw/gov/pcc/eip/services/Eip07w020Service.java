@@ -7,6 +7,7 @@ import tw.gov.pcc.common.util.DateUtil;
 import tw.gov.pcc.eip.apply.report.Eip07w020l00;
 import tw.gov.pcc.eip.dao.*;
 import tw.gov.pcc.eip.domain.CarBooking;
+import tw.gov.pcc.eip.domain.Car_booking_rec;
 import tw.gov.pcc.eip.domain.Eipcode;
 import tw.gov.pcc.eip.domain.User_roles;
 import tw.gov.pcc.eip.framework.domain.UserBean;
@@ -38,6 +39,8 @@ public class Eip07w020Service {
     @Autowired
     private CarBookingDao carBookingDao;
     @Autowired
+    private Car_booking_recDao car_booking_recDao;
+    @Autowired
     private  TimeConversionService timeConversionService;
     String sysDateTime = DateUtil.getNowWestDateTime(true);
     String sysDate = sysDateTime.substring(0, 8);
@@ -54,18 +57,23 @@ public class Eip07w020Service {
      * @param insterData
      */
     public void addReserve(Eip07w020Case insterData,Eip07w020Case caseData) throws Exception{
-        //取ApplyId
-        List<CarBooking> applyId=carBookingDao.getApplyId();
-        int maxApplyId= 0;
-        if (applyId.size()>0){
-            maxApplyId=Integer.parseInt(StringUtils.substring(applyId.get(0).getApplyid(),10 ))+1;
-        }
-        else {
-        maxApplyId= 1;
-        }
-       insterData.setApplyId("DC"+sysDate+String.format("%3s", maxApplyId).replace(' ', '0'));
+//        //取ApplyId
+//        List<CarBooking> applyId=carBookingDao.getApplyId();
+//        int maxApplyId= 0;
+//        if (applyId.size()>0){
+//            maxApplyId=Integer.parseInt(StringUtils.substring(applyId.get(0).getApplyid(),10 ))+1;
+//        }
+//        else {
+//        maxApplyId= 1;
+//        }
+        String applyId="DC"+sysDate+String.format("%3s", carBookingDao.getApplyCarnoSeq()).replace(' ', '0');
+       insterData.setApplyId(applyId);
         //取using  48位元
+        String endTime =conversionTime(insterData.getEndH(), insterData.getEndM(),"E");
         String using= timeConversionService.to48binary(conversionTime(insterData.getStarH(), insterData.getStarM(),"S"),conversionTime(insterData.getEndH(), insterData.getEndM(),"M"));
+        if ("2330".equals(endTime)){
+            using=StringUtils.substring(using,0,47)+"0";
+        }
         insterData.setUsing(using);
         insterData.setApplyTimeS(insterData.getStarH()+insterData.getStarM());
         insterData.setApplyTimeE(insterData.getEndH()+insterData.getEndM());
@@ -79,6 +87,7 @@ public class Eip07w020Service {
         insterData.setApplyDate(DateUtility.changeDateType(caseData.getApplyDate()));
         insterData.setUseDate(DateUtility.changeDateType(insterData.getUseDate()));
         carBookingDao.insert(insterData);
+        caseData.setApplyId(applyId);
     }
 
 
@@ -163,7 +172,7 @@ public class Eip07w020Service {
     /**
      * update資料依driverid
      *
-     * @param CarBooking
+     * @param updateData
      */
     public void updateCarBooking( CarBooking updateData)throws Exception {
         updateData.setUsing_time_s(updateData.getStarH()+updateData.getStarM());
@@ -172,13 +181,14 @@ public class Eip07w020Service {
         updateData.setUsing_date(DateUtility.changeDateType(updateData.getUsing_date()));
         updateData.setUpd_user(userData.getUserId());
         updateData.setUpd_datetime(sysDateTime);
+        getEntTime(updateData, updateData);
         carBookingDao.updateByKey(updateData);
     }
 
     /**
      * update 異動申請
      *
-     * @param CarBooking
+     * @param data
      */
     public void changeApplication( Eip07w020Case data)throws Exception {
         CarBooking changeData = data.getChangeMkList().get(0);
@@ -205,8 +215,7 @@ public class Eip07w020Service {
             oldData.setUsing_time_s(changeData.getStarH()+changeData.getStarM());
             oldData.setUsing_time_e(changeData.getEndH()+changeData.getEndM());
             //取using  48位元
-            String using= timeConversionService.to48binary(conversionTime(changeData.getStarH(), changeData.getStarM(),"S"),conversionTime(changeData.getEndH(), changeData.getEndM(),"M"));
-            oldData.setUsing(using);
+            getEntTime(changeData, oldData);
             oldData.setDestination(changeData.getDestination());
             oldData.setApply_car_type(changeData.getApply_car_type());
             oldData.setNum_of_people(changeData.getNum_of_people());
@@ -215,6 +224,7 @@ public class Eip07w020Service {
             oldData.setName("");
             oldData.setCellphone("");
             oldData.setCartype("");
+            oldData.setChange_reason("1");
             oldData.setApply_date(DateUtility.changeDateType(oldData.getApply_date()));
             oldData.setUsing_date(DateUtility.changeDateType(oldData.getUsing_date()));
             carBookingDao.updateByKey(oldData);
@@ -226,8 +236,20 @@ public class Eip07w020Service {
             oldData.setCarprocess_status("C");
             oldData.setApply_date(DateUtility.changeDateType(oldData.getApply_date()));
             oldData.setUsing_date(DateUtility.changeDateType(oldData.getUsing_date()));
+            Car_booking_rec carBookingRec = new Car_booking_rec();
+            carBookingRec.setApplyid(oldData.getApplyid());
             carBookingDao.updateByKey(oldData);
+//            car_booking_recDao.deleteByKey(carBookingRec);
         }
+    }
+
+    private void getEntTime(CarBooking changeData, CarBooking oldData) {
+        String endTime =conversionTime(changeData.getEndH(), changeData.getEndM(),"E");
+        String using= timeConversionService.to48binary(conversionTime(changeData.getStarH(), changeData.getStarM(),"S"),conversionTime(changeData.getEndH(), changeData.getEndM(),"E"));
+        if ("2330".equals(endTime)){
+            using= StringUtils.substring(using,0,47)+"0";
+        }
+        oldData.setUsing(using);
     }
 
     /**
@@ -236,29 +258,33 @@ public class Eip07w020Service {
      * type:S 9:20->0900   9:45->0930
      *      E  9:20->0930   9:45->1000
      * type:S-開始 E-結束
-     * @param CarBooking
+     * @param
      */
     public  String conversionTime(String hour ,String minute ,String type) {
 //        Integer.parseInt(
         int H= Integer.parseInt(hour);
         int M= Integer.parseInt(minute);
         String time;
+        String time1 = String.format("%2s", H).replace(' ', '0') + "00";
+        String time2 = String.format("%2s", H).replace(' ', '0') + "30";
         if ("S".equals(type)){
             if (M>=30){
-                time=  String.format("%2s", H).replace(' ', '0')+"30";
+                time= time2;
             }else {
-                time= String.format("%2s", H).replace(' ', '0')+"00";
+                time= time1;
             }
             return time;
         }else {
             if (M>30){
                 time= String.format("%2s",H+1).replace(' ', '0')+"00";
             }else if (M==0){//如果等於0
-                time= String.format("%2s", H).replace(' ', '0')+"00";
+                time= time1;
             }
+
             else {
-                time= String.format("%2s", H).replace(' ', '0')+"30";
+                time= time2;
             }
+
             return time;
         }
     }
@@ -266,7 +292,7 @@ public class Eip07w020Service {
      /**
      * 查詢預約單明細資料
      *
-     * @param CarBooking
+     * @param applyId
      */
     public  CarBooking selectByApplyId(String applyId) throws Exception{
         CarBooking detail= carBookingDao.selectByApplyId( applyId);

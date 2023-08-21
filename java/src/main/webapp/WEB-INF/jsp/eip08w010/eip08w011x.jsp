@@ -21,15 +21,18 @@
 </jsp:attribute>
 
 <jsp:attribute name="contents">
-    <tags:fieldset  legend="查詢結果">
+    <tags:fieldset  legend="明細查詢結果">
 		<form:form id="eip08w011Form" name="eip08w011Form" modelAttribute="${caseKey}" method="POST">
             <tags:form-row>
-                 <div class="col-6 col-md form-inline"> 
-					<tags:text-item label="品名大類代號"><c:out value="${caseData.mainkindno}"/></tags:text-item>
-                 </div> 
-                 <div class="col-6 col-md form-inline"> 
-					<tags:text-item label="品名大類"><c:out value="${caseData.mainkindname}"/></tags:text-item>
-                 </div> 
+                
+                 <form:label path="mainkindno" cssClass="col-form-label">品名大類代號：</form:label>
+            	 <div class="col-6 col-md form-inline">
+					<c:out value="${caseData.mainkindno}"/>
+                 </div>            
+				 <form:label path="mainkindname" cssClass="col-form-label">品名大類：</form:label>
+                 <div class="col-6 col-md form-inline">
+					<c:out value="${caseData.mainkindname}"/>
+                 </div>
             </tags:form-row>
             <tags:form-row>
             	 <form:label path="addDetailItemno" cssClass="col-form-label">品名代號：</form:label>

@@ -75,7 +75,7 @@
 						<tags:form-row>
 								<div class="col-md-4 d-flex">
 									<form:label cssClass="col-form-label star" path="owned">財產編號:</form:label>
-									<form:input id="owned" name="owned" path="eip07w010CarDataList[0].owned" cssClass="form-control" size="7" maxlength="6"/>
+									<form:input id="owned" name="owned" path="eip07w010CarDataList[0].owned" cssClass="form-control" size="15" maxlength="12"/>
 								</div>
 								<div class="col-md-4 d-flex">
 									<form:label cssClass="col-form-label" path="carYear">購置年份:</form:label>
@@ -234,7 +234,7 @@
 		baseTab.click();
 	});
 	$(function() {
-
+		controlCarStatusk();
 			$('#base-tab').click(function(){
 				$('#btnUpdate').show();
 				$('#btnBack').show();
@@ -285,6 +285,18 @@
 					$("#btnDelete").hide();
 				}
 			}
+		$('#bossMk').change(function() {//控制首長專用下拉式選單
+			controlCarStatusk();
+		});
+
+		function controlCarStatusk() {
+			var bossMk =$("#bossMk option:selected").val();
+			if (bossMk=='Y'){
+				$("#carStatus").val('2');
+			}else{
+				$("#carStatus").val('1');
+			}
+		}
          });
 </script>
 </jsp:attribute>

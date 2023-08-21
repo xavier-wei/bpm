@@ -82,6 +82,8 @@ public class Eip00w020Controller extends BaseController {
         		caseData.setDeptList(eip00w020Service.findDeptIdList());//部門代號下拉式選單datalist
         		caseData.setUserRolesList(eip00w020Service.findUserRoleList(caseData.getUser_id()));
         		caseData.setRolesList(eip00w020Service.findAddRolesList(caseData));//新增角色rolelist
+        		caseData.setEng_user_name(eip00w020Service.findEngName(users.getEmail()));
+        		caseData.setDeptString(eip00w020Service.findDeptName(users.getDept_id()));
         		return new ModelAndView(EDIT_PAGE);
         	}else {
         		super.setSystemMessage(getQueryEmptyMessage());

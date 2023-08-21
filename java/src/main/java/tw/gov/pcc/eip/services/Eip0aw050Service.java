@@ -9,6 +9,7 @@ import tw.gov.pcc.eip.domain.Eipcode;
 import tw.gov.pcc.eip.domain.View_cpape05m;
 import tw.gov.pcc.eip.util.BeanUtility;
 import tw.gov.pcc.eip.util.ExceptionUtility;
+import tw.gov.pcc.eip.util.ObjectUtility;
 
 import java.time.LocalDateTime;
 import java.util.Optional;
@@ -41,7 +42,7 @@ public class Eip0aw050Service {
                     if (!y.equals(org)) {
                         y.setPrcdat(LocalDateTime.now());
                         y.setStaff("SYS");
-                        log.info("EIPCODE(TITLE) {}資料異動", y.getCodeno());
+                        log.info("EIPCODE(TITLE) {}資料異動", ObjectUtility.normalizeObject(y.getCodeno()));
                         eipcodeDao.updateByKey(y);
                         updateCnt.getAndIncrement();
                     } else {
@@ -52,12 +53,12 @@ public class Eip0aw050Service {
                     transView_cpape05mToTitle(y, x);
                     y.setPrcdat(LocalDateTime.now());
                     y.setStaff("SYS");
-                    log.info("VIEW_CPAPE05M {}新增到EIPCODE(TITLE)", y.getCodeno());
+                    log.info("VIEW_CPAPE05M {}新增到EIPCODE(TITLE)", ObjectUtility.normalizeObject(y.getCodeno()));
                     eipcodeDao.insertEipcode(y);
                     insertCnt.getAndIncrement();
                 });
             } catch (Exception e) {
-                log.error("VIEW_CPAPE05M {}資料異動失敗 {}", x.getPetit(), ExceptionUtility.getStackTrace(e));
+                log.error("VIEW_CPAPE05M {}資料異動失敗 {}", ObjectUtility.normalizeObject(x.getPetit()), ExceptionUtility.getStackTrace(e));
                 errorCnt.getAndIncrement();
             }
         });

@@ -128,21 +128,6 @@ public class Eip00w070Controller extends BaseController {
         }
     }
 
-    @RequestMapping(value = "/Eip00w070_info.action", produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
-    @ResponseBody
-    public Map<String, String> info(@RequestBody Eip00w070Case caseData) throws IOException {
-        Items item = itemsDao.selectByKey(caseData.getItem_id());
-        return ObjectUtility.normalizeObject(Map.of(
-                "item_id", StringUtils.defaultString(item.getItem_id()),
-                "item_name", StringUtils.defaultString(item.getItem_name()),
-                "hyperlink", StringUtils.defaultString(item.getHyperlink()),
-                "sub_link", StringUtils.defaultString(item.getSub_link()),
-                "sort", StringUtils.defaultString(item.getSort_order()
-                        .toString()),
-                "disable", StringUtils.defaultString(item.getDisable())
-        ));
-    }
-
     /**
      * 新增角色insert
      *

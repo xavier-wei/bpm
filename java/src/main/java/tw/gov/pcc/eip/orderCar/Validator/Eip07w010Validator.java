@@ -66,8 +66,8 @@ public class Eip07w010Validator implements Validator {
 				errors.reject(null, "手機號碼需輸入10位");}
 		}
 			if (StringUtils.isNotBlank(Validate.getPhone())){
-			if (Validate.getPhone().length()!=10){
-				errors.reject(null, "電話需輸入10位");}
+			if (Validate.getPhone().length()<8){
+				errors.reject(null, "電話需輸入8位");}
 		}
 			if (StringUtils.isBlank(Validate.getStartworkDate())){
 			errors.reject(null, "尚未輸入到職日期");
@@ -86,28 +86,50 @@ public class Eip07w010Validator implements Validator {
 
 
 
-	public void carValidate(Eip07w010Case validate, Errors errors) throws ParseException {
-//		Date insuranceS = format.parse(DateUtility.changeDateType(validate.getInsuranceStart()));
-//		Date insuranceE = format.parse(DateUtility.changeDateType(validate.getInsuranceEnd()));
-		if (StringUtils.isBlank(validate.getOwned())){
-			errors.reject(null, "尚未輸入財產編號");
-		}
-		if (StringUtils.isBlank(validate.getCarno1())||StringUtils.isBlank(validate.getCarno2())) {
-			errors.reject(null, "尚未輸入車牌號碼");
-		}
-		if (StringUtils.isNotBlank(validate.getInsuranceStart())) {
-			if (!DateUtility.isValidDate(validate.getInsuranceStart(), false)) {
-				errors.reject(null, "保險期間(起)請輸入民國年月日");}
-		}
-		if (StringUtils.isNotBlank(validate.getInsuranceEnd())) {
-			if (!DateUtility.isValidDate(validate.getInsuranceEnd(), false)) {
-				errors.reject(null, "保險期間(迄)請輸入民國年月日");
+		public void carValidate(Eip07w010Case validate, Errors errors) throws ParseException {
+	//		Date insuranceS = format.parse(DateUtility.changeDateType(validate.getInsuranceStart()));
+	//		Date insuranceE = format.parse(DateUtility.changeDateType(validate.getInsuranceEnd()));
+			if (StringUtils.isBlank(validate.getOwned())){
+				errors.reject(null, "尚未輸入財產編號");
 			}
-			if (Integer.parseInt(validate.getInsuranceStart())>Integer.parseInt(validate.getInsuranceEnd())) {
-				errors.reject(null, "保險期間(起)不可大於(迄)");
+			if (StringUtils.isBlank(validate.getCarno1())||StringUtils.isBlank(validate.getCarno2())) {
+				errors.reject(null, "尚未輸入車牌號碼");
+			}
+			if (StringUtils.isNotBlank(validate.getInsuranceStart())) {
+				if (!DateUtility.isValidDate(validate.getInsuranceStart(), false)) {
+					errors.reject(null, "保險期間(起)請輸入民國年月日");}
+			}
+			if (StringUtils.isNotBlank(validate.getInsuranceEnd())) {
+				if (!DateUtility.isValidDate(validate.getInsuranceEnd(), false)) {
+					errors.reject(null, "保險期間(迄)請輸入民國年月日");
+				}
+				if (Integer.parseInt(validate.getInsuranceStart())>Integer.parseInt(validate.getInsuranceEnd())) {
+					errors.reject(null, "保險期間(起)不可大於(迄)");
+				}
 			}
 		}
-	}
+
+		public void eip07w010qValidate(String workTy,String processTy,Eip07w010Case validate, Errors errors) {
+
+			if ("D".equals(processTy)&&"A".equals(workTy)){
+
+				if (StringUtils.isBlank(validate.getName())){
+					errors.reject(null, "駕駛人姓名為必輸");
+				}
+
+			}
+			if ("C".equals(processTy)&&"A".equals(workTy)){//兩個車牌如都未輸入就噴錯
+
+				if ((StringUtils.isBlank(validate.getCarno1())||StringUtils.isBlank(validate.getCarno2()))) {
+					errors.reject(null, "車牌號碼為必輸");
+				}
+
+			}
+
+
+
+		}
+
 
 	}
 

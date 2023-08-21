@@ -13,14 +13,17 @@ import tw.gov.pcc.eip.framework.domain.UserBean;
 import tw.gov.pcc.eip.framework.spring.controllers.BaseController;
 import tw.gov.pcc.eip.framework.spring.support.FileOutputView;
 import tw.gov.pcc.eip.orderCar.Validator.Eip07w020Validator;
+import tw.gov.pcc.eip.orderCar.cases.Eip07w010Case;
 import tw.gov.pcc.eip.orderCar.cases.Eip07w020Case;
 import tw.gov.pcc.eip.services.Eip07w020Service;
+import tw.gov.pcc.eip.util.BeanUtility;
 import tw.gov.pcc.eip.util.DateUtility;
 import tw.gov.pcc.eip.util.ExceptionUtility;
 import tw.gov.pcc.eip.util.ObjectUtility;
 import java.io.ByteArrayOutputStream;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * 派車預約暨派車結果查詢作業
@@ -63,6 +66,8 @@ public class Eip07w020Controller extends BaseController {
     @RequestMapping("/Eip07w020_enter.action")
     public ModelAndView enter(@ModelAttribute(CASE_KEY) Eip07w020Case caseData) {
         log.debug("導向 Eip07w010Case_enter 派車預約暨派車");
+        Eip07w020Case newCase = new Eip07w020Case();
+        BeanUtility.copyProperties(caseData, newCase);// 進來時清除caseData
         caseData.setWorkTy("A");
         caseData.setApplyName(userData.getUserId());
         caseData.setApplyUnit(userData.getDeptId());
@@ -107,17 +112,17 @@ public class Eip07w020Controller extends BaseController {
     @RequestMapping("/Eip07w020_inster.action")
     public String inster(@ModelAttribute(CASE_KEY) Eip07w020Case caseData, BindingResult result)  {
         log.debug("導向 Eip07w020_addPage 派車預約暨派車新增");
-        try {
+
             eip07w020Validator.eip07w020AValidate(caseData.getInsterList().get(0),result);
+
         if (result.hasErrors()) {
             return ADD_PAGE;
         }
-
+        try {
             eip07w020Service.addReserve(caseData.getInsterList().get(0),caseData);
-            setSystemMessage(getSaveSuccessMessage());
+            setSystemMessage(getSaveSuccessMessage()+"_派車單號:"+caseData.getApplyId());
             caseData.setInsterList(new ArrayList<>());
         }catch (Exception e){
-            result.reject(null, "新增失敗");
             setSystemMessage(getSaveFailMessage());
             return ADD_PAGE;
         }
@@ -178,7 +183,8 @@ public class Eip07w020Controller extends BaseController {
             log.error("查詢失敗，原因:{}", ExceptionUtility.getStackTrace(e));
             return DATA_PAGE;
         }
-        caseData.setDetailsList(arrayList);
+        caseData.setDetailsList( arrayList.stream().map(x->(CarBooking)BeanUtility.cloneBean(x)).collect(Collectors.toList()));
+//        caseData.setDetailsList(arrayList);
         caseData.setChangeMkList(arrayList);
         return Details_PAGE;
     }
@@ -206,6 +212,10 @@ public class Eip07w020Controller extends BaseController {
             log.error("修改失敗，原因:{}", ExceptionUtility.getStackTrace(e));
             return Details_PAGE;
         }
+        caseData.setUseDateStar("");
+        caseData.setUseDateEnd("");
+        caseData.setApplyDateStar("");
+        caseData.setApplyDateEnd("");
         return QUERY_PAGE;
     }
 
@@ -225,6 +235,9 @@ public class Eip07w020Controller extends BaseController {
             return Details_PAGE;
         }
 
+//            if ("U".equals(caseData.getDetailsList().get(0).getCarprocess_status())){
+//                caseData.setRmMemo("2");
+//            }
             eip07w020Service.changeApplication(caseData);
             setSystemMessage(getUpdateSuccessMessage());
         }catch (Exception e){
@@ -232,6 +245,10 @@ public class Eip07w020Controller extends BaseController {
             log.error("修改失敗，原因:{}", ExceptionUtility.getStackTrace(e));
             return Details_PAGE;
         }
+        caseData.setUseDateStar("");
+        caseData.setUseDateEnd("");
+        caseData.setApplyDateStar("");
+        caseData.setApplyDateEnd("");
         return QUERY_PAGE;
 
     }
@@ -256,6 +273,10 @@ public class Eip07w020Controller extends BaseController {
             log.error("刪除失敗，原因:{}", ExceptionUtility.getStackTrace(e));
             return Details_PAGE;
         }
+        caseData.setUseDateStar("");
+        caseData.setUseDateEnd("");
+        caseData.setApplyDateStar("");
+        caseData.setApplyDateEnd("");
         return QUERY_PAGE;
 
     }

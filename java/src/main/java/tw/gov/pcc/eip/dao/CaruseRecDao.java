@@ -16,5 +16,8 @@ public interface CaruseRecDao {
 
     String TABLE_NAME = "CARUSE_REC";
     public List<Eip07w010Case> quaryCaruseRec(Eip07w010Case updateDate);
+    
     public int insert(CaruseRec caruseRec);
+    
+	public CaruseRec selectDataByApplyid(CaruseRec caruseRec);
 }

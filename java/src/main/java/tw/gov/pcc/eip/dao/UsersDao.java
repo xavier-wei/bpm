@@ -53,4 +53,11 @@ public interface UsersDao {
      */
     public List<Users> findNameByMultiID(List<String> userIDs);
 
+    /**
+     * 依照user_name查詢ID
+     * @param userName
+     * @return
+     */
+    public List<Users> findUserIDByUserName(String userName);
+
 }

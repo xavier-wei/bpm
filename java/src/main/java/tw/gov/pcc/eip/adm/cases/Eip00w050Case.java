@@ -28,7 +28,5 @@ public class Eip00w050Case implements Serializable {
     @RequiredString(label = "排序")
     @RequiredInteger(label = "排序")
     private String sort_order;
-    @RequiredString(label = "功能編號")
-    private String sub_link;
     private String disable;
 }

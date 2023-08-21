@@ -7,6 +7,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import tw.gov.pcc.eip.domain.CarBase;
 import tw.gov.pcc.eip.domain.CarBooking;
+import tw.gov.pcc.eip.domain.CaruseRec;
 
 /**
  * 駕駛鍵入里程表作業Case
@@ -21,10 +22,12 @@ public class Eip07w060Case implements Serializable {
 	private List<CarBase> bosscarList;
 	private List<String> hourList;
 	private List<String> minuteList;
+	private List<CarBooking> thisMomthCarbookingList;
 
 	private String carType;
 	private String applyid;
 	private String bosscarno;//carno1,carno2
+	private String last3carno;
 	
 	private String usehms;
 	private String usehme;
@@ -47,6 +50,7 @@ public class Eip07w060Case implements Serializable {
 	private String btmk;//出差排程 Y/N
 	
 	private CarBooking carbooking;
+	private CaruseRec caruserec;
 	
 	
 }

@@ -11,10 +11,7 @@ import tw.gov.pcc.common.domain.User;
 import tw.gov.pcc.common.framework.dao.FrameworkBaseDao;
 import tw.gov.pcc.eip.dao.User_rolesDao;
 
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Repository
@@ -160,6 +157,14 @@ public class PortalDaoImpl extends FrameworkBaseDao implements PortalDao {
                 .filter(x -> systemId.equals(x.get("itemIdP")))
                 .collect(Collectors.toList());
 
+        Comparator<HashMap<String, String>> sortBySortOrder = Comparator.comparing(
+                x -> Integer.parseInt(x.get("sortOrder")),
+                Comparator.nullsLast(Comparator.naturalOrder())
+        );
+
+        roots.sort(sortBySortOrder);
+        
+        
         List<HashMap<String, String>> sortedNodes = new ArrayList<>();
 
         for (HashMap<String, String> root : roots) {

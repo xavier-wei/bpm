@@ -30,9 +30,9 @@ public class UpdStatusJob extends QuartzJob {
 			osformdataDao.updateStatusBatch();
 			
 			// 線上報名
-			// P：上架中 → A：報名中 (系統時間 >= PROFMDT 辦理開始時間 and 系統時間 < PROENDT 辦理結束時間)
-			// A：報名中 → I：進行中 (系統時間 >= REGISFMDT 報名開始時間 and 系統時間 < REGISENDT 報名結束時間)
-			// I：進行中 → C：已結束 (系統時間 >= REGISENDT 報名結束時間)
+			// P：上架中 → A：報名中 (系統時間 >= REGISFMDT 報名開始時間 and 系統時間 < REGISENDT 報名結束時間)
+			// A：報名中 → I：進行中 (系統時間 >= PROFMDT 辦理開始時間 and 系統時間 < PROENDT 辦理結束時間)
+			// I：進行中 → C：已結束 (系統時間 >= PROENDT 辦理結束時間)
 			orformdataDao.updateStatusBatch();
 			log.debug("完成執行修改表單狀態排程!");
 		} catch (Exception e) {

@@ -13,7 +13,9 @@ import tw.gov.pcc.eip.util.BeanUtility;
 import tw.gov.pcc.eip.util.ExceptionUtility;
 import tw.gov.pcc.eip.util.ObjectUtility;
 
+import javax.servlet.http.HttpSession;
 import java.util.Arrays;
+import java.util.Optional;
 
 /**
  * Ajax Controller
@@ -21,7 +23,6 @@ import java.util.Arrays;
  * @author swho
  */
 @Controller
-@SessionAttributes({SettingController.SETTING})
 @Slf4j
 public class SettingController extends BaseController {
     public static final String SETTING = "_setting";
@@ -46,9 +47,10 @@ public class SettingController extends BaseController {
 
     @RequestMapping(value = {"/*_saveSetting.action"}, method = RequestMethod.POST)
     @ResponseBody
-    public void saveSetting(@RequestBody Eipxx0w030Case bfxx0w030Case, @ModelAttribute(SETTING) Eipxx0w030Case sessionCaseData) {
+    public void saveSetting(@RequestBody Eipxx0w030Case bfxx0w030Case, HttpSession httpSession) {
+        Eipxx0w030Case cloneCase = new Eipxx0w030Case();
+        Eipxx0w030Case sessionCaseData = (Eipxx0w030Case) Optional.ofNullable(httpSession.getAttribute(SETTING)).orElse(getEipxx0w030Case());
         try {
-            Eipxx0w030Case cloneCase = new Eipxx0w030Case();
             BeanUtility.copyProperties(cloneCase, sessionCaseData);
             sessionCaseData.setClosed(ObjectUtility.normalizeObject(StringUtils.defaultIfBlank(bfxx0w030Case.getClosed(), sessionCaseData.getClosed())));
             String entryListOrder = ObjectUtility.normalizeObject(StringUtils.defaultIfBlank(bfxx0w030Case.getEntryListOrder(),
@@ -63,5 +65,6 @@ public class SettingController extends BaseController {
         } catch (Exception e) {
             log.warn("saving profile failed. {}", ExceptionUtility.getStackTrace(e));
         }
+        httpSession.setAttribute(SETTING, ObjectUtility.normalizeObject(sessionCaseData));
     }
 }

@@ -13,9 +13,12 @@ import tw.gov.pcc.common.util.FrameworkLogUtil;
 import tw.gov.pcc.common.util.HttpUtil;
 import tw.gov.pcc.common.util.StrUtil;
 import tw.gov.pcc.eip.dao.User_rolesDao;
+import tw.gov.pcc.eip.dao.UsersDao;
+import tw.gov.pcc.eip.domain.Users;
 
 import javax.servlet.http.HttpServletRequest;
 import java.sql.Timestamp;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -33,12 +36,14 @@ public class LoginService {
     private final PortalLogDao portalLogDao;
     private final SysfuncService sysfuncService;
     private final User_rolesDao user_rolesDao;
+    private final UsersDao usersDao;
 
-    public LoginService(PortalDao portalDao, PortalLogDao portalLogDao, SysfuncService sysfuncService, User_rolesDao userRolesDao) {
+    public LoginService(PortalDao portalDao, PortalLogDao portalLogDao, SysfuncService sysfuncService, User_rolesDao userRolesDao, UsersDao usersDao) {
         this.portalDao = portalDao;
         this.portalLogDao = portalLogDao;
         this.sysfuncService = sysfuncService;
         user_rolesDao = userRolesDao;
+        this.usersDao = usersDao;
     }
 
     /**
@@ -104,6 +109,7 @@ public class LoginService {
                 .ifPresent(x -> {
                     log.info("系統管理者登入：{}", userId);
                 });
+
         // 設定 Framework 使用者資料
         FrameworkUserInfoBean frameworkUserInfoBean = new FrameworkUserInfoBean();
         frameworkUserInfoBean.setUserId(userId);
@@ -139,6 +145,11 @@ public class LoginService {
         if (log.isDebugEnabled()) {
             log.debug("設定使用者資料完成, 使用者代碼: {}", StrUtil.safeLog(userId));
         }
+
+        Users users = usersDao.selectByKey(userId);
+        users.setLast_login_ip(frameworkUserInfoBean.getLoginIP());
+        users.setLast_login_date(LocalDateTime.now());
+        usersDao.updateByKey(users);
 
         // 取得使用者可執行之所有系統項目代碼 (ITEMS.ITEM_ID)
         List<String> itemIdList = portalDao.selectUserItemList(EnvFacadeHelper.getSystemId(), userId, deptId);

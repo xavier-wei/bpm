@@ -32,7 +32,6 @@
 			<table class="table" id="listTable">
 				<thead data-orderable="true">
 					<tr>
-						<th class="text-center">系統代號</th>
 						<th class="text-center">角色代號</th>
 						<th class="text-center">角色說明</th>
 						<th class="text-center"></th>
@@ -41,7 +40,6 @@
 			    <tbody>
 			    	<c:forEach items="${caseData.rolesList}" var="data" varStatus="status">
 				        <tr>
-				        	<td class="text-left"><c:out value="${data.sys_id}"/></td>
 				        	<td class="text-left"><c:out value="${data.role_id}"/></td>
 				        	<td class="text-left"><c:out value="${data.role_desc}"/></td>
 				            <td class="text-right">

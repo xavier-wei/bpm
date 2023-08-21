@@ -21,7 +21,7 @@
             <Column name="LOG_LEVEL" pattern="%p"/>
             <Column name="LOG_TIME" pattern="%d{yyyyMMddHHmmssSSS}"/>
             <Column name="USER_ID" pattern="%X{userId}"/>
-            <Column name="LOG_HOST" pattern="${map:logSuffix}"/>
+            <Column name="LOG_HOST" pattern="${hostName}"/>
             <Column name="MESSAGE" pattern="%m"/>
         </JDBC>
     </Appenders>

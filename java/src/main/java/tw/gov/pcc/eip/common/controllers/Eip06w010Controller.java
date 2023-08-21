@@ -1,6 +1,5 @@
 package tw.gov.pcc.eip.common.controllers;
 
-import org.apache.commons.lang3.StringUtils;
 import org.apache.poi.xwpf.usermodel.XWPFDocument;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -186,7 +185,7 @@ public class Eip06w010Controller extends BaseController {
     @RequestMapping("/Eip06w010_findSelectedItemandFood.action")
     @ResponseBody
     public List<Map<String, String>> findSelectedItemandFood(@RequestBody Map<Object, Object> map) {
-        return eip06w010Service.findSelectedItemandFood(map.get("meetingId").toString());
+        return eip06w010Service.findSelectedItemAndFood(map.get("meetingId").toString());
     }
 
     /**

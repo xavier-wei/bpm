@@ -181,7 +181,7 @@ public class Eip00w420ModifyCase implements Serializable {
         }
         int hours = Integer.parseInt(getClasshours());
         int certihours = Arrays.stream(getCertihours().split(","))
-                .mapToInt(s -> Integer.parseInt(s.substring(2)))
+                .mapToInt(s -> Integer.parseInt(StringUtils.substringAfter(s,"-").substring(2)))
                 .sum();
         if ("H".equals(getClasshoursUnit()) && hours < certihours) {
             return false;

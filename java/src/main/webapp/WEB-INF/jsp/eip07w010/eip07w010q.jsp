@@ -7,7 +7,7 @@
 <jsp:attribute name="buttons">
 <!-- 選擇頁 -->
 	  <tags:button id="btnSelect">
-    	確認<i class="fas fa-user-plus"></i>
+    	新增<i class="fas fa-user-plus"></i>
       </tags:button>
 
 	  <tags:button id="btnClearn">
@@ -17,7 +17,7 @@
 </jsp:attribute>
 
 	<jsp:attribute name="contents">
-    <tags:fieldset>
+    <tags:fieldset >
 		<form:form id="eip07w010Form" name="eip07w010Form" modelAttribute="${caseKey}" method="POST">
 			<tags:form-row>
 				<div class="col-md d-flex align-items-center">
@@ -38,14 +38,14 @@
 			<div id="driver">
 			<tags:form-row>
 				<div class="col-md d-flex align-items-center">
-					<form:label cssClass="col-form-label" path="name">駕駛人姓名：</form:label>
+					<form:label cssClass="col-form-label star" path="name" name="name">駕駛人姓名：</form:label>
 					<form:input id="name" name="name" path="eip07w010QueryDataList[0].name" cssClass="form-control"   size="10"
 								maxlength="10" />
 				</div>
 			</tags:form-row>
 			<tags:form-row>
 				<div class="col-md d-flex align-items-center">
-					<form:label cssClass="col-form-label" path="stillWork">在職註記：</form:label>
+					<form:label cssClass="col-form-label star" path="stillWork">在職註記：</form:label>
                     <form:select id="stillWork" path="eip07w010QueryDataList[0].stillWork" cssClass="form-control">
                     	<form:option value="Y">是</form:option>
                     	<form:option value="N">否</form:option>
@@ -59,12 +59,12 @@
 				<div class="col-4 " id="carno" style="margin: 0; padding: 0;">
 			<tags:form-row>
 				<div class="col-md d-flex align-items-center" >
-					<form:label cssClass="col-form-label" path="carno1A">車牌號碼：</form:label>
+					<form:label cssClass="col-form-label star" path="carno1A">車牌號碼：</form:label>
 					<table>
 						<tr>
-							<td><form:input id="carno1A" name="carno1"  path="eip07w010QueryDataList[0].carno1A" cssClass="form-control num_eng_only upCase" size="4" maxlength="3" /></td>
+							<td><form:input id="carno1" name="carno1"  path="eip07w010QueryDataList[0].carno1" cssClass="form-control num_eng_only upCase" size="4" maxlength="3" /></td>
 							<td>-</td>
-							<td><form:input id="carno2A" name="carno2"  path="eip07w010QueryDataList[0].carno2A" cssClass="form-control num_eng_only upCase" size="7" maxlength="4" /></td>
+							<td><form:input id="carno2" name="carno2"  path="eip07w010QueryDataList[0].carno2" cssClass="form-control num_eng_only upCase" size="7" maxlength="4" /></td>
 							</tr>
 					</table>
 				</div>
@@ -73,7 +73,7 @@
 				<div id="carnoList" style="margin: 0; padding: 0;">
 				<tags:form-row>
 				<div class="col-md d-flex align-items-center">
-					<form:label cssClass="col-form-label" path="carno">車牌號碼：</form:label>
+					<form:label cssClass="col-form-label " path="carno">車牌號碼：</form:label>
 							<form:select id="carno"  name="carno"  path="eip07w010QueryDataList[0].carno" cssClass="form-control">
 							<form:option value="">請選擇</form:option>
 							<c:forEach var="item" items="${caseData.carnoList}" varStatus="status">
@@ -98,6 +98,7 @@
 <script>
         $(function() {
 			controlBt();
+            controlTitle();
 			var config = getDataTablesConfig();
             var table = $('#listTable').DataTable(config);
 
@@ -116,10 +117,12 @@
 			});
 
 			$('input[id=processTy]:radio').change(function(e) {
+                controlTitle();
 				controlBt();
 			});
 
 			$('input[id=workTy]:radio').change(function(e) {
+                controlTitle();
 				controlBt();
 			});
 
@@ -132,15 +135,57 @@
 				} else {
 					$("#car").show();
 					$("#driver").hide();
-					if (workTy=='Q'){
-						$("#carnoList").show();
-						$("#carno").hide();
-					}else {
-						$("#carno").show();
-						$("#carnoList").hide();
-					}
+				}
+				if (workTy=='Q'){
+					$("#carnoList").show();
+					$("#carno").hide();
+					$("#btnSelect").text("查詢");
+					$('#stillWork').append('<option value="A">全部</option>');
+
+					$("label[name='name']").removeClass('star');
+				}else {
+					$("#carno").show();
+					$("#carnoList").hide();
+					$("#btnSelect").text("新增");
+					$('#stillWork option[value="A"]').remove()
+					$("label[name='name']").addClass('star');
 				}
 			}
+
+            function controlTitle(){
+                var processTy=$("input[id=processTy]:checked").val();
+                var workTy=$("input[id=workTy]:checked").val();
+                if(processTy == 'D'){
+                 if (workTy=='Q'){
+                     $("#main>fieldset>legend").html("駕駛人查詢條件")
+                 }else{
+                     $("#main>fieldset>legend").html("駕駛人新增條件")
+                 }
+                } else {
+                    if (workTy=='Q'){
+                        $("#main>fieldset>legend").html("車籍查詢條件")
+                    }else{
+                        $("#main>fieldset>legend").html("車籍新增條件")
+                    }
+
+                }
+                // if (workTy=='Q'){
+                //     $("#carnoList").show();
+                //     $("#carno").hide();
+                //     $("#main>fieldset>legend").html("查詢條件")
+                //     $("#btnSelect").text("查詢");
+                //     $('#stillWork').append('<option value="A">全部</option>');
+                //
+                //     $("label[name='name']").removeClass('star');
+                // }else {
+                //     $("#carno").show();
+                //     $("#carnoList").hide();
+                //     $("#main>fieldset>legend").html("新增條件")
+                //     $("#btnSelect").text("新增");
+                //     $('#stillWork option[value="A"]').remove()
+                //     $("label[name='name']").addClass('star');
+                // }
+            }
 
          });
 

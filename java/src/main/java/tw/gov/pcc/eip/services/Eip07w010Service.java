@@ -161,11 +161,11 @@ public class Eip07w010Service {
     /**
      * 查詢車籍資料
      *
-     * @param caseData
+     * @param data
      */
-    public  List<Eip07w010Case> quaryCarBase(Eip07w010Case caseData) throws Exception{
+    public  List<Eip07w010Case> quaryCarBase(Eip07w010Case data) throws Exception{
 
-        List<Eip07w010Case> carData= carBaseDao.quaryCarBase(caseData);
+        List<Eip07w010Case> carData= carBaseDao.quaryCarBase(data);
 
         for (Eip07w010Case car:carData) {
             car.setInsuranceStart(DateUtility.changeDateType(car.getInsuranceStart()));

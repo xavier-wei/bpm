@@ -55,7 +55,7 @@ public class Eip00w420L00 {
 		addDiffBoldRow("　　　　", StringUtils.substringAfter(time,"~"), document);
 		addDiffBoldRow("◼地點：", address, document);
 		if (!"M".equals(signform)) {
-			addDiffBoldRow("◼主題：", "", document);
+			addDiffBoldRow("◼主題：", topicname, document);
 			addDiffBoldRow("◼講座：", "", document);
 		}
 		// 創建一個表格並添加到文件中

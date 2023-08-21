@@ -96,6 +96,7 @@ public class Eip07w040Controller extends BaseController {
 			caseData.setTimeMK("");
 			caseData.setShowButton(false);
 			caseData.setUsing("");
+			caseData.setStatus("");
 			eip07w040Service.getDetailData(caseData);
 		} catch (Exception e) {
 			log.error("Eip07w040Controller查詢失敗" + ExceptionUtility.getStackTrace(e));
@@ -137,11 +138,13 @@ public class Eip07w040Controller extends BaseController {
 		}
 		try {
 			eip07w040Service.updateAll(caseData);
-//			Eip07w040Case newCase = new Eip07w040Case();
-//			BeanUtility.copyProperties(caseData, newCase);// 清除caseData
 			eip07w040Service.getData(caseData,SEARCH_BY_CONDITION);
 			setSystemMessage("派車成功");
-		} catch(Exception e) {
+		} catch(RuntimeException re) {
+			setSystemMessage("駕駛人資料有誤，派車失敗");
+			log.error("Eip07W040Controller駕駛人資料有誤，派車失敗" + ExceptionUtils.getStackTrace(re));
+			return DETAIL_PAGE;
+		}catch(Exception e) {
 			setSystemMessage("派車失敗");
 			log.error("Eip07W040Controller派車失敗" + ExceptionUtils.getStackTrace(e));
 			return DETAIL_PAGE;

@@ -14,10 +14,12 @@ import org.springframework.web.servlet.ModelAndView;
 import tw.gov.pcc.common.util.DateUtil;
 import tw.gov.pcc.eip.apply.cases.Eip08w060Case;
 import tw.gov.pcc.eip.apply.Validator.Eip08w060CaseValidator;
+import tw.gov.pcc.eip.orderCar.cases.Eip07w010Case;
 import tw.gov.pcc.eip.services.Eip08w060Service;
 import tw.gov.pcc.eip.framework.domain.UserBean;
 import tw.gov.pcc.eip.framework.spring.controllers.BaseController;
 import tw.gov.pcc.eip.framework.spring.support.FileOutputView;
+import tw.gov.pcc.eip.util.BeanUtility;
 import tw.gov.pcc.eip.util.ExceptionUtility;
 import tw.gov.pcc.eip.util.ObjectUtility;
 
@@ -62,6 +64,8 @@ public class Eip08w060Controller extends BaseController {
      */
     @RequestMapping("/Eip08w060_enter.action")
     public ModelAndView enter(@ModelAttribute(CASE_KEY) Eip08w060Case caseData) {
+        Eip08w060Case newCase = new Eip08w060Case();
+        BeanUtility.copyProperties(caseData, newCase);// 進來時清除caseData
         log.debug("導向 adm0w010_enter 設定系統管理員");
         caseData.setUser(userData.getUserId());
         caseData.setApplyTpNm("I-物品請購單");

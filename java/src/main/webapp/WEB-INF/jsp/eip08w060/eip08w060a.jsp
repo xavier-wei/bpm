@@ -22,7 +22,7 @@
 </jsp:attribute>
 
 	<jsp:attribute name="contents">
-    <tags:fieldset>
+    <tags:fieldset legend="物品請購/修繕請修單 申請作業">
 		<form:form id="Eip08W060xForm" name="Eip08W060xForm" modelAttribute="${caseKey}" method="POST">
 			<tags:form-row>
 				<label class="col-form-label text-left col-3">選項:<c:out value="${fn:substring(caseData.applyTpNm, 2,-1)}"/></label>

@@ -25,7 +25,7 @@
 </jsp:attribute>
 
 	<jsp:attribute name="contents">
-
+		<tags:fieldset legend="駕駛人資料新增" >
 		<form:form id="eip07w010Form" name="eip07w010Form" modelAttribute="${caseKey}" method="POST">
     	<tags:form-row>
 				<div class="col-md-4 d-flex ">
@@ -125,7 +125,7 @@
 		</tags:form-row>
 					<form:hidden id="workTy" path="workTy" />
         </form:form>
-
+</tags:fieldset>
 </jsp:attribute>
 <jsp:attribute name="footers">
 <script>

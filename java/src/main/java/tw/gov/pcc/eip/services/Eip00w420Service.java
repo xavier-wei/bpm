@@ -77,6 +77,7 @@ public class Eip00w420Service extends OnlineRegService {
             caseData.setRegisqualCheckboxE3(getRegisqualE3());
             caseData.setRegisqualCheckboxE4(getRegisqualE4());
             caseData.setOrccodeCombobox(orccodeMap);
+            caseData.setCountryCombobox(getCountry());
         }
         if ("M".equals(caseData.getMode())) {
             caseData.setDegreenCombobox(getDegreen());
@@ -380,8 +381,11 @@ public class Eip00w420Service extends OnlineRegService {
      * @return
      */
     public String calculateCertiHours(String certihours) {
+        if (StringUtils.startsWith(certihours, ",")) {
+            certihours = certihours.substring(1);
+        }
         List<String>list = Arrays.asList(certihours.split(","));
-        Integer sum = list.stream().mapToInt(s -> Integer.parseInt(s.substring(2))).sum();
+        Integer sum = list.stream().mapToInt(s -> Integer.parseInt(StringUtils.substringAfter(s,"-").substring(2))).sum();
         return String.valueOf(sum);
     }
 
@@ -561,7 +565,7 @@ public class Eip00w420Service extends OnlineRegService {
                 .append("期別(*)").append(",")
                 .append("訓練總數(即認證時數)(*)").append(",")
                 .append("生日").append(",")
-                .append("實體時數(即核可時數)(*)").append(",")
+                .append("核可時數(*)").append(",")
                 .append("課程代碼").append(System.getProperty("line.separator"));
         for (Orresult orresult : list) {
             sb.append(StringUtils.trimToEmpty(orresult.getRegisidn())).append(",")

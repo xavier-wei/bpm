@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.SessionAttributes;
 import org.springframework.web.servlet.ModelAndView;
 
+import tw.gov.pcc.eip.framework.domain.UserBean;
 import tw.gov.pcc.eip.framework.spring.controllers.BaseController;
 import tw.gov.pcc.eip.orderCar.cases.Eip07w030Case;
 import tw.gov.pcc.eip.services.Eip07w030Service;
@@ -33,11 +34,13 @@ public class Eip07w030Controller extends BaseController {
 	public static final String CASE_KEY = "_eip07w030_caseData";
 	private static final org.slf4j.Logger log = org.slf4j.LoggerFactory.getLogger(Eip07w030Controller.class);
 	private static final String QUERY_PAGE = "/eip07w030/eip07w030q";// 選擇頁
-	private static final String LIST_PAGE = "/eip07w030/eip07w030x";// 審核頁
 
 	@Autowired
 	private Eip07w030Service eip07w030Service;
-
+	
+	@Autowired
+	private UserBean userData;
+	
 	@ModelAttribute(CASE_KEY)
 	public Eip07w030Case getEip07w030Case() {
 		Eip07w030Case caseData = new Eip07w030Case();
@@ -54,6 +57,13 @@ public class Eip07w030Controller extends BaseController {
 		log.debug("導向 Eip07w030Case_enter 派車預約審核作業");
 		Eip07w030Case newCase = new Eip07w030Case();
 		BeanUtility.copyProperties(caseData, newCase);// 進來時清除caseData
+		caseData.setApply_dept(userData.getDeptId());
+		try {
+			eip07w030Service.getData(caseData);
+		} catch (Exception e) {
+			log.error("Eip07w030Controller查詢失敗" + ExceptionUtility.getStackTrace(e));
+			setSystemMessage("查詢失敗");
+		}
 		return new ModelAndView(QUERY_PAGE);
 	}
 
@@ -77,7 +87,7 @@ public class Eip07w030Controller extends BaseController {
 			setSystemMessage("查詢失敗");
 		}
 		
-		return new ModelAndView(LIST_PAGE);
+		return new ModelAndView(QUERY_PAGE);
 	}
 	
 	/**
@@ -91,7 +101,7 @@ public class Eip07w030Controller extends BaseController {
 	public String updateData(@Validated(Eip07w030Case.Update.class) @ModelAttribute(CASE_KEY) Eip07w030Case caseData, BindingResult result) {
 		log.debug("導向   Eip07w030  派車預約審核作業：更新資料 ");
 		if (result.hasErrors()) {
-			return LIST_PAGE;
+			return QUERY_PAGE;
 		}
 
 		try {
@@ -100,7 +110,7 @@ public class Eip07w030Controller extends BaseController {
 					.collect(Collectors.toList());
 			if(CollectionUtils.isEmpty(applyids)) {
 				setSystemMessage("請至少勾選一項案件",true);
-				return LIST_PAGE;
+				return QUERY_PAGE;
 			}
 			
 			caseData.setApplyIdList(applyids);
@@ -108,12 +118,12 @@ public class Eip07w030Controller extends BaseController {
 			eip07w030Service.getData(caseData);
 			if(CollectionUtils.isNotEmpty(caseData.getDataList())) {//若同一時間區間仍有未複合的案件則返回資料列表頁
 				setSystemMessage("複核成功");
-				return LIST_PAGE;
+				return QUERY_PAGE;
 			}
 		} catch (Exception e) {
 			log.error("Eip07w030Controller update失敗" + ExceptionUtility.getStackTrace(e));
 			setSystemMessage("複核失敗");
-			return LIST_PAGE;
+			return QUERY_PAGE;
 		}
 		Eip07w030Case newCase = new Eip07w030Case();
 		BeanUtility.copyProperties(caseData, newCase);// 進來時清除caseData

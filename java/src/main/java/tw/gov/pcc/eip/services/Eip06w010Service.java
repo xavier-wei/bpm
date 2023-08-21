@@ -36,6 +36,8 @@ public class Eip06w010Service {
     @Autowired
     UsersDao usersDao;
     @Autowired
+    DeptsDao deptsDao;
+    @Autowired
     private MeetingCodeDao meetingCodeDao;
     @Autowired
     private MeetingDao meetingDao;
@@ -43,6 +45,8 @@ public class Eip06w010Service {
     private MeetingItemDao meetingItemDao;
     @Autowired
     private MsgdataDao msgdataDao;
+    @Autowired
+    private MsgavaildepDao msgavaildepDao;
     @Autowired
     private TimeConversionService timeConversionService;
     /**
@@ -98,7 +102,7 @@ public class Eip06w010Service {
      * @param meetingId
      * @return
      */
-    public List<Map<String, String>> findSelectedItemandFood(String meetingId){
+    public List<Map<String, String>> findSelectedItemAndFood(String meetingId){
         //初始化已選項目
         List<MeetingItemAndMeetingCode> selectItemList = meetingItemDao.selectDataByMeetingId(meetingId,"B");
         List<MeetingItemAndMeetingCode> selectFoodList = meetingItemDao.selectDataByMeetingId(meetingId,"A");
@@ -129,6 +133,16 @@ public class Eip06w010Service {
         }
         caseData.setMeetingdtBegin(caseData.getMeetingdtBegin() != null ? DateUtility.changeDateTypeToWestDate(caseData.getMeetingdtBegin()) : "");
         caseData.setMeetingdtEnd(caseData.getMeetingdtEnd() != null ? DateUtility.changeDateTypeToWestDate(caseData.getMeetingdtEnd()) : "");
+
+//        userIdList
+        //查詢欄位輸入使用者名稱，故須先至users撈名稱相符ID後，再以userID查詢
+        List<Users> usersList = usersDao.findUserIDByUserName(caseData.getOrganizerId());
+        List<String> userIdList = new ArrayList<>();
+        for (Users users : usersList) {
+            userIdList.add(users.getUser_id().toString());
+        }
+        caseData.setUserIdList(userIdList);
+
         List<Eip06w010Case> resultList = meetingDao.selectDataByColumns(caseData);
         resultList.forEach(a->{
             if(a.getOrganizerId().equals(userData.getUserId())){
@@ -137,6 +151,7 @@ public class Eip06w010Service {
                 a.setEditable(false);
             }
             a.setOrderFood(a.getOrderNum()>0);
+            a.setOrganizerId(usersDao.selectByKey(a.getOrganizerId()).getUser_name());
         });
 
         caseData.setResultList(resultList.stream().map(Eip06w010Case::new).collect(Collectors.toList()));
@@ -316,22 +331,22 @@ public class Eip06w010Service {
         /** 頁面型態  */
         ms.setPagetype("A");  // A:文章 B:連結
         /** 狀態 */
-//        ms.setStatus(); // 表單狀態： 0-處理中(暫存) 1-已上稿 2-已核可 3-核退 4-已上架 5-已下架 X-註銷(畫面自已上架維護成註銷)
+        ms.setStatus("4"); // 表單狀態： 0-處理中(暫存) 1-已上稿 2-已核可 3-核退 4-已上架 5-已下架 X-註銷(畫面自已上架維護成註銷)
         /** 屬性 */
-        ms.setAttributype("Z"); // 1:公告事項 2:最新消息 3:常用系統及網站 4:下載專區 5:輿情專區 6:人事室-行政院組織改造 7:各處室資訊網-單位簡介
+        ms.setAttributype("1"); // 1:公告事項 2:最新消息 3:常用系統及網站 4:下載專區 5:輿情專區 6:人事室-行政院組織改造 7:各處室資訊網-單位簡介
                                 // 8:各處室資訊網-業務資訊
         /** 訊息類別 */
-//        ms.setMsgtype();  //要寫啥
+        ms.setMsgtype("G");  //要寫啥
         /** 顯示位置 */
         ms.setLocatearea("3"); // 1:登入前 2:登入後 3:各處室資訊網
         /** 是否提供外部查詢 */
-        ms.setIssearch("1"); // 1:是 2:否
+        ms.setIssearch("2"); // 1:是 2:否
         /** 顯示順序 */
-//        ms.setShoworder(); // 1~99，數字愈小，優先序愈高-  (順序怎麼定義)
+        ms.setShoworder("0"); // 1~99，數字愈小，優先序愈高-  (順序怎麼定義)
         /** 是否置頂 */
-        ms.setIstop("2"); // 1:是 2:否
+//        ms.setIstop("2"); // 1:是 2:否
         /** 前台是否顯示 */
-        ms.setIsfront("1"); // 1:是 2:否
+//        ms.setIsfront("1"); // 1:是 2:否
         /** 主旨/連結網址 */
         ms.setSubject("會議室取消通知");
 
@@ -363,9 +378,9 @@ public class Eip06w010Service {
         /** 下架時間 */
         ms.setOfftime(endAnnounceLocalDt.format(fmt).replaceAll("-",""));
         /** 連絡單位 */
-//        ms.setContactunit();
+        ms.setContactunit(deptsDao.findByPk(usersDao.selectByKey(meeting.getOrganizerId()).getDept_id()).getDept_name());
         /** 聯絡人 */
-//        ms.setContactperson();
+        ms.setContactperson(usersDao.selectByKey(meeting.getOrganizerId()).getUser_name());
         /** 連絡電話 */
 //        ms.setContacttel();
         /** 備註 */
@@ -382,5 +397,10 @@ public class Eip06w010Service {
 //        ms.setUpddt();
 
         msgdataDao.insert(ms);
+
+        Msgavaildep msdep = new Msgavaildep();
+        msdep.setFseq(newFseq);
+        msdep.setAvailabledep("0");
+        msgavaildepDao.insert(msdep);
     }
 }

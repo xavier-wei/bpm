@@ -9,12 +9,14 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.SessionAttributes;
 import org.springframework.web.servlet.ModelAndView;
+import tw.gov.pcc.eip.apply.cases.Eip08w020Case;
 import tw.gov.pcc.eip.domain.Eipcode;
 import tw.gov.pcc.eip.framework.domain.UserBean;
 import tw.gov.pcc.eip.framework.spring.controllers.BaseController;
 import tw.gov.pcc.eip.orderCar.Validator.Eip07w010Validator;
 import tw.gov.pcc.eip.orderCar.cases.Eip07w010Case;
 import tw.gov.pcc.eip.services.Eip07w010Service;
+import tw.gov.pcc.eip.util.BeanUtility;
 import tw.gov.pcc.eip.util.ExceptionUtility;
 import tw.gov.pcc.eip.util.ObjectUtility;
 
@@ -60,6 +62,8 @@ public class Eip07w010Controller extends BaseController {
     @RequestMapping("/Eip07w010_enter.action")
     public ModelAndView enter(@ModelAttribute(CASE_KEY) Eip07w010Case caseData) {
         log.debug("導向 Eip07w010Case_enter 派車基本資料建置作業");
+        Eip07w010Case newCase = new Eip07w010Case();
+        BeanUtility.copyProperties(caseData, newCase);// 進來時清除caseData
         eip07w010Service.getSelectList(caseData);
         caseData.setProcessTy("D");
         caseData.setWorkTy("A");
@@ -78,12 +82,31 @@ public class Eip07w010Controller extends BaseController {
     @RequestMapping("/Eip07w010_query.action")
     public String query(@Validated @ModelAttribute(CASE_KEY) Eip07w010Case caseData, BindingResult result) {
         log.debug("導向    Eip07w010Case_enter 派車基本資料查詢作業");
+        eip07w010Validator.eip07w010qValidate(caseData.getWorkTy(),caseData.getProcessTy(),caseData.getEip07w010QueryDataList().get(0), result);
+        if (result.hasErrors()) {
+            return QUERY_PAGE;
+        }
+        caseData.setStillWork(caseData.getEip07w010QueryDataList().get(0).getStillWork());
+        caseData.setName(caseData.getEip07w010QueryDataList().get(0).getName());
+        String stillWorkNm="";
+        switch(caseData.getStillWork()){
+            case "Y" :
+                stillWorkNm="是";
+                break;
+            case "N" :
+                stillWorkNm="否";
+                break;
+            case "A" :
+                stillWorkNm="全部";
+                break;
+        }
+        caseData.setStillWorkNm(stillWorkNm);
         List<Eip07w010Case> queryList= new ArrayList<>();
         try {
             eip07w010Service.getSelectList(caseData);
-            if (StringUtils.isBlank(caseData.getName())&&!"A".equals(caseData.getWorkTy())){
+//            if (StringUtils.isBlank(caseData.getName())&&!"A".equals(caseData.getWorkTy())){
                 queryList=eip07w010Service.driveIsExist(caseData.getEip07w010QueryDataList().get(0));
-            }
+//            }
             if (queryList.isEmpty()) {
                 if ("Q".equals(caseData.getWorkTy())) {
                     setSystemMessage(getQueryEmptyMessage());
@@ -232,8 +255,9 @@ public class Eip07w010Controller extends BaseController {
     @RequestMapping("/Eip07w010_queryCar.action")
     public String queryCar(@Validated @ModelAttribute(CASE_KEY) Eip07w010Case caseData, BindingResult result) {
         log.debug("導向    Eip07w010_queryCar 派車基本資料車籍新增作業");
+        eip07w010Validator.eip07w010qValidate(caseData.getWorkTy(),caseData.getProcessTy(),caseData.getEip07w010QueryDataList().get(0),result);
         if (result.hasErrors()) {
-            return DATA_APGE;
+            return QUERY_PAGE;
         }
         try {
             List<Eip07w010Case> carDetail = new ArrayList<>();
@@ -242,15 +266,14 @@ public class Eip07w010Controller extends BaseController {
                 quareData.setCarno1(StringUtils.substringBefore(quareData.getCarno(),"-"));
                 quareData.setCarno2(StringUtils.substringAfter(quareData.getCarno(),"-"));
             }
-
             carDetail = eip07w010Service.quaryCarBase(quareData);
             eip07w010Service.getCarDetails(caseData);
             if ("A".equals(caseData.getWorkTy())) {//新增
                 if (carDetail.isEmpty()) {
                     List<Eip07w010Case> addCar = new ArrayList<>();
                     Eip07w010Case addData =new Eip07w010Case();
-                    addData.setCarno1(quareData.getCarno1A());
-                    addData.setCarno2(quareData.getCarno2A());
+                    addData.setCarno1(quareData.getCarno1());
+                    addData.setCarno2(quareData.getCarno2());
                     addData.setBossMk("N");
                     addCar.add(addData);
                     caseData.setEip07w010CarDataList(addCar);

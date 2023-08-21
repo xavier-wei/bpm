@@ -3,13 +3,11 @@ package tw.gov.pcc.eip.adm.cases;
 import java.io.Serializable;
 import java.util.List;
 
-import org.apache.commons.lang3.StringUtils;
-
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import tw.gov.pcc.eip.domain.Depts;
 import tw.gov.pcc.eip.domain.Eipcode;
 import tw.gov.pcc.eip.domain.Roles;
-import tw.gov.pcc.eip.domain.User_roles;
 import tw.gov.pcc.eip.domain.Users;
 
 /**
@@ -25,7 +23,7 @@ public class Eip00w020Case implements Serializable {
 	private List<Users> userList;
 	private Users users;
 	private List<Eipcode> titleidList;
-	private List<Eipcode> deptList;
+	private List<Depts> deptList;
 	private List<Roles> userRolesList;
 	private List<Roles> rolesList;
 	
@@ -41,6 +39,8 @@ public class Eip00w020Case implements Serializable {
 	private String userStatus;
 	private String delRoleId;
 	private String addRoleid;
+	private String deptString;//部門中文
+	private String eng_user_name;//英文姓名
 	
 	
 	public void settingCase(Users users) {

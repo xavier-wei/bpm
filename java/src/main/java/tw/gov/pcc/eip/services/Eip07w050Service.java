@@ -43,7 +43,7 @@ public class Eip07w050Service {
 	 */
 	public void getData(Eip07w050Case caseData) throws Exception {
 		List<CarBooking> list = carBookingDao.selectByApplydate(caseData.getApplydateStart(),
-				caseData.getApplydateEnd(), "eip07w050");
+				caseData.getApplydateEnd(), "eip07w050","");
 		List<Eip07w050Case> dataList = new ArrayList<>();
 		if (CollectionUtils.isNotEmpty(list)) {
 			for (CarBooking car : list) {
@@ -63,6 +63,7 @@ public class Eip07w050Service {
 				eipcode.setCodeno(car.getCarprocess_status());
 				Eipcode code = eipcodeDao.selectDataByPrimaryKey(eipcode);
 				data.setCarprocess_status(code.getCodeno() + "-" + code.getCodename());
+				data.setApply_date(car.getApply_date());
 				dataList.add(data);
 			}
 

@@ -29,8 +29,8 @@
       </tags:button>
 
 </jsp:attribute>
-
 	<jsp:attribute name="contents">
+	<tags:fieldset legend="派車單明細" >
 		<form:form id="eip07w020Form" name="eip07w020Form" modelAttribute="${caseKey}" method="POST">
 
 			<tags:form-row>
@@ -273,16 +273,18 @@
 					<tags:form-row>
 						<div  class="col-md d-flex">
 							<br>
-							<form:label cssClass="col-form-label " path="lable">[申請異動請填寫下方資料]：</form:label>
+							<form:label cssClass="col-form-label " path="lable">[若派車後申請異動，請勾選異動註記]：</form:label>
 							<br>
 						</div>
 					</tags:form-row>
 					<tags:form-row >
-						<div   class="col-md-4 d-flex" >
+						<div   class="col-md d-flex" >
 							<form:label cssClass="col-form-label " path="lable">異動註記：</form:label>
 							<form:checkbox name="checkMk" path="checkMk" value="true"  />
 						</div>
-						<div  class="col-md-4 d-flex">
+					</tags:form-row>
+					<tags:form-row >
+						<div  class="col-md d-flex">
 							<form:label id="rmMemoLabel" cssClass="col-form-label star" path="lable">異動原因：</form:label>
 							<form:select id="rmMemo" name="rmMemo" path="rmMemo" cssClass="form-control">
 								<form:option value="1">1.原申請資料需變更</form:option>
@@ -293,10 +295,9 @@
 			</div>
 			<div id="changMk">
 				<tags:form-row>
-					<div class="col-md-4 d-flex">
-						<br>
-						<form:label cssClass="col-form-label" path="lable">[異動申請相關資料]：</form:label>
-						<br>
+					<div  class="col-md d-flex" >
+						<form:label cssClass="col-form-label star" path="lable">用車事由：</form:label>
+						<form:textarea id="mkApply_memo" path="changeMkList[0].apply_memo" cssClass="form-control" cols="70" rows="3" maxlength="100" disabled="true"/>
 					</div>
 				</tags:form-row>
 				<tags:form-row>
@@ -305,12 +306,7 @@
 						<form:textarea id="mkDestination" path="changeMkList[0].destination" cssClass="form-control" cols="70" rows="3" maxlength="100" disabled="true"/>
 					</div>
 				</tags:form-row>
-				<tags:form-row>
-					<div  class="col-md d-flex" >
-						<form:label cssClass="col-form-label star" path="lable">用車事由：</form:label>
-						<form:textarea id="mkApply_memo" path="changeMkList[0].apply_memo" cssClass="form-control" cols="70" rows="3" maxlength="100" disabled="true"/>
-					</div>
-				</tags:form-row>
+
 				<tags:form-row>
 						<div  class="col-md-4 d-flex">
 							<form:label cssClass="col-form-label" path="lable">車輛總類：</form:label>
@@ -365,15 +361,16 @@
 			</div>
 			<div id="footer">
 				<tags:form-row>
-				<p>備註：1.表單狀態為1已送出/2申請主管已審核時，才可進行原申請資料修改或刪除<br>
-						&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;2.表單狀態為3派全程/4派單程/5已派滿時/6併單(派全程)/7併單-派單程，<br>
-						&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;有異動需求時，需勾選「異動註記」欄位告知秘書處派車申請有異動，且按「異動申請」後，<br>
-					&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;原派車車輛資料刪除待重新指派後才有相關資料<br></p>
+				<p><br>備註：1.表單狀態為1已送出/2申請主管已審核時，才可進行原申請資料修改或刪除<br>
+					&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;2.表單狀態為3派全程/4派單程/5已派滿時/6併單(派全程)/7併單-派單程，<br>
+					&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;有異動需求時，需勾選「異動註記」欄位告知秘書處派車申請有異動，且按「異動申請」後，<br>
+					&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;原派車車輛資料刪除待重新指派後才有相關資料<br></p>
 				</tags:form-row>
 			</div>
 		<form:hidden id="combine_mk" path="combine_mk" />
 		<form:hidden id="carprocess_status" path="detailsList[0].carprocess_status" />
 	  </form:form>
+	</tags:fieldset>
 </jsp:attribute>
 <jsp:attribute name="footers">
 <script>
@@ -383,11 +380,19 @@
 			controlcheckMk();
 			btnRmUpdate();
 			CombineMk();
+			status_U();
 
 			$('#btnUpdate').click(function() {
 				$('#eip07w020Form').attr('action', '<c:url value="/Eip07w020_update.action" />').submit();
 			});
 			$('#btnRmUpdate').click(function() {
+
+				var carprocess_status=$("#carprocess_status").val();
+				if (carprocess_status=='U') {
+					var rmMemo = '2';
+					$("#rmMemo").val(rmMemo);
+				}
+
 				$('#eip07w020Form').attr('action', '<c:url value="/Eip07w020_changeApplication.action" />').submit();
             });
 
@@ -413,7 +418,7 @@
 				} else {
 					$("#mark").hide();
 				}
-				if(carprocess_status == '3'||carprocess_status == '4'||carprocess_status == '6'||carprocess_status == '7'){//後面加了67
+				if(carprocess_status == '3'||carprocess_status == '4'||carprocess_status == '6'||carprocess_status == '7'||carprocess_status == 'F'){//後面加了67F
 					$("#car").show();
 					$("#btnPrint").show();
 				} else {
@@ -514,9 +519,18 @@
 				var combineMk = $("#combine_mk").val();
 				var carprocess_status=$("#carprocess_status").val();
 				if (combineMk == 'Y'||carprocess_status=='U') {
-					$('#rmMemo option[value="1"]').remove()
+					$("#rmMemo").prop("disabled", true);
 				}
 			}
+			function status_U() {//控制表單狀態為U時
+				var carprocess_status=$("#carprocess_status").val();
+				if (carprocess_status=='U') {
+					// $('#rmMemo option[value="1"]').remove()
+					$("#rmMemo").prop("disabled", true);
+					$("#btnRmUpdate").text("取消申請");
+				}
+			}
+
          });
 </script>
 </jsp:attribute>

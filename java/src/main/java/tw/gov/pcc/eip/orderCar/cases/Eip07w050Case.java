@@ -32,5 +32,6 @@ public class Eip07w050Case implements Serializable {
 	private String carprocess_status;
 	private List<String>applyIdList;
 	private String agree;
+	private String apply_date;
 	
 }

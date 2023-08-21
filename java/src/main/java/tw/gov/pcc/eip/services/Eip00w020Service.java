@@ -3,19 +3,20 @@ package tw.gov.pcc.eip.services;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collector;
 import java.util.stream.Collectors;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.poi.util.StringUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import tw.gov.pcc.eip.adm.cases.Eip00w020Case;
+import tw.gov.pcc.eip.dao.DeptsDao;
 import tw.gov.pcc.eip.dao.EipcodeDao;
 import tw.gov.pcc.eip.dao.RolesDao;
 import tw.gov.pcc.eip.dao.User_rolesDao;
 import tw.gov.pcc.eip.dao.UsersDao;
+import tw.gov.pcc.eip.domain.Depts;
 import tw.gov.pcc.eip.domain.Eipcode;
 import tw.gov.pcc.eip.domain.Roles;
 import tw.gov.pcc.eip.domain.User_roles;
@@ -41,6 +42,8 @@ public class Eip00w020Service {
     private User_rolesDao user_rolesDao;
     @Autowired
     private RolesDao rolesDao;
+    @Autowired
+    private DeptsDao deptsDao;
     
     public void init(Eip00w020Case eip00w020Case) {
     	eip00w020Case.setUser_id(null);
@@ -79,6 +82,34 @@ public class Eip00w020Service {
     }
     
     /**
+     * 取得英文名字
+     *
+     */
+    public String findEngName(String email) {
+    	
+    	if(StringUtils.isBlank(email)) {
+    		return StringUtils.EMPTY;
+    	}else {
+    		String[] strings = email.split("@");
+    		return strings[0];
+    	}
+    }
+    
+    /**
+     * 取得部門名字
+     *
+     */
+    public String findDeptName(String dept_id) {
+    	
+    	if(StringUtils.isBlank(dept_id)) {
+    		return StringUtils.EMPTY;
+    	}else {
+    		List<Depts> depts = deptsDao.findByDeptid(dept_id);
+    		return CollectionUtils.isNotEmpty(depts)?depts.get(0).getDept_name():"";
+    	}
+    }
+    
+    /**
      *
      * 更新users資料
      */
@@ -100,10 +131,10 @@ public class Eip00w020Service {
     		users.setTel1(eip00w020Case.getTel1());
     		users.setTel2(eip00w020Case.getTel2());
     		users.setTitle_id(eip00w020Case.getTitle_id());
+    		users.setEmail(eip00w020Case.getEmail());
     	}
     	
-    	users.setEmail(eip00w020Case.getEmail());
-    	users.setLine_token(eip00w020Case.getLine_token());
+        //users.setLine_token(eip00w020Case.getLine_token());
     	users.setModify_user_id(userData.getUserId());
     	users.setModify_timestamp(LocalDateTime.now());
     	usersDao.updateByKey(users);
@@ -148,8 +179,8 @@ public class Eip00w020Service {
     	return eipcodeDao.findByCodeKind("TITLE");
     }
     
-    public List<Eipcode> findDeptIdList(){
-    	return eipcodeDao.findByCodeKind("DEPT");
+    public List<Depts> findDeptIdList(){
+    	return deptsDao.findByDeptid(null);
     }
     
     //查詢此user_id底下有哪些roles

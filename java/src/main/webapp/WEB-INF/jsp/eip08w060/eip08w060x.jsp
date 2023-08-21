@@ -5,18 +5,7 @@
 <c:set var="caseData" value="${sessionScope[caseKey]}" />
 <tags:layout>
 <jsp:attribute name="buttons">
-<!-- 選擇頁 -->
-<%--	<tags:button id="btUpdate">--%>
-<%--    	修改<i class="fas fa-user-plus"></i>--%>
-<%--    </tags:button>--%>
 
-<%--	<tags:button id="btDelete">--%>
-<%--    	刪除<i class="fas fa-user-plus"></i>--%>
-<%--    </tags:button>--%>
-
-<%--	<tags:button id="btPrint">--%>
-<%--    	列印<i class="fas fa-user-plus"></i>--%>
-<%--    </tags:button>--%>
 
 	<tags:button id="btBack">
     	回主畫面<i class="fas fa-user-plus"></i>
@@ -25,8 +14,10 @@
 </jsp:attribute>
 
 	<jsp:attribute name="contents">
-    <tags:fieldset>
+
 		<form:form id="Eip08w060xForm" name="Eip08w060xForm" modelAttribute="${caseKey}" method="POST">
+			<fieldset>
+      	<legend>查詢條件</legend>
 			<tags:form-row>
 				<label class="col-form-label text-left col-3">選項:<c:out value="${fn:substring(caseData.applyTpNm, 2,-1)}"/></label>
 			</tags:form-row>
@@ -35,7 +26,9 @@
 				<label class="col-form-label text-left col-3">申請日期:<c:out value="${caseData.applyDate}"/></label>
 				<label class="col-form-label text-left col-3">暫存:<c:out value="${caseData.save}"/></label>
             </tags:form-row>
-
+			</fieldset>
+<fieldset id="resultBox">
+            <legend>查詢結果</legend>
      <div class="table-responsive" id="div1">
 		 <table class="table" id="tb1">
 			 <thead data-orderable="true">
@@ -66,8 +59,8 @@
 			<form:hidden id="selectItemID" path="selectItemID" />
 			<form:hidden id="processTy" path="processTy" />
 			<form:hidden id="save" path="save" />
-			</form:form>
-    </tags:fieldset>
+	</form:form>
+	</fieldset>
 </jsp:attribute>
 <jsp:attribute name="footers">
 <script>

@@ -96,62 +96,61 @@
             </fieldset>
             
             <fieldset>
-            <legend>秘書處已複核通過案件</legend>
+            <legend>已處理派車案件 ${caseData.using_time_sStr} ~ ${caseData.using_time_eStr}</legend>
             <tags:form-row>
-            
-                       <table id="foodTable" class="table table-hover m-2">
-                        <thead>
-                            <th class="align-middle"  style="width: 10%">全選<input type="checkbox" id="handledListTabcheckAllP" name="handledListTabcheckAllP"></th>
-                            <th class="align-middle"  style="width: 10%">派車單號</th>
-                            <th class="align-middle"  style="width: 10%">申請人<br>申請單位</th>
-                            <th class="align-middle"  style="width: 10%">用車日期</th>
-                            <th class="align-middle"  style="width: 10%">用車時間起迄</th>
-                            <th class="align-middle"  style="width: 30%">用車事由</th>
-                            <th class="align-middle"  style="width: 10%">已列印派車單註記</th>
-                            <th class="align-middle" style="width: 10%">補印</th>
-                        </thead>
-                        <c:if test="${empty caseData.handledList}">
-                        <tbody>
-	                        <tr>
-	                        	<td colspan="7">目前無秘書處已複核通過案件</td>
-	                        </tr>
-                        </tbody>
-                        </c:if>
-                        <c:forEach items="${caseData.handledList}" var="item" varStatus="status">
-                        <tbody>
-                        	<td>
-                        	<c:if test="${empty item.print_mk}">
-                        		<form:checkbox path="applyids" name="applyids" value="${item.applyid}"/>
-                        	</c:if>
-                        	</td>
-                        	<td><c:out value="${item.applyid}"/></td>
-                        	<td><c:out value="${item.apply_user}"/><br>
-                        		<c:out value="${item.apply_dept}"/>
-                        	</td>
-                        	<td><func:minguo value="${item.using_date}"/></td>
-                        	<td>
-	                        	<c:out value="${item.using_time_s}"/>〜<c:out value="${item.using_time_e}"/>
-                        	</td>
-                        	<td class="text-left">
-							<span class="ellipsisStr">
-		                 		<c:out value="${item.apply_memo}"/>
-		                 	</span>
-                        	</td>
-                        	<td>
-                        		<c:out value="${item.print_mk}"/>
-                        	</td>
-                        	<td>
-                        	<c:if test="${item.print_mk eq 'Y'}">
-                        		<tags:button cssClass="btnPrint2" value="${item.applyid}">
-									補印
-								</tags:button>
-							</c:if>
-                        	</td>
-                        </tbody>
-                        </c:forEach>
-                    </table>
+            <div class="table-responsive">	 
+                     <table id="qryListTable" class="table">
+                       <thead data-orderable="true">
+                        <tr>
+                            <th class="align-middle" >全選<input type="checkbox" id="handledListTabcheckAllP" name="handledListTabcheckAllP"></th>
+                            <th class="align-middle"  >派車單號</th>
+                            <th class="align-middle" >申請人<br>申請單位</th>
+                            <th class="align-middle"  >用車日期</th>
+                            <th class="align-middle" >用車時間起迄</th>
+                            <th class="align-middle" >用車事由</th>
+                            <th class="align-middle"  >已列印派車單註記</th>
+                            <th class="align-middle">補印</th>
+                        </tr>
+                       </thead>
+                      <tbody>
+
+                      <c:forEach items="${caseData.handledList}" var="item" varStatus="status">
+                      <tr>
+                      	<td>
+                      	<c:if test="${empty item.print_mk}">
+                      		<form:checkbox path="applyids" name="applyids" value="${item.applyid}"/>
+                      	</c:if>
+                      	</td>
+                      	<td><c:out value="${item.applyid}"/></td>
+                      	<td><c:out value="${item.apply_user}"/><br>
+                      		<c:out value="${item.apply_dept}"/>
+                      	</td>
+                      	<td><func:minguo value="${item.using_date}"/></td>
+                      	<td>
+                       	<c:out value="${item.using_time_s}"/>〜<c:out value="${item.using_time_e}"/>
+                      	</td>
+                      	<td class="text-left">
+					<span class="ellipsisStr">
+                 		<c:out value="${item.apply_memo}"/>
+                 	</span>
+                      	</td>
+                      	<td>
+                      		<c:out value="${item.print_mk}"/>
+                      	</td>
+                      	<td>
+                      	<c:if test="${item.print_mk eq 'Y'}">
+                      		<tags:button cssClass="btnPrint2" value="${item.applyid}">
+							補印
+						</tags:button>
+					</c:if>
+                      	</td>
+                      </tr>
+                      </c:forEach>
+                      </tbody>
+                  </table>
+            </div>
             </tags:form-row>
-                 </fieldset>
+            </fieldset>
 			<form:hidden path="applyid"/>
 			<form:hidden path="reprintApplyid"/>
 
@@ -161,7 +160,10 @@
 <jsp:attribute name="footers">
 <script>
         $(function() {
-        	
+        
+            let config = getDataTablesConfig();
+            var table = $("#qryListTable").DataTable(config);
+            
             $('.btnDetail').click(function() {
 				$('#applyid').val($(this).val());
             	$('#eip07w040Form').attr('action', '<c:url value="/Eip07w040_query.action" />').submit();
@@ -195,6 +197,9 @@
             	$('.add').val('');
             	$('#eip07w040Form').attr('action', '<c:url value="/Eip07w040_enter.action" />').submit();
             });
+            
+            
+            
 
          });
 </script>

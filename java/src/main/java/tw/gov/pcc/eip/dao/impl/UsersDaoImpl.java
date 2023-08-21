@@ -244,5 +244,21 @@ public class UsersDaoImpl extends BaseDao<Users> implements UsersDao {
                 BeanPropertyRowMapper.newInstance(Users.class));
     }
 
+    @Override
+    public List<Users> findUserIDByUserName(String userName) {
+        StringBuilder sql = new StringBuilder();
+        sql.append("   SELECT ");
+        sql.append(ALL_COLUMNS_SQL);
+        sql.append("     FROM USERS t");
+        sql.append("    WHERE USER_NAME like '%' + :userName + '%' ");
+        sql.append(" ORDER BY EMP_ID  ");
+
+        Map<String, Object> params = new HashMap<>();
+        params.put("userName", userName);
+
+        return getNamedParameterJdbcTemplate().query(sql.toString(), params,
+                BeanPropertyRowMapper.newInstance(Users.class));
+    }
+
 
 }

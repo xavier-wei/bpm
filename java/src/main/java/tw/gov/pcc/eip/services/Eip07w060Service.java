@@ -49,8 +49,9 @@ public class Eip07w060Service {
 		BeanUtility.copyProperties(caseData, newCase);// 進來時清除caseData
 		caseData.setBosscarList(getBosscarnoList());
 		caseData.setCarType("N");
-		caseData.setBtmk("Y");
-		getTimeList(caseData);
+		caseData.setBtmk("N");
+		setTimelist(caseData);
+		caseData.setThisMomthCarbookingList(carBookingDao.selectOneMonthApplyidAndStatusIn3467F(DateUtility.getNowWestYearMonth()));
 	}
 	
 	public List<CarBase> getBosscarnoList(){
@@ -150,7 +151,7 @@ public class Eip07w060Service {
 	 *
 	 * @param caseData
 	 */
-	public void getData(Eip07w060Case caseData) throws Exception {
+	public void setData(Eip07w060Case caseData) throws Exception {
 		if(StringUtils.equals("Y", caseData.getCarType())) {
 			settingBossCarData(caseData);
 		}else if(StringUtils.equals("N", caseData.getCarType())) {
@@ -221,20 +222,34 @@ public class Eip07w060Service {
 	}
 	
 	private CarBooking findCarbookingByApplyid(String applyid){
-		return carBookingDao.selectByApplyidAndStatusIn3467(applyid);
+		return carBookingDao.selectByApplyidAndStatusIn3467F(applyid);
 	}
 	
+	//設定首長專用車畫面資料
 	private void settingBossCarData(Eip07w060Case caseData) {
 		String[] carnos= caseData.getBosscarno().split(",");
 		String carnoString = carnos[0]+carnos[1];
-		String carnoLast3 = carnoString.substring(carnoString.length()-3,carnoString.length());
+		String carnoLast3 = "";
+		if(carnoString.length() >3) {
+			carnoLast3 = carnoString.substring(carnoString.length()-3,carnoString.length());
+		}else {
+			carnoLast3 = carnoString;
+		}
+		
 		
 		CarBooking insertbooking = new CarBooking();
-		if(StringUtils.equals("Y", caseData.getBtmk())) {
-			insertbooking.setApplyid("DC"+DateUtility.getNowWestDate()+carnoLast3);
-		}else if(StringUtils.equals("N", caseData.getBtmk())) {
+		if(StringUtils.equals("N", caseData.getBtmk())) {
 			insertbooking.setApplyid("DC"+DateUtility.getNowWestYearMonth()+"00000");
-			insertbooking.setUsing_date(DateUtility.getNowChineseYearMonth()+DateUtility.lastDay(DateUtility.getNowWestDate()));		
+			insertbooking.setUsing_date(DateUtility.getNowChineseYearMonth()+DateUtility.lastDay(DateUtility.getNowWestDate()));	
+			caseData.setRoad("台灣地區");
+			caseData.setStartH("08");
+			caseData.setStartM("00");
+			caseData.setEndH("18");
+			caseData.setEndM("00");
+			caseData.setStartuseH("08");
+			caseData.setStartuseM("00");
+			caseData.setEnduseH("18");
+			caseData.setEnduseM("00");
 		}
 		insertbooking.setCarno1(carnos[0]);
 		insertbooking.setCarno2(carnos[1]);
@@ -244,10 +259,19 @@ public class Eip07w060Service {
 		insertbooking.setCarprocess_status("F");
 		insertbooking.setName(findDriveName(carnos[0], carnos[1]));
 		caseData.setCarbooking(insertbooking);
+		caseData.setLast3carno(carnoLast3);
 	}
 	
+	//設定非首長專用車畫面資料
 	private void settingNotBossCarData(Eip07w060Case caseData) {
-		caseData.setCarbooking(findCarbookingByApplyid(caseData.getApplyid()));
+		CarBooking carbooking = findCarbookingByApplyid(caseData.getApplyid());
+		caseData.setCarbooking(carbooking);
+		
+		if(StringUtils.equals("F", carbooking.getCarprocess_status())) {
+			CaruseRec caruseRec = new CaruseRec();
+			caruseRec.setApplyid(carbooking.getApplyid());
+			caseData.setCaruserec(caruseRecDao.selectDataByApplyid(caruseRec));
+		}
 	}
 	
     /**
@@ -255,7 +279,7 @@ public class Eip07w060Service {
      *
      * @param caseData
      */
-    private void getTimeList(Eip07w060Case caseData) {
+    private void setTimelist(Eip07w060Case caseData) {
         List<String> hour=new ArrayList<>();
         List<String> minute=new ArrayList<>();
         for (int h=0;h<=59;h++){

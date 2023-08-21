@@ -42,8 +42,8 @@
 						        	<td class="text-right"><c:out value="${data.dept_desc}"/></td>
 
 						            <td class="text-center">
-						            		<tags:button cssClass="btnEdit"
- 	                                             onclick="detail('${data.dept_id}')">查詢<i class="fas fa-edit"></i></tags:button>  
+<%-- 						            		<tags:button cssClass="btnEdit" --%>
+<%--  	                                             onclick="detail('${data.dept_id}')">查詢<i class="fas fa-edit"></i></tags:button>   --%>
  						            	<c:if test="${data.from_hr != 'Y'}"> 
  						            		<tags:button cssClass="btnEdit" 
  	                                             onclick="doEdit('${data.dept_id}')">修改<i class="fas fa-edit"></i></tags:button>  
@@ -75,10 +75,10 @@
         $('#dept_id').val(dept_id);
         $('#eip00w040Form').attr('action', '<c:url value="/Eip00w040_edit.action" />').submit();
     }
-	function detail(dept_id) {
-        $('#dept_id').val(dept_id);
-        $('#eip00w040Form').attr('action', '<c:url value="/Eip00w040_detail.action" />').submit();
-    }
+// 	function detail(dept_id) {
+//         $('#dept_id').val(dept_id);
+//         $('#eip00w040Form').attr('action', '<c:url value="/Eip00w040_detail.action" />').submit();
+//     }
 </script>
 </jsp:attribute>
 </tags:layout>

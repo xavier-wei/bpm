@@ -9,6 +9,7 @@ import tw.gov.pcc.eip.domain.Depts;
 import tw.gov.pcc.eip.domain.View_oup_unit;
 import tw.gov.pcc.eip.util.BeanUtility;
 import tw.gov.pcc.eip.util.ExceptionUtility;
+import tw.gov.pcc.eip.util.ObjectUtility;
 
 import java.time.LocalDateTime;
 import java.util.Optional;
@@ -41,7 +42,7 @@ public class Eip0aw040Service {
                     if (!y.equals(org)) {
                         y.setModify_timestamp(LocalDateTime.now());
                         y.setModify_user_id("SYS");
-                        log.info("VIEW_OUT_UNIT{}資料異動", x.getUnit_id());
+                        log.info("VIEW_OUT_UNIT{}資料異動", ObjectUtility.normalizeObject(x.getUnit_id()));
                         deptsDao.updateByKey(y);
                         updateCnt.getAndIncrement();
                     } else {
@@ -52,12 +53,12 @@ public class Eip0aw040Service {
                     transView_out_unitToDepts(y, x);
                     y.setCreate_timestamp(LocalDateTime.now());
                     y.setCreate_user_id("SYS");
-                    log.info("VIEW_OUT_UNIT{}資料新增至DEPTS", x.getUnit_id());
+                    log.info("VIEW_OUT_UNIT{}資料新增至DEPTS", ObjectUtility.normalizeObject(x.getUnit_id()));
                     deptsDao.insert(y);
                     insertCnt.getAndIncrement();
                 });
             } catch (Exception e) {
-                log.error("VIEW_OUT_UNIT{}資料異動失敗 {}", x.getUnit_id(), ExceptionUtility.getStackTrace(e));
+                log.error("VIEW_OUT_UNIT{}資料異動失敗 {}", ObjectUtility.normalizeObject(x.getUnit_id()), ExceptionUtility.getStackTrace(e));
                 errorCnt.getAndIncrement();
             }
         });

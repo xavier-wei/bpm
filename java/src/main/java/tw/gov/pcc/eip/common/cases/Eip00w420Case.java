@@ -51,6 +51,8 @@ public class Eip00w420Case implements Serializable {
 
     private Map<String,String> degreenCombobox;
 
+    private Map<String,String> countryCombobox;
+
     private String mode;
 
     private String orformno;

@@ -13,16 +13,16 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import tw.gov.pcc.eip.adm.cases.Eip00w050Case;
-import tw.gov.pcc.eip.dao.User_rolesDao;
-import tw.gov.pcc.eip.services.ItemService;
 import tw.gov.pcc.eip.adm.view.dynatree.DynaTreeBuilder;
 import tw.gov.pcc.eip.adm.view.dynatree.parser.ItemParser;
 import tw.gov.pcc.eip.dao.ItemsDao;
 import tw.gov.pcc.eip.dao.PortalMenuAclDao;
+import tw.gov.pcc.eip.dao.User_rolesDao;
 import tw.gov.pcc.eip.domain.CursorAcl;
 import tw.gov.pcc.eip.domain.Items;
 import tw.gov.pcc.eip.framework.domain.UserBean;
 import tw.gov.pcc.eip.framework.spring.controllers.BaseController;
+import tw.gov.pcc.eip.services.ItemService;
 import tw.gov.pcc.eip.util.ExceptionUtility;
 import tw.gov.pcc.eip.util.ObjectUtility;
 
@@ -42,7 +42,7 @@ import java.util.stream.Collectors;
 @Slf4j
 public class Eip00w050Controller extends BaseController {
     public static final String CASE_KEY = "_eip00w050_caseData";
-    private static final String LIST_PAGE = "/eip00w050/eip00w050x";//編輯頁
+    private static final String LIST_PAGE = "/eip00w050/eip00w050q";//編輯頁
 
     private final PortalMenuAclDao portalMenuAclDao;
     private final ItemsDao itemsDao;
@@ -114,7 +114,6 @@ public class Eip00w050Controller extends BaseController {
                 "item_id", StringUtils.defaultString(item.getItem_id()),
                 "item_name", StringUtils.defaultString(item.getItem_name()),
                 "hyperlink", StringUtils.defaultString(item.getHyperlink()),
-                "sub_link", StringUtils.defaultString(item.getSub_link()),
                 "sort", StringUtils.defaultString(item.getSort_order()
                         .toString()),
                 "disable", StringUtils.defaultString(item.getDisable())
@@ -139,15 +138,15 @@ public class Eip00w050Controller extends BaseController {
             items.setItem_name(eip00w050Case.getItem_name());
             items.setDisable(eip00w050Case.getDisable());
             items.setHyperlink(eip00w050Case.getHyperlink());
-            items.setSub_link(eip00w050Case.getSub_link());
+            items.setSub_link(StringUtils.defaultIfBlank(StringUtils.substringBetween(items.getHyperlink(), "/", "@"), StringUtils.substring(items.getHyperlink(), 0, 10)));
             items.setSort_order(new BigDecimal(eip00w050Case.getSort_order()));
             items.setCreate_user_id(userData.getUserId());
             items.setCreate_timestamp(today);
             itemService.saveOrUpdate(items);
-            setSystemMessage(getUpdateSuccessMessage());
+            setSystemMessage(getSaveSuccessMessage());
         } catch (Exception e) {
             log.error("功能管理儲存失敗 - {}", ExceptionUtility.getStackTrace(e));
-            setSystemMessage(getUpdateFailMessage());
+            setSystemMessage(getSaveFailMessage());
         }
         return list(eip00w050Case, m);
     }
@@ -164,7 +163,7 @@ public class Eip00w050Controller extends BaseController {
             items.setHyperlink(eip00w050Case.getHyperlink());
             items.setSort_order(new BigDecimal(eip00w050Case.getSort_order()));
             items.setDisable(eip00w050Case.getDisable());
-            items.setSub_link(eip00w050Case.getSub_link());
+            items.setSub_link(StringUtils.defaultIfBlank(StringUtils.substringBetween(items.getHyperlink(), "/", "@"), StringUtils.substring(items.getHyperlink(), 0, 10)));
             items.setModify_user_id(userData.getUserId());
             items.setModify_timestamp(LocalDateTime.now());
             itemService.saveOrUpdate(items);
@@ -205,7 +204,6 @@ public class Eip00w050Controller extends BaseController {
         eip00w050Case.setItem_name(StringUtils.EMPTY);
         eip00w050Case.setHyperlink(StringUtils.EMPTY);
         eip00w050Case.setSort_order("0");
-        eip00w050Case.setSub_link(StringUtils.EMPTY);
         eip00w050Case.setDisable(StringUtils.EMPTY);
     }
 }

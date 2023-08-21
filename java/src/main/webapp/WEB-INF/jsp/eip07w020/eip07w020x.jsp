@@ -13,8 +13,43 @@
 </jsp:attribute>
 
 	<jsp:attribute name="contents">
-    <tags:fieldset>
+
 		<form:form id="eip07w020Form" name="eip07w020Form" modelAttribute="${caseKey}" method="POST">
+			 <fieldset>
+      	<legend>查詢條件</legend>
+			<tags:form-row>
+				<div   class="col-md-4 d-flex" >
+					<form:label cssClass="col-form-label " path="lable">申請人：</form:label>
+					<label class="col-form-label text-left col-3" ><c:out value="${caseData.applyName}"/></label>
+				</div>
+				<div   class="col-md-4 d-flex" >
+					<form:label cssClass="col-form-label " path="lable">申請單位：</form:label>
+					<label class="col-form-label text-left col-3" ><c:out value="${caseData.applyUnit}"/></label>
+				</div>
+			</tags:form-row>
+		<tags:form-row>
+				<div   class="col-md-4 d-flex" >
+					<form:label cssClass="col-form-label " path="lable">申請日期(起)：</form:label>
+					<label class="col-form-label text-left col-3" ><func:minguo value="${caseData.applyDateStar}"/></label>
+				</div>
+				<div   class="col-md-4 d-flex" >
+					<form:label cssClass="col-form-label " path="lable">申請日期(迄)：</form:label>
+					<label class="col-form-label text-left col-3" ><func:minguo value="${caseData.applyDateEnd}"/></label>
+				</div>
+			</tags:form-row>
+		<tags:form-row>
+				<div   class="col-md-4 d-flex" >
+					<form:label cssClass="col-form-label " path="lable">用車日期(起)：</form:label>
+					<label class="col-form-label text-left col-3" ><func:minguo value="${caseData.useDateStar}"/></label>
+				</div>
+				<div   class="col-md-4 d-flex" >
+					<form:label cssClass="col-form-label " path="lable">用車日期(迄)：</form:label>
+					<label class="col-form-label text-left col-3" ><func:minguo value="${caseData.useDateEnd}"/></label>
+				</div>
+			</tags:form-row>
+			 </fieldset>
+		<fieldset id="resultBox">
+		<legend>查詢結果</legend>
 		<div class="table-responsive" id="div1">
 			<table class="table" id="driver">
 				<thead data-orderable="true">
@@ -60,10 +95,9 @@
 				</tbody>
 			</table>
 		</div>
-
 		<form:hidden id="applyId" path="applyId" />
         </form:form>
-    </tags:fieldset>
+		</fieldset>
 </jsp:attribute>
 <jsp:attribute name="footers">
 <script>

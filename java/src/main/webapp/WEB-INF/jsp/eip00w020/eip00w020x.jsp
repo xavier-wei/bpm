@@ -27,7 +27,7 @@
                   	<c:if test="${caseData.users.from_hr == 'Y'}">
                   			<form:label cssClass="col-form-label" path="dept_id">部門代號：</form:label>
 	           			<div class="col-12 col-md form-inline">
-	           				<c:out value="${caseData.users.dept_id}"/>-<func:code codekind = 'DEPT' codeno = '${caseData.users.dept_id}' />
+	           				<c:out value="${caseData.users.dept_id}"/>-<c:out value="${caseData.deptString}"/>
 	                    </div>
                   	</c:if>
                   	<c:if test="${caseData.users.from_hr != 'Y'}">
@@ -36,7 +36,7 @@
 				        <form:select path="dept_id" cssClass="form-control">
 							<form:option value="">請選擇</form:option>
 								<c:forEach items="${caseData.deptList}" var="item" varStatus="status">
-									<form:option value="${item.codeno}">${item.codeno}-${item.codename}</form:option>
+									<form:option value="${item.dept_id}">${item.dept_id}-${item.dept_name}</form:option>
 								</c:forEach>
 						</form:select>
 						</div>
@@ -58,15 +58,25 @@
 		           		</c:if>
 			</tags:form-row>      
 			<tags:form-row>
-	                <div class="col-12 col-md form-inline">
-	                   	<tags:text-item label="英文姓名"><c:out value=""/></tags:text-item>
-	                </div>
+
+	               <form:label cssClass="col-form-label" path="dept_id">英文姓名：</form:label>
+                   <div class="col-12 col-md form-inline">
+                        <c:out value="${caseData.eng_user_name}"/>
+                   </div>
             </tags:form-row>
             <tags:form-row>
+                <c:if test="${caseData.users.from_hr == 'Y'}">
+                    <form:label cssClass="col-form-label" path="emp_id">電子郵件：</form:label>
+           			<div class="col-12 col-md form-inline">
+                     	<c:out value="${caseData.users.email}"/>
+                    </div>
+           		</c:if>
+           		<c:if test="${caseData.users.from_hr != 'Y'}">
             	   <form:label cssClass="col-form-label" path="dept_id">電子郵件：</form:label>
                    <div class="col-12 col-md form-inline">
                         <form:input path="email" cssClass="form-control" size="50" value="${caseData.email}"/>
                    </div>
+           		</c:if>
             </tags:form-row>
             <tags:form-row>
 				<c:if test="${caseData.users.from_hr == 'Y'}">
@@ -110,12 +120,12 @@
                     </div>
            		</c:if>
 		    </tags:form-row>
-            <tags:form-row>
-            	   <form:label cssClass="col-form-label" path="line_token">LINE TOKEN：</form:label>
-            	   <div class="col-12 col-md form-inline">
-                        <form:input path="line_token" cssClass="form-control" size="50" value="${caseData.line_token}"/>
-                   </div>
-            </tags:form-row>
+<%--             <tags:form-row> --%>
+<%--             	   <form:label cssClass="col-form-label" path="line_token">LINE TOKEN：</form:label> --%>
+<!--             	   <div class="col-12 col-md form-inline"> -->
+<%--                         <form:input path="line_token" cssClass="form-control" size="50" value="${caseData.line_token}"/> --%>
+<!--                    </div> -->
+<%--             </tags:form-row> --%>
             <tags:form-row>
             		<form:label cssClass="col-form-label star" path="userStatus">使用者狀態：</form:label>
             		<div class="col-12 col-md form-inline">

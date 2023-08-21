@@ -53,8 +53,7 @@ public class Eip07w050Controller extends BaseController {
 		try {
 			eip07w050Service.getData(caseData);
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			log.error("Eip07w050Controller取得資料失敗" + ExceptionUtility.getStackTrace(e));
 		}
 		return new ModelAndView(QUERY_PAGE);
 	}

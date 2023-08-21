@@ -58,10 +58,28 @@ public class Eip07w040Service {
 	 */
 	public void getData(Eip07w040Case caseData,String dataCondition) throws Exception {
 		List<CarBooking> list = carBookingDao.selectForEip07w040(caseData,dataCondition);//取得資料
-
 		List<CarBooking> notHandleList = new ArrayList<>();
 		List<CarBooking> handledList = new ArrayList<>();
 		if (CollectionUtils.isNotEmpty(list)) {
+			
+			if("1".equals(dataCondition)) {
+				int lastDay = DateUtility.lastDay(DateUtility.getNowChineseDate(),false);
+				caseData.setUsing_time_sStr(DateUtility.getNowChineseYearMonth() + "01");
+				caseData.setUsing_time_eStr(DateUtility.getNowChineseYearMonth()+String.valueOf(lastDay));		
+			}
+			
+			if("2".equals(dataCondition)) {
+				// 若用車日期起日有值，但迄日沒值=>迄日帶入系統日
+				if (StringUtils.isNotEmpty(caseData.getUsing_time_s()) && StringUtils.isEmpty(caseData.getUsing_time_e())) {
+					caseData.setUsing_time_sStr(caseData.getUsing_time_s());
+					caseData.setUsing_time_eStr(DateUtility.getNowChineseDate());
+				} else if(StringUtils.isNotEmpty(caseData.getUsing_time_s()) && StringUtils.isNotEmpty(caseData.getUsing_time_e())){//兩個都有值
+					caseData.setUsing_time_sStr(caseData.getUsing_time_s());
+					caseData.setUsing_time_eStr(caseData.getUsing_time_e());
+				}
+			}
+			
+			
 			for (CarBooking car : list) {
 				//撈表單狀態中文
 				Eipcode eipcode = new Eipcode();
@@ -177,6 +195,9 @@ public class Eip07w040Service {
 		}
 		
 		CarBase carData = carBaseDao.selectCarAndDriverByCarno(carno[0],carno[1]);
+		if(carData == null) {
+			throw new RuntimeException();
+		}
 		carBooking.setName(carData.getName());
 		carBooking.setCellphone(carData.getCellphone());
 		carBooking.setCarno1(carno[0]);

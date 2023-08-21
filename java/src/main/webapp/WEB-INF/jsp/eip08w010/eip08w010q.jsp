@@ -20,7 +20,7 @@
 			<tags:form-row>
                 <form:label cssClass="col-form-label" path="mainkindno">品名大類：</form:label>
                 <div class="col-12 col-md-6 m-2">
-                    <form:select path="mainkindno">
+                    <form:select path="mainkindno" cssClass="form-control">
                     	<option value = ''>請選擇</option>
                     	<c:forEach items="${caseData.mainKindList}" var="item" varStatus="status">
 							<form:option value="${item.itemno}">${item.itemno}-${item.itemname}</form:option>
@@ -31,7 +31,7 @@
             <tags:form-row> 
                 <form:label cssClass="col-form-label" path="detailkindno">品名：</form:label>
                 <div class="col-12 col-md-6 m-2">
-                    <form:select path="detailkindno">
+                    <form:select path="detailkindno" cssClass="form-control">
                     	<option value = ''>請選擇</option>
                                         	<c:forEach items="${caseData.detailKindList}" var="item" varStatus="status">
 							<form:option value="${item.itemno}">${item.itemno}-${item.itemname}</form:option>

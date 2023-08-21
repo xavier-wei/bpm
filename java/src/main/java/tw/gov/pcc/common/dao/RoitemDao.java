@@ -32,4 +32,8 @@ public interface RoitemDao {
 
     public List<Eip08w060Case> distinctItemId(Eip08w060Case caseData) ;
 
+    String getEip_08w060NoSeq();
+
+    void updateSequence();
+
 }

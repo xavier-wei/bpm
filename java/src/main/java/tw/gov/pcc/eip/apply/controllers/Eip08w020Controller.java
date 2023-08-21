@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
@@ -90,7 +91,7 @@ public class Eip08w020Controller extends BaseController {
 	 * @return
 	 */
 	@RequestMapping("/Eip08w020_add.action")
-	public String add(@Validated(Eip08w020Case.Query.class) @ModelAttribute(CASE_KEY) Eip08w020Case caseData, BindingResult result) {
+	public String add(@Validated(Eip08w020Case.Apply.class) @ModelAttribute(CASE_KEY) Eip08w020Case caseData, BindingResult result) {
 		log.debug("導向   Eip08w020   領物單申請作業畫面-新增作業");
 		if (result.hasErrors()) {
 			return QUERY_PAGE;
@@ -142,10 +143,28 @@ public class Eip08w020Controller extends BaseController {
 	public String insertData(@Validated(Eip08w020Case.Insert.class) @ModelAttribute(CASE_KEY) Eip08w020Case caseData,
 			BindingResult result) {
 		log.debug("導向   Eip08w020 ");
-		eip08w020Service.validateCnt(caseData, result);
-		if (result.hasErrors()) {
+		if(result.hasErrors()) {
 			return ADD_APGE;
 		}
+		
+		String returnStr = "";//畫面資料驗證
+		try {
+			returnStr = eip08w020Service.validateAllData(caseData);
+		} catch (Exception e1) {
+			log.error("Eip08w020Controller" + ExceptionUtility.getStackTrace(e1));
+		}
+		
+		if(StringUtils.isNotBlank(returnStr)) {
+			setSystemMessage(returnStr,true);
+			return ADD_APGE;
+		}
+		
+		String validateCnt = eip08w020Service.validateCnt(caseData);
+		if(StringUtils.isNotBlank(validateCnt)) {
+			setSystemMessage(validateCnt, true);
+			return ADD_APGE;
+		}
+		
 
 		try {
 			eip08w020Service.insertApplyItem(caseData);
@@ -168,14 +187,13 @@ public class Eip08w020Controller extends BaseController {
 	 * @return
 	 */
 	@RequestMapping("/Eip08w020_query.action")
-	public String queryAndCorrect(@Validated @ModelAttribute(CASE_KEY) Eip08w020Case caseData, BindingResult result) {
+	public String queryAndCorrect(@Validated(Eip08w020Case.Query.class) @ModelAttribute(CASE_KEY) Eip08w020Case caseData, BindingResult result) {
 		log.debug("導向   Eip08w020   領物單申請作業畫面-查詢更正作業");
 		if (result.hasErrors()) {
 			return QUERY_PAGE;
 		}
 
 		try {
-			
 			eip08w020Service.getApplyItem(caseData);
 			if (CollectionUtils.isEmpty(caseData.getApplyitemList())) {
 				setSystemMessage("查無資料");

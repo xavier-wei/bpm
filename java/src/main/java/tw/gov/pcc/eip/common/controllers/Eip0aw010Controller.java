@@ -27,6 +27,7 @@ import tw.gov.pcc.eip.domain.View_flow;
 import tw.gov.pcc.eip.framework.domain.UserBean;
 import tw.gov.pcc.eip.util.BeanUtility;
 import tw.gov.pcc.eip.util.ExceptionUtility;
+import tw.gov.pcc.eip.util.ObjectUtility;
 
 /**
  * 讀取 TITLE 介接其他系統API資料
@@ -66,16 +67,16 @@ public class Eip0aw010Controller {
                 .forEach(sysApi -> {
                     result.add(doApi(sysApi));
                 });
-        return TitleResult.builder()
+        return ObjectUtility.normalizeObject(TitleResult.builder()
                 .apiResultList(result)
                 .interval(eipcodeDao.findByCodeKindCodeNo("SYS_API", "INTERVAL")
                         .map(Eipcode::getCodename)
                         .orElse("60"))
-                .build();
+                .build());
     }
 
     private ApiResult getIrtSql() {
-        String url = eipcodeDao.findByCodeKindCodeNo("SYS_API", "1_URL").map(Eipcode::getCodename).orElse(StringUtils.EMPTY);
+        String url = eipcodeDao.findByCodeKindCodeNo("SYS_API", "1_CLICK_URL").map(Eipcode::getCodename).orElse(StringUtils.EMPTY);
         return ApiResult.builder()
             .click_url(url)
             .cnt(viewFlowDao.selectCountByNext_person_id(View_flow.builder().next_person_id(userData.getUserId()).build()).toString()).build();
@@ -119,7 +120,7 @@ public class Eip0aw010Controller {
                     .get(apiParams.res)
                     .toString());
         } catch (RestClientException e) {
-            log.error("SYS_API 呼叫{} 錯誤 {}", apiParams, ExceptionUtility.getStackTrace(e));
+            log.error("SYS_API 呼叫{} 錯誤 {}", ObjectUtility.normalizeObject(apiParams), ExceptionUtility.getStackTrace(e));
         }
         return apiResult;
     }

@@ -64,11 +64,11 @@ public class Eip07w060Controller extends BaseController {
 				return new ModelAndView(QUERY_PAGE);
 			}
 			
-			eip07w060Service.getData(caseData);
+			eip07w060Service.setData(caseData);
 			return new ModelAndView(DATA_PAGE);
 		} catch (Exception e) {
 			log.error("Eip07w060Controller查詢失敗" + ExceptionUtility.getStackTrace(e));
-			setSystemMessage(getUpdateFailMessage());
+			setSystemMessage(getQueryFailMessage());
 			return enter(caseData);
 		}
 		

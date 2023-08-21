@@ -7,11 +7,11 @@
 <jsp:attribute name="buttons">
 <!-- 選擇頁 -->
 	  <tags:button id="btnSelect">
-    	確認<i class="fas fa-search"></i>
+    	查詢<i class="fas fa-search"></i>
       </tags:button>
 
 		<tags:button id="btnAdd">
-    	確認<i class="fas fa-search"></i>
+    	新增<i class="fas fa-search"></i>
       </tags:button>
 
 	  <tags:button id="btnClearn">
@@ -75,11 +75,14 @@
 								maxlength="7" />
 				</div>
 				<div class="col-md-4 d-flex">
-					<form:label cssClass="col-form-label" path="useDateEnd">用車日期(迄)：</form:label>
+					<form:label cssClass="col-form-label " path="useDateEnd">用車日期(迄)：</form:label>
 					<form:input id="useDateEnd" name="useDateEnd" path="useDateEnd" cssClass="form-control num_only dateTW"   size="7"
 								maxlength="7" />
 				</div>
 			</tags:form-row>
+			<tags:form-note>
+                若申請日期起或用車日期起有輸入時，只需擇一輸入
+            </tags:form-note>
 			</div>
         </form:form>
     </tags:fieldset>
@@ -116,11 +119,14 @@
 					$("#Q").hide();
 					$("#btnAdd").show();
 					$("#btnSelect").hide();
+					$("#main>fieldset>legend").html("新增條件")
 				} else {
 					$("#Q").show();
 					$("#A").hide();
 					$("#btnSelect").show();
 					$("#btnAdd").hide();
+					$("#main>fieldset>legend").html("查詢條件")
+					$("#sysyemMessage").text('');
 				}
 			}
          });

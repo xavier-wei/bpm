@@ -30,7 +30,6 @@
 	                <form:hidden path="item_id"/>
 	                <form:hidden path="item_name"/>
 	                <form:hidden path="hyperlink"/>
-	                <form:hidden path="sub_link"/>
 	                <form:hidden path="selectedIdlist"/>
 		        </form:form>
             </div>

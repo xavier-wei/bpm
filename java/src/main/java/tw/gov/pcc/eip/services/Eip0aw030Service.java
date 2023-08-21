@@ -10,6 +10,7 @@ import tw.gov.pcc.eip.domain.Users;
 import tw.gov.pcc.eip.domain.View_cpape05m;
 import tw.gov.pcc.eip.util.BeanUtility;
 import tw.gov.pcc.eip.util.ExceptionUtility;
+import tw.gov.pcc.eip.util.ObjectUtility;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -54,21 +55,21 @@ public class Eip0aw030Service {
 
                     assert u != null;
                     if (x.equals(u)) {
-                        log.info("VIEW_CPAPE05M使用者{}資料無異動", x.getUser_id());
+                        log.info("VIEW_CPAPE05M使用者{}資料無異動", ObjectUtility.normalizeObject(x.getUser_id()));
                         passCnt.getAndIncrement();
                     } else {
-                        log.info("VIEW_CPAPE05M使用者{}資料異動", x.getUser_id());
+                        log.info("VIEW_CPAPE05M使用者{}資料異動", ObjectUtility.normalizeObject(x.getUser_id()));
                         x.setModify_timestamp(LocalDateTime.now());
                         x.setModify_user_id("SYS");
                         usersDao.updateByKey(x);
                         updateCnt.getAndIncrement();
                     }
                 }, () -> {
-                    log.debug("VIEW_CPAPE05M使用者{}不存在", x.getUser_id());
+                    log.debug("VIEW_CPAPE05M使用者{}不存在", ObjectUtility.normalizeObject(x.getUser_id()));
                     passCnt.incrementAndGet();
                 });
             } catch (Exception e) {
-                log.error("自VIEW_CAPE05M更新USERS {} 失敗 {} ", x.getUser_id(), ExceptionUtility.getStackTrace(e));
+                log.error("自VIEW_CAPE05M更新USERS {} 失敗 {} ", ObjectUtility.normalizeObject(x.getUser_id()), ExceptionUtility.getStackTrace(e));
                 errCnt.getAndIncrement();
             }
         });

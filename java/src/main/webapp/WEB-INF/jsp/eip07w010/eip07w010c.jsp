@@ -18,7 +18,7 @@
 </jsp:attribute>
 
 	<jsp:attribute name="contents">
-    <tags:fieldset>
+    <tags:fieldset legend="車籍資料新增">
 		<form:form id="eip07w010Form" name="eip07w010Form" modelAttribute="${caseKey}" method="POST">
     	<tags:form-row>
 			<div  class="col-md-4 d-flex">
@@ -44,7 +44,7 @@
 		<tags:form-row>
 				<div class="col-md-4 d-flex">
 					<form:label cssClass="col-form-label star" path="owned">財產編號：</form:label>
-					<form:input id="owned"  name="owned"  path="eip07w010CarDataList[0].owned" cssClass="form-control" size="24" maxlength="12"/>
+					<form:input id="owned"  name="owned"  path="eip07w010CarDataList[0].owned" cssClass="form-control" size="15" maxlength="12"/>
 				</div>
 				<div class="col-md-4 d-flex">
 					<form:label cssClass="col-form-label" path="carYear">購置年份：</form:label>
@@ -162,6 +162,19 @@
 					$("#btnUpdate").hide();
 					$("#btnDelete").hide();
 				}
+			}
+
+			$('#bossMk').change(function() {//控制首長專用下拉式選單
+				controlCarStatusk();
+			});
+
+			function controlCarStatusk() {
+				var bossMk =$("#bossMk option:selected").val();
+				if (bossMk=='Y'){
+					$("#carStatus").val('2');
+				}else{
+				$("#carStatus").val('1');
+			}
 			}
 
          });

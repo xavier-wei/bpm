@@ -2,6 +2,8 @@ package tw.gov.pcc.eip.orderCar.cases;
 
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
 import tw.gov.pcc.common.annotation.LogField;
 import tw.gov.pcc.eip.domain.CarBooking;
 import tw.gov.pcc.eip.domain.Eipcode;

@@ -194,4 +194,15 @@ public class OnlineRegService {
         list.forEach(t -> map.put(t.getScodekind(), StringUtils.isEmpty(t.getCodename()) ? "" : t.getCodename()));
         return map;
     }
+
+    /**
+     * 取得縣市
+     * @return
+     */
+    public Map<String,String> getCountry() {
+        List<Eipcode>list = eipcodeDao.findByCodeKind("COUNTRY");
+        Map<String, String> map = new LinkedHashMap<>();
+        list.forEach(t -> map.put(t.getCodeno(), StringUtils.isEmpty(t.getCodename()) ? "" : t.getCodename()));
+        return map;
+    }
 }

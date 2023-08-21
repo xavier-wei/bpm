@@ -26,6 +26,7 @@ import tw.gov.pcc.eip.services.Eip01w040Service;
 import tw.gov.pcc.eip.util.BeanUtility;
 import tw.gov.pcc.eip.util.DateUtility;
 import tw.gov.pcc.eip.util.ExceptionUtility;
+import tw.gov.pcc.eip.util.ObjectUtility;
 
 import javax.servlet.http.HttpServletRequest;
 import java.math.BigDecimal;
@@ -150,7 +151,7 @@ public class LoginController extends BaseController {
         datatableCase.setData(subList);
         datatableCase.setRecordsTotal(recordsTotal);
         datatableCase.setRecordsFiltered(recordsFiltered);
-        return datatableCase;
+        return ObjectUtility.normalizeObject(datatableCase);
     }
 
 
@@ -178,8 +179,7 @@ public class LoginController extends BaseController {
         Eip01w030Case eip01w030Case = new Eip01w030Case();
         BeanUtility.copyProperties(eip01w030Case, caseData);
         return Optional.of(eip01w030Controller.download(eip01w030Case))
-                .filter(x -> x.getClass()
-                        .isAssignableFrom(FileOutputView.class))
+                .filter(x -> Optional.ofNullable(x.getView()).map(view -> view.getClass().isAssignableFrom(FileOutputView.class)).orElse(false))
                 .orElse(new ModelAndView(INDEX_PAGE));
     }
 
@@ -228,12 +228,12 @@ public class LoginController extends BaseController {
         datatableCase.setData(subList);
         datatableCase.setRecordsTotal(recordsTotal);
         datatableCase.setRecordsFiltered(recordsFiltered);
-        return datatableCase;
+        return ObjectUtility.normalizeObject(datatableCase);
     }
 
 
     @ModelAttribute("sys_site")
     public List<Eipcode> getSys_site() {
-        return eipcodeDao.findByCodeKindOrderByScodeno("SYS_SITE");
+        return ObjectUtility.normalizeObject(eipcodeDao.findByCodeKindOrderByScodeno("SYS_SITE"));
     }
 }

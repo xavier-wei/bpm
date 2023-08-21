@@ -24,7 +24,7 @@
 </jsp:attribute>
 
 	<jsp:attribute name="contents">
-    <tags:fieldset>
+    <tags:fieldset legend="明細畫面">
 		<form:form id="Eip08w060xForm" name="Eip08w060xForm" modelAttribute="${caseKey}" method="POST">
 			<tags:form-row>
 				<label class="col-form-label text-left col-3">選項:<c:out value="${fn:substring(caseData.applyTpNm, 2,-1)}"/></label>

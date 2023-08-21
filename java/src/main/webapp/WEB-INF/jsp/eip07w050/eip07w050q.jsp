@@ -9,7 +9,7 @@
     	查詢<i class="fas fa-search"></i>
     </tags:button>
     <tags:button id="btnSubmit">
-    	審核<i class="fas fa-user-check"></i>
+    	核派<i class="fas fa-user-check"></i>
     </tags:button>
     <tags:button id="btnClear">
     	清除<i class="fas fa-eraser"></i>
@@ -21,7 +21,7 @@
   		 	<fieldset>
   		 		<legend>查詢條件</legend>
 	            <tags:form-row>
-	            	<form:label cssClass="col-form-label star" path="applydateStart">申請日期：</form:label>
+	            	<form:label cssClass="col-form-label" path="applydateStart">申請日期：</form:label>
 	                <div class="col-12 col-md d-flex align-items-center">
 	                    <form:input path="applydateStart" cssClass="add form-control dateTW date num_only" />~
 	                    <form:input path="applydateEnd" cssClass="add form-control dateTW date num_only" />
@@ -33,7 +33,7 @@
 			<legend>查詢結果</legend>
           	  <div class="row">
           	   <div class="col-md-3 col-xl-4 flex-fill">
-	              <tags:text-item label="複核選項">
+	              <tags:text-item label="核派選項">
 		            <label><input type="radio" name="agree"  value="agree">同意</label>
 	            	<label><input type="radio" name="agree"  value="disagree">不同意</label>
 	              </tags:text-item>
@@ -45,7 +45,8 @@
                             <th class="align-middle"  style="width: 10%">全選<input type="checkbox" id="dataListTabcheckAllP" name="dataListTabcheckAllP"></th>
                             <th class="align-middle"  style="width: 10%">派車單號</th>
                             <th style="width: 10%">申請人<br>申請單位</th>
-                            <th style="width: 20%">用車日期<br>用車時間起迄</th>
+                            <th style="width: 10%" class="align-middle">申請日期</th>
+                            <th style="width: 10%">用車日期<br>用車時間起迄</th>
                             <th class="align-middle"  style="width: 40%">用車事由</th>
                             <th class="align-middle"  style="width: 10%">表單狀態</th>
                         </thead>
@@ -55,6 +56,9 @@
                         	<td><c:out value="${item.applyid}"/></td>
                         	<td><c:out value="${item.apply_user}"/><br>
                         		<c:out value="${item.apply_dept}"/>
+                        	</td>
+                        	<td>
+                        		<func:minguo value="${item.apply_date}"/>
                         	</td>
                         	<td>
 	                        	<func:minguo value="${item.using_date}"/><br>
@@ -107,7 +111,14 @@
             	$('#eip07w050Form').attr('action', '<c:url value="/Eip07w050_update.action" />').submit();
             });
             
-            
+            //全選的切換
+            var flag = false;
+            $("#dataListTabcheckAllP").click(function(){
+            	$("input[name^='dataList']:checkbox").each(function(){
+            		$(this).prop('checked',!flag);
+            	});
+                flag = !flag;
+            });
          });
 </script>
 </jsp:attribute>

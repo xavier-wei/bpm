@@ -11,6 +11,7 @@ import tw.gov.pcc.eip.dao.UsersDao;
 import tw.gov.pcc.eip.domain.Eipcode;
 import tw.gov.pcc.eip.domain.Users;
 import tw.gov.pcc.eip.util.ExceptionUtility;
+import tw.gov.pcc.eip.util.ObjectUtility;
 
 import javax.naming.Context;
 import javax.naming.NamingEnumeration;
@@ -49,11 +50,11 @@ public class Eip0aw020Service {
                 x.setCreate_timestamp(LocalDateTime.now());
                 x.setCreate_user_id("SYS");
                 Optional.ofNullable(usersDao.selectByKey(x.getUser_id())).ifPresentOrElse(r -> {
-                    log.debug("使用者{}已存在", r.getUser_id());
+                    log.debug("使用者{}已存在", ObjectUtility.normalizeObject(r.getUser_id()));
                     passCnt.getAndIncrement();
                 }, () -> {
                     usersDao.insert(x);
-                    log.debug("寫入使用者{}資料", x.getUser_id());
+                    log.debug("寫入使用者{}資料", ObjectUtility.normalizeObject(x.getUser_id()));
                     insertCnt.getAndIncrement();
                 });
             } catch (Exception e) {
@@ -81,7 +82,7 @@ public class Eip0aw020Service {
             SearchControls searchControls = new SearchControls();
             searchControls.setSearchScope(SearchControls.SUBTREE_SCOPE);
             searchControls.setReturningAttributes(Arrays.stream(LdapAttributes.values()).map(Enum::name).toArray(String[]::new));
-            NamingEnumeration<SearchResult> result = ctx.search(ldapParams.getDnBase(), ldapParams.getSearchFilter(), searchControls);
+            NamingEnumeration<SearchResult> result = ctx.search(ObjectUtility.normalizeObject(ldapParams.getDnBase()), ObjectUtility.normalizeObject(ldapParams.getSearchFilter()), ObjectUtility.normalizeObject(searchControls));
 
             while (result.hasMore()) {
                 SearchResult searchResult = result.next();
@@ -90,8 +91,8 @@ public class Eip0aw020Service {
                 users.setLdap_id(retriveLdapReturnString(attributes, LdapAttributes.userPrincipalName));
                 users.setUser_id(StringUtils.substringBefore(users.getLdap_id(), "@"));
                 users.setUser_name(retriveLdapReturnString(attributes, LdapAttributes.name));
-                users.setTel1(retriveLdapReturnString(attributes, LdapAttributes.telephoneNumber));
-                users.setEmail(retriveLdapReturnString(attributes, LdapAttributes.mail));
+//                users.setTel1(retriveLdapReturnString(attributes, LdapAttributes.telephoneNumber));
+//                users.setEmail(retriveLdapReturnString(attributes, LdapAttributes.mail));
                 log.info("讀取LDAP資料：{}", users);
                 usersList.add(users);
             }

@@ -80,5 +80,18 @@ public class CaruseRecDaoImpl extends BaseDao<CaruseRec> implements CaruseRecDao
                 .addValue("carno2", caseData.getCarno2());
         return getNamedParameterJdbcTemplate().query(sql.toString(),params, BeanPropertyRowMapper.newInstance(Eip07w010Case.class));
     }
+    
+    /**
+     * 根據applyid查詢
+     *
+     * @param CaruseRec 條件
+     * @return 唯一值
+     */
+    @Override
+    public CaruseRec selectDataByApplyid(CaruseRec caruseRec) {
+        String sql = "SELECT * FROM " + TABLE_NAME + " t WHERE t.applyid = :applyid ";
+        List<CaruseRec> list = getNamedParameterJdbcTemplate().query(sql, new BeanPropertySqlParameterSource(caruseRec), BeanPropertyRowMapper.newInstance(CaruseRec.class));
+        return CollectionUtils.isEmpty(list) ? null : list.get(0);
+    }
 
 }

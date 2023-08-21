@@ -115,8 +115,9 @@
             			<th style="width: 10%">派車單號</th>
             			<th style="width: 10%">申請人</th>
             			<th style="width: 10%">申請單位</th>
-            			<th style="width: 10%">用車時間起迄</th>
-            			<th style="width: 60%">用車事由</th>
+            			<th style="width: 10%">用車區間</th>
+            			<th style="width: 30%">用車事由</th>
+            			<th style="width: 30%">目的地</th>
             		</thead>
 		            <c:forEach items="${caseData.carBookingList}" var="item" varStatus="status">
             		<tbody>
@@ -129,6 +130,8 @@
 						<span class="ellipsisStr">
 	                 		<c:out value="${item.apply_memo}"/>
 	                 	</span>
+	                 	</td>
+	                 	<td class="text-left"><c:out value="${item.destination}"/></td>
             		</tr>
             		</tbody>
 		            </c:forEach>
@@ -198,16 +201,15 @@
         	});
         	
         	function changeOption(){
-        		$("#carprocess_status>option").show();
-        		var num; 
+        		$("#status>option").show();
+        		var num = ""; 
         		var timeMK = $('#timeMK').val();
         		var merge = $("input[name='merge']:checked").val();
         		if(timeMK=='Y' && merge=='N'){num = [1,2,4,5];}
         		if(timeMK=='N' && merge=='N'){num = [4,5];}
         		if(merge=='Y'){num = [1,2];}
-        		num.forEach(e => $("#carprocess_status>option").eq(e).hide());
+        		num.forEach(e => $("#status>option").eq(e).hide());
         	}
-
 
             
             $('#btnReturn').click(function(){

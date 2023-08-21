@@ -122,29 +122,29 @@ public class Eip00w040Controller extends BaseController {
 		}
 	}
 	
-    /**
-     * 修改畫面
-     *
-     * @return
-     */
-	@RequestMapping("/Eip00w040_detail.action")
-	public ModelAndView detailquery(@ModelAttribute(CASE_KEY) Eip00w040Case eipadm0w040Case) {
-		try {
-			Depts depts = eipadm0w040Service.queryDepts(eipadm0w040Case.getDept_id()).get(0);
-			if(depts != null) {
-				eipadm0w040Case.setQueryDepts(depts);
-				return new ModelAndView(DETAIL_PAGE);
-			}else {
-				setSystemMessage(getMessage(MessageKey.NODATA));
-				return new ModelAndView(QUERY_PAGE);
-			}
-			
-		} catch (Exception e) {
-			log.error("修改畫面失敗 - {}", ExceptionUtility.getStackTrace(e));
-			setSystemMessage(getQueryFailMessage());
-			return new ModelAndView(QUERY_PAGE);
-		}
-	}
+//    /**
+//     * 修改畫面
+//     *
+//     * @return
+//     */
+//	@RequestMapping("/Eip00w040_detail.action")
+//	public ModelAndView detailquery(@ModelAttribute(CASE_KEY) Eip00w040Case eipadm0w040Case) {
+//		try {
+//			Depts depts = eipadm0w040Service.queryDepts(eipadm0w040Case.getDept_id()).get(0);
+//			if(depts != null) {
+//				eipadm0w040Case.setQueryDepts(depts);
+//				return new ModelAndView(DETAIL_PAGE);
+//			}else {
+//				setSystemMessage(getMessage(MessageKey.NODATA));
+//				return new ModelAndView(QUERY_PAGE);
+//			}
+//			
+//		} catch (Exception e) {
+//			log.error("修改畫面失敗 - {}", ExceptionUtility.getStackTrace(e));
+//			setSystemMessage(getQueryFailMessage());
+//			return new ModelAndView(QUERY_PAGE);
+//		}
+//	}
 	
     /**
      * 新增資料

@@ -4,63 +4,58 @@
 <spring:eval var="caseKey" expression="T(tw.gov.pcc.eip.adm.controllers.Eip00w050Controller).CASE_KEY"/>
 <c:set var="caseData" value="${requestScope[caseKey]}"/>
 <tags:layout>
-    
- <jsp:attribute name="heads">
-    <style>
-        .container-title .title-text {
-            float: left;
-            font-weight: bold
-        }
-    </style>
- </jsp:attribute>
-
     <jsp:attribute name="buttons">
         <tags:button id="btnReload">重新整理<i class="fas fa-reply"></i></tags:button>
     </jsp:attribute>
     <jsp:attribute name="contents">
-    <tags:fieldset legend="功能管理">
+        
         <div class="col-12 d-flex">
+
             <div class="col-6 col-md-6">
+                <tags:fieldset legend="節點資訊">
                 <div class="container-title">
-                    <div class="title-text text-left"><b>連結或節點資訊</b></div>
                     <div class="title-function text-right">
-                        <tags:button id="save" cssClass="btn-sm">儲存<i class="fas fa-save"></i></tags:button>
+                        <tags:button id="save" cssClass="btn-sm">儲存新增<i class="fas fa-save"></i></tags:button>
+                        <tags:button id="update" cssClass="btn-sm">儲存更新<i class="fas fa-edit"></i></tags:button>
                         <tags:button id="delete" cssClass="btn-sm">刪除<i class="fas fa-trash-alt"></i></tags:button>
                     </div>
                 </div>
                 <div class="container-content">
-        <form:form id="eip00w050Form" modelAttribute="${caseKey}">
-			<ol>
-                <li>
-                    <label class="label">顯示名稱：</label>
-                    <form:input path="item_name" id="item_name" cssClass="form-control" size="30" maxlength="40"/>
-                </li>
-                <li>
-                    <label class="label">連結路徑：</label>
-                    <form:input path="hyperlink" id="hyperlink" cssClass="form-control" size="30" maxlength="100"/>
-                </li>
-                <li>
-                    <label class="label">排序：</label>
-                    <form:input path="sort_order" id="sort_order" cssClass="form-control" size="5" maxlength="10"
-                                value="0"/>
-                </li>
-                <li>
-                    <label class="label">功能編號：</label>
-                    <form:input path="sub_link" id="sub_link" cssClass="form-control" size="30" maxlength="20"/>
-                </li>
-                <li>
-                    <label class="label">啟用/停用：</label>
-                    <form:radiobutton path="disable" value="Y"/>停用
-                    <form:radiobutton path="disable" value=""/>啟用
-                </li>
-            </ol>
-            <form:hidden path="pid"/>
-            <form:hidden path="item_id"/>
-            <form:hidden path="action_type"/>
-		</form:form>
+                    <form:form id="eip00w050Form" modelAttribute="${caseKey}">
+                        <tags:form-row>
+                            <form:label cssClass="col-form-label star" path="item_name">顯示名稱：</form:label>
+                            <div class="col-12 col-md">
+                                <form:input path="item_name" cssClass="form-control" maxlength="40"/>
+                            </div>
+                        </tags:form-row>
+                        <tags:form-row>
+                            <form:label cssClass="col-form-label" path="item_name">連結路徑：</form:label>
+                            <div class="col-12 col-md">
+                                <form:input path="hyperlink" cssClass="form-control" maxlength="40"/>
+                            </div>
+                        </tags:form-row>
+                        <tags:form-row>
+                            <form:label cssClass="col-form-label" path="sort_order">排序：</form:label>
+                            <div class="col-12 col-md">
+                                <form:input path="sort_order" cssClass="form-control" maxlength="10" value="0"/>
+                            </div>
+                        </tags:form-row>
+                        <tags:form-row>
+                            <form:label cssClass="col-form-label star" path="disable">啟用/停用：</form:label>
+                            <div class="col-12 col-md form-top-std">
+                                <form:radiobutton path="disable" value="Y"/><span>停用</span>
+                                <form:radiobutton path="disable" value=""/><span>啟用</span>
+                            </div>
+                        </tags:form-row>
+                        <form:hidden path="pid"/>
+                        <form:hidden path="item_id"/>
+                        <form:hidden path="action_type"/>
+                    </form:form>
                 </div>
+                </tags:fieldset>
             </div>
             <div class="col-6 col-md-6">
+                <tags:fieldset legend="功能節點樹">
                 <div class="container-title">
                     <div class="text-right">
                         <tags:button id="open" cssClass="btn-sm">展開<i class="fas fa-expand"></i></tags:button>
@@ -75,12 +70,10 @@
 			</c:forEach>
                     </div>
                 </div>
+                </tags:fieldset>
             </div>
         </div>
-<code id="tmp"></code>
-
-    </tags:fieldset>
-</jsp:attribute>
+    </jsp:attribute>
     <jsp:attribute name="footers">
 <script type="text/javascript">
     let te;
@@ -116,6 +109,8 @@
 
     function ajaxItemData(item_id) {
         $('#action_type').val('edit');
+        $('#save').hide();
+        $('#update').show();
         $('#pid').val(item_id);
         let data = {};
         data['item_id'] = item_id;
@@ -139,37 +134,26 @@
         nullValue($('#item_id'), json.item_id);
         nullValue($('#item_name'), json.item_name);
         nullValue($('#hyperlink'), json.hyperlink);
-        nullValue($('#sub_link'), json.sub_link);
         nullValue($('#sort_order'), json.sort);
-        $.each($('input[name="disable"]'), function () {
-            if ($(this).val() === json.disable || ($(this).val() === '' && json.disable === 'null')) {
-                $(this).attr("checked", 'checked');
-            }
+        const disableValue = json.disable != null && json.disable !== 'null' ? json.disable : '';
+        $('input[name="disable"]').prop('checked', function () {
+            return $(this).val() === disableValue;
         });
     }
 
     function nullValue(obj, value) {
-        if (value != null && value !== 'null') {
-            obj.val(value);
-        } else {
-            obj.val('');
-        }
+        obj.val(value != null && value !== 'null' ? value : '');
     }
 
-
     function clean() {
-        $('form#eip00w050Form').each(function () {
-            this.reset();
-        });
+        $('form#eip00w050Form').trigger('reset');
     }
 
     $(function () {
         $("#delete").click(function () {
             let selNodes = $("#dynaTree").dynatree("getSelectedNodes");
-            let selKeys = $.map(selNodes, function (node) {
-                return node.data.key;
-            });
-            if (selKeys === '' || selKeys === 'undefined' || selKeys.length === 0) {
+            let selKeys = selNodes.map(node => node.data.key);
+            if (selKeys.length === 0) {
                 showAlert('請先挑選功能');
             } else {
                 showConfirm("刪除功能若包含子節點以及相關授權會一併刪除，確定刪除？", () => {
@@ -178,23 +162,18 @@
                 });
             }
         });
-        $('#save').click(function () {
+        $('#save,#update').click(function () {
             let selNodes = $("#dynaTree").dynatree("getSelectedNodes");
             let selKeys = $.map(selNodes, function (node) {
                 return node.data.key;
             });
-            if (selKeys === '' || selKeys === 'undefined' || selKeys.length === 0) {
+            if (!selKeys || selKeys.length === 0) {
                 showAlert('請先挑選功能');
                 return false;
-            } else {
-                let url;
-                if ($('#action_type').val() === 'edit') {
-                    url = '<c:url value="/Eip00w050_update.action"/>';
-                } else {
-                    url = '<c:url value="/Eip00w050_save.action"/>';
-                }
-                $('#eip00w050Form').attr('action', url).submit();
             }
+            let actionType = $('#action_type').val();
+            let url = actionType === 'edit' ? '<c:url value="/Eip00w050_update.action"/>' : '<c:url value="/Eip00w050_save.action"/>';
+            $('#eip00w050Form').attr('action', url).submit();
         });
 
         $('#btnReload').click(function () {
@@ -214,28 +193,33 @@
         });
 
         $('#create').click(function () {
-
             let selNodes = $("#dynaTree").dynatree("getSelectedNodes");
-            let selKeys = $.map(selNodes, function (node) {
-                return node.data.key;
-            });
-            if (selKeys === '' || selKeys === 'undefined' || selKeys.length === 0) {
+            let selKeys = selNodes.map(node => node.data.key);
+            if (selKeys.length === 0) {
                 showAlert('請先挑選功能');
             } else {
                 clean();
                 $('#pid').val(selKeys);
                 $('#action_type').val('create');
+                $('#save').show();
+                $('#update').hide();
             }
         });
-
-
+        
         function clean() {
             $('#eip00w050Form input:text:enabled:visible').val('');
             $('#sort_order').val('0');
         }
 
+        if ($('#action_type').val() === 'create') {
+            $('#save').show();
+            $('#update').hide();
+        } else {
+            $('#save').hide();
+            $('#update').show();
+        }
         initTree();
     });
 </script>
-</jsp:attribute>
+    </jsp:attribute>
 </tags:layout>

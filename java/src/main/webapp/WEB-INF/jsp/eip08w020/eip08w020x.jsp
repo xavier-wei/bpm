@@ -166,8 +166,14 @@
 	    					$(".book_cnt").eq(index).val(data.book_cnt);
 	    					$(".withhold_cnt").eq(index).val(data.withhold_cnt);
 	    					if(data.book_cnt==0){
-	    						$('.apply_cnt').eq(index).attr("disabled",true);
-	    						$('.unit').eq(index).attr("disabled",true);
+	    						$('.apply_cnt').eq(index).attr("readonly",true);
+	    						$('.unit').eq(index).attr("readonly",true);
+	    						$('.unit').eq(index).val('');
+	    						$('.apply_cnt').eq(index).val('');
+	    						$('.withhold_cnt').eq(index).val('');
+	    					} else {
+	    						$('.apply_cnt').eq(index).attr("readonly",false);
+	    						$('.unit').eq(index).attr("readonly",false);
 	    					}
 	    				},
 	    				error : function(e) {
@@ -210,20 +216,29 @@
    					   
    					   for (var a = 0; a < countyList.length; a++) {
    							$(".itemno").eq(index).append(countyList[a]);
+   							
+   							
    					   }
    					
    					   $(".itemno option").each(function() {
    					    if($(this).val() ==  itemno) {
    					     $(this).prop("selected",true);
    					    }
+
    					   })
+   					   
+   					   
+	   					if($(".book_cnt").eq(index).val()==0){
+	   						$(".apply_cnt").eq(index).attr("readonly",true);
+	   						$(".unit").eq(index).attr("readonly",true);
+	   					}
    					
     				},
     				error : function(e) {
     					showAlert("取得品項失敗");
     				}
     	    	});
+    		
 	        }
-
 </script></jsp:attribute>
 </tags:layout>

@@ -16,7 +16,9 @@ import tw.gov.pcc.common.util.StrUtil;
 import tw.gov.pcc.eip.apply.cases.Eip08w060Case;
 
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Repository
 public class RoitemDaoImpl extends BaseDao<Roitem> implements RoitemDao {
@@ -149,5 +151,21 @@ public class RoitemDaoImpl extends BaseDao<Roitem> implements RoitemDao {
                 .addValue("apply_date", caseData.getApplyDate())
                 .addValue("save", caseData.getSave());
         return getNamedParameterJdbcTemplate().query(sql.toString(),params, BeanPropertyRowMapper.newInstance(Eip08w060Case.class));
+    }
+
+    @Override
+    public String getEip_08w060NoSeq() {
+        StringBuilder sql = new StringBuilder();
+        sql.append(" SELECT NEXT VALUE FOR EIP_08W060NO ");
+        return getNamedParameterJdbcTemplate().queryForObject(sql.toString(), new HashMap<String, String>(),
+                String.class);
+    }
+
+
+    @Override
+    public void updateSequence() {
+        String sql = " ALTER SEQUENCE EIP_APPLYCARNO RESTART  WITH 1 ";
+        Map<String, Object> param = new HashMap<String, Object>();
+        getNamedParameterJdbcTemplate().update(sql, param);
     }
 }

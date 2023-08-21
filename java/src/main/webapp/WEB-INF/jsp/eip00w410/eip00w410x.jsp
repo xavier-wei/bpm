@@ -6,9 +6,6 @@
 <tags:layout>
 <jsp:attribute name="heads">
     <style>
-        .btn {
-            border-color: #0c0c0c;
-        }
     </style>
 </jsp:attribute>
 <jsp:attribute name="buttons">
@@ -35,11 +32,11 @@
             <form:label cssClass="col-form-label star" path="iscourse">是否為課程：</form:label>
             <label class="mb-0">
                 <form:radiobutton path="iscourse" value="Y" cssClass="mr-1"/>
-                <span class="font-weight-bold mr-2">是</span>
+                <span>是</span>
             </label>
             <label class="mb-0">
                 <form:radiobutton path="iscourse" value="N" cssClass="mr-1"/>
-                <span class="font-weight-bold mr-2">否</span>
+                <span>否</span>
             </label>
         </div>
     </tags:form-row>
@@ -48,15 +45,15 @@
             <form:label cssClass="col-form-label star" path="signform">簽到表格式：</form:label>
             <label class="mb-0">
                 <form:radiobutton path="signform" value="A" cssClass="mr-1"/>
-                <span class="font-weight-bold mr-2">活動</span>
+                <span>活動</span>
             </label>
             <label class="mb-0">
                 <form:radiobutton path="signform" value="C" cssClass="mr-1"/>
-                <span class="font-weight-bold mr-2">課程</span>
+                <span>課程</span>
             </label>
             <label class="mb-0">
                 <form:radiobutton path="signform" value="M" cssClass="mr-1"/>
-                <span class="font-weight-bold mr-2">會議</span>
+                <span>會議</span>
             </label>
         </div>
     </tags:form-row>

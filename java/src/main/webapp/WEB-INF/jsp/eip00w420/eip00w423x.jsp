@@ -139,10 +139,10 @@ $(function(){
 
     // 初始化
     $('.tdcheck label').each(function (){
-        let str = $(this).text();
-        let str1 = str.charAt(0) === 'P' ? '實體' : '數位';
-        let str2 = str.charAt(1) === 'M' ? '上午' : '下午';
-        let str3 = str.substring(2);
+        let str = $(this).text().split("-");
+        let str1 = str[1].charAt(0) === 'P' ? '實體' : '數位';
+        let str2 = str[1].charAt(1) === 'M' ? '上午' : '下午';
+        let str3 = str[1].substring(2);
         $(this).text(str3 + '時' + '(' + str1 + str2 + ')');
         $(this).attr('for',$(this).prev().prev().attr("id"));
     });

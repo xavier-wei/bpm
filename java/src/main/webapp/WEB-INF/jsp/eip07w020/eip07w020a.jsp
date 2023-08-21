@@ -17,7 +17,7 @@
 </jsp:attribute>
 
 	<jsp:attribute name="contents">
-    <tags:fieldset>
+    <tags:fieldset legend="請填寫預約內容">
 		<form:form id="eip07w020Form" name="eip07w020Form" modelAttribute="${caseKey}" method="POST">
 
 			<tags:form-row>

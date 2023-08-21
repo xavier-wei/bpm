@@ -31,10 +31,10 @@
         <c:forEach var="item" items="${fn:split(listOrder,',')}">
             <c:choose>
                 <c:when test="${item eq 'drag2'}">
-            <div class="box" draggable="true">
+            <div class="box" >
                 <section id="drag2" class="dragtag">
                     <nav class="nav pt-4 navbar-expand">
-                        <div id="nav-tab4" role="tablist" class="nav nav-tabs container-fluid">
+                        <div id="nav-tab4" role="tablist" class="nav nav-tabs container-fluid" draggable="true">
                             <button id="nav-inform-tab4" type="button"
                                     class="btn nav-link btn-secondary active w-100">
                                 個人儀表板
@@ -45,10 +45,10 @@
             </div>                        
                 </c:when>
                 <c:when test="${item eq 'drag3'}">
-            <div class="box" draggable="true">
+            <div class="box">
                 <section id="drag3" class="dragtag">
                     <nav class="nav pt-4 navbar-expand">
-                        <div id="nav-tab3" role="tablist" class="nav nav-tabs container-fluid">
+                        <div id="nav-tab3" role="tablist" class="nav nav-tabs container-fluid"  draggable="true">
                             <button id="nav-inform-tab3" data-toggle="tab" data-target="#nav-inform"
                                     role="tab"
                                     aria-controls="nav-inform" aria-selected="true" type="button"
@@ -105,7 +105,7 @@
                                             <div class="card test-table table-sm table-hover">
                                                 <div class="card-body m-0 p-0">
                                                     <div class="table-responsive">
-                                                        <table class="table" id="downloadListTable">
+                                                        <table class="table text-break" id="downloadListTable">
                                                             <thead data-orderable="true">
                                                             <tr>
                                                                 <th class="text-center">序號</th>
@@ -133,10 +133,10 @@
             </div>
                 </c:when>
                 <c:when test="${item eq 'drag4'}">
-            <div class="box" draggable="true">
+            <div class="box" >
                 <section id="drag4" class="dragtag">
                     <nav class="nav pt-4 navbar-expand">
-                        <div id="nav-tab2" role="tablist" class="nav nav-tabs container-fluid">
+                        <div id="nav-tab2" role="tablist" class="nav nav-tabs container-fluid" draggable="true">
                             <button id="nav-inform-tab2" type="button"
                                     class="btn nav-link btn-secondary active w-100">
                                 常用系統及網站
@@ -282,7 +282,7 @@
             };
             msgListTableConfig.columns = [
               {data: '', render: (d, t, r, m) => m.row + m.settings._iDisplayStart + 1},
-              {data: 'subject'},
+              {data: 'subject', className: 'text-break'},
               {data: 'msgtype'},
               {data: 'releasedt'},
               {data: 'contactunit'},
@@ -290,7 +290,7 @@
                 data: 'fseq', createdCell: (t, d) => {
                   $(t).data('fseq', d);
                 }, render: (d, t, r, m) => {
-                  return '<button type=\"button\" class=\"btn btn-outline-be btnDetailMsg \"> <span class=\"btn-txt\">明細<i class=\"fas fa-list-alt\"><\/i><\/span> <\/button>';
+                  return '<button type=\"button\" class=\"btn btn-outline-be btnDetailMsg text-nowrap \"> <span class=\"btn-txt\">明細<i class=\"fas fa-list-alt\"><\/i><\/span> <\/button>';
                 }, orderable: false
               }
             ];
@@ -300,9 +300,9 @@
             downloadListTableConfig.ajax.url = '<c:url value="/Common_getDownloaddata.action"/>';
             downloadListTableConfig.columns = [
               {data: '', render: (d, t, r, m) => m.row + m.settings._iDisplayStart + 1},
-              {data: 'subject'},
+              {data: 'subject', className: 'text-break'},
               {data: 'upddt'},
-              {data: 'contactunit', className: 'text-left'},
+              {data: 'contactunit', className: 'text-break text-left'},
               {
                 data: 'fseq', createdCell: (t, d) => {
                   $(t).data('fseq', d);

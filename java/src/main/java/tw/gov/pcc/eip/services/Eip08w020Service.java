@@ -8,7 +8,6 @@ import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.validation.BindingResult;
 
 import tw.gov.pcc.eip.apply.cases.Eip08w020Case;
 import tw.gov.pcc.eip.dao.ApplyitemDao;
@@ -92,32 +91,6 @@ public class Eip08w020Service{
 		return data;
 	}
 
-	/**
-	 * 驗證各項庫存是否足夠，若有不足，則跳通知
-	 * 
-	 */
-	public BindingResult validateCnt(Eip08w020Case caseData, BindingResult result) {
-		StringBuffer sb = new StringBuffer();
-		for (Eip08w020Case data : caseData.getAllData()) {
-			if (!StringUtils.isAnyEmpty(data.getItemkind(), data.getItemno(), data.getUnit())
-					&& data.getBook_cnt() != null && data.getBook_cnt() > 0) {
-				if (!itemcodeService.validItemTakeCnt(data.getItemkind(), data.getItemno(), data.getApply_cnt())) {
-					Itemcode code = new Itemcode();
-					code.setItemkind(data.getItemkind());
-					code.setItemno(data.getItemno());
-					Itemcode item = itemcodeDao.selectDataByPrimaryKey(code);
-					sb.append(item.getItemno() + "-" + item.getItemname() + "數量不足，");
-				}
-			}
-		}
-
-		if (StringUtils.isNotEmpty(sb.toString())) {
-			result.rejectValue("", "validation.eip08w020", new Object[] { "數量不足" },
-					StringUtils.removeEnd(sb.toString(), ","));
-		}
-
-		return null;
-	}
 
 	/**
 	 * 新增申請資料
@@ -130,7 +103,7 @@ public class Eip08w020Service{
 		String nowDatetime = DateUtility.getNowWestDateTime(true);
 		Integer index = 1;
 		String applyno = nowDate+StringUtils.leftPad(applyitemDao.getApplynoSeq(), 3, '0');
-
+		
 		for (Eip08w020Case data : caseData.getAllData()) {
 			if (!StringUtils.isAnyEmpty(data.getItemkind(), data.getItemno(), data.getUnit())
 					&& data.getBook_cnt() != null && data.getBook_cnt() > 0) {
@@ -174,19 +147,21 @@ public class Eip08w020Service{
 	 * @return 
 	 */
 	public void getApplyItem(Eip08w020Case caseData) throws Exception{
-
 		List<Applyitem>list = applyitemDao.selectByApplyUserAndApply_deptAndapplyDate(caseData.getApply_user(), caseData.getApply_dept(), 
 				StringUtils.isNotEmpty(caseData.getApply_date())? DateUtility.changeDateType(caseData.getApply_date()) : "");
-		list.stream().map(
-			e -> {
-			Eipcode code = new Eipcode();
-			code.setCodekind("APPLYSTATUS");
-			code.setCodeno(e.getProcess_status());
-			Eipcode process_status_nm = eipcodeDao.selectDataByPrimaryKey(code);
-			e.setProcess_status(e.getProcess_status()+"-" + process_status_nm.getCodename());
-			return e;
-			}).collect(Collectors.toList());
-		caseData.setApplyitemList(list);
+
+		if(CollectionUtils.isNotEmpty(list)){			
+			list.stream().map(
+					e -> {
+						Eipcode code = new Eipcode();
+						code.setCodekind("APPLYSTATUS");
+						code.setCodeno(e.getProcess_status());
+						Eipcode process_status_nm = eipcodeDao.selectDataByPrimaryKey(code);
+						e.setProcess_status(e.getProcess_status()+"-" + process_status_nm.getCodename());
+						return e;
+					}).collect(Collectors.toList());
+			caseData.setApplyitemList(list);
+		}
 	}
 
 	/**
@@ -236,4 +211,93 @@ public class Eip08w020Service{
 			applyitemDao.deleteByKey(item);
 		}
 	}
+	
+	public String validateAllData(Eip08w020Case caseData) throws Exception{
+		StringBuffer sb = new StringBuffer();
+		if(StringUtils.isEmpty(caseData.getApply_memo())) {
+			sb.append("「申請用途」必須輸入\r\n");
+		}
+		
+
+		for(int i=0; i<caseData.getAllData().size() ; i++) {
+			Eip08w020Case data = caseData.getAllData().get(i);
+			StringBuffer each = new StringBuffer();
+			
+			if(StringUtils.isNotEmpty(data.getItemkind()) && data.getBook_cnt()!=null && data.getBook_cnt()!=0){
+				
+				if(data.getItemno()==null) {
+					each.append("品名、");
+				}
+				
+				if(data.getApply_cnt()==null) {
+					each.append("數量、");
+				}
+				
+				if(StringUtils.isEmpty(data.getUnit())) {
+					each.append("單位");
+				}
+				
+				if(StringUtils.isNotBlank(each.toString())) {
+					sb.append("序號"+(i+1)+"："+ StringUtils.removeEnd(each.toString(),"、")+"未填寫\r\n");
+				}
+			}
+			
+			if(data.getApply_cnt()!=null && data.getBook_cnt()!=null && data.getApply_cnt()>data.getBook_cnt()) {
+				sb.append("序號"+(i+1)+"："+"申請數量不得大於庫存數量\r\n");
+			}
+			
+		}
+		if(StringUtils.isEmpty(sb.toString())) {
+			List<String>itemkindList = new ArrayList<>();
+			List<String>itemnoList = new ArrayList<>();
+			List<String>unitList = new ArrayList<>();
+			List<Integer>bookCntList = new ArrayList<>();
+			for(Eip08w020Case each : caseData.getAllData()) {
+				
+				if(StringUtils.isNotBlank(each.getItemkind())) {
+					itemkindList.add(each.getItemkind());
+				}
+				
+				if(StringUtils.isNotBlank(each.getItemno())) {
+					itemnoList.add(each.getItemno());
+				}
+				
+				if(StringUtils.isNotBlank(each.getUnit())) {
+					unitList.add(each.getUnit());
+				}
+				
+				if(each.getBook_cnt()!=null) {
+					bookCntList.add(each.getBook_cnt());
+				}
+			}
+			
+			if(CollectionUtils.isEmpty(itemkindList)|| CollectionUtils.isEmpty(bookCntList) || CollectionUtils.isEmpty(itemnoList)|| CollectionUtils.isEmpty(unitList) ) {
+				sb.append("請至少申請一項");
+			}
+		}
+
+		
+		return sb.toString();
+	}
+	
+	public String validateCnt(Eip08w020Case caseData) {
+		StringBuffer sb = new StringBuffer();
+		
+		for(Eip08w020Case data : caseData.getAllData()) {
+			if (!StringUtils.isAnyEmpty(data.getItemkind(), data.getItemno(), data.getUnit())
+					&& data.getBook_cnt() != null && data.getBook_cnt() > 0) {
+				if (!itemcodeService.validItemTakeCnt(data.getItemkind(), data.getItemno(), data.getApply_cnt())) {
+					Itemcode code = new Itemcode();
+					code.setItemkind(data.getItemkind());
+					code.setItemno(data.getItemno());
+					Itemcode item = itemcodeDao.selectDataByPrimaryKey(code);
+					sb.append(item.getItemno() + "-" + item.getItemname() + "數量不足\r\n");
+				}
+			}
+		}
+
+		return sb.toString();
+	}
+
+	
 }

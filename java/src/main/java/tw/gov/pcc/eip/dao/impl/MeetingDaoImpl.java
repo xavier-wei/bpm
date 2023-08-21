@@ -152,6 +152,7 @@ public class MeetingDaoImpl extends BaseDao<Meeting> implements MeetingDao{
         sql.append(ALL_COLUMNS_SQL);
         sql.append("            , M.ITEMNAME  ");
         sql.append("            , (SELECT count(1) FROM MEETINGITEM MI WHERE T.MEETINGID = MI.MEETINGID AND MI.ITEMID LIKE 'A%') as orderNum");
+        sql.append("            , substring(T.ROOMID, 2, len(T.ROOMID)-3) as orders");
         sql.append("      FROM MEETING T ");
         sql.append(" LEFT JOIN MEETINGCODE M on T.ROOMID = M.ITEMID ");
         sql.append("     WHERE ");
@@ -199,11 +200,11 @@ public class MeetingDaoImpl extends BaseDao<Meeting> implements MeetingDao{
             sql.append("   AND T.ROOMID = :roomId ");
             params.put("roomId", caseData.getRoomId());
         }
-        if(StringUtils.isNotBlank(caseData.getOrganizerId())){
-            sql.append("   AND T.ORGANIZERID LIKE '%'+ :organizerId +'%'");
-            params.put("organizerId", caseData.getOrganizerId());
+        if(caseData.getUserIdList() != null && caseData.getUserIdList().size() > 0){
+            sql.append("   AND T.ORGANIZERID in (:userIdList)");
+            params.put("userIdList", caseData.getUserIdList());
         }
-        sql.append("  ORDER BY T.MEETINGDT, T.MEETINGBEGIN");
+        sql.append("  ORDER BY orders desc, T.MEETINGDT, T.MEETINGBEGIN");
         return getNamedParameterJdbcTemplate().query(sql.toString(), params, BeanPropertyRowMapper.newInstance(Eip06w010Case.class));
     }
 

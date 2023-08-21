@@ -124,8 +124,11 @@
     </tags:form-row>
     <tags:form-row>
         <div class="col-md-6">
-            <form:label cssClass="col-form-label star" path="country">上課縣市：</form:label>
-            <form:input path="country" cssClass="form-control d-inline-block num_only" size="10" maxlength="2"/>
+            <form:label cssClass="col-form-label star" path="orccode">上課縣市：</form:label>
+            <form:select path="country" cssClass="form-control d-inline-block" multiple="false">
+                <form:option value="">請選擇</form:option>
+                <form:options items="${caseData.countryCombobox}" />
+            </form:select>
         </div>
     </tags:form-row>
     <tags:form-row>
@@ -198,11 +201,11 @@
             <form:label cssClass="col-form-label" path="ismeals">提供餐點：</form:label>
             <label class="mb-0">
                 <form:radiobutton path="ismeals" value="Y" cssClass="mr-1"/>
-                <span class="font-weight-bold mr-2">是</span>
+                <span>是</span>
             </label>
             <label class="mb-0">
                 <form:radiobutton path="ismeals" value="N" cssClass="mr-1"/>
-                <span class="font-weight-bold mr-2">否</span>
+                <span>否</span>
             </label>
         </div>
     </tags:form-row>
@@ -418,18 +421,33 @@ $(function(){
         $('#eip00w420Form').attr('action', '<c:url value="/Eip00w420_enter.action" />').submit();
     })
 
-    //組合字串供畫面顯示
+    /**
+     * 刷新index
+     */
+    function refreshIndex () {
+        let newChvArray = new Array();
+        $.each(chvArray,function (i,e){
+            let oriStr = e.split('-');
+            e = (i+1) + '-' + oriStr[1];
+            newChvArray.push(e);
+        })
+        chvArray = newChvArray;
+    }
+
+    /**
+     * 組合字串供畫面顯示
+     */
     function composite () {
         $('#certihoursText').empty();
         chsArray = new Array();
         $.each(chvArray,function (i,e){
-            let str1 = e.charAt(0) === 'P' ? '實體' : '數位';
-            let str2 = e.charAt(1) === 'M' ? '上午' : '下午';
-            let str3 = e.substring(2);
+            let oriStr = e.split('-');
+            let str1 = oriStr[1].charAt(0) === 'P' ? '實體' : '數位';
+            let str2 = oriStr[1].charAt(1) === 'M' ? '上午' : '下午';
+            let str3 = oriStr[1].substring(2);
             chsArray.push('<lable>' + str3 + '時' + '(' + str1 + str2 + ')'
                 + '<span style="display: none;">'+ e +'</span>'
                 + '<span style="color: red;cursor: pointer;">X</span></lable>');
-
         })
         // showAlert(chsArray.join('、'));
         $('#certihoursText').append(chsArray.join('、'));
@@ -439,10 +457,14 @@ $(function(){
     $('#btnAdd').click(function () {
         if (!$('#certihoursType3').val()) {
             showAlert("認證時數不得為空", 'certihoursType3');
+        } else if (['0','00'].includes($('#certihoursType3').val())) {
+            showAlert("認證時數不得為0", 'certihoursType3');
         } else {
-            let chvalue = $('#certihoursType1').val() + $('#certihoursType2').val() + $('#certihoursType3').val();
+            let index = $('#certihoursText lable').length + 1;
+            let chvalue = index + '-' + $('#certihoursType1').val() + $('#certihoursType2').val() + $('#certihoursType3').val();
             chvArray.push(chvalue);
             // $('#certihoursText').append(chstr);
+            refreshIndex();
             composite();
         }
     })
@@ -453,8 +475,8 @@ $(function(){
         if (index !== -1) {
             chvArray.splice(index, 1);
         }
+        refreshIndex();
         composite();
-        // alert(chvArray.join('、'));
     });
 
     //全選

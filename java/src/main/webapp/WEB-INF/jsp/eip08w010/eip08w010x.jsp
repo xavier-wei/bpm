@@ -23,16 +23,16 @@
 <jsp:attribute name="contents">
     <tags:fieldset  legend="查詢結果">
 		<form:form id="eip08w010Form" name="eip08w010Form" modelAttribute="${caseKey}" method="POST">
+			<tags:form-row>
+                 <form:label path="addMainItemno" cssClass="col-form-label">品名大類代號：</form:label>
+                    <div class="col-6 col-md form-inline">
+                        <form:input path="addMainItemno" cssClass="form-control eng_num_only upCase" size="1" maxlength="1"/>
+                    </div>
+            </tags:form-row>
             <tags:form-row>
                  <form:label path="addMainItemname" cssClass="col-form-label">品名大類：</form:label>
                     <div class="col-6 col-md form-inline">
                         <form:input path="addMainItemname" cssClass="form-control" size="19" maxlength="18"/>
-                    </div>
-            </tags:form-row>
-            <tags:form-row>
-                 <form:label path="addMainItemno" cssClass="col-form-label">品名大類代號：</form:label>
-                    <div class="col-6 col-md form-inline">
-                        <form:input path="addMainItemno" cssClass="form-control eng_num_only upCase" size="1" maxlength="1"/>
                     </div>
             </tags:form-row>
             <tags:form-row>

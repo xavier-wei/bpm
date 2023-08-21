@@ -9,7 +9,9 @@ import tw.gov.pcc.eip.apply.cases.Eip08w060Case;
 import tw.gov.pcc.eip.domain.CarBooking;
 import tw.gov.pcc.eip.orderCar.cases.Eip07w010Case;
 import tw.gov.pcc.eip.orderCar.cases.Eip07w020Case;
+import tw.gov.pcc.eip.orderCar.controllers.Eip07w020Controller;
 import tw.gov.pcc.eip.util.DateUtility;
+import tw.gov.pcc.eip.util.ExceptionUtility;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -18,7 +20,7 @@ import java.util.Timer;
 
 @Component
 public class Eip07w020Validator implements Validator {
-
+	private static final org.slf4j.Logger log = org.slf4j.LoggerFactory.getLogger(Eip07w020Controller.class);
 	@Override
 	public boolean supports(Class<?> clazz) {
 		return Eip08w060Case.class.isAssignableFrom(clazz);
@@ -35,13 +37,7 @@ public class Eip07w020Validator implements Validator {
 
 	public void eip07w020QValidate(Eip07w020Case validate, Errors errors) {
 
-		String A=DateUtility.calDay(DateUtil.getNowChineseDate(), -1);
-		if (StringUtils.isBlank(validate.getApplyName())) {
-			errors.reject(null, "尚未輸入申請人");
-		}
-		if (StringUtils.isBlank(validate.getApplyUnit())) {
-			errors.reject(null, "尚未輸入申請單位");
-		}
+
 		if ("A".equals(validate.getWorkTy())) {
 			if (StringUtils.isBlank(validate.getApplyDate())) {
 				errors.reject(null, "尚未輸入申請日期");
@@ -53,10 +49,16 @@ public class Eip07w020Validator implements Validator {
 				errors.reject(null, "申請日期需大於等於系統日期");
 			}
 		}
+
 		if ("Q".equals(validate.getWorkTy())){
 			if (StringUtils.isNotBlank(validate.getApplyDateEnd())){
 				if (StringUtils.isBlank(validate.getApplyDateStar())){
 					errors.reject(null, "尚未輸入申請日期(起)");
+				}
+			}
+			if (StringUtils.isNotBlank(validate.getApplyDateStar())&&StringUtils.isNotBlank(validate.getApplyDateEnd())){
+				if(DateUtility.asDate(validate.getApplyDateStar(),false).after(DateUtility.asDate(validate.getApplyDateEnd(),false))){
+					errors.reject(null, "申請日期(迄)需大於申請日期(起)");
 				}
 			}
 
@@ -65,6 +67,13 @@ public class Eip07w020Validator implements Validator {
 					errors.reject(null, "尚未輸入用車日期(起)");
 				}
 			}
+
+			if (StringUtils.isNotBlank(validate.getUseDateStar())&&StringUtils.isNotBlank(validate.getUseDateEnd())) {
+				if (DateUtility.asDate(validate.getUseDateStar(), false).after(DateUtility.asDate(validate.getUseDateEnd(), false))) {
+					errors.reject(null, "用車日期(迄)需大於用車日期(起)");
+				}
+			}
+
 		}
 
 
@@ -72,9 +81,8 @@ public class Eip07w020Validator implements Validator {
 
 	}
 
-	public void eip07w020AValidate(Eip07w020Case validate, Errors errors) throws ParseException {
-		Date timeSart = format.parse(validate.getStarH()+validate.getStarM());
-		Date timeEnd = format.parse(validate.getEndH()+validate.getEndM());
+	public void eip07w020AValidate(Eip07w020Case validate, Errors errors) {
+
 		if (StringUtils.isBlank(validate.getUseCarMemo())) {
 			errors.reject(null, "用車事由必需輸入");
 		}
@@ -92,32 +100,32 @@ public class Eip07w020Validator implements Validator {
 		) {
 			errors.reject(null, "用車時間必需輸入");
 		}
+		try {
+
+			Date timeSart = format.parse(validate.getStarH()+validate.getStarM());
+			Date timeEnd = format.parse(validate.getEndH()+validate.getEndM());
+
 		if (timeSart.compareTo(timeEnd)>0){
 			errors.reject(null, "用車時間起始時間不可小於結束時間");
 		}
 		if (DateUtility.asDate(DateUtility.calDay(DateUtil.getNowChineseDate(), 0),false).after(DateUtility.asDate(validate.getUseDate(),false))){
 			errors.reject(null, "用車日期需大於等於系統日期");
 		}
+		}catch (Exception E){
 
+		}
 
 	}
 
-	public void eip07w020DValidate(Eip07w020Case date, Errors errors) throws ParseException{
-//		Date timeSart =null;
-//		Date timeEnd =null;
-//		if (date.getChangeMkList().isEmpty()){
-//			 timeSart = format.parse(date.getStarH()+date.getStarM());
-//			 timeEnd = format.parse(date.getEndH()+date.getEndM());
-//		}else {
-		Date timeSart = format.parse(date.getChangeMkList().get(0).getStarH()+date.getChangeMkList().get(0).getStarM());
-		Date timeEnd = format.parse(date.getChangeMkList().get(0).getEndH()+date.getChangeMkList().get(0).getEndM());
-//		}
+	public void eip07w020DValidate(Eip07w020Case date, Errors errors) {
+	try {
+		Date timeSart = format.parse(date.getChangeMkList().get(0).getStarH() + date.getChangeMkList().get(0).getStarM());
+		Date timeEnd = format.parse(date.getChangeMkList().get(0).getEndH() + date.getChangeMkList().get(0).getEndM());
+
 
 		CarBooking oldData=date.getDetailsList().get(0);
 		CarBooking 	rmData=date.getChangeMkList().get(0);
 		updateValidate( oldData, errors);
-
-
 		//判斷異動申請相關資料
 //		if ("true".equals(date.getCheckMk())){
 			if (StringUtils.isBlank(rmData.getApply_memo())) {
@@ -137,10 +145,13 @@ public class Eip07w020Validator implements Validator {
 			if (timeSart.compareTo(timeEnd)>0){
 				errors.reject(null, "用車時間起始時間不可小於結束時間");
 			}
-
+	}catch (Exception e){
+		log.error("驗證失敗，原因:{}", ExceptionUtility.getStackTrace(e));
+	}
 	}
 
-	public void updateValidate(CarBooking data, Errors errors) throws ParseException {
+	public void updateValidate(CarBooking data, Errors errors){
+		try{
 		Date timeSart = format.parse(data.getStarH()+data.getStarM());
 		Date timeEnd = format.parse(data.getEndH()+data.getEndM());
 		if (StringUtils.isBlank(data.getApply_memo())) {
@@ -162,6 +173,9 @@ public class Eip07w020Validator implements Validator {
 		}
 		if (timeSart.compareTo(timeEnd)>0){
 			errors.reject(null, "用車時間起始時間不可小於結束時間");
+		}
+		}catch (Exception e){
+			log.error("驗證失敗，原因:{}", ExceptionUtility.getStackTrace(e));
 		}
 		}
 	}

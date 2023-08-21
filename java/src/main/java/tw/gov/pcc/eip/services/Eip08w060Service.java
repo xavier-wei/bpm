@@ -43,15 +43,7 @@ public class Eip08w060Service {
 	 * @param caseData
 	 */
 	public void add(Eip08w060Case caseData) throws Exception{
-//		String sysDateTime = DateUtil.getNowWestDateTime(true);
-//		String sysDate = sysDateTime.substring(0, 8);
-		//計算流水號
-		List<Roitem> count =roitemDao.count(caseData.getApply_date());
-		int number = 1;
-		if (!count.isEmpty()){
-			number=Integer.valueOf(count.get(0).getItemid().substring(10));
-			number=number+1;
-		}
+
 
 		int itemNO =0;
 		for (Eip08w060Case eip08W060Case :caseData.getEip08w060CaseList()) {
@@ -59,7 +51,7 @@ public class Eip08w060Service {
 				break;
 			}
 			Roitem roitem= new Roitem();
-			roitem.setItemid("RO"+caseData.getApply_date()+String.format("%3s", number).replace(' ', '0'));
+			roitem.setItemid("RO"+caseData.getApply_date()+String.format("%3s", roitemDao.getEip_08w060NoSeq()).replace(' ', '0'));
 			roitem.setItemno(String.valueOf(++itemNO));
 			roitem.setItem(eip08W060Case.getItem());
 			roitem.setDesc_memo(eip08W060Case.getDesc_memo());

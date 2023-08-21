@@ -3,10 +3,7 @@ package tw.gov.pcc.eip.apply.cases;
 import java.io.Serializable;
 import java.util.List;
 
-import javax.validation.constraints.AssertTrue;
 import javax.validation.groups.Default;
-
-import org.apache.commons.lang3.StringUtils;
 
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -24,21 +21,22 @@ import tw.gov.pcc.eip.framework.validation.RequiredString;
 @NoArgsConstructor
 public class Eip08w020Case implements Serializable {
 
-	public interface Insert extends Default {}
 	public interface Query extends Default {}
-
+	public interface Apply extends Default {}
+	public interface Insert extends Default {}
 	private static final long serialVersionUID = 1L;
 
 	/**
 	 * 申請人
 	 */
+	@RequiredString(label = "申請人" , groups = { Query.class })
 	private String apply_user;
 
 	/**
 	 * 申請日期
 	 */
-	@RequiredString(label = "申請日期" , groups = { Query.class })
-	@ChineseDate(label = "申請日期" , groups = { Query.class })
+	@RequiredString(label = "申請日期" , groups = { Apply.class })
+	@ChineseDate(label = "申請日期", groups = {Apply.class})
 	private String apply_date;
 
 	/**
@@ -49,7 +47,6 @@ public class Eip08w020Case implements Serializable {
 	/**
 	 * 申請用途
 	 */
-	@RequiredString(label = "申請用途", message = "「申請用途」必須輸入", groups = { Insert.class })
 	private String apply_memo;
 
 	/**
@@ -107,31 +104,12 @@ public class Eip08w020Case implements Serializable {
 	 */
 	private List<Eip08w020Case> allData;
 	
-	@AssertTrue(message = "至少申請一個物品", groups = {Insert.class})
-	private boolean isAllData2() {
-		for(Eip08w020Case data : this.allData) {
-			if(StringUtils.isNotEmpty(data.getItemkind()) && StringUtils.isNotEmpty(data.getItemno())
-					&& data.getApply_cnt()!=null && StringUtils.isNotEmpty(data.getUnit())) {
-				return true;
-			}
-		}
-		return false;
-	}
-	
+
 	/**
 	 * 
 	 */
 	private Integer num;
 
-	@AssertTrue(message = "申請數量不得大於庫存數量", groups = {Insert.class})
-	private boolean isAllData() {
-		for(Eip08w020Case data : this.allData) {
-			if(data.getApply_cnt()!=null && data.getBook_cnt()!=null && data.getApply_cnt()>data.getBook_cnt()) {
-				return false;
-			}
-		}
-		return true;
-	}
 	
 	/**
 	 * 查詢 List
@@ -151,5 +129,6 @@ public class Eip08w020Case implements Serializable {
 	private String oriApply_user;//用來保留畫面上原始userid
 	private String oriApply_dept;//用來保留畫面上原始dept
 	private String processStatus;
-
+	private String SelectType;
+	
 }

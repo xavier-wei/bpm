@@ -13,8 +13,40 @@
 </jsp:attribute>
 
 	<jsp:attribute name="contents">
-    <tags:fieldset>
 		<form:form id="eip07w010Form" name="eip07w010Form" modelAttribute="${caseKey}" method="POST">
+    <fieldset>
+      	<legend>查詢條件</legend>
+			 <c:choose>
+			 <c:when test="${caseData.processTy eq 'D' }">
+				<tags:form-row>
+				<div   class="col-md-2 d-flex" >
+					<form:label cssClass="col-form-label " path="name">選項：駕駛人資料</form:label>
+				</div>
+				<div   class="col-md-2 d-flex" >
+					<form:label cssClass="col-form-label " path="name">駕駛人姓名：</form:label>
+					<label class="col-form-label text-left col-3" ><c:out value="${caseData.name}"/></label>
+				</div>
+				<div   class="col-md-2 d-flex" >
+					<form:label cssClass="col-form-label " path="stillWork">在職註記：</form:label>
+					<label class="col-form-label text-left col-3" ><c:out value='${caseData.stillWork}'/>-<c:out value="${caseData.stillWorkNm}"/></label>
+				</div>
+		</tags:form-row>
+			</c:when>
+			 <c:otherwise>
+				<tags:form-row>
+				<div   class="col-md-2 d-flex" >
+					<form:label cssClass="col-form-label " path="name">選項：車籍資料</form:label>
+				</div>
+				<div   class="col-md-4 d-flex" >
+					<form:label cssClass="col-form-label " path="carno1">車牌號碼：</form:label>
+				</div>
+				</tags:form-row>
+			</c:otherwise>
+		</c:choose>
+
+	</fieldset>
+		<fieldset id="resultBox">
+		<legend>查詢結果</legend>
 		<div class="table-responsive" id="div1">
 			<table class="table" id="driver">
 				<thead data-orderable="true">
@@ -46,7 +78,7 @@
 									<td id="stillWork">
 										<c:out value='${item.stillWork}'/>-<c:out value='${item.stillWorkNm}'/>
 									</td>
-									<td id="carno1">
+									<td >
 										<c:out value='${item.carno1}'/>-
 										<c:out value='${item.carno2}'/>
 									</td>
@@ -79,7 +111,7 @@
 									<td class="text-center">
 										<c:out value='${status.count}'/>
 									</td>
-									<td id="carno">
+									<td >
 										<c:out value='${item.carno1}'/>-
 										<c:out value='${item.carno2}'/>
 									</td>
@@ -107,13 +139,13 @@
 				</tbody>
 			</table>
 
-		<form:hidden id="carno1" path="carno1" />
-		<form:hidden id="carno2" path="carno2" />
+		<form:hidden id="carno1" path="carno1" name="carno1" />
+		<form:hidden id="carno2" path="carno2" name="carno2"/>
 		<form:hidden id="driveridDetail" path="driveridDetail" />
 		<form:hidden id="stillWork" path="stillWork" />
 		<form:hidden id="processTy" path="processTy" />
-        </form:form>
-    </tags:fieldset>
+		</form:form>
+		</fieldset>
 </jsp:attribute>
 <jsp:attribute name="footers">
 <script>
