@@ -48,7 +48,7 @@ public class TableauService {
     private TableauDashboardInfoDao tableauDashboardInfoDao;
 
 
-    public List<TableauDataCase> findTableauData(String userId) throws IOException {
+    public List<TableauDataCase> findTableauDataByUser(String userId) throws IOException {
         List<TableauUserInfo> subscribedData = tableauUserInfoDao.selectByUserId(userId);
         List<TableauDataCase> resultList = new ArrayList<>();
         List<TableauDashboardInfo> dashboardList;
@@ -86,22 +86,36 @@ public class TableauService {
         if ("dev".equals(env)) {
             log.info("環境為==dev==");
             tableauFolderPathPrefix = "D:/";
+        } else {
+            log.info("環境為==prod==");
+            tableauFolderPathPrefix = "/mnt/stsdat/eip/";
         }
-//        else if ("prod".equals(env)) {
-//            log.info("環境為==prod==");
-//            tableauFolderPathPrefix = "/mnt/stsdat/eip/";
-//        }
         log.info("tableauFolderPathPrefix:{}", tableauFolderPathPrefix);
         for (TableauDashboardInfo dashboard : dashboardList) {
             TableauDataCase tableauDataCase = new TableauDataCase();
             tableauDataCase.setDashboardFigId(dashboard.getDashboard_fig_id());
             tableauDataCase.setImageUrl(dashboard.getDashboard_fig_folder() + "/" + dashboard.getDashboard_fig_file_nm());
             String path = dashboard.getDashboard_fig_folder().replaceAll("/", "\\" + File.separator) + File.separator + dashboard.getDashboard_fig_file_nm();
-            if ("dev".equals(env)) {
-                tableauDataCase.setImageBase64String(getImageBase64String(tableauFolderPathPrefix.replaceAll("/", "\\" + File.separator) + path.replace("\\mnt\\stsdat\\eip\\","")));
-            }else{
-                tableauDataCase.setImageBase64String(getImageBase64String(path));
-            }
+//            if ("dev".equals(env)) {
+//                tableauDataCase.setImageBase64String(getImageBase64String(tableauFolderPathPrefix.replaceAll("/", "\\" + File.separator) + path.replace("\\mnt\\stsdat\\eip\\","")));
+//            }else{
+//                tableauDataCase.setImageBase64String(getImageBase64String(path));
+//            }
+            tableauDataCase.setImageBase64String(getImageBase64String(tableauFolderPathPrefix.replaceAll("/", "\\" + File.separator) + path));
+            tableauDataCase.setTableauUrl(dashboard.getDashboard_url());
+            resultList.add(tableauDataCase);
+        }
+        return resultList;
+    }
+
+
+    public List<TableauDataCase> findTableauData() throws IOException {
+        List<TableauDataCase> resultList = new ArrayList<>();
+        List<TableauDashboardInfo> dashboardList = tableauDashboardInfoDao.selectAll();
+        log.info("使用者應顯示的儀表板為:{}", dashboardList.toString());
+        for (TableauDashboardInfo dashboard : dashboardList) {
+            TableauDataCase tableauDataCase = new TableauDataCase();
+            tableauDataCase.setDashboardFigId(dashboard.getDashboard_fig_id());
             tableauDataCase.setTableauUrl(dashboard.getDashboard_url());
             resultList.add(tableauDataCase);
         }
@@ -115,7 +129,7 @@ public class TableauService {
         BufferedReader in = null;
         try {
             // TODO: 2023/8/2  wgserver要改成定義在properties檔?
-            String wgserver = "http://223.200.84.115/";
+            String wgserver = "http://223.200.84.115";
             StringBuilder reqUrl = new StringBuilder();
             reqUrl.append(URLEncoder.encode("username", "UTF-8"));
             reqUrl.append("=");

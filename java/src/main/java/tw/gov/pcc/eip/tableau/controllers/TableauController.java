@@ -1,10 +1,10 @@
 package tw.gov.pcc.eip.tableau.controllers;
 
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
-import tw.gov.pcc.eip.adm.cases.Eip00w070Case;
+import org.springframework.web.servlet.ModelAndView;
 import tw.gov.pcc.eip.framework.domain.UserBean;
 import tw.gov.pcc.eip.framework.spring.controllers.BaseController;
 import tw.gov.pcc.eip.tableau.cases.TableauDataCase;
@@ -12,12 +12,10 @@ import tw.gov.pcc.eip.tableau.service.TableauService;
 import tw.gov.pcc.eip.util.ExceptionUtility;
 import tw.gov.pcc.eip.util.ObjectUtility;
 
-import javax.servlet.http.HttpServletResponse;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 /**
  * index頁面，tableau儀錶板顯示
@@ -27,6 +25,7 @@ import java.util.stream.Collectors;
 @Controller
 public class TableauController extends BaseController {
     private static final org.slf4j.Logger log = org.slf4j.LoggerFactory.getLogger(TableauController.class);
+    private static final String QUERY_PAGE = "/tableau/tableauPage";
     private final UserBean userData;
     private final TableauService tableauService;
 
@@ -38,12 +37,12 @@ public class TableauController extends BaseController {
     /**
      * 取得首頁應顯示的各儀表板資訊
      */
-    @RequestMapping("/get-tableau-data")
+    @RequestMapping("/get-tableau-data-by-user")
     @ResponseBody
     public List<TableauDataCase> getUserdata() {
         List<TableauDataCase> resultList = new ArrayList<>();
         try {
-            resultList = tableauService.findTableauData(userData.getUserId());
+            resultList = tableauService.findTableauDataByUser(userData.getUserId());
         } catch (Exception e) {
             log.error("tableau儀錶板查詢失敗 - " + ExceptionUtility.getStackTrace(e));
             setSystemMessage(getQueryFailMessage());
@@ -68,5 +67,36 @@ public class TableauController extends BaseController {
         }
         return ObjectUtility.normalizeObject(map);
     }
+
+
+    /**
+     * 取得首頁應顯示的各儀表板資訊
+     */
+    @RequestMapping("/get-tableau-data")
+    @ResponseBody
+    public List<TableauDataCase> getAllTableauData() {
+        List<TableauDataCase> resultList = new ArrayList<>();
+        try {
+            resultList = tableauService.findTableauData();
+        } catch (Exception e) {
+            log.error("tableau儀錶板查詢失敗 - " + ExceptionUtility.getStackTrace(e));
+            setSystemMessage(getQueryFailMessage());
+        }
+        return ObjectUtility.normalizeObject(resultList);
+
+    }
+
+
+    /**
+     * 取得點選menu轉導的頁面，用來window.open相對應的tableau url
+     */
+    @RequestMapping("/tableau.action")
+    public ModelAndView showTableauPage(
+            @RequestParam(name = "tableauId") String tableauId
+    ) {
+        log.info("===========/tableau.action with tableauId");
+        return new ModelAndView(QUERY_PAGE);
+    }
+
 
 }
