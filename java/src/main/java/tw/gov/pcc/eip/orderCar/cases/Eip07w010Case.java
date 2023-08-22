@@ -39,6 +39,23 @@ public class Eip07w010Case implements Serializable {
 
 	private List<CarBase> carnoList;//里程紀錄
 
+	private GasRec gasRec;//里程紀錄
+
+	/**
+	 * 車輛總類下拉選單
+	 */
+	private List<Eipcode> carstatusList;
+
+	/**
+	 * 時
+	 */
+	private List<String> hourList;
+
+	/**
+	 * 分
+	 */
+	private List<String> minuteList;
+
 	/**
 	 * 處理種類 D:駕駛人資料 C:車籍資料
 	 */
@@ -323,9 +340,26 @@ public class Eip07w010Case implements Serializable {
 	 */
 	private String gasUsed;
 
+	/**
+	 *標籤
+	 */
+	private String lable;
 
 
+	/**
+	 *加油時間:時
+	 */
+	private String gasH;
 
+	/**
+	 * 加油時間:分
+	 */
+	private String gasM;
+
+	/**
+	 * O:oil之tap
+	 */
+	private String tapTy;
 
 	/**
 	 *點選明細查詢之driverid

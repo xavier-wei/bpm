@@ -49,7 +49,6 @@
                     <form:select id="stillWork" path="eip07w010QueryDataList[0].stillWork" cssClass="form-control">
                     	<form:option value="Y">是</form:option>
                     	<form:option value="N">否</form:option>
-						<form:option value="A">全部</form:option>
                     </form:select>
 				</div>
             </tags:form-row>
@@ -151,6 +150,7 @@
 					$("label[name='name']").addClass('star');
 				}
 			}
+
 
             function controlTitle(){
                 var processTy=$("input[id=processTy]:checked").val();

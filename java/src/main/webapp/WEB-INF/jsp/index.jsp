@@ -296,10 +296,10 @@
             };
             msgListTableConfig.columns = [
               {data: '', render: (d, t, r, m) => m.row + m.settings._iDisplayStart + 1},
-              {data: 'subject', className: 'text-break'},
-              {data: 'msgtype'},
-              {data: 'releasedt'},
-              {data: 'contactunit'},
+              {data: 'subject', className: 'text-left text-break'},
+              {data: 'msgtype', className: 'text-left'},
+              {data: 'releasedt', className: 'text-left'},
+              {data: 'contactunit', className: 'text-left'},
               {
                 data: 'fseq', createdCell: (t, d) => {
                   $(t).data('fseq', d);
@@ -314,8 +314,8 @@
             downloadListTableConfig.ajax.url = '<c:url value="/Common_getDownloaddata.action"/>';
             downloadListTableConfig.columns = [
               {data: '', render: (d, t, r, m) => m.row + m.settings._iDisplayStart + 1},
-              {data: 'subject', className: 'text-break'},
-              {data: 'upddt'},
+              {data: 'subject', className: 'text-left text-break'},
+              {data: 'upddt', className: 'text-left'},
               {data: 'contactunit', className: 'text-break text-left'},
               {
                 data: 'fseq', createdCell: (t, d) => {

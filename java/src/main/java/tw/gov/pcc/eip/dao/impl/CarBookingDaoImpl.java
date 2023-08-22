@@ -94,11 +94,13 @@ public class CarBookingDaoImpl extends BaseDao<CarBooking> implements CarBooking
 		sql.append(" from CAR_BOOKING ");
 		sql.append(" Where apply_user=:applyName ");
 		sql.append("   And apply_dept =dbo.ufn_nvl(:applyUnit , apply_dept) ");
-		if (StringUtils.isNotBlank(caseData.getApplyDateStar())||(StringUtils.isBlank(caseData.getApplyDateStar())&&StringUtils.isBlank(caseData.getUseDateStar()))){
+		if (StringUtils.isNotBlank(caseData.getApplyDateStar()) || (StringUtils.isBlank(caseData.getApplyDateStar())
+				&& StringUtils.isBlank(caseData.getUseDateStar()))) {
 			sql.append("   And apply_date >=dbo.ufn_nvl(:applyDateStar, apply_date) ");
 			sql.append("   And apply_date <=dbo.ufn_nvl(:applyDateEnd , apply_date) ");
 		}
-		if (StringUtils.isNotBlank(caseData.getUseDateStar())||(StringUtils.isBlank(caseData.getApplyDateStar())&&StringUtils.isBlank(caseData.getUseDateStar()))){
+		if (StringUtils.isNotBlank(caseData.getUseDateStar()) || (StringUtils.isBlank(caseData.getApplyDateStar())
+				&& StringUtils.isBlank(caseData.getUseDateStar()))) {
 			sql.append("   And using_date >= dbo.ufn_nvl(:useDateStar , using_date) ");
 			sql.append("   And using_date <= dbo.ufn_nvl(:useDateEnd , using_date) ");
 		}
@@ -113,7 +115,8 @@ public class CarBookingDaoImpl extends BaseDao<CarBooking> implements CarBooking
 	}
 
 	@Override
-	public List<CarBooking> selectByApplydate(String applydateStart, String applydateEnd, String type, String apply_dept) {
+	public List<CarBooking> selectByApplydate(String applydateStart, String applydateEnd, String type,
+			String apply_dept) {
 		StringBuilder sql = new StringBuilder();
 
 		sql.append(" Select * from CAR_BOOKING ");
@@ -126,20 +129,20 @@ public class CarBookingDaoImpl extends BaseDao<CarBooking> implements CarBooking
 			sql.append(" And reconfirm_mk2 is null ");
 		}
 
-		Map<String,String> map = new HashMap<>();
-		
-		if(StringUtils.isNotBlank(applydateStart)) {
+		Map<String, String> map = new HashMap<>();
+
+		if (StringUtils.isNotBlank(applydateStart)) {
 			map.put("applydateStart", DateUtility.changeDateType(applydateStart));
 		} else {
-			map.put("applydateStart", DateUtility.getNowWestYearMonth()+"01");
+			map.put("applydateStart", DateUtility.getNowWestYearMonth() + "01");
 		}
 
-		if(StringUtils.isNotBlank(applydateEnd)) {			
+		if (StringUtils.isNotBlank(applydateEnd)) {
 			map.put("applydateEnd", DateUtility.changeDateType(applydateEnd));
 		} else {
 			map.put("applydateEnd", "99991231");
 		}
-		
+
 		map.put("apply_dept", apply_dept);
 
 		List<CarBooking> list = getNamedParameterJdbcTemplate().query(sql.toString(), map,
@@ -194,65 +197,65 @@ public class CarBookingDaoImpl extends BaseDao<CarBooking> implements CarBooking
 				new BeanPropertySqlParameterSource(car_booking));
 	}
 
-	@Override
-	public List<CarBooking> selectForEip07w040(Eip07w040Case caseData,String dataCondition) {
-		StringBuilder sql = new StringBuilder();
-		Map<String, String> map = new HashMap<String, String>();
-
-		if("1".equals(dataCondition)) {
-			sql.append(" Select * from CAR_BOOKING ");
-			sql.append(" Where carprocess_status in ('2','3','4','6','7') ");
-			sql.append(" AND using_date  BETWEEN :using_time_s AND :using_time_e ");
-			sql.append(" order by print_mk, applyid ");
-			map.put("using_time_s", DateUtility.getNowWestYearMonth() + "01");
-        	int lastDay = DateUtility.lastDay(DateUtility.getNowWestDate(),false);
-        	map.put("using_time_e", DateUtility.getNowWestYearMonth()+String.valueOf(lastDay));
-		}
-		
-		if("2".equals(dataCondition)) {
-			sql.append(" Select * from CAR_BOOKING ");
-
-			if ("1".equals(caseData.getCarprocess_status()) ) {//未處理
-				sql.append(" Where carprocess_status = '2' ");
-			} else if("2".equals(caseData.getCarprocess_status())){
-				sql.append(" Where carprocess_status in ('3','4','6','7') ");
-			} else {
-				sql.append(" Where carprocess_status in ('2','3','4','6','7') ");
-			}
-			
-
-			map.put("carprocess_status", caseData.getCarprocess_status());
-			
-			if (StringUtils.isNotEmpty(caseData.getApplydateStart()) && StringUtils.isEmpty(caseData.getApplydateEnd())) {//起日有值，迄日沒值，迄日帶入系統日
-				sql.append(" AND apply_date  BETWEEN :applydatestart AND :applydateend ");
-				map.put("applydatestart", DateUtility.changeDateType(caseData.getApplydateStart()));
-				map.put("applydateend", DateUtility.getNowWestDate());
-			} else if (StringUtils.isNotEmpty(caseData.getApplydateStart()) && StringUtils.isNotEmpty(caseData.getApplydateEnd())){
-				sql.append(" AND apply_date  BETWEEN :applydatestart AND :applydateend ");
-				map.put("applydatestart", DateUtility.changeDateType(caseData.getApplydateStart()));
-				map.put("applydateend",DateUtility.changeDateType(caseData.getApplydateEnd()));
-			} 
-
-			// 若用車日期起日有值，但迄日沒值=>迄日帶入系統日
-			if (StringUtils.isNotEmpty(caseData.getUsing_time_s()) && StringUtils.isEmpty(caseData.getUsing_time_e())) {
-				sql.append(" AND using_date  BETWEEN :using_time_s AND :using_time_e ");
-				map.put("using_time_s", DateUtility.changeDateType(caseData.getUsing_time_s()));
-				map.put("using_time_e", DateUtility.getNowWestDate());
-			} else if(StringUtils.isNotEmpty(caseData.getUsing_time_s()) && StringUtils.isNotEmpty(caseData.getUsing_time_e())){//兩個都有值
-				sql.append(" AND using_date  BETWEEN :using_time_s AND :using_time_e ");
-				map.put("using_time_s", DateUtility.changeDateType(caseData.getUsing_time_s()));
-				map.put("using_time_e", DateUtility.changeDateType(caseData.getUsing_time_e()));
-			}
-			
-			
-			sql.append(" order by print_mk, applyid ");
-		}
-		
-		List<CarBooking> list = getNamedParameterJdbcTemplate().query(sql.toString(), map,
-				BeanPropertyRowMapper.newInstance(CarBooking.class));
-
-		return CollectionUtils.isEmpty(list) ? null : list;
-	}
+//	@Override
+//	public List<CarBooking> selectForEip07w040(Eip07w040Case caseData,String dataCondition) {
+//		StringBuilder sql = new StringBuilder();
+//		Map<String, String> map = new HashMap<String, String>();
+//
+//		if("1".equals(dataCondition)) {
+//			sql.append(" Select * from CAR_BOOKING ");
+//			sql.append(" Where carprocess_status in ('2','3','4','6','7') ");
+//			sql.append(" AND using_date  BETWEEN :using_time_s AND :using_time_e ");
+//			sql.append(" order by print_mk, applyid ");
+//			map.put("using_time_s", DateUtility.getNowWestYearMonth() + "01");
+//        	int lastDay = DateUtility.lastDay(DateUtility.getNowWestDate(),false);
+//        	map.put("using_time_e", DateUtility.getNowWestYearMonth()+String.valueOf(lastDay));
+//		}
+//		
+//		if("2".equals(dataCondition)) {
+//			sql.append(" Select * from CAR_BOOKING ");
+//
+//			if ("1".equals(caseData.getCarprocess_status()) ) {//未處理
+//				sql.append(" Where carprocess_status = '2' ");
+//			} else if("2".equals(caseData.getCarprocess_status())){
+//				sql.append(" Where carprocess_status in ('3','4','6','7') ");
+//			} else {
+//				sql.append(" Where carprocess_status in ('2','3','4','6','7') ");
+//			}
+//			
+//
+//			map.put("carprocess_status", caseData.getCarprocess_status());
+//			
+//			if (StringUtils.isNotEmpty(caseData.getApplydateStart()) && StringUtils.isEmpty(caseData.getApplydateEnd())) {//起日有值，迄日沒值，迄日帶入系統日
+//				sql.append(" AND apply_date  BETWEEN :applydatestart AND :applydateend ");
+//				map.put("applydatestart", DateUtility.changeDateType(caseData.getApplydateStart()));
+//				map.put("applydateend", DateUtility.getNowWestDate());
+//			} else if (StringUtils.isNotEmpty(caseData.getApplydateStart()) && StringUtils.isNotEmpty(caseData.getApplydateEnd())){
+//				sql.append(" AND apply_date  BETWEEN :applydatestart AND :applydateend ");
+//				map.put("applydatestart", DateUtility.changeDateType(caseData.getApplydateStart()));
+//				map.put("applydateend",DateUtility.changeDateType(caseData.getApplydateEnd()));
+//			} 
+//
+//			// 若用車日期起日有值，但迄日沒值=>迄日帶入系統日
+//			if (StringUtils.isNotEmpty(caseData.getUsing_time_s()) && StringUtils.isEmpty(caseData.getUsing_time_e())) {
+//				sql.append(" AND using_date  BETWEEN :using_time_s AND :using_time_e ");
+//				map.put("using_time_s", DateUtility.changeDateType(caseData.getUsing_time_s()));
+//				map.put("using_time_e", DateUtility.getNowWestDate());
+//			} else if(StringUtils.isNotEmpty(caseData.getUsing_time_s()) && StringUtils.isNotEmpty(caseData.getUsing_time_e())){//兩個都有值
+//				sql.append(" AND using_date  BETWEEN :using_time_s AND :using_time_e ");
+//				map.put("using_time_s", DateUtility.changeDateType(caseData.getUsing_time_s()));
+//				map.put("using_time_e", DateUtility.changeDateType(caseData.getUsing_time_e()));
+//			}
+//			
+//			
+//			sql.append(" order by print_mk, applyid ");
+//		}
+//		
+//		List<CarBooking> list = getNamedParameterJdbcTemplate().query(sql.toString(), map,
+//				BeanPropertyRowMapper.newInstance(CarBooking.class));
+//
+//		return CollectionUtils.isEmpty(list) ? null : list;
+//	}
 
 	@Override
 	public List<CarBooking> getDataByCarnoAndUsing_date(CarBooking carBooking) {
@@ -315,17 +318,17 @@ public class CarBookingDaoImpl extends BaseDao<CarBooking> implements CarBooking
 		sql.append("  SELECT * ");
 		sql.append(" FROM CAR_BOOKING ");
 		sql.append(" WHERE Using_date between :using_date_s and :using_date_e ");
-		
-		if(StringUtils.isNotEmpty(carBooking.getCarno1()) &&  StringUtils.isNotEmpty(carBooking.getCarno2())) {			
+
+		if (StringUtils.isNotEmpty(carBooking.getCarno1()) && StringUtils.isNotEmpty(carBooking.getCarno2())) {
 			sql.append("   AND CARNO1=:carno1 ");
 			sql.append("   AND CARNO2=:carno2 ");
 		}
-		
-		if(StringUtils.isNotEmpty(carBooking.getName())) {			
+
+		if (StringUtils.isNotEmpty(carBooking.getName())) {
 			sql.append("   AND NAME = :name ");
 		}
-		sql.append("   And CARProcess_status in ('3','4','6','7') ");
-		
+		sql.append("   And CARProcess_status in ('3','4','6','7', 'F') ");
+
 		if ("1".equals(carBooking.getOrderCondition())) {
 			sql.append(" ORDER BY USING_DATE ");
 		}
@@ -334,53 +337,53 @@ public class CarBookingDaoImpl extends BaseDao<CarBooking> implements CarBooking
 		}
 
 		Map<String, String> map = new HashMap<String, String>();
-        map.put("carno1", carBooking.getCarno1());
-        map.put("carno2", carBooking.getCarno2());
-        map.put("name", carBooking.getName());
-        map.put("using_date_s", DateUtility.changeDateType(carBooking.getUsing_date_s()));
-        if(StringUtils.isEmpty(carBooking.getUsing_date_e())) {
-        	int lastDay = DateUtility.lastDay(DateUtility.getNowWestDate(),false);
-        	map.put("using_date_e", DateUtility.getNowWestYearMonth()+String.valueOf(lastDay));
-        } else {        	
-        	map.put("using_date_e", DateUtility.changeDateType(carBooking.getUsing_date_e()));
-        }
+		map.put("carno1", carBooking.getCarno1());
+		map.put("carno2", carBooking.getCarno2());
+		map.put("name", carBooking.getName());
+		map.put("using_date_s", DateUtility.changeDateType(carBooking.getUsing_date_s()));
+		if (StringUtils.isEmpty(carBooking.getUsing_date_e())) {
+			int lastDay = DateUtility.lastDay(DateUtility.getNowWestDate(), false);
+			map.put("using_date_e", DateUtility.getNowWestYearMonth() + String.valueOf(lastDay));
+		} else {
+			map.put("using_date_e", DateUtility.changeDateType(carBooking.getUsing_date_e()));
+		}
 
 		List<CarBooking> list = getNamedParameterJdbcTemplate().query(sql.toString(), map,
 				BeanPropertyRowMapper.newInstance(CarBooking.class));
 
 		return CollectionUtils.isEmpty(list) ? null : list;
 	}
-	
+
 	@Override
 	public CarBooking selectByApplyidAndStatusIn3467F(String applyid) {
-        StringBuilder sql = new StringBuilder();
-        
-        sql.append(" SELECT * FROM CAR_BOOKING ");
-        sql.append(" WHERE APPLYID = :applyid ");
-        sql.append(" AND carprocess_status in ('3','4','6','7','F') ");
+		StringBuilder sql = new StringBuilder();
 
-        SqlParameterSource params = new MapSqlParameterSource("applyid", applyid);
+		sql.append(" SELECT * FROM CAR_BOOKING ");
+		sql.append(" WHERE APPLYID = :applyid ");
+		sql.append(" AND carprocess_status in ('3','4','6','7','F') ");
 
-        List<CarBooking> list = getNamedParameterJdbcTemplate().query(sql.toString(), params,
-                BeanPropertyRowMapper.newInstance(CarBooking.class));
+		SqlParameterSource params = new MapSqlParameterSource("applyid", applyid);
 
-        return CollectionUtils.isEmpty(list) ? null : list.get(0);
+		List<CarBooking> list = getNamedParameterJdbcTemplate().query(sql.toString(), params,
+				BeanPropertyRowMapper.newInstance(CarBooking.class));
+
+		return CollectionUtils.isEmpty(list) ? null : list.get(0);
 	}
-	
+
 	@Override
 	public List<CarBooking> selectOneMonthApplyidAndStatusIn3467F(String westYearMonth) {
-        StringBuilder sql = new StringBuilder();
-        
-        sql.append(" SELECT * FROM CAR_BOOKING ");
-        sql.append(" WHERE APPLYID like :westYearMonthApplyid ");
-        sql.append(" AND carprocess_status in ('3','4','6','7','F') ");
+		StringBuilder sql = new StringBuilder();
 
-        SqlParameterSource params = new MapSqlParameterSource("westYearMonthApplyid", "DC"+westYearMonth+"%");
+		sql.append(" SELECT * FROM CAR_BOOKING ");
+		sql.append(" WHERE APPLYID like :westYearMonthApplyid ");
+		sql.append(" AND carprocess_status in ('3','4','6','7','F') ");
 
-        List<CarBooking> list = getNamedParameterJdbcTemplate().query(sql.toString(), params,
-                BeanPropertyRowMapper.newInstance(CarBooking.class));
+		SqlParameterSource params = new MapSqlParameterSource("westYearMonthApplyid", "DC" + westYearMonth + "%");
 
-        return list;
+		List<CarBooking> list = getNamedParameterJdbcTemplate().query(sql.toString(), params,
+				BeanPropertyRowMapper.newInstance(CarBooking.class));
+
+		return list;
 	}
 
 	@Override
@@ -391,11 +394,135 @@ public class CarBookingDaoImpl extends BaseDao<CarBooking> implements CarBooking
 				String.class);
 	}
 
-
 	@Override
 	public void updateSequence() {
 		String sql = " ALTER SEQUENCE EIP_APPLYCARNO RESTART  WITH 1 ";
 		Map<String, Object> param = new HashMap<String, Object>();
 		getNamedParameterJdbcTemplate().update(sql, param);
 	}
+	
+	@Override
+	public List<CarBooking> notHandledDataForEip07w040(Eip07w040Case caseData, String type) {
+		StringBuffer sql = new StringBuffer();
+		Map<String, String> map = new HashMap<>();
+		sql.append(" select (select dept_name from DEPTS where dept_id= apply_dept )apply_deptStr,c.* from CAR_BOOKING c ");
+		sql.append(" Where carprocess_status = '2' ");
+		if("condition".equals(type)) {
+			if(StringUtils.isNotBlank(caseData.getApplydateStart())){
+				sql.append(" AND  apply_date between :applydatestart and :applydateend ");
+				setApplydate(caseData,map);
+			}
+			
+			if(StringUtils.isNotBlank(caseData.getUsing_time_s())){
+				sql.append(" AND  Using_date between :using_date_s and :using_date_e ");
+				setUsingdate(caseData,map);
+			}
+		}
+		sql.append(" order by applyid ");
+
+		List<CarBooking> list = getNamedParameterJdbcTemplate().query(sql.toString(), map,
+				BeanPropertyRowMapper.newInstance(CarBooking.class));
+		
+		return CollectionUtils.isEmpty(list)? null : list;
+	}
+	
+
+	@Override
+	public List<CarBooking> handledDataForEip07w040(Eip07w040Case caseData, String type) {
+		StringBuffer sql = new StringBuffer();
+		Map<String, String> map = new HashMap<>();
+		
+		sql.append(" select (select dept_name from DEPTS where dept_id= apply_dept )apply_deptStr,c.* from CAR_BOOKING c ");
+		sql.append(" Where carprocess_status in ('3','4','6','7') ");
+		
+		if("default".equals(type)) {
+			setUsingdate(caseData,map);				
+			sql.append(" AND  Using_date between :using_date_s and :using_date_e ");
+		}
+		
+		if("condition".equals(type)) {
+			if(StringUtils.isNotBlank(caseData.getApplydateStart())){
+				sql.append(" AND  apply_date between :applydatestart and :applydateend ");
+				setApplydate(caseData,map);
+			}
+			
+			if(StringUtils.isNotBlank(caseData.getUsing_time_s())){
+				sql.append(" AND  Using_date between :using_date_s and :using_date_e ");
+				setUsingdate(caseData,map);
+			}
+		}
+		sql.append(" order by print_mk, applyid ");
+
+		List<CarBooking> list = getNamedParameterJdbcTemplate().query(sql.toString(), map,BeanPropertyRowMapper.newInstance(CarBooking.class));
+		
+		return CollectionUtils.isEmpty(list)? null : list;
+	}
+
+	public Map<String,String> setApplydate(Eip07w040Case caseData, Map<String,String> map){
+		if (StringUtils.isNotEmpty(caseData.getApplydateStart()) && StringUtils.isEmpty(caseData.getApplydateEnd())) {// 起日有值，迄日沒值，迄日帶入系統日
+			map.put("applydatestart", DateUtility.changeDateType(caseData.getApplydateStart()));
+			map.put("applydateend", "99991231");
+		} else if (StringUtils.isNotEmpty(caseData.getApplydateStart()) && StringUtils.isNotEmpty(caseData.getApplydateEnd())) {
+			map.put("applydatestart", DateUtility.changeDateType(caseData.getApplydateStart()));
+			map.put("applydateend", DateUtility.changeDateType(caseData.getApplydateEnd()));
+		} else {
+			map.put("applydatestart", DateUtility.getNowWestYearMonth()+"01");
+			int lastDay = DateUtility.lastDay(DateUtility.getNowWestDate(),false);
+			map.put("applydateend", DateUtility.getNowWestYearMonth()+String.valueOf(lastDay));
+		}
+		
+		return map;
+	}
+	
+	public Map<String,String> setUsingdate(Eip07w040Case caseData, Map<String,String> map){
+		// 若用車日期起日有值，但迄日沒值=>迄日帶入系統日
+		if (StringUtils.isNotEmpty(caseData.getUsing_time_s()) && StringUtils.isEmpty(caseData.getUsing_time_e())) {
+			map.put("using_date_s", DateUtility.changeDateType(caseData.getUsing_time_s()));
+			map.put("using_date_e", "99991231");
+		} else if (StringUtils.isNotEmpty(caseData.getUsing_time_s())
+				&& StringUtils.isNotEmpty(caseData.getUsing_time_e())) {// 兩個都有值
+			map.put("using_date_s", DateUtility.changeDateType(caseData.getUsing_time_s()));
+			map.put("using_date_e", DateUtility.changeDateType(caseData.getUsing_time_e()));
+		} else {
+			map.put("using_date_s", DateUtility.getNowWestYearMonth()+"01");
+			int lastDay = DateUtility.lastDay(DateUtility.getNowWestDate(),false);
+			map.put("using_date_e", DateUtility.getNowWestYearMonth()+String.valueOf(lastDay));
+		}
+		
+		return map;
+	}
+	@Override
+	public List<CarBooking> selectByReconfime_mk2ForEip07w040(Eip07w040Case caseData,String type) {
+		StringBuffer sql = new StringBuffer();
+		Map<String, String> map = new HashMap<>();	
+		sql.append(" select (select dept_name from DEPTS where dept_id= apply_dept )apply_deptStr,c.* from CAR_BOOKING c ");
+		sql.append(" where  reconfirm_mk2  IS NOT NULL  ");
+		
+		if("Y".equals(type)) {
+			sql.append(" and  reconfirm_mk2='Y' ");
+		} else if ("N".equals(type)) {
+			sql.append(" and  reconfirm_mk2='N' ");
+		}
+		
+		if("default".equals(type)) {
+			sql.append(" AND  Using_date between :using_date_s and :using_date_e ");
+			map.put("using_date_s", DateUtility.getNowWestYearMonth()+"01");
+			int lastDay = DateUtility.lastDay(DateUtility.getNowWestDate(),false);
+			map.put("using_date_e", DateUtility.getNowWestYearMonth()+String.valueOf(lastDay));
+		}
+		
+		if(StringUtils.isNotBlank(caseData.getApplydateStart())){
+			sql.append(" AND  apply_date between :applydatestart and :applydateend ");
+			setApplydate(caseData,map);
+		}
+		
+		if(StringUtils.isNotBlank(caseData.getUsing_time_s())){
+			sql.append(" AND  Using_date between :using_date_s and :using_date_e ");
+			setUsingdate(caseData,map);
+		}
+		
+		List<CarBooking> list = getNamedParameterJdbcTemplate().query(sql.toString(), map,BeanPropertyRowMapper.newInstance(CarBooking.class));
+		return CollectionUtils.isEmpty(list)? null : list;
+	}
+	
 }

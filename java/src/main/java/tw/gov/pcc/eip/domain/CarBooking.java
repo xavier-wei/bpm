@@ -367,4 +367,6 @@ public class CarBooking implements Serializable {
 
     @LogField
     private String rmEndM;
+    
+    private String apply_deptStr;//eip07w040
 }

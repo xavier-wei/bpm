@@ -12,6 +12,7 @@ import tw.gov.pcc.common.framework.dao.BaseDao;
 import tw.gov.pcc.eip.dao.GasRecDao;
 import tw.gov.pcc.eip.domain.CarBase;
 import tw.gov.pcc.eip.domain.GasRec;
+import tw.gov.pcc.eip.domain.Items;
 import tw.gov.pcc.eip.orderCar.cases.Eip07w010Case;
 
 import java.util.List;
@@ -33,7 +34,7 @@ public class GasRecDaoImpl extends BaseDao<GasRec> implements GasRecDao {
     /**
      * 根據key選取資料(底層用)
      *
-     * @param GasRec 條件
+     * @param gasRec 條件
      * @return 唯一值
      */
     @Override
@@ -60,6 +61,25 @@ public class GasRecDaoImpl extends BaseDao<GasRec> implements GasRecDao {
         SqlParameterSource params = new MapSqlParameterSource("carno1",caseData.getCarno1())
                 .addValue("carno2", caseData.getCarno2());
         return getNamedParameterJdbcTemplate().query(sql.toString(),params, BeanPropertyRowMapper.newInstance(Eip07w010Case.class));
+    }
+
+    /**
+     * 新增一筆資料
+     *
+     * @param gasRec 新增資料
+     */
+    @Override
+   public int insert(GasRec gasRec) {
+        return getNamedParameterJdbcTemplate().update(" INSERT INTO " + TABLE_NAME +
+                        "(" +
+                        " carno1, carno2, fuel_date, fuel_time, gas_money, gas_amount, cre_user, " +
+                        " cre_datetime, upd_user, upd_datetime" +
+                        ")" +
+                        " VALUES ( " +
+                        " :carno1, :carno2, :fuel_date, :fuel_time, :gas_money, :gas_amount, :cre_user, " +
+                        " :cre_datetime, :upd_user, :upd_datetime" +
+                        ")",
+                new BeanPropertySqlParameterSource(gasRec));
     }
 
 }

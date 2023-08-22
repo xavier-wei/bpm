@@ -53,7 +53,7 @@ public interface CarBookingDao {
      * @param dataCondition = 2 ， 依照畫面鍵入條件來查詢
      * 
      **/ 
-    List<CarBooking> selectForEip07w040(Eip07w040Case caseData,String dataCondition);
+//    List<CarBooking> selectForEip07w040(Eip07w040Case caseData,String dataCondition);
     
     public List<CarBooking> getDataByCarnoAndUsing_date(CarBooking carBooking);
     
@@ -70,4 +70,15 @@ public interface CarBookingDao {
     void updateSequence();
 
 	public List<CarBooking> selectOneMonthApplyidAndStatusIn3467F(String westYearMonth);
+	
+	//carstatus='2'的資料
+	public List<CarBooking> notHandledDataForEip07w040(Eip07w040Case caseData, String type);
+	
+	//carstatus='3,4,6,7'的資料 type=default(只查usingDate) type=condition(依據畫面條件來查)
+	public List<CarBooking> handledDataForEip07w040(Eip07w040Case caseData, String type);
+	
+	//carprocess_status秘書室長官核派案件
+	//type all => 全撈， Y=>reconfime_mk2=Y ，Y=>reconfime_mk2=N
+	public List<CarBooking> selectByReconfime_mk2ForEip07w040(Eip07w040Case caseData,String type);
+	
 }

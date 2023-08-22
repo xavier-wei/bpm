@@ -193,6 +193,10 @@ public class Eip07w020Service {
     public void changeApplication( Eip07w020Case data)throws Exception {
         CarBooking changeData = data.getChangeMkList().get(0);
         CarBooking oldData= data.getDetailsList().get(0);
+        String status=oldData.getCarprocess_status();
+        if ("U".equals(status)||"7".equals(status)||"6".equals(status)){
+            data.setRmMemo("2");
+        }
         int count ;
         //計算更改次數並加一
         if (StringUtils.isBlank(oldData.getChange_count())){
@@ -229,6 +233,11 @@ public class Eip07w020Service {
             oldData.setUsing_date(DateUtility.changeDateType(oldData.getUsing_date()));
             carBookingDao.updateByKey(oldData);
             data.setDetailsList(Collections.singletonList(oldData));
+            Car_booking_rec carBookingRec = new Car_booking_rec();
+            carBookingRec.setApplyid(oldData.getApplyid());
+            if (!"Y".equals(oldData.getCombine_mk())){
+            car_booking_recDao.deleteByKey(carBookingRec);
+            }
         }else {//2取消申請
             oldData.setChange_count(String.valueOf(count));
             oldData.setChange_mk("Y");
@@ -239,7 +248,7 @@ public class Eip07w020Service {
             Car_booking_rec carBookingRec = new Car_booking_rec();
             carBookingRec.setApplyid(oldData.getApplyid());
             carBookingDao.updateByKey(oldData);
-//            car_booking_recDao.deleteByKey(carBookingRec);
+            car_booking_recDao.deleteByKey(carBookingRec);
         }
     }
 

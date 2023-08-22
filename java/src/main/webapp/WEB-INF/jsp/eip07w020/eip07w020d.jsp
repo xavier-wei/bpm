@@ -103,30 +103,26 @@
 				</tags:form-row>
 				<tags:form-row>
 						<div  class="col-md d-flex">
-									<form:label cssClass="col-form-label" path="lable">用車時間：</form:label>
-									<form:select   path="detailsList[0].rmStarH" cssClass="form-control " disabled="true">
-						<form:option value=""></form:option>
+					<form:label cssClass="col-form-label" path="lable">用車時間：</form:label>
+					<form:select   path="detailsList[0].rmStarH" cssClass="form-control " disabled="true">
 						<c:forEach var="hour" items="${caseData.hourList}" varStatus="status">
 							<form:option value="${hour}"><c:out value="${hour}"/></form:option>
 						</c:forEach>
 					</form:select>
-									<span class="input-group-text px-1">:</span>
-									<form:select   path="detailsList[0].rmStarM" cssClass="form-control" disabled="true">
-						<form:option value=""></form:option>
+					<span class="input-group-text px-1">:</span>
+					<form:select   path="detailsList[0].rmStarM" cssClass="form-control" disabled="true">
 						<c:forEach var="minute" items="${caseData.minuteList}" varStatus="status">
 							<form:option value="${minute}"><c:out value="${minute}"/></form:option>
 						</c:forEach>
 					</form:select>
-									<span class="input-group-text px-1">~</span>
-									<form:select   path="detailsList[0].rmEndH" cssClass="form-control" disabled="true">
-						<form:option value=""></form:option>
+					<span class="input-group-text px-1">~</span>
+					<form:select   path="detailsList[0].rmEndH" cssClass="form-control" disabled="true">
 						<c:forEach var="hour" items="${caseData.hourList}" varStatus="status">
 							<form:option value="${hour}"><c:out value="${hour}"/></form:option>
 						</c:forEach>
 					</form:select>
-									<span class="input-group-text px-1">:</span>
-									<form:select   path="detailsList[0].rmEndM" cssClass="form-control" disabled="true">
-						<form:option value=""></form:option>
+					<span class="input-group-text px-1">:</span>
+					<form:select   path="detailsList[0].rmEndM" cssClass="form-control" disabled="true">
 						<c:forEach var="minute" items="${caseData.minuteList}" varStatus="status">
 							<form:option value="${minute}"><c:out value="${minute}"/></form:option>
 						</c:forEach>
@@ -159,7 +155,7 @@
 					<div c class="col-md-4 d-flex">
 						<form:label cssClass="col-form-label" path="lable">車輛總類：</form:label>
 						<form:select id="apply_car_type"  name="apply_car_type"  path="detailsList[0].apply_car_type" cssClass="form-control">
-	                    	<form:option value="1">4人座</form:option>
+<%--	                    	<form:option value="1">4人座</form:option>--%>
 	                        <c:forEach var="item" items="${caseData.carTyList}" varStatus="status">
 	                            <form:option value="${item.codeno}"><c:out value="${item.codename}"/></form:option>
 	                        </c:forEach>
@@ -181,28 +177,28 @@
 				<div  class="col-md d-flex" >
 					<form:label cssClass="col-form-label" path="lable">用車時間：</form:label>
 					<form:select id="starH"  name="starH"  path="detailsList[0].starH" cssClass="form-control">
-					<form:option value=""></form:option>
+<%--					<form:option value=""></form:option>--%>
 					<c:forEach var="hour" items="${caseData.hourList}" varStatus="status">
 						<form:option value="${hour}"><c:out value="${hour}"/></form:option>
 					</c:forEach>
 				</form:select>
 					<span class="input-group-text px-1">:</span>
 					<form:select id="starM"  name="starM"  path="detailsList[0].starM" cssClass="form-control">
-					<form:option value=""></form:option>
+<%--					<form:option value=""></form:option>--%>
 					<c:forEach var="minute" items="${caseData.minuteList}" varStatus="status">
 						<form:option value="${minute}"><c:out value="${minute}"/></form:option>
 					</c:forEach>
 				</form:select>
 					<span class="input-group-text px-1">~</span>
 					<form:select id="endH"  name="endH"  path="detailsList[0].endH" cssClass="form-control">
-					<form:option value=""></form:option>
+<%--					<form:option value=""></form:option>--%>
 					<c:forEach var="hour" items="${caseData.hourList}" varStatus="status">
 						<form:option value="${hour}"><c:out value="${hour}"/></form:option>
 					</c:forEach>
 				</form:select>
 					<span class="input-group-text px-1">:</span>
 					<form:select id="endM"  name="endM"  path="detailsList[0].endM" cssClass="form-control">
-					<form:option value=""></form:option>
+<%--					<form:option value=""></form:option>--%>
 					<c:forEach var="minute" items="${caseData.minuteList}" varStatus="status">
 						<form:option value="${minute}"><c:out value="${minute}"/></form:option>
 					</c:forEach>
@@ -217,7 +213,10 @@
 							<form:label cssClass="col-form-label star" path="lable">表單狀態：</form:label>
 							<form:input id="codeName" name="codeName" path="detailsList[0].codeName" cssClass="form-control"    disabled="true"/>
 						</div>
-			</tags:form-row>
+					</tags:form-row>
+					<tags:form-row>
+						<form:label id="status_5" cssClass="col-form-label " path="lable">[車輛相關資料]：公務車已滿請改其他大眾運輸工具。</form:label>
+					</tags:form-row>
 
 			<div id="mark">
 				<tags:form-row>
@@ -331,28 +330,28 @@
 				<div  class="col-md d-flex"  style="margin: 0; padding: 0;">
 					<form:label cssClass="col-form-label star" path="lable">用車時間：</form:label>
 					<form:select id="rmStarH"  name="rmStarH"  path="changeMkList[0].starH" cssClass="form-control" disabled="true">
-					<form:option value=""></form:option>
+<%--					<form:option value=""></form:option>--%>
 					<c:forEach var="hour" items="${caseData.hourList}" varStatus="status">
 						<form:option value="${hour}"><c:out value="${hour}"/></form:option>
 					</c:forEach>
 				</form:select>
 					<span class="input-group-text px-1">:</span>
 					<form:select id="rmStarM"  name="rmStarM"  path="changeMkList[0].starM" cssClass="form-control" disabled="true">
-					<form:option value=""></form:option>
+<%--					<form:option value=""></form:option>--%>
 					<c:forEach var="minute" items="${caseData.minuteList}" varStatus="status">
 						<form:option value="${minute}"><c:out value="${minute}"/></form:option>
 					</c:forEach>
 				</form:select>
 					<span class="input-group-text px-1">~</span>
 					<form:select id="rmEndH"  name="rmEndH"  path="changeMkList[0].endH" cssClass="form-control" disabled="true">
-					<form:option value=""></form:option>
+<%--					<form:option value=""></form:option>--%>
 					<c:forEach var="hour" items="${caseData.hourList}" varStatus="status">
 						<form:option value="${hour}"><c:out value="${hour}"/></form:option>
 					</c:forEach>
 				</form:select>
 					<span class="input-group-text px-1">:</span>
 					<form:select id="rmEndM"  name="rmEndM"  path="changeMkList[0].endM" cssClass="form-control" disabled="true">
-					<form:option value=""></form:option>
+<%--					<form:option value=""></form:option>--%>
 					<c:forEach var="minute" items="${caseData.minuteList}" varStatus="status">
 						<form:option value="${minute}"><c:out value="${minute}"/></form:option>
 					</c:forEach>
@@ -362,7 +361,7 @@
 			<div id="footer">
 				<tags:form-row>
 				<p><br>備註：1.表單狀態為1已送出/2申請主管已審核時，才可進行原申請資料修改或刪除<br>
-					&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;2.表單狀態為3派全程/4派單程/5已派滿時/6併單(派全程)/7併單-派單程，<br>
+					&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;2.表單狀態為3派全程/4派單程/5已派滿/6併單-派全程/7併單-派單程時，<br>
 					&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;有異動需求時，需勾選「異動註記」欄位告知秘書處派車申請有異動，且按「異動申請」後，<br>
 					&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;原派車車輛資料刪除待重新指派後才有相關資料<br></p>
 				</tags:form-row>
@@ -386,13 +385,14 @@
 				$('#eip07w020Form').attr('action', '<c:url value="/Eip07w020_update.action" />').submit();
 			});
 			$('#btnRmUpdate').click(function() {
-
 				var carprocess_status=$("#carprocess_status").val();
-				if (carprocess_status=='U') {
-					var rmMemo = '2';
-					$("#rmMemo").val(rmMemo);
-				}
-
+				// var combineMk = $("#combine_mk").val();
+				// var rmMemo = '2';
+				// alert(carprocess_status+combineMk);
+				// if (carprocess_status=='U'||combineMk == 'Y'||carprocess_status == '6'||carprocess_status == '7') {
+				// 	alert("有近");
+				// 	$("#rmMemo").val(rmMemo);
+				// }
 				$('#eip07w020Form').attr('action', '<c:url value="/Eip07w020_changeApplication.action" />').submit();
             });
 
@@ -413,11 +413,13 @@
 			function controlDiv(){//控制[申請相關資料]及[車輛相關資料]
 				var combineMk=$("#combine_mk").val();
 				var carprocess_status=$("#carprocess_status").val();
+
 				if(combineMk == 'Y'){
 					$("#mark").show();
 				} else {
 					$("#mark").hide();
 				}
+				//車籍顯示
 				if(carprocess_status == '3'||carprocess_status == '4'||carprocess_status == '6'||carprocess_status == '7'||carprocess_status == 'F'){//後面加了67F
 					$("#car").show();
 					$("#btnPrint").show();
@@ -425,6 +427,7 @@
 					$("#car").hide();
 					$("#btnPrint").hide();
 				}
+				//狀態為U時
 				if(carprocess_status == 'U'){
 					$("#rmData").show();
 					$("#data").hide();
@@ -440,12 +443,18 @@
 					$("#rmEndH").prop("disabled", false);
 					$("#rmEndM").prop("disabled", false);
 				}
+				//控制狀態5時"公務車已滿請改其他大眾運輸工具"lable
+				if (carprocess_status == '5'){
+					$("#status_5").show();
+				}else {
+					$("#status_5").hide();
+				}
 
 			}
 
 			function controlcheckMk(){//控制是否顯示"異動註記"checkBox
 				var carprocess_status=$("#carprocess_status").val();
-				if(carprocess_status == '3'||carprocess_status == '4'||carprocess_status == '5'||carprocess_status == '6'||carprocess_status == '7'||carprocess_status == 'U'){
+				if(carprocess_status == '3'||carprocess_status == '4'||carprocess_status == '6'||carprocess_status == '7'||carprocess_status == 'U'){//5先取消
 					$("#checkMk").show();
 					$("#footer").show();
 				} else {
@@ -518,8 +527,10 @@
 			function CombineMk() {//控制併單註記為Y時
 				var combineMk = $("#combine_mk").val();
 				var carprocess_status=$("#carprocess_status").val();
-				if (combineMk == 'Y'||carprocess_status=='U') {
+				if (combineMk == 'Y'||carprocess_status == '6'||carprocess_status == '7') {
+					$('#rmMemo option[value="1"]').remove()
 					$("#rmMemo").prop("disabled", true);
+					$("#btnRmUpdate").text("取消申請");
 				}
 			}
 			function status_U() {//控制表單狀態為U時

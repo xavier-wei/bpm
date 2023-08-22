@@ -5,6 +5,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.validation.Errors;
 import org.springframework.validation.Validator;
 import tw.gov.pcc.eip.apply.cases.Eip08w060Case;
+import tw.gov.pcc.eip.domain.GasRec;
 import tw.gov.pcc.eip.orderCar.cases.Eip07w010Case;
 import tw.gov.pcc.eip.util.DateUtility;
 import tw.gov.pcc.eip.util.StringUtility;
@@ -94,7 +95,11 @@ public class Eip07w010Validator implements Validator {
 			}
 			if (StringUtils.isBlank(validate.getCarno1())||StringUtils.isBlank(validate.getCarno2())) {
 				errors.reject(null, "尚未輸入車牌號碼");
+			}else if (validate.getCarno1().length()<3||validate.getCarno2().length()<3){
+				errors.reject(null, "車牌號碼格式不符");
 			}
+
+
 			if (StringUtils.isNotBlank(validate.getInsuranceStart())) {
 				if (!DateUtility.isValidDate(validate.getInsuranceStart(), false)) {
 					errors.reject(null, "保險期間(起)請輸入民國年月日");}
@@ -110,26 +115,36 @@ public class Eip07w010Validator implements Validator {
 		}
 
 		public void eip07w010qValidate(String workTy,String processTy,Eip07w010Case validate, Errors errors) {
-
 			if ("D".equals(processTy)&&"A".equals(workTy)){
-
 				if (StringUtils.isBlank(validate.getName())){
 					errors.reject(null, "駕駛人姓名為必輸");
 				}
-
 			}
 			if ("C".equals(processTy)&&"A".equals(workTy)){//兩個車牌如都未輸入就噴錯
-
 				if ((StringUtils.isBlank(validate.getCarno1())||StringUtils.isBlank(validate.getCarno2()))) {
 					errors.reject(null, "車牌號碼為必輸");
+				}else if (validate.getCarno1().length()<3||validate.getCarno2().length()<3){
+					errors.reject(null, "車牌號碼格式不符");
 				}
-
 			}
+		}
 
-
+	public void gasValidaet(GasRec gasRec,Eip07w010Case caseData, Errors errors) {
+			if (!DateUtility.isValidDate(gasRec.getFuel_date(), false)){
+				errors.reject(null, "加油日期請輸入民國年月日");
+			}
+			if (StringUtils.isBlank(caseData.getGasH())||StringUtils.isBlank(caseData.getGasM())){
+				errors.reject(null, "尚未輸入加油時間");
+			}else if ((caseData.getGasH()+caseData.getGasM()).length()!=4){
+				errors.reject(null, "加油時間格式不符");
+			}
 
 		}
 
 
+
 	}
+
+
+
 

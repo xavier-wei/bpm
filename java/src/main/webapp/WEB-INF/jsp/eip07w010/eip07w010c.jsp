@@ -129,7 +129,11 @@
 <script>
 
         $(function() {
+			var workTy=$("#workTy").val();
 			controlBtn();
+			if (workTy==='A'){
+				controlCarStatusk();
+			}
             $('#btnInster').click(function() {
            		$('#eip07w010Form').attr('action', '<c:url value="/Eip07w010_carInster.action" />').submit();
             });

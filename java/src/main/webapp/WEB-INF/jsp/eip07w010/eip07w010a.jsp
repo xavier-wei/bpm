@@ -25,7 +25,7 @@
 </jsp:attribute>
 
 	<jsp:attribute name="contents">
-		<tags:fieldset legend="駕駛人資料新增" >
+		<tags:fieldset  legend="駕駛人資料" >
 		<form:form id="eip07w010Form" name="eip07w010Form" modelAttribute="${caseKey}" method="POST">
     	<tags:form-row>
 				<div class="col-md-4 d-flex ">
@@ -35,7 +35,6 @@
 			   <div class="col-md-4 d-flex ">
 				   <form:label cssClass="col-form-label" path="name">職稱：</form:label>
 					<form:select id="title"  name="title"  path="eip07w010QueryDataList[0].title" cssClass="form-control">
-						<form:option value="1">1-駕駛</form:option>
 						<c:forEach var="item" items="${caseData.titleList}" varStatus="status">
 							<form:option value="${item.codeno}"><c:out value="${item.codeno}"/>-<c:out value="${item.codename}"/></form:option>
 						</c:forEach>

@@ -108,7 +108,7 @@ public class DriverbaseDaoImpl extends BaseDao<DriverBase> implements DriverBase
     public List<Eip07w010Case> getTempStaff() {
         StringBuilder sql = new StringBuilder();
         sql.append(" Select distinct driverid, name  ");
-        sql.append(" From driver_base ");
+        sql.append(" From driver_base where still_work ='Y' ");
         SqlParameterSource params = new MapSqlParameterSource("","");
         return getNamedParameterJdbcTemplate().query(sql.toString(),params, BeanPropertyRowMapper.newInstance(Eip07w010Case.class));
     }

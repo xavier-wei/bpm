@@ -66,7 +66,7 @@ public class Car_booking_recDaoImpl extends BaseDao<Car_booking_rec> implements 
     @Override
     public int deleteByKey(Car_booking_rec car_booking_rec) {
         return getNamedParameterJdbcTemplate().update(" DELETE FROM " + TABLE_NAME +
-                        " t WHERE t.APPLYID = :applyid ",
+                        "  WHERE APPLYID = :applyid ",
                 new BeanPropertySqlParameterSource(car_booking_rec));
     }
 
