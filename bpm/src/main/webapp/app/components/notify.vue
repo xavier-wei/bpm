@@ -63,9 +63,9 @@
                                :disabled-date="notAfterPublicDateEnd"></i-date-picker>
                 <b-input-group-text>至</b-input-group-text>
                 <i-date-picker
-                    v-model="$v.dateEnd.$model"
-                    placeholder="yyy/MM/dd"
-                    :disabled-date="notBeforePublicDateStart"
+                  v-model="$v.dateEnd.$model"
+                  placeholder="yyy/MM/dd"
+                  :disabled-date="notBeforePublicDateStart"
                 ></i-date-picker>
               </b-input-group>
             </i-form-group-check>
@@ -82,12 +82,12 @@
     <section class="mt-2" v-show="queryStatus">
       <div class="container">
         <i-table
-            ref="iTable"
-            :itemsUndefinedBehavior="'loading'"
-            :items="table.data"
-            :fields="table.fields"
-            :totalItems="table.totalItems"
-            :is-server-side-paging="false"
+          ref="iTable"
+          :itemsUndefinedBehavior="'loading'"
+          :items="table.data"
+          :fields="table.fields"
+          :totalItems="table.totalItems"
+          :is-server-side-paging="false"
         >
 
           <template #cell(filAndApp)="row">
@@ -115,6 +115,14 @@
           </template>
 
 
+          <template #cell(signUnit)="row">
+            <div v-if="!!row.item.signer">
+              {{ row.item.signer }}
+              ({{ changeDealWithUnit(row.item.signUnit, bpmUnitOptions) }})
+            </div>
+          </template>
+
+
           <template #cell(formId)="row">
             <div>
               {{ changeFormId(row.item.formId) }}
@@ -138,7 +146,7 @@ import IDatePicker from '../shared/i-date-picker/i-date-picker.vue';
 import ITable from '../shared/i-table/i-table.vue';
 import IFormGroupCheck from '../shared/form/i-form-group-check.vue';
 import {useValidation, validateState} from '@/shared/form';
-import {required} from '@/shared/validators';
+import {required, requiredIf} from '@/shared/validators';
 import {useGetters} from '@u3u/vue-hooks';
 import {notificationErrorHandler} from "@/shared/http/http-response-helper";
 import {useNotification} from "@/shared/notification";
@@ -161,11 +169,12 @@ export default defineComponent({
     const stepVisible = ref(true);
     const queryStatus = ref(false);
     const notificationService = useNotification();
+
     enum FormStatusEnum {
       CREATE = '新增',
       MODIFY = '編輯',
       READONLY = '檢視',
-      VERIFY ='簽核'
+      VERIFY = '簽核'
     }
 
     function notBeforePublicDateStart(date: Date) {
@@ -182,22 +191,22 @@ export default defineComponent({
       formId: '', //表單
       processInstanceStatus: '', //處理狀態
       formType: '', //表單分類
-      dateStart: undefined, //起
-      dateEnd: undefined, //迄
+      dateStart: null, //起
+      dateEnd: null, //迄
     };
 
     const form = reactive(Object.assign({}, formDefault));
 
     // 表單物件驗證規則
-    const rules = ref({
+    const rules = {
       unit: {},
       appName: {},
       formId: {},
-      processInstanceStatus: {notnull: required},
+      processInstanceStatus: {},
       formType: {},
       dateStart: {},
       dateEnd: {},
-    });
+    }
 
     const {$v, checkValidity, reset} = useValidation(rules, form, formDefault);
 
@@ -239,7 +248,7 @@ export default defineComponent({
           sortable: false,
           thClass: 'text-center',
           tdClass: 'text-center align-middle',
-          formatter: value => (value == undefined ? '' : changeDealWithUnit(value, bpmUnitOptions)),
+          // formatter: value => (value == undefined ? '' : changeDealWithUnit(value, bpmUnitOptions)),
         },
         {
           key: 'processInstanceStatus',
@@ -280,6 +289,11 @@ export default defineComponent({
     });
 
     const toQuery = () => {
+
+      if (form.dateStart !== null) {
+        form.dateEnd = form.dateEnd !== null ? form.dateEnd : new Date()
+      }
+
       table.data = [];
       const params = new FormData();
       params.append('bpmFormQueryDto', new Blob([JSON.stringify(form)], {type: 'application/json'}));
@@ -293,12 +307,13 @@ export default defineComponent({
     };
 
     const userData = ref(useGetters(['getUserData']).getUserData).value.user;
+
     function toEdit(item) {
       navigateByNameAndParams('l414Edit', {
         l414Data: item,
         formStatus: FormStatusEnum.READONLY,
         isNotKeepAlive: false,
-        stateStatus : userData === 'InfoTester'
+        stateStatus: userData === 'InfoTester'
       });
     }
 
@@ -318,6 +333,7 @@ export default defineComponent({
       toEdit,
       queryStatus,
       bpmUnitOptions,
+      changeDealWithUnit
     };
   },
 });

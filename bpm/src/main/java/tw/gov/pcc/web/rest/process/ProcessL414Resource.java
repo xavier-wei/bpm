@@ -69,9 +69,9 @@ public class ProcessL414Resource {
 
     @PostMapping(path = "/startL414", consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
     public String start(
-            @Valid @RequestPart("form") BpmIsmsL414DTO bpmIsmsL414DTO,
-            @Valid @RequestPart(name = "fileDto", required = false) List<BpmUploadFileDTO> dto,
-            @RequestPart(name = "appendixFiles", required = false) List<MultipartFile> appendixFiles) throws IOException {
+        @Valid @RequestPart("form") BpmIsmsL414DTO bpmIsmsL414DTO,
+        @Valid @RequestPart(name = "fileDto", required = false) List<BpmUploadFileDTO> dto,
+        @RequestPart(name = "appendixFiles", required = false) List<MultipartFile> appendixFiles) throws IOException {
         log.info("ProcessL414Resource.java - start - 59 :: " + bpmIsmsL414DTO);
         log.info("ProcessL414Resource.java - start - 60 :: " + dto);
         log.info("ProcessL414Resource.java - start - 61 :: " + appendixFiles);
@@ -162,9 +162,9 @@ public class ProcessL414Resource {
 
     @PatchMapping(path = "/startL414/patch", consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
     public BpmIsmsL414DTO startPatch(
-            @Valid @RequestPart("form") BpmIsmsL414DTO bpmIsmsL414DTO,
-            @Valid @RequestPart(name = "fileDto", required = false) List<BpmUploadFileDTO> dto,
-            @RequestPart(name = "appendixFiles", required = false) List<MultipartFile> appendixFiles) throws IOException {
+        @Valid @RequestPart("form") BpmIsmsL414DTO bpmIsmsL414DTO,
+        @Valid @RequestPart(name = "fileDto", required = false) List<BpmUploadFileDTO> dto,
+        @RequestPart(name = "appendixFiles", required = false) List<MultipartFile> appendixFiles) throws IOException {
         log.info("ProcessL414Resource.java - start - 59 :: " + bpmIsmsL414DTO);
         log.info("ProcessL414Resource.java - start - 60 :: " + dto);
         log.info("ProcessL414Resource.java - start - 61 :: " + appendixFiles);
@@ -189,8 +189,8 @@ public class ProcessL414Resource {
 
     @RequestMapping("/queryTask/{id}")
     public List<BpmIsmsL414DTO> queryTask(@PathVariable String id, @Valid @RequestPart(required = false) BpmFormQueryDto bpmFormQueryDto) {
+        log.info("ProcessL414Resource.java - queryTask - 193 :: " + id);
         log.info("ProcessL414Resource.java - queryTask - 194 :: " + bpmFormQueryDto);
-
 
 //        String id="ApplyTester";
         HttpHeaders headers = new HttpHeaders();
@@ -204,19 +204,19 @@ public class ProcessL414Resource {
             List<TaskDTO> taskDTOS = new Gson().fromJson(body, listType);
             assert taskDTOS != null;
             return taskDTOS.isEmpty() ? null :
-                    taskDTOS.stream()
-                            .map(taskDTO -> {
+                taskDTOS.stream()
+                    .map(taskDTO -> {
 //                        BpmIsmsL414DTO dto = bpmIsmsL414Mapper.toDto(bpmIsmsL414Repository.findFirstByProcessInstanceId(taskDTO.getProcessInstanceId()));
-                                BpmIsmsL414DTO dto = bpmIsmsL414Repository.findByBpmIsmsL414(bpmFormQueryDto, taskDTO.getProcessInstanceId());
-                                if (dto != null) {
-                                    dto.setTaskId(taskDTO.getTaskId());
-                                    dto.setTaskName(taskDTO.getTaskName());
-                                    dto.setDecisionRole(SingerEnum.getDecisionByName(taskDTO.getTaskName()));
-                                }
-                                return dto;
-                            })
-                            .filter(Objects::nonNull)
-                            .collect(Collectors.toList());
+                        BpmIsmsL414DTO dto = bpmIsmsL414Repository.findByBpmIsmsL414(bpmFormQueryDto, taskDTO.getProcessInstanceId());
+                        if (dto != null) {
+                            dto.setTaskId(taskDTO.getTaskId());
+                            dto.setTaskName(taskDTO.getTaskName());
+                            dto.setDecisionRole(SingerEnum.getDecisionByName(taskDTO.getTaskName()));
+                        }
+                        return dto;
+                    })
+                    .filter(Objects::nonNull)
+                    .collect(Collectors.toList());
         }
 
         return null;
