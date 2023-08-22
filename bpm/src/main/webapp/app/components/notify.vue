@@ -274,7 +274,6 @@ export default defineComponent({
     // 下拉選單選項
     const queryOptions = reactive({
       status: [
-        {value: '0', text: '申請'},
         {value: '0', text: '處理中'},
         {value: '1', text: '處理過'},
         {value: '2', text: '補件'},
