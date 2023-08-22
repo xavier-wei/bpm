@@ -11,6 +11,7 @@ import tw.gov.pcc.domain.BpmIsmsL414;
 import tw.gov.pcc.repository.BpmIsmsL414Repository;
 import tw.gov.pcc.repository.BpmSignStatusRepository;
 import tw.gov.pcc.service.BpmIsmsL414Service;
+import tw.gov.pcc.service.dto.BpmFormQueryDto;
 import tw.gov.pcc.service.dto.BpmIsmsL414DTO;
 import tw.gov.pcc.service.dto.BpmSignStatusDTO;
 import tw.gov.pcc.service.mapper.BpmIsmsL414Mapper;
@@ -216,5 +217,10 @@ public class BpmIsmsL414Resource {
         return bpmSignStatus;
     }
 
+    @RequestMapping("/getNotify")
+    public List<BpmIsmsL414DTO> getNotify(@Valid @RequestPart(required = false) BpmFormQueryDto bpmFormQueryDto) {
+        log.info("ProcessL414Resource.java - queryTask - 194 :: " + bpmFormQueryDto);
+        return bpmIsmsL414Repository.getNotify(bpmFormQueryDto);
+    }
 
 }

@@ -1,4 +1,3 @@
-
 export function changeDirections(user: any): string {
 
     switch (user) {
@@ -10,13 +9,13 @@ export function changeDirections(user: any): string {
             return '申請人所屬之單位主管';
         case 'InfoTester':
             return '資訊小組資安承辦人';
-        case 'SeniorTechSpecialist':
+        case 'seniorTechSpecialistTester':
             return '資訊小組簡任技正/科長';
-        case 'ServerRoomOperator':
+        case 'serverRoomOperatorTester':
             return '機房操作人員';
-        case 'ReviewStaff':
+        case 'reviewStaffTester':
             return '複核人員';
-        case 'ServerRoomManager':
+        case 'serverRoomManagerTester':
             return '機房管理人員';
         default:
             return '';
@@ -28,22 +27,38 @@ export function changeUnit(unit: any): string {
 
     switch (unit) {
         case 'ApplyTester':
-            return '企劃處/第三科';
+            return '6';
         case 'ChiefTester':
-            return '企劃處/第三科';
+            return '6';
         case 'DirectorTester':
-            return '企劃處';
+            return '6';
         case 'InfoTester':
-            return '資訊推動小組';
-        case 'SeniorTechSpecialist':
-            return '資訊推動小組';
-        case 'ServerRoomOperator':
-            return '機房人員';
-        case 'ReviewStaff':
-            return '機房人員';
-        case 'ServerRoomManager':
-            return '機房人員';
+            return '15';
+        case 'seniorTechSpecialistTester':
+            return '15';
+        case 'serverRoomOperatorTester':
+            return '7';
+        case 'reviewStaffTester':
+            return '7';
+        case 'serverRoomManagerTester':
+            return '7';
         default:
             return '';
     }
 }
+
+export function changeDealWithUnit(unit: any, unitList: any): string {
+
+    if (unit == null) return '';
+    let unitName = '';
+    unitList.forEach(data => {
+
+        if (data.value === unit) {
+            unitName = data.text
+        }
+
+    })
+    return unitName;
+}
+
+

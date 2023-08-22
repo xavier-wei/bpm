@@ -225,7 +225,6 @@ public class ProcessL414Resource {
 
     @RequestMapping("/completeTask")
     public String completeTask(@RequestBody CompleteReqDTO completeReqDTO) {
-
         log.info("ProcessL414Resource.java - completeTask - 183 :: " + completeReqDTO);
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
@@ -235,6 +234,9 @@ public class ProcessL414Resource {
             BpmSignStatusDTO bpmSignStatusDTO = getBpmSignStatusDTO(completeReqDTO);
             BpmSignStatus bpmSignStatus = bpmSignStatusMapper.toEntity(bpmSignStatusDTO);
             bpmSignStatusService.saveBpmSignStatus(bpmSignStatus);
+            if (Objects.equals(completeReqDTO.getIpt(), true)) {
+                bpmIsmsL414Service.save(completeReqDTO.getBpmIsmsL414DTO());
+            }
             return exchange.getBody();
         }
         return "伺服器忙碌中或查無任務，請稍候再試";

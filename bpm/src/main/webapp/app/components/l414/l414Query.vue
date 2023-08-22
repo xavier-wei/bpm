@@ -61,6 +61,41 @@
               啟用
             </div>
           </template>
+
+          <template #cell(needNarrative)="row">
+            <b-row>
+              <b-col class="col-12" >
+                <div>
+                  來源IP：{{row.item.sourceIp}},
+                </div>
+              </b-col>
+              <b-col class="col-12">
+                <div>
+                  目的IP：{{row.item.sourceIp}},
+                </div>
+              </b-col>
+              <b-col class="col-12">
+                <div>
+                  使用協定(Port)：{{row.item.port}},
+                </div>
+              </b-col>
+              <b-col class="col-12">
+                <div>
+                  <b-input-group>
+                    <div>傳輸模式：</div>
+                    <div class="mx-1" v-if="row.item.isTcp ==='Y'">TCP</div>
+                    <div class="mx-1" v-if="row.item.isUdp ==='Y'">UDP</div>
+                    <div>,</div>
+                  </b-input-group>
+                </div>
+              </b-col>
+              <b-col class="col-12">
+                <div>
+                  用途說明：{{row.item.instructions}}
+                </div>
+              </b-col>
+            </b-row>
+          </template>
         </i-table>
       </div>
     </section>
@@ -79,6 +114,7 @@ import {notificationErrorHandler} from "@/shared/http/http-response-helper";
 import {useNotification} from "@/shared/notification";
 import {newformatDate} from '@/shared/date/minguo-calendar-utils';
 import {useGetters} from "@u3u/vue-hooks";
+import {changeDealWithUnit} from "@/shared/word/directions";
 
 export default {
   name: 'l414Query',
@@ -92,6 +128,7 @@ export default {
     const queryStatus = ref(false);
     const notificationService = useNotification();
     const userData = ref(useGetters(['getUserData']).getUserData).value.user;
+    const bpmUnitOptions = ref(useGetters(['getBpmUnitOptions']).getBpmUnitOptions).value;
     enum FormStatusEnum {
       CREATE = '新增',
       MODIFY = '編輯',
@@ -156,6 +193,7 @@ export default {
           thStyle: 'width:10%',
           thClass: 'text-center',
           tdClass: 'text-center align-middle',
+          formatter: value => (value == undefined ? '' : changeDealWithUnit(value, bpmUnitOptions)),
         },
         {
           key: 'isEnable',
@@ -171,7 +209,7 @@ export default {
           sortable: false,
           thStyle: 'width:40%',
           thClass: 'text-center',
-          tdClass: 'text-center align-middle',
+          tdClass: 'text-left align-middle',
         },
       ],
       data: [],
