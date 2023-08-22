@@ -15,3 +15,19 @@ export function changeSubject(subject: any): string {
 
     return '';
 }
+
+export function changeFormId(formId: any): string {
+
+
+  if (!formId) return '';
+
+  let formName = formId.substring(0, 4);
+
+  if (formName === 'L410') {
+    return formId.substring(0, 4) + '-共用系統使用者帳號申請單' ;
+  } else if (formName === 'L414') {
+    return formId.substring(0, 4) + '-網路服務連結申請單';
+  }
+
+  return '';
+}
