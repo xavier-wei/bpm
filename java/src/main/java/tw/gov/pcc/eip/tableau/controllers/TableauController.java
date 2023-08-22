@@ -91,8 +91,10 @@ public class TableauController extends BaseController {
      * 取得點選menu轉導的頁面，用來window.open相對應的tableau url
      */
     @RequestMapping("/tableau.action")
-    public ModelAndView showTableauPage(@RequestParam(name = "tableauId") String tableauId) {
-        log.info("===========/tableau.action with tableauId: {}", tableauId);
+    public ModelAndView showTableauPage(
+            @RequestParam(name = "tableauId") String tableauId
+    ) {
+        log.info("===========/tableau.action with tableauId");
         return new ModelAndView(QUERY_PAGE);
     }
 
