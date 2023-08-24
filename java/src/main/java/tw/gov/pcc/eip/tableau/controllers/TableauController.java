@@ -96,7 +96,7 @@ public class TableauController extends BaseController {
     public ModelAndView showTableauPage(
 //            @RequestParam(name = "tableauId") String tableauId
     ) {
-        log.info("===========/tableau.action with tableauId");
+        log.info("===由menu跳轉到tableau頁面===");
         return new ModelAndView(QUERY_PAGE);
     }
 
