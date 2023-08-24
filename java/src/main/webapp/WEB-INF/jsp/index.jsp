@@ -44,8 +44,9 @@
                 <c:when test="${item eq 'drag2'}">
             <div class="box" >
                 <section id="drag2" class="dragtag">
-                    <nav class="nav pt-4 navbar-expand">
-                        <div id="nav-tab4" role="tablist" class="nav nav-tabs container-fluid" draggable="true">
+                  <div id="myTableau"></div>
+                    <!-- <nav class="nav pt-4 navbar-expand">
+                        <div id="nav-tab4" role="tablist" class="tableauTitle nav nav-tabs container-fluid" draggable="true">
                             <button id="nav-inform-tab4" type="button"
                                     class="btn nav-link btn-secondary active w-100">
                                 個人儀表板
@@ -54,7 +55,7 @@
                     </nav>
                     <div  class="box" draggable="true">
                         <div id="tableauContainer" class="row"></div>
-                    </div>
+                    </div> -->
                 </section>
             </div>                        
                 </c:when>
@@ -420,7 +421,7 @@
                getTicket()
            });
 
-           let backendResponse;
+           let backendResponse = [];
            function openTableau(type) {
                  // 顯示確認視窗
                  const isConfirmed = confirm('將開啟Tableau視窗，確認繼續嗎？');
@@ -448,16 +449,19 @@
                 async: true,
                 timeout: 100000,
                 success: function(response) {
-                console.log(response);
                 if (response) {
-                   backendResponse = response
-                   //動態生成tableau div
-                   const tableauContainer = document.getElementById("tableauContainer");
-                   backendResponse.forEach((imageData) => {
-                      console.log("imageData",imageData)
-                      const tableauElement = createTableauElement(imageData);
-                      tableauContainer.appendChild(tableauElement);
-                   });
+                    if(response.length!=0){
+                       backendResponse = response
+                         //動態生成tableau div
+                         const myTableau = createTableauTitleAndContainer();
+                         backendResponse.forEach((imageData) => {
+                            console.log("imageData",imageData)
+                            const tableauElement = createTableauElement(imageData);
+                            myTableau.appendChild(tableauElement);
+                         });
+                    }else{
+                        console.log("查無儀表板")
+                    }
                  }
               },
               error: function(error) {
@@ -466,72 +470,114 @@
               });
            }
 
+          function createTableauTitleAndContainer(){
+             const myTableau = document.getElementById("myTableau");
+             // 創建 nav 元素
+             const navElement = document.createElement("nav");
+             navElement.className = "nav pt-4 navbar-expand";
+
+             // 創建 div 元素
+             const navTabDiv = document.createElement("div");
+             navTabDiv.id = "nav-tab4";
+             navTabDiv.className = "tableauTitle nav nav-tabs container-fluid";
+             navTabDiv.setAttribute("role", "tablist");
+             navTabDiv.setAttribute("draggable", "true");
+
+             // 創建按鈕元素
+             const buttonElement = document.createElement("button");
+             buttonElement.id = "nav-inform-tab4";
+             buttonElement.type = "button";
+             buttonElement.className = "btn nav-link btn-secondary active w-100";
+             buttonElement.textContent = "個人儀表板";
+
+             // 將按鈕元素添加到 div 元素中
+             navTabDiv.appendChild(buttonElement);
+
+             // 將 div 元素添加到 nav 元素中
+             navElement.appendChild(navTabDiv);
+
+             // 創建外部的 div 元素
+             const containerDiv = document.createElement("div");
+             containerDiv.className = "box";
+             containerDiv.setAttribute("draggable", "true");
+
+             // 創建內部的 div 元素
+             const tableauContainerDiv = document.createElement("div");
+             tableauContainerDiv.id = "tableauContainer";
+             tableauContainerDiv.className = "row";
+
+             // 將內部的 div 元素添加到外部的 div 元素中
+             containerDiv.appendChild(tableauContainerDiv);
+
+             // 將 nav 元素和外部的 div 元素添加到myTableau中
+             myTableau.appendChild(navElement);
+             myTableau.appendChild(containerDiv);
+             return tableauContainerDiv;
+          }
 
 
-                     // 動態產生tableau div
-                     function createTableauElement(imageData) {
-                         const tableauDiv = document.createElement("div");
-                         tableauDiv.classList.add("col-md-4", "tableau_btn");
-                         tableauDiv.id = "tableau_btn_" + imageData.dashboardFigId;
+         // 動態產生tableau div
+         function createTableauElement(imageData) {
+             const tableauDiv = document.createElement("div");
+             tableauDiv.classList.add("col-md-4", "tableau_btn");
+             tableauDiv.id = "tableau_btn_" + imageData.dashboardFigId;
 
-                         const topDiv = document.createElement("div");
-                         topDiv.classList.add("top", "pic-scale-up");
+             const topDiv = document.createElement("div");
+             topDiv.classList.add("top", "pic-scale-up");
 
-                         const link = document.createElement("a");
-                         link.href = "#";
-                         link.onclick = function() {
-                             openTableau(imageData.dashboardFigId);
-                         };
+             const link = document.createElement("a");
+             link.href = "#";
+             link.onclick = function() {
+                 openTableau(imageData.dashboardFigId);
+             };
 
-                         const imgDiv = document.createElement("div");
-                         imgDiv.classList.add("d-inline-block", "align-middle", "text-center");
-                         const img = document.createElement("img");
-                         const base64String = imageData.imageBase64String;
-                         img.src = "data:image/png;base64," + base64String;
-                         img.style.borderRadius = "10px";
-                         img.style.maxWidth = "100%";
-                         img.style.maxHeight = "100%";
-                         img.alt = "儀錶板";
+             const imgDiv = document.createElement("div");
+             const img = document.createElement("img");
+             const base64String = imageData.imageBase64String;
+             img.src = "data:image/png;base64," + base64String;
+             img.style.borderRadius = "10px";
+             img.style.maxWidth = "100%";
+             img.style.maxHeight = "100%";
+             img.alt = "儀錶板";
+             
+             imgDiv.appendChild(img);
+             link.appendChild(imgDiv);
+             topDiv.appendChild(link);
+             tableauDiv.appendChild(topDiv);
+             return tableauDiv;
+         }
 
 
-                         imgDiv.appendChild(img);
-                         link.appendChild(imgDiv);
-                         topDiv.appendChild(link);
-                         tableauDiv.appendChild(topDiv);
-                         return tableauDiv;
+         let ticket;
+         //獲取tableau授權碼，不用再二次登入
+         function getTicket() {
+          $.ajax({
+                 url: '<c:url value="/get-ticket" />',
+                 type: 'POST',
+                 async: true,
+                 timeout: 100000,
+                 success: function(response) {
+                     if (response) {
+                         ticket = response.ticket;
+                         console.log("ticket",ticket);
                      }
-
-
-                     let ticket;
-                     //獲取tableau授權碼，不用再二次登入
-                     function getTicket() {
-                      $.ajax({
-                             url: '<c:url value="/get-ticket" />',
-                             type: 'POST',
-                             async: true,
-                             timeout: 100000,
-                             success: function(response) {
-                                 if (response) {
-                                     ticket = response.ticket;
-                                     console.log("ticket",ticket);
-                                 }
-                             },
-                             error: function(error) {
-                                 console.error(error);
-                             }
-                         });
-                     }
-
-                   function arrayBufferToBase64(buffer) {
-                     console.log("buffer", buffer); // 檢查 buffer 是否有值
-                     const bytes = new Uint8Array(buffer);
-                     console.log("bytes", bytes); // 檢查 bytes 是否有值
-                     let binary = '';
-                     for (let i = 0; i < bytes.length; i++) {
-                         binary += String.fromCharCode(bytes[i]);
-                     }
-                     return window.btoa(binary);
+                 },
+                 error: function(error) {
+                     console.error(error);
                  }
+             });
+         }
+
+         function arrayBufferToBase64(buffer) {
+              console.log("buffer", buffer); // 檢查 buffer 是否有值
+              const bytes = new Uint8Array(buffer);
+              console.log("bytes", bytes); // 檢查 bytes 是否有值
+              let binary = '';
+              for (let i = 0; i < bytes.length; i++) {
+                  binary += String.fromCharCode(bytes[i]);
+              }
+              return window.btoa(binary);
+         }
 
         </script>
     </jsp:attribute>

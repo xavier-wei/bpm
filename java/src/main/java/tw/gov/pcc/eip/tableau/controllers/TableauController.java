@@ -46,9 +46,9 @@ public class TableauController extends BaseController {
         } catch (Exception e) {
             log.error("tableau儀錶板查詢失敗 - " + ExceptionUtility.getStackTrace(e));
             setSystemMessage(getQueryFailMessage());
+            return ObjectUtility.normalizeObject(resultList);
         }
         return ObjectUtility.normalizeObject(resultList);
-
     }
 
 
@@ -64,6 +64,8 @@ public class TableauController extends BaseController {
         } catch (Exception e) {
             log.error("tableau ticket error - " + ExceptionUtility.getStackTrace(e));
             setSystemMessage(getQueryFailMessage());
+            map.put("ticket","no");
+            return ObjectUtility.normalizeObject(map);
         }
         return ObjectUtility.normalizeObject(map);
     }
