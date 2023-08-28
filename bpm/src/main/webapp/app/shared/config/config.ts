@@ -47,7 +47,7 @@ import * as filters from '@/shared/date/filters';
 import { accountStore } from '@/shared/config/store/account-store';
 
 import { envStore } from '@/shared/config/store/env-store';
-import {userStore} from "@/components/userStore/user-store";
+import {userStore} from "@/shared/userStore/user-store";
 import {keepAliveStore} from "@/shared/config/store/keep-alive-store";
 import { axiosScrollStore } from '@/shared/config/store/axios-scroll-store';
 import {bpmUnitOptionsStore} from "@/shared/config/store/bpm-unit-options-store";

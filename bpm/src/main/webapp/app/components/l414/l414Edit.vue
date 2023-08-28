@@ -808,6 +808,8 @@ export default {
         ipt: userData === 'InfoTester'
       };
 
+      console.log('body',body)
+
       axios
           .post(`/process/completeTask`, body)
           .then(({data}) => {
