@@ -1,16 +1,5 @@
 package tw.gov.pcc.web.rest;
 
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
-import javax.servlet.http.HttpServletRequest;
-import javax.validation.Valid;
-import javax.validation.constraints.NotNull;
-
-import org.apache.commons.lang3.StringUtils;
-import org.keycloak.KeycloakSecurityContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -23,6 +12,14 @@ import tw.gov.pcc.service.BpmFunctionService;
 import tw.gov.pcc.service.dto.BpmFunctionDTO;
 import tw.gov.pcc.service.dto.MenuTreeDTO;
 import tw.gov.pcc.web.rest.errors.BadRequestAlertException;
+
+import javax.validation.Valid;
+import javax.validation.constraints.NotNull;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
 
 /**
  * REST controller for managing {@link tw.gov.pcc.domain.BpmFunction}.

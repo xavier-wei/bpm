@@ -17,6 +17,13 @@ npm start
 ## 2. 正式環境打包
 
 ```bash
-mvn clean
-mvn package -P prod,no-liquibase
+
+Move-Item target\bpm.war -Destination "C:\wildfly-2\standalone\deployments"
+Remove-Item "C:\wildfly-2\standalone\deployments\bpm.war"
+mvn clean package -P prod
+```
+
+```bash
+echo "start"
+echo "stop"
 ```
