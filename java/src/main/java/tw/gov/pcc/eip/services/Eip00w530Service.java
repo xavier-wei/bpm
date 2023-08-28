@@ -46,8 +46,9 @@ public class Eip00w530Service extends OpinionSurveyService {
      */
     public void getAllList(Eip00w530Case caseData) {
         //TODO 目前userdata還沒有職稱，未來需要補
-        String deptno = getLimitvoteDept().containsKey(userData.getDeptId()) ? userData.getDeptId() : userData.getEmpId();
-        List<Eip00w530Case.OsCase> list = osformdataDao.getListByStatus(Arrays.asList("P", "I"), deptno).stream().map(t -> {
+        String deptno = "D" + userData.getDeptId();
+        String jobtitleno = userData.getTitleId();
+        List<Eip00w530Case.OsCase> list = osformdataDao.getListByStatus(Arrays.asList("P", "I"), deptno, jobtitleno).stream().map(t -> {
             Eip00w530Case.OsCase osCase = new Eip00w530Case.OsCase();
             osCase.setOsformno(t.getOsformno());
             osCase.setTopicname(t.getTopicname());
@@ -60,7 +61,7 @@ public class Eip00w530Service extends OpinionSurveyService {
             }
             return osCase;
         }).collect(Collectors.toList());
-        List<Eip00w530Case.OsCase> hislist = osformdataDao.getListByStatus(Arrays.asList("T", "C"), deptno).stream().map(t -> {
+        List<Eip00w530Case.OsCase> hislist = osformdataDao.getListByStatus(Arrays.asList("T", "C"), deptno, jobtitleno).stream().map(t -> {
             Eip00w530Case.OsCase osCase = new Eip00w530Case.OsCase();
             osCase.setOsformno(t.getOsformno());
             osCase.setTopicname(t.getTopicname());

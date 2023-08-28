@@ -23,7 +23,7 @@ public class View_flow implements Serializable {
 
   private static final long serialVersionUID = 1L;
   
-  /** 下一個批核者身分 ID */
+  /** 下一個批核者員工編號 */
   @LogField
-  private String next_person_id;
+  private String next_card_id;
 }

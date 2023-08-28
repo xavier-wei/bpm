@@ -577,9 +577,13 @@ public class Eip00w420Service extends OnlineRegService {
                     .append(StringUtils.trimToEmpty(orformdata.getCountry())).append(",")
                     .append(StringUtils.trimToEmpty(String.valueOf(orformdata.getPeriod()))).append(",")
                     .append(StringUtils.trimToEmpty(calculateCertiHours(orformdata.getCertihours()))).append(",")
-                    .append(StringUtils.trimToEmpty(DateUtility.changeDateTypeToChineseDate(orresult.getRegisbrth()))).append(",")
-                    .append(StringUtils.trimToEmpty(calculateCertiHours(StringUtils.defaultString(orresult.getCertiphours()) + "," + StringUtils.defaultString(orresult.getCertidhours())))).append(",")
-                    .append(StringUtils.trimToEmpty(orformdata.getCoursecode()))
+                    .append(StringUtils.trimToEmpty(DateUtility.changeDateTypeToChineseDate(orresult.getRegisbrth()))).append(",");
+                    if (StringUtils.isAllBlank(orresult.getCertiphours(),orresult.getCertidhours())) {
+                        sb.append("0,");
+                    } else {
+                        sb.append(StringUtils.trimToEmpty(calculateCertiHours(StringUtils.defaultString(orresult.getCertiphours()) + "," + StringUtils.defaultString(orresult.getCertidhours())))).append(",");
+                    }
+                    sb.append(StringUtils.trimToEmpty(orformdata.getCoursecode()))
                     .append(System.getProperty("line.separator"));
         }
         return sb.toString().getBytes(Charset.forName("big5"));

@@ -118,6 +118,8 @@ public class Eip08w010Controller extends BaseController {
     	 	//查詢畫面資料
     	 	List<Itemcode> list = eip08w010Service.findMainKindList(caseData.getMainkindno());
     		caseData.setResultKindList(list);
+    		caseData.setAddMainItemname("");
+    		caseData.setAddMainItemno("");
     		setSystemMessage(getSaveSuccessMessage());
     		return new ModelAndView(MAINLIST_PAGE);		    	
 	    	 	
@@ -125,6 +127,36 @@ public class Eip08w010Controller extends BaseController {
 			log.error("新增失敗 - {}", ExceptionUtility.getStackTrace(e));
 			setSystemMessage(getQueryFailMessage());
 			return new ModelAndView(QUERY_PAGE);
+		}
+	 }
+	
+	/**
+	 * 刪除mainitemcode
+	 *
+	 * @return
+	 */
+	@RequestMapping("/Eip08w010_deleteMain.action")
+	public ModelAndView deleteMainKind(@ModelAttribute(CASE_KEY) Eip08w010Case caseData,  BindingResult bindingResult) {
+	       
+	     try {
+	    	//驗證
+	    	eip08w010Service.validDelMainItemcode(caseData, bindingResult);
+	    	if(bindingResult.hasErrors()) {
+	    	 	return new ModelAndView(MAINLIST_PAGE);
+	    	}
+	    	
+    	 	//刪除
+	    	eip08w010Service.deleteMainItemcode(caseData);
+    	 	//查詢畫面資料
+    	 	List<Itemcode> list = eip08w010Service.findMainKindList(caseData.getMainkindno());
+    		caseData.setResultKindList(list);
+    		setSystemMessage(getDeleteSuccessMessage());
+    		return new ModelAndView(MAINLIST_PAGE);		    	
+	    	 	
+		} catch (Exception e) {
+			log.error("刪除失敗 - {}", ExceptionUtility.getStackTrace(e));
+			setSystemMessage(getDeleteFailMessage());
+			return new ModelAndView(MAINLIST_PAGE);
 		}
 	 }
 	
@@ -179,31 +211,7 @@ public class Eip08w010Controller extends BaseController {
 			return new ModelAndView(DETAILLIST_PAGE);
 		}
 	 }
-	
-	/**
-	 * 刪除mainitemcode
-	 *
-	 * @return
-	 */
-	@RequestMapping("/Eip08w010_deleteMain.action")
-	public ModelAndView deleteMainKind(@ModelAttribute(CASE_KEY) Eip08w010Case caseData,  BindingResult bindingResult) {
-	       
-	     try {
-    	 	//刪除
-	    	eip08w010Service.deleteMainItemcode(caseData);
-    	 	//查詢畫面資料
-    	 	List<Itemcode> list = eip08w010Service.findMainKindList(caseData.getMainkindno());
-    		caseData.setResultKindList(list);
-    		setSystemMessage(getDeleteSuccessMessage());
-    		return new ModelAndView(MAINLIST_PAGE);		    	
-	    	 	
-		} catch (Exception e) {
-			log.error("刪除失敗 - {}", ExceptionUtility.getStackTrace(e));
-			setSystemMessage(getDeleteFailMessage());
-			return new ModelAndView(MAINLIST_PAGE);
-		}
-	 }
-	
+		
 	/**
 	 * 修改mainitemcode
 	 *
@@ -213,6 +221,7 @@ public class Eip08w010Controller extends BaseController {
 	public ModelAndView editMainKind(@ModelAttribute(CASE_KEY) Eip08w010Case caseData,  BindingResult bindingResult) {
 	       
 	     try {
+   	 
     	 	//驗證
     	 	eip08w010Service.validEditMainItemcode(caseData, bindingResult);
     	 	if(bindingResult.hasErrors()) {

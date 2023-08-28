@@ -27,10 +27,10 @@ public class View_flowDaoImpl extends ItrBaseDao<View_flow> implements View_flow
 
   @Override
   @SkipLog
-  public BigDecimal selectCountByNext_person_id(View_flow viewFlow) {
+  public BigDecimal selectCountByNext_card_id(View_flow viewFlow) {
     return getNamedParameterJdbcTemplate()
         .queryForObject(
-            " select count(1) cnt from view_flow where next_person_id = :next_person_id ",
+            " select count(1) cnt from view_flow where next_card_id = :next_card_id ",
             new BeanPropertySqlParameterSource(viewFlow),
             BigDecimal.class);
   }

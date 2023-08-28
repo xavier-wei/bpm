@@ -8,6 +8,7 @@ import tw.gov.pcc.eip.adm.cases.Eip00w010Case;
 import tw.gov.pcc.eip.dao.*;
 import tw.gov.pcc.eip.domain.CarBase;
 import tw.gov.pcc.eip.domain.Eipcode;
+import tw.gov.pcc.eip.domain.GasRec;
 import tw.gov.pcc.eip.domain.User_roles;
 import tw.gov.pcc.eip.framework.domain.UserBean;
 import tw.gov.pcc.eip.orderCar.cases.Eip07w010Case;
@@ -19,7 +20,7 @@ import java.util.List;
 /**
  * 
  *
- * @author ivan
+ * @author york
  */
 @Service
 public class Eip07w010Service {
@@ -40,7 +41,7 @@ public class Eip07w010Service {
     @Autowired
     private CaruseRecDao caruseRecDao;
     @Autowired
-    private GasRecDao gasRecDaol;
+    private GasRecDao gasRecDao;
     String sysDateTime = DateUtil.getNowWestDateTime(true);
     String sysDate = sysDateTime.substring(0, 8);
 
@@ -105,11 +106,13 @@ public class Eip07w010Service {
      */
     public void getSelectList(Eip07w010Case caseData) {
         List<Eipcode> getTitle = eipcodeDao.findByCodeKind("DRIVETITLE");
+        List<Eipcode> getCarstatus = eipcodeDao.findByCodeKind("CARSTATUS");
         List<Eip07w010Case> tempStaff = driverBaseDao.getTempStaff();
         List<CarBase> carNoList = carBaseDao.getCarno();
         caseData.setTitleList(getTitle);
         caseData.setTempStaffList(tempStaff);
         caseData.setCarnoList(carNoList);
+        caseData.setCarstatusList(getCarstatus);
     }
 
 
@@ -197,14 +200,14 @@ public class Eip07w010Service {
     /**
      * update資料依driverid
      *
-     * @param caseData
+     * @param updateData
      */
-    public void updateCarBase(Eip07w010Case caseData)throws Exception {
-        caseData.setUpdUser(userData.getUserId());
-        caseData.setUpdDatetime(sysDate);
-        caseData.setInsuranceStart(DateUtility.changeDateType(caseData.getInsuranceStart()));
-        caseData.setInsuranceEnd(DateUtility.changeDateType(caseData.getInsuranceEnd()));
-        carBaseDao.updateCarBase(caseData);
+    public void updateCarBase(Eip07w010Case updateData)throws Exception {
+        updateData.setUpdUser(userData.getUserId());
+        updateData.setUpdDatetime(sysDate);
+        updateData.setInsuranceStart(DateUtility.changeDateType(updateData.getInsuranceStart()));
+        updateData.setInsuranceEnd(DateUtility.changeDateType(updateData.getInsuranceEnd()));
+        carBaseDao.updateCarBase(updateData);
     }
 
     /**
@@ -216,9 +219,24 @@ public class Eip07w010Service {
         List<Eip07w010Case> oilList= new ArrayList<>();
         List<Eip07w010Case> mileageList= new ArrayList<>();
         mileageList=caruseRecDao.quaryCaruseRec(caseData.getEip07w010QueryDataList().get(0));
-        oilList=gasRecDaol.quaryGasRec(caseData.getEip07w010QueryDataList().get(0));
+        oilList= gasRecDao.quaryGasRec(caseData.getEip07w010QueryDataList().get(0));
+        if (mileageList.isEmpty()&&oilList.isEmpty()){
+            mileageList=caruseRecDao.quaryCaruseRec(caseData);
+            oilList= gasRecDao.quaryGasRec(caseData);
+        }
         caseData.setOilList(oilList);
         caseData.setMileageList(mileageList);
+    }
+
+    public void gasAdd(GasRec gasData,Eip07w010Case caseData) throws Exception{
+        gasData.setCarno1(caseData.getEip07w010CarDataList().get(0).getCarno1());
+        gasData.setCarno2(caseData.getEip07w010CarDataList().get(0).getCarno2());
+        gasData.setFuel_time(caseData.getGasH()+caseData.getGasM());
+        gasData.setUpd_user(userData.getUserId());
+        gasData.setCre_user(userData.getUserId());
+        gasData.setCre_datetime(sysDate);
+        gasData.setUpd_datetime(sysDate);
+        gasRecDao.insert(gasData);
     }
 
     /**
@@ -228,6 +246,25 @@ public class Eip07w010Service {
      */
     public void deleteCar(Eip07w010Case caseData)throws Exception {
         carBaseDao.delete(caseData);
+    }
+
+    /**
+     * 時1~23
+     * 分1~59
+     *
+     * @param caseData
+     */
+    public void getTimeList(Eip07w010Case caseData) {
+        List<String> hour=new ArrayList<>();
+        List<String> minute=new ArrayList<>();
+        for (int h=0;h<=59;h++){
+            minute.add( String.format("%2s", h).replace(' ', '0'));
+        }
+        for (int m=0;m<=23;m++){
+            hour.add( String.format("%2s", m).replace(' ', '0'));
+        }
+        caseData.setHourList(hour);
+        caseData.setMinuteList(minute);
     }
 
 

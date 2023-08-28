@@ -164,7 +164,7 @@ public class RoitemDaoImpl extends BaseDao<Roitem> implements RoitemDao {
 
     @Override
     public void updateSequence() {
-        String sql = " ALTER SEQUENCE EIP_APPLYCARNO RESTART  WITH 1 ";
+        String sql = " ALTER SEQUENCE EIP_08W060NO RESTART  WITH 1 ";
         Map<String, Object> param = new HashMap<String, Object>();
         getNamedParameterJdbcTemplate().update(sql, param);
     }

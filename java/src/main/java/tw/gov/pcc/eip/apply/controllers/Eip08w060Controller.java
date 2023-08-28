@@ -71,12 +71,18 @@ public class Eip08w060Controller extends BaseController {
         caseData.setApplyTpNm("I-物品請購單");
         caseData.setSave("N");
         caseData.setApplyDate(DateUtil.getNowChineseDate());
-        List<Eip08w060Case> newList =new ArrayList<Eip08w060Case>();
-        caseData.setEip08w060QuaryList(newList);
-        caseData.setEip08w060CaseList(newList);
-        caseData.setItemId("");
 
         return new ModelAndView(QUERY_PAGE);
+    }
+
+    private void resetData(Eip08w060Case caseData) {
+        Eip08w060Case newCase = new Eip08w060Case();
+        BeanUtility.copyProperties(caseData, newCase);// 進來時清除caseData
+        log.debug("導向 adm0w010_enter 設定系統管理員");
+        caseData.setUser(userData.getUserId());
+        caseData.setApplyTpNm("I-物品請購單");
+        caseData.setSave("N");
+        caseData.setApplyDate(DateUtil.getNowChineseDate());
     }
 
     /**
@@ -147,18 +153,23 @@ public class Eip08w060Controller extends BaseController {
             caseData.setCre_datetime(sysDateTime);
             eip08W060Service.add(caseData);
             setSystemMessage(getSaveSuccessMessage()+"_請購單號:"+caseData.getItemId());
+//            eip08W060Service.quary(caseData);
         }catch (Exception e){
             setSystemMessage(getSaveFailMessage());
             log.error("新增失敗，原因:{}", ExceptionUtility.getStackTrace(e));
             return ADD_APGE;
         }
+        int itemNo =0;
         ArrayList<Eip08w060Case> arrayList = new ArrayList<Eip08w060Case>();
         for (Eip08w060Case data:caseData.getEip08w060CaseList()) {
             if (StringUtils.isNotBlank(data.getItem())){
+                data.setItemId(caseData.getItemId());
+                data.setItemNo(String.valueOf(++itemNo));
                 arrayList.add(data);
             }
         }
         caseData.setEip08w060CaseList(arrayList);
+
           return Details_DATA_APGE;
     }
 
@@ -179,10 +190,8 @@ public class Eip08w060Controller extends BaseController {
 
     @RequestMapping("/Eip08w060_delete.action")
     public String delete(@Validated @ModelAttribute(CASE_KEY) Eip08w060Case caseData, BindingResult result) {
-
         log.debug("導向   eip08W060Q   物品請購/修繕請修刪除作業");
         try {
-
             eip08W060Service.delete(caseData.getEip08w060CaseList().get(0));
             setSystemMessage(getDeleteSuccessMessage());
         }catch (Exception e){
@@ -190,11 +199,7 @@ public class Eip08w060Controller extends BaseController {
             log.error("刪除失敗，原因:{}", ExceptionUtility.getStackTrace(e));
             return Details_DATA_APGE;
         }
-        //list初始化
-        List<Eip08w060Case> newList =new ArrayList<Eip08w060Case>();
-        caseData.setEip08w060QuaryList(newList);
-        caseData.setEip08w060CaseList(newList);
-
+        resetData(caseData);
         return QUERY_PAGE;
     }
     @RequestMapping("/Eip08w060_update.action")
@@ -206,8 +211,8 @@ public class Eip08w060Controller extends BaseController {
         log.debug("導向   eip08W060Q   物品請購/修繕申請修改作業");
         try {
             for (Eip08w060Case upData:caseData.getEip08w060CaseList()) {
-                caseData.setUpd_datetime(DateUtil.getNowWestDateTime(true));
-                caseData.setUpd_user(userData.getUserId());
+                upData.setUpd_datetime(DateUtil.getNowWestDateTime(true));
+                upData.setUpd_user(userData.getUserId());
                 eip08W060Service.update(upData);
             }
             setSystemMessage(getUpdateSuccessMessage());
@@ -216,11 +221,7 @@ public class Eip08w060Controller extends BaseController {
             log.error("刪除失敗，原因:{}", ExceptionUtility.getStackTrace(e));
             return Details_DATA_APGE;
         }
-        //list初始化
-        List<Eip08w060Case> newList =new ArrayList<Eip08w060Case>();
-        caseData.setEip08w060QuaryList(newList);
-        caseData.setEip08w060CaseList(newList);
-
+        resetData(caseData);
         return QUERY_PAGE;
     }
 

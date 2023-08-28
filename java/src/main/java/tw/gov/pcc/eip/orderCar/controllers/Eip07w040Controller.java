@@ -57,7 +57,7 @@ public class Eip07w040Controller extends BaseController {
 		try {
 			Eip07w040Case newCase = new Eip07w040Case();
 			BeanUtility.copyProperties(caseData, newCase);// 進來時清除caseData
-			eip07w040Service.getData(caseData,SEARCH_BY_STATUS234);
+			eip07w040Service.getDefaultData(caseData);
 		} catch (Exception e) {
 			log.error("Eip07w040Case_enter查詢失敗" + ExceptionUtility.getStackTrace(e));
 		}
@@ -73,7 +73,7 @@ public class Eip07w040Controller extends BaseController {
 	public ModelAndView backToFirst(@ModelAttribute(CASE_KEY) Eip07w040Case caseData) {
 		log.debug("導向 Eip07w040Case_enter 秘書處進行派車作業");
 		try {
-			eip07w040Service.getData(caseData,SEARCH_BY_CONDITION);
+			eip07w040Service.getDefaultData(caseData);
 		} catch (Exception e) {
 			log.error("Eip07w040Case_enter查詢失敗" + ExceptionUtility.getStackTrace(e));
 		}
@@ -138,7 +138,7 @@ public class Eip07w040Controller extends BaseController {
 		}
 		try {
 			eip07w040Service.updateAll(caseData);
-			eip07w040Service.getData(caseData,SEARCH_BY_CONDITION);
+			eip07w040Service.getDefaultData(caseData);
 			setSystemMessage("派車成功");
 		} catch(RuntimeException re) {
 			setSystemMessage("駕駛人資料有誤，派車失敗");
@@ -183,10 +183,13 @@ public class Eip07w040Controller extends BaseController {
 	 * @return
 	 */
 	@RequestMapping({"/Eip07w040_search.action"})
-	public String searchData(@ModelAttribute(CASE_KEY) Eip07w040Case caseData) {
+	public String searchData(@Validated(Eip07w040Case.Query.class) @ModelAttribute(CASE_KEY) Eip07w040Case caseData, BindingResult result) {
 		log.debug("導向 Eip07w040Case_enter 查詢 ");
 		try {
-			eip07w040Service.getData(caseData,SEARCH_BY_CONDITION);
+			if(result.hasErrors()) {
+				return QUERY_PAGE;
+			}
+			eip07w040Service.getDataByCondition(caseData);
 		} catch (Exception e) {
 			log.error("Eip07w040Case_enter查詢失敗" + ExceptionUtility.getStackTrace(e));
 		}

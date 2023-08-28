@@ -7,6 +7,9 @@ public class HttpUtil {
     private static final org.slf4j.Logger log = org.slf4j.LoggerFactory.getLogger(HttpUtil.class);
 
     public static String getClientIP(HttpServletRequest request) {
+        if(request == null){
+            return StringUtils.EMPTY;
+        }
         String ip = request.getHeader("X-Forwarded-For");
         if (StringUtils.isBlank(ip) || StringUtils.equalsIgnoreCase("unknown", ip)) {
             ip = request.getHeader("Proxy-Client-IP");

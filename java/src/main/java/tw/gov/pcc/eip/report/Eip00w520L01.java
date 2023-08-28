@@ -114,9 +114,9 @@ public class Eip00w520L01 extends XlsReport {
 	 */
     public void addHeader(Eip00w520Case caseData) {
         List<String> titleList = caseData.getWriteContentTitle();
-        Row headerRow = createRow(sheet, 0, 5, headerCenterStyle);
+        Row headerRow = createRow(sheet, 0, titleList.size(), headerCenterStyle);
         //合併，index由0開始
-        headerRow.getSheet().addMergedRegion(new CellRangeAddress(0, 0, 0, 4));
+        headerRow.getSheet().addMergedRegion(new CellRangeAddress(0, 0, 0, titleList.size()-1));
         setCellValue(headerRow, 0, "意見調查填寫內容", headerCenterStyle);
         Row headerRow2 = createRow(sheet, 2, 5, bodyLeftNoBorderStyle);
         setCellValue(headerRow2,0,"主題：", bodyLeftNoBorderStyle);

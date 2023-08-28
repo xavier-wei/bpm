@@ -14,12 +14,7 @@ import tw.gov.pcc.common.annotation.DaoTable;
 import tw.gov.pcc.common.framework.dao.BaseDao;
 import tw.gov.pcc.eip.common.cases.Eip02w010Case.addressBook;
 import tw.gov.pcc.eip.dao.UsersDao;
-import tw.gov.pcc.eip.domain.Depts;
 import tw.gov.pcc.eip.domain.Users;
-
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 /**
  * 使用者資料 DaoImpl
@@ -260,5 +255,12 @@ public class UsersDaoImpl extends BaseDao<Users> implements UsersDao {
                 BeanPropertyRowMapper.newInstance(Users.class));
     }
 
+    /**
+     * 將HR的人頭匯入USERS，拿來開發測試用，正式應由LDAP匯入
+     */
+    @Override
+    public void insertUsersFromView_cpape05m(){
+        String sql = "insert into USERS (USER_ID, USER_NAME) select v.PECARD USER_ID, v.PENAME  USER_NAME  from view_cpape05m v where v.PEUNIT!='600037'";
+    }
 
 }

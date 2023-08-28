@@ -129,19 +129,24 @@ public class OsformdataDaoImpl extends BaseDao<Osformdata> implements Osformdata
     }
 
     @Override
-    public List<Osformdata> getListByStatus(List<String> statusList, String deptno) {
+    public List<Osformdata> getListByStatus(List<String> statusList, String deptno, String jobtitle) {
         StringBuilder sql = new StringBuilder();
         sql.append(" SELECT ");
         sql.append(ALL_COLUMNS_SQL);
         sql.append(" FROM " + TABLE_NAME);
         sql.append(" WHERE status IN (:statusList) ");
-        sql.append("   AND (limitvote = :deptno ");
+        sql.append("   AND ((limitvote = :deptno ");
         sql.append("        OR limitvote like :deptno + ',%' ");
         sql.append("        OR limitvote like '%,' + :deptno ");
         sql.append("        OR limitvote like '%,' + :deptno + ',%')");
+        sql.append("    OR (limitvote = :jobtitle ");
+        sql.append("        OR limitvote like :jobtitle + ',%' ");
+        sql.append("        OR limitvote like '%,' + :jobtitle ");
+        sql.append("        OR limitvote like '%,' + :jobtitle + ',%'))");
         Map<String, Object> params = new HashMap<>();
         params.put("statusList", statusList);
         params.put("deptno", deptno);
+        params.put("jobtitle", jobtitle);
         List<Osformdata> list = getNamedParameterJdbcTemplate().query(sql.toString(),params,
                 BeanPropertyRowMapper.newInstance(Osformdata.class));
         return CollectionUtils.isEmpty(list) ? new ArrayList<>() : list;

@@ -12,10 +12,8 @@ import org.springframework.scheduling.quartz.CronTriggerFactoryBean;
 import org.springframework.scheduling.quartz.JobDetailFactoryBean;
 import org.springframework.scheduling.quartz.SchedulerFactoryBean;
 
-import tw.gov.pcc.eip.jobs.ExecuteProcedureJob;
-import tw.gov.pcc.eip.jobs.ImportUsersJob;
-import tw.gov.pcc.eip.jobs.ResetSequenceJob;
-import tw.gov.pcc.eip.jobs.UpdStatusJob;
+import tw.gov.pcc.eip.jobs.*;
+
 /**
  * QUARTZ 排程設定 排程不會每次重啟就重置排程時間，謹首次運行未註冊時會。
  */
@@ -66,11 +64,11 @@ public class QuartzConfig {
 	 * @return scheduler
 	 */
 	@Bean
-	public SchedulerFactoryBean quartzScheduler( CronTrigger spTrigger,CronTrigger resetSequenceTrigger, CronTrigger executeImportUsersJobTrigger, CronTrigger updStatusTrigger) {
+	public SchedulerFactoryBean quartzScheduler( CronTrigger spTrigger,CronTrigger resetSequenceTrigger, CronTrigger executeImportUsersJobTrigger, CronTrigger updStatusTrigger, CronTrigger sendMailsJobTrigger) {
 
 		SchedulerFactoryBean schedulerFactory = new SchedulerFactoryBean();
 		schedulerFactory.setConfigLocation(new ClassPathResource("quartz.properties"));
-		schedulerFactory.setTriggers(spTrigger,resetSequenceTrigger,executeImportUsersJobTrigger,updStatusTrigger);
+		schedulerFactory.setTriggers(spTrigger,resetSequenceTrigger,executeImportUsersJobTrigger,updStatusTrigger, sendMailsJobTrigger);
 //		schedulerFactory.setJobDetails(bebp0w010ReportJobDetail);
 		schedulerFactory.setOverwriteExistingJobs(false);
 		return schedulerFactory;
@@ -163,4 +161,33 @@ public class QuartzConfig {
 		cronTriggerFactoryBean.setCronExpression("0 0/2 * * * ?"); // 每2分鐘執行一次任務
 		return cronTriggerFactoryBean;
 	}
+
+	/**
+	 * 執行SendMailsJob排程 TRIGGER
+	 * @param executeSendMailsJob 執行SendMailsJob排程 JOB
+	 * @return executeSendMailsJobTrigger
+	 */
+	@Bean
+	public CronTriggerFactoryBean sendMailsJobTrigger(JobDetail executeSendMailsJob) {
+		CronTriggerFactoryBean cronTriggerFactoryBean = new CronTriggerFactoryBean();
+		cronTriggerFactoryBean.setJobDetail(executeSendMailsJob);
+		cronTriggerFactoryBean.setCronExpression("0 * * ? * *"); // 每分鐘
+		return cronTriggerFactoryBean;
+	}
+
+	/**
+	 * 執行SendMailsJob排程
+	 * @return executeSendMailsJob
+	 */
+	@Bean
+	public JobDetailFactoryBean executeSendMailsJob() {
+		JobDetailFactoryBean jobDetailFactoryBean = new JobDetailFactoryBean();
+		jobDetailFactoryBean.setJobClass(SendMailsJob.class);
+		jobDetailFactoryBean.setDescription("執行SendMailsJob排程");
+		jobDetailFactoryBean.setName("sendMailsJob");
+		jobDetailFactoryBean.setGroup(COMMON_GROUP);
+		jobDetailFactoryBean.setDurability(true);
+		return jobDetailFactoryBean;
+	}
+	
 }

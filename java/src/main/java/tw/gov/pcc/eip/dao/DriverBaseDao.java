@@ -2,8 +2,6 @@ package tw.gov.pcc.eip.dao;
 
 import org.springframework.stereotype.Repository;
 import tw.gov.pcc.common.annotation.DaoTable;
-import tw.gov.pcc.common.domain.Roitem;
-import tw.gov.pcc.eip.apply.cases.Eip08w060Case;
 import tw.gov.pcc.eip.domain.DriverBase;
 import tw.gov.pcc.eip.orderCar.cases.Eip07w010Case;
 
@@ -30,4 +28,6 @@ public interface DriverBaseDao {
     public int updateDriverBase(Eip07w010Case caseData);
 
 	public DriverBase getDataByCarno12(DriverBase driverbase);
+
+    public List<DriverBase> getDriveId(String id) ;
 }

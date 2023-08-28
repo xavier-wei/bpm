@@ -3,19 +3,19 @@ package tw.gov.pcc.eip.services;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import tw.gov.pcc.eip.dao.DeptsDao;
 import tw.gov.pcc.eip.dao.EipcodeDao;
 import tw.gov.pcc.eip.dao.OsitemDao;
 import tw.gov.pcc.eip.dao.OsquestionDao;
+import tw.gov.pcc.eip.domain.Depts;
 import tw.gov.pcc.eip.domain.Eipcode;
 import tw.gov.pcc.eip.domain.Ositem;
 import tw.gov.pcc.eip.domain.Osquestion;
 
 import java.time.chrono.MinguoChronology;
 import java.time.format.DateTimeFormatter;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
+import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * 意見調查共用Service
@@ -30,6 +30,8 @@ public class OpinionSurveyService {
     OsquestionDao osquestionDao;
     @Autowired
     OsitemDao ositemDao;
+    @Autowired
+    DeptsDao deptsDao;
     private static final org.slf4j.Logger log = org.slf4j.LoggerFactory.getLogger(OpinionSurveyService.class);
 
     DateTimeFormatter minguoformatter = DateTimeFormatter.ofPattern("yyy/MM/dd HH:mm:ss")
@@ -62,9 +64,9 @@ public class OpinionSurveyService {
      * @return map
      */
     public Map<String,String> getLimitvoteDept() {
-        List<Eipcode>list = eipcodeDao.findByCodekindScodekindOrderByCodeno("REGISQUAL","U");
+        List<Depts>list = deptsDao.getEip03wDepts("1",null);
         Map<String, String> map = new LinkedHashMap<>();
-        list.forEach(t -> map.put(t.getCodeno(), StringUtils.isEmpty(t.getCodename()) ? "" : t.getCodename()));
+        list.forEach(t -> map.put("D" + t.getDept_id(), StringUtils.isEmpty(t.getDept_name()) ? "" : t.getDept_name()));
         return map;
     }
 
@@ -73,7 +75,9 @@ public class OpinionSurveyService {
      * @return map
      */
     public Map<String,String> getLimitvoteE1() {
-        List<Eipcode>list = eipcodeDao.findByCodekindScodekindOrderByCodeno("REGISQUAL","E1");
+        List<Eipcode>list = eipcodeDao.findByCodekindScodekindOrderByCodeno("TITLE","1")
+                .stream().sorted(Comparator.comparingInt(e -> Integer.parseInt(e.getCodeno())))
+                .collect(Collectors.toList());
         Map<String, String> map = new LinkedHashMap<>();
         list.forEach(t -> map.put(t.getCodeno(), StringUtils.isEmpty(t.getCodename()) ? "" : t.getCodename()));
         return map;
@@ -84,7 +88,9 @@ public class OpinionSurveyService {
      * @return map
      */
     public Map<String,String> getLimitvoteE2() {
-        List<Eipcode>list = eipcodeDao.findByCodekindScodekindOrderByCodeno("REGISQUAL","E2");
+        List<Eipcode>list = eipcodeDao.findByCodekindScodekindOrderByCodeno("TITLE","2")
+                .stream().sorted(Comparator.comparingInt(e -> Integer.parseInt(e.getCodeno())))
+                .collect(Collectors.toList());
         Map<String, String> map = new LinkedHashMap<>();
         list.forEach(t -> map.put(t.getCodeno(), StringUtils.isEmpty(t.getCodename()) ? "" : t.getCodename()));
         return map;
@@ -95,7 +101,9 @@ public class OpinionSurveyService {
      * @return map
      */
     public Map<String,String> getLimitvoteE3() {
-        List<Eipcode>list = eipcodeDao.findByCodekindScodekindOrderByCodeno("REGISQUAL","E3");
+        List<Eipcode>list = eipcodeDao.findByCodekindScodekindOrderByCodeno("TITLE","3")
+                .stream().sorted(Comparator.comparingInt(e -> Integer.parseInt(e.getCodeno())))
+                .collect(Collectors.toList());
         Map<String, String> map = new LinkedHashMap<>();
         list.forEach(t -> map.put(t.getCodeno(), StringUtils.isEmpty(t.getCodename()) ? "" : t.getCodename()));
         return map;
@@ -106,7 +114,9 @@ public class OpinionSurveyService {
      * @return map
      */
     public Map<String,String> getLimitvoteE4() {
-        List<Eipcode>list = eipcodeDao.findByCodekindScodekindOrderByCodeno("REGISQUAL","E4");
+        List<Eipcode>list = eipcodeDao.findByCodekindScodekindOrderByCodeno("TITLE","4")
+                .stream().sorted(Comparator.comparingInt(e -> Integer.parseInt(e.getCodeno())))
+                .collect(Collectors.toList());
         Map<String, String> map = new LinkedHashMap<>();
         list.forEach(t -> map.put(t.getCodeno(), StringUtils.isEmpty(t.getCodename()) ? "" : t.getCodename()));
         return map;

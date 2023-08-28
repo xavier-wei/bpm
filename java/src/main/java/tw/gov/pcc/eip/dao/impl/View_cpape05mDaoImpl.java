@@ -71,4 +71,21 @@ public class View_cpape05mDaoImpl extends ItrBaseDao<View_cpape05m> implements V
         return getNamedParameterJdbcTemplate()
                 .query(sql,new HashMap<>(),BeanPropertyRowMapper.newInstance(View_cpape05m.class));
     }
+
+    @Override
+    @SkipLog
+    public View_cpape05m selectMaxPeupdateRecordByPecard(String pecard) {
+        View_cpape05m view_cpape05m = new View_cpape05m();
+        view_cpape05m.setPecard(pecard);
+        String sql = "SELECT "
+                + " * "
+                + " FROM view_cpape05m t WHERE t.pecard = :pecard ORDER BY peupdate DESC";
+        List<View_cpape05m> list =
+                getNamedParameterJdbcTemplate()
+                        .query(
+                                sql,
+                                new BeanPropertySqlParameterSource(view_cpape05m),
+                                BeanPropertyRowMapper.newInstance(View_cpape05m.class));
+        return CollectionUtils.isEmpty(list) ? null : list.get(0);
+    }
 }

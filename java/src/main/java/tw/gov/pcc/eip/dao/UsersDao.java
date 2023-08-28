@@ -60,4 +60,5 @@ public interface UsersDao {
      */
     public List<Users> findUserIDByUserName(String userName);
 
+    void insertUsersFromView_cpape05m();
 }

@@ -156,6 +156,11 @@
             	</div>
             </tags:form-row>
             <tags:form-row>
+            	<div class="col-12 col-md">
+				<tags:text-item label="[使用記錄登入]" ></tags:text-item>
+				</div>
+            </tags:form-row>
+            <tags:form-row>
             	<c:choose>
             		<c:when test="${caseData.carType == 'N' && caseData.carbooking.carprocess_status == 'F'}">
 						<div class="col-12 col-md-2">

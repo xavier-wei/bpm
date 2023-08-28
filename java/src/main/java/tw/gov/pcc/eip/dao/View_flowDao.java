@@ -10,5 +10,5 @@ public interface View_flowDao {
   String TABLE_NAME = "view_flow";
 
   @SkipLog
-  BigDecimal selectCountByNext_person_id(View_flow viewFlow);
+  BigDecimal selectCountByNext_card_id(View_flow viewFlow);
 }

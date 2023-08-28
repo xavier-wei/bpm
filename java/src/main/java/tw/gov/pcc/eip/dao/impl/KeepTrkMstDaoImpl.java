@@ -137,10 +137,8 @@ public class KeepTrkMstDaoImpl extends BaseDao<KeepTrkMst> implements KeepTrkMst
         sql.append("      FROM KeepTrkMst a, ");
         sql.append("           KeepTrkDtl b ");
         sql.append("     WHERE a.TrkID = b.TrkID ");
-//        if(StringUtils.isNotBlank(trkSts)){
-            sql.append("   AND a.TrkSts = dbo.UFN_NVL(:trkSts, a.TrkSts)  "); //畫面選擇[列管狀態]，全部則為空字串
-            params.put("trkSts", trkSts);
-//        }
+        sql.append("   AND a.TrkSts = dbo.UFN_NVL(:trkSts, a.TrkSts)  "); //畫面選擇[列管狀態]，全部則為空字串
+
         if(StringUtils.isNotBlank(trkID)){
             sql.append("   AND a.TrkID like '%' + :trkID + '%'  ");     // 畫面輸入[列管編號]
             params.put("trkID", trkID);
@@ -154,6 +152,7 @@ public class KeepTrkMstDaoImpl extends BaseDao<KeepTrkMst> implements KeepTrkMst
         sql.append("  GROUP BY a.Trkid, a.TrkCont, a.AllStDt, a.Trksts ");
         sql.append("  ORDER BY Trkid DESC");
 
+        params.put("trkSts", trkSts);
         params.put("allStDtSt", allStDtSt);
         params.put("allStDtEnd", allStDtEnd);
 

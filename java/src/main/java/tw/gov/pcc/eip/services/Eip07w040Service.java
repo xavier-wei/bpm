@@ -56,54 +56,67 @@ public class Eip07w040Service {
 	 *				  2.秘書處已複核通過案件：HandledList(carProcessstatus=3,4)
 	 * @param caseData
 	 */
-	public void getData(Eip07w040Case caseData,String dataCondition) throws Exception {
-		List<CarBooking> list = carBookingDao.selectForEip07w040(caseData,dataCondition);//取得資料
+	public void getDefaultData(Eip07w040Case caseData) throws Exception {
 		List<CarBooking> notHandleList = new ArrayList<>();
 		List<CarBooking> handledList = new ArrayList<>();
-		if (CollectionUtils.isNotEmpty(list)) {
-			
-			if("1".equals(dataCondition)) {
-				int lastDay = DateUtility.lastDay(DateUtility.getNowChineseDate(),false);
-				caseData.setUsing_time_sStr(DateUtility.getNowChineseYearMonth() + "01");
-				caseData.setUsing_time_eStr(DateUtility.getNowChineseYearMonth()+String.valueOf(lastDay));		
-			}
-			
-			if("2".equals(dataCondition)) {
-				// 若用車日期起日有值，但迄日沒值=>迄日帶入系統日
-				if (StringUtils.isNotEmpty(caseData.getUsing_time_s()) && StringUtils.isEmpty(caseData.getUsing_time_e())) {
-					caseData.setUsing_time_sStr(caseData.getUsing_time_s());
-					caseData.setUsing_time_eStr(DateUtility.getNowChineseDate());
-				} else if(StringUtils.isNotEmpty(caseData.getUsing_time_s()) && StringUtils.isNotEmpty(caseData.getUsing_time_e())){//兩個都有值
-					caseData.setUsing_time_sStr(caseData.getUsing_time_s());
-					caseData.setUsing_time_eStr(caseData.getUsing_time_e());
-				}
-			}
-			
-			
-			for (CarBooking car : list) {
-				//撈表單狀態中文
-				Eipcode eipcode = new Eipcode();
-				eipcode.setCodekind("CARPROCESSSTATUS");
-				eipcode.setCodeno(car.getCarprocess_status());
-				Eipcode code = eipcodeDao.selectDataByPrimaryKey(eipcode);
-				car.setCarprocess_status(code.getCodeno() + "-" + code.getCodename());//表單狀態
-				car.setPrint_mk(StringUtils.isEmpty(car.getPrint_mk())? "" : car.getPrint_mk());
-				//撈單位名稱中文
-				Depts deptName = deptsDao.findByPk(car.getApply_dept());
-				car.setApply_dept(deptName.getDept_name());
-//				//轉換使用時間起迄
-//				String[] usingTime = timeConversionService.timeStringToBeginEndTime(car.getUsing());
-				
-				if(car.getCarprocess_status().startsWith("2")) {
-					notHandleList.add(car);
-				} else {
-					handledList.add(car);
-				}
-				
-			}
-		}
-		caseData.setNotHandleList(notHandleList);
+		List<CarBooking> Reconfime_mk2List = new ArrayList<>();
+		
+		handledList = carBookingDao.handledDataForEip07w040(caseData,"default");
 		caseData.setHandledList(handledList);
+		
+		notHandleList = carBookingDao.notHandledDataForEip07w040(caseData,"default");
+		caseData.setNotHandleList(notHandleList);
+		
+		Reconfime_mk2List = carBookingDao.selectByReconfime_mk2ForEip07w040(caseData,"default");
+		caseData.setReconfime_mk2List(Reconfime_mk2List);
+		
+		int lastDay = DateUtility.lastDay(DateUtility.getNowWestDate(),false);
+		caseData.setUsing_time_sStrForTable2(DateUtility.getNowChineseYearMonth()+"01");
+		caseData.setUsing_time_eStrForTable2(DateUtility.getNowChineseYearMonth()+String.valueOf(lastDay));
+		caseData.setUsing_time_sStrForTable3(DateUtility.getNowChineseYearMonth()+"01");
+		caseData.setUsing_time_eStrForTable3(DateUtility.getNowChineseYearMonth()+String.valueOf(lastDay));
+	}
+	
+	/**
+	 * 依照申請日期、用車日期起迄搜尋審核資料
+	 *		將資料分類為 1.待處理派車案件：notHandleList(carprocessstatus=2)
+	 *				  2.秘書處已複核通過案件：HandledList(carProcessstatus=3,4)
+	 * @param caseData
+	 */
+	public void getDataByCondition(Eip07w040Case caseData) throws Exception {
+		List<CarBooking> notHandleList = new ArrayList<>();
+		List<CarBooking> handledList = new ArrayList<>();
+		List<CarBooking> Reconfime_mk2List = new ArrayList<>();
+		
+		if("1".equals(caseData.getCarprocess_status())) {
+			notHandleList = carBookingDao.notHandledDataForEip07w040(caseData,"condition");
+		} else if("2".equals(caseData.getCarprocess_status())) {
+			handledList = carBookingDao.handledDataForEip07w040(caseData,"condition");
+			caseData.setUsing_time_sStrForTable2(caseData.getUsing_time_s());
+			caseData.setUsing_time_eStrForTable2(caseData.getUsing_time_e());
+		} else if("3".equals(caseData.getCarprocess_status())) {
+			Reconfime_mk2List = carBookingDao.selectByReconfime_mk2ForEip07w040(caseData,"Y");
+			caseData.setUsing_time_sStrForTable3(caseData.getUsing_time_s());
+			caseData.setUsing_time_eStrForTable3(caseData.getUsing_time_e());
+		} else if("4".equals(caseData.getCarprocess_status())) {
+			Reconfime_mk2List = carBookingDao.selectByReconfime_mk2ForEip07w040(caseData,"N");
+			caseData.setUsing_time_sStrForTable3(caseData.getUsing_time_s());
+			caseData.setUsing_time_eStrForTable3(caseData.getUsing_time_e());
+		}
+		
+		if(!"2".equals(caseData.getCarprocess_status())){
+			caseData.setUsing_time_sStrForTable2("");
+			caseData.setUsing_time_eStrForTable2("");
+		}
+		
+		if(!"3,4".contains(caseData.getCarprocess_status())){
+			caseData.setUsing_time_sStrForTable3("");
+			caseData.setUsing_time_eStrForTable3("");
+		}
+		
+		caseData.setHandledList(handledList);
+		caseData.setNotHandleList(notHandleList);
+		caseData.setReconfime_mk2List(Reconfime_mk2List);
 	}
 
 	/**

@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.SessionAttributes;
 import org.springframework.web.servlet.ModelAndView;
 import tw.gov.pcc.common.util.DateUtil;
+import tw.gov.pcc.eip.apply.cases.Eip08w020Case;
 import tw.gov.pcc.eip.domain.CarBooking;
 import tw.gov.pcc.eip.framework.domain.UserBean;
 import tw.gov.pcc.eip.framework.spring.controllers.BaseController;
@@ -77,9 +78,22 @@ public class Eip07w020Controller extends BaseController {
         caseData.setApplyDateStar("");
         caseData.setApplyDateEnd("");
         caseData.setCheckMk("false");
-        caseData.setInsterList(new ArrayList<>());
         return new ModelAndView(QUERY_PAGE);
     }
+    private void resetData(Eip07w020Case caseData) {
+        Eip07w020Case newCase = new Eip07w020Case();
+        BeanUtility.copyProperties(caseData, newCase);// 進來時清除caseData
+        caseData.setWorkTy("A");
+        caseData.setApplyName(userData.getUserId());
+        caseData.setApplyUnit(userData.getDeptId());
+        caseData.setApplyDate(DateUtil.getNowChineseDate());
+        caseData.setUseDateStar("");
+        caseData.setUseDateEnd("");
+        caseData.setApplyDateStar("");
+        caseData.setApplyDateEnd("");
+        caseData.setCheckMk("false");
+    }
+
 
     /**
      * 派車預約暨派車新增畫面
@@ -212,10 +226,7 @@ public class Eip07w020Controller extends BaseController {
             log.error("修改失敗，原因:{}", ExceptionUtility.getStackTrace(e));
             return Details_PAGE;
         }
-        caseData.setUseDateStar("");
-        caseData.setUseDateEnd("");
-        caseData.setApplyDateStar("");
-        caseData.setApplyDateEnd("");
+        resetData(caseData);
         return QUERY_PAGE;
     }
 
@@ -245,10 +256,7 @@ public class Eip07w020Controller extends BaseController {
             log.error("修改失敗，原因:{}", ExceptionUtility.getStackTrace(e));
             return Details_PAGE;
         }
-        caseData.setUseDateStar("");
-        caseData.setUseDateEnd("");
-        caseData.setApplyDateStar("");
-        caseData.setApplyDateEnd("");
+        resetData(caseData);
         return QUERY_PAGE;
 
     }
@@ -273,10 +281,7 @@ public class Eip07w020Controller extends BaseController {
             log.error("刪除失敗，原因:{}", ExceptionUtility.getStackTrace(e));
             return Details_PAGE;
         }
-        caseData.setUseDateStar("");
-        caseData.setUseDateEnd("");
-        caseData.setApplyDateStar("");
-        caseData.setApplyDateEnd("");
+        resetData(caseData);
         return QUERY_PAGE;
 
     }

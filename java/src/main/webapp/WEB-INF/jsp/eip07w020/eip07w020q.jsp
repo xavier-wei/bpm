@@ -126,7 +126,6 @@
 					$("#btnSelect").show();
 					$("#btnAdd").hide();
 					$("#main>fieldset>legend").html("查詢條件")
-					$("#sysyemMessage").text('');
 				}
 			}
          });

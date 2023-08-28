@@ -9,12 +9,14 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.SessionAttributes;
 import org.springframework.web.servlet.ModelAndView;
+import tw.gov.pcc.common.util.DateUtil;
 import tw.gov.pcc.eip.apply.cases.Eip08w020Case;
 import tw.gov.pcc.eip.domain.Eipcode;
 import tw.gov.pcc.eip.framework.domain.UserBean;
 import tw.gov.pcc.eip.framework.spring.controllers.BaseController;
 import tw.gov.pcc.eip.orderCar.Validator.Eip07w010Validator;
 import tw.gov.pcc.eip.orderCar.cases.Eip07w010Case;
+import tw.gov.pcc.eip.orderCar.cases.Eip07w020Case;
 import tw.gov.pcc.eip.services.Eip07w010Service;
 import tw.gov.pcc.eip.util.BeanUtility;
 import tw.gov.pcc.eip.util.ExceptionUtility;
@@ -66,11 +68,21 @@ public class Eip07w010Controller extends BaseController {
         BeanUtility.copyProperties(caseData, newCase);// 進來時清除caseData
         eip07w010Service.getSelectList(caseData);
         caseData.setProcessTy("D");
-        caseData.setWorkTy("A");
         caseData.setEip07w010QueryDataList(new ArrayList<>());
         caseData.setEip07w010CarDataList(new ArrayList<>());
         return new ModelAndView(QUERY_PAGE);
     }
+
+    private void resetData(Eip07w010Case caseData) {
+        Eip07w010Case newCase = new Eip07w010Case();
+        BeanUtility.copyProperties(caseData, newCase);// 進來時清除caseData
+        eip07w010Service.getSelectList(caseData);
+        caseData.setProcessTy("D");
+        caseData.setWorkTy("A");
+        caseData.setEip07w010QueryDataList(new ArrayList<>());
+        caseData.setEip07w010CarDataList(new ArrayList<>());
+    }
+
 
     /**
      * 派車基本資料建置作業  查詢
@@ -82,7 +94,7 @@ public class Eip07w010Controller extends BaseController {
     @RequestMapping("/Eip07w010_query.action")
     public String query(@Validated @ModelAttribute(CASE_KEY) Eip07w010Case caseData, BindingResult result) {
         log.debug("導向    Eip07w010Case_enter 派車基本資料查詢作業");
-        eip07w010Validator.eip07w010qValidate(caseData.getWorkTy(),caseData.getProcessTy(),caseData.getEip07w010QueryDataList().get(0), result);
+//        eip07w010Validator.eip07w010qValidate(caseData.getWorkTy(),caseData.getProcessTy(),caseData.getEip07w010QueryDataList().get(0), result);
         if (result.hasErrors()) {
             return QUERY_PAGE;
         }
@@ -103,39 +115,32 @@ public class Eip07w010Controller extends BaseController {
         caseData.setStillWorkNm(stillWorkNm);
         List<Eip07w010Case> queryList= new ArrayList<>();
         try {
-            eip07w010Service.getSelectList(caseData);
-//            if (StringUtils.isBlank(caseData.getName())&&!"A".equals(caseData.getWorkTy())){
+            if ("Q".equals(caseData.getWorkTy())){
+                eip07w010Service.getSelectList(caseData);
                 queryList=eip07w010Service.driveIsExist(caseData.getEip07w010QueryDataList().get(0));
-//            }
-            if (queryList.isEmpty()) {
-                if ("Q".equals(caseData.getWorkTy())) {
-                    setSystemMessage(getQueryEmptyMessage());
-                    return QUERY_PAGE;
-                }
-            }else{
-                for (Eip07w010Case quaryData:queryList) {
-                    //查找在職中文
-                    if ("Y".equals(quaryData.getStillWork())){
-                        quaryData.setStillWorkNm("是");
-                    }else{
-                        quaryData.setStillWorkNm("否");
+                if (queryList.isEmpty()) {
+                    if ("Q".equals(caseData.getWorkTy())) {
+                        setSystemMessage(getQueryEmptyMessage());
+                        return QUERY_PAGE;
                     }
-                    //查找在職職稱中文
-                    for (Eipcode title:caseData.getTitleList()) {
-                        if (quaryData.getTitle().equals(title.getCodeno())){
-                            quaryData.setTitleNm(title.getCodename());
+                }
+                    for (Eip07w010Case quaryData:queryList) {
+                        //查找在職中文
+                        if ("Y".equals(quaryData.getStillWork())){
+                            quaryData.setStillWorkNm("是");
+                        }else{
+                            quaryData.setStillWorkNm("否");
+                        }
+                        //查找在職職稱中文
+                        for (Eipcode title:caseData.getTitleList()) {
+                            if (quaryData.getTitle().equals(title.getCodeno())){
+                                quaryData.setTitleNm(title.getCodename());
+                            }
                         }
                     }
-
-                }
-
-                caseData.setEip07w010QueryDataList(queryList);
-                if ("A".equals(caseData.getWorkTy())){
-                    result.reject(null, "此駕駛人已存在，不可新增");
-                    return QUERY_PAGE;
-                } else if (queryList.size()>1) {
-                    return DATA_APGE;
-                }
+                    caseData.setEip07w010QueryDataList(queryList);
+            }else {
+                    return ADD_APGE;
             }
 
         }catch (Exception e){
@@ -143,7 +148,7 @@ public class Eip07w010Controller extends BaseController {
             setSystemMessage(getQueryFailMessage());
             return QUERY_PAGE;
         }
-        return ADD_APGE;
+        return DATA_APGE;
     }
 
     /**
@@ -156,6 +161,7 @@ public class Eip07w010Controller extends BaseController {
     @RequestMapping("/Eip07w010_inster.action")
     public String inster(@Validated @ModelAttribute(CASE_KEY) Eip07w010Case caseData, BindingResult result) {
         log.debug("導向    Eip07w010Case_enter 派車基本資料新增作業");
+
         eip07w010Validator.driverValidate(caseData.getEip07w010QueryDataList().get(0),result);
         if (result.hasErrors()) {
             return ADD_APGE;
@@ -170,6 +176,7 @@ public class Eip07w010Controller extends BaseController {
             log.error("新增失敗，原因:{}", ExceptionUtility.getStackTrace(e));
             return ADD_APGE;
         }
+        resetData(caseData);
         return QUERY_PAGE;
 
     }
@@ -196,6 +203,7 @@ public class Eip07w010Controller extends BaseController {
             log.error("刪除失敗，原因:{}", ExceptionUtility.getStackTrace(e));
             return ADD_APGE;
         }
+        resetData(caseData);
         return QUERY_PAGE;
 
     }
@@ -223,6 +231,7 @@ public class Eip07w010Controller extends BaseController {
             log.error("修改失敗，原因:{}", ExceptionUtility.getStackTrace(e));
             return ADD_APGE;
         }
+        resetData(caseData);
         return QUERY_PAGE;
 
     }
@@ -255,7 +264,6 @@ public class Eip07w010Controller extends BaseController {
     @RequestMapping("/Eip07w010_queryCar.action")
     public String queryCar(@Validated @ModelAttribute(CASE_KEY) Eip07w010Case caseData, BindingResult result) {
         log.debug("導向    Eip07w010_queryCar 派車基本資料車籍新增作業");
-        eip07w010Validator.eip07w010qValidate(caseData.getWorkTy(),caseData.getProcessTy(),caseData.getEip07w010QueryDataList().get(0),result);
         if (result.hasErrors()) {
             return QUERY_PAGE;
         }
@@ -292,6 +300,7 @@ public class Eip07w010Controller extends BaseController {
                     if (carDetail.size()>1){
                         return DATA_APGE;//大於一筆畫面轉至統計頁
                     }else {
+                        eip07w010Service.getTimeList(caseData);
                         return   CAR_DATA;//畫面轉至明細頁
                     }
 
@@ -329,6 +338,7 @@ public class Eip07w010Controller extends BaseController {
             log.error("新增失敗，原因:{}", ExceptionUtility.getStackTrace(e));
             return ADD_CAR;
         }
+        resetData(caseData);
         return QUERY_PAGE;
 
     }
@@ -346,7 +356,7 @@ public class Eip07w010Controller extends BaseController {
         try {
         eip07w010Validator.carValidate(caseData.getEip07w010CarDataList().get(0),result);
         if (result.hasErrors()) {
-            return ADD_APGE;
+            return CAR_DATA;
         }
 
             eip07w010Service.updateCarBase(caseData.getEip07w010CarDataList().get(0));
@@ -355,8 +365,9 @@ public class Eip07w010Controller extends BaseController {
         }catch (Exception e){
             setSystemMessage(getUpdateFailMessage());
             log.error("修改失敗，原因:{}", ExceptionUtility.getStackTrace(e));
-            return ADD_APGE;
+            return CAR_DATA;
         }
+        resetData(caseData);
         return QUERY_PAGE;
 
     }
@@ -377,9 +388,9 @@ public class Eip07w010Controller extends BaseController {
         try {
             List<Eip07w010Case> carDetail = new ArrayList<>();
             carDetail = eip07w010Service.quaryCarBase(caseData);
-           
             caseData.setEip07w010CarDataList(carDetail);
             eip07w010Service.getCarDetails(caseData);
+            eip07w010Service.getTimeList(caseData);
         }catch (Exception e){
             setSystemMessage(getQueryFailMessage());
             log.error("查詢失敗，原因:{}", ExceptionUtility.getStackTrace(e));
@@ -414,7 +425,38 @@ public class Eip07w010Controller extends BaseController {
             log.error("刪除失敗，原因:{}", ExceptionUtility.getStackTrace(e));
             return ADD_APGE;
         }
+        resetData(caseData);
         return QUERY_PAGE;
 
     }
+
+    /**
+     * 派車基本資料建置作業  車輛油料新增
+     *
+     * @param caseData
+     * @param result
+     * @return
+     */
+    @RequestMapping("/Eip07w010_gasAdd.action")
+    public String gasAdd(@Validated @ModelAttribute(CASE_KEY) Eip07w010Case caseData, BindingResult result) {
+        log.debug("導向  Eip07w010_gasAdd.action 派車基本車輛資料作業_車輛油料新增");
+        try {
+            eip07w010Validator.gasValidaet(caseData.getGasRec(),caseData,result);
+            caseData.setTapTy("O");
+            if (result.hasErrors()) {
+                return CAR_DATA;
+            }
+            eip07w010Service.gasAdd(caseData.getGasRec(),caseData);
+            eip07w010Service.getCarDetails(caseData);
+            setSystemMessage(getSaveSuccessMessage());
+        }catch (Exception e){
+            setSystemMessage(getSaveFailMessage());
+            log.error("新增失敗，原因:{}", ExceptionUtility.getStackTrace(e));
+            return CAR_DATA;
+        }
+
+        return CAR_DATA;
+
+    }
+
 }

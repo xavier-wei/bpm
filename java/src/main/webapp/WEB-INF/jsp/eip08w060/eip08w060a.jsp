@@ -11,10 +11,6 @@
     	 新增<i class="fas fa-user-plus"></i>
     </tags:button>
 
-	  <tags:button id="btnPrint">
-    	列印<i class="fas fa-user-plus"></i>
-    </tags:button>
-
 	<tags:button id="btBack">
     	回主畫面<i class="fas fa-user-plus"></i>
     </tags:button>
@@ -102,9 +98,7 @@
            		$('#Eip08W060xForm').attr('action', '<c:url value="/Eip08w060_inster.action" />').submit();
             });
 
-			$('#btnPrint').click(function() {
-				$('#Eip08W060xForm').attr('action', '<c:url value="/Eip08w060_enter.action" />').submit();
-			});
+
 
 			$('#btBack').click(function() {
 				$('#Eip08W060xForm').attr('action', '<c:url value="/Eip08w060_enter.action" />').submit();

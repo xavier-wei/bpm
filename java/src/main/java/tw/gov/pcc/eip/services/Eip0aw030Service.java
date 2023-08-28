@@ -41,7 +41,7 @@ public class Eip0aw030Service {
         AtomicInteger errCnt = new AtomicInteger();
         list.forEach(x -> {
             try {
-                View_cpape05m itrUser = view_cpape05mDao.selectByKey(x.getUser_id());
+                View_cpape05m itrUser = view_cpape05mDao.selectMaxPeupdateRecordByPecard(x.getUser_id());
                 Optional.ofNullable(itrUser).ifPresentOrElse(r -> {
                     Users u = (Users) BeanUtility.cloneBean(x);
                     x.setFrom_hr("Y");

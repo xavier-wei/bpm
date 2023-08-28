@@ -79,7 +79,7 @@ public class Eip0aw010Controller {
         String url = eipcodeDao.findByCodeKindCodeNo("SYS_API", "1_CLICK_URL").map(Eipcode::getCodename).orElse(StringUtils.EMPTY);
         return ApiResult.builder()
             .click_url(url)
-            .cnt(viewFlowDao.selectCountByNext_person_id(View_flow.builder().next_person_id(userData.getUserId()).build()).toString()).build();
+            .cnt(viewFlowDao.selectCountByNext_card_id(View_flow.builder().next_card_id(userData.getUserId()).build()).toString()).build();
     }
 
     private ApiParams getSys_api(String apiNumber) {

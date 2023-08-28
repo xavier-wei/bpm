@@ -6,6 +6,7 @@ import org.springframework.stereotype.Repository;
 
 import tw.gov.pcc.common.annotation.DaoTable;
 import tw.gov.pcc.eip.domain.CarBase;
+import tw.gov.pcc.eip.domain.DriverBase;
 import tw.gov.pcc.eip.orderCar.cases.Eip07w010Case;
 
 /**
@@ -42,5 +43,7 @@ public interface CarBaseDao {
     public List<CarBase> getCarno();
 
     public List<CarBase> selectBosscarList();
+
+    public List<CarBase> getCarNo(String carno1,String carno2) ;
 
 }

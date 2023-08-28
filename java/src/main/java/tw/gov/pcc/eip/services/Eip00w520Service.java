@@ -670,36 +670,8 @@ public class Eip00w520Service extends OpinionSurveyService{
                 List<Eip00w520Case.Answer> answers = objectMapper.readValue(osresult.getWricontent(), new TypeReference<List<Eip00w520Case.Answer>>(){});
                 for (Eip00w520Case.Answer a : answers) {
                     if (topicList.contains(a.getN())){
-                        //填空題
-                        if (CollectionUtils.isEmpty(a.getOs())) {
-                            sb.append(StringUtils.defaultIfEmpty(a.getT()," ")).append(",");
-                            //選擇題
-                        } else if (!CollectionUtils.isEmpty(a.getOs())) {
-                            //單選
-                            if (a.getOs().size() == 1) {
-                                sb.append(iMap.get(a.getOs().get(0).getV()));
-                                if (StringUtils.isNotBlank(a.getOs().get(0).getT())) {
-                                    sb.append("(").append(a.getOs().get(0).getT()).append(")");
-                                }
-                                sb.append(",");
-                                //多選
-                            } else {
-                                a.getOs().forEach(m->{
-                                    if (StringUtils.isNotBlank(m.getV())) {
-                                        sb.append(iMap.get(m.getV()));
-                                        if (StringUtils.isNotBlank(m.getT())) {
-                                            sb.append("(").append(m.getT()).append(")");
-                                        }
-                                        sb.append("、");
-                                    }
-                                });
-                                if (sb.length()>1) {
-                                    // 删除最後一個、
-                                    sb.deleteCharAt(sb.length() - 1);
-                                }
-                                sb.append(",");
-                            }
-                        }
+                        //組合單筆填寫內容
+                        compositionWriteContent(sb, a, iMap);
                     }
                 }
                 if (sb.length()>1) {
@@ -720,6 +692,12 @@ public class Eip00w520Service extends OpinionSurveyService{
         return "";
     }
 
+    /**
+     * 取得所有填寫內容(EXCEL使用)
+     * @param caseData
+     * @return
+     * @throws JsonProcessingException
+     */
     public String getAllWriteContents(Eip00w520Case caseData) throws JsonProcessingException {
         Map<String,String> qMap = getQMap(caseData.getOsformno());
         Map<String,String> iMap = getIMap(caseData.getOsformno());
@@ -741,36 +719,8 @@ public class Eip00w520Service extends OpinionSurveyService{
                 //某個人的所有答案
                 List<Eip00w520Case.Answer> answers = objectMapper.readValue(osresult.getWricontent(), new TypeReference<List<Eip00w520Case.Answer>>(){});
                 for (Eip00w520Case.Answer a : answers) {
-                    //填空題
-                    if (CollectionUtils.isEmpty(a.getOs())) {
-                        sb.append(StringUtils.defaultIfEmpty(a.getT()," ")).append(",");
-                        //選擇題
-                    } else if (!CollectionUtils.isEmpty(a.getOs())) {
-                        //單選
-                        if (a.getOs().size() == 1) {
-                            sb.append(iMap.get(a.getOs().get(0).getV()));
-                            if (StringUtils.isNotBlank(a.getOs().get(0).getT())) {
-                                sb.append("(").append(a.getOs().get(0).getT()).append(")");
-                            }
-                            sb.append(",");
-                            //多選
-                        } else {
-                            a.getOs().forEach(m->{
-                                if (StringUtils.isNotBlank(m.getV())) {
-                                    sb.append(iMap.get(m.getV()));
-                                    if (StringUtils.isNotBlank(m.getT())) {
-                                        sb.append("(").append(m.getT()).append(")");
-                                    }
-                                    sb.append("、");
-                                }
-                            });
-                            if (sb.length()>1) {
-                                // 删除最後一個、
-                                sb.deleteCharAt(sb.length() - 1);
-                            }
-                            sb.append(",");
-                        }
-                    }
+                    //組合單筆填寫內容
+                    compositionWriteContent(sb, a, iMap);
                 }
                 if (sb.length()>1) {
                     // 删除最後一個逗號
@@ -790,12 +740,56 @@ public class Eip00w520Service extends OpinionSurveyService{
     }
 
     /**
+     * 組合單筆填寫內容
+     * @param sb
+     * @param answer
+     * @param iMap
+     * @return
+     */
+    private void compositionWriteContent(StringBuilder sb, Eip00w520Case.Answer answer, Map<String,String> iMap) {
+        //填空題
+        if (CollectionUtils.isEmpty(answer.getOs())) {
+            sb.append(StringUtils.defaultIfEmpty(answer.getT()," ")).append(",");
+            //選擇題
+        } else if (!CollectionUtils.isEmpty(answer.getOs())) {
+            //單選
+            if (answer.getOs().size() == 1) {
+                sb.append(iMap.get(answer.getOs().get(0).getV()));
+                if (StringUtils.isNotBlank(answer.getOs().get(0).getT())) {
+                    sb.append("(").append(answer.getOs().get(0).getT()).append(")");
+                }
+                sb.append(",");
+            //多選
+            } else {
+                answer.getOs().forEach(m->{
+                    if (StringUtils.isNotBlank(m.getV())) {
+                        sb.append(iMap.get(m.getV()));
+                        if (StringUtils.isNotBlank(m.getT())) {
+                            sb.append("(").append(m.getT()).append(")");
+                        }
+                        sb.append("、");
+                    }
+                });
+                // 如果最後一個字不是"、"，代表多選題沒有選擇答案，將填寫內容補" "
+                if (sb.length() > 1 && !"、".equals(sb.substring(sb.length() - 1, sb.length()))) {
+                    sb.append(" ");
+                } else if (sb.length() > 1) {
+                    // 删除最後一個、
+                    sb.deleteCharAt(sb.length() - 1);
+                }
+                sb.append(",");
+            }
+        }
+    }
+
+    /**
      * 檢視統計表
      * @param caseData
      */
     public String getReviewStatistics(Eip00w520Case caseData) throws JsonProcessingException {
         List<String>wricontentList = osresultDao.getListByOsformno(caseData.getOsformno()).stream().map(Osresult::getWricontent).collect(Collectors.toList());
         List<Ositem>ositems = ositemDao.getAllByOsformno(caseData.getOsformno());
+        List<Osquestion>osquestions = osquestionDao.getAllQuestionByOsformno(caseData.getOsformno());
         //key為選項序號iseqno，值為出現次數
         Map<String,Integer> multipleCountMap = new LinkedHashMap<>();
         //key為問題序號qseqno，值為分母
@@ -863,18 +857,22 @@ public class Eip00w520Service extends OpinionSurveyService{
             multipleCountMap.putIfAbsent(String.valueOf(i.getIseqno()), 0);
             totalMap.putIfAbsent(String.valueOf(i.getQseqno()), 0);
             for (String json : wricontentList) {
+                // 計算單選題及多選題的各個選項出現次數
                 if (StringUtils.contains(json, "\"v\":\"" + String.valueOf(i.getIseqno()) + "\"")) {
                     multipleCountMap.computeIfPresent(String.valueOf(i.getIseqno()), (key, value) -> value + 1);
                 }
+                // 計算多選題的分母，如JSON有包含"q":"1","v":"1"，沒有填就不會有v
                 if (StringUtils.contains(json, "\"q\":\"" + String.valueOf(i.getQseqno()) + "\"" + ",\"v\":\"" + String.valueOf(i.getIseqno()) + "\"")) {
                     totalMap.computeIfPresent(String.valueOf(i.getQseqno()), (key, value) -> value + 1);
                 }
             }
         }
-        //處理radio型態選擇題的分母為總資料量
-        for (Map.Entry<String, Integer> entry : totalMap.entrySet()) {
-            if (entry.getValue() == 0) {
-                totalMap.put(entry.getKey(),wricontentList.size());
+        for (Osquestion osquestion : osquestions) {
+            // 計算單選題的分母，如JSON有包含"n":"7","os":[{"v"，沒有填就不會有os
+            for (String json : wricontentList) {
+                if (StringUtils.contains(json, "\"n\":\"" + String.valueOf(osquestion.getQseqno()) + "\"" + ",\"os\":[{\"v\"")) {
+                    totalMap.computeIfPresent(String.valueOf(osquestion.getQseqno()), (key, value) -> value + 1);
+                }
             }
         }
 

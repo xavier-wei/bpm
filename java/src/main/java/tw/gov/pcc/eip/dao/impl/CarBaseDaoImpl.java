@@ -16,6 +16,7 @@ import tw.gov.pcc.common.annotation.DaoTable;
 import tw.gov.pcc.common.framework.dao.BaseDao;
 import tw.gov.pcc.eip.dao.CarBaseDao;
 import tw.gov.pcc.eip.domain.CarBase;
+import tw.gov.pcc.eip.domain.DriverBase;
 import tw.gov.pcc.eip.orderCar.cases.Eip07w010Case;
 
 
@@ -45,7 +46,7 @@ public class CarBaseDaoImpl extends BaseDao<CarBase> implements CarBaseDao {
     public CarBase selectDataByPrimaryKey(CarBase carBase) {
         String sql = "SELECT " +
                 ALL_COLUMNS_SQL +
-                " FROM " + TABLE_NAME + " t WHERE Where t.carno1=:carno1 And t.carno2=:carno2";//這要改
+                " FROM " + TABLE_NAME +"       " +" t  WHERE Where t.carno1=:carno1 And t.carno2=:carno2";//這要改
         List<CarBase> list = getNamedParameterJdbcTemplate().query(sql, new BeanPropertySqlParameterSource(carBase), BeanPropertyRowMapper.newInstance(CarBase.class));
         return CollectionUtils.isEmpty(list) ? null : list.get(0);
     }
@@ -240,6 +241,14 @@ public class CarBaseDaoImpl extends BaseDao<CarBase> implements CarBaseDao {
         sql.append(" SELECT DISTINCT CONCAT(carno1, '-', carno2) AS carno from  "+ TABLE_NAME);
 
         SqlParameterSource params = new MapSqlParameterSource();
+        return getNamedParameterJdbcTemplate().query(sql.toString(),params, BeanPropertyRowMapper.newInstance(CarBase.class));
+    }
+
+    public List<CarBase> getCarNo(String carno1,String carno2) {
+        StringBuilder sql = new StringBuilder();
+        sql.append(" Select distinct carno1,carno2  ");
+        sql.append(" From DRIVER_BASE where carno1=:carno1 and carno2=:carno2 ");
+        SqlParameterSource params = new MapSqlParameterSource("carno1",carno1).addValue("carno2",carno2);
         return getNamedParameterJdbcTemplate().query(sql.toString(),params, BeanPropertyRowMapper.newInstance(CarBase.class));
     }
 

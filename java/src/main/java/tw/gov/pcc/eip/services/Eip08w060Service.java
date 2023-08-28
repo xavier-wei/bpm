@@ -46,12 +46,13 @@ public class Eip08w060Service {
 
 
 		int itemNO =0;
+		String itemid ="RO"+caseData.getApply_date()+String.format("%3s", roitemDao.getEip_08w060NoSeq()).replace(' ', '0');
 		for (Eip08w060Case eip08W060Case :caseData.getEip08w060CaseList()) {
 			if ("".equals(eip08W060Case.getItem())){
 				break;
 			}
 			Roitem roitem= new Roitem();
-			roitem.setItemid("RO"+caseData.getApply_date()+String.format("%3s", roitemDao.getEip_08w060NoSeq()).replace(' ', '0'));
+			roitem.setItemid(itemid);
 			roitem.setItemno(String.valueOf(++itemNO));
 			roitem.setItem(eip08W060Case.getItem());
 			roitem.setDesc_memo(eip08W060Case.getDesc_memo());
@@ -67,6 +68,7 @@ public class Eip08w060Service {
 			roitem.setUpd_datetime("");
 
 			caseData.setItemId(roitem.getItemid());
+			caseData.setItemNo(roitem.getItemno());
 			roitemDao.insert(roitem);
 		}
 
@@ -109,10 +111,10 @@ public class Eip08w060Service {
 	/**
 	 * 修改資料
 	 *
-	 * @param caseData
+	 * @param updateData
 	 */
-	public void update(Eip08w060Case caseData) throws Exception{
-		roitemDao.updateRoitem(caseData);
+	public void update(Eip08w060Case updateData) throws Exception{
+		roitemDao.updateRoitem(updateData);
 	}
 
 	/**

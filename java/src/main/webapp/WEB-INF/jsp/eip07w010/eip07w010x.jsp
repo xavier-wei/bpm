@@ -47,6 +47,8 @@
 	</fieldset>
 		<fieldset id="resultBox">
 		<legend>查詢結果</legend>
+		 <c:choose>
+			 <c:when test="${caseData.processTy eq 'D' }">
 		<div class="table-responsive" id="div1">
 			<table class="table" id="driver">
 				<thead data-orderable="true">
@@ -57,7 +59,7 @@
 					<th class="text-center align-middle">職稱</th>
 					<th class="text-center align-middle">在職註記</th>
 					<th class="text-center align-middle">預定保管車號</th>
-					<th class="text-center align-middle"></th>
+					<th data-orderable="false"></th>
 				</tr>
 				</thead>
 				<tbody>
@@ -90,7 +92,8 @@
 				</tbody>
 			</table>
 		</div>
-
+		</c:when>
+			 <c:otherwise>
 			<table class="table" id="car">
 				<thead data-orderable="true">
 				<tr>
@@ -101,7 +104,7 @@
 					<th class="text-center align-middle">財產編號</th>
 					<th class="text-center align-middle">保險公司</th>
 					<th class="text-center align-middle">保險期間(起)~(迄)</th>
-					<th class="text-center align-middle"></th>
+					<th data-orderable="false"></th>
 
 				</tr>
 				</thead>
@@ -138,7 +141,8 @@
                             </c:forEach>
 				</tbody>
 			</table>
-
+			</c:otherwise>
+		</c:choose>
 		<form:hidden id="carno1" path="carno1" name="carno1" />
 		<form:hidden id="carno2" path="carno2" name="carno2"/>
 		<form:hidden id="driveridDetail" path="driveridDetail" />
@@ -153,8 +157,10 @@
         $(function() {
 			controlBt();
 			var config = getDataTablesConfig();
-            var table = $('#listTable').DataTable(config);
+            var table = $('#driver').DataTable(config);
 
+			$('#car').DataTable(config);
+			
             $('#btnSelect').click(function() {
 				$('#eip07w010Form').attr('action', '<c:url value="/Eip07w010_query.action" />').submit();
             });
@@ -194,6 +200,7 @@
 			$('input[id="carno2"]').val(carno2);
 			$('#eip07w010Form').attr('action', fun).submit();
 		}
+
 </script>
 </jsp:attribute>
 </tags:layout>

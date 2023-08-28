@@ -35,6 +35,9 @@ public class UserSessionHelper {
      * @return Framework 用的使用者物件
      */
     public static FrameworkUserInfoBean getFrameworkUserData(HttpServletRequest request) {
+        if(request == null){
+            return null;
+        }
         HttpSession session = request.getSession();
         return (FrameworkUserInfoBean) session.getAttribute(FRAMEWORK_USER_INFO);
     }

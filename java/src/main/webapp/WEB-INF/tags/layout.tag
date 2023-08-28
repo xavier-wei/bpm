@@ -113,7 +113,7 @@
                 </div>
                 <div class="sys_info">
                     <div>登入帳號：<c:out value="${frameworkUserData.userId}"/></div>
-                    <div> 部門：<c:out value="${frameworkUserData.deptId}"/></div>
+                    <div> 單位：<c:out value="${frameworkUserData.deptId}"/></div>
                     <div> 登入日期：<c:out value="${frameworkUserData.loginDateString}"/></div>
                     <div>登入時間：<c:out value="${frameworkUserData.loginTimeString}"/></div>
                 </div>

@@ -54,7 +54,7 @@
 </jsp:attribute>
 
 <jsp:attribute name="contents">
-<tags:fieldset legend="意見調查預覽畫面">
+<tags:fieldset legend="意見調查填寫內容查詢">
 <form:form id="eip00w520Form" modelAttribute="${caseKey}">
     <tags:form-row>
         <div class="col-md-6">

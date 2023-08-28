@@ -99,6 +99,14 @@ public class Eip08w010Service {
     	}
     }
     
+    public void validDelMainItemcode(Eip08w010Case caseData, BindingResult bindingResult) {
+    	long count = caseData.getResultKindList().stream().filter(a -> a.isCheckbox()).count();
+    	if(count == 0) {
+    		bindingResult.reject(null, "請勾選欲刪除之項目");
+    	}
+    	
+    }
+    
     public void validEditMainItemcode(Eip08w010Case caseData, BindingResult bindingResult) {
     	long count = caseData.getResultKindList().stream().filter(a -> a.isCheckbox()).count();
     	if(count == 0) {
@@ -110,7 +118,6 @@ public class Eip08w010Service {
     			}
     		}
     	}
-    	
     }
     
     public void validEditDetailItemcode(Eip08w010Case caseData, BindingResult bindingResult) {

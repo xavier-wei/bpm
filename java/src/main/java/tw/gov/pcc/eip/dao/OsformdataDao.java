@@ -62,7 +62,7 @@ public interface OsformdataDao {
      * @param deptno
      * @return
      */
-    public List<Osformdata> getListByStatus(List<String> statusList, String deptno);
+    public List<Osformdata> getListByStatus(List<String> statusList, String deptno, String jobtitle);
     
     /**
      * 批次更新狀態

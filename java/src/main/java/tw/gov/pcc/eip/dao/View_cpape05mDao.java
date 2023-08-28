@@ -16,9 +16,12 @@ public interface View_cpape05mDao {
 
     String TABLE_NAME = "view_cpape05m";
 
-    View_cpape05m selectByKey(String pecard) ;
+    View_cpape05m selectByKey(String login_id) ;
 
 
     @SkipLog
     List<View_cpape05m> selectAllPetitTitle();
+
+    @SkipLog
+    View_cpape05m selectMaxPeupdateRecordByPecard(String pecard);
 }
