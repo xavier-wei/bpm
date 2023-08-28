@@ -334,7 +334,7 @@ public final class Query {
          *            為了向前相容，也可以先不指定，後續再用其他方式代入。
          * @return Builder 物件本身，方便繼續串其他參數。
          */
-        public Builder appendWhen(boolean test, @Language("SQL") String queryString, Object... parameters) {
+        public Builder appendWhen(boolean test,@Language("SQL") String queryString, Object... parameters) {
             if (test) {
                 return append(queryString, parameters);
             } else {

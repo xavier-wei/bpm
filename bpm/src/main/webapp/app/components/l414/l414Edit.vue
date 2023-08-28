@@ -449,23 +449,12 @@
                         </div>
                       </template>
 
-                      <!--                      <template #cell(action)="row">-->
-                      <!--                        <b-button class="ml-2" style="background-color: #17a2b8; color: white"-->
-                      <!--                                  variant="outline-secondary"-->
-                      <!--                                  :disabled="formStatusRef !== FormStatusEnum.MODIFY"-->
-                      <!--                        >刪除-->
-                      <!--                          &lt;!&ndash;                        @click="submitDelete(row.item.id)"&ndash;&gt;-->
-                      <!--                        </b-button>-->
-                      <!--                      </template>-->
-
                     </b-table>
 
                     <b-form-textarea v-model="$v.opinion.$model" rows="1" maxlength="2000" trim lazy
                                      v-show="formStatusRef === FormStatusEnum.VERIFY"/>
 
-
                   </div>
-
 
                   <b-container class="mt-3">
                     <b-row class="justify-content-center">
@@ -537,7 +526,7 @@ import {handleBack, navigateByNameAndParams} from '@/router/router';
 import axios from "axios";
 import {notificationErrorHandler} from "@/shared/http/http-response-helper";
 import {formatToString, newformatDate} from '@/shared/date/minguo-calendar-utils';
-import {changeDirections} from "@/shared/word/directions";
+import {changeDealWithUnit, changeDirections} from "@/shared/word/directions";
 
 const appendix = () => import('@/components/appendix.vue');
 const flowChart = () => import('@/components/flowChart.vue');
@@ -695,6 +684,7 @@ export default {
           sortable: false,
           thClass: 'text-center',
           tdClass: 'text-center align-middle ',
+          formatter: value => (value == undefined ? '' : changeDealWithUnit(value, bpmUnitOptions)),
         },
         {
           key: 'signingDatetime',
@@ -815,6 +805,7 @@ export default {
         bpmIsmsL414DTO: form,
         directions: changeDirections(userData),
         opinion: opinionData,
+        ipt: userData === 'InfoTester'
       };
 
       axios

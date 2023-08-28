@@ -45,8 +45,7 @@
           :items="mockdata"
           :fields="table.fields"
           :totalItems="table.totalItems"
-          :is-server-side-paging="true"
-          @changePagination="handlePaginationChanged($event)"
+          :is-server-side-paging="false"
           :hideNo="true"
         >
           <template #cell(number)="row">
@@ -211,10 +210,6 @@ export default defineComponent({
       table.data.splice(0, table.data.length, ...mockdata);
     };
 
-    const handlePaginationChanged = (pagination: Pagination) => {
-      //todo:未做方法先放著
-    };
-
     function toEdit(i) {
       useStore().value.commit('syuan', { user: 'syuan' });
       // console.log(useStore().value);
@@ -239,7 +234,6 @@ export default defineComponent({
       queryOptions,
       iTable,
       toEdit,
-      handlePaginationChanged,
       toL410Apply,
     };
   },

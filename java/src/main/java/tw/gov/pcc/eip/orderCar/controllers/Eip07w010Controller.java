@@ -231,6 +231,8 @@ public class Eip07w010Controller extends BaseController {
             log.error("修改失敗，原因:{}", ExceptionUtility.getStackTrace(e));
             return ADD_APGE;
         }
+        caseData.setStillWork("");
+        caseData.setEip07w010QueryDataList(new ArrayList<>());
         resetData(caseData);
         return QUERY_PAGE;
 

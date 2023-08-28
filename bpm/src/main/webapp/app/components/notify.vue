@@ -15,7 +15,7 @@
         <div class="card-body clo-12" style="background-color: #d3ede8">
           <b-form-row>
             <i-form-group-check class="col-4" label-cols="4" content-cols="8" :label="'部門：'" :item="$v.unit">
-              <b-form-select v-model="$v.unit.$model">
+              <b-form-select v-model="$v.unit.$model" :options="bpmUnitOptions">
                 <template #first>
                   <option value="">請選擇</option>
                 </template>
@@ -38,7 +38,8 @@
                 </template>
               </b-form-select>
             </i-form-group-check>
-            <i-form-group-check class="col-4" label-cols="4" content-cols="8" label="處理狀況：" :item="$v.processInstanceStatus">
+            <i-form-group-check class="col-4" label-cols="4" content-cols="8" label="處理狀況："
+                                :item="$v.processInstanceStatus">
               <b-form-select v-model="$v.processInstanceStatus.$model" :options="queryOptions.status">
                 <template #first>
                   <option value="">請選擇</option>
@@ -86,11 +87,52 @@
           :items="table.data"
           :fields="table.fields"
           :totalItems="table.totalItems"
-          :is-server-side-paging="true"
+          :is-server-side-paging="false"
         >
-          <template #cell(action)="row">
-            <b-button class="ml-2" style="background-color: #17a2b8" @click="toEdit(row)">檢視</b-button>
+
+          <template #cell(filAndApp)="row">
+            <div v-if="row.item.appEmpid === row.item.filEmpid">
+              {{ row.item.appName }}
+            </div>
+            <div v-else>
+              {{ row.item.appName }} / {{ row.item.filName }}
+            </div>
           </template>
+
+          <template #cell(processInstanceStatus)="row">
+            <div v-if="row.item.processInstanceStatus === '1'">
+              已處理完畢
+            </div>
+            <div v-else>
+              處理中
+            </div>
+          </template>
+
+          <template #cell(subject)="row">
+            <div>
+              {{ changeSubject(row.item) }}
+            </div>
+          </template>
+
+
+          <template #cell(signUnit)="row">
+            <div v-if="!!row.item.signer">
+              {{ row.item.signer }}
+              ({{ changeDealWithUnit(row.item.signUnit, bpmUnitOptions) }})
+            </div>
+          </template>
+
+
+          <template #cell(formId)="row">
+            <div>
+              {{ changeFormId(row.item.formId) }}
+            </div>
+          </template>
+
+          <template #cell(action)="row">
+            <b-button class="ml-2" style="background-color: #17a2b8" @click="toEdit(row.item)">檢視</b-button>
+          </template>
+
         </i-table>
       </div>
     </section>
@@ -99,32 +141,41 @@
 
 <script lang="ts">
 import axios from 'axios';
-import {ref, reactive, computed, toRefs, defineComponent} from '@vue/composition-api';
+import {ref, reactive, defineComponent} from '@vue/composition-api';
 import IDatePicker from '../shared/i-date-picker/i-date-picker.vue';
 import ITable from '../shared/i-table/i-table.vue';
 import IFormGroupCheck from '../shared/form/i-form-group-check.vue';
-import {useValidation, validateState} from '../shared/form';
-import {useBvModal} from '../shared/modal';
-import {required} from '@/shared/validators';
-import {Pagination} from '@/shared/model/pagination.model';
-import {useGetters, useStore} from '@u3u/vue-hooks';
+import {useValidation, validateState} from '@/shared/form';
+import {required, requiredIf} from '@/shared/validators';
+import {useGetters} from '@u3u/vue-hooks';
 import {notificationErrorHandler} from "@/shared/http/http-response-helper";
 import {useNotification} from "@/shared/notification";
+import {newformatDate} from "@/shared/date/minguo-calendar-utils";
+import {changeFormId, changeSubject} from "@/shared/word/change-word-utils";
+import {changeDealWithUnit} from "@/shared/word/directions";
+import {navigateByNameAndParams} from "@/router/router";
 
 export default defineComponent({
   name: 'notify',
+  methods: {changeFormId, changeSubject},
   components: {
     IDatePicker,
     ITable,
     IFormGroupCheck,
   },
   setup() {
-    const userData = ref(useGetters(['getUserData']).getUserData).value.user;
+    const bpmUnitOptions = ref(useGetters(['getBpmUnitOptions']).getBpmUnitOptions).value;
     const iTable = ref(null);
     const stepVisible = ref(true);
     const queryStatus = ref(false);
-    const $bvModal = useBvModal();
     const notificationService = useNotification();
+
+    enum FormStatusEnum {
+      CREATE = '新增',
+      MODIFY = '編輯',
+      READONLY = '檢視',
+      VERIFY = '簽核'
+    }
 
     function notBeforePublicDateStart(date: Date) {
       if (form.dateStart) return date < new Date(form.dateStart);
@@ -140,22 +191,22 @@ export default defineComponent({
       formId: '', //表單
       processInstanceStatus: '', //處理狀態
       formType: '', //表單分類
-      dateStart: undefined, //起
-      dateEnd: undefined, //迄
+      dateStart: null, //起
+      dateEnd: null, //迄
     };
 
     const form = reactive(Object.assign({}, formDefault));
 
     // 表單物件驗證規則
-    const rules = ref({
+    const rules = {
       unit: {},
       appName: {},
       formId: {},
-      processInstanceStatus: {notnull: required},
+      processInstanceStatus: {},
       formType: {},
       dateStart: {},
       dateEnd: {},
-    });
+    }
 
     const {$v, checkValidity, reset} = useValidation(rules, form, formDefault);
 
@@ -169,14 +220,14 @@ export default defineComponent({
           tdClass: 'text-center align-middle',
         },
         {
-          key: 'formId',
+          key: 'filAndApp',
           label: '申請者/填表人',
           sortable: false,
           thClass: 'text-center',
           tdClass: 'text-center align-middle',
         },
         {
-          key: 'hostname',
+          key: 'formId',
           label: '申請表單',
           sortable: false,
           thClass: 'text-center',
@@ -188,23 +239,26 @@ export default defineComponent({
           sortable: false,
           thClass: 'text-center',
           tdClass: 'text-center align-middle',
+          formatter: value => (value == undefined ? '' : newformatDate(new Date(value), '/')),
+
         },
         {
-          key: 'port',
+          key: 'signUnit',
           label: '目前處理單位',
           sortable: false,
           thClass: 'text-center',
           tdClass: 'text-center align-middle',
+          // formatter: value => (value == undefined ? '' : changeDealWithUnit(value, bpmUnitOptions)),
         },
         {
-          key: 'active2',
+          key: 'processInstanceStatus',
           label: '處理狀況',
           sortable: false,
           thClass: 'text-center',
           tdClass: 'text-center align-middle',
         },
         {
-          key: 'active3',
+          key: 'subject',
           label: '主旨',
           sortable: false,
           thStyle: 'width:40%',
@@ -220,9 +274,9 @@ export default defineComponent({
     // 下拉選單選項
     const queryOptions = reactive({
       status: [
-        {value: '0', text: '申請'},
-        {value: '1', text: '處理中'},
-        {value: '2', text: '處理過'},
+        {value: '0', text: '處理中'},
+        {value: '1', text: '處理過'},
+        {value: '2', text: '補件'},
       ],
       formCase: [
         {value: 'L410', text: 'L410-共用系統使用者帳號申請單'},
@@ -234,30 +288,32 @@ export default defineComponent({
     });
 
     const toQuery = () => {
-      // table.data = [];
-      // const params = new FormData();
-      // params.append('bpmFormQueryDto', new Blob([JSON.stringify(form)], { type: 'application/json' }));
-      // axios.post(`/process/queryTask/${userData}`,params).then(({data}) => {
-      //   console.log('data+++', data);
-      //   queryStatus.value = true;
-      //   if(data.length <= 0) return;
-      //   table.data = data.slice(0, data.length);
-      //   table.totalItems = data.length;
-      // }).catch(notificationErrorHandler(notificationService));
 
-      table.data = undefined;
-      const id = 'ApplyTester';
-      axios.post(`/process/queryTask/${id}`).then(data => {
-        console.log('data', data.data);
+      if (form.dateStart !== null) {
+        form.dateEnd = form.dateEnd !== null ? form.dateEnd : new Date()
+      }
+
+      table.data = [];
+      const params = new FormData();
+      params.append('bpmFormQueryDto', new Blob([JSON.stringify(form)], {type: 'application/json'}));
+      axios.post(`/eip/getNotify`, params).then(({data}) => {
+        console.log('data+++', data);
         queryStatus.value = true;
-        table.data = data.data.slice(0, data.data.length); //前端分頁(後端資料回傳)
-        table.totalItems = data.data.length;
+        if (data.length <= 0) return;
+        table.data = data.slice(0, data.length);
+        table.totalItems = data.length;
       }).catch(notificationErrorHandler(notificationService));
     };
 
+    const userData = ref(useGetters(['getUserData']).getUserData).value.user;
 
-    function toEdit(i) {
-      //todo:未做方法先放著
+    function toEdit(item) {
+      navigateByNameAndParams('l414Edit', {
+        l414Data: item,
+        formStatus: FormStatusEnum.READONLY,
+        isNotKeepAlive: false,
+        stateStatus: userData === 'InfoTester'
+      });
     }
 
     return {
@@ -275,6 +331,8 @@ export default defineComponent({
       notAfterPublicDateEnd,
       toEdit,
       queryStatus,
+      bpmUnitOptions,
+      changeDealWithUnit
     };
   },
 });

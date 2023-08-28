@@ -54,7 +54,6 @@
                     <form:select id="stillWork" path="eip07w010QueryDataList[0].stillWork" cssClass="form-control">
                     	<form:option value="Y">是</form:option>
                     	<form:option value="N">否</form:option>
-						<form:option value="A">全部</form:option>
                     </form:select>
 				</div>
             </tags:form-row>
@@ -171,23 +170,24 @@
 			}
 
 
-            // function controlTitle(){
-            //     var processTy=$("input[id=processTy]:checked").val();
-            //     var workTy=$("input[id=workTy]:checked").val();
-            //     if(processTy == 'D'){
-            //      if (workTy=='Q'){
-            //          $("#main>fieldset>legend").html("駕駛人查詢條件")
-            //      }else{
-            //          $("#main>fieldset>legend").html("駕駛人新增條件")
-            //      }
-            //     } else {
-            //         if (workTy=='Q'){
-            //             $("#main>fieldset>legend").html("車籍查詢條件")
-            //         }else{
-            //             $("#main>fieldset>legend").html("車籍新增條件")
-            //         }
-			//
-            //     }
+
+            function controlTitle(){
+                var processTy=$("input[id=processTy]:checked").val();
+                var workTy=$("input[id=workTy]:checked").val();
+                if(processTy == 'D'){
+                 if (workTy=='Q'){
+                     $("#main>fieldset>legend").html("駕駛人查詢條件")
+                 }else{
+                     $("#main>fieldset>legend").html("駕駛人新增條件")
+                 }
+                } else {
+                    if (workTy=='Q'){
+                        $("#main>fieldset>legend").html("車籍查詢條件")
+                    }else{
+                        $("#main>fieldset>legend").html("車籍新增條件")
+                    }
+
+                }
                 // if (workTy=='Q'){
                 //     $("#carnoList").show();
                 //     $("#carno").hide();

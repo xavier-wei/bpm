@@ -23,6 +23,8 @@ const onRequestSuccess = config => {
 };
 const setupAxiosInterceptors = (onUnauthenticated, onServerError) => {
   const onResponseError = err => {
+    useStore().value.commit('setLoadingStatus', { status: false, url: err.config ? err.config.url : '' });
+
     const status = err.status || err.response.status;
     if (status === 403 || status === 401) {
       return onUnauthenticated(err);
@@ -30,7 +32,10 @@ const setupAxiosInterceptors = (onUnauthenticated, onServerError) => {
     if (status >= 500) {
       return onServerError(err);
     }
-    useStore().value.commit('setLoadingStatus', { status: false, url: err.config ? err.config.url : '' });
+    if (status === undefined) {
+      onUnauthenticated();
+    }
+
     return Promise.reject(err);
   };
 
