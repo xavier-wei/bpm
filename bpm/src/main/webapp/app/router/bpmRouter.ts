@@ -5,6 +5,7 @@ const flowChart =() => import('@/components/flowChart.vue');
 
 const breadcrumb =() => import('../core/menu/breadcrumb.vue');
 const l414Edit =() => import('@/components/l414/l414Edit.vue');
+const l410Edit =() => import('@/components/l410/l410Edit.vue');
 
 export default [
   {
@@ -58,6 +59,15 @@ export default [
     component: l414Edit,
     meta: {
       functionId: 'l414Edit',
+    },
+    props: true,
+  },
+  {
+    path: '/l410Edit',
+    name: 'l410Edit',
+    component: l410Edit,
+    meta: {
+      functionId: 'l410Edit',
     },
     props: true,
   },

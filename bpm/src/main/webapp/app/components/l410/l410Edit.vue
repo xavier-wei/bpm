@@ -26,19 +26,18 @@
                                         :item="$v.applyDate">
                       <!--申請日期 : applyDate-->
                       <i-date-picker
-                        placeholder="yyy/MM/dd"
-                        v-model="$v.applyDate.$model"
-                        :state="validateState($v.applyDate)"
-                        lazy
-                        trim
-                        disabled
+                          placeholder="yyy/MM/dd"
+                          v-model="$v.applyDate.$model"
+                          :state="validateState($v.applyDate)"
+                          lazy
+                          trim
                       ></i-date-picker>
                     </i-form-group-check>
 
                     <i-form-group-check class="col-sm-3" label-cols="5" content-cols="7" :label="`表單編號：`"
                                         :item="$v.formId">
                       <!--表單編號 : formId -->
-                      <b-form-input v-model="$v.formId.$model" disabled/>
+                      <b-form-input v-model="$v.formId.$model"/>
                     </i-form-group-check>
 
                     <i-form-group-check class="col-sm-4" label-cols="5" content-cols="7" :label="`註：`">
@@ -67,72 +66,85 @@
                     <i-form-group-check class="col-sm-4" label-cols="5" content-cols="7" :label="`單位：`"
                                         :item="$v.filUnit">
                       <!--填表人單位名稱　: filUnit-->
-                      <b-form-select v-model="$v.filUnit.$model" :options="bpmUnitOptions">
+                      <b-form-select v-model="$v.filUnit.$model" :options="options.filUnitOptions">
                         <template #first>
                           <b-form-select-option value="null" disabled>請選擇</b-form-select-option>
+                          <b-form-select-option value="">全部</b-form-select-option>
                         </template>
                       </b-form-select>
                     </i-form-group-check>
                   </b-form-row>
+
+                  <!--                  <b-form-row>-->
+                  <!--                    <i-form-group-check label-star class="col-sm-5" label-cols="5" content-cols="7" :label="`是否暫存：`"-->
+                  <!--                                        :item="$v.isSubmit">-->
+                  <!--                      &lt;!&ndash;是否暫存、送出 : isSubmit&ndash;&gt;-->
+                  <!--                      <b-form-select v-model="$v.isSubmit.$model">-->
+                  <!--                        <template #first>-->
+                  <!--                          <b-form-select-option value="" disabled>請選擇</b-form-select-option>-->
+                  <!--                          <b-form-select-option value="0">暫存</b-form-select-option>-->
+                  <!--                          <b-form-select-option value="1">送出</b-form-select-option>-->
+                  <!--                        </template>-->
+                  <!--                      </b-form-select>-->
+                  <!--                    </i-form-group-check>-->
+                  <!--                  </b-form-row>-->
 
                   <b-form-row>
                     <p class="test1">一、個人基本資料：</p>
                   </b-form-row>
 
                   <b-form-row>
-                    <i-form-group-check label-star class="col-sm-5" label-cols="5" content-cols="7"
-                                        :label="'姓名(中文) ：'"
-                                        :item="$v.appName">
+                    <i-form-group-check label-star class="col-sm-5" label-cols="5" content-cols="7" :label="'姓名(中文) ：'"
+                                        :item="$v.chName">
                       <!--姓名(中文) : -->
-                      <b-form-input v-model="$v.appName.$model"/>
+                      <b-form-input v-model="$v.chName.$model"/>
                     </i-form-group-check>
 
                     <i-form-group-check label-star class="col-sm-5" label-cols="5" content-cols="7" :label="`單位別 ：`"
-                                        :item="$v.appUnit1">
+                                        :item="$v.appUnit">
                       <!--單位別 : -->
-                      <b-form-select v-model="$v.appUnit1.$model" :options="bpmUnitOptions">
+                      <b-form-select v-model="$v.appUnit.$model" :options="options.appUnitOptions">
                         <template #first>
                           <b-form-select-option value="null" disabled>請選擇</b-form-select-option>
+                          <b-form-select-option value="">全部</b-form-select-option>
                         </template>
                       </b-form-select>
                     </i-form-group-check>
                   </b-form-row>
 
                   <b-form-row>
-                    <i-form-group-check label-star class="col-sm-5" label-cols="5" content-cols="7"
-                                        :label="'姓名(英文) ：'"
-                                        :item="$v.appEngName">
+                    <i-form-group-check label-star class="col-sm-5" label-cols="5" content-cols="7" :label="'姓名(英文) ：'"
+                                        :item="$v.enName">
                       <!--姓名(英文) : -->
-                      <b-form-input v-model="$v.appEngName.$model"/>
+                      <b-form-input v-model="$v.enName.$model"/>
                     </i-form-group-check>
 
                     <i-form-group-check label-star class="col-sm-5" label-cols="5" content-cols="7" :label="`科別 ：`"
-                                        :item="$v.appUnit2">
+                                        :item="$v.subject">
                       <!--科別 : -->
-                      <b-form-input v-model="$v.appUnit2.$model"/>
+                      <b-form-input v-model="$v.subject.$model"/>
                     </i-form-group-check>
                   </b-form-row>
 
                   <b-form-row>
-                    <i-form-group-check label-star class="col-sm-5" label-cols="5" content-cols="7"
-                                        :label="'員工編號 ：'"
+                    <i-form-group-check label-star class="col-sm-5" label-cols="5" content-cols="7" :label="'員工編號 ：'"
                                         :item="$v.appEmpid">
                       <!--員工編號 : -->
                       <b-form-input v-model="$v.appEmpid.$model"/>
                     </i-form-group-check>
 
                     <i-form-group-check label-star class="col-sm-5" label-cols="5" content-cols="7" :label="`職稱 ：`"
-                                        :item="$v.position">
+                                        :item="$v.jobName">
                       <!--職稱 : -->
-                      <b-form-input v-model="$v.position.$model"/>
+                      <b-form-input v-model="$v.jobName.$model"/>
                     </i-form-group-check>
                   </b-form-row>
 
                   <b-form-row>
                     <i-form-group-check class="col-sm-5" label-cols="5" content-cols="7" :label="'分機 ：'"
-                                        :item="$v.extNum">
+                                        :item="$v.extendNumber">
                       <!--分機 : -->
-                      <b-form-input v-model="$v.extNum.$model"/>
+                      <b-form-input v-model="$v.extendNumber.$model"/>
                     </i-form-group-check>
                   </b-form-row>
 
@@ -142,7 +154,7 @@
 
                   <b-form-row>
                     <!--申請事由-->
-                    <b-form-radio-group class="offset-1" v-model="$v.appReason.$model">
+                    <b-form-radio-group class="offset-1" v-model="$v.applicationReason.$model">
                       <b-form-radio value="1">
                         <div style="height: 34px;">新進</div>
                       </b-form-radio>
@@ -160,25 +172,24 @@
 
                   <b-form-row>
                     <b-input-group class="offset-1 mb-3">
-                      <!--生效日期checkbox : isEnableDate-->
-                      <b-form-checkbox class="col-2" v-model="$v.isEnableDate.$model" value="1" unchecked-value="0">
+                      <!--生效日期checkbox : effective-->
+                      <b-form-checkbox class="col-2" v-model="$v.effective.$model" value="Y" unchecked-value="N">
                         生效日期 :
                       </b-form-checkbox>
-                      <!--生效日期 : enableDate-->
+                      <!--生效日期 : effectiveDate-->
                       <i-date-picker
-                        class="col-2"
-                        placeholder="yyy/MM/dd"
-                        v-model="$v.enableDate.$model"
-                        lazy
-                        trim
-                        :disabled="$v.isEnableDate.$model !== '1'"
+                          class="col-2"
+                          placeholder="yyy/MM/dd"
+                          v-model="$v.effectiveDate.$model"
+                          lazy
+                          trim
                       ></i-date-picker>
-                      <!--其他 checkbox : isOther-->
-                      <b-form-checkbox class="col-2 offset-1" v-model="$v.isOther.$model" value="1" unchecked-value="0">
+                      <!--other: other-->
+                      <b-form-checkbox class="col-2 offset-1" v-model="$v.other.$model" value="Y" unchecked-value="N">
                         其他 :
                       </b-form-checkbox>
-                      <!--其他說明 : otherReason-->
-                      <b-form-input class="col-3" v-model="$v.otherReason.$model"/>
+                      <!--其他說明 : otherRemark-->
+                      <b-form-input class="col-3" v-model="$v.otherRemark.$model"/>
                     </b-input-group>
                   </b-form-row>
 
@@ -191,72 +202,60 @@
 
                   <div class="card context">
                     <b-table
-                      class="table-sm"
-                      show-empty
-                      responsive
-                      bordered
-                      empty-text="無資料"
-                      :items="table.data"
-                      :fields="table.fields"
+                        class="table-sm"
+                        show-empty
+                        responsive
+                        bordered
+                        empty-text="無資料"
+                        :items="mockdata"
+                        :fields="table.fields"
                     >
 
                       <template #cell(checkbox)="row">
-                        <b-form-checkbox :value="'1'" :unchecked-value="false" v-model="row.item.checkbox"/>
+                        <b-form-checkbox v-model="row.item.checkbox" :value="true" :unchecked-value="false"/>
                       </template>
 
+                      <!--TODO: 未綁 v-model-->
                       <!--申請項目-->
                       <template #cell(applyItem)="row">
-                        <div
-                          v-if="row.item.systemApply !== '7' && row.item.systemApply !=='8' && row.item.systemApply !=='9'">
-                          {{ row.item.systemApplyName }}
-                          <span
-                            v-if="
-                          row.item.systemApply === '1' ||
-                          row.item.systemApply === '2' ||
-                          row.item.systemApply === '4' ||
-                          row.item.systemApply === '5' ||
-                          row.item.systemApply === '6'"> : </span>
+                        <div>
+                          {{ systemToName(row.item.systemApply) }}
                         </div>
-                        <b-form-input v-if="row.item.systemApply === '1'"
-                                      maxlength="200" v-model="row.item.systemApplyInput"></b-form-input>
-                        <b-form-input v-if="row.item.systemApply === '4'"
-                                      maxlength="200" v-model="row.item.systemApplyInput"></b-form-input>
+                        <b-form-input v-if="row.item.systemApply === '1'" v-model="row.item.applyItem"
+                                      maxlength="200"></b-form-input>
+                        <b-form-input v-if="row.item.systemApply === '4'" v-model="row.item.applyItem"
+                                      maxlength="200"></b-form-input>
                         <span v-if="row.item.systemApply === '4'">@mail.pcc.gov.tw</span>
 
-                        <b-form-checkbox-group v-if="row.item.systemApply === '2'" v-model="$v.applyItem.$model"
-                                               :options="options.type"/>
-
-
-                        <b-form-input v-if="row.item.systemApply === '6'"
-                                      maxlength="200" v-model="row.item.systemApplyInput"></b-form-input>
-
-                        <div v-if="row.item.systemApply === '5'">
-                          <b-form-checkbox-group v-if="row.item.systemApply === '5'" v-model="$v.webSiteList.$model"
-                                                 :options="options.webSite"/>
-
-                        </div>
+                        <b-form-radio-group class="col-12" v-if="row.item.systemApply === '2'"
+                                            v-model="row.item.applyItem"
+                                            :options="options.type"/>
+                        <b-form-input v-if="row.item.systemApply === '7'" v-model="row.item.applyItem"
+                                      maxlength="200"></b-form-input>
 
                         <div
-                          v-if="row.item.systemApply === '7' || row.item.systemApply === '8' || row.item.systemApply === '9'">
+                            v-if="row.item.systemApply === '13' || row.item.systemApply === '14' || row.item.systemApply === '15'"
+                            v-model="row.item.applyItem">
                           <div>系統名稱 :</div>
-                          <b-form-input v-model="row.item.otherSys" maxlength="200"></b-form-input>
+                          <b-form-input maxlength="200"></b-form-input>
                           <div>帳號 :</div>
-                          <b-form-input v-model="row.item.otherSysAccount" maxlength="200"></b-form-input>
+                          <b-form-input maxlength="200"></b-form-input>
                         </div>
                       </template>
 
+                      <!--TODO: 未綁 v-model-->
                       <!--處理權限-->
                       <template #cell(permissions)="row">
-                        <b-form-radio-group v-if="row.item.systemApply === '4'" v-model="row.item.sys">
+                        <b-form-radio-group v-if="row.item.systemApply === '4'" v-model="row.item.permissions">
                           <b-form-radio class="col-12" value="1">
                             <div>新增</div>
                             <b-input-group>
                               <div>1.　</div>
-                              <b-form-input maxlength="200" v-model="row.item.emailApply1" :disabled="row.item.sys !== '1'" />
+                              <b-form-input maxlength="200"/>
                             </b-input-group>
                             <b-input-group>
                               <div>2.　</div>
-                              <b-form-input maxlength="200" v-model="row.item.emailApply2" :disabled="row.item.sys !== '1'" />
+                              <b-form-input maxlength="200"/>
                             </b-input-group>
                           </b-form-radio>
 
@@ -269,12 +268,12 @@
                           <b-form-radio class="col-12" value="3">
                             <b-input-group>
                               <div>異動 :　</div>
-                              <b-form-input maxlength="200" v-model="row.item.sysChange" :disabled="row.item.sys !== '3'"/>
+                              <b-form-input maxlength="200"/>
                             </b-input-group>
                           </b-form-radio>
                         </b-form-radio-group>
 
-                        <b-form-radio-group v-else-if="row.item.systemApply === '2'" v-model="row.item.sys">
+                        <b-form-radio-group v-else-if="row.item.systemApply === '2'" v-model="row.item.permissions">
                           <b-form-radio class="col-12" value="1">
                             <div>新增</div>
                           </b-form-radio>
@@ -294,34 +293,36 @@
                           <b-form-radio class="col-12" value="5">
                             <b-input-group>
                               <div>異動 :　</div>
-                              <b-form-input maxlength="200" v-model="row.item.sysChange" :disabled="row.item.sys !== '5'"/>
+                              <b-form-input maxlength="200"/>
                             </b-input-group>
                           </b-form-radio>
                         </b-form-radio-group>
 
-                        <b-form-radio-group v-else-if=" row.item.systemApply === '5' " v-model="row.item.sys">
+                        <b-form-radio-group v-else-if="row.item.systemApply === '5' || row.item.systemApply === '6' "
+                                            v-model="row.item.permissions">
                           <b-form-radio class="col-12" value="1">
                             <div>新增</div>
                           </b-form-radio>
 
                           <b-form-radio class="col-12" value="2">
+                            <b-input-group>
                               <div>異動 :　</div>
+                              <b-form-input maxlength="200"/>
+                            </b-input-group>
                           </b-form-radio>
 
-                          <div class="ml-1">
-                            <b-form-checkbox value="1" unchecked-value="0" v-model="row.item.isUnitAdm" :disabled="row.item.sys !== '2'" >
-                              部門管理者
-                            </b-form-checkbox>
+                          <b-form-checkbox value="Y" unchecked-value="N">
+                            部門管理者
+                          </b-form-checkbox>
 
-                            <b-form-checkbox value="1" unchecked-value="0" v-model="row.item.isUnitDataMgr" :disabled="row.item.sys !== '2'" >
-                              部門資料維護者
-                            </b-form-checkbox>
+                          <b-form-checkbox value="Y" unchecked-value="N">
+                            部門資料維護者
+                          </b-form-checkbox>
 
-                            <b-form-checkbox value="1" unchecked-value="0" v-model="row.item.isWebSiteOther" :disabled="row.item.sys !== '2'" >
-                              其他 :　
-                            </b-form-checkbox>
-                            <b-form-input maxlength="200" v-model="row.item.otherRemark" :disabled="row.item.isWebSiteOther !== '1'"/>
-                          </div>
+                          <b-form-checkbox value="Y" unchecked-value="N">
+                            其他 :　
+                          </b-form-checkbox>
+                          <b-form-input maxlength="200"/>
 
                           <b-form-radio class="col-12" value="3">
                             <div>帳號停用</div>
@@ -329,7 +330,7 @@
 
                         </b-form-radio-group>
 
-                        <b-form-radio-group v-else v-model="row.item.sys">
+                        <b-form-radio-group v-else v-model="row.item.permissions">
                           <b-form-radio class="col-12" value="1">
                             <div>新增</div>
                           </b-form-radio>
@@ -341,7 +342,7 @@
                           <b-form-radio class="col-12" value="3">
                             <b-input-group>
                               <div>異動 :　</div>
-                              <b-form-input maxlength="200" v-model="row.item.sysChange" :disabled="row.item.sys !== '3'" />
+                              <b-form-input maxlength="200"/>
                             </b-input-group>
                           </b-form-radio>
                         </b-form-radio-group>
@@ -349,27 +350,30 @@
 
                       <!--管理單位-->
                       <template #cell(managementUnit)="row">
-                        <b-form-select :options="bpmUnitOptions" v-model="row.item.admUnit">
+                        <b-form-select v-model="row.item.managementUnit" :options="options.managementUnit">
                           <template #first>
                             <b-form-select-option value="null" disabled>請選擇</b-form-select-option>
+                            <b-form-select-option value="">全部</b-form-select-option>
                           </template>
                         </b-form-select>
                       </template>
 
+                      <!--TODO: 未綁 v-model-->
                       <!--處理情形及生效日期-->
                       <template #cell(lastWork)="row">
-                        <b-form-input maxlength="200" v-model="row.item.admStatus"/>
+                        <b-form-input maxlength="200"/>
                         <i-date-picker
-                          placeholder="yyy/MM/dd"
-                          lazy
-                          trim
-                          v-model="row.item.admEnableDate"
+                            placeholder="yyy/MM/dd"
+                            v-model="row.item.lastWork"
+                            lazy
+                            trim
                         ></i-date-picker>
                       </template>
 
+                      <!--TODO: 未綁 v-model-->
                       <!--處理人員-->
                       <template #cell(reviewStaffName)="row">
-                        <b-form-input maxlength="200" v-model="row.item.admName"/>
+                        <b-form-input maxlength="200"/>
                       </template>
 
                     </b-table>
@@ -402,22 +406,36 @@
 
                   <b-container class="mt-3">
                     <b-row class="justify-content-center">
-                      <b-button class="mr-1" style="background-color: #17a2b8; color: white" size="sm"
+                      <b-button class="ml-2" style="background-color: #17a2b8; color: white"
                                 variant="outline-secondary"
-                                @click="submitForm('0')">暫存
-                      </b-button>
-                      <b-button class="mr-1" style="background-color: #17a2b8; color: white" size="sm"
-                                variant="outline-secondary"
-                                @click="submitForm('1')">申請
+                                @click="submitForm('0')"
+                                v-show="formStatusRef === FormStatusEnum.MODIFY">暫存
                       </b-button>
                       <b-button class="ml-2" style="background-color: #17a2b8; color: white"
                                 variant="outline-secondary"
-                                @click="reset()">清除
+                                @click="submitForm('1')"
+                                v-show="formStatusRef === FormStatusEnum.MODIFY">送出
+                      </b-button>
+                      <b-button class="ml-2" style="background-color: #17a2b8; color: white"
+                                variant="outline-secondary"
+                                @click="reviewStart('1')"
+                                v-show="formStatusRef === FormStatusEnum.VERIFY">同意
+                      </b-button>
+                      <b-button class="ml-2" style="background-color: #17a2b8; color: white"
+                                variant="outline-secondary"
+                                @click="reviewStart('0')"
+                                v-show="formStatusRef === FormStatusEnum.VERIFY">不同意
+                      </b-button>
+                      <b-button class="ml-2" style="background-color: #17a2b8; color: white"
+                                variant="outline-secondary"
+                                @click="reviewStart('2')"
+                                v-show="formStatusRef === FormStatusEnum.VERIFY">補件
                       </b-button>
                       <b-button class="ml-2" style="background-color: #17a2b8; color: white"
                                 variant="outline-secondary"
                                 @click="toQueryView">返回
                       </b-button>
+
                     </b-row>
                   </b-container>
 
@@ -426,13 +444,13 @@
               </b-tab>
               <b-tab title="附件" :active="activeTab(1)" @click="changeTabIndex(1)">
 
-                <appendix :vData="appendixData" :formStatus="formStatusRef">
+                <appendix :vData="appendixData" :fileDataId="fileDataId" :formStatus="formStatusRef">
 
                 </appendix>
 
               </b-tab>
               <b-tab title="流程圖" :active="activeTab(2)" @click="changeTabIndex(3)">
-                <flowChart :filePathName="filePathData">
+                <flowChart :filePathName="fileData">
 
                 </flowChart>
               </b-tab>
@@ -449,32 +467,32 @@
 
 
 import IDualDatePicker from '@/shared/i-date-picker/i-dual-date-picker.vue';
-import {onMounted, reactive, ref, Ref, toRef, watch} from '@vue/composition-api';
+import {reactive, ref, Ref, toRef, watch} from '@vue/composition-api';
 import {useValidation, validateState} from '@/shared/form';
 import IFormGroupCheck from '@/shared/form/i-form-group-check.vue';
 import {required} from '@/shared/validators';
 import IDatePicker from '@/shared/i-date-picker/i-date-picker.vue';
 import {useBvModal} from '@/shared/modal';
 import {systemToName} from "@/shared/i-system/system-to-name"
-import {handleBack, navigateByNameAndParams} from "@/router/router";
-import axios from "axios";
-import {notificationErrorHandler} from "@/shared/http/http-response-helper";
-import {useNotification} from "@/shared/notification";
-import {useGetters} from "@u3u/vue-hooks";
-import {changeDirections} from "@/shared/word/directions";
-import {checkboxToMapAndForm} from "@/shared/word/checkboxToMapAndForm";
+import {handleBack} from "@/router/router";
 
 const appendix = () => import('@/components/appendix.vue');
 const flowChart = () => import('@/components/flowChart.vue');
 export default {
-  name: "l410Apply",
-  methods: {
-    checkboxToMapAndForm
-  },
+  name: "l410Edit",
   props: {
-    formStatus: {
-      type: String,
+    l410Data: {
+      type: Object,
       required: false,
+    },
+    formStatus: {
+      required: false,
+      type: String,
+    },
+    stateStatus: {
+      required: false,
+      type: Boolean,
+      default: true,
     },
   },
   components: {
@@ -486,146 +504,66 @@ export default {
   },
   setup(props) {
     let appendixData = reactive({});
-    const formStatusRef = toRef(props, 'formStatus');
-    const bpmUnitOptions = ref(useGetters(['getBpmUnitOptions']).getBpmUnitOptions).value;
     const $bvModal = useBvModal();
-    const notificationService = useNotification();
+    const l410DataProp = toRef(props, 'l410Data');
+    const formStatusRef = toRef(props, 'formStatus');
+    const stateStatusRef = toRef(props, 'stateStatus');
+    let fileDataId = reactive({
+      fileId: ''
+    });
+    enum FormStatusEnum {
+      CREATE = '新增',
+      MODIFY = '編輯',
+      READONLY = '檢視',
+      VERIFY = '簽核'
+    }
+
     const formDefault = {
       formId: '',//表單編號
-      applyDate: new Date(new Date().getFullYear(), new Date().getMonth(), new Date().getDate()),//	申請日期
+      applyDate: new Date(new Date().getFullYear(), 0, 1),//	申請日期
       filEmpid: '',//	填表人員工編號
       filName: '',//	填表人姓名
       filUnit: '',//	填表人單位名稱
       isSubmit: '',//	是否暫存、送出
-      appName: '', // 中文姓名
-      appEngName: '', // 英文姓名
+      chName: '', // 中文姓名
+      enName: '', // 英文姓名
       appEmpid: '',//	申請人員工編號
-      extNum: '',//	分機
-      appUnit1: '',//	單位別
-      appUnit2: '',//	科別
-      position: '',//	職稱
-      appReason: '1',//	申請事由 1.新進 2.離職 3.職務異動
-      isEnableDate: '',//	生效日期
-      enableDate: null,//	生效日期
-      isOther: '',//	其他
-      otherReason: '',//	其他說明
-      isHrSys: '',
-      hrSys: '',
-      hrSysChange: '',
-      hrSysAdmUnit: '',
-      hrSysStatus: '',
-      hrSysEnableDate: null,
-      hrSysAdmName: '',
-      isAdSys: '',
-      adAccount: '',
-      adSys: '',
-      adSysChange: '',
-      adSysAdmUnit: '',
-      adSysStatus: '',
-      adSysEnableDate: null,
-      adSysAdmName: '',
-      isMeetingRoom: '',
-      meetingRoom: '',
-      meetingRoomChange: '',
-      meetingRoomAdmUnit: '',
-      meetingRoomStatus: '',
-      meetingRoomEnableDate: null,
-      meetingRoomAdmName: '',
-      isOdSys: '',
-      odSysRole: '',
-      odSys: '',
-      odSysOther: '',
-      odSysAdmUnit: '',
-      odSysStatus: '',
-      odSysEnableDate: null,
-      odSysAdmName: '',
-      isEmailSys: '',
-      emailSysAccount: '',
-      emailSys: '',
-      emailApply1: '',
-      emailApply2: '',
-      emailSysChange: '',
-      emailSysAdmUnit: '',
-      emailSysStatus: '',
-      emailSysEnableDate: null,
-      emailSysAdmName: '',
-      isWebSite: '',
-      isPccWww: '', //全球資訊網
-      isPccHome: '',//會內資訊網站
-      webSite: '',
-      isUnitAdm: '',
-      isUnitDataMgr: '',
-      isWebSiteOther: '',
-      webSiteOther: '',
-      webSiteAdmUnit: '',
-      webSiteStatus: '',
-      webSiteEnableDate: null,
-      webSiteAdmName: '',
-      isPccPis: '',
-      pccPisAccount: '',
-      pccPis: '',
-      pccPisChange: '',
-      pccPisAdmUnit: '',
-      pccPisStatus: '',
-      pccPisEnableDate: null,
-      pccPisAdmName: '',
-      isOtherSys1: '',
-      otherSys1ServerName: '',
-      otherSys1Account: '',
-      otherSys1: '',
-      otherSys1Change: '',
-      otherSys1AdmUnit: '',
-      otherSys1Status: '',
-      otherSys1EnableDate: null,
-      otherSys1AdmName: '',
-      isOtherSys2: '',
-      otherSys2ServerName: '',
-      otherSys2Account: '',
-      otherSys2: '',
-      otherSys2Change: '',
-      otherSys2AdmUnit: '',
-      otherSys2Status: '',
-      otherSys2EnableDate: null,
-      otherSys2AdmName: '',
-      isOtherSys3: '',
-      otherSys3ServerName: '',
-      otherSys3Account: '',
-      otherSys3: '',
-      otherSys3Change: '',
-      otherSys3AdmUnit: '',
-      otherSys3Status: '',
-      otherSys3EnableDate: null,
-      otherSys3AdmName: '',
-      applyItem: [],
-      webSiteList: [],
+      extendNumber: '',//	分機
+      appUnit: '',//	單位別
+      subject: '',//	科別
+      jobName: '',//	職稱
+      applicationReason: '',//	申請事由 1.新進 2.離職 3.職務異動
+      effective: '',//	生效日期
+      effectiveDate: '',//	生效日期
+      other: '',//	其他
+      otherRemark: '',//	其他說明
       formName: 'L410',
     };
     const form = reactive(Object.assign({}, formDefault));
     const rules = {
       formId: {},
-      applyDate: {required},
-      filEmpid: {required},
-      filName: {required},
-      filUnit: {required},
-      appName: {required},
-      isSubmit: {required},
-      appEngName: {required},
-      appEmpid: {required},
-      extNum: {},
-      appUnit1: {required},
-      appUnit2: {required},
-      position: {required},
-      appReason: {required},
-      isEnableDate: {},
-      enableDate: {required},
-      isOther: {},
-      otherReason: {},
-      applyItem: {},
-      webSiteList: {},
+      applyDate: {},
+      filEmpid: {},
+      filName: {},
+      filUnit: {},
+      appName: {},
+      isSubmit: {},
+      chName: {},
+      enName: {},
+      appEmpid: {},
+      extendNumber: {},
+      appUnit: {},
+      subject: {},
+      jobName: {},
+      applicationReason: {},
+      effective: {},
+      effectiveDate: {},
+      other: {},
+      otherRemark: {},
     };
     const {$v, checkValidity, reset} = useValidation(rules, form, formDefault);
 
-    const filePathData = reactive({
+    const fileData = reactive({
       filePathName: '',
     });
 
@@ -644,7 +582,7 @@ export default {
           sortable: false,
           thClass: 'text-center',
           tdClass: 'text-left align-middle',
-          thStyle: 'width:20%',
+          thStyle: 'width:25%',
         },
         {
           key: 'permissions',
@@ -652,7 +590,7 @@ export default {
           sortable: false,
           thClass: 'text-center',
           tdClass: 'text-left align-middle',
-          thStyle: 'width:25%',
+          thStyle: 'width:30%',
         },
         {
           key: 'managementUnit',
@@ -660,7 +598,6 @@ export default {
           sortable: false,
           thClass: 'text-center',
           tdClass: 'text-center align-middle',
-          thStyle: 'width:15%',
         },
         {
           key: 'lastWork',
@@ -682,87 +619,188 @@ export default {
       totalItems: 0,
     });
 
-    onMounted(() => {
-      handleQuery();
-    });
-
-    function handleQuery() {
-
-      table.data = [];
-
-      axios
-        .get(`/eip/bpm-l410-apply-manages`)
-        .then(({data}) => {
-          table.data = data
-        })
-        .catch(notificationErrorHandler(notificationService));
-    }
+    const mockdata = [
+      {
+        systemApply: '0',
+        checkbox: null,
+        applyItem: '',
+        permissions: '',
+        managementUnit: '',
+        lastWork: '',
+        reviewStaffName: '',
+      },
+      {
+        systemApply: '1',
+        checkbox: null,
+        applyItem: '',
+        permissions: '',
+        managementUnit: '',
+        lastWork: '',
+        reviewStaffName: '',
+      },
+      {
+        systemApply: '2',
+        checkbox: null,
+        applyItem: '',
+        permissions: '',
+        managementUnit: '',
+        lastWork: '',
+        reviewStaffName: '',
+      },
+      {
+        systemApply: '3',
+        checkbox: null,
+        applyItem: '',
+        permissions: '',
+        managementUnit: '',
+        lastWork: '',
+        reviewStaffName: '',
+      },
+      {
+        systemApply: '4',
+        checkbox: null,
+        applyItem: '',
+        permissions: '',
+        managementUnit: '',
+        lastWork: '',
+        reviewStaffName: '',
+      },
+      {
+        systemApply: '5',
+        checkbox: null,
+        applyItem: '',
+        permissions: '',
+        managementUnit: '',
+        lastWork: '',
+        reviewStaffName: '',
+      },
+      {
+        systemApply: '6',
+        checkbox: null,
+        applyItem: '',
+        permissions: '',
+        managementUnit: '',
+        lastWork: '',
+        reviewStaffName: '',
+      },
+      {
+        systemApply: '7',
+        checkbox: null,
+        applyItem: '',
+        permissions: '',
+        managementUnit: '',
+        lastWork: '',
+        reviewStaffName: '',
+      },
+      {
+        systemApply: '8',
+        checkbox: null,
+        applyItem: '',
+        permissions: '',
+        managementUnit: '',
+        lastWork: '',
+        reviewStaffName: '',
+      },
+      {
+        systemApply: '9',
+        checkbox: null,
+        applyItem: '',
+        permissions: '',
+        managementUnit: '',
+        lastWork: '',
+        reviewStaffName: '',
+      },
+      {
+        systemApply: '10',
+        checkbox: null,
+        applyItem: '',
+        permissions: '',
+        managementUnit: '',
+        lastWork: '',
+        reviewStaffName: '',
+      },
+      {
+        systemApply: '11',
+        checkbox: null,
+        applyItem: '',
+        permissions: '',
+        managementUnit: '',
+        lastWork: '',
+        reviewStaffName: '',
+      },
+      {
+        systemApply: '12',
+        checkbox: null,
+        applyItem: '',
+        permissions: '',
+        managementUnit: '',
+        lastWork: '',
+        reviewStaffName: '',
+      },
+      {
+        systemApply: '13',
+        checkbox: null,
+        applyItem: '',
+        permissions: '',
+        managementUnit: '',
+        lastWork: '',
+        reviewStaffName: '',
+      },
+      {
+        systemApply: '14',
+        checkbox: null,
+        applyItem: '',
+        permissions: '',
+        managementUnit: '',
+        lastWork: '',
+        reviewStaffName: '',
+      },
+      {
+        systemApply: '15',
+        checkbox: null,
+        applyItem: '',
+        permissions: '',
+        managementUnit: '',
+        lastWork: '',
+        reviewStaffName: '',
+      },
+    ];
 
     const options = reactive({
+      filUnitOptions: [
+        {value: '0', text: '主計室'},
+        {value: '1', text: '資訊推動小組'},
+        {value: '2', text: '主任委員室'},
+      ],
+      appUnitOptions: [
+        {value: '0', text: '主計室'},
+        {value: '1', text: '資訊推動小組'},
+        {value: '2', text: '主任委員室'},
+      ],
       type: [
         {value: '0', text: '主管'},
         {value: '1', text: '副主管'},
-        {value: '2', text: '科長'},
-        {value: '3', text: '承辦人'},
-        {value: '4', text: '登記桌'},
-        {value: '5', text: '總收文'},
-        {value: '6', text: '總發文'},
-        {value: '7', text: '繕打人員'},
-        {value: '8', text: '檔案歸檔'},
+        {value: '3', text: '科長'},
+        {value: '4', text: '承辦人'},
+        {value: '5', text: '登記桌'},
+        {value: '6', text: '總收文'},
+        {value: '7', text: '總發文'},
+        {value: '8', text: '繕打人員'},
+        {value: '9', text: '檔案歸檔'},
       ],
-      webSite: [
-        {value: '0', text: '全球資訊網 (https://www.pcc.gov.tw)'},
-        {value: '1', text: '會內資訊網站請先至home.pcc.gov.tw「帳號登入」點選「註冊」，填寫個人基本資料'},
+      managementUnit: [
+        {value: '0', text: '人事室'},
+        {value: '1', text: '資訊推動小組'},
+        {value: '3', text: '秘書處'},
       ],
     });
 
-    const headers = {
-      headers: {
-        'Content-Type': 'multipart/form-data',
-      },
-    };
-
     const submitForm = (isSubmit) => {
-
-      let variables = [];
-
       checkValidity().then((isValid: boolean) => {
         if (isValid) {
           $bvModal.msgBoxConfirm('是否確認送出修改內容？').then((isOK: boolean) => {
             if (isOK) {
-
-              table.data.forEach(data => {
-                checkboxToMapAndForm(data, form, variables)
-              })
-
-              let body = {
-                bpmIsmsL410DTO: form,
-                variables: variables
-              }
-
-              const formData = new FormData();
-
-              form.isSubmit = isSubmit;
-
-              formData.append('form', new Blob([JSON.stringify(body)], {type: 'application/json'}));
-              if (JSON.stringify(appendixData.value) !== '[]') {
-                console.log('安安')
-                for (let i in appendixData.value) {
-                  formData.append('appendixFiles', appendixData.value[i].file[0]);
-                }
-                formData.append('fileDto', new Blob([JSON.stringify(appendixData.value)], {type: 'application/json'}));
-              }
-
-              axios
-                .post(`/process/start/L410`, formData, headers)
-                .then(({data}) => {
-                  // filePathData.filePathName = 'http://localhost:8081/pic?processId=' + data;
-                  console.log('data', data)
-                  $bvModal.msgBoxOk('表單新增完畢');
-                  reset();
-                  navigateByNameAndParams('l410Query', { isReload: false, isNotKeepAlive: true });
-                })
-                .catch(notificationErrorHandler(notificationService));
+              // console.log('form', form)
             }
           });
         } else {
@@ -785,10 +823,14 @@ export default {
       }
     };
 
-    function toQueryView() {
-      handleBack({isReload: false, isNotKeepAlive: true});
+
+    function reviewStart(item) {
+
     }
 
+    function toQueryView() {
+      handleBack({isReload: true, isNotKeepAlive: true});
+    }
 
     return {
       $v,
@@ -800,13 +842,16 @@ export default {
       changeTabIndex,
       activeTab,
       table,
+      mockdata,
       systemToName,
-      filePathData,
+      fileData,
       appendixData,
       formStatusRef,
-      reset,
-      toQueryView,
-      bpmUnitOptions
+      stateStatusRef,
+      FormStatusEnum,
+      fileDataId,
+      reviewStart,
+      toQueryView
     }
   }
 }
@@ -850,5 +895,6 @@ export default {
 }
 
 </style>
+
 
 

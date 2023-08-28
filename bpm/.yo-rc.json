@@ -25,7 +25,7 @@
     "jhipsterVersion": "7.9.3",
     "jwtSecretKey": "NTYxNTcyMzgzMWM5MGZmYTkxNGIyYjZkMjg2NTM0MDAzNzJiNWFhZjA5OWZlOTQ3NTY1YjFkZjAxM2E3ZWJlMzU5Y2NmZDJjZDUyNDIxZjRmYzM0YjU0ZTZiOGM5ODBjNTIxMzc0OTk2YjI1YWI4NWRhNzU1MTdhODM2ZDVlZWQ=",
     "languages": ["zh-tw"],
-    "lastLiquibaseTimestamp": 1690860875000,
+    "lastLiquibaseTimestamp": 1692860797000,
     "messageBroker": false,
     "monorepository": true,
     "nativeLanguage": "zh-tw",

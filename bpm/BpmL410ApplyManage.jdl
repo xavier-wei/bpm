@@ -1,0 +1,21 @@
+entity BpmL410ApplyManage (BPM_L410_APPLY_MANAGE) {
+    @Id systemApply String maxlength(50) required,
+    checkbox String,
+    sys String,
+    systemApplyInput String maxlength(50),
+    sysChange String maxlength(50),
+    emailApply1 String maxlength(20),
+    emailApply2 String maxlength(1),
+    isUnitAdm String maxlength(1),
+    isUnitDataMgr String maxlength(1),
+    isWebSiteOther String maxlength(1),
+    admUnit String maxlength(1),
+    admStatus String maxlength(10),
+    admEnableDate Instant,
+    admName String maxlength(20),
+    otherSys String maxlength(20),
+    otherSysAccount String maxlength(20),
+    createUser String maxlength(20) required,
+    createTime Instant required,
+}
+use mapstruct for *
