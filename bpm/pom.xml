@@ -321,12 +321,12 @@
             <artifactId>keycloak-servlet-filter-adapter</artifactId>
             <version>${keycloak.version}</version>
         </dependency>
-<!--        <dependency>-->
-<!--            <groupId>org.keycloak</groupId>-->
-<!--            <artifactId>keycloak-core</artifactId>-->
-<!--            <version>19.0.2</version>-->
-<!--            <scope>compile</scope>-->
-<!--        </dependency>-->
+        <dependency>
+            <groupId>org.keycloak</groupId>
+            <artifactId>keycloak-core</artifactId>
+            <version>19.0.2</version>
+            <scope>compile</scope>
+        </dependency>
         <dependency>
             <groupId>commons-beanutils</groupId>
             <artifactId>commons-beanutils</artifactId>

@@ -15,7 +15,7 @@ cd bpm
 npm start
 ```
 ## 2. 正式環境打包
-
+- 如果只需要打包到target，執行mvn clean package -P prod即可
 ```bash
 
 Move-Item target\bpm.war -Destination "C:\wildfly-2\standalone\deployments"
