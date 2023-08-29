@@ -3,6 +3,6 @@
 <!doctype html>
 <tags:bpmLayout>
     <jsp:attribute name="contents">
-            <iframe style="width: 100%;height: 100%" src="${bpmPath}"></iframe>
+            <iframe style="width: 100%;height: 100%" src="${bpmPath}?"></iframe>
     </jsp:attribute>
 </tags:bpmLayout>

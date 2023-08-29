@@ -5,6 +5,7 @@ import org.keycloak.adapters.servlet.FilterRequestAuthenticator;
 import org.keycloak.adapters.servlet.OIDCFilterSessionStore;
 import org.keycloak.adapters.servlet.OIDCServletHttpFacade;
 import org.keycloak.adapters.spi.*;
+import org.springframework.context.annotation.Profile;
 
 import javax.servlet.*;
 import javax.servlet.annotation.WebFilter;
@@ -24,6 +25,7 @@ import java.util.logging.Logger;
 import java.util.regex.Pattern;
 
 @WebFilter("/*")
+@Profile("prod")
 public class KeycloakOIDCFilter  implements Filter {
     private static final Logger log = Logger.getLogger("" + KeycloakOIDCFilter.class);
     public static final String SKIP_PATTERN_PARAM = "keycloak.config.skipPattern";
@@ -160,6 +162,7 @@ public class KeycloakOIDCFilter  implements Filter {
                                 chain.doFilter(wrapper, res);
                             }
                         }
+
                     } else {
                         AuthChallenge challenge = authenticator.getChallenge();
                         if (challenge != null) {
