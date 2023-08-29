@@ -38,7 +38,9 @@ public class ProcessFlowService {
                 .processInstanceId(processInstance.getId()).singleResult();
         TaskDTO taskDTO =new  TaskDTO(task, processInstance.getProcessDefinitionKey());
 
-        if (variables.get("isSubmit").equals("1")) taskService.complete(task.getId());
+        if ("1".equals((String) variables.get("isSubmit"))) {
+            taskService.complete(task.getId());
+        }
 
         return taskDTO;
 

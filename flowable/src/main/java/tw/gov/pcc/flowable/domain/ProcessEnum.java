@@ -1,7 +1,8 @@
 package tw.gov.pcc.flowable.domain;
 
 public enum ProcessEnum {
-    L414("L414","ProcessL414");
+    L414("L414","ProcessL414"),
+    AdditionProcess("addition","AdditionalProcess");
 
     private final String formName;
     private final String processKey;

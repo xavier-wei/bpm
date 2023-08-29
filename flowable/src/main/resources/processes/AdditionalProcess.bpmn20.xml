@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<definitions xmlns="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:flowable="http://flowable.org/bpmn" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:omgdc="http://www.omg.org/spec/DD/20100524/DC" xmlns:omgdi="http://www.omg.org/spec/DD/20100524/DI" typeLanguage="http://www.w3.org/2001/XMLSchema" expressionLanguage="http://www.w3.org/1999/XPath" targetNamespace="http://www.flowable.org/processdef">
+  <process id="AdditionalProcess" name="AdditionalProcess" isExecutable="true">
+    <startEvent id="AdditionalProcessStart" />
+    <userTask id="AdditionalSigner" name="加簽" flowable:assignee="${additionalSigner}"/>
+    <sequenceFlow id="sid-1bd85708-e5c9-44bd-af0f-fa66aee3f24e" sourceRef="AdditionalProcessStart" targetRef="AdditionalSigner"/>
+    <serviceTask id="BeforeEndService" flowable:exclusive="true"/>
+    <sequenceFlow id="sid-1b578c15-fdde-412e-b040-55e32fe59211" sourceRef="AdditionalSigner" targetRef="BeforeEndService"/>
+    <endEvent id="AdditionalProcessEnd"/>
+    <sequenceFlow id="sid-762067a3-694c-446d-96bc-e2bcf55bfcaa" sourceRef="BeforeEndService" targetRef="AdditionalProcessEnd"/>
+  </process>
+  <bpmndi:BPMNDiagram id="BPMNDiagram_AdditionalProcess">
+    <bpmndi:BPMNPlane bpmnElement="AdditionalProcess" id="BPMNPlane_AdditionalProcess">
+      <bpmndi:BPMNShape id="shape-6f313aba-05a8-4d5b-968e-317cfff5d39a" bpmnElement="AdditionalProcessStart">
+        <omgdc:Bounds x="110.0" y="-270.0" width="30.0" height="30.0"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="shape-5e109b37-e30c-450c-a097-85b36e88be4d" bpmnElement="AdditionalSigner">
+        <omgdc:Bounds x="75.0" y="-205.0" width="100.0" height="80.0"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="edge-c247b6f2-a402-4ae9-812c-c471def9978d" bpmnElement="sid-1bd85708-e5c9-44bd-af0f-fa66aee3f24e">
+        <omgdi:waypoint x="125.0" y="-240.0"/>
+        <omgdi:waypoint x="125.0" y="-205.0"/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="shape-04d375a6-52a9-4fcb-b24b-01e279056e06" bpmnElement="BeforeEndService">
+        <omgdc:Bounds x="75.0" y="-85.0" width="100.0" height="80.0"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="edge-4aa1b126-b2c1-44aa-ab86-508a70dbf205" bpmnElement="sid-1b578c15-fdde-412e-b040-55e32fe59211">
+        <omgdi:waypoint x="125.0" y="-125.0"/>
+        <omgdi:waypoint x="125.0" y="-85.0"/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="shape-b622d198-2ec0-43b9-a6a0-fee3f21b590e" bpmnElement="AdditionalProcessEnd">
+        <omgdc:Bounds x="110.0" y="35.0" width="30.0" height="30.0"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="edge-a15ef146-51c6-40e8-beb4-2a22ac5c2158" bpmnElement="sid-762067a3-694c-446d-96bc-e2bcf55bfcaa">
+        <omgdi:waypoint x="125.0" y="-5.0"/>
+        <omgdi:waypoint x="125.0" y="35.0"/>
+      </bpmndi:BPMNEdge>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</definitions>
