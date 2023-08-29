@@ -451,7 +451,6 @@ export default {
   setup(props) {
     const userData = ref(useGetters(['getUserData']).getUserData).value.user;
     const bpmUnitOptions = ref(useGetters(['getBpmUnitOptions']).getBpmUnitOptions).value;
-    console.log('userData : ', userData)
     const formStatusRef = toRef(props, 'formStatus');
     const tabIndex = ref(0);
     const dual1 = ref(null);
@@ -552,8 +551,6 @@ export default {
               const formData = new FormData();
 
               form.isSubmit = isSubmit;
-
-              console.log('form',form)
 
               formData.append('form', new Blob([JSON.stringify(form)], {type: 'application/json'}));
 
