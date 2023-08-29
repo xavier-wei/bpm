@@ -15,6 +15,7 @@
           .dataTables_wrapper label {
             margin: 0;
           }
+
           .pic-scale-up {
             position: relative; /* 設定定位上下文，使 z-index 生效 */
             z-index: 1; /* 設定 z-index 值為 1，放在其他元素之上 */
@@ -413,6 +414,7 @@
             });
 
           });
+
 
            $(function() {
                getUserData();
