@@ -26,12 +26,12 @@
                                         :item="$v.applyDate">
                       <!--申請日期 : applyDate-->
                       <i-date-picker
-                          placeholder="yyy/MM/dd"
-                          v-model="$v.applyDate.$model"
-                          :state="validateState($v.applyDate)"
-                          lazy
-                          trim
-                          disabled
+                        placeholder="yyy/MM/dd"
+                        v-model="$v.applyDate.$model"
+                        :state="validateState($v.applyDate)"
+                        lazy
+                        trim
+                        disabled
                       ></i-date-picker>
                     </i-form-group-check>
 
@@ -166,12 +166,12 @@
                       </b-form-checkbox>
                       <!--生效日期 : enableDate-->
                       <i-date-picker
-                          class="col-2"
-                          placeholder="yyy/MM/dd"
-                          v-model="$v.enableDate.$model"
-                          lazy
-                          trim
-                          :disabled="$v.isEnableDate.$model !== '1'"
+                        class="col-2"
+                        placeholder="yyy/MM/dd"
+                        v-model="$v.enableDate.$model"
+                        lazy
+                        trim
+                        :disabled="$v.isEnableDate.$model !== '1'"
                       ></i-date-picker>
                       <!--其他 checkbox : isOther-->
                       <b-form-checkbox class="col-2 offset-1" v-model="$v.isOther.$model" value="1" unchecked-value="0">
@@ -191,13 +191,13 @@
 
                   <div class="card context">
                     <b-table
-                        class="table-sm"
-                        show-empty
-                        responsive
-                        bordered
-                        empty-text="無資料"
-                        :items="table.data"
-                        :fields="table.fields"
+                      class="table-sm"
+                      show-empty
+                      responsive
+                      bordered
+                      empty-text="無資料"
+                      :items="table.data"
+                      :fields="table.fields"
                     >
 
                       <template #cell(checkbox)="row">
@@ -222,9 +222,10 @@
                           {{ row.item.systemApplyName }}
                           <span v-if=" row.item.isColon === '1'"> : </span>
                           <b-form-input
-                              maxlength="200" v-model="row.item.systemApplyInput">
+                            maxlength="200" v-model="row.item.systemApplyInput"
+                            :disabled="row.item.systemApply === '4'">
                           </b-form-input>
-                          <span v-if="row.item.systemApply === '4'" >@mail.pcc.gov.tw</span>
+                          <span v-if="row.item.systemApply === '4'">@mail.pcc.gov.tw</span>
                         </div>
 
                         <div v-else-if="row.item.applyVersion == '3'">
@@ -241,113 +242,141 @@
 
                       <!--處理權限-->
                       <template #cell(permissions)="row">
-                        <b-form-radio-group v-if="row.item.systemApply === '4'" v-model="row.item.sys">
-                          <b-form-radio class="col-12" value="1">
-                            <div>新增</div>
-                            <b-input-group>
-                              <div>1.　</div>
-                              <b-form-input maxlength="200" v-model="row.item.emailApply1"
-                                            :disabled="row.item.sys !== '1'"/>
-                            </b-input-group>
-                            <b-input-group>
-                              <div>2.　</div>
-                              <b-form-input maxlength="200" v-model="row.item.emailApply2"
-                                            :disabled="row.item.sys !== '1'"/>
-                            </b-input-group>
-                          </b-form-radio>
 
-                          <p>(第一個帳號名稱若已有人設定,則設為第二個帳號)</p>
+                        <div v-if="row.item.permissionsVersion == '0'">
+                          <b-form-radio-group v-model="row.item.sys">
+                            <b-form-radio class="col-12" value="1">
+                              <div>新增</div>
+                            </b-form-radio>
+                            <b-form-radio class="col-12" value="2">
+                              <div>刪除</div>
+                            </b-form-radio>
+                            <b-form-radio class="col-12" value="3">
+                              <div>帳號停用</div>
+                            </b-form-radio>
 
-                          <b-form-radio class="col-12" value="2">
-                            <div>刪除</div>
-                          </b-form-radio>
+                            <b-form-radio class="col-12" value="4">
+                              <b-input-group>
+                                <div>異動 :　</div>
+                                <b-form-input maxlength="200" v-model="row.item.sysChange"
+                                              :disabled="row.item.sys !== '4'"/>
+                              </b-input-group>
+                            </b-form-radio>
+                          </b-form-radio-group>
+                        </div>
 
-                          <b-form-radio class="col-12" value="3">
-                            <b-input-group>
+                        <div v-if="row.item.permissionsVersion == '1'">
+                          <b-form-radio-group v-model="row.item.sys">
+                            <b-form-radio class="col-12" value="1">
+                              <div>新增</div>
+                            </b-form-radio>
+                            <b-form-radio class="col-12" value="2">
+                              <div>帳號停用</div>
+                            </b-form-radio>
+                            <b-form-radio class="col-12" value="3">
+                              <b-input-group>
+                                <div>異動 :　</div>
+                                <b-form-input maxlength="200" v-model="row.item.sysChange"
+                                              :disabled="row.item.sys !== '3'"/>
+                              </b-input-group>
+                            </b-form-radio>
+                          </b-form-radio-group>
+                        </div>
+
+                        <div v-if="row.item.permissionsVersion == '2'">
+                          <b-form-radio-group v-model="row.item.sys">
+                            <b-form-radio class="col-12" value="1">
+                              <div>新增人員</div>
+                            </b-form-radio>
+
+                            <b-form-radio class="col-12" value="2">
+                              <div>單位科別異動</div>
+                            </b-form-radio>
+
+                            <b-form-radio class="col-12" value="3">
+                              <div>角色異動</div>
+                            </b-form-radio>
+
+                            <b-form-radio class="col-12" value="4">
+                              <div>帳號停用</div>
+                            </b-form-radio>
+
+                            <b-form-radio class="col-12" value="5">
+                              <b-input-group>
+                                <div>異動 :　</div>
+                                <b-form-input maxlength="200" v-model="row.item.sysChange"
+                                              :disabled="row.item.sys !== '5'"/>
+                              </b-input-group>
+                            </b-form-radio>
+                          </b-form-radio-group>
+                        </div>
+
+                        <div v-if="row.item.permissionsVersion == '3'">
+                          <b-form-radio-group v-model="row.item.sys">
+                            <b-form-radio class="col-12" value="1">
+                              <div>新增</div>
+                              <b-input-group>
+                                <div>1.　</div>
+                                <b-form-input maxlength="200" v-model="row.item.emailApply1"
+                                              :disabled="row.item.sys !== '1'"/>
+                              </b-input-group>
+                              <b-input-group>
+                                <div>2.　</div>
+                                <b-form-input maxlength="200" v-model="row.item.emailApply2"
+                                              :disabled="row.item.sys !== '1'"/>
+                              </b-input-group>
+                            </b-form-radio>
+
+                            <p>(第一個帳號名稱若已有人設定,則設為第二個帳號)</p>
+
+                            <b-form-radio class="col-12" value="2">
+                              <div>刪除</div>
+                            </b-form-radio>
+
+                            <b-form-radio class="col-12" value="3">
+                              <b-input-group>
+                                <div>異動 :　</div>
+                                <b-form-input maxlength="200" v-model="row.item.sysChange"
+                                              :disabled="row.item.sys !== '3'"/>
+                              </b-input-group>
+                            </b-form-radio>
+                          </b-form-radio-group>
+                        </div>
+
+                        <div v-if="row.item.permissionsVersion == '4'">
+                          <b-form-radio-group v-model="row.item.sys">
+                            <b-form-radio class="col-12" value="1">
+                              <div>新增</div>
+                            </b-form-radio>
+
+                            <b-form-radio class="col-12" value="2">
                               <div>異動 :　</div>
-                              <b-form-input maxlength="200" v-model="row.item.sysChange"
-                                            :disabled="row.item.sys !== '3'"/>
-                            </b-input-group>
-                          </b-form-radio>
-                        </b-form-radio-group>
+                            </b-form-radio>
 
-                        <b-form-radio-group v-else-if="row.item.systemApply === '2'" v-model="row.item.sys">
-                          <b-form-radio class="col-12" value="1">
-                            <div>新增</div>
-                          </b-form-radio>
+                            <div class="ml-1">
+                              <b-form-checkbox value="1" unchecked-value="0" v-model="row.item.isUnitAdm"
+                                               :disabled="row.item.sys !== '2'">
+                                部門管理者
+                              </b-form-checkbox>
 
-                          <b-form-radio class="col-12" value="2">
-                            <div>單位科別異動</div>
-                          </b-form-radio>
+                              <b-form-checkbox value="1" unchecked-value="0" v-model="row.item.isUnitDataMgr"
+                                               :disabled="row.item.sys !== '2'">
+                                部門資料維護者
+                              </b-form-checkbox>
 
-                          <b-form-radio class="col-12" value="3">
-                            <div>角色異動</div>
-                          </b-form-radio>
+                              <b-form-checkbox value="1" unchecked-value="0" v-model="row.item.isWebSiteOther"
+                                               :disabled="row.item.sys !== '2'">
+                                其他 :　
+                              </b-form-checkbox>
+                              <b-form-input maxlength="200" v-model="row.item.otherRemark"
+                                            :disabled="row.item.isWebSiteOther !== '1'"/>
+                            </div>
 
-                          <b-form-radio class="col-12" value="4">
-                            <div>帳號停用</div>
-                          </b-form-radio>
-
-                          <b-form-radio class="col-12" value="5">
-                            <b-input-group>
-                              <div>異動 :　</div>
-                              <b-form-input maxlength="200" v-model="row.item.sysChange"
-                                            :disabled="row.item.sys !== '5'"/>
-                            </b-input-group>
-                          </b-form-radio>
-                        </b-form-radio-group>
-
-                        <b-form-radio-group v-else-if=" row.item.systemApply === '5' " v-model="row.item.sys">
-                          <b-form-radio class="col-12" value="1">
-                            <div>新增</div>
-                          </b-form-radio>
-
-                          <b-form-radio class="col-12" value="2">
-                            <div>異動 :　</div>
-                          </b-form-radio>
-
-                          <div class="ml-1">
-                            <b-form-checkbox value="1" unchecked-value="0" v-model="row.item.isUnitAdm"
-                                             :disabled="row.item.sys !== '2'">
-                              部門管理者
-                            </b-form-checkbox>
-
-                            <b-form-checkbox value="1" unchecked-value="0" v-model="row.item.isUnitDataMgr"
-                                             :disabled="row.item.sys !== '2'">
-                              部門資料維護者
-                            </b-form-checkbox>
-
-                            <b-form-checkbox value="1" unchecked-value="0" v-model="row.item.isWebSiteOther"
-                                             :disabled="row.item.sys !== '2'">
-                              其他 :　
-                            </b-form-checkbox>
-                            <b-form-input maxlength="200" v-model="row.item.otherRemark"
-                                          :disabled="row.item.isWebSiteOther !== '1'"/>
-                          </div>
-
-                          <b-form-radio class="col-12" value="3">
-                            <div>帳號停用</div>
-                          </b-form-radio>
-
-                        </b-form-radio-group>
-
-                        <b-form-radio-group v-else v-model="row.item.sys">
-                          <b-form-radio class="col-12" value="1">
-                            <div>新增</div>
-                          </b-form-radio>
-
-                          <b-form-radio class="col-12" value="2">
-                            <div>帳號停用</div>
-                          </b-form-radio>
-
-                          <b-form-radio class="col-12" value="3">
-                            <b-input-group>
-                              <div>異動 :　</div>
-                              <b-form-input maxlength="200" v-model="row.item.sysChange"
-                                            :disabled="row.item.sys !== '3'"/>
-                            </b-input-group>
-                          </b-form-radio>
-                        </b-form-radio-group>
+                            <b-form-radio class="col-12" value="3">
+                              <div>帳號停用</div>
+                            </b-form-radio>
+                          </b-form-radio-group>
+                        </div>
                       </template>
 
                       <!--管理單位-->
@@ -363,10 +392,10 @@
                       <template #cell(lastWork)="row">
                         <b-form-input maxlength="200" v-model="row.item.admStatus"/>
                         <i-date-picker
-                            placeholder="yyy/MM/dd"
-                            lazy
-                            trim
-                            v-model="row.item.admEnableDate"
+                          placeholder="yyy/MM/dd"
+                          lazy
+                          trim
+                          v-model="row.item.admEnableDate"
                         ></i-date-picker>
                       </template>
 
@@ -694,12 +723,12 @@ export default {
       table.data = [];
 
       axios
-          .get(`/eip/bpm-l410-apply-manages`)
-          .then(({data}) => {
-            console.log('data', data)
-            table.data = data
-          })
-          .catch(notificationErrorHandler(notificationService));
+        .get(`/eip/bpm-l410-apply-manages`)
+        .then(({data}) => {
+          console.log('data', data)
+          table.data = data
+        })
+        .catch(notificationErrorHandler(notificationService));
     }
 
     const options = reactive({
@@ -728,8 +757,10 @@ export default {
 
     const submitForm = (isSubmit) => {
 
-      let variables = [];
+      console.log('form)))',form)
 
+      let variables = [];
+      form.isSubmit = isSubmit;
       checkValidity().then((isValid: boolean) => {
         if (isValid) {
           $bvModal.msgBoxConfirm('是否確認送出修改內容？').then((isOK: boolean) => {
@@ -740,16 +771,13 @@ export default {
               })
 
               let body = {
-                "L410":{
-                  bpmIsmsL410DTO: form,
-                  variables: variables
+                "L410": {
+                  bpmIsmsL410DTO: JSON.stringify(form),
+                  variables: JSON.stringify(variables),
                 }
-
               }
 
               const formData = new FormData();
-
-              form.isSubmit = isSubmit;
 
               formData.append('form', new Blob([JSON.stringify(body)], {type: 'application/json'}));
               if (JSON.stringify(appendixData.value) !== '[]') {
@@ -761,15 +789,15 @@ export default {
               }
 
               axios
-                  .post(`/process/start/L410`, formData, headers)
-                  .then(({data}) => {
-                    // filePathData.filePathName = 'http://localhost:8081/pic?processId=' + data;
-                    console.log('data', data)
-                    $bvModal.msgBoxOk('表單新增完畢');
-                    reset();
-                    navigateByNameAndParams('l410Query', {isReload: false, isNotKeepAlive: true});
-                  })
-                  .catch(notificationErrorHandler(notificationService));
+                .post(`/process/start/${form.formName}`, formData, headers)
+                .then(({data}) => {
+                  // filePathData.filePathName = 'http://localhost:8081/pic?processId=' + data;
+                  console.log('data', data)
+                  $bvModal.msgBoxOk('表單新增完畢');
+                  reset();
+                  navigateByNameAndParams('l410Query', {isReload: false, isNotKeepAlive: true});
+                })
+                .catch(notificationErrorHandler(notificationService));
             }
           });
         } else {

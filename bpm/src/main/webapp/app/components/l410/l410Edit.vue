@@ -207,154 +207,176 @@
 
                       <!--申請項目-->
                       <template #cell(applyItem)="row">
-                        <div
-                          v-if="row.item.systemApply !== '7' && row.item.systemApply !=='8' && row.item.systemApply !=='9'">
-                          {{ row.item.systemApplyName }}
-                          <span
-                            v-if="
-                          row.item.systemApply === '1' ||
-                          row.item.systemApply === '2' ||
-                          row.item.systemApply === '4' ||
-                          row.item.systemApply === '5' ||
-                          row.item.systemApply === '6'"> : </span>
-                        </div>
-                        <b-form-input v-if="row.item.systemApply === '1'"
-                                      maxlength="200" v-model="row.item.systemApplyInput" :disabled=" stateStatusRef || formStatusRef === FormStatusEnum.READONLY"></b-form-input>
-                        <b-form-input v-if="row.item.systemApply === '4'"
-                                      maxlength="200" v-model="row.item.systemApplyInput" :disabled=" stateStatusRef || formStatusRef === FormStatusEnum.READONLY"></b-form-input>
-                        <span v-if="row.item.systemApply === '4'">@mail.pcc.gov.tw</span>
 
-                        <b-form-checkbox-group v-if="row.item.systemApply === '2'" v-model="$v.applyItem.$model"
-                                               :options="options.type" :disabled=" stateStatusRef || formStatusRef === FormStatusEnum.READONLY"/>
-
-
-                        <b-form-input v-if="row.item.systemApply === '6'"
-                                      maxlength="200" v-model="row.item.systemApplyInput" :disabled=" stateStatusRef || formStatusRef === FormStatusEnum.READONLY"></b-form-input>
-
-                        <div v-if="row.item.systemApply === '5'">
-                          <b-form-checkbox-group v-if="row.item.systemApply === '5'" v-model="$v.webSiteList.$model"
-                                                 :options="options.webSite" :disabled=" stateStatusRef || formStatusRef === FormStatusEnum.READONLY"/>
-
-                        </div>
-
-                        <div
-                          v-if="row.item.systemApply === '7' || row.item.systemApply === '8' || row.item.systemApply === '9'">
+                        <div v-if="row.item.applyVersion == '0'">
                           <div>系統名稱 :</div>
                           <b-form-input v-model="row.item.otherSys" maxlength="200" :disabled=" stateStatusRef || formStatusRef === FormStatusEnum.READONLY"></b-form-input>
                           <div>帳號 :</div>
                           <b-form-input v-model="row.item.otherSysAccount" maxlength="200" :disabled=" stateStatusRef || formStatusRef === FormStatusEnum.READONLY"></b-form-input>
                         </div>
+
+                        <div v-else-if="row.item.applyVersion == '1'">
+                          {{ row.item.systemApplyName }}
+                        </div>
+
+                        <div v-else-if="row.item.applyVersion == '2'">
+                          {{ row.item.systemApplyName }}
+                          <span v-if=" row.item.isColon === '1'"> : </span>
+                          <b-form-input
+                            maxlength="200" v-model="row.item.systemApplyInput" :disabled=" stateStatusRef || formStatusRef === FormStatusEnum.READONLY">
+                          </b-form-input>
+                          <span v-if="row.item.systemApply === '4'" >@mail.pcc.gov.tw</span>
+                        </div>
+
+                        <div v-else-if="row.item.applyVersion == '3'">
+                          {{ row.item.systemApplyName }}
+                          <span v-if=" row.item.isColon === '1'"> : </span>
+                          <b-form-checkbox-group v-model="$v.applyItem.$model" :options="options.type" :disabled=" stateStatusRef || formStatusRef === FormStatusEnum.READONLY"/>
+                        </div>
+
+                        <div v-else-if="row.item.applyVersion == '4'">
+                          <b-form-checkbox-group v-model="$v.webSiteList.$model" :options="options.webSite" :disabled=" stateStatusRef || formStatusRef === FormStatusEnum.READONLY"/>
+                        </div>
+
                       </template>
 
                       <!--處理權限-->
                       <template #cell(permissions)="row">
-                        <b-form-radio-group v-if="row.item.systemApply === '4'" v-model="row.item.sys" :disabled=" stateStatusRef || formStatusRef === FormStatusEnum.READONLY">
-                          <b-form-radio class="col-12" value="1">
-                            <div>新增</div>
-                            <b-input-group>
-                              <div>1.　</div>
-                              <b-form-input maxlength="200" v-model="row.item.emailApply1"
-                                             :disabled="row.item.sys !== '1' || stateStatusRef || formStatusRef === FormStatusEnum.READONLY"/>
-                            </b-input-group>
-                            <b-input-group>
-                              <div>2.　</div>
-                              <b-form-input maxlength="200" v-model="row.item.emailApply2"
-                                             :disabled=" row.item.sys !== '1' || stateStatusRef || formStatusRef === FormStatusEnum.READONLY"/>
-                            </b-input-group>
-                          </b-form-radio>
 
-                          <p>(第一個帳號名稱若已有人設定,則設為第二個帳號)</p>
+                        <div v-if="row.item.permissionsVersion == '0'" >
+                          <b-form-radio-group v-model="row.item.sys" :disabled=" stateStatusRef || formStatusRef === FormStatusEnum.READONLY">
+                            <b-form-radio class="col-12" value="1">
+                              <div>新增</div>
+                            </b-form-radio>
+                            <b-form-radio class="col-12" value="2">
+                              <div>刪除</div>
+                            </b-form-radio>
+                            <b-form-radio class="col-12" value="3">
+                              <div>帳號停用</div>
+                            </b-form-radio>
 
-                          <b-form-radio class="col-12" value="2">
-                            <div>刪除</div>
-                          </b-form-radio>
+                            <b-form-radio class="col-12" value="4">
+                              <b-input-group>
+                                <div>異動 :　</div>
+                                <b-form-input maxlength="200" v-model="row.item.sysChange"
+                                              :disabled="row.item.sys !== '3' || stateStatusRef || formStatusRef === FormStatusEnum.READONLY"/>
+                              </b-input-group>
+                            </b-form-radio>
+                          </b-form-radio-group>
+                        </div>
 
-                          <b-form-radio class="col-12" value="3">
-                            <b-input-group>
+                        <div v-if="row.item.permissionsVersion == '1'" >
+                          <b-form-radio-group v-model="row.item.sys" :disabled=" stateStatusRef || formStatusRef === FormStatusEnum.READONLY">
+                            <b-form-radio class="col-12" value="1">
+                              <div>新增</div>
+                            </b-form-radio>
+                            <b-form-radio class="col-12" value="2">
+                              <div>帳號停用</div>
+                            </b-form-radio>
+                            <b-form-radio class="col-12" value="3">
+                              <b-input-group>
+                                <div>異動 :　</div>
+                                <b-form-input maxlength="200" v-model="row.item.sysChange"
+                                              :disabled="row.item.sys !== '3'|| stateStatusRef || formStatusRef === FormStatusEnum.READONLY" />
+                              </b-input-group>
+                            </b-form-radio>
+                          </b-form-radio-group>
+                        </div>
+
+                        <div v-if="row.item.permissionsVersion == '2'" >
+                          <b-form-radio-group  v-model="row.item.sys" :disabled=" stateStatusRef || formStatusRef === FormStatusEnum.READONLY">
+                            <b-form-radio class="col-12" value="1">
+                              <div>新增人員</div>
+                            </b-form-radio>
+
+                            <b-form-radio class="col-12" value="2">
+                              <div>單位科別異動</div>
+                            </b-form-radio>
+
+                            <b-form-radio class="col-12" value="3">
+                              <div>角色異動</div>
+                            </b-form-radio>
+
+                            <b-form-radio class="col-12" value="4">
+                              <div>帳號停用</div>
+                            </b-form-radio>
+
+                            <b-form-radio class="col-12" value="5">
+                              <b-input-group>
+                                <div>異動 :　</div>
+                                <b-form-input maxlength="200" v-model="row.item.sysChange"
+                                              :disabled="row.item.sys !== '5' || stateStatusRef || formStatusRef === FormStatusEnum.READONLY"/>
+                              </b-input-group>
+                            </b-form-radio>
+                          </b-form-radio-group>
+                        </div>
+
+                        <div v-if="row.item.permissionsVersion == '3'" >
+                          <b-form-radio-group v-model="row.item.sys" :disabled=" stateStatusRef || formStatusRef === FormStatusEnum.READONLY">
+                            <b-form-radio class="col-12" value="1">
+                              <div>新增</div>
+                              <b-input-group>
+                                <div>1.　</div>
+                                <b-form-input maxlength="200" v-model="row.item.emailApply1"
+                                              :disabled="row.item.sys !== '1' || stateStatusRef || formStatusRef === FormStatusEnum.READONLY"/>
+                              </b-input-group>
+                              <b-input-group>
+                                <div>2.　</div>
+                                <b-form-input maxlength="200" v-model="row.item.emailApply2"
+                                              :disabled="row.item.sys !== '1' || stateStatusRef || formStatusRef === FormStatusEnum.READONLY"/>
+                              </b-input-group>
+                            </b-form-radio>
+
+                            <p>(第一個帳號名稱若已有人設定,則設為第二個帳號)</p>
+
+                            <b-form-radio class="col-12" value="2">
+                              <div>刪除</div>
+                            </b-form-radio>
+
+                            <b-form-radio class="col-12" value="3">
+                              <b-input-group>
+                                <div>異動 :　</div>
+                                <b-form-input maxlength="200" v-model="row.item.sysChange"
+                                              :disabled="row.item.sys !== '3' || stateStatusRef || formStatusRef === FormStatusEnum.READONLY"/>
+                              </b-input-group>
+                            </b-form-radio>
+                          </b-form-radio-group>
+                        </div>
+
+                        <div v-if="row.item.permissionsVersion == '4'" >
+                          <b-form-radio-group v-model="row.item.sys" :disabled=" stateStatusRef || formStatusRef === FormStatusEnum.READONLY">
+                            <b-form-radio class="col-12" value="1">
+                              <div>新增</div>
+                            </b-form-radio>
+
+                            <b-form-radio class="col-12" value="2">
                               <div>異動 :　</div>
-                              <b-form-input maxlength="200" v-model="row.item.sysChange"
-                                            :disabled="row.item.sys !== '3' || stateStatusRef || formStatusRef === FormStatusEnum.READONLY"/>
-                            </b-input-group>
-                          </b-form-radio>
-                        </b-form-radio-group>
+                            </b-form-radio>
 
-                        <b-form-radio-group v-else-if="row.item.systemApply === '2'" v-model="row.item.sys" :disabled=" stateStatusRef || formStatusRef === FormStatusEnum.READONLY">
-                          <b-form-radio class="col-12" value="1">
-                            <div>新增</div>
-                          </b-form-radio>
-
-                          <b-form-radio class="col-12" value="2">
-                            <div>單位科別異動</div>
-                          </b-form-radio>
-
-                          <b-form-radio class="col-12" value="3">
-                            <div>角色異動</div>
-                          </b-form-radio>
-
-                          <b-form-radio class="col-12" value="4">
-                            <div>帳號停用</div>
-                          </b-form-radio>
-
-                          <b-form-radio class="col-12" value="5">
-                            <b-input-group>
-                              <div>異動 :　</div>
-                              <b-form-input maxlength="200" v-model="row.item.sysChange"
-                                             :disabled="row.item.sys !== '5' || stateStatusRef || formStatusRef === FormStatusEnum.READONLY"/>
-                            </b-input-group>
-                          </b-form-radio>
-                        </b-form-radio-group>
-
-                        <b-form-radio-group v-else-if=" row.item.systemApply === '5' " v-model="row.item.sys" :disabled=" stateStatusRef || formStatusRef === FormStatusEnum.READONLY">
-                          <b-form-radio class="col-12" value="1">
-                            <div>新增</div>
-                          </b-form-radio>
-
-                          <b-form-radio class="col-12" value="2">
-                            <div>異動 :　</div>
-                          </b-form-radio>
-
-                          <div class="ml-1">
-                            <b-form-checkbox value="1" unchecked-value="0" v-model="row.item.isUnitAdm"
-                                             :disabled="row.item.sys !== '2' || stateStatusRef || formStatusRef === FormStatusEnum.READONLY">
-                              部門管理者
-                            </b-form-checkbox>
-
-                            <b-form-checkbox value="1" unchecked-value="0" v-model="row.item.isUnitDataMgr"
+                            <div class="ml-1">
+                              <b-form-checkbox value="1" unchecked-value="0" v-model="row.item.isUnitAdm"
                                                :disabled="row.item.sys !== '2' || stateStatusRef || formStatusRef === FormStatusEnum.READONLY">
-                              部門資料維護者
-                            </b-form-checkbox>
+                                部門管理者
+                              </b-form-checkbox>
 
-                            <b-form-checkbox value="1" unchecked-value="0" v-model="row.item.isWebSiteOther"
-                                             :disabled="row.item.sys !== '2' || stateStatusRef || formStatusRef === FormStatusEnum.READONLY">
-                              其他 :　
-                            </b-form-checkbox>
-                            <b-form-input maxlength="200" v-model="row.item.otherRemark"
-                                          :disabled="row.item.isWebSiteOther !== '1' || stateStatusRef || formStatusRef === FormStatusEnum.READONLY"/>
-                          </div>
+                              <b-form-checkbox value="1" unchecked-value="0" v-model="row.item.isUnitDataMgr"
+                                               :disabled="row.item.sys !== '2' || stateStatusRef || formStatusRef === FormStatusEnum.READONLY">
+                                部門資料維護者
+                              </b-form-checkbox>
 
-                          <b-form-radio class="col-12" value="3">
-                            <div>帳號停用</div>
-                          </b-form-radio>
+                              <b-form-checkbox value="1" unchecked-value="0" v-model="row.item.isWebSiteOther"
+                                               :disabled="row.item.sys !== '2' || stateStatusRef || formStatusRef === FormStatusEnum.READONLY">
+                                其他 :　
+                              </b-form-checkbox>
+                              <b-form-input maxlength="200" v-model="row.item.otherRemark"
+                                            :disabled="row.item.isWebSiteOther !== '1' || stateStatusRef || formStatusRef === FormStatusEnum.READONLY"/>
+                            </div>
 
-                        </b-form-radio-group>
-
-                        <b-form-radio-group v-else v-model="row.item.sys" :disabled=" stateStatusRef || formStatusRef === FormStatusEnum.READONLY">
-                          <b-form-radio class="col-12" value="1">
-                            <div>新增</div>
-                          </b-form-radio>
-
-                          <b-form-radio class="col-12" value="2">
-                            <div>帳號停用</div>
-                          </b-form-radio>
-
-                          <b-form-radio class="col-12" value="3">
-                            <b-input-group>
-                              <div>異動 :　</div>
-                              <b-form-input maxlength="200" v-model="row.item.sysChange"
-                                             :disabled="row.item.sys !== '3' || stateStatusRef || formStatusRef === FormStatusEnum.READONLY"/>
-                            </b-input-group>
-                          </b-form-radio>
-                        </b-form-radio-group>
+                            <b-form-radio class="col-12" value="3">
+                              <div>帳號停用</div>
+                            </b-form-radio>
+                          </b-form-radio-group>
+                        </div>
                       </template>
 
                       <!--管理單位-->
