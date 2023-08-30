@@ -58,7 +58,7 @@ public class ProcessL410Resource {
     @Autowired
     private BpmSignStatusMapper bpmSignStatusMapper;
 
-    @PostMapping(path = "/start/{key}", consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
+    @PostMapping(path = "/start/teat/{key}", consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
     public String startL410(
         @Valid @RequestPart("form") HashMap<String, HashMap<String, String>> form,
         @PathVariable String key,
