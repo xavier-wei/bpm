@@ -77,7 +77,6 @@ public class ProcessL414Resource {
         log.info("ProcessL414Resource.java - start - 59 :: " + form);
         log.info("ProcessL414Resource.java - start - 60 :: " + dto);
         log.info("ProcessL414Resource.java - start - 61 :: " + appendixFiles);
-        Gson gson = new Gson();
 
 
         BpmIsmsL414DTO bpmIsmsL414DTO = gson.fromJson(form.get(key), BpmIsmsL414DTO.class);
@@ -95,10 +94,9 @@ public class ProcessL414Resource {
         variables.put("reviewStaff", "reviewStaffTester");
         variables.put("serverRoomManager", "serverRoomManagerTester");
         processReqDTO.setVariables(variables);
-        String json = gson.toJson(processReqDTO);
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
-        HttpEntity<String> requestEntity = new HttpEntity<>(json, headers);
+        HttpEntity<String> requestEntity = new HttpEntity<>(gson.toJson(processReqDTO), headers);
 
 
         // 到flowable啟動流程
@@ -114,7 +112,6 @@ public class ProcessL414Resource {
         }
 
 
-        bpmIsmsL414DTO.setProcessInstanceId(processInstanceId);
 
         //取得表單最後的流水號
         String lastFormId = !bpmIsmsL414Repository.getMaxFormId().isEmpty() ? bpmIsmsL414Repository.getMaxFormId().get(0).getFormId() : null;

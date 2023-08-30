@@ -567,7 +567,7 @@ export default {
               }
 
               axios
-                  .post(`/process/startL414/L414`, formData, headers)
+                  .post(`/process/start/L414`, formData, headers)
                   .then(({data}) => {
                     // filePathData.filePathName = 'http://localhost:8081/pic?processId=' + data;
                     $bvModal.msgBoxOk('表單新增完畢');
