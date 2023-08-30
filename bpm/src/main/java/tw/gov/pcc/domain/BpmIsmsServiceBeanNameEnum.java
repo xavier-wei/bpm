@@ -1,7 +1,7 @@
 package tw.gov.pcc.domain;
 
 public enum BpmIsmsServiceBeanNameEnum {
-    L414("L414","L414Service");
+    L414("L414", "L414Service");
     private final String key;
     private final String serviceBeanName;
 
@@ -19,11 +19,14 @@ public enum BpmIsmsServiceBeanNameEnum {
         }
         return null;
     }
+
     // getNameByDecision
     public static String getServiceBeanNameByKey(String key) {
         for (BpmIsmsServiceBeanNameEnum bpmIsmsServiceBeanNameEnum : BpmIsmsServiceBeanNameEnum.values()) {
             if (bpmIsmsServiceBeanNameEnum.key.equals(key)) {
                 return bpmIsmsServiceBeanNameEnum.serviceBeanName;
+            } else {
+                return key + "Service";
             }
         }
         return null;

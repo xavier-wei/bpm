@@ -5,6 +5,8 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.io.Serializable;
 import java.sql.Timestamp;
+import java.util.HashMap;
+import java.util.List;
 import java.util.Objects;
 
 /**
@@ -341,6 +343,8 @@ public class BpmIsmsL410DTO implements Serializable {
     private String formName;
     private String signUnit;
     private String signer;
+
+    private List<HashMap<String, HashMap<String, Object>>> variables;
 
     public String getFormId() {
         return formId;
@@ -1254,6 +1258,14 @@ public class BpmIsmsL410DTO implements Serializable {
         this.signer = signer;
     }
 
+    public List<HashMap<String, HashMap<String, Object>>> getVariables() {
+        return variables;
+    }
+
+    public void setVariables(List<HashMap<String, HashMap<String, Object>>> variables) {
+        this.variables = variables;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) {
@@ -1276,6 +1288,7 @@ public class BpmIsmsL410DTO implements Serializable {
     }
 
     // prettier-ignore
+
     @Override
     public String toString() {
         return "BpmIsmsL410DTO{" +
@@ -1390,9 +1403,10 @@ public class BpmIsmsL410DTO implements Serializable {
             ", updateTime=" + updateTime +
             ", createUser='" + createUser + '\'' +
             ", createTime=" + createTime +
-            ", FormName='" + formName + '\'' +
+            ", formName='" + formName + '\'' +
             ", signUnit='" + signUnit + '\'' +
             ", signer='" + signer + '\'' +
+            ", variables=" + variables +
             '}';
     }
 }

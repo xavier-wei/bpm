@@ -630,6 +630,7 @@ export default {
       otherSys3AdmName: '',
       applyItem: [],
       webSiteList: [],
+      variables: {},
       formName: 'L410',
     };
     const form = reactive(Object.assign({}, formDefault));
@@ -770,11 +771,10 @@ export default {
                 checkboxToMapAndForm(data, form, variables)
               })
 
+              form.variables = variables
+
               let body = {
-                "L410": {
-                  bpmIsmsL410DTO: JSON.stringify(form),
-                  variables: JSON.stringify(variables),
-                }
+                "L410": JSON.stringify(form)
               }
 
               const formData = new FormData();
@@ -789,7 +789,7 @@ export default {
               }
 
               axios
-                .post(`/process/start/${form.formName}`, formData, headers)
+                .post(`/process/start/L410`, formData, headers)
                 .then(({data}) => {
                   // filePathData.filePathName = 'http://localhost:8081/pic?processId=' + data;
                   console.log('data', data)

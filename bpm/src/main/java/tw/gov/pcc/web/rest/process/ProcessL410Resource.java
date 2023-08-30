@@ -60,7 +60,7 @@ public class ProcessL410Resource {
 
     @PostMapping(path = "/start/teat/{key}", consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
     public String startL410(
-        @Valid @RequestPart("form") HashMap<String, HashMap<String, String>> form,
+        @Valid @RequestPart("form") HashMap<String,String> form,
         @PathVariable String key,
         @Valid @RequestPart(name = "fileDto", required = false) List<BpmUploadFileDTO> dto,
         @RequestPart(name = "appendixFiles", required = false) List<MultipartFile> appendixFiles
@@ -71,8 +71,8 @@ public class ProcessL410Resource {
         log.info("ProcessL414Resource.java - start - 61 :: " + appendixFiles);
 
 
-        CompleteReql410DTO completeReql410DTO = gson.fromJson(String.valueOf(form.get(key)), CompleteReql410DTO.class);
-        log.info("ProcessL410Resource.java - startL410 - 73 :: " + completeReql410DTO);
+        BpmIsmsL410DTO bpmIsmsL410DTO = gson.fromJson(form.get(key), BpmIsmsL410DTO.class);
+        log.info("ProcessL410Resource.java - startL410 - 73 :: " + bpmIsmsL410DTO);
 
         //TODO:尚未起流程先存L410表
 //        ProcessReqDTO processReqDTO = new ProcessReqDTO();
@@ -108,27 +108,27 @@ public class ProcessL410Resource {
 //        }
 
 
-//        completeReql410DTO.getBpmIsmsL410DTO().setProcessInstanceId(processInstanceId);
+//        completeReql410DTO.setProcessInstanceId(processInstanceId);
 //
         //取得表單最後的流水號
         String lastFormId = !bpmIsmsL410Repository.getMaxFormId().isEmpty() ? bpmIsmsL410Repository.getMaxFormId().get(0).getFormId() : null;
-        String formId = completeReql410DTO.getBpmIsmsL410DTO().getFormName() + "-" + new SeqNumber().getNewSeq(lastFormId);
+        String formId = bpmIsmsL410DTO.getFormName() + "-" + new SeqNumber().getNewSeq(lastFormId);
 
-        completeReql410DTO.getBpmIsmsL410DTO().setFormId(formId);
+        bpmIsmsL410DTO.setFormId(formId);
 
 //        存入table
-        completeReql410DTO.getBpmIsmsL410DTO().setProcessInstanceId(processInstanceId);
-        completeReql410DTO.getBpmIsmsL410DTO().setProcessInstanceStatus("0");
-        completeReql410DTO.getBpmIsmsL410DTO().setUpdateTime(Timestamp.valueOf(LocalDateTime.now()));
-        completeReql410DTO.getBpmIsmsL410DTO().setUpdateUser(completeReql410DTO.getBpmIsmsL410DTO().getFilName());
-        completeReql410DTO.getBpmIsmsL410DTO().setCreateTime(Timestamp.valueOf(LocalDateTime.now()));
-        completeReql410DTO.getBpmIsmsL410DTO().setCreateUser(completeReql410DTO.getBpmIsmsL410DTO().getFilName());
-        bpmIsmsL410Service.save(completeReql410DTO.getBpmIsmsL410DTO());
+        bpmIsmsL410DTO.setProcessInstanceId(processInstanceId);
+        bpmIsmsL410DTO.setProcessInstanceStatus("0");
+        bpmIsmsL410DTO.setUpdateTime(Timestamp.valueOf(LocalDateTime.now()));
+        bpmIsmsL410DTO.setUpdateUser(bpmIsmsL410DTO.getFilName());
+        bpmIsmsL410DTO.setCreateTime(Timestamp.valueOf(LocalDateTime.now()));
+        bpmIsmsL410DTO.setCreateUser(bpmIsmsL410DTO.getFilName());
+        bpmIsmsL410Service.save(bpmIsmsL410DTO);
 
         //儲存照片
         if (appendixFiles != null) {
             for (int i = 0; i < appendixFiles.size(); i++) {
-                dto.get(i).setFormId(completeReql410DTO.getBpmIsmsL410DTO().getFormName() + "-" + new SeqNumber().getNewSeq(lastFormId));
+                dto.get(i).setFormId(bpmIsmsL410DTO.getFormName() + "-" + new SeqNumber().getNewSeq(lastFormId));
                 dto.get(i).setFileName(appendixFiles.get(i).getName());
                 bpmUploadFileService.bpmUploadFile(bpmUploadFileMapper.toEntity(dto.get(i)), appendixFiles.get(i));
             }
