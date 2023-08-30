@@ -25,7 +25,7 @@ public class Bpm01w010Controller {
         HttpSession session = request.getSession();
         Boolean isBpmLogin =(Boolean) session.getAttribute("bpmLogin");
 
-        // 沒有
+        // 無bpmLogin資訊情況
         if (isBpmLogin == null|| !isBpmLogin) {
             log.info("BPM表單管理:: {}導向頁面","/bpm cookies不存在，重導取得");
             session.setAttribute("bpmLogin",true);
@@ -41,19 +41,16 @@ public class Bpm01w010Controller {
                                     .append("&path=/Bpm01w010_enter.bpmAction");
             return new ModelAndView("redirect:"+path);
         }
+
+        // 有bpmLogin資訊情況
         String referer=RefererTemp.refererMap.get("referer");
 
         // todo 本地開發用，未來上線記得拔掉;
         if (request.getServerPort() == 8080) {
             referer = "http://localhost:9000";
         }
-        ModelAndView modelAndView = new ModelAndView("/bpm/Bpm01w010");
-        if (referer != null) {
-            modelAndView.addAllObjects(Map.of("bpmPath", referer + "/bpm"));
-        }
-
 
         log.info("BPM表單管理:: 導向{}頁面","Bpm01w010 表單申請");
-        return modelAndView;
+        return new ModelAndView("/bpm/Bpm01w010").addAllObjects(Map.of("bpmPath", referer + "/bpm"));
     }
 }
