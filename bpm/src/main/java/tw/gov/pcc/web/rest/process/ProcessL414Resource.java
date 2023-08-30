@@ -28,6 +28,7 @@ import java.io.IOException;
 import java.lang.reflect.Type;
 import java.sql.Timestamp;
 import java.time.Instant;
+import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -67,18 +68,21 @@ public class ProcessL414Resource {
     private final String FLOWABLE_PROCESS_URL = "http://localhost:8081/process";
     private final RestTemplate restTemplate = new RestTemplate();
 
-    @PostMapping(path = "/startL414", consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
+    @PostMapping(path = "/startL414/{key}", consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
     public String start(
-        @Valid @RequestPart("form") BpmIsmsL414DTO bpmIsmsL414DTO,
+        @Valid @RequestPart("form") HashMap<String,String> form,
+        @PathVariable String key,
         @Valid @RequestPart(name = "fileDto", required = false) List<BpmUploadFileDTO> dto,
         @RequestPart(name = "appendixFiles", required = false) List<MultipartFile> appendixFiles) throws IOException {
-        log.info("ProcessL414Resource.java - start - 59 :: " + bpmIsmsL414DTO);
+        log.info("ProcessL414Resource.java - start - 59 :: " + form);
         log.info("ProcessL414Resource.java - start - 60 :: " + dto);
         log.info("ProcessL414Resource.java - start - 61 :: " + appendixFiles);
+        Gson gson = new Gson();
 
 
+        BpmIsmsL414DTO bpmIsmsL414DTO = gson.fromJson(form.get(key), BpmIsmsL414DTO.class);
         ProcessReqDTO processReqDTO = new ProcessReqDTO();
-        processReqDTO.setFormName("L414");
+        processReqDTO.setFormName(key);
         HashMap<String, Object> variables = new HashMap<>();
 
         variables.put("applier", bpmIsmsL414DTO.getAppName());
@@ -120,9 +124,9 @@ public class ProcessL414Resource {
         //存入table
         bpmIsmsL414DTO.setProcessInstanceId(processInstanceId);
         bpmIsmsL414DTO.setProcessInstanceStatus("0");
-        bpmIsmsL414DTO.setUpdateTime(Instant.now());
+        bpmIsmsL414DTO.setUpdateTime(Timestamp.valueOf(LocalDateTime.now()));
         bpmIsmsL414DTO.setUpdateUser(bpmIsmsL414DTO.getFilName());
-        bpmIsmsL414DTO.setCreateTime(Instant.now());
+        bpmIsmsL414DTO.setCreateTime(Timestamp.valueOf(LocalDateTime.now()));
         bpmIsmsL414DTO.setCreateUser(bpmIsmsL414DTO.getFilName());
         bpmIsmsL414Service.save(bpmIsmsL414DTO);
 
@@ -170,7 +174,7 @@ public class ProcessL414Resource {
         log.info("ProcessL414Resource.java - start - 61 :: " + appendixFiles);
 
         //存入table
-        bpmIsmsL414DTO.setUpdateTime(Instant.now());
+        bpmIsmsL414DTO.setUpdateTime(Timestamp.valueOf(LocalDateTime.now()));
         bpmIsmsL414DTO.setUpdateUser(bpmIsmsL414DTO.getFilName());
         BpmIsmsL414DTO newBpmIsmsL414DTO = bpmIsmsL414Service.save(bpmIsmsL414DTO);
 
@@ -274,7 +278,7 @@ public class ProcessL414Resource {
         if (TOKEN.equals(endEventDTO.getToken())) {
             BpmIsmsL414 bpmIsmsL414 = bpmIsmsL414Repository.findFirstByProcessInstanceId(endEventDTO.getProcessInstanceId());
             bpmIsmsL414.setProcessInstanceStatus(endEventDTO.getProcessStatus());
-            bpmIsmsL414.setUpdateTime(Instant.now());
+            bpmIsmsL414.setUpdateTime(Timestamp.valueOf(LocalDateTime.now()));
             bpmIsmsL414Repository.save(bpmIsmsL414);
             return;
         }

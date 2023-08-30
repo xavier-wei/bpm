@@ -88,6 +88,19 @@ public class BpmL410ApplyManage implements Serializable {
     @Column(name = "other_sys_account", length = 20)
     private String otherSysAccount;
 
+
+    @Size(max = 1)
+    @Column(name = "IS_COLON", length = 1)
+    private String isColon;
+
+    @Size(max = 1)
+    @Column(name = "APPLY_VERSION", length = 1)
+    private String applyVersion;
+
+    @Size(max = 1)
+    @Column(name = "PERMISSIONS_VERSION", length = 1)
+    private String permissionsVersion;
+
     @NotNull
     @Size(max = 20)
     @Column(name = "create_user", length = 20, nullable = false)
@@ -323,6 +336,30 @@ public class BpmL410ApplyManage implements Serializable {
         this.otherSysAccount = otherSysAccount;
     }
 
+    public String getIsColon() {
+        return isColon;
+    }
+
+    public void setIsColon(String isColon) {
+        this.isColon = isColon;
+    }
+
+    public String getApplyVersion() {
+        return applyVersion;
+    }
+
+    public void setApplyVersion(String applyVersion) {
+        this.applyVersion = applyVersion;
+    }
+
+    public String getPermissionsVersion() {
+        return permissionsVersion;
+    }
+
+    public void setPermissionsVersion(String permissionsVersion) {
+        this.permissionsVersion = permissionsVersion;
+    }
+
     public String getCreateUser() {
         return this.createUser;
     }
@@ -369,30 +406,32 @@ public class BpmL410ApplyManage implements Serializable {
     }
 
     // prettier-ignore
-
     @Override
     public String toString() {
         return "BpmL410ApplyManage{" +
-            "systemApply='" + systemApply + '\'' +
-            ", systemApplyName='" + systemApplyName + '\'' +
-            ", checkbox='" + checkbox + '\'' +
-            ", sys='" + sys + '\'' +
-            ", systemApplyInput='" + systemApplyInput + '\'' +
-            ", sysChange='" + sysChange + '\'' +
-            ", emailApply1='" + emailApply1 + '\'' +
-            ", emailApply2='" + emailApply2 + '\'' +
-            ", isUnitAdm='" + isUnitAdm + '\'' +
-            ", isUnitDataMgr='" + isUnitDataMgr + '\'' +
-            ", isWebSiteOther='" + isWebSiteOther + '\'' +
-            ", otherReason='" + otherReason + '\'' +
-            ", admUnit='" + admUnit + '\'' +
-            ", admStatus='" + admStatus + '\'' +
-            ", admEnableDate=" + admEnableDate +
-            ", admName='" + admName + '\'' +
-            ", otherSys='" + otherSys + '\'' +
-            ", otherSysAccount='" + otherSysAccount + '\'' +
-            ", createUser='" + createUser + '\'' +
-            ", createTime=" + createTime +
-            '}';
+                "systemApply='" + systemApply + '\'' +
+                ", systemApplyName='" + systemApplyName + '\'' +
+                ", checkbox='" + checkbox + '\'' +
+                ", sys='" + sys + '\'' +
+                ", systemApplyInput='" + systemApplyInput + '\'' +
+                ", sysChange='" + sysChange + '\'' +
+                ", emailApply1='" + emailApply1 + '\'' +
+                ", emailApply2='" + emailApply2 + '\'' +
+                ", isUnitAdm='" + isUnitAdm + '\'' +
+                ", isUnitDataMgr='" + isUnitDataMgr + '\'' +
+                ", isWebSiteOther='" + isWebSiteOther + '\'' +
+                ", otherReason='" + otherReason + '\'' +
+                ", admUnit='" + admUnit + '\'' +
+                ", admStatus='" + admStatus + '\'' +
+                ", admEnableDate=" + admEnableDate +
+                ", admName='" + admName + '\'' +
+                ", otherSys='" + otherSys + '\'' +
+                ", otherSysAccount='" + otherSysAccount + '\'' +
+                ", isColon='" + isColon + '\'' +
+                ", applyVersion='" + applyVersion + '\'' +
+                ", permissionsVersion='" + permissionsVersion + '\'' +
+                ", createUser='" + createUser + '\'' +
+                ", createTime=" + createTime +
+                '}';
     }
 }

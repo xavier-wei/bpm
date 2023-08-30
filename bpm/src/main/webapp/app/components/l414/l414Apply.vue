@@ -481,7 +481,7 @@ export default {
       sDate: null, //啟用期間開始時間
       eDate: null, //啟用期間結束時間
       othereEdate: '', //職務異動止說明
-      delEnableDate: '', //刪除規則時間
+      delEnableDate: null, //刪除規則時間
       sourceIp: '', //來源 ip
       targetIp: '', //目的 ip
       port: '', //	使用協定(port)
@@ -489,13 +489,13 @@ export default {
       isUdp: '', //	傳輸模式是否為udp
       instructions: '', //	用途說明
       agreeType: '', //	處理意見
-      scheduleDate: '', //預定完成日期
+      scheduleDate:null, //預定完成日期
       partialAgreeReason: '', //	部分同意設定原因
       notAgreeReason: '', //不同意設定原因
       isExternalFirewall: '', //	變更設備：是否為外部防火牆
       isInternalFirewall: '', //	變更設備：是否為內部防火牆
       firewallContent: '', //	設定內容
-      finishDatetime: '', //	實際完成日期
+      finishDatetime: null, //	實際完成日期
       formName: 'L414',
     };
     const form = reactive(Object.assign({}, formDefault));
@@ -548,11 +548,15 @@ export default {
           $bvModal.msgBoxConfirm('是否確認送出修改內容？').then((isOK: boolean) => {
             if (isOK) {
 
+              let body={
+                "L414":JSON.stringify(form)
+              }
+
               const formData = new FormData();
 
               form.isSubmit = isSubmit;
 
-              formData.append('form', new Blob([JSON.stringify(form)], {type: 'application/json'}));
+              formData.append('form',  new Blob([JSON.stringify(body)], {type: 'application/json'});
 
 
               if (JSON.stringify(appendixData.value) !== '[]') {
@@ -563,7 +567,7 @@ export default {
               }
 
               axios
-                  .post(`/process/startL414`, formData, headers)
+                  .post(`/process/startL414/L414`, formData, headers)
                   .then(({data}) => {
                     // filePathData.filePathName = 'http://localhost:8081/pic?processId=' + data;
                     $bvModal.msgBoxOk('表單新增完畢');

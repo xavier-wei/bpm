@@ -231,7 +231,7 @@ export default defineComponent({
 
     function toEdit(item) {
       navigateByNameAndParams('l410Edit', {
-        l414Data: item,
+        l410Data: item,
         formStatus: FormStatusEnum.READONLY,
         isNotKeepAlive: false,
         stateStatus : userData === 'InfoTester'
