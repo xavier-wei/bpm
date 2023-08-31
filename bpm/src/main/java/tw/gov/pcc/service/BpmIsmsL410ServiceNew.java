@@ -50,7 +50,7 @@ public class BpmIsmsL410ServiceNew implements BpmIsmsService {
 
     @Override
     @Transactional(rollbackFor = SQLException.class)
-    public void saveBpm(UUID uuid, String processInstanceId, TaskDTO taskDTO, List<BpmUploadFileDTO> dto, List<MultipartFile> appendixFiles) {
+    public void saveBpmByPatch(UUID uuid, String processInstanceId, TaskDTO taskDTO, List<BpmUploadFileDTO> dto, List<MultipartFile> appendixFiles) {
 
         BpmIsmsL410DTO bpmIsmsL410DTO =  DTO_HOLDER.get(uuid);
         //取得表單最後的流水號
@@ -100,8 +100,13 @@ public class BpmIsmsL410ServiceNew implements BpmIsmsService {
     }
 
     @Override
-    public void saveBpm(String form) {
+    public void saveBpmByPatch(String form) {
 
+    }
+
+    @Override
+    public String saveBpmByPatch(String form, List<BpmUploadFileDTO> dto, List<MultipartFile> appendixFiles) {
+        return null;
     }
 
     @Override
@@ -112,5 +117,19 @@ public class BpmIsmsL410ServiceNew implements BpmIsmsService {
         variables.put("applier", bpmIsmsL410DTO.getAppName());
         variables.put("isSubmit", bpmIsmsL410DTO.getIsSubmit());
         return uuid;
+    }
+
+    private void savePhoto(List<BpmUploadFileDTO> dto, List<MultipartFile> appendixFiles, String formId) {
+        if (appendixFiles != null) {
+            for (int i = 0; i < appendixFiles.size(); i++) {
+                dto.get(i).setFormId(formId);
+                dto.get(i).setFileName(appendixFiles.get(i).getName());
+                try {
+                    bpmUploadFileService.bpmUploadFile(bpmUploadFileMapper.toEntity(dto.get(i)), appendixFiles.get(i));
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
+                }
+            }
+        }
     }
 }

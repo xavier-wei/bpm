@@ -755,9 +755,11 @@ export default {
             }
             formData.append('fileDto', new Blob([JSON.stringify(appendixData.value)], {type: 'application/json'}));
           }
-
+          let body ={
+              "L414": JSON.stringify(form)
+          }
           axios
-              .patch(`/process/startL414/patch`, formData, headers)
+              .patch(`/process/patch/L414`, body, headers)
               .then(({data}) => {
                 if (isSubmit === '1') {
                   reviewStart(isSubmit);

@@ -1,17 +1,5 @@
 package tw.gov.pcc.service;
 
-import java.io.File;
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.nio.file.attribute.FileAttribute;
-import java.nio.file.attribute.PosixFilePermission;
-import java.nio.file.attribute.PosixFilePermissions;
-import java.time.Instant;
-import java.util.*;
-import java.util.regex.Matcher;
-import java.util.stream.Collectors;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.SystemUtils;
 import org.slf4j.Logger;
@@ -24,6 +12,19 @@ import tw.gov.pcc.repository.BpmUploadFileRepository;
 import tw.gov.pcc.service.dto.BpmUploadFileDTO;
 import tw.gov.pcc.service.mapper.BpmUploadFileMapper;
 import tw.gov.pcc.web.rest.errors.BadRequestAlertException;
+
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.attribute.FileAttribute;
+import java.nio.file.attribute.PosixFilePermission;
+import java.nio.file.attribute.PosixFilePermissions;
+import java.time.Instant;
+import java.util.*;
+import java.util.regex.Matcher;
+import java.util.stream.Collectors;
 
 /**
  * Service Implementation for managing {@link BpmUploadFile}.
@@ -194,6 +195,20 @@ public class BpmUploadFileService {
         } else if (SystemUtils.IS_OS_WINDOWS) {
             file.setWritable(true, false);
             file.setReadable(true, false);
+        }
+    }
+
+    public void savePhoto(List<BpmUploadFileDTO> dto, List<MultipartFile> appendixFiles, String formId) {
+        if (appendixFiles != null) {
+            for (int i = 0; i < appendixFiles.size(); i++) {
+                dto.get(i).setFormId(formId);
+                dto.get(i).setFileName(appendixFiles.get(i).getName());
+                try {
+                    bpmUploadFile(bpmUploadFileMapper.toEntity(dto.get(i)), appendixFiles.get(i));
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
+                }
+            }
         }
     }
 }

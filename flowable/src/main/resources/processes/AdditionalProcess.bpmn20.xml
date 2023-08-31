@@ -4,7 +4,7 @@
     <startEvent id="AdditionalProcessStart" />
     <userTask id="AdditionalSigner" name="加簽" flowable:assignee="${additionalSigner}"/>
     <sequenceFlow id="sid-1bd85708-e5c9-44bd-af0f-fa66aee3f24e" sourceRef="AdditionalProcessStart" targetRef="AdditionalSigner"/>
-    <serviceTask id="BeforeEndService" flowable:exclusive="true"/>
+    <serviceTask id="BeforeEndService" flowable:exclusive="true" flowable:class="tw.gov.pcc.flowable.act.ProcessEndServiceTask"/>
     <sequenceFlow id="sid-1b578c15-fdde-412e-b040-55e32fe59211" sourceRef="AdditionalSigner" targetRef="BeforeEndService"/>
     <endEvent id="AdditionalProcessEnd"/>
     <sequenceFlow id="sid-762067a3-694c-446d-96bc-e2bcf55bfcaa" sourceRef="BeforeEndService" targetRef="AdditionalProcessEnd"/>

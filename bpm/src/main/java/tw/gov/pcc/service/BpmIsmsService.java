@@ -12,9 +12,11 @@ import java.util.UUID;
 @Service
 public interface BpmIsmsService {
 
-    void saveBpm(UUID uuid, String processInstanceId, TaskDTO taskDTO, List<BpmUploadFileDTO> dto, List<MultipartFile> appendixFiles);
+    void saveBpmByPatch(UUID uuid, String processInstanceId, TaskDTO taskDTO, List<BpmUploadFileDTO> dto, List<MultipartFile> appendixFiles);
 
-    void saveBpm(String form);
+    void saveBpmByPatch(String form);
+
+    String saveBpmByPatch(String form, List<BpmUploadFileDTO> dto, List<MultipartFile> appendixFiles);
     UUID setVariables(HashMap<String, Object> variables, String form);
 
 }

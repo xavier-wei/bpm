@@ -15,7 +15,6 @@ import tw.gov.pcc.service.mapper.BpmIsmsL414Mapper;
 import tw.gov.pcc.service.mapper.BpmUploadFileMapper;
 import tw.gov.pcc.utils.SeqNumber;
 
-import java.io.IOException;
 import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
@@ -32,7 +31,7 @@ public class BpmIsmsL414ServiceNew implements BpmIsmsService {
     private final BpmUploadFileService bpmUploadFileService;
     private final BpmUploadFileMapper bpmUploadFileMapper;
     private final BpmSignStatusService bpmSignStatusService;
-    private Gson gson = new Gson();
+    private final Gson gson = new Gson();
 
     public BpmIsmsL414ServiceNew(BpmIsmsL414Repository bpmIsmsL414Repository, BpmIsmsL414Mapper bpmIsmsL414Mapper, BpmUploadFileService bpmUploadFileService, BpmUploadFileMapper bpmUploadFileMapper, BpmSignStatusService bpmSignStatusService) {
         this.bpmIsmsL414Repository = bpmIsmsL414Repository;
@@ -44,7 +43,7 @@ public class BpmIsmsL414ServiceNew implements BpmIsmsService {
 
     @Override
     @Transactional(rollbackFor = SQLException.class)
-    public void saveBpm(UUID uuid, String processInstanceId, TaskDTO taskDTO, List<BpmUploadFileDTO> dto, List<MultipartFile> appendixFiles) {
+    public void saveBpmByPatch(UUID uuid, String processInstanceId, TaskDTO taskDTO, List<BpmUploadFileDTO> dto, List<MultipartFile> appendixFiles) {
         BpmIsmsL414DTO bpmIsmsL414DTO = DTO_HOLDER.get(uuid);
 
         //取得表單最後的流水號
@@ -66,17 +65,7 @@ public class BpmIsmsL414ServiceNew implements BpmIsmsService {
         bpmIsmsL414 = bpmIsmsL414Repository.save(bpmIsmsL414);
 
         //儲存照片
-        if (appendixFiles != null) {
-            for (int i = 0; i < appendixFiles.size(); i++) {
-                dto.get(i).setFormId(bpmIsmsL414DTO.getFormName() + "-" + new SeqNumber().getNewSeq(lastFormId));
-                dto.get(i).setFileName(appendixFiles.get(i).getName());
-                try {
-                    bpmUploadFileService.bpmUploadFile(bpmUploadFileMapper.toEntity(dto.get(i)), appendixFiles.get(i));
-                } catch (IOException e) {
-                    throw new RuntimeException(e);
-                }
-            }
-        }
+        bpmUploadFileService.savePhoto(dto, appendixFiles, formId);
 
         // 如果申請者選擇直接送出則跑下面這段完成申請者確認
         if ("1".equals(bpmIsmsL414DTO.getIsSubmit())) {
@@ -93,9 +82,23 @@ public class BpmIsmsL414ServiceNew implements BpmIsmsService {
         DTO_HOLDER.remove(uuid);
     }
 
-    public void saveBpm(String form) {
+    public void saveBpmByPatch(String form) {
         BpmIsmsL414DTO bpmIsmsL414DTO = gson.fromJson(form, BpmIsmsL414DTO.class);
         bpmIsmsL414Repository.save(bpmIsmsL414Mapper.toEntity(bpmIsmsL414DTO));
+    }
+
+    @Override
+    public String saveBpmByPatch(String form, List<BpmUploadFileDTO> dto, List<MultipartFile> appendixFiles) {
+
+        BpmIsmsL414DTO bpmIsmsL414DTO = gson.fromJson(form, BpmIsmsL414DTO.class);
+        bpmIsmsL414DTO.setUpdateTime(Timestamp.valueOf(LocalDateTime.now()));
+        bpmIsmsL414DTO.setUpdateUser(bpmIsmsL414DTO.getFilName());
+        String formId = bpmIsmsL414DTO.getFormId();
+
+        //儲存照片
+        bpmUploadFileService.savePhoto(dto, appendixFiles, formId);
+
+        return gson.toJson(bpmIsmsL414Mapper.toDto(bpmIsmsL414Repository.save(bpmIsmsL414Mapper.toEntity(bpmIsmsL414DTO))));
     }
 
     @Override
@@ -107,4 +110,8 @@ public class BpmIsmsL414ServiceNew implements BpmIsmsService {
         variables.put("isSubmit", bpmIsmsL414DTO.getIsSubmit());
         return uuid;
     }
+
+
+
+
 }

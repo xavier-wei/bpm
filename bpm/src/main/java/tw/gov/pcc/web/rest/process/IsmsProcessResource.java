@@ -85,7 +85,7 @@ public class IsmsProcessResource {
         }
 
         try {
-            service.saveBpm(uuid, processInstanceId, taskDTO, dto, appendixFiles);
+            service.saveBpmByPatch(uuid, processInstanceId, taskDTO, dto, appendixFiles);
 
         } catch (Exception e) {
             // 如果BPM寫入失敗，通知flowable原流程撤銷
@@ -97,6 +97,18 @@ public class IsmsProcessResource {
 
     }
 
+    @PatchMapping(path = "/patch/{key}", consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
+    public String patch(
+        @PathVariable String key,
+        @Valid @RequestPart("form") HashMap<String, String> form,
+        @Valid @RequestPart(name = "fileDto", required = false) List<BpmUploadFileDTO> dto,
+        @RequestPart(name = "appendixFiles", required = false) List<MultipartFile> appendixFiles) throws IOException {
+        log.info("ProcessL414Resource.java - start - 60 :: " + dto);
+        log.info("ProcessL414Resource.java - start - 61 :: " + appendixFiles);
+        BpmIsmsService service = (BpmIsmsService) applicationContext.getBean(Objects.requireNonNull(BpmIsmsServiceBeanNameEnum.getServiceBeanNameByKey(key)));
+
+        return service.saveBpmByPatch(form.get(key), dto, appendixFiles);
+    }
     @RequestMapping("/completeTask/{formId}")
     public String completeTask(@RequestBody CompleteReqDTO completeReqDTO, @PathVariable String formId) {
         log.info("ProcessL414Resource.java - completeTask - 183 :: " + completeReqDTO);
@@ -112,7 +124,7 @@ public class IsmsProcessResource {
                 int i = formId.indexOf("-");
                 String key = formId.substring(0, i);
                 BpmIsmsService service = (BpmIsmsService) applicationContext.getBean(Objects.requireNonNull(BpmIsmsServiceBeanNameEnum.getServiceBeanNameByKey(key)));
-                service.saveBpm(completeReqDTO.getForm().get(key));
+                service.saveBpmByPatch(completeReqDTO.getForm().get(key));
             }
             return exchange.getBody();
         }
@@ -145,7 +157,12 @@ public class IsmsProcessResource {
         return bpmSignStatusDTO;
     }
 
-
+    /**
+     * Delete processInstance when Bpm insert failed
+     *
+     * @param processInstanceId the id of the prcocessInstance.
+     *
+     */
     public void deleteProcessWhenSaveBpmFailed(String processInstanceId) {
         log.info("ProcessL414Resource.java - deleteProcessInstance - 206 :: " + processInstanceId);
         HttpHeaders headers = new HttpHeaders();
