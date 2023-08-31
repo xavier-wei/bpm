@@ -2,20 +2,20 @@
   <div>
     <b-container>
       <section class="container mt-2">
-        <div class="card">
+        <div >
           <b-card-body>
             <b-tabs>
               <b-tab title="表單" :active="activeTab(0)" @click="changeTabIndex(0)">
                 <div style="background-color: #b0ded4; padding-top: 10px">
                   <b-row class="d-flex">
-                    <p class="ml-3" style="color: white">L414-網路服務連結申請單</p>
+                    <p class="ml-4" style="color: white">L414-網路服務連結申請單</p>
 
                     <P class="ml-3">機密等級： 敏感</P>
                   </b-row>
                 </div>
 
-                <div class="card" style="background-color: #d3ede8">
-                  <div class="card m-3" style="background-color: #d3ede8">
+                <div style="background-color: #d3ede8">
+                  <div style="background-color: #d3ede8">
                     <b-form-row>
                       <i-form-group-check class="col-sm-5" label-cols="5" content-cols="7" :label="'申請日期:'"
                                           :item="$v.applyDate">
@@ -527,6 +527,7 @@ import axios from "axios";
 import {notificationErrorHandler} from "@/shared/http/http-response-helper";
 import {formatToString, newformatDate} from '@/shared/date/minguo-calendar-utils';
 import {changeDealWithUnit, changeDirections} from "@/shared/word/directions";
+import * as immutable from "immutable";
 
 const appendix = () => import('@/components/appendix.vue');
 const flowChart = () => import('@/components/flowChart.vue');
@@ -707,9 +708,9 @@ export default {
     });
 
 
-    onMounted(() => {
-      handleQuery();
-    });
+    // onMounted(() => {
+    //   handleQuery();
+    // });
 
     function handleQuery() {
       if (l414DataProp.value.processInstanceId !== null && l414DataProp.value.processInstanceId !== undefined) {
@@ -876,8 +877,14 @@ export default {
     }
 
     function toQueryView() {
-      handleBack({isReload: true, isNotKeepAlive: true});
+      handleBack({isReload: true, isNotKeepAlive: false});
     }
+
+    watch(l414DataProp,()=>{
+          handleQuery();
+    },
+        {immediate:true}
+    )
 
 
     return {

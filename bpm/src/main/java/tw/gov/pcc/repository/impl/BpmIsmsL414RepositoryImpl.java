@@ -68,6 +68,7 @@ public class BpmIsmsL414RepositoryImpl implements BpmIsmsL414RepositoryCustom {
             .appendWhen(StringUtils.isNotBlank(dto.getAppName()), "AND b414.APP_NAME = :appName ", dto.getAppName())
             .appendWhen(dto.getDateStart() != null, " AND b414.APPLY_DATE BETWEEN :dateStart ", dto.getDateStart())
             .appendWhen(dto.getDateEnd() != null, " AND :dateEnd ", dto.getDateEnd())
+            .append(" ORDER BY b414.UPDATE_TIME DESC ")
             .build();
         List<BpmIsmsL414DTO> list = sqlExecutor.queryForList(query, BpmIsmsL414DTO.class);
 

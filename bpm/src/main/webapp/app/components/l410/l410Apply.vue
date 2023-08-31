@@ -2,16 +2,13 @@
   <div>
     <b-container>
       <section class="container mt-2">
-
-        <div class="card">
-
           <b-card-body>
             <b-tabs>
               <b-tab title="表單" :active="activeTab(0)" @click="changeTabIndex(0)">
 
                 <div style="background-color: #b0ded4;padding-top: 10px;">
                   <b-row class=" d-flex">
-                    <p class="ml-3" style="color: white">
+                    <p class="ml-4" style="color: white">
                       L410-共用系統使用者帳號申請單
                     </p>
 
@@ -470,8 +467,6 @@
               </b-tab>
             </b-tabs>
           </b-card-body>
-
-        </div>
       </section>
     </b-container>
   </div>
