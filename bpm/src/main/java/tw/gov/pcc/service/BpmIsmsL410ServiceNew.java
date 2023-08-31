@@ -50,7 +50,7 @@ public class BpmIsmsL410ServiceNew implements BpmIsmsService {
 
     @Override
     @Transactional(rollbackFor = SQLException.class)
-    public void saveBpmByPatch(UUID uuid, String processInstanceId, TaskDTO taskDTO, List<BpmUploadFileDTO> dto, List<MultipartFile> appendixFiles) {
+    public void saveBpm(UUID uuid, String processInstanceId, TaskDTO taskDTO, List<BpmUploadFileDTO> dto, List<MultipartFile> appendixFiles) {
 
         BpmIsmsL410DTO bpmIsmsL410DTO =  DTO_HOLDER.get(uuid);
         //取得表單最後的流水號
