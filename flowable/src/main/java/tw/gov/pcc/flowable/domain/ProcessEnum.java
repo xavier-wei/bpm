@@ -3,13 +3,13 @@ package tw.gov.pcc.flowable.domain;
 public enum ProcessEnum {
     L414("L414","ProcessL414"),
     L410("L410","ProcessL410"),
-    AdditionProcess("Addition","AdditionalProcess");
+    AdditionProcess("Additional","AdditionalProcess");
 
     private final String formName;
     private final String processKey;
 
-    ProcessEnum(String key, String processKey) {
-        this.formName = key;
+    ProcessEnum(String formName, String processKey) {
+        this.formName = formName;
         this.processKey = processKey;
     }
 

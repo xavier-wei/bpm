@@ -43,7 +43,7 @@ public class BpmIsmsL414ServiceNew implements BpmIsmsService {
 
     @Override
     @Transactional(rollbackFor = SQLException.class)
-    public void saveBpmByPatch(UUID uuid, String processInstanceId, TaskDTO taskDTO, List<BpmUploadFileDTO> dto, List<MultipartFile> appendixFiles) {
+    public void saveBpm(UUID uuid, String processInstanceId, TaskDTO taskDTO, List<BpmUploadFileDTO> dto, List<MultipartFile> appendixFiles) {
         BpmIsmsL414DTO bpmIsmsL414DTO = DTO_HOLDER.get(uuid);
 
         //取得表單最後的流水號
@@ -108,6 +108,16 @@ public class BpmIsmsL414ServiceNew implements BpmIsmsService {
         DTO_HOLDER.put(uuid, bpmIsmsL414DTO);
         variables.put("applier", bpmIsmsL414DTO.getAppName());
         variables.put("isSubmit", bpmIsmsL414DTO.getIsSubmit());
+        // todo 判斷上級
+        variables.put("sectionChief", "ChiefTester");
+        variables.put("director", "DirectorTester");
+
+        // todo 依據表單取得固定簽核人員
+        variables.put("infoGroup", "InfoTester");
+        variables.put("seniorTechSpecialist", "seniorTechSpecialistTester");
+        variables.put("serverRoomOperator", "serverRoomOperatorTester");
+        variables.put("reviewStaff", "reviewStaffTester");
+        variables.put("serverRoomManager", "serverRoomManagerTester");
         return uuid;
     }
 

@@ -45,7 +45,7 @@ public class IsmsProcessResource {
         this.bpmSignStatusMapper = bpmSignStatusMapper;
     }
 
-    @PostMapping(path = "/start/{key}", consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
+    @PostMapping(path = "/start/{key}", consumes = {MediaType.MULTIPART_FORM_DATA_VALUE })
     public String start(
         @Valid @RequestPart("form") HashMap<String, String> form,
         @PathVariable String key,
@@ -58,17 +58,6 @@ public class IsmsProcessResource {
         HashMap<String, Object> variables = new HashMap<>();
         BpmIsmsService service = (BpmIsmsService) applicationContext.getBean(Objects.requireNonNull(BpmIsmsServiceBeanNameEnum.getServiceBeanNameByKey(key)));
         UUID uuid = service.setVariables(variables, form.get(key));
-
-        // todo 判斷上級
-        variables.put("sectionChief", "ChiefTester");
-        variables.put("director", "DirectorTester");
-
-        // todo 依據表單取得固定簽核人員
-        variables.put("infoGroup", "InfoTester");
-        variables.put("seniorTechSpecialist", "seniorTechSpecialistTester");
-        variables.put("serverRoomOperator", "serverRoomOperatorTester");
-        variables.put("reviewStaff", "reviewStaffTester");
-        variables.put("serverRoomManager", "serverRoomManagerTester");
         processReqDTO.setVariables(variables);
 
         HttpHeaders headers = new HttpHeaders();
@@ -85,7 +74,7 @@ public class IsmsProcessResource {
         }
 
         try {
-            service.saveBpmByPatch(uuid, processInstanceId, taskDTO, dto, appendixFiles);
+            service.saveBpm(uuid, processInstanceId, taskDTO, dto, appendixFiles);
 
         } catch (Exception e) {
             // 如果BPM寫入失敗，通知flowable原流程撤銷
@@ -96,7 +85,44 @@ public class IsmsProcessResource {
         return processInstanceId;
 
     }
+    @PostMapping(path = "/startTest/{key}", consumes = {MediaType.APPLICATION_JSON_VALUE })
+    public String start(
+           @PathVariable String key,
+           @RequestBody HashMap<String,String> form) throws IOException {
 
+        // 產生要送給流程引擎的request dto
+        ProcessReqDTO processReqDTO = new ProcessReqDTO();
+        processReqDTO.setFormName(key);
+        HashMap<String, Object> variables = new HashMap<>();
+        BpmIsmsService service = (BpmIsmsService) applicationContext.getBean(Objects.requireNonNull(BpmIsmsServiceBeanNameEnum.getServiceBeanNameByKey(key)));
+        UUID uuid = service.setVariables(variables, form.get(key));
+        processReqDTO.setVariables(variables);
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+        HttpEntity<String> requestEntity = new HttpEntity<>(gson.toJson(processReqDTO), headers);
+        ResponseEntity<String> exchange = restTemplate.exchange(FLOWABLE_PROCESS_URL + "/startProcess", HttpMethod.POST, requestEntity, String.class);
+        String processInstanceId;
+        TaskDTO taskDTO;
+        if (exchange.getStatusCodeValue() == 200) {
+            taskDTO = gson.fromJson(exchange.getBody(), TaskDTO.class);
+            processInstanceId = taskDTO.getProcessInstanceId();
+        } else {
+            return "流程引擎忙碌中，請稍候再試";
+        }
+
+        try {
+            service.saveBpm(uuid, processInstanceId, taskDTO, null, null);
+
+        } catch (Exception e) {
+            // 如果BPM寫入失敗，通知flowable原流程撤銷
+            deleteProcessWhenSaveBpmFailed(processInstanceId);
+            return "BPM寫入失敗，請聯絡管理員";
+        }
+
+        return processInstanceId;
+
+    }
     @PatchMapping(path = "/patch/{key}", consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
     public String patch(
         @PathVariable String key,
@@ -132,6 +158,7 @@ public class IsmsProcessResource {
     }
 
 
+
     private static BpmSignStatusDTO getBpmSignStatusDTO(CompleteReqDTO completeReqDTO, String formId) {
         BpmSignStatusDTO bpmSignStatusDTO = new BpmSignStatusDTO();
         bpmSignStatusDTO.setFormId(formId);
@@ -156,6 +183,8 @@ public class IsmsProcessResource {
 
         return bpmSignStatusDTO;
     }
+
+
 
     /**
      * Delete processInstance when Bpm insert failed
