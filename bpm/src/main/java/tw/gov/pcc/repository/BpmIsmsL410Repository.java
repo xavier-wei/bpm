@@ -20,7 +20,8 @@ public interface BpmIsmsL410Repository extends JpaRepository<BpmIsmsL410, String
     @Query("SELECT l410 FROM BpmIsmsL410 l410 " +
         "WHERE (LENGTH(COALESCE(:word,'')) = 0 OR l410.formId = :word) " +
         "AND (LENGTH(COALESCE(:appEmpid,'')) = 0 OR l410.appEmpid = :appEmpid)" +
-        "AND (LENGTH(COALESCE(:processInstanceStatus,'')) = 0 OR l410.processInstanceStatus = :processInstanceStatus)")
+        "AND (LENGTH(COALESCE(:processInstanceStatus,'')) = 0 OR l410.processInstanceStatus = :processInstanceStatus)" +
+        "ORDER BY l410.updateTime DESC ")
     List<BpmIsmsL410> findByWord(@Param("word") String word, @Param("appEmpid") String appEmpid, @Param("processInstanceStatus") String processInstanceStatus);
 
 
