@@ -561,7 +561,7 @@ export default {
 
     const formDefault = {
       formId: '',//表單編號
-      applyDate: new Date(new Date().getFullYear(), new Date().getMonth(), new Date().getDate()),//	申請日期
+      applyDate: new Date(new Date().getFullYear(), new Date().getMonth(), new Date().getDate(),new Date().getHours(),new Date().getMinutes(),new Date().getSeconds(),new Date().getMilliseconds()),//	申請日期
       filEmpid: '',//	填表人員工編號
       filName: '',//	填表人姓名
       filUnit: '',//	填表人單位名稱
