@@ -802,7 +802,7 @@ export default {
         taskId: form.taskId,
         taskName: form.taskName,
         variables,
-        bpmIsmsL414DTO: form,
+        form: {"L414":JSON.stringify(form)},
         directions: changeDirections(userData),
         opinion: opinionData,
         ipt: userData === 'InfoTester'
@@ -811,7 +811,7 @@ export default {
       console.log('body',body)
 
       axios
-          .post(`/process/completeTask`, body)
+          .post(`/process/completeTask/${form.formId}`, body)
           .then(({data}) => {
             if (item === '1') {
               $bvModal.msgBoxOk('表單儲存完畢');

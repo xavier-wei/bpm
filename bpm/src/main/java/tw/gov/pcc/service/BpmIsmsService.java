@@ -14,6 +14,7 @@ public interface BpmIsmsService {
 
     void saveBpm(UUID uuid, String processInstanceId, TaskDTO taskDTO, List<BpmUploadFileDTO> dto, List<MultipartFile> appendixFiles);
 
+    void saveBpm(String form);
     UUID setVariables(HashMap<String, Object> variables, String form);
 
 }

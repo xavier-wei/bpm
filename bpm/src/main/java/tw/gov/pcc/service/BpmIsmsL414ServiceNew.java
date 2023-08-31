@@ -29,9 +29,8 @@ public class BpmIsmsL414ServiceNew implements BpmIsmsService {
     public static final HashMap<UUID, BpmIsmsL414DTO> DTO_HOLDER = new HashMap<>();
     private final BpmIsmsL414Repository bpmIsmsL414Repository;
     private final BpmIsmsL414Mapper bpmIsmsL414Mapper;
-    private BpmUploadFileService bpmUploadFileService;
-
-    private BpmUploadFileMapper bpmUploadFileMapper;
+    private final BpmUploadFileService bpmUploadFileService;
+    private final BpmUploadFileMapper bpmUploadFileMapper;
     private final BpmSignStatusService bpmSignStatusService;
     private Gson gson = new Gson();
 
@@ -87,12 +86,16 @@ public class BpmIsmsL414ServiceNew implements BpmIsmsService {
                 taskDTO,
                 bpmIsmsL414DTO.getAppEmpid(),
                 bpmIsmsL414DTO.getAppName(),
-                bpmIsmsL414DTO.getSignUnit()
+                bpmIsmsL414DTO.getAppUnit()
             );
         }
 
         DTO_HOLDER.remove(uuid);
+    }
 
+    public void saveBpm(String form) {
+        BpmIsmsL414DTO bpmIsmsL414DTO = gson.fromJson(form, BpmIsmsL414DTO.class);
+        bpmIsmsL414Repository.save(bpmIsmsL414Mapper.toEntity(bpmIsmsL414DTO));
     }
 
     @Override

@@ -1,7 +1,11 @@
 package tw.gov.pcc.domain;
 
 public enum BpmIsmsServiceBeanNameEnum {
-    L414("L414", "L414Service");
+    L410("L410","L410Service"),
+    L414("L414", "L414Service"),
+    Additional("Additional","AdditionalService");
+
+
     private final String key;
     private final String serviceBeanName;
 
@@ -10,7 +14,7 @@ public enum BpmIsmsServiceBeanNameEnum {
         this.serviceBeanName = serviceBeanName;
     }
 
-    // getDecisionByName
+    // getKeyByBeanName
     public static String getKeyByServiceBeanName(String serviceBeanName) {
         for (BpmIsmsServiceBeanNameEnum bpmIsmsServiceBeanNameEnum : BpmIsmsServiceBeanNameEnum.values()) {
             if (bpmIsmsServiceBeanNameEnum.serviceBeanName.equals(serviceBeanName)) {
@@ -20,16 +24,18 @@ public enum BpmIsmsServiceBeanNameEnum {
         return null;
     }
 
-    // getNameByDecision
+    // getBeanNameByKey
     public static String getServiceBeanNameByKey(String key) {
         for (BpmIsmsServiceBeanNameEnum bpmIsmsServiceBeanNameEnum : BpmIsmsServiceBeanNameEnum.values()) {
             if (bpmIsmsServiceBeanNameEnum.key.equals(key)) {
                 return bpmIsmsServiceBeanNameEnum.serviceBeanName;
-            } else {
-                return key + "Service";
             }
         }
         return null;
+    }
+
+    public static void main(String[] args) {
+        System.out.println(getServiceBeanNameByKey("L410"));
     }
 
 }

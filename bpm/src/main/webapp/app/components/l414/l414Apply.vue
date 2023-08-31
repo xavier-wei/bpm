@@ -548,13 +548,13 @@ export default {
           $bvModal.msgBoxConfirm('是否確認送出修改內容？').then((isOK: boolean) => {
             if (isOK) {
 
+              form.isSubmit = isSubmit;
+
               let body = {
                 "L414": JSON.stringify(form)
               }
 
               const formData = new FormData();
-
-              form.isSubmit = isSubmit;
 
               formData.append('form', new Blob([JSON.stringify(body)], {type: 'application/json'});
 
@@ -565,6 +565,8 @@ export default {
                 }
                 formData.append('fileDto', new Blob([JSON.stringify(appendixData.value)], {type: 'application/json'}));
               }
+
+              console.log(form);
 
               axios
                 .post(`/process/start/L414`, formData, headers)
