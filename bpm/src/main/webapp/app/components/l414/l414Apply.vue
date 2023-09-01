@@ -555,7 +555,7 @@ export default {
 
               const formData = new FormData();
 
-              formData.append('form', new Blob([JSON.stringify(body)], {type: 'application/json'});
+              formData.append('form', new Blob([JSON.stringify(body)], {type: 'application/json'}));
 
 
               if (JSON.stringify(appendixData.value) !== '[]') {

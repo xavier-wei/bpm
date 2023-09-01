@@ -77,6 +77,7 @@ public class IsmsProcessResource {
             service.saveBpm(uuid, processInstanceId, taskDTO, dto, appendixFiles);
 
         } catch (Exception e) {
+            e.printStackTrace();
             // 如果BPM寫入失敗，通知flowable原流程撤銷
             deleteProcessWhenSaveBpmFailed(processInstanceId);
             return "BPM寫入失敗，請聯絡管理員";

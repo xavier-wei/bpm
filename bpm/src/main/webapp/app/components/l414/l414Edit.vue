@@ -889,21 +889,28 @@ export default {
         mainProcessTaskId: form.taskId,
         requesterId: 'ChiefTester',
         requester: 'ChiefTester',
-        additionalSignerId: 'AdditionalSignerTester',
-        additionalSigner: 'AdditionalSignerTester',
+        additionalSignerId: 'DirectorTester',
+        additionalSigner: 'DirectorTester',
         additionalSignReason: form.opinion,
         processInstanceStatus: '0',
       };
 
-      console.log('body', body)
-      //
-      // axios
-      //   .post(`/process/start/Additional`, body)
-      //   .then(({data}) => {
-      //     $bvModal.msgBoxOk('加簽申請成功');
-      //     navigateByNameAndParams('pending', {isReload: false, isNotKeepAlive: true});
-      //   })
-      //   .catch(notificationErrorHandler(notificationService));
+      let body1 = {
+        "Additional": JSON.stringify(body)
+      }
+      console.log('body', body1)
+
+      const formData = new FormData();
+
+      formData.append('form', new Blob([JSON.stringify(body1)], {type: 'application/json'}));
+
+      axios
+        .post(`/process/start/Additional`,  formData)
+        .then(({data}) => {
+          $bvModal.msgBoxOk('加簽申請成功');
+          navigateByNameAndParams('pending', {isReload: false, isNotKeepAlive: true});
+        })
+        .catch(notificationErrorHandler(notificationService));
 
 
     }
