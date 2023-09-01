@@ -15,8 +15,11 @@ cd bpm
 npm start
 ```
 ## 2. 正式環境打包
-
+- 如果只需要打包到target，執行mvn clean package -P prod,no-liquibase即可
 ```bash
-mvn clean
-mvn package -P prod,no-liquibase
+
+Move-Item target\bpm.war -Destination "C:\wildfly-2\standalone\deployments"
+Remove-Item "C:\wildfly-2\standalone\deployments\bpm.war"
+mvn clean package -P prod,no-liquibase
 ```
+

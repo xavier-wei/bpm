@@ -7,7 +7,8 @@ import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.io.Serializable;
-import java.time.Instant;
+import java.sql.Timestamp;
+
 
 /**
  * A BpmIsmsL410.
@@ -31,7 +32,7 @@ public class BpmIsmsL410 implements Serializable {
 
     @NotNull
     @Column(name = "apply_date", nullable = false)
-    private Instant applyDate;
+    private Timestamp applyDate;
 
     @NotNull
     @Size(max = 20)
@@ -95,7 +96,7 @@ public class BpmIsmsL410 implements Serializable {
     private String isEnableDate;
 
     @Column(name = "enable_date")
-    private Instant enableDate;
+    private Timestamp enableDate;
 
     @Size(max = 1)
     @Column(name = "is_other", length = 1)
@@ -126,7 +127,7 @@ public class BpmIsmsL410 implements Serializable {
     private String hrSysStatus;
 
     @Column(name = "hr_sys_enable_date")
-    private Instant hrSysEnableDate;
+    private Timestamp hrSysEnableDate;
 
     @Size(max = 20)
     @Column(name = "hr_sys_adm_name", length = 20)
@@ -157,7 +158,7 @@ public class BpmIsmsL410 implements Serializable {
     private String adSysStatus;
 
     @Column(name = "ad_sys_enable_date")
-    private Instant adSysEnableDate;
+    private Timestamp adSysEnableDate;
 
     @Size(max = 20)
     @Column(name = "ad_sys_adm_name", length = 20)
@@ -184,7 +185,7 @@ public class BpmIsmsL410 implements Serializable {
     private String meetingRoomStatus;
 
     @Column(name = "meeting_room_enable_date")
-    private Instant meetingRoomEnableDate;
+    private Timestamp meetingRoomEnableDate;
 
     @Size(max = 20)
     @Column(name = "MEETING_ROOM_ADM_NAME", length = 20)
@@ -215,7 +216,7 @@ public class BpmIsmsL410 implements Serializable {
     private String odSysStatus;
 
     @Column(name = "od_sys_enable_date")
-    private Instant odSysEnableDate;
+    private Timestamp odSysEnableDate;
 
     @Size(max = 20)
     @Column(name = "od_sys_adm_name", length = 20)
@@ -254,7 +255,7 @@ public class BpmIsmsL410 implements Serializable {
     private String emailSysStatus;
 
     @Column(name = "email_sys_enable_date")
-    private Instant emailSysEnableDate;
+    private Timestamp emailSysEnableDate;
 
     @Size(max = 20)
     @Column(name = "email_sys_adm_name", length = 20)
@@ -300,7 +301,7 @@ public class BpmIsmsL410 implements Serializable {
     private String webSiteStatus;
 
     @Column(name = "web_site_enable_date")
-    private Instant webSiteEnableDate;
+    private Timestamp webSiteEnableDate;
 
     @Size(max = 20)
     @Column(name = "web_site_adm_name", length = 20)
@@ -331,7 +332,7 @@ public class BpmIsmsL410 implements Serializable {
     private String pccPisStatus;
 
     @Column(name = "pcc_pis_enable_date")
-    private Instant pccPisEnableDate;
+    private Timestamp pccPisEnableDate;
 
     @Size(max = 20)
     @Column(name = "pcc_pis_adm_name", length = 20)
@@ -366,7 +367,7 @@ public class BpmIsmsL410 implements Serializable {
     private String otherSys1Status;
 
     @Column(name = "other_sys1_enable_date")
-    private Instant otherSys1EnableDate;
+    private Timestamp otherSys1EnableDate;
 
     @Size(max = 20)
     @Column(name = "other_sys1_adm_name", length = 20)
@@ -401,7 +402,7 @@ public class BpmIsmsL410 implements Serializable {
     private String otherSys2Status;
 
     @Column(name = "other_sys2_enable_date")
-    private Instant otherSys2EnableDate;
+    private Timestamp otherSys2EnableDate;
 
     @Size(max = 20)
     @Column(name = "other_sys2_adm_name", length = 20)
@@ -436,7 +437,7 @@ public class BpmIsmsL410 implements Serializable {
     private String otherSys3Status;
 
     @Column(name = "other_sys3_enable_date")
-    private Instant otherSys3EnableDate;
+    private Timestamp otherSys3EnableDate;
 
     @Size(max = 20)
     @Column(name = "other_sys3_adm_name", length = 20)
@@ -451,7 +452,7 @@ public class BpmIsmsL410 implements Serializable {
     private String updateUser;
 
     @Column(name = "update_time")
-    private Instant updateTime;
+    private Timestamp updateTime;
 
     @NotNull
     @Size(max = 20)
@@ -460,17 +461,12 @@ public class BpmIsmsL410 implements Serializable {
 
     @NotNull
     @Column(name = "create_time", nullable = false)
-    private Instant createTime;
+    private Timestamp createTime;
 
     // jhipster-needle-entity-add-field - JHipster will add fields here
 
     public String getFormId() {
-        return this.formId;
-    }
-
-    public BpmIsmsL410 formId(String formId) {
-        this.setFormId(formId);
-        return this;
+        return formId;
     }
 
     public void setFormId(String formId) {
@@ -478,38 +474,23 @@ public class BpmIsmsL410 implements Serializable {
     }
 
     public String getProcessInstanceId() {
-        return this.processInstanceId;
-    }
-
-    public BpmIsmsL410 processInstanceId(String processInstanceId) {
-        this.setProcessInstanceId(processInstanceId);
-        return this;
+        return processInstanceId;
     }
 
     public void setProcessInstanceId(String processInstanceId) {
         this.processInstanceId = processInstanceId;
     }
 
-    public Instant getApplyDate() {
-        return this.applyDate;
+    public Timestamp getApplyDate() {
+        return applyDate;
     }
 
-    public BpmIsmsL410 applyDate(Instant applyDate) {
-        this.setApplyDate(applyDate);
-        return this;
-    }
-
-    public void setApplyDate(Instant applyDate) {
+    public void setApplyDate(Timestamp applyDate) {
         this.applyDate = applyDate;
     }
 
     public String getFilEmpid() {
-        return this.filEmpid;
-    }
-
-    public BpmIsmsL410 filEmpid(String filEmpid) {
-        this.setFilEmpid(filEmpid);
-        return this;
+        return filEmpid;
     }
 
     public void setFilEmpid(String filEmpid) {
@@ -517,12 +498,7 @@ public class BpmIsmsL410 implements Serializable {
     }
 
     public String getFilName() {
-        return this.filName;
-    }
-
-    public BpmIsmsL410 filName(String filName) {
-        this.setFilName(filName);
-        return this;
+        return filName;
     }
 
     public void setFilName(String filName) {
@@ -530,12 +506,7 @@ public class BpmIsmsL410 implements Serializable {
     }
 
     public String getFilUnit() {
-        return this.filUnit;
-    }
-
-    public BpmIsmsL410 filUnit(String filUnit) {
-        this.setFilUnit(filUnit);
-        return this;
+        return filUnit;
     }
 
     public void setFilUnit(String filUnit) {
@@ -543,12 +514,7 @@ public class BpmIsmsL410 implements Serializable {
     }
 
     public String getAppEmpid() {
-        return this.appEmpid;
-    }
-
-    public BpmIsmsL410 appEmpid(String appEmpid) {
-        this.setAppEmpid(appEmpid);
-        return this;
+        return appEmpid;
     }
 
     public void setAppEmpid(String appEmpid) {
@@ -556,12 +522,7 @@ public class BpmIsmsL410 implements Serializable {
     }
 
     public String getAppName() {
-        return this.appName;
-    }
-
-    public BpmIsmsL410 appName(String appName) {
-        this.setAppName(appName);
-        return this;
+        return appName;
     }
 
     public void setAppName(String appName) {
@@ -569,12 +530,7 @@ public class BpmIsmsL410 implements Serializable {
     }
 
     public String getAppEngName() {
-        return this.appEngName;
-    }
-
-    public BpmIsmsL410 appEngName(String appEngName) {
-        this.setAppEngName(appEngName);
-        return this;
+        return appEngName;
     }
 
     public void setAppEngName(String appEngName) {
@@ -582,12 +538,7 @@ public class BpmIsmsL410 implements Serializable {
     }
 
     public String getAppUnit1() {
-        return this.appUnit1;
-    }
-
-    public BpmIsmsL410 appUnit1(String appUnit1) {
-        this.setAppUnit1(appUnit1);
-        return this;
+        return appUnit1;
     }
 
     public void setAppUnit1(String appUnit1) {
@@ -595,12 +546,7 @@ public class BpmIsmsL410 implements Serializable {
     }
 
     public String getAppUnit2() {
-        return this.appUnit2;
-    }
-
-    public BpmIsmsL410 appUnit2(String appUnit2) {
-        this.setAppUnit2(appUnit2);
-        return this;
+        return appUnit2;
     }
 
     public void setAppUnit2(String appUnit2) {
@@ -608,12 +554,7 @@ public class BpmIsmsL410 implements Serializable {
     }
 
     public String getPosition() {
-        return this.position;
-    }
-
-    public BpmIsmsL410 position(String position) {
-        this.setPosition(position);
-        return this;
+        return position;
     }
 
     public void setPosition(String position) {
@@ -621,12 +562,7 @@ public class BpmIsmsL410 implements Serializable {
     }
 
     public String getExtNum() {
-        return this.extNum;
-    }
-
-    public BpmIsmsL410 extNum(String extNum) {
-        this.setExtNum(extNum);
-        return this;
+        return extNum;
     }
 
     public void setExtNum(String extNum) {
@@ -634,12 +570,7 @@ public class BpmIsmsL410 implements Serializable {
     }
 
     public String getIsSubmit() {
-        return this.isSubmit;
-    }
-
-    public BpmIsmsL410 isSubmit(String isSubmit) {
-        this.setIsSubmit(isSubmit);
-        return this;
+        return isSubmit;
     }
 
     public void setIsSubmit(String isSubmit) {
@@ -647,12 +578,7 @@ public class BpmIsmsL410 implements Serializable {
     }
 
     public String getAppReason() {
-        return this.appReason;
-    }
-
-    public BpmIsmsL410 appReason(String appReason) {
-        this.setAppReason(appReason);
-        return this;
+        return appReason;
     }
 
     public void setAppReason(String appReason) {
@@ -660,38 +586,23 @@ public class BpmIsmsL410 implements Serializable {
     }
 
     public String getIsEnableDate() {
-        return this.isEnableDate;
-    }
-
-    public BpmIsmsL410 isEnableDate(String isEnableDate) {
-        this.setIsEnableDate(isEnableDate);
-        return this;
+        return isEnableDate;
     }
 
     public void setIsEnableDate(String isEnableDate) {
         this.isEnableDate = isEnableDate;
     }
 
-    public Instant getEnableDate() {
-        return this.enableDate;
+    public Timestamp getEnableDate() {
+        return enableDate;
     }
 
-    public BpmIsmsL410 enableDate(Instant enableDate) {
-        this.setEnableDate(enableDate);
-        return this;
-    }
-
-    public void setEnableDate(Instant enableDate) {
+    public void setEnableDate(Timestamp enableDate) {
         this.enableDate = enableDate;
     }
 
     public String getIsOther() {
-        return this.isOther;
-    }
-
-    public BpmIsmsL410 isOther(String isOther) {
-        this.setIsOther(isOther);
-        return this;
+        return isOther;
     }
 
     public void setIsOther(String isOther) {
@@ -699,18 +610,12 @@ public class BpmIsmsL410 implements Serializable {
     }
 
     public String getOtherReason() {
-        return this.otherReason;
-    }
-
-    public BpmIsmsL410 otherReason(String otherReason) {
-        this.setOtherReason(otherReason);
-        return this;
+        return otherReason;
     }
 
     public void setOtherReason(String otherReason) {
         this.otherReason = otherReason;
     }
-
 
     public String getIsHrSys() {
         return isHrSys;
@@ -721,12 +626,7 @@ public class BpmIsmsL410 implements Serializable {
     }
 
     public String getHrSys() {
-        return this.hrSys;
-    }
-
-    public BpmIsmsL410 hrSys(String hrSys) {
-        this.setHrSys(hrSys);
-        return this;
+        return hrSys;
     }
 
     public void setHrSys(String hrSys) {
@@ -734,12 +634,7 @@ public class BpmIsmsL410 implements Serializable {
     }
 
     public String getHrSysChange() {
-        return this.hrSysChange;
-    }
-
-    public BpmIsmsL410 hrSysChange(String hrSysChange) {
-        this.setHrSysChange(hrSysChange);
-        return this;
+        return hrSysChange;
     }
 
     public void setHrSysChange(String hrSysChange) {
@@ -747,12 +642,7 @@ public class BpmIsmsL410 implements Serializable {
     }
 
     public String getHrSysAdmUnit() {
-        return this.hrSysAdmUnit;
-    }
-
-    public BpmIsmsL410 hrSysAdmUnit(String hrSysAdmUnit) {
-        this.setHrSysAdmUnit(hrSysAdmUnit);
-        return this;
+        return hrSysAdmUnit;
     }
 
     public void setHrSysAdmUnit(String hrSysAdmUnit) {
@@ -760,38 +650,23 @@ public class BpmIsmsL410 implements Serializable {
     }
 
     public String getHrSysStatus() {
-        return this.hrSysStatus;
-    }
-
-    public BpmIsmsL410 hrSysStatus(String hrSysStatus) {
-        this.setHrSysStatus(hrSysStatus);
-        return this;
+        return hrSysStatus;
     }
 
     public void setHrSysStatus(String hrSysStatus) {
         this.hrSysStatus = hrSysStatus;
     }
 
-    public Instant getHrSysEnableDate() {
-        return this.hrSysEnableDate;
+    public Timestamp getHrSysEnableDate() {
+        return hrSysEnableDate;
     }
 
-    public BpmIsmsL410 hrSysEnableDate(Instant hrSysEnableDate) {
-        this.setHrSysEnableDate(hrSysEnableDate);
-        return this;
-    }
-
-    public void setHrSysEnableDate(Instant hrSysEnableDate) {
+    public void setHrSysEnableDate(Timestamp hrSysEnableDate) {
         this.hrSysEnableDate = hrSysEnableDate;
     }
 
     public String getHrSysAdmName() {
-        return this.hrSysAdmName;
-    }
-
-    public BpmIsmsL410 hrSysAdmName(String hrSysAdmName) {
-        this.setHrSysAdmName(hrSysAdmName);
-        return this;
+        return hrSysAdmName;
     }
 
     public void setHrSysAdmName(String hrSysAdmName) {
@@ -799,12 +674,7 @@ public class BpmIsmsL410 implements Serializable {
     }
 
     public String getIsAdSys() {
-        return this.isAdSys;
-    }
-
-    public BpmIsmsL410 isAdSys(String isAdSys) {
-        this.setIsAdSys(isAdSys);
-        return this;
+        return isAdSys;
     }
 
     public void setIsAdSys(String isAdSys) {
@@ -812,12 +682,7 @@ public class BpmIsmsL410 implements Serializable {
     }
 
     public String getAdAccount() {
-        return this.adAccount;
-    }
-
-    public BpmIsmsL410 adAccount(String adAccount) {
-        this.setAdAccount(adAccount);
-        return this;
+        return adAccount;
     }
 
     public void setAdAccount(String adAccount) {
@@ -825,12 +690,7 @@ public class BpmIsmsL410 implements Serializable {
     }
 
     public String getAdSys() {
-        return this.adSys;
-    }
-
-    public BpmIsmsL410 adSys(String adSys) {
-        this.setAdSys(adSys);
-        return this;
+        return adSys;
     }
 
     public void setAdSys(String adSys) {
@@ -838,12 +698,7 @@ public class BpmIsmsL410 implements Serializable {
     }
 
     public String getAdSysChange() {
-        return this.adSysChange;
-    }
-
-    public BpmIsmsL410 adSysChange(String adSysChange) {
-        this.setAdSysChange(adSysChange);
-        return this;
+        return adSysChange;
     }
 
     public void setAdSysChange(String adSysChange) {
@@ -851,12 +706,7 @@ public class BpmIsmsL410 implements Serializable {
     }
 
     public String getAdSysAdmUnit() {
-        return this.adSysAdmUnit;
-    }
-
-    public BpmIsmsL410 adSysAdmUnit(String adSysAdmUnit) {
-        this.setAdSysAdmUnit(adSysAdmUnit);
-        return this;
+        return adSysAdmUnit;
     }
 
     public void setAdSysAdmUnit(String adSysAdmUnit) {
@@ -864,38 +714,23 @@ public class BpmIsmsL410 implements Serializable {
     }
 
     public String getAdSysStatus() {
-        return this.adSysStatus;
-    }
-
-    public BpmIsmsL410 adSysStatus(String adSysStatus) {
-        this.setAdSysStatus(adSysStatus);
-        return this;
+        return adSysStatus;
     }
 
     public void setAdSysStatus(String adSysStatus) {
         this.adSysStatus = adSysStatus;
     }
 
-    public Instant getAdSysEnableDate() {
-        return this.adSysEnableDate;
+    public Timestamp getAdSysEnableDate() {
+        return adSysEnableDate;
     }
 
-    public BpmIsmsL410 adSysEnableDate(Instant adSysEnableDate) {
-        this.setAdSysEnableDate(adSysEnableDate);
-        return this;
-    }
-
-    public void setAdSysEnableDate(Instant adSysEnableDate) {
+    public void setAdSysEnableDate(Timestamp adSysEnableDate) {
         this.adSysEnableDate = adSysEnableDate;
     }
 
     public String getAdSysAdmName() {
-        return this.adSysAdmName;
-    }
-
-    public BpmIsmsL410 adSysAdmName(String adSysAdmName) {
-        this.setAdSysAdmName(adSysAdmName);
-        return this;
+        return adSysAdmName;
     }
 
     public void setAdSysAdmName(String adSysAdmName) {
@@ -942,11 +777,11 @@ public class BpmIsmsL410 implements Serializable {
         this.meetingRoomStatus = meetingRoomStatus;
     }
 
-    public Instant getMeetingRoomEnableDate() {
+    public Timestamp getMeetingRoomEnableDate() {
         return meetingRoomEnableDate;
     }
 
-    public void setMeetingRoomEnableDate(Instant meetingRoomEnableDate) {
+    public void setMeetingRoomEnableDate(Timestamp meetingRoomEnableDate) {
         this.meetingRoomEnableDate = meetingRoomEnableDate;
     }
 
@@ -959,12 +794,7 @@ public class BpmIsmsL410 implements Serializable {
     }
 
     public String getIsOdSys() {
-        return this.isOdSys;
-    }
-
-    public BpmIsmsL410 isOdSys(String isOdSys) {
-        this.setIsOdSys(isOdSys);
-        return this;
+        return isOdSys;
     }
 
     public void setIsOdSys(String isOdSys) {
@@ -972,12 +802,7 @@ public class BpmIsmsL410 implements Serializable {
     }
 
     public String getOdSysRole() {
-        return this.odSysRole;
-    }
-
-    public BpmIsmsL410 odSysRole(String odSysRole) {
-        this.setOdSysRole(odSysRole);
-        return this;
+        return odSysRole;
     }
 
     public void setOdSysRole(String odSysRole) {
@@ -985,12 +810,7 @@ public class BpmIsmsL410 implements Serializable {
     }
 
     public String getOdSys() {
-        return this.odSys;
-    }
-
-    public BpmIsmsL410 odSys(String odSys) {
-        this.setOdSys(odSys);
-        return this;
+        return odSys;
     }
 
     public void setOdSys(String odSys) {
@@ -998,12 +818,7 @@ public class BpmIsmsL410 implements Serializable {
     }
 
     public String getOdSysOther() {
-        return this.odSysOther;
-    }
-
-    public BpmIsmsL410 odSysOther(String odSysOther) {
-        this.setOdSysOther(odSysOther);
-        return this;
+        return odSysOther;
     }
 
     public void setOdSysOther(String odSysOther) {
@@ -1011,12 +826,7 @@ public class BpmIsmsL410 implements Serializable {
     }
 
     public String getOdSysAdmUnit() {
-        return this.odSysAdmUnit;
-    }
-
-    public BpmIsmsL410 odSysAdmUnit(String odSysAdmUnit) {
-        this.setOdSysAdmUnit(odSysAdmUnit);
-        return this;
+        return odSysAdmUnit;
     }
 
     public void setOdSysAdmUnit(String odSysAdmUnit) {
@@ -1024,38 +834,23 @@ public class BpmIsmsL410 implements Serializable {
     }
 
     public String getOdSysStatus() {
-        return this.odSysStatus;
-    }
-
-    public BpmIsmsL410 odSysStatus(String odSysStatus) {
-        this.setOdSysStatus(odSysStatus);
-        return this;
+        return odSysStatus;
     }
 
     public void setOdSysStatus(String odSysStatus) {
         this.odSysStatus = odSysStatus;
     }
 
-    public Instant getOdSysEnableDate() {
-        return this.odSysEnableDate;
+    public Timestamp getOdSysEnableDate() {
+        return odSysEnableDate;
     }
 
-    public BpmIsmsL410 odSysEnableDate(Instant odSysEnableDate) {
-        this.setOdSysEnableDate(odSysEnableDate);
-        return this;
-    }
-
-    public void setOdSysEnableDate(Instant odSysEnableDate) {
+    public void setOdSysEnableDate(Timestamp odSysEnableDate) {
         this.odSysEnableDate = odSysEnableDate;
     }
 
     public String getOdSysAdmName() {
-        return this.odSysAdmName;
-    }
-
-    public BpmIsmsL410 odSysAdmName(String odSysAdmName) {
-        this.setOdSysAdmName(odSysAdmName);
-        return this;
+        return odSysAdmName;
     }
 
     public void setOdSysAdmName(String odSysAdmName) {
@@ -1063,12 +858,7 @@ public class BpmIsmsL410 implements Serializable {
     }
 
     public String getIsEmailSys() {
-        return this.isEmailSys;
-    }
-
-    public BpmIsmsL410 isEmailSys(String isEmailSys) {
-        this.setIsEmailSys(isEmailSys);
-        return this;
+        return isEmailSys;
     }
 
     public void setIsEmailSys(String isEmailSys) {
@@ -1076,12 +866,7 @@ public class BpmIsmsL410 implements Serializable {
     }
 
     public String getEmailSysAccount() {
-        return this.emailSysAccount;
-    }
-
-    public BpmIsmsL410 emailSysAccount(String emailSysAccount) {
-        this.setEmailSysAccount(emailSysAccount);
-        return this;
+        return emailSysAccount;
     }
 
     public void setEmailSysAccount(String emailSysAccount) {
@@ -1089,12 +874,7 @@ public class BpmIsmsL410 implements Serializable {
     }
 
     public String getEmailSys() {
-        return this.emailSys;
-    }
-
-    public BpmIsmsL410 emailSys(String emailSys) {
-        this.setEmailSys(emailSys);
-        return this;
+        return emailSys;
     }
 
     public void setEmailSys(String emailSys) {
@@ -1102,12 +882,7 @@ public class BpmIsmsL410 implements Serializable {
     }
 
     public String getEmailApply1() {
-        return this.emailApply1;
-    }
-
-    public BpmIsmsL410 emailApply1(String emailApply1) {
-        this.setEmailApply1(emailApply1);
-        return this;
+        return emailApply1;
     }
 
     public void setEmailApply1(String emailApply1) {
@@ -1115,12 +890,7 @@ public class BpmIsmsL410 implements Serializable {
     }
 
     public String getEmailApply2() {
-        return this.emailApply2;
-    }
-
-    public BpmIsmsL410 emailApply2(String emailApply2) {
-        this.setEmailApply2(emailApply2);
-        return this;
+        return emailApply2;
     }
 
     public void setEmailApply2(String emailApply2) {
@@ -1128,12 +898,7 @@ public class BpmIsmsL410 implements Serializable {
     }
 
     public String getEmailSysChange() {
-        return this.emailSysChange;
-    }
-
-    public BpmIsmsL410 emailSysChange(String emailSysChange) {
-        this.setEmailSysChange(emailSysChange);
-        return this;
+        return emailSysChange;
     }
 
     public void setEmailSysChange(String emailSysChange) {
@@ -1141,12 +906,7 @@ public class BpmIsmsL410 implements Serializable {
     }
 
     public String getEmailSysAdmUnit() {
-        return this.emailSysAdmUnit;
-    }
-
-    public BpmIsmsL410 emailSysAdmUnit(String emailSysAdmUnit) {
-        this.setEmailSysAdmUnit(emailSysAdmUnit);
-        return this;
+        return emailSysAdmUnit;
     }
 
     public void setEmailSysAdmUnit(String emailSysAdmUnit) {
@@ -1154,38 +914,23 @@ public class BpmIsmsL410 implements Serializable {
     }
 
     public String getEmailSysStatus() {
-        return this.emailSysStatus;
-    }
-
-    public BpmIsmsL410 emailSysStatus(String emailSysStatus) {
-        this.setEmailSysStatus(emailSysStatus);
-        return this;
+        return emailSysStatus;
     }
 
     public void setEmailSysStatus(String emailSysStatus) {
         this.emailSysStatus = emailSysStatus;
     }
 
-    public Instant getEmailSysEnableDate() {
-        return this.emailSysEnableDate;
+    public Timestamp getEmailSysEnableDate() {
+        return emailSysEnableDate;
     }
 
-    public BpmIsmsL410 emailSysEnableDate(Instant emailSysEnableDate) {
-        this.setEmailSysEnableDate(emailSysEnableDate);
-        return this;
-    }
-
-    public void setEmailSysEnableDate(Instant emailSysEnableDate) {
+    public void setEmailSysEnableDate(Timestamp emailSysEnableDate) {
         this.emailSysEnableDate = emailSysEnableDate;
     }
 
     public String getEmailSysAdmName() {
-        return this.emailSysAdmName;
-    }
-
-    public BpmIsmsL410 emailSysAdmName(String emailSysAdmName) {
-        this.setEmailSysAdmName(emailSysAdmName);
-        return this;
+        return emailSysAdmName;
     }
 
     public void setEmailSysAdmName(String emailSysAdmName) {
@@ -1193,12 +938,7 @@ public class BpmIsmsL410 implements Serializable {
     }
 
     public String getIsWebSite() {
-        return this.isWebSite;
-    }
-
-    public BpmIsmsL410 isWebSite(String isWebSite) {
-        this.setIsWebSite(isWebSite);
-        return this;
+        return isWebSite;
     }
 
     public void setIsWebSite(String isWebSite) {
@@ -1206,12 +946,7 @@ public class BpmIsmsL410 implements Serializable {
     }
 
     public String getIsPccWww() {
-        return this.isPccWww;
-    }
-
-    public BpmIsmsL410 isPccWww(String isPccWww) {
-        this.setIsPccWww(isPccWww);
-        return this;
+        return isPccWww;
     }
 
     public void setIsPccWww(String isPccWww) {
@@ -1219,12 +954,7 @@ public class BpmIsmsL410 implements Serializable {
     }
 
     public String getIsPccHome() {
-        return this.isPccHome;
-    }
-
-    public BpmIsmsL410 isPccHome(String isPccHome) {
-        this.setIsPccHome(isPccHome);
-        return this;
+        return isPccHome;
     }
 
     public void setIsPccHome(String isPccHome) {
@@ -1232,12 +962,7 @@ public class BpmIsmsL410 implements Serializable {
     }
 
     public String getWebSite() {
-        return this.webSite;
-    }
-
-    public BpmIsmsL410 webSite(String webSite) {
-        this.setWebSite(webSite);
-        return this;
+        return webSite;
     }
 
     public void setWebSite(String webSite) {
@@ -1245,12 +970,7 @@ public class BpmIsmsL410 implements Serializable {
     }
 
     public String getIsUnitAdm() {
-        return this.isUnitAdm;
-    }
-
-    public BpmIsmsL410 isUnitAdm(String isUnitAdm) {
-        this.setIsUnitAdm(isUnitAdm);
-        return this;
+        return isUnitAdm;
     }
 
     public void setIsUnitAdm(String isUnitAdm) {
@@ -1258,12 +978,7 @@ public class BpmIsmsL410 implements Serializable {
     }
 
     public String getIsUnitDataMgr() {
-        return this.isUnitDataMgr;
-    }
-
-    public BpmIsmsL410 isUnitDataMgr(String isUnitDataMgr) {
-        this.setIsUnitDataMgr(isUnitDataMgr);
-        return this;
+        return isUnitDataMgr;
     }
 
     public void setIsUnitDataMgr(String isUnitDataMgr) {
@@ -1271,12 +986,7 @@ public class BpmIsmsL410 implements Serializable {
     }
 
     public String getIsWebSiteOther() {
-        return this.isWebSiteOther;
-    }
-
-    public BpmIsmsL410 isWebSiteOther(String isWebSiteOther) {
-        this.setIsWebSiteOther(isWebSiteOther);
-        return this;
+        return isWebSiteOther;
     }
 
     public void setIsWebSiteOther(String isWebSiteOther) {
@@ -1284,12 +994,7 @@ public class BpmIsmsL410 implements Serializable {
     }
 
     public String getWebSiteOther() {
-        return this.webSiteOther;
-    }
-
-    public BpmIsmsL410 webSiteOther(String webSiteOther) {
-        this.setWebSiteOther(webSiteOther);
-        return this;
+        return webSiteOther;
     }
 
     public void setWebSiteOther(String webSiteOther) {
@@ -1297,12 +1002,7 @@ public class BpmIsmsL410 implements Serializable {
     }
 
     public String getWebSiteAdmUnit() {
-        return this.webSiteAdmUnit;
-    }
-
-    public BpmIsmsL410 webSiteAdmUnit(String webSiteAdmUnit) {
-        this.setWebSiteAdmUnit(webSiteAdmUnit);
-        return this;
+        return webSiteAdmUnit;
     }
 
     public void setWebSiteAdmUnit(String webSiteAdmUnit) {
@@ -1310,38 +1010,23 @@ public class BpmIsmsL410 implements Serializable {
     }
 
     public String getWebSiteStatus() {
-        return this.webSiteStatus;
-    }
-
-    public BpmIsmsL410 webSiteStatus(String webSiteStatus) {
-        this.setWebSiteStatus(webSiteStatus);
-        return this;
+        return webSiteStatus;
     }
 
     public void setWebSiteStatus(String webSiteStatus) {
         this.webSiteStatus = webSiteStatus;
     }
 
-    public Instant getWebSiteEnableDate() {
-        return this.webSiteEnableDate;
+    public Timestamp getWebSiteEnableDate() {
+        return webSiteEnableDate;
     }
 
-    public BpmIsmsL410 webSiteEnableDate(Instant webSiteEnableDate) {
-        this.setWebSiteEnableDate(webSiteEnableDate);
-        return this;
-    }
-
-    public void setWebSiteEnableDate(Instant webSiteEnableDate) {
+    public void setWebSiteEnableDate(Timestamp webSiteEnableDate) {
         this.webSiteEnableDate = webSiteEnableDate;
     }
 
     public String getWebSiteAdmName() {
-        return this.webSiteAdmName;
-    }
-
-    public BpmIsmsL410 webSiteAdmName(String webSiteAdmName) {
-        this.setWebSiteAdmName(webSiteAdmName);
-        return this;
+        return webSiteAdmName;
     }
 
     public void setWebSiteAdmName(String webSiteAdmName) {
@@ -1349,12 +1034,7 @@ public class BpmIsmsL410 implements Serializable {
     }
 
     public String getIsPccPis() {
-        return this.isPccPis;
-    }
-
-    public BpmIsmsL410 isPccPis(String isPccPis) {
-        this.setIsPccPis(isPccPis);
-        return this;
+        return isPccPis;
     }
 
     public void setIsPccPis(String isPccPis) {
@@ -1362,12 +1042,7 @@ public class BpmIsmsL410 implements Serializable {
     }
 
     public String getPccPisAccount() {
-        return this.pccPisAccount;
-    }
-
-    public BpmIsmsL410 pccPisAccount(String pccPisAccount) {
-        this.setPccPisAccount(pccPisAccount);
-        return this;
+        return pccPisAccount;
     }
 
     public void setPccPisAccount(String pccPisAccount) {
@@ -1375,12 +1050,7 @@ public class BpmIsmsL410 implements Serializable {
     }
 
     public String getPccPis() {
-        return this.pccPis;
-    }
-
-    public BpmIsmsL410 pccPis(String pccPis) {
-        this.setPccPis(pccPis);
-        return this;
+        return pccPis;
     }
 
     public void setPccPis(String pccPis) {
@@ -1388,12 +1058,7 @@ public class BpmIsmsL410 implements Serializable {
     }
 
     public String getPccPisChange() {
-        return this.pccPisChange;
-    }
-
-    public BpmIsmsL410 pccPisChange(String pccPisChange) {
-        this.setPccPisChange(pccPisChange);
-        return this;
+        return pccPisChange;
     }
 
     public void setPccPisChange(String pccPisChange) {
@@ -1401,12 +1066,7 @@ public class BpmIsmsL410 implements Serializable {
     }
 
     public String getPccPisAdmUnit() {
-        return this.pccPisAdmUnit;
-    }
-
-    public BpmIsmsL410 pccPisAdmUnit(String pccPisAdmUnit) {
-        this.setPccPisAdmUnit(pccPisAdmUnit);
-        return this;
+        return pccPisAdmUnit;
     }
 
     public void setPccPisAdmUnit(String pccPisAdmUnit) {
@@ -1414,38 +1074,23 @@ public class BpmIsmsL410 implements Serializable {
     }
 
     public String getPccPisStatus() {
-        return this.pccPisStatus;
-    }
-
-    public BpmIsmsL410 pccPisStatus(String pccPisStatus) {
-        this.setPccPisStatus(pccPisStatus);
-        return this;
+        return pccPisStatus;
     }
 
     public void setPccPisStatus(String pccPisStatus) {
         this.pccPisStatus = pccPisStatus;
     }
 
-    public Instant getPccPisEnableDate() {
-        return this.pccPisEnableDate;
+    public Timestamp getPccPisEnableDate() {
+        return pccPisEnableDate;
     }
 
-    public BpmIsmsL410 pccPisEnableDate(Instant pccPisEnableDate) {
-        this.setPccPisEnableDate(pccPisEnableDate);
-        return this;
-    }
-
-    public void setPccPisEnableDate(Instant pccPisEnableDate) {
+    public void setPccPisEnableDate(Timestamp pccPisEnableDate) {
         this.pccPisEnableDate = pccPisEnableDate;
     }
 
     public String getPccPisAdmName() {
-        return this.pccPisAdmName;
-    }
-
-    public BpmIsmsL410 pccPisAdmName(String pccPisAdmName) {
-        this.setPccPisAdmName(pccPisAdmName);
-        return this;
+        return pccPisAdmName;
     }
 
     public void setPccPisAdmName(String pccPisAdmName) {
@@ -1453,12 +1098,7 @@ public class BpmIsmsL410 implements Serializable {
     }
 
     public String getIsOtherSys1() {
-        return this.isOtherSys1;
-    }
-
-    public BpmIsmsL410 isOtherSys1(String isOtherSys1) {
-        this.setIsOtherSys1(isOtherSys1);
-        return this;
+        return isOtherSys1;
     }
 
     public void setIsOtherSys1(String isOtherSys1) {
@@ -1466,12 +1106,7 @@ public class BpmIsmsL410 implements Serializable {
     }
 
     public String getOtherSys1ServerName() {
-        return this.otherSys1ServerName;
-    }
-
-    public BpmIsmsL410 otherSys1ServerName(String otherSys1ServerName) {
-        this.setOtherSys1ServerName(otherSys1ServerName);
-        return this;
+        return otherSys1ServerName;
     }
 
     public void setOtherSys1ServerName(String otherSys1ServerName) {
@@ -1479,12 +1114,7 @@ public class BpmIsmsL410 implements Serializable {
     }
 
     public String getOtherSys1Account() {
-        return this.otherSys1Account;
-    }
-
-    public BpmIsmsL410 otherSys1Account(String otherSys1Account) {
-        this.setOtherSys1Account(otherSys1Account);
-        return this;
+        return otherSys1Account;
     }
 
     public void setOtherSys1Account(String otherSys1Account) {
@@ -1492,12 +1122,7 @@ public class BpmIsmsL410 implements Serializable {
     }
 
     public String getOtherSys1() {
-        return this.otherSys1;
-    }
-
-    public BpmIsmsL410 otherSys1(String otherSys1) {
-        this.setOtherSys1(otherSys1);
-        return this;
+        return otherSys1;
     }
 
     public void setOtherSys1(String otherSys1) {
@@ -1505,12 +1130,7 @@ public class BpmIsmsL410 implements Serializable {
     }
 
     public String getOtherSys1Change() {
-        return this.otherSys1Change;
-    }
-
-    public BpmIsmsL410 otherSys1Change(String otherSys1Change) {
-        this.setOtherSys1Change(otherSys1Change);
-        return this;
+        return otherSys1Change;
     }
 
     public void setOtherSys1Change(String otherSys1Change) {
@@ -1518,12 +1138,7 @@ public class BpmIsmsL410 implements Serializable {
     }
 
     public String getOtherSys1AdmUnit() {
-        return this.otherSys1AdmUnit;
-    }
-
-    public BpmIsmsL410 otherSys1AdmUnit(String otherSys1AdmUnit) {
-        this.setOtherSys1AdmUnit(otherSys1AdmUnit);
-        return this;
+        return otherSys1AdmUnit;
     }
 
     public void setOtherSys1AdmUnit(String otherSys1AdmUnit) {
@@ -1531,38 +1146,23 @@ public class BpmIsmsL410 implements Serializable {
     }
 
     public String getOtherSys1Status() {
-        return this.otherSys1Status;
-    }
-
-    public BpmIsmsL410 otherSys1Status(String otherSys1Status) {
-        this.setOtherSys1Status(otherSys1Status);
-        return this;
+        return otherSys1Status;
     }
 
     public void setOtherSys1Status(String otherSys1Status) {
         this.otherSys1Status = otherSys1Status;
     }
 
-    public Instant getOtherSys1EnableDate() {
-        return this.otherSys1EnableDate;
+    public Timestamp getOtherSys1EnableDate() {
+        return otherSys1EnableDate;
     }
 
-    public BpmIsmsL410 otherSys1EnableDate(Instant otherSys1EnableDate) {
-        this.setOtherSys1EnableDate(otherSys1EnableDate);
-        return this;
-    }
-
-    public void setOtherSys1EnableDate(Instant otherSys1EnableDate) {
+    public void setOtherSys1EnableDate(Timestamp otherSys1EnableDate) {
         this.otherSys1EnableDate = otherSys1EnableDate;
     }
 
     public String getOtherSys1AdmName() {
-        return this.otherSys1AdmName;
-    }
-
-    public BpmIsmsL410 otherSys1AdmName(String otherSys1AdmName) {
-        this.setOtherSys1AdmName(otherSys1AdmName);
-        return this;
+        return otherSys1AdmName;
     }
 
     public void setOtherSys1AdmName(String otherSys1AdmName) {
@@ -1570,12 +1170,7 @@ public class BpmIsmsL410 implements Serializable {
     }
 
     public String getIsOtherSys2() {
-        return this.isOtherSys2;
-    }
-
-    public BpmIsmsL410 isOtherSys2(String isOtherSys2) {
-        this.setIsOtherSys2(isOtherSys2);
-        return this;
+        return isOtherSys2;
     }
 
     public void setIsOtherSys2(String isOtherSys2) {
@@ -1583,12 +1178,7 @@ public class BpmIsmsL410 implements Serializable {
     }
 
     public String getOtherSys2ServerName() {
-        return this.otherSys2ServerName;
-    }
-
-    public BpmIsmsL410 otherSys2ServerName(String otherSys2ServerName) {
-        this.setOtherSys2ServerName(otherSys2ServerName);
-        return this;
+        return otherSys2ServerName;
     }
 
     public void setOtherSys2ServerName(String otherSys2ServerName) {
@@ -1596,12 +1186,7 @@ public class BpmIsmsL410 implements Serializable {
     }
 
     public String getOtherSys2Account() {
-        return this.otherSys2Account;
-    }
-
-    public BpmIsmsL410 otherSys2Account(String otherSys2Account) {
-        this.setOtherSys2Account(otherSys2Account);
-        return this;
+        return otherSys2Account;
     }
 
     public void setOtherSys2Account(String otherSys2Account) {
@@ -1609,12 +1194,7 @@ public class BpmIsmsL410 implements Serializable {
     }
 
     public String getOtherSys2() {
-        return this.otherSys2;
-    }
-
-    public BpmIsmsL410 otherSys2(String otherSys2) {
-        this.setOtherSys2(otherSys2);
-        return this;
+        return otherSys2;
     }
 
     public void setOtherSys2(String otherSys2) {
@@ -1622,12 +1202,7 @@ public class BpmIsmsL410 implements Serializable {
     }
 
     public String getOtherSys2Change() {
-        return this.otherSys2Change;
-    }
-
-    public BpmIsmsL410 otherSys2Change(String otherSys2Change) {
-        this.setOtherSys2Change(otherSys2Change);
-        return this;
+        return otherSys2Change;
     }
 
     public void setOtherSys2Change(String otherSys2Change) {
@@ -1635,12 +1210,7 @@ public class BpmIsmsL410 implements Serializable {
     }
 
     public String getOtherSys2AdmUnit() {
-        return this.otherSys2AdmUnit;
-    }
-
-    public BpmIsmsL410 otherSys2AdmUnit(String otherSys2AdmUnit) {
-        this.setOtherSys2AdmUnit(otherSys2AdmUnit);
-        return this;
+        return otherSys2AdmUnit;
     }
 
     public void setOtherSys2AdmUnit(String otherSys2AdmUnit) {
@@ -1648,38 +1218,23 @@ public class BpmIsmsL410 implements Serializable {
     }
 
     public String getOtherSys2Status() {
-        return this.otherSys2Status;
-    }
-
-    public BpmIsmsL410 otherSys2Status(String otherSys2Status) {
-        this.setOtherSys2Status(otherSys2Status);
-        return this;
+        return otherSys2Status;
     }
 
     public void setOtherSys2Status(String otherSys2Status) {
         this.otherSys2Status = otherSys2Status;
     }
 
-    public Instant getOtherSys2EnableDate() {
-        return this.otherSys2EnableDate;
+    public Timestamp getOtherSys2EnableDate() {
+        return otherSys2EnableDate;
     }
 
-    public BpmIsmsL410 otherSys2EnableDate(Instant otherSys2EnableDate) {
-        this.setOtherSys2EnableDate(otherSys2EnableDate);
-        return this;
-    }
-
-    public void setOtherSys2EnableDate(Instant otherSys2EnableDate) {
+    public void setOtherSys2EnableDate(Timestamp otherSys2EnableDate) {
         this.otherSys2EnableDate = otherSys2EnableDate;
     }
 
     public String getOtherSys2AdmName() {
-        return this.otherSys2AdmName;
-    }
-
-    public BpmIsmsL410 otherSys2AdmName(String otherSys2AdmName) {
-        this.setOtherSys2AdmName(otherSys2AdmName);
-        return this;
+        return otherSys2AdmName;
     }
 
     public void setOtherSys2AdmName(String otherSys2AdmName) {
@@ -1687,12 +1242,7 @@ public class BpmIsmsL410 implements Serializable {
     }
 
     public String getIsOtherSys3() {
-        return this.isOtherSys3;
-    }
-
-    public BpmIsmsL410 isOtherSys3(String isOtherSys3) {
-        this.setIsOtherSys3(isOtherSys3);
-        return this;
+        return isOtherSys3;
     }
 
     public void setIsOtherSys3(String isOtherSys3) {
@@ -1700,12 +1250,7 @@ public class BpmIsmsL410 implements Serializable {
     }
 
     public String getOtherSys3ServerName() {
-        return this.otherSys3ServerName;
-    }
-
-    public BpmIsmsL410 otherSys3ServerName(String otherSys3ServerName) {
-        this.setOtherSys3ServerName(otherSys3ServerName);
-        return this;
+        return otherSys3ServerName;
     }
 
     public void setOtherSys3ServerName(String otherSys3ServerName) {
@@ -1713,12 +1258,7 @@ public class BpmIsmsL410 implements Serializable {
     }
 
     public String getOtherSys3Account() {
-        return this.otherSys3Account;
-    }
-
-    public BpmIsmsL410 otherSys3Account(String otherSys3Account) {
-        this.setOtherSys3Account(otherSys3Account);
-        return this;
+        return otherSys3Account;
     }
 
     public void setOtherSys3Account(String otherSys3Account) {
@@ -1726,12 +1266,7 @@ public class BpmIsmsL410 implements Serializable {
     }
 
     public String getOtherSys3() {
-        return this.otherSys3;
-    }
-
-    public BpmIsmsL410 otherSys3(String otherSys3) {
-        this.setOtherSys3(otherSys3);
-        return this;
+        return otherSys3;
     }
 
     public void setOtherSys3(String otherSys3) {
@@ -1739,12 +1274,7 @@ public class BpmIsmsL410 implements Serializable {
     }
 
     public String getOtherSys3Change() {
-        return this.otherSys3Change;
-    }
-
-    public BpmIsmsL410 otherSys3Change(String otherSys3Change) {
-        this.setOtherSys3Change(otherSys3Change);
-        return this;
+        return otherSys3Change;
     }
 
     public void setOtherSys3Change(String otherSys3Change) {
@@ -1752,12 +1282,7 @@ public class BpmIsmsL410 implements Serializable {
     }
 
     public String getOtherSys3AdmUnit() {
-        return this.otherSys3AdmUnit;
-    }
-
-    public BpmIsmsL410 otherSys3AdmUnit(String otherSys3AdmUnit) {
-        this.setOtherSys3AdmUnit(otherSys3AdmUnit);
-        return this;
+        return otherSys3AdmUnit;
     }
 
     public void setOtherSys3AdmUnit(String otherSys3AdmUnit) {
@@ -1765,38 +1290,23 @@ public class BpmIsmsL410 implements Serializable {
     }
 
     public String getOtherSys3Status() {
-        return this.otherSys3Status;
-    }
-
-    public BpmIsmsL410 otherSys3Status(String otherSys3Status) {
-        this.setOtherSys3Status(otherSys3Status);
-        return this;
+        return otherSys3Status;
     }
 
     public void setOtherSys3Status(String otherSys3Status) {
         this.otherSys3Status = otherSys3Status;
     }
 
-    public Instant getOtherSys3EnableDate() {
-        return this.otherSys3EnableDate;
+    public Timestamp getOtherSys3EnableDate() {
+        return otherSys3EnableDate;
     }
 
-    public BpmIsmsL410 otherSys3EnableDate(Instant otherSys3EnableDate) {
-        this.setOtherSys3EnableDate(otherSys3EnableDate);
-        return this;
-    }
-
-    public void setOtherSys3EnableDate(Instant otherSys3EnableDate) {
+    public void setOtherSys3EnableDate(Timestamp otherSys3EnableDate) {
         this.otherSys3EnableDate = otherSys3EnableDate;
     }
 
     public String getOtherSys3AdmName() {
-        return this.otherSys3AdmName;
-    }
-
-    public BpmIsmsL410 otherSys3AdmName(String otherSys3AdmName) {
-        this.setOtherSys3AdmName(otherSys3AdmName);
-        return this;
+        return otherSys3AdmName;
     }
 
     public void setOtherSys3AdmName(String otherSys3AdmName) {
@@ -1804,12 +1314,7 @@ public class BpmIsmsL410 implements Serializable {
     }
 
     public String getProcessInstanceStatus() {
-        return this.processInstanceStatus;
-    }
-
-    public BpmIsmsL410 processInstanceStatus(String processInstanceStatus) {
-        this.setProcessInstanceStatus(processInstanceStatus);
-        return this;
+        return processInstanceStatus;
     }
 
     public void setProcessInstanceStatus(String processInstanceStatus) {
@@ -1817,56 +1322,37 @@ public class BpmIsmsL410 implements Serializable {
     }
 
     public String getUpdateUser() {
-        return this.updateUser;
-    }
-
-    public BpmIsmsL410 updateUser(String updateUser) {
-        this.setUpdateUser(updateUser);
-        return this;
+        return updateUser;
     }
 
     public void setUpdateUser(String updateUser) {
         this.updateUser = updateUser;
     }
 
-    public Instant getUpdateTime() {
-        return this.updateTime;
+    public Timestamp getUpdateTime() {
+        return updateTime;
     }
 
-    public BpmIsmsL410 updateTime(Instant updateTime) {
-        this.setUpdateTime(updateTime);
-        return this;
-    }
-
-    public void setUpdateTime(Instant updateTime) {
+    public void setUpdateTime(Timestamp updateTime) {
         this.updateTime = updateTime;
     }
 
     public String getCreateUser() {
-        return this.createUser;
-    }
-
-    public BpmIsmsL410 createUser(String createUser) {
-        this.setCreateUser(createUser);
-        return this;
+        return createUser;
     }
 
     public void setCreateUser(String createUser) {
         this.createUser = createUser;
     }
 
-    public Instant getCreateTime() {
-        return this.createTime;
+    public Timestamp getCreateTime() {
+        return createTime;
     }
 
-    public BpmIsmsL410 createTime(Instant createTime) {
-        this.setCreateTime(createTime);
-        return this;
-    }
-
-    public void setCreateTime(Instant createTime) {
+    public void setCreateTime(Timestamp createTime) {
         this.createTime = createTime;
     }
+
 
     // jhipster-needle-entity-add-getters-setters - JHipster will add getters and setters here
 

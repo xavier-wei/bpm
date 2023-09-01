@@ -11,23 +11,16 @@
             getAllTableauData();
          });
 
-        function checkIfFromMenu(){
-            const fullUrl = window.location.href;
-            let queryString = window.location.search;
-             // 去除?
-            queryString = queryString.substring(1);
-            let queryParams = queryString.split('&');
-            let paramValue = null;
-            queryParams.forEach(function(queryParam) {
-                var paramParts = queryParam.split('=');
-                if (paramParts[0] === 'tableauId') {
-                    paramValue = paramParts[1];
-                }
-            });
-             if (paramValue) {
-                 openTableau(paramValue)
-             }
-         }
+        function checkIfFromMenu() {
+            const path = window.location.pathname; // 获取URL路径部分，如 "/tableau_enter.action/BID_01_02"
+            const parts = path.split('/'); // 将路径按"/"分割为数组
+            const paramValue = parts[parts.length - 1]; // 获取数组中的最后一个部分，即 "BID_01_02"
+
+            if (paramValue) {
+                openTableau(paramValue);
+            }
+        }
+
 
         let ticket;
         //獲取tableau授權碼，不用再二次登入

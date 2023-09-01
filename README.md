@@ -29,7 +29,7 @@ Keycloak設定請依照開發環境進行替換，`/WEB-INF/keycloak-*.json` 對
 運行以下指令進行包版：
 
 ```bash
-mvn clean package -P internal
+mvn clean package
 ```
 
 ## 7. 登入設定

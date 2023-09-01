@@ -5,12 +5,12 @@ import tw.gov.pcc.domain.BpmIsmsL414;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.io.Serializable;
-import java.time.Instant;
-import java.util.Objects;
+import java.sql.Timestamp;
 
 /**
  * A DTO for the {@link BpmIsmsL414} entity.
  */
+
 public class BpmIsmsL414DTO implements Serializable {
 
     @Size(max = 50)
@@ -28,7 +28,7 @@ public class BpmIsmsL414DTO implements Serializable {
     private String decisionRole;
 
     @NotNull
-    private Instant applyDate;
+    private Timestamp applyDate;
 
     @NotNull
     @Size(max = 20)
@@ -73,14 +73,14 @@ public class BpmIsmsL414DTO implements Serializable {
     @Size(max = 1)
     private String selecteEdateType;
 
-    private Instant sdate;
+    private Timestamp sdate;
 
-    private Instant edate;
+    private Timestamp edate;
 
     @Size(max = 100)
     private String othereEdate;
 
-    private Instant delEnableDate;
+    private Timestamp delEnableDate;
 
     @Size(max = 100)
     private String sourceIp;
@@ -103,7 +103,7 @@ public class BpmIsmsL414DTO implements Serializable {
     @Size(max = 1)
     private String agreeType;
 
-    private Instant scheduleDate;
+    private Timestamp scheduleDate;
 
     @Size(max = 200)
     private String settingReason;
@@ -117,7 +117,7 @@ public class BpmIsmsL414DTO implements Serializable {
     @Size(max = 1000)
     private String firewallContent;
 
-    private Instant finishDatetime;
+    private Timestamp finishDatetime;
 
     @Size(max = 1)
     private String processInstanceStatus;
@@ -125,63 +125,15 @@ public class BpmIsmsL414DTO implements Serializable {
     @Size(max = 20)
     private String updateUser;
 
-    private Instant updateTime;
+    private Timestamp updateTime;
 
     @Size(max = 20)
     private String createUser;
 
-    private Instant createTime;
-    private String FormName;
+    private Timestamp createTime;
+    private String formName;
     private String signUnit;
     private String signer;
-
-    public BpmIsmsL414DTO() {
-    }
-
-    public BpmIsmsL414DTO(String formId, String signUnit, String signer, String processInstanceId, String taskId, String taskName, String decisionRole, Instant applyDate, String filEmpid, String filName, String filUnit, String appEmpid, String appName, String appUnit, String isSubmit, String isEnable, String enableTime, String otherEnableTime, String selecteEdateType, Instant sdate, Instant edate, String othereEdate, Instant delEnableDate, String sourceIp, String targetIp, String port, String isTcp, String isUdp, String instructions, String agreeType, Instant scheduleDate, String settingReason, String isExternalFirewall, String isInternalFirewall, String firewallContent, Instant finishDatetime, String processInstanceStatus, String updateUser, Instant updateTime, String createUser, Instant createTime, String formName) {
-        this.formId = formId;
-        this.processInstanceId = processInstanceId;
-        this.taskId = taskId;
-        this.taskName = taskName;
-        this.decisionRole = decisionRole;
-        this.applyDate = applyDate;
-        this.filEmpid = filEmpid;
-        this.filName = filName;
-        this.filUnit = filUnit;
-        this.appEmpid = appEmpid;
-        this.appName = appName;
-        this.appUnit = appUnit;
-        this.isSubmit = isSubmit;
-        this.isEnable = isEnable;
-        this.enableTime = enableTime;
-        this.otherEnableTime = otherEnableTime;
-        this.selecteEdateType = selecteEdateType;
-        this.sdate = sdate;
-        this.edate = edate;
-        this.othereEdate = othereEdate;
-        this.delEnableDate = delEnableDate;
-        this.sourceIp = sourceIp;
-        this.targetIp = targetIp;
-        this.port = port;
-        this.isTcp = isTcp;
-        this.isUdp = isUdp;
-        this.instructions = instructions;
-        this.agreeType = agreeType;
-        this.scheduleDate = scheduleDate;
-        this.settingReason = settingReason;
-        this.isExternalFirewall = isExternalFirewall;
-        this.isInternalFirewall = isInternalFirewall;
-        this.firewallContent = firewallContent;
-        this.finishDatetime = finishDatetime;
-        this.processInstanceStatus = processInstanceStatus;
-        this.updateUser = updateUser;
-        this.updateTime = updateTime;
-        this.createUser = createUser;
-        this.createTime = createTime;
-        FormName = formName;
-        this.signUnit = signUnit;
-        this.signer = signer;
-    }
 
     public String getFormId() {
         return formId;
@@ -223,11 +175,11 @@ public class BpmIsmsL414DTO implements Serializable {
         this.decisionRole = decisionRole;
     }
 
-    public Instant getApplyDate() {
+    public Timestamp getApplyDate() {
         return applyDate;
     }
 
-    public void setApplyDate(Instant applyDate) {
+    public void setApplyDate(Timestamp applyDate) {
         this.applyDate = applyDate;
     }
 
@@ -319,19 +271,19 @@ public class BpmIsmsL414DTO implements Serializable {
         this.selecteEdateType = selecteEdateType;
     }
 
-    public Instant getSdate() {
+    public Timestamp getSdate() {
         return sdate;
     }
 
-    public void setSdate(Instant sdate) {
+    public void setSdate(Timestamp sdate) {
         this.sdate = sdate;
     }
 
-    public Instant getEdate() {
+    public Timestamp getEdate() {
         return edate;
     }
 
-    public void setEdate(Instant edate) {
+    public void setEdate(Timestamp edate) {
         this.edate = edate;
     }
 
@@ -343,11 +295,11 @@ public class BpmIsmsL414DTO implements Serializable {
         this.othereEdate = othereEdate;
     }
 
-    public Instant getDelEnableDate() {
+    public Timestamp getDelEnableDate() {
         return delEnableDate;
     }
 
-    public void setDelEnableDate(Instant delEnableDate) {
+    public void setDelEnableDate(Timestamp delEnableDate) {
         this.delEnableDate = delEnableDate;
     }
 
@@ -407,11 +359,11 @@ public class BpmIsmsL414DTO implements Serializable {
         this.agreeType = agreeType;
     }
 
-    public Instant getScheduleDate() {
+    public Timestamp getScheduleDate() {
         return scheduleDate;
     }
 
-    public void setScheduleDate(Instant scheduleDate) {
+    public void setScheduleDate(Timestamp scheduleDate) {
         this.scheduleDate = scheduleDate;
     }
 
@@ -447,11 +399,11 @@ public class BpmIsmsL414DTO implements Serializable {
         this.firewallContent = firewallContent;
     }
 
-    public Instant getFinishDatetime() {
+    public Timestamp getFinishDatetime() {
         return finishDatetime;
     }
 
-    public void setFinishDatetime(Instant finishDatetime) {
+    public void setFinishDatetime(Timestamp finishDatetime) {
         this.finishDatetime = finishDatetime;
     }
 
@@ -471,11 +423,11 @@ public class BpmIsmsL414DTO implements Serializable {
         this.updateUser = updateUser;
     }
 
-    public Instant getUpdateTime() {
+    public Timestamp getUpdateTime() {
         return updateTime;
     }
 
-    public void setUpdateTime(Instant updateTime) {
+    public void setUpdateTime(Timestamp updateTime) {
         this.updateTime = updateTime;
     }
 
@@ -487,20 +439,20 @@ public class BpmIsmsL414DTO implements Serializable {
         this.createUser = createUser;
     }
 
-    public Instant getCreateTime() {
+    public Timestamp getCreateTime() {
         return createTime;
     }
 
-    public void setCreateTime(Instant createTime) {
+    public void setCreateTime(Timestamp createTime) {
         this.createTime = createTime;
     }
 
     public String getFormName() {
-        return FormName;
+        return formName;
     }
 
     public void setFormName(String formName) {
-        FormName = formName;
+        this.formName = formName;
     }
 
     public String getSignUnit() {
@@ -520,63 +472,50 @@ public class BpmIsmsL414DTO implements Serializable {
     }
 
     @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        BpmIsmsL414DTO that = (BpmIsmsL414DTO) o;
-        return Objects.equals(formId, that.formId) && Objects.equals(processInstanceId, that.processInstanceId) && Objects.equals(taskId, that.taskId) && Objects.equals(taskName, that.taskName) && Objects.equals(decisionRole, that.decisionRole) && Objects.equals(applyDate, that.applyDate) && Objects.equals(filEmpid, that.filEmpid) && Objects.equals(filName, that.filName) && Objects.equals(filUnit, that.filUnit) && Objects.equals(appEmpid, that.appEmpid) && Objects.equals(appName, that.appName) && Objects.equals(appUnit, that.appUnit) && Objects.equals(isSubmit, that.isSubmit) && Objects.equals(isEnable, that.isEnable) && Objects.equals(enableTime, that.enableTime) && Objects.equals(otherEnableTime, that.otherEnableTime) && Objects.equals(selecteEdateType, that.selecteEdateType) && Objects.equals(sdate, that.sdate) && Objects.equals(edate, that.edate) && Objects.equals(othereEdate, that.othereEdate) && Objects.equals(delEnableDate, that.delEnableDate) && Objects.equals(sourceIp, that.sourceIp) && Objects.equals(targetIp, that.targetIp) && Objects.equals(port, that.port) && Objects.equals(isTcp, that.isTcp) && Objects.equals(isUdp, that.isUdp) && Objects.equals(instructions, that.instructions) && Objects.equals(agreeType, that.agreeType) && Objects.equals(scheduleDate, that.scheduleDate) && Objects.equals(settingReason, that.settingReason) && Objects.equals(isExternalFirewall, that.isExternalFirewall) && Objects.equals(isInternalFirewall, that.isInternalFirewall) && Objects.equals(firewallContent, that.firewallContent) && Objects.equals(finishDatetime, that.finishDatetime) && Objects.equals(processInstanceStatus, that.processInstanceStatus) && Objects.equals(updateUser, that.updateUser) && Objects.equals(updateTime, that.updateTime) && Objects.equals(createUser, that.createUser) && Objects.equals(createTime, that.createTime) && Objects.equals(FormName, that.FormName) && Objects.equals(signUnit, that.signUnit) && Objects.equals(signer, that.signer);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(formId, processInstanceId, taskId, taskName, decisionRole, applyDate, filEmpid, filName, filUnit, appEmpid, appName, appUnit, isSubmit, isEnable, enableTime, otherEnableTime, selecteEdateType, sdate, edate, othereEdate, delEnableDate, sourceIp, targetIp, port, isTcp, isUdp, instructions, agreeType, scheduleDate, settingReason, isExternalFirewall, isInternalFirewall, firewallContent, finishDatetime, processInstanceStatus, updateUser, updateTime, createUser, createTime, FormName, signUnit, signer);
-    }
-
-    @Override
     public String toString() {
         return "BpmIsmsL414DTO{" +
-                "formId='" + formId + '\'' +
-                ", processInstanceId='" + processInstanceId + '\'' +
-                ", taskId='" + taskId + '\'' +
-                ", taskName='" + taskName + '\'' +
-                ", decisionRole='" + decisionRole + '\'' +
-                ", applyDate=" + applyDate +
-                ", filEmpid='" + filEmpid + '\'' +
-                ", filName='" + filName + '\'' +
-                ", filUnit='" + filUnit + '\'' +
-                ", appEmpid='" + appEmpid + '\'' +
-                ", appName='" + appName + '\'' +
-                ", appUnit='" + appUnit + '\'' +
-                ", isSubmit='" + isSubmit + '\'' +
-                ", isEnable='" + isEnable + '\'' +
-                ", enableTime='" + enableTime + '\'' +
-                ", otherEnableTime='" + otherEnableTime + '\'' +
-                ", selecteEdateType='" + selecteEdateType + '\'' +
-                ", sdate=" + sdate +
-                ", edate=" + edate +
-                ", othereEdate='" + othereEdate + '\'' +
-                ", delEnableDate=" + delEnableDate +
-                ", sourceIp='" + sourceIp + '\'' +
-                ", targetIp='" + targetIp + '\'' +
-                ", port='" + port + '\'' +
-                ", isTcp='" + isTcp + '\'' +
-                ", isUdp='" + isUdp + '\'' +
-                ", instructions='" + instructions + '\'' +
-                ", agreeType='" + agreeType + '\'' +
-                ", scheduleDate=" + scheduleDate +
-                ", settingReason='" + settingReason + '\'' +
-                ", isExternalFirewall='" + isExternalFirewall + '\'' +
-                ", isInternalFirewall='" + isInternalFirewall + '\'' +
-                ", firewallContent='" + firewallContent + '\'' +
-                ", finishDatetime=" + finishDatetime +
-                ", processInstanceStatus='" + processInstanceStatus + '\'' +
-                ", updateUser='" + updateUser + '\'' +
-                ", updateTime=" + updateTime +
-                ", createUser='" + createUser + '\'' +
-                ", createTime=" + createTime +
-                ", FormName='" + FormName + '\'' +
-                ", signUnit='" + signUnit + '\'' +
-                ", signer='" + signer + '\'' +
-                '}';
+            "formId='" + formId + '\'' +
+            ", processInstanceId='" + processInstanceId + '\'' +
+            ", taskId='" + taskId + '\'' +
+            ", taskName='" + taskName + '\'' +
+            ", decisionRole='" + decisionRole + '\'' +
+            ", applyDate=" + applyDate +
+            ", filEmpid='" + filEmpid + '\'' +
+            ", filName='" + filName + '\'' +
+            ", filUnit='" + filUnit + '\'' +
+            ", appEmpid='" + appEmpid + '\'' +
+            ", appName='" + appName + '\'' +
+            ", appUnit='" + appUnit + '\'' +
+            ", isSubmit='" + isSubmit + '\'' +
+            ", isEnable='" + isEnable + '\'' +
+            ", enableTime='" + enableTime + '\'' +
+            ", otherEnableTime='" + otherEnableTime + '\'' +
+            ", selecteEdateType='" + selecteEdateType + '\'' +
+            ", sdate=" + sdate +
+            ", edate=" + edate +
+            ", othereEdate='" + othereEdate + '\'' +
+            ", delEnableDate=" + delEnableDate +
+            ", sourceIp='" + sourceIp + '\'' +
+            ", targetIp='" + targetIp + '\'' +
+            ", port='" + port + '\'' +
+            ", isTcp='" + isTcp + '\'' +
+            ", isUdp='" + isUdp + '\'' +
+            ", instructions='" + instructions + '\'' +
+            ", agreeType='" + agreeType + '\'' +
+            ", scheduleDate=" + scheduleDate +
+            ", settingReason='" + settingReason + '\'' +
+            ", isExternalFirewall='" + isExternalFirewall + '\'' +
+            ", isInternalFirewall='" + isInternalFirewall + '\'' +
+            ", firewallContent='" + firewallContent + '\'' +
+            ", finishDatetime=" + finishDatetime +
+            ", processInstanceStatus='" + processInstanceStatus + '\'' +
+            ", updateUser='" + updateUser + '\'' +
+            ", updateTime=" + updateTime +
+            ", createUser='" + createUser + '\'' +
+            ", createTime=" + createTime +
+            ", FormName='" + formName + '\'' +
+            ", signUnit='" + signUnit + '\'' +
+            ", signer='" + signer + '\'' +
+            '}';
     }
 }

@@ -5,8 +5,8 @@ public enum SingerEnum {
     DIRECTOR("主管簽核","directorDecision"), // 0、1、2
     INFO_GROUP("資推小組承辦人員","infoGroupDecision"); // 0、1
 
-    private String name;
-    private String decision;
+    private final String name;
+    private final String decision;
     SingerEnum(String name,String decision) {
         this.name = name;
         this.decision = decision;

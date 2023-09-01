@@ -4,7 +4,9 @@ import javax.persistence.Column;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.io.Serializable;
-import java.time.Instant;
+import java.sql.Timestamp;
+import java.util.HashMap;
+import java.util.List;
 import java.util.Objects;
 
 /**
@@ -20,7 +22,7 @@ public class BpmIsmsL410DTO implements Serializable {
     private String processInstanceId;
 
     @NotNull
-    private Instant applyDate;
+    private Timestamp applyDate;
 
     @NotNull
     @Size(max = 20)
@@ -70,7 +72,7 @@ public class BpmIsmsL410DTO implements Serializable {
     @Size(max = 1)
     private String isEnableDate;
 
-    private Instant enableDate;
+    private Timestamp enableDate;
 
     @Size(max = 1)
     private String isOther;
@@ -93,7 +95,7 @@ public class BpmIsmsL410DTO implements Serializable {
     @Size(max = 20)
     private String hrSysStatus;
 
-    private Instant hrSysEnableDate;
+    private Timestamp hrSysEnableDate;
 
     @Size(max = 20)
     private String hrSysAdmName;
@@ -116,7 +118,7 @@ public class BpmIsmsL410DTO implements Serializable {
     @Size(max = 20)
     private String adSysStatus;
 
-    private Instant adSysEnableDate;
+    private Timestamp adSysEnableDate;
     @Size(max = 20)
     private String adSysAdmName;
     @Size(max = 1)
@@ -130,7 +132,7 @@ public class BpmIsmsL410DTO implements Serializable {
 
     private String meetingRoomStatus;
     @Column(name = "meeting_room_enable_date")
-    private Instant meetingRoomEnableDate;
+    private Timestamp meetingRoomEnableDate;
 
     @Size(max = 20)
     private String meetingRoomAdmName;
@@ -153,7 +155,7 @@ public class BpmIsmsL410DTO implements Serializable {
     @Size(max = 20)
     private String odSysStatus;
 
-    private Instant odSysEnableDate;
+    private Timestamp odSysEnableDate;
 
     @Size(max = 20)
     private String odSysAdmName;
@@ -182,7 +184,7 @@ public class BpmIsmsL410DTO implements Serializable {
     @Size(max = 20)
     private String emailSysStatus;
 
-    private Instant emailSysEnableDate;
+    private Timestamp emailSysEnableDate;
 
     @Size(max = 20)
     private String emailSysAdmName;
@@ -217,7 +219,7 @@ public class BpmIsmsL410DTO implements Serializable {
     @Size(max = 20)
     private String webSiteStatus;
 
-    private Instant webSiteEnableDate;
+    private Timestamp webSiteEnableDate;
 
     @Size(max = 20)
     private String webSiteAdmName;
@@ -240,7 +242,7 @@ public class BpmIsmsL410DTO implements Serializable {
     @Size(max = 20)
     private String pccPisStatus;
 
-    private Instant pccPisEnableDate;
+    private Timestamp pccPisEnableDate;
 
     @Size(max = 20)
     private String pccPisAdmName;
@@ -266,7 +268,7 @@ public class BpmIsmsL410DTO implements Serializable {
     @Size(max = 20)
     private String otherSys1Status;
 
-    private Instant otherSys1EnableDate;
+    private Timestamp otherSys1EnableDate;
 
     @Size(max = 20)
     private String otherSys1AdmName;
@@ -292,7 +294,7 @@ public class BpmIsmsL410DTO implements Serializable {
     @Size(max = 20)
     private String otherSys2Status;
 
-    private Instant otherSys2EnableDate;
+    private Timestamp otherSys2EnableDate;
 
     @Size(max = 20)
     private String otherSys2AdmName;
@@ -318,7 +320,7 @@ public class BpmIsmsL410DTO implements Serializable {
     @Size(max = 20)
     private String otherSys3Status;
 
-    private Instant otherSys3EnableDate;
+    private Timestamp otherSys3EnableDate;
 
     @Size(max = 20)
     private String otherSys3AdmName;
@@ -329,18 +331,20 @@ public class BpmIsmsL410DTO implements Serializable {
     @Size(max = 20)
     private String updateUser;
 
-    private Instant updateTime;
+    private Timestamp updateTime;
 
     @NotNull
     @Size(max = 20)
     private String createUser;
 
     @NotNull
-    private Instant createTime;
+    private Timestamp createTime;
 
-    private String FormName;
+    private String formName;
     private String signUnit;
     private String signer;
+
+    private List<HashMap<String, HashMap<String, Object>>> variables;
 
     public String getFormId() {
         return formId;
@@ -358,11 +362,11 @@ public class BpmIsmsL410DTO implements Serializable {
         this.processInstanceId = processInstanceId;
     }
 
-    public Instant getApplyDate() {
+    public Timestamp getApplyDate() {
         return applyDate;
     }
 
-    public void setApplyDate(Instant applyDate) {
+    public void setApplyDate(Timestamp applyDate) {
         this.applyDate = applyDate;
     }
 
@@ -470,11 +474,11 @@ public class BpmIsmsL410DTO implements Serializable {
         this.isEnableDate = isEnableDate;
     }
 
-    public Instant getEnableDate() {
+    public Timestamp getEnableDate() {
         return enableDate;
     }
 
-    public void setEnableDate(Instant enableDate) {
+    public void setEnableDate(Timestamp enableDate) {
         this.enableDate = enableDate;
     }
 
@@ -534,11 +538,11 @@ public class BpmIsmsL410DTO implements Serializable {
         this.hrSysStatus = hrSysStatus;
     }
 
-    public Instant getHrSysEnableDate() {
+    public Timestamp getHrSysEnableDate() {
         return hrSysEnableDate;
     }
 
-    public void setHrSysEnableDate(Instant hrSysEnableDate) {
+    public void setHrSysEnableDate(Timestamp hrSysEnableDate) {
         this.hrSysEnableDate = hrSysEnableDate;
     }
 
@@ -598,11 +602,11 @@ public class BpmIsmsL410DTO implements Serializable {
         this.adSysStatus = adSysStatus;
     }
 
-    public Instant getAdSysEnableDate() {
+    public Timestamp getAdSysEnableDate() {
         return adSysEnableDate;
     }
 
-    public void setAdSysEnableDate(Instant adSysEnableDate) {
+    public void setAdSysEnableDate(Timestamp adSysEnableDate) {
         this.adSysEnableDate = adSysEnableDate;
     }
 
@@ -654,11 +658,11 @@ public class BpmIsmsL410DTO implements Serializable {
         this.meetingRoomStatus = meetingRoomStatus;
     }
 
-    public Instant getMeetingRoomEnableDate() {
+    public Timestamp getMeetingRoomEnableDate() {
         return meetingRoomEnableDate;
     }
 
-    public void setMeetingRoomEnableDate(Instant meetingRoomEnableDate) {
+    public void setMeetingRoomEnableDate(Timestamp meetingRoomEnableDate) {
         this.meetingRoomEnableDate = meetingRoomEnableDate;
     }
 
@@ -718,11 +722,11 @@ public class BpmIsmsL410DTO implements Serializable {
         this.odSysStatus = odSysStatus;
     }
 
-    public Instant getOdSysEnableDate() {
+    public Timestamp getOdSysEnableDate() {
         return odSysEnableDate;
     }
 
-    public void setOdSysEnableDate(Instant odSysEnableDate) {
+    public void setOdSysEnableDate(Timestamp odSysEnableDate) {
         this.odSysEnableDate = odSysEnableDate;
     }
 
@@ -798,11 +802,11 @@ public class BpmIsmsL410DTO implements Serializable {
         this.emailSysStatus = emailSysStatus;
     }
 
-    public Instant getEmailSysEnableDate() {
+    public Timestamp getEmailSysEnableDate() {
         return emailSysEnableDate;
     }
 
-    public void setEmailSysEnableDate(Instant emailSysEnableDate) {
+    public void setEmailSysEnableDate(Timestamp emailSysEnableDate) {
         this.emailSysEnableDate = emailSysEnableDate;
     }
 
@@ -894,11 +898,11 @@ public class BpmIsmsL410DTO implements Serializable {
         this.webSiteStatus = webSiteStatus;
     }
 
-    public Instant getWebSiteEnableDate() {
+    public Timestamp getWebSiteEnableDate() {
         return webSiteEnableDate;
     }
 
-    public void setWebSiteEnableDate(Instant webSiteEnableDate) {
+    public void setWebSiteEnableDate(Timestamp webSiteEnableDate) {
         this.webSiteEnableDate = webSiteEnableDate;
     }
 
@@ -958,11 +962,11 @@ public class BpmIsmsL410DTO implements Serializable {
         this.pccPisStatus = pccPisStatus;
     }
 
-    public Instant getPccPisEnableDate() {
+    public Timestamp getPccPisEnableDate() {
         return pccPisEnableDate;
     }
 
-    public void setPccPisEnableDate(Instant pccPisEnableDate) {
+    public void setPccPisEnableDate(Timestamp pccPisEnableDate) {
         this.pccPisEnableDate = pccPisEnableDate;
     }
 
@@ -1030,11 +1034,11 @@ public class BpmIsmsL410DTO implements Serializable {
         this.otherSys1Status = otherSys1Status;
     }
 
-    public Instant getOtherSys1EnableDate() {
+    public Timestamp getOtherSys1EnableDate() {
         return otherSys1EnableDate;
     }
 
-    public void setOtherSys1EnableDate(Instant otherSys1EnableDate) {
+    public void setOtherSys1EnableDate(Timestamp otherSys1EnableDate) {
         this.otherSys1EnableDate = otherSys1EnableDate;
     }
 
@@ -1102,11 +1106,11 @@ public class BpmIsmsL410DTO implements Serializable {
         this.otherSys2Status = otherSys2Status;
     }
 
-    public Instant getOtherSys2EnableDate() {
+    public Timestamp getOtherSys2EnableDate() {
         return otherSys2EnableDate;
     }
 
-    public void setOtherSys2EnableDate(Instant otherSys2EnableDate) {
+    public void setOtherSys2EnableDate(Timestamp otherSys2EnableDate) {
         this.otherSys2EnableDate = otherSys2EnableDate;
     }
 
@@ -1174,11 +1178,11 @@ public class BpmIsmsL410DTO implements Serializable {
         this.otherSys3Status = otherSys3Status;
     }
 
-    public Instant getOtherSys3EnableDate() {
+    public Timestamp getOtherSys3EnableDate() {
         return otherSys3EnableDate;
     }
 
-    public void setOtherSys3EnableDate(Instant otherSys3EnableDate) {
+    public void setOtherSys3EnableDate(Timestamp otherSys3EnableDate) {
         this.otherSys3EnableDate = otherSys3EnableDate;
     }
 
@@ -1206,11 +1210,11 @@ public class BpmIsmsL410DTO implements Serializable {
         this.updateUser = updateUser;
     }
 
-    public Instant getUpdateTime() {
+    public Timestamp getUpdateTime() {
         return updateTime;
     }
 
-    public void setUpdateTime(Instant updateTime) {
+    public void setUpdateTime(Timestamp updateTime) {
         this.updateTime = updateTime;
     }
 
@@ -1222,20 +1226,20 @@ public class BpmIsmsL410DTO implements Serializable {
         this.createUser = createUser;
     }
 
-    public Instant getCreateTime() {
+    public Timestamp getCreateTime() {
         return createTime;
     }
 
-    public void setCreateTime(Instant createTime) {
+    public void setCreateTime(Timestamp createTime) {
         this.createTime = createTime;
     }
 
     public String getFormName() {
-        return FormName;
+        return formName;
     }
 
     public void setFormName(String formName) {
-        FormName = formName;
+        this.formName = formName;
     }
 
     public String getSignUnit() {
@@ -1252,6 +1256,14 @@ public class BpmIsmsL410DTO implements Serializable {
 
     public void setSigner(String signer) {
         this.signer = signer;
+    }
+
+    public List<HashMap<String, HashMap<String, Object>>> getVariables() {
+        return variables;
+    }
+
+    public void setVariables(List<HashMap<String, HashMap<String, Object>>> variables) {
+        this.variables = variables;
     }
 
     @Override
@@ -1276,6 +1288,7 @@ public class BpmIsmsL410DTO implements Serializable {
     }
 
     // prettier-ignore
+
     @Override
     public String toString() {
         return "BpmIsmsL410DTO{" +
@@ -1390,9 +1403,10 @@ public class BpmIsmsL410DTO implements Serializable {
             ", updateTime=" + updateTime +
             ", createUser='" + createUser + '\'' +
             ", createTime=" + createTime +
-            ", FormName='" + FormName + '\'' +
+            ", formName='" + formName + '\'' +
             ", signUnit='" + signUnit + '\'' +
             ", signer='" + signer + '\'' +
+            ", variables=" + variables +
             '}';
     }
 }

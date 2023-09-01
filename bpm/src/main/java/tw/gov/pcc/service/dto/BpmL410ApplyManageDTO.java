@@ -41,7 +41,8 @@ public class BpmL410ApplyManageDTO implements Serializable {
 
     @Size(max = 1)
     private String isWebSiteOther;
-
+    @Size(max = 30)
+    private String otherReason;
     @Size(max = 1)
     private String admUnit;
 
@@ -59,13 +60,20 @@ public class BpmL410ApplyManageDTO implements Serializable {
     @Size(max = 20)
     private String otherSysAccount;
 
+    @Size(max = 1)
+    private String isColon;
+    @Size(max = 1)
+    private String applyVersion;
+    @Size(max = 1)
+    private String permissionsVersion;
+
     @NotNull
     @Size(max = 20)
     private String createUser;
 
     @NotNull
     private Instant createTime;
-    private String otherReason;
+
 
     public String getSystemApply() {
         return systemApply;
@@ -155,6 +163,14 @@ public class BpmL410ApplyManageDTO implements Serializable {
         this.isWebSiteOther = isWebSiteOther;
     }
 
+    public String getOtherReason() {
+        return otherReason;
+    }
+
+    public void setOtherReason(String otherReason) {
+        this.otherReason = otherReason;
+    }
+
     public String getAdmUnit() {
         return admUnit;
     }
@@ -203,6 +219,30 @@ public class BpmL410ApplyManageDTO implements Serializable {
         this.otherSysAccount = otherSysAccount;
     }
 
+    public String getIsColon() {
+        return isColon;
+    }
+
+    public void setIsColon(String isColon) {
+        this.isColon = isColon;
+    }
+
+    public String getApplyVersion() {
+        return applyVersion;
+    }
+
+    public void setApplyVersion(String applyVersion) {
+        this.applyVersion = applyVersion;
+    }
+
+    public String getPermissionsVersion() {
+        return permissionsVersion;
+    }
+
+    public void setPermissionsVersion(String permissionsVersion) {
+        this.permissionsVersion = permissionsVersion;
+    }
+
     public String getCreateUser() {
         return createUser;
     }
@@ -210,6 +250,8 @@ public class BpmL410ApplyManageDTO implements Serializable {
     public void setCreateUser(String createUser) {
         this.createUser = createUser;
     }
+
+
 
     public Instant getCreateTime() {
         return createTime;
@@ -219,13 +261,7 @@ public class BpmL410ApplyManageDTO implements Serializable {
         this.createTime = createTime;
     }
 
-    public String getOtherReason() {
-        return otherReason;
-    }
 
-    public void setOtherReason(String otherReason) {
-        this.otherReason = otherReason;
-    }
 
     @Override
     public boolean equals(Object o) {
@@ -249,31 +285,32 @@ public class BpmL410ApplyManageDTO implements Serializable {
     }
 
     // prettier-ignore
-
-
     @Override
     public String toString() {
         return "BpmL410ApplyManageDTO{" +
-            "systemApply='" + systemApply + '\'' +
-            ", systemApplyName='" + systemApplyName + '\'' +
-            ", checkbox='" + checkbox + '\'' +
-            ", sys='" + sys + '\'' +
-            ", systemApplyInput='" + systemApplyInput + '\'' +
-            ", sysChange='" + sysChange + '\'' +
-            ", emailApply1='" + emailApply1 + '\'' +
-            ", emailApply2='" + emailApply2 + '\'' +
-            ", isUnitAdm='" + isUnitAdm + '\'' +
-            ", isUnitDataMgr='" + isUnitDataMgr + '\'' +
-            ", isWebSiteOther='" + isWebSiteOther + '\'' +
-            ", admUnit='" + admUnit + '\'' +
-            ", admStatus='" + admStatus + '\'' +
-            ", admEnableDate=" + admEnableDate +
-            ", admName='" + admName + '\'' +
-            ", otherSys='" + otherSys + '\'' +
-            ", otherSysAccount='" + otherSysAccount + '\'' +
-            ", createUser='" + createUser + '\'' +
-            ", createTime=" + createTime +
-            ", otherReason='" + otherReason + '\'' +
-            '}';
+                "systemApply='" + systemApply + '\'' +
+                ", systemApplyName='" + systemApplyName + '\'' +
+                ", checkbox='" + checkbox + '\'' +
+                ", sys='" + sys + '\'' +
+                ", systemApplyInput='" + systemApplyInput + '\'' +
+                ", sysChange='" + sysChange + '\'' +
+                ", emailApply1='" + emailApply1 + '\'' +
+                ", emailApply2='" + emailApply2 + '\'' +
+                ", isUnitAdm='" + isUnitAdm + '\'' +
+                ", isUnitDataMgr='" + isUnitDataMgr + '\'' +
+                ", isWebSiteOther='" + isWebSiteOther + '\'' +
+                ", otherReason='" + otherReason + '\'' +
+                ", admUnit='" + admUnit + '\'' +
+                ", admStatus='" + admStatus + '\'' +
+                ", admEnableDate=" + admEnableDate +
+                ", admName='" + admName + '\'' +
+                ", otherSys='" + otherSys + '\'' +
+                ", otherSysAccount='" + otherSysAccount + '\'' +
+                ", isColon='" + isColon + '\'' +
+                ", applyVersion='" + applyVersion + '\'' +
+                ", permissionsVersion='" + permissionsVersion + '\'' +
+                ", createUser='" + createUser + '\'' +
+                ", createTime=" + createTime +
+                '}';
     }
 }

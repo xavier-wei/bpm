@@ -1,6 +1,7 @@
 package tw.gov.pcc.eip.tableau.controllers;
 
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -89,12 +90,13 @@ public class TableauController extends BaseController {
     }
 
 
+
     /**
      * 取得點選menu轉導的頁面，用來window.open相對應的tableau url
      */
-    @RequestMapping("/tableau_enter.action")
+    @RequestMapping("/tableau_enter.action/{tableauId}")
     public ModelAndView showTableauPage(
-//            @RequestParam(name = "tableauId") String tableauId
+            @PathVariable("tableauId") String tableauId
     ) {
         log.info("===由menu跳轉到tableau頁面===");
         return new ModelAndView(QUERY_PAGE);

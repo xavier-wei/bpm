@@ -28,6 +28,7 @@ public class CompleteReqDTO {
     @NotNull
     private BpmIsmsL414DTO bpmIsmsL414DTO;
 
+    private HashMap<String, String> form;
     private Boolean ipt; //用來判斷登入者使否為InfoTester，判斷是否儲存資推小組填寫的欄位
 
     // 科長簽核：  "chiefDecision": "0"(不同意) || "1" (同意) || "2"(補件)
@@ -39,7 +40,7 @@ public class CompleteReqDTO {
     }
 
 
-    public CompleteReqDTO(String signer, String signerId, String signUnit,Boolean ipt, String processInstanceId, String taskId, String taskName, HashMap<String, Object> variables, BpmIsmsL414DTO bpmIsmsL414DTO,String directions,String opinion) {
+    public CompleteReqDTO(String signer, String signerId, String signUnit, Boolean ipt, String processInstanceId, String taskId, String taskName, HashMap<String, Object> variables, BpmIsmsL414DTO bpmIsmsL414DTO, String directions, String opinion, HashMap<String, String> form) {
         this.signer = signer;
         this.signerId = signerId;
         this.signUnit = signUnit;
@@ -51,6 +52,7 @@ public class CompleteReqDTO {
         this.directions = directions;
         this.opinion = opinion;
         this.ipt = ipt;
+        this.form = form;
     }
 
     public String getSigner() {
@@ -169,5 +171,13 @@ public class CompleteReqDTO {
                 ", bpmIsmsL414DTO=" + bpmIsmsL414DTO +
                 ", ipt=" + ipt +
                 '}';
+    }
+
+    public HashMap<String, String> getForm() {
+        return form;
+    }
+
+    public void setForm(HashMap<String, String> form) {
+        this.form = form;
     }
 }
