@@ -200,6 +200,7 @@ public class FrameworkLogUtil {
                 userData.setApFunctionName(StringUtils.EMPTY);
                 userData.setApFunctionCode(StringUtils.EMPTY);
                 userData.setDeptId(StringUtils.EMPTY);
+                userData.setDeptName(StringUtils.EMPTY);
                 userData.setLoginIP(StringUtils.defaultString(HttpUtil.getClientIP(HttpHelper.getHttpRequest())));
                 userData.setUserId("SYS");
                 userData.setUserName("SYS");

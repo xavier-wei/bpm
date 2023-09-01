@@ -121,11 +121,20 @@ public class Eip03w030Service {
         mixCase.setClsDt(km.getClsDt()); //結案日期
         mixCase.setCreDept(deptsDao.findByPk(km.getCreDept()).getDept_name());
         mixCase.setCreUser(usersDao.selectByKey(km.getCreUser()).getUser_name());
-        mixCase.setCreDt(km.getCreDt() == null? "": km.getCreDt().format(fmt).replaceAll("-",""));
-        mixCase.setUpdDept(deptsDao.findByPk(km.getUpdDept()).getDept_name());
-        mixCase.setRptUpdUser(usersDao.selectByKey(km.getUpdUser()).getUser_name());
-        mixCase.setUpdDt(km.getUpdDt() == null? "": km.getUpdDt().format(fmt).replaceAll("-",""));
-
+//        mixCase.setCreDt(km.getCreDt() == null? "": km.getCreDt().format(fmt).replaceAll("-",""));
+        String creDt = DateUtility.parseLocalDateTimeToChineseDateTime(km.getCreDt(),true);
+        creDt = DateUtility.formatChineseDateTimeString(creDt,false);
+        mixCase.setCreDt(creDt);
+//        mixCase.setUpdDept(deptsDao.findByPk(km.getUpdDept()).getDept_name());
+//        mixCase.setRptUpdUser(usersDao.selectByKey(km.getUpdUser()).getUser_name());
+//        mixCase.setUpdDt(km.getUpdDt() == null? "": km.getUpdDt().format(fmt).replaceAll("-",""));
+        if (km.getUpdDt() != null){
+            mixCase.setUpdDept(deptsDao.findByPk(km.getUpdDept()).getDept_name());
+            mixCase.setUpdUser(usersDao.selectByKey(km.getUpdUser()).getUser_name());
+            String updDt = DateUtility.parseLocalDateTimeToChineseDateTime(km.getUpdDt(),true);
+            updDt = DateUtility.formatChineseDateTimeString(updDt,false);
+            mixCase.setUpdDt(updDt);
+        }
         List<KeepTrkDtl> kdList = keepTrkDtlDao.selectDataByTrkIDAndTrkObj(caseData.getSelectedTrkID(),"");
         List<Eipcode> trkStsList = eipcodeDao.findByCodeKind("TRKPRCSTS");
 

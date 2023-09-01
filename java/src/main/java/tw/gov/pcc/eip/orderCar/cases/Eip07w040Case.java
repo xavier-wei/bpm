@@ -154,7 +154,7 @@ public class Eip07w040Case implements Serializable {
 	private String status;
 	
 	private List<CarBooking>Reconfime_mk2List;
-	
 
-	
+	private String usingTimeList; 
+
 }

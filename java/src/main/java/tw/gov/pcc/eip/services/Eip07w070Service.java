@@ -30,6 +30,8 @@ public class Eip07w070Service {
 	private CarBookingDao carBookingDao;
 	@Autowired
 	private CarBaseDao carBaseDao;
+	@Autowired
+	private TimeConversionService timeConversionService;
 	
 	public void getCarno(Eip07w070Case caseData) {
 		List<CarBase>carnoList = carBaseDao.getAllData();
@@ -48,6 +50,11 @@ public class Eip07w070Service {
 		cb.setUsing_date_e(caseData.getUsing_date_e());
 		List<CarBooking> list = carBookingDao.getEip07w070ReportData(cb);
 		if(CollectionUtils.isNotEmpty(list)) {
+			for(CarBooking car : list) {
+				String [] time = timeConversionService.timeStringToBeginEndTime(car.getUsing());
+				car.setUsing_date_s(time[0]);
+				car.setUsing_date_e(time[1]);
+			}
 			caseData.setDataList(list);
 		}else {
 			caseData.setDataList(null);
@@ -68,7 +75,6 @@ public class Eip07w070Service {
 
 		Eip07w070l00 report = new Eip07w070l00();
 		report.createPdf(caseData);
-
 		return report.getOutputStream();
 		
 	}

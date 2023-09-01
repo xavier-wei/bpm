@@ -83,7 +83,7 @@ public class Eip08w060l00 extends PdfReportBase {
 	private void printSinglePage(Eip08w060Case caseData) throws DocumentException {
 
 		int totalRow = 35;
-		int FooterROW=24;
+		int FooterROW=26;
 		int applyTp ="P".equals(caseData.getApplyTpNm().substring(0,1))?0:3;
 		double dateSize=0;//算memo大小
 		int number =0;//算項數
@@ -102,7 +102,12 @@ public class Eip08w060l00 extends PdfReportBase {
 		String totalPag = dateSize<11?"01":"02";
 		addHeader(caseData,totalPag);
 		for (Eip08w060Case row : caseData.getEip08w060CaseList()) {
-			addRow(row,++number);
+			if (number==caseData.getEip08w060CaseList().size()-1){
+				number=0;
+			}else{
+				++number;
+			}
+			addRow(row,number);
 		}
 		if ("01".equals(totalPag)){
 			addNewRow((int) (totalRow-FooterROW-dateSize+applyTp-caseData.getEip08w060CaseList().size()));
@@ -156,7 +161,13 @@ public class Eip08w060l00 extends PdfReportBase {
 	 */
 	private void addRow(Eip08w060Case row,int number) {
 		addCell(table, COL1, 1, "", 0, 0, Element.ALIGN_CENTER);
-		addCellAssignVAlignment(table, COL2, 1, String.valueOf(number), SIZE_12, 0.5F, Element.ALIGN_CENTER, MIDDLE);
+		if (number==0){
+			addCellAssignVAlignment(table, COL2, 1, "", SIZE_12, 0.5F, Element.ALIGN_CENTER, MIDDLE);
+		}else {
+			addCellAssignVAlignment(table, COL2, 1, String.valueOf(number), SIZE_12, 0.5F, Element.ALIGN_CENTER, MIDDLE);
+		}
+
+
 		addCellAssignVAlignment(table, COL3, 1,row.getItem(), SIZE_12, 0.5F, Element.ALIGN_CENTER, MIDDLE);
 		addCellAssignVAlignment(table, COL4, 1,row.getDesc_memo(), SIZE_12, 0.5F, Element.ALIGN_LEFT, MIDDLE);
 		addCellAssignVAlignment(table, COL5, 1,row.getCnt(), SIZE_12, 0.5F, Element.ALIGN_CENTER, MIDDLE);
@@ -193,7 +204,7 @@ public class Eip08w060l00 extends PdfReportBase {
 						"資訊網「產品查詢」，查詢確無此產品環保標章證號（查詢畫面如附）；□執行業務需要，擬採"+
 						"購非環保標章產品。\n"+
 						"3.本採購項目，目前□是□否符合「優先採購身心障礙福利機構團體或庇護工場生產物品及服務"+
-						"辦法」第3條所訂之商品，□是□否向身心障礙福利機構團體或庇護工場採購。\n"
+						"辦法」第3條所訂之商品，□是□否向身心障礙福利機構團體或庇護工場採購。\r\r\r"
 				, SIZE_12, 0.5F, Element.ALIGN_LEFT, MIDDLE,2);
 
 		addCell(table, COL10, 1, "", 0, 0, Element.ALIGN_CENTER);

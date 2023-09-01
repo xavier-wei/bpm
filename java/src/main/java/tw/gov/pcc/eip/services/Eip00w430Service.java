@@ -93,7 +93,7 @@ public class Eip00w430Service extends OnlineRegService {
         StringBuilder regisqualSb = new StringBuilder();
         StringBuilder allowappwaySb = new StringBuilder();
         Arrays.asList(StringUtils.split(orformdata.getRegisqual(),",")).stream().forEach(t -> {
-            regisqualSb.append(regisqualMap.get(t)).append(", ");
+            regisqualSb.append(StringUtils.defaultString(regisqualMap.get(t))).append(", ");
         });
         Arrays.asList(StringUtils.split(orformdata.getAllowappway(),",")).stream().forEach(t -> {
             allowappwaySb.append(allowappwayMap.get(t)).append(", ");

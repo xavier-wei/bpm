@@ -30,7 +30,7 @@ public class View_cpape05mDaoImpl extends ItrBaseDao<View_cpape05m> implements V
     public View_cpape05m selectDataByPrimaryKey(View_cpape05m view_cpape05m) {
         String sql = "SELECT "
                 + " * "
-                + " FROM " + TABLE_NAME + " t WHERE t.login_id = :login_id ";
+                + " FROM cpap.dbo.view_cpape05m t WHERE t.login_id = :login_id ";
         List<View_cpape05m> list =
                 getNamedParameterJdbcTemplate()
                         .query(
@@ -65,7 +65,7 @@ public class View_cpape05mDaoImpl extends ItrBaseDao<View_cpape05m> implements V
                 "FROM (" +
                 "    SELECT petit, title, " +
                 "           ROW_NUMBER() OVER (PARTITION BY petit ORDER BY peupdate DESC) AS rn " +
-                "    FROM view_cpape05m " +
+                "    FROM cpap.dbo.view_cpape05m " +
                 ") AS ranked " +
                 "WHERE rn = 1";
         return getNamedParameterJdbcTemplate()
@@ -79,7 +79,7 @@ public class View_cpape05mDaoImpl extends ItrBaseDao<View_cpape05m> implements V
         view_cpape05m.setPecard(pecard);
         String sql = "SELECT "
                 + " * "
-                + " FROM view_cpape05m t WHERE t.pecard = :pecard ORDER BY peupdate DESC";
+                + " FROM cpap.dbo.view_cpape05m t WHERE t.pecard = :pecard AND case PEUNIT when '600037' then '999999' else PEUNIT end ORDER BY PEUNIT desc, peupdate DESC";
         List<View_cpape05m> list =
                 getNamedParameterJdbcTemplate()
                         .query(

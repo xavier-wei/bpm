@@ -13,6 +13,7 @@ public class UserBean implements UserInfo, Serializable {
     private String userId; // 使用者代碼
     private String userName; // 使用者名稱
     private String deptId; // 部門代碼
+    private String deptName; //部門名稱
     private String empId; // 員工編號
     private String loginIP; // 使用者 IP
     private String loginDate; // 登入日期

@@ -160,8 +160,8 @@ public class Eip03w040l00xls extends XlsReport {
         setColumnWidth(sheet, 3, 14);
         setColumnWidth(sheet, 4, 10);
         setColumnWidth(sheet, 5, 25);
-        setColumnWidth(sheet, 6, 10);
-        setColumnWidth(sheet, 7, 10);
+        setColumnWidth(sheet, 6, 12);
+        setColumnWidth(sheet, 7, 12);
 
         setCellValue(row1, 0, "列管編號", alignCenterTitle);
         setCellValue(row1, 1, "交辦來源", alignCenterTitle);
@@ -183,10 +183,15 @@ public class Eip03w040l00xls extends XlsReport {
             setCellValue(row, 3, data.getDept_name() != null? data.getDept_name() : "", alignCenter);
             setCellValue(row, 4, data.getPrcSts() != null?  data.getPrcSts() : "", alignCenter);
             setCellValue(row, 5, data.getRptCont() != null? data.getRptCont() : "", alignLeft);
-            setCellValue(row, 6, data.getEndDt() != null? DateUtility.changeDateTypeToChineseDate(data.getEndDt()) : "", alignCenter);
+            String endDt = DateUtility.changeDateTypeToChineseDate(data.getEndDt());
+            endDt = DateUtility.formatChineseDateString(endDt, false);
+            setCellValue(row, 6, data.getEndDt() != null? endDt : "", alignCenter);
 //            解列日期：固定文字，若KeepTrkDtl.SupAgree為Y，則KeepTrkDtl.SupDt，否則為空。
-            if(data.getSupAgree().equals("Y")){
-                setCellValue(row, 7, data.getFmtSupDt() != null? data.getFmtSupDt() : "", alignCenter);
+            if(data.getSupAgree().equals("Y") && data.getFmtSupDt() != null){
+                String fmtSupDt = DateUtility.changeDateTypeToChineseDate(data.getFmtSupDt());
+                fmtSupDt = DateUtility.formatChineseDateString(fmtSupDt, false);
+//                String fmtSupDt = data.getFmtSupDt() != null? DateUtility.formatChineseDateString(data.getFmtSupDt(), false) : "";
+                setCellValue(row, 7, fmtSupDt, alignCenter);
             }else {
                 setCellValue(row, 7, "", alignCenter);
             }

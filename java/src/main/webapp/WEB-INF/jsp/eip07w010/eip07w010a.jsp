@@ -11,15 +11,15 @@
       </tags:button>
 
 	  <tags:button id="btnUpdate">
-    	修改<i class="fas fa-user-plus"></i>
+    	修改<i class="fas fa-user-edit"></i>
       </tags:button>
 
 	  <tags:button id="btnDelete">
-    	刪除<i class="fas fa-user-plus"></i>
+    	刪除<i class="fas fa-trash-alt"></i>
       </tags:button>
 
 		<tags:button id="btnBack">
-    	回主畫面<i class="fas fa-user-plus"></i>
+    	回主畫面<i class="fas fa-reply"></i>
       </tags:button>
 
 </jsp:attribute>
@@ -66,7 +66,7 @@
 		<tags:form-row>
 				<div class="col-md-4 d-flex">
 					<form:label cssClass="col-form-label" path="brdte">出生日期：</form:label>
-					<form:input id="brdte"  name="brdte"  path="eip07w010QueryDataList[0].brdte" cssClass="form-control num_only dateTW" size="7" maxlength="7"/>
+					<form:input id="brdte"  name="brdte"  path="eip07w010QueryDataList[0].brdte" cssClass="form-control num_only dateTW" size="9" maxlength="7"/>
 				</div>
 		</tags:form-row>
 		<tags:form-row>
@@ -79,11 +79,11 @@
 			</div>
 			<div class="col-md d-flex">
 					<form:label cssClass="col-form-label star" path="startworkDate">到職日期：</form:label>
-					<form:input id="startworkDate"  name="startworkDate"  path="eip07w010QueryDataList[0].startworkDate" cssClass="form-control num_only dateTW" size="7" maxlength="7"/>
+					<form:input id="startworkDate"  name="startworkDate"  path="eip07w010QueryDataList[0].startworkDate" cssClass="form-control num_only dateTW" size="9" maxlength="7"/>
 			</div>
 			<div class="col-md d-flex">
 				<form:label cssClass="col-form-label star" id="endworkDate" path="endworkDate">離職日期：</form:label>
-				<form:input id="endworkDate"  name="endworkDate"  path="eip07w010QueryDataList[0].endworkDate" cssClass="form-control num_only dateTW" size="7" maxlength="7"/>
+				<form:input id="endworkDate"  name="endworkDate"  path="eip07w010QueryDataList[0].endworkDate" cssClass="form-control num_only dateTW" size="9" maxlength="7"/>
 			</div>
 		</tags:form-row>
 		<tags:form-row>

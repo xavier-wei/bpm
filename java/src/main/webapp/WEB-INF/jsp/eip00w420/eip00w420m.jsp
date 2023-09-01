@@ -20,10 +20,10 @@
         刪除<i class="fas fa-trash-alt"></i>
     </tags:button>
     <tags:button id="btnPut">
-        上架<i class="fas fa-user-check"></i>
+        上架<i class="fas fa-arrow-circle-up"></i>
     </tags:button>
     <tags:button id="btnDisabled">
-        停辦<i class="fas fa-user-times"></i>
+        停辦<i class="fas fa-arrow-circle-down"></i>
     </tags:button>
 </jsp:attribute>
 
@@ -31,26 +31,22 @@
     <tags:fieldset legend="查詢條件">
     <form:form id="eip00w420Form" name="eip00w420Form" modelAttribute="${caseKey}" method="POST">
         <tags:form-row>
-            <div class="col-md-3">
+            <div class="col-lg-12 col-xl-11">
                 <form:label cssClass="col-form-label" path="qKeyword">主題關鍵字：</form:label>
-                <form:input path="qKeyword" cssClass="form-control d-inline-block" size="16" maxlength="50"/>
-            </div>
-            <div class="col-md-3">
+                <form:input path="qKeyword" cssClass="form-control d-inline-block" size="13" maxlength="50"/>
                 <form:label cssClass="col-form-label" path="qStatus">活動狀態：</form:label>
                 <form:select path="qStatus" cssClass="form-control d-inline-block" multiple="false">
                     <form:option value="">請選擇</form:option>
                     <form:options items="${caseData.statusCombobox}" />
                 </form:select>
-            </div>
-            <div class="col-md-5">
                 <form:label cssClass="col-form-label" path="qStartYear">活動區間：</form:label>
-                <form:input path="qStartYear" cssClass="form-control d-inline-block padL" size="4" maxlength="3"/>年
-                <form:input path="qStartMonth" cssClass="form-control d-inline-block padL" size="3" maxlength="2"/>月
+                <form:input path="qStartYear" cssClass="form-control d-inline-block padL mr-1" placeholder="年" size="2" maxlength="3"/>/
+                <form:input path="qStartMonth" cssClass="form-control d-inline-block padL" placeholder="月" size="2" maxlength="2"/>
                 <span class="">~</span>
-                <form:input path="qEndYear" cssClass="form-control d-inline-block padL" size="4" maxlength="3"/>年
-                <form:input path="qEndMonth" cssClass="form-control d-inline-block padL" size="3" maxlength="2"/>月
+                <form:input path="qEndYear" cssClass="form-control d-inline-block padL mr-1" placeholder="年" size="2" maxlength="3"/>/
+                <form:input path="qEndMonth" cssClass="form-control d-inline-block padL" placeholder="月" size="2" maxlength="2"/>
             </div>
-            <div class="col-md-1">
+            <div class="col-lg-12 col-xl-1">
                 <tags:button id="btnSearch">
                     查詢<i class="fas fa-search"></i>
                 </tags:button>
@@ -84,7 +80,7 @@
                                 <td class="text-center align-middle"><c:out value="${item.acceptappnum}" /></td>
                                 <td class="text-center align-middle"><abbr title="${item.actualappnumAbbr}"><c:out value="${item.actualappnum}" /></abbr></td>
                                 <td class="text-center align-middle"><abbr title="${item.passnumAbbr}"><c:out value="${item.passnum}" /></abbr></td>
-                                <td class="text-center align-middle"><c:out value="${item.regisfmdt}" /><br><c:out value="${item.regisendt}" /></td>
+                                <td class="text-center align-middle"><c:out value="${item.regisfmdt}" />~<br><c:out value="${item.regisendt}" />&nbsp;&nbsp;</td>
                                 <td class="text-center align-middle">
                                     <form:select path="selectAction" cssClass="form-control d-inline-block" data-orformno="${item.orformno}" data-status="${item.statusVal}" cssStyle="max-width: 145px;" multiple="false">
                                         <form:option value="M">人工報名</form:option>

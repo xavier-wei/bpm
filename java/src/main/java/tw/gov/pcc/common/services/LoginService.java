@@ -12,8 +12,10 @@ import tw.gov.pcc.common.util.DateUtil;
 import tw.gov.pcc.common.util.FrameworkLogUtil;
 import tw.gov.pcc.common.util.HttpUtil;
 import tw.gov.pcc.common.util.StrUtil;
+import tw.gov.pcc.eip.dao.DeptsDao;
 import tw.gov.pcc.eip.dao.User_rolesDao;
 import tw.gov.pcc.eip.dao.UsersDao;
+import tw.gov.pcc.eip.domain.Depts;
 import tw.gov.pcc.eip.domain.Users;
 
 import javax.servlet.http.HttpServletRequest;
@@ -37,13 +39,15 @@ public class LoginService {
     private final SysfuncService sysfuncService;
     private final User_rolesDao user_rolesDao;
     private final UsersDao usersDao;
+    private final DeptsDao deptsDao;
 
-    public LoginService(PortalDao portalDao, PortalLogDao portalLogDao, SysfuncService sysfuncService, User_rolesDao userRolesDao, UsersDao usersDao) {
+    public LoginService(PortalDao portalDao, PortalLogDao portalLogDao, SysfuncService sysfuncService, User_rolesDao userRolesDao, UsersDao usersDao, DeptsDao deptsDao) {
         this.portalDao = portalDao;
         this.portalLogDao = portalLogDao;
         this.sysfuncService = sysfuncService;
         user_rolesDao = userRolesDao;
         this.usersDao = usersDao;
+        this.deptsDao = deptsDao;
     }
 
     /**
@@ -60,6 +64,7 @@ public class LoginService {
         String userId; // 使用者代碼
         String userName; // 使用者名稱
         String deptId; // 部門代碼
+        String deptName; //部門名稱
         String empId; // 員工編號
         String loginIP; // 使用者 IP
         String token; // 檢查資訊 Token
@@ -86,6 +91,7 @@ public class LoginService {
         if (user == null) return false;
         userName = StringUtils.defaultString(user.getUserName()); // 使用者名稱
         deptId = StringUtils.defaultString(user.getDeptId()); // 部門代碼
+        deptName = Optional.ofNullable(deptsDao.findByPk(deptId)).map(Depts::getDept_name).orElse(StringUtils.EMPTY);
         empId = StringUtils.defaultString(user.getEmpId()); // 員工編號
         loginIP = StringUtils.defaultString(HttpUtil.getClientIP(request)); // 使用者 IP
         token = userId + DateUtil.getNowWestDateTime(true); // 檢查資訊 Token
@@ -115,6 +121,7 @@ public class LoginService {
         frameworkUserInfoBean.setUserId(userId);
         frameworkUserInfoBean.setUserName(userName);
         frameworkUserInfoBean.setDeptId(deptId);
+        frameworkUserInfoBean.setDeptName(deptName);
         frameworkUserInfoBean.setEmpId(empId);
         frameworkUserInfoBean.setLoginIP(loginIP);
         frameworkUserInfoBean.setEmail(email);
@@ -132,6 +139,7 @@ public class LoginService {
         userData.setUserId(userId);
         userData.setUserName(userName);
         userData.setDeptId(deptId);
+        userData.setDeptName(deptName);
         userData.setEmpId(empId);
         userData.setLoginIP(loginIP);
         userData.setEmail(email);

@@ -9,7 +9,7 @@
     	查詢<i class="fas fa-search"></i>
     </tags:button>
     <tags:button id="btnConfirm">
-    	列印<i class="fas fa-print"></i>
+    	列印<I class="fas fa-download"></i>
     </tags:button>
     <tags:button id="btnClear">
     	清除<i class="fas fa-eraser"></i>

@@ -13,12 +13,10 @@ import org.springframework.stereotype.Service;
 import tw.gov.pcc.eip.dao.CarBaseDao;
 import tw.gov.pcc.eip.dao.CarBookingDao;
 import tw.gov.pcc.eip.dao.Car_booking_recDao;
-import tw.gov.pcc.eip.dao.DeptsDao;
 import tw.gov.pcc.eip.dao.EipcodeDao;
 import tw.gov.pcc.eip.domain.CarBase;
 import tw.gov.pcc.eip.domain.CarBooking;
 import tw.gov.pcc.eip.domain.Car_booking_rec;
-import tw.gov.pcc.eip.domain.Depts;
 import tw.gov.pcc.eip.domain.Eipcode;
 import tw.gov.pcc.eip.framework.domain.UserBean;
 import tw.gov.pcc.eip.orderCar.cases.Eip07w040Case;
@@ -44,8 +42,6 @@ public class Eip07w040Service {
 	private CarBaseDao carBaseDao;
 	@Autowired
 	private Car_booking_recDao car_booking_recDao;
-	@Autowired
-	private DeptsDao deptsDao;
 	@Autowired
 	private TimeConversionService timeConversionService;
 	
@@ -132,12 +128,13 @@ public class Eip07w040Service {
 		eipcode.setCodeno(carBookingDetailData.getApply_car_type());
 		Eipcode code = eipcodeDao.selectDataByPrimaryKey(eipcode);
 		carBookingDetailData.setApply_car_type(code.getCodename());
-		
+	
 		String[] usingTime = timeConversionService.timeStringToBeginEndTime(carBookingDetailData.getUsing());
-		carBookingDetailData.setUsingStr(usingTime[0]+"~"+usingTime[1].trim());
+		carBookingDetailData.setUsingStr(usingTime[0].substring(0,2)+":"+usingTime[0].substring(2,4) + "~"+usingTime[1].substring(0,2)+":"+usingTime[1].substring(2,4));
+		carBookingDetailData.setApply_user(carBookingDetailData.getApply_user());
 		
-		Depts deptName = deptsDao.findByPk(carBookingDetailData.getApply_dept());
-		carBookingDetailData.setApply_dept(deptName.getDept_name());
+//		Depts deptName = deptsDao.findByPk(carBookingDetailData.getApply_dept());
+//		carBookingDetailData.setApply_dept(deptName.getDept_name());
 		caseData.setCarBookingDetailData(carBookingDetailData);//案件明細資料
 		
 		List<CarBase> carList = carBaseDao.getAllData();//取得所有非首長&&carstatus=1的車輛
@@ -165,11 +162,27 @@ public class Eip07w040Service {
 				if("Y".equals(check.getUsing())) {
 					caseData.setTimeMK("Y");//顯示該用車時間已有人預約
 				}
-				Depts deptName = deptsDao.findByPk(carbooking.getApply_dept());
-				carbooking.setApply_dept(deptName.getDept_name());
+
+//				carbooking.setApply_user(getUserName(carbooking.getApply_user()));
+				
+//				Depts deptName = deptsDao.findByPk(carbooking.getApply_dept());
+//				carbooking.setApply_dept(deptName.getDept_name());
+				
 				String[] usingTime = timeConversionService.timeStringToBeginEndTime(carbooking.getUsing_rec());
 				carbooking.setUsing_time_s(usingTime[0]);
 				carbooking.setUsing_time_e(usingTime[1].trim());
+				
+				String using = carbooking.getUsing_rec();
+				
+				char[] chars = using.toCharArray();
+				StringBuffer num = new StringBuffer();
+				for(int i=0; i<chars.length; i++) {
+					if('1' == chars[i]) {
+						num.append(i+",");
+					}
+				}
+				carbooking.setUsingTimeList(StringUtils.removeEnd(num.toString(), ","));
+				
 			}
 		} else {
 			caseData.setCarBookingList(null);//顯示今日尚未有人預約使用
@@ -220,21 +233,15 @@ public class Eip07w040Service {
 		carBooking.setUpd_user(userData.getUserId());
 		carBooking.setUpd_datetime(dateTime);
 		
-//		@派車結果選項:若為1，則表單狀態=3派全程，若為2，則表單狀態=4派單程，若為3，則表單狀態=5已派滿
-//					 若為4，則表單狀態=6併單,派全程，若為5，則表單狀態=7併單,派單程
-		String sts = "";
-		if("1".equals(caseData.getStatus())){
-			sts = "3";
-		} else if ("2".equals(caseData.getStatus())){
-			sts = "4";
-		} else if ("3".equals(caseData.getStatus())){
-			sts = "5";
-		} else if ("4".equals(caseData.getStatus())){
-			sts = "6";
-		} else if ("5".equals(caseData.getStatus())){
-			sts = "7";
-		}
-		carBooking.setCarprocess_status(sts);
+//		@派車結果選項:若為3，則表單狀態=3派全程
+//	              若為4，則表單狀態=4派單程
+//		若為5，則表單狀態=5已派滿
+//		若為6，則表單狀態=6併單,派全程
+//		若為7，則表單狀態=7併單,派單程
+//		若為8，則表單狀態=8乘坐人數超過座車人數限制，無法受理
+
+
+		carBooking.setCarprocess_status(caseData.getStatus());
 		carBookingDao.updateByKey(carBooking);
 		
 		Car_booking_rec rec = new Car_booking_rec();
@@ -280,8 +287,8 @@ public class Eip07w040Service {
 			Eip07w040L_Vo vo = new Eip07w040L_Vo();
 			CarBooking data = carBookingDao.selectByApplyId(applyid);
 			vo.setApply_user(data.getApply_user());//申請人
-			Depts deptName = deptsDao.findByPk(data.getApply_dept());
-			vo.setApply_dept(deptName.getDept_name());
+//			Depts deptName = deptsDao.findByPk(data.getApply_dept());
+			vo.setApply_dept(data.getApply_dept());
 			vo.setApply_date(data.getApply_date());//申請日期
 			vo.setApply_memo(data.getApply_memo());//用車事由
 			vo.setDestination(data.getDestination());//目的地
@@ -320,6 +327,21 @@ public class Eip07w040Service {
 		caseData.setApplyids(null);
 
 		return report.getOutputStream();
+	}
+	
+	public void cancelData(Eip07w040Case caseData) {
+		
+		CarBooking cb = carBookingDao.selectByApplyId(caseData.getApplyid());
+		cb.setCarprocess_status("9");
+		cb.setUpd_datetime(DateUtility.getNowWestDateTime(true));
+		cb.setUpd_user(userData.getUserId());
+		carBookingDao.updateByKey(cb);
+		
+		
+		Car_booking_rec rec = new Car_booking_rec();
+		rec.setApplyid(caseData.getApplyid());
+		car_booking_recDao.deleteByKey(rec);
+
 	}
 	
 }

@@ -7,7 +7,7 @@
 <jsp:attribute name="buttons">
 <!-- 選擇頁 -->
 	  <tags:button id="btnClearn">
-    	回上一頁<i class="fas fa-user-plus"></i>
+    	回上一頁<i class="fas fa-reply"></i>
       </tags:button>
 
 </jsp:attribute>
@@ -103,7 +103,7 @@
 					<th class="text-center align-middle">首長專用</th>
 					<th class="text-center align-middle">財產編號</th>
 					<th class="text-center align-middle">保險公司</th>
-					<th class="text-center align-middle">保險期間(起)~(迄)</th>
+					<th class="text-center align-middle">保險期間(起)-(迄)</th>
 					<th data-orderable="false"></th>
 
 				</tr>
@@ -130,9 +130,13 @@
 									<td id="insuranceCompany">
 										<c:out value='${item.insuranceCompany}'/>
 									</td>
-									<td id="date">
-										<c:out value='${item.insuranceStart}'/>~
-										<c:out value='${item.insuranceEnd}'/>
+									<td id="date" class="text-center">
+										<c:choose>
+											 <c:when test="${not empty item.insuranceStart}">
+												<c:out value="${fn:substring(item.insuranceStart, 0,3)}"/>/<c:out value="${fn:substring(item.insuranceStart, 3,5)}"/>/<c:out value="${fn:substring(item.insuranceStart, 5,-1)}"/>
+												-<c:out value="${fn:substring(item.insuranceEnd, 0,3)}"/>/<c:out value="${fn:substring(item.insuranceEnd, 3,5)}"/>/<c:out value="${fn:substring(item.insuranceEnd, 5,-1)}"/>
+											 </c:when>
+										</c:choose>
 									</td>
 									<td class="text-left" >
 										<tags:button onclick="carDetailReport('${item.carno1}','${item.carno2}')"  >明細</tags:button>

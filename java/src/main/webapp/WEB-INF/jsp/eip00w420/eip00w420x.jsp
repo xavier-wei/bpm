@@ -32,7 +32,7 @@
 <tags:fieldset legend="${caseData.mode eq 'A' ? '新增' : '修改'}線上報名">
 <form:form id="eip00w420Form" modelAttribute="${modifyKey}" enctype="multipart/form-data" method="post">
     <tags:form-row>
-        <div class="col-md-6">
+        <div class="col-md-12">
             <form:label cssClass="col-form-label star" path="orccode">線上報名類別：</form:label>
             <form:select path="orccode" cssClass="form-control d-inline-block" multiple="false">
                 <form:option value="">請選擇</form:option>
@@ -41,71 +41,71 @@
         </div>
     </tags:form-row>
     <tags:form-row>
-        <div class="col-md-6">
+        <div class="col-md-12">
             <form:label cssClass="col-form-label star" path="courseclacode">課程類別代碼：</form:label>
-            <form:input path="courseclacode" cssClass="form-control d-inline-block num_only" size="5" maxlength="4"/>(最長4字)
+            <form:input path="courseclacode" cssClass="form-control d-inline-block num_only" placeholder="最長4字" size="5" maxlength="4"/>
         </div>
     </tags:form-row>
     <tags:form-row>
-        <div class="col-md-6">
+        <div class="col-md-12">
             <form:label cssClass="col-form-label" path="coursecode">課程代碼：</form:label>
-            <form:input path="coursecode" cssClass="form-control d-inline-block num_eng_only" size="20" maxlength="20"/>(最長20字)
+            <form:input path="coursecode" cssClass="form-control d-inline-block num_eng_only" placeholder="最長20字" size="20" maxlength="20"/>
         </div>
     </tags:form-row>
     <tags:form-row>
-        <div class="col-md-6">
+        <div class="col-md-12">
             <form:label cssClass="col-form-label" path="classcode">班別代碼：</form:label>
-            <form:input path="classcode" cssClass="form-control d-inline-block num_eng_only" size="10" maxlength="10"/>(最長10字)
+            <form:input path="classcode" cssClass="form-control d-inline-block num_eng_only" placeholder="最長10字" size="10" maxlength="10"/>
         </div>
     </tags:form-row>
     <tags:form-row>
-        <div class="col-md-6">
+        <div class="col-md-12">
             <form:label cssClass="col-form-label star" path="period">期別：</form:label>
-            <form:input path="period" cssClass="form-control d-inline-block num_only" size="4" maxlength="3"/>(最長3字)
+            <form:input path="period" cssClass="form-control d-inline-block num_only" placeholder="最長3字" size="5" maxlength="3"/>
         </div>
     </tags:form-row>
     <tags:form-row>
         <div class="col-md-12">
             <form:label cssClass="col-form-label star" path="topicname">名稱：</form:label>
-            <form:input path="topicname" cssClass="form-control d-inline-block" size="50" maxlength="50"/>(最長50字)
+            <form:input path="topicname" cssClass="form-control d-inline-block" placeholder="最長50字" size="50" maxlength="50"/>
         </div>
     </tags:form-row>
     <tags:form-row>
-        <div class="col-md-6">
+        <div class="col-md-12">
             <form:label cssClass="col-form-label star" path="regisfmdt">報名開始時間：</form:label>
-            <form:input path="regisfmdt" cssClass="form-control d-inline-block dateTW date" size="10" maxlength="7"/>
-            <form:input path="regisfmdtHour" cssClass="form-control d-inline-block num_only padL" size="3" maxlength="2"/>時
-            <form:input path="regisfmdtMinute" cssClass="form-control d-inline-block num_only padL" size="3" maxlength="2"/>分
+            <form:input path="regisfmdt" cssClass="form-control d-inline-block dateTW cdate" size="10" maxlength="9"/>
+            <form:input path="regisfmdtHour" cssClass="form-control d-inline-block num_only padL" placeholder="時" size="3" maxlength="2"/>：
+            <form:input path="regisfmdtMinute" cssClass="form-control d-inline-block num_only padL" placeholder="分" size="3" maxlength="2"/>
         </div>
     </tags:form-row>
     <tags:form-row>
-        <div class="col-md-6">
+        <div class="col-md-12">
             <form:label cssClass="col-form-label star" path="regisendt">報名結束時間：</form:label>
-            <form:input path="regisendt" cssClass="form-control d-inline-block dateTW date" size="10" maxlength="7"/>
-            <form:input path="regisendtHour" cssClass="form-control d-inline-block num_only padL" size="3" maxlength="2"/>時
-            <form:input path="regisendtMinute" cssClass="form-control d-inline-block num_only padL" size="3" maxlength="2"/>分
+            <form:input path="regisendt" cssClass="form-control d-inline-block dateTW cdate" size="10" maxlength="9"/>
+            <form:input path="regisendtHour" cssClass="form-control d-inline-block num_only padL" placeholder="時" size="3" maxlength="2"/>：
+            <form:input path="regisendtMinute" cssClass="form-control d-inline-block num_only padL" placeholder="分" size="3" maxlength="2"/>
         </div>
     </tags:form-row>
     <tags:form-row>
         <div class="col-md-12">
             <form:label cssClass="col-form-label star" path="organizer">主辦單位：</form:label>
-            <form:input path="organizer" cssClass="form-control d-inline-block" size="50" maxlength="50"/>(最長50字)
+            <form:input path="organizer" cssClass="form-control d-inline-block" placeholder="最長50字" size="50" maxlength="50"/>
         </div>
     </tags:form-row>
     <tags:form-row>
-        <div class="col-md-6">
+        <div class="col-md-12">
             <form:label cssClass="col-form-label star" path="contacter">聯絡人：</form:label>
             <form:input path="contacter" cssClass="form-control d-inline-block" size="20" maxlength="6"/>
         </div>
     </tags:form-row>
     <tags:form-row>
-        <div class="col-md-6">
+        <div class="col-md-12">
             <form:label cssClass="col-form-label star" path="contactnum">聯絡電話：</form:label>
             <form:input path="contactnum" cssClass="form-control d-inline-block tel" size="20" maxlength="20"/>
         </div>
     </tags:form-row>
     <tags:form-row>
-        <div class="col-md-6">
+        <div class="col-md-12">
             <form:label cssClass="col-form-label" path="fax">傳真：</form:label>
             <form:input path="fax" cssClass="form-control d-inline-block tel" size="20" maxlength="20"/>
         </div>
@@ -119,11 +119,11 @@
     <tags:form-row>
         <div class="col-md-12">
             <form:label cssClass="col-form-label star" path="addres">地點：</form:label>
-            <form:input path="addres" cssClass="form-control d-inline-block" size="50" maxlength="50"/>(最長50字)
+            <form:input path="addres" cssClass="form-control d-inline-block" placeholder="最長50字" size="50" maxlength="50"/>
         </div>
     </tags:form-row>
     <tags:form-row>
-        <div class="col-md-6">
+        <div class="col-md-12">
             <form:label cssClass="col-form-label star" path="orccode">上課縣市：</form:label>
             <form:select path="country" cssClass="form-control d-inline-block" multiple="false">
                 <form:option value="">請選擇</form:option>
@@ -132,35 +132,35 @@
         </div>
     </tags:form-row>
     <tags:form-row>
-        <div class="col-md-6">
+        <div class="col-md-12">
             <form:label cssClass="col-form-label star" path="profmdt">辦理開始時間：</form:label>
-            <form:input path="profmdt" cssClass="form-control d-inline-block dateTW date" size="10" maxlength="7"/>
-            <form:input path="profmdtHour" cssClass="form-control d-inline-block num_only padL" size="3" maxlength="2"/>時
-            <form:input path="profmdtMinute" cssClass="form-control d-inline-block num_only padL" size="3" maxlength="2"/>分
+            <form:input path="profmdt" cssClass="form-control d-inline-block dateTW cdate" size="10" maxlength="9"/>
+            <form:input path="profmdtHour" cssClass="form-control d-inline-block num_only padL" placeholder="時" size="3" maxlength="2"/>：
+            <form:input path="profmdtMinute" cssClass="form-control d-inline-block num_only padL" placeholder="分" size="3" maxlength="2"/>
         </div>
     </tags:form-row>
     <tags:form-row>
-        <div class="col-md-6">
+        <div class="col-md-12">
             <form:label cssClass="col-form-label star" path="proendt">辦理結束時間：</form:label>
-            <form:input path="proendt" cssClass="form-control d-inline-block dateTW date" size="10" maxlength="7"/>
-            <form:input path="proendtHour" cssClass="form-control d-inline-block num_only padL" size="3" maxlength="2"/>時
-            <form:input path="proendtMinute" cssClass="form-control d-inline-block num_only padL" size="3" maxlength="2"/>分
+            <form:input path="proendt" cssClass="form-control d-inline-block dateTW cdate" size="10" maxlength="7"/>
+            <form:input path="proendtHour" cssClass="form-control d-inline-block num_only padL" placeholder="時" size="3" maxlength="2"/>：
+            <form:input path="proendtMinute" cssClass="form-control d-inline-block num_only padL" placeholder="分" size="3" maxlength="2"/>
         </div>
     </tags:form-row>
     <tags:form-row>
-        <div class="col-md-6">
+        <div class="col-md-12">
             <form:label cssClass="col-form-label star" path="acceptappnum">接受報名人數：</form:label>
             <form:input path="acceptappnum" cssClass="form-control d-inline-block num_only" size="4" maxlength="3"/>人
         </div>
     </tags:form-row>
     <tags:form-row>
-        <div class="col-md-6">
+        <div class="col-md-12">
             <form:label cssClass="col-form-label star" path="allowappnum">允許報名人數：</form:label>
             <form:input path="allowappnum" cssClass="form-control d-inline-block num_only" size="4" maxlength="3"/>人
         </div>
     </tags:form-row>
     <tags:form-row>
-        <div class="col-md-6">
+        <div class="col-md-12">
             <form:label cssClass="col-form-label" path="allowappway">允許報名方式：</form:label>
             <label id="chk1" class="mb-0">
                 <div class="form-check-inline">
@@ -185,19 +185,19 @@
         </div>
     </tags:form-row>
     <tags:form-row>
-        <div class="col-md-6">
+        <div class="col-md-12">
             <form:label cssClass="col-form-label" path="fee">費用：</form:label>
             <form:input path="fee" cssClass="form-control d-inline-block num_only" size="7" maxlength="7"/>元
         </div>
     </tags:form-row>
     <tags:form-row>
-        <div class="col-md-6">
+        <div class="col-md-12">
             <form:label cssClass="col-form-label" path="account">報名繳費帳號：</form:label>
             <form:input path="account" cssClass="form-control d-inline-block tel" size="30" maxlength="30"/>
         </div>
     </tags:form-row>
     <tags:form-row>
-        <div class="col-md-6">
+        <div class="col-md-12">
             <form:label cssClass="col-form-label" path="ismeals">提供餐點：</form:label>
             <label class="mb-0">
                 <form:radiobutton path="ismeals" value="Y" cssClass="mr-1"/>
@@ -210,7 +210,7 @@
         </div>
     </tags:form-row>
     <tags:form-row>
-        <div class="col-md-6">
+        <div class="col-md-12">
             <form:label cssClass="col-form-label star" path="classhours">上課時數：</form:label>
             <form:input path="classhours" cssClass="form-control d-inline-block num_only" size="3" maxlength="3"/>
             <form:select path="classhoursUnit" cssClass="form-control d-inline-block" multiple="false">
@@ -242,13 +242,13 @@
         </div>
     </tags:form-row>
     <tags:form-row>
-        <div class="col-md-6">
+        <div class="col-md-12">
             <form:label cssClass="col-form-label" path="lecturercode">講師代號：</form:label>
             <form:input path="lecturercode" cssClass="form-control d-inline-block num_eng_only" size="30" maxlength="30"/>
         </div>
     </tags:form-row>
     <tags:form-row>
-        <div class="col-md-6">
+        <div class="col-md-12">
             <form:label cssClass="col-form-label" path="subject">主旨：</form:label>
             <form:input path="subject" cssClass="form-control d-inline-block" size="30" maxlength="33"/>
         </div>

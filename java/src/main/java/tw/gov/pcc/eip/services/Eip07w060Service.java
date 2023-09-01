@@ -3,7 +3,8 @@ package tw.gov.pcc.eip.services;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.commons.collections.CollectionUtils;
+import javax.print.DocFlavor.STRING;
+
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -98,51 +99,90 @@ public class Eip07w060Service {
 	 * @param bindingResult
 	 */
 	public void validUpdate(Eip07w060Case caseData, BindingResult bindingResult) {	
-		//為首長車
-		if("Y".equals(caseData.getCarType())) {
+		
+		//首長專用車：Y,出差排程：N
+		if("Y".equals(caseData.getCarType()) && "N".equals(caseData.getBtmk())) {
+			List<CarBooking> cbList = caseData.getBosscarMonthlyList();
+
+			for(CarBooking cb : cbList) {
+				//如果該筆資料的出場公里數有寫才檢核
+				if(StringUtils.isNotBlank(cb.getMilageStart())) {
+					int notPass = 0;
+					
+					//使用起訖時間
+					String timeResult = validStartEndTimeList(cb.getStartuseH(), cb.getStartuseM(), cb.getEnduseH(), cb.getEnduseM());
+					if(!"0".equals(timeResult)) {
+						notPass = notPass+1;
+					}
+					//出場公里數
+					if(StringUtils.isBlank(cb.getMilageStart())) {
+						notPass = notPass+1;
+					}
+					//回場公里數
+					if(StringUtils.isBlank(cb.getMilageEnd())) {
+						notPass = notPass+1;
+					}
+					//行駛公里數
+					if(StringUtils.isBlank(cb.getMilage())) {
+						notPass = notPass+1;
+					}
+					//耗油公里數
+					if(StringUtils.isBlank(cb.getGasUsed())) {
+						notPass = notPass+1;
+					}
+					
+					if(notPass > 0) {
+						bindingResult.reject(null, DateUtility.changeDateType(cb.getUsing_date()) + "資料填寫有誤請檢查");
+					}
+				}
+			}
+			
 			if(StringUtils.isBlank(caseData.getCarbooking().getApply_memo())) {
 				bindingResult.reject(null, "用車事由為必填欄位");
 			}
-			if(StringUtils.isBlank(caseData.getCarbooking().getUsing_date())) {
-				bindingResult.reject(null, "用車日期為必填欄位");
-			}
-			if(StringUtils.isBlank(caseData.getStartuseH()) || StringUtils.isBlank(caseData.getStartuseM())
-					|| StringUtils.isBlank(caseData.getEnduseH()) || StringUtils.isBlank(caseData.getEnduseM())) {
-				bindingResult.reject(null, "用車時間起訖為必填欄位");
-			}else {
-				int start = Integer.parseInt(caseData.getStartuseH()+caseData.getStartuseM());
-				int end = Integer.parseInt(caseData.getEnduseH()+caseData.getEnduseM());
-				if(end-start <= 0) {
-					bindingResult.reject(null, "用車時間起時不可晚於迄時");
+		}
+		//1.首長專用車：Y,出差排程：Y 2.首長專用車：N
+		else {
+			//為首長車
+			if("Y".equals(caseData.getCarType()) && "Y".equals(caseData.getBtmk())) {
+				if(StringUtils.isBlank(caseData.getCarbooking().getApply_memo())) {
+					bindingResult.reject(null, "用車事由為必填欄位");
 				}
+				if(StringUtils.isBlank(caseData.getCarbooking().getUsing_date())) {
+					bindingResult.reject(null, "用車日期為必填欄位");
+				}
+				String timeResult = validStartEndTimeList(caseData.getStartuseH(), caseData.getStartuseM(), caseData.getEnduseH(), caseData.getEnduseM());
+				if("1".equals(timeResult)) {
+					bindingResult.reject(null, "用車時間起訖為必填欄位");
+				}else if("2".equals(timeResult)) {
+					bindingResult.reject(null, "用車時間起時不可晚於迄時");
+				}			
 			}
-		}
-		
-		if(StringUtils.isBlank(caseData.getRoad())) {
-			bindingResult.reject(null, "行駛路線為必填欄位");
-		}
-		if(StringUtils.isBlank(caseData.getMilageStart())) {
-			bindingResult.reject(null, "出場公里數為必填欄位");
-		}
-		if(StringUtils.isBlank(caseData.getMilageEnd())) {
-			bindingResult.reject(null, "回場公里數為必填欄位");
-		}
-		if(StringUtils.isBlank(caseData.getMilage())) {
-			bindingResult.reject(null, "行駛公里數為必填欄位");
-		}
-		if(StringUtils.isBlank(caseData.getGasUsed())) {
-			bindingResult.reject(null, "耗油公里數為必填欄位");
-		}
-		if(StringUtils.isBlank(caseData.getStartH()) || StringUtils.isBlank(caseData.getStartM())
-				|| StringUtils.isBlank(caseData.getEndH()) || StringUtils.isBlank(caseData.getEndM())) {
-			bindingResult.reject(null, "開出時間及到達時間為必填欄位");
-		}else {
-			int start = Integer.parseInt(caseData.getStartH()+caseData.getStartM());
-			int end = Integer.parseInt(caseData.getEndH()+caseData.getEndM());
-			if(end-start <= 0) {
+			
+			if(StringUtils.isBlank(caseData.getRoad())) {
+				bindingResult.reject(null, "行駛路線為必填欄位");
+			}
+			if(StringUtils.isBlank(caseData.getMilageStart())) {
+				bindingResult.reject(null, "出場公里數為必填欄位");
+			}
+			if(StringUtils.isBlank(caseData.getMilageEnd())) {
+				bindingResult.reject(null, "回場公里數為必填欄位");
+			}
+			if(StringUtils.isBlank(caseData.getMilage())) {
+				bindingResult.reject(null, "行駛公里數為必填欄位");
+			}
+			if(StringUtils.isBlank(caseData.getGasUsed())) {
+				bindingResult.reject(null, "耗油公里數為必填欄位");
+			}
+			String timeResult = validStartEndTimeList(caseData.getStartH(), caseData.getStartM(), caseData.getEndH(), caseData.getEndM());
+			if("1".equals(timeResult)) {
+				bindingResult.reject(null, "開出時間及到達時間為必填欄位");
+			}else if("2".equals(timeResult)) {
 				bindingResult.reject(null, "開出時間不可晚於到達時間");
 			}
 		}
+		
+		
 	}
 
 
@@ -168,25 +208,56 @@ public class Eip07w060Service {
 	}
 	
 	private void updBossCarRecordData(Eip07w060Case caseData) {
-		CarBooking carbooking = caseData.getCarbooking();
-		CaruseRec caruserec = new CaruseRec();
 		
-		caruserec.setCarno1(carbooking.getCarno1());
-		caruserec.setCarno2(carbooking.getCarno2());
-		caruserec.setApplyid(carbooking.getApplyid());
-		caruserec.setUse_date(DateUtility.changeDateType(carbooking.getUsing_date()));
-		caruserec.setUse_time_s(caseData.getStartuseH()+caseData.getStartuseM());
-		caruserec.setUse_time_e(caseData.getEnduseH()+caseData.getEnduseM());
-		caruserec.setMilage_start(caseData.getMilageStart());
-		caruserec.setMilage_end(caseData.getMilageEnd());
-		caruserec.setMilage(caseData.getMilage());
-		caruserec.setGas_used(caseData.getGasUsed());
-		caruserec.setDriver_time_s(caseData.getStartH()+caseData.getStartM());
-		caruserec.setDriver_time_e(caseData.getEndH()+caseData.getEndM());
-		caruserec.setDrive_road(caseData.getRoad());
-		caruserec.setCre_user(userData.getUserId());
-		caruserec.setCre_datetime(DateUtility.getNowWestDateTime(true));
-		caruseRecDao.insert(caruserec);
+		if(StringUtils.equals("Y", caseData.getBtmk()) ) {
+			CarBooking carbooking = caseData.getCarbooking();
+			CaruseRec caruserec = new CaruseRec();
+			
+			caruserec.setCarno1(carbooking.getCarno1());
+			caruserec.setCarno2(carbooking.getCarno2());
+			caruserec.setApplyid(carbooking.getApplyid());
+			caruserec.setUse_date(DateUtility.changeDateType(carbooking.getUsing_date()));
+			caruserec.setUse_time_s(caseData.getStartuseH()+caseData.getStartuseM());
+			caruserec.setUse_time_e(caseData.getEnduseH()+caseData.getEnduseM());
+			caruserec.setMilage_start(caseData.getMilageStart());
+			caruserec.setMilage_end(caseData.getMilageEnd());
+			caruserec.setMilage(caseData.getMilage());
+			caruserec.setGas_used(caseData.getGasUsed());
+			caruserec.setDriver_time_s(caseData.getStartH()+caseData.getStartM());
+			caruserec.setDriver_time_e(caseData.getEndH()+caseData.getEndM());
+			caruserec.setDrive_road(caseData.getRoad());
+			caruserec.setCre_user(userData.getUserId());
+			caruserec.setCre_datetime(DateUtility.getNowWestDateTime(true));
+			caruseRecDao.insert(caruserec);
+		}else if(StringUtils.equals("N", caseData.getBtmk()) ) {
+			List<CarBooking> cbList = caseData.getBosscarMonthlyList();
+			CarBooking carbooking = caseData.getCarbooking();
+			for(CarBooking cb:cbList) {
+				//出場公里數有填寫的資料才進行新增
+				if(StringUtils.isNotBlank(cb.getMilageStart())) {
+					CaruseRec caruserec = new CaruseRec();
+					
+					caruserec.setCarno1(carbooking.getCarno1());
+					caruserec.setCarno2(carbooking.getCarno2());
+					caruserec.setApplyid("DC"+cb.getUsing_date()+"000");
+					caruserec.setUse_date(cb.getUsing_date());
+					caruserec.setUse_time_s(cb.getStartuseH()+cb.getStartuseM());
+					caruserec.setUse_time_e(cb.getEnduseH()+cb.getEnduseM());
+					caruserec.setMilage_start(cb.getMilageStart());
+					caruserec.setMilage_end(cb.getMilageEnd());
+					caruserec.setMilage(cb.getMilage());
+					caruserec.setGas_used(cb.getGasUsed());
+					caruserec.setDriver_time_s(cb.getStartuseH()+cb.getStartuseM());
+					caruserec.setDriver_time_e(cb.getEnduseH()+cb.getEnduseM());
+					caruserec.setDrive_road("台灣地區");
+					caruserec.setCre_user(userData.getUserId());
+					caruserec.setCre_datetime(DateUtility.getNowWestDateTime(true));
+					caruseRecDao.insert(caruserec);
+				}
+
+			}
+		}
+
 	}
 	
 	private void updNotBossCarRecordData(Eip07w060Case caseData) {
@@ -239,22 +310,26 @@ public class Eip07w060Service {
 		
 		CarBooking insertbooking = new CarBooking();
 		if(StringUtils.equals("N", caseData.getBtmk())) {
-			insertbooking.setApplyid("DC"+DateUtility.getNowWestYearMonth()+"00000");
-			insertbooking.setUsing_date(DateUtility.getNowChineseYearMonth()+DateUtility.lastDay(DateUtility.getNowWestDate()));	
-			caseData.setRoad("台灣地區");
-			caseData.setStartH("08");
-			caseData.setStartM("00");
-			caseData.setEndH("18");
-			caseData.setEndM("00");
-			caseData.setStartuseH("08");
-			caseData.setStartuseM("00");
-			caseData.setEnduseH("18");
-			caseData.setEnduseM("00");
+			List<CarBooking>  carbookingList= new ArrayList<CarBooking>();
+			String westYm = DateUtility.getNowWestYearMonth();
+			int days = DateUtility.lastDay(DateUtility.getNowWestDate());
+			for(int i = 1; i<=days ; i++) {
+				CarBooking cb = new CarBooking();
+				String westYmD = westYm + (i<10?"0"+String.valueOf(i):String.valueOf(i));
+				cb.setUsing_date(westYmD);
+				cb.setStartuseH("08");
+				cb.setStartuseM("00");
+				cb.setEnduseH("18");
+				cb.setEnduseM("00");
+				carbookingList.add(cb);
+			}
+			caseData.setKeyinYm(westYm);
+			caseData.setBosscarMonthlyList(carbookingList);
 		}
+		
 		insertbooking.setCarno1(carnos[0]);
 		insertbooking.setCarno2(carnos[1]);
 		insertbooking.setApply_memo("接送長官");
-		
 		insertbooking.setDestination("台灣地區");
 		insertbooking.setCarprocess_status("F");
 		insertbooking.setName(findDriveName(carnos[0], carnos[1]));
@@ -304,5 +379,31 @@ public class Eip07w060Service {
     	driverbase.setCarno2(carno2);
     	DriverBase rsdb = driverBaseDao.getDataByCarno12(driverbase);
     	return rsdb != null? rsdb.getName():"";
+    }
+    
+    /**
+     * 驗證起訖時間資料
+     *
+     * @param startH
+     * @param startM
+     * @param endH
+     * @param endM
+     * 
+     * @return 0:無錯誤 1:未填寫完整 2:開始時間晚於結束時間
+     */
+    private String validStartEndTimeList(String startH, String startM, String endH, String endM) {
+		if(StringUtils.isBlank(startH) || StringUtils.isBlank(startM)
+				|| StringUtils.isBlank(endM) || StringUtils.isBlank(endM) ) {
+			return "1";
+		}else {
+			int start = Integer.parseInt(startH+startM);
+			int end = Integer.parseInt(endH+endM);
+			
+			if(end-start <= 0) {
+				return "2";
+			}else {
+				return "0";
+			}
+		}
     }
 }

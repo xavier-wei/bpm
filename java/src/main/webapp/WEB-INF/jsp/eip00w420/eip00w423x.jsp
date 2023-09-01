@@ -25,11 +25,9 @@
     <tags:fieldset legend="時數認證">
     <form:form id="eip00w420Form" name="eip00w420Form" modelAttribute="${caseKey}" method="POST">
         <tags:form-row>
-            <div class="col-md-3">
+            <div class="col-md-12">
                 <form:label cssClass="col-form-label" path="cKeyword">關鍵字：</form:label>
                 <form:input path="cKeyword" cssClass="form-control d-inline-block" size="16" maxlength="50"/>
-            </div>
-            <div class="col-md-1">
                 <tags:button id="btnSearch">
                     查詢<i class="fas fa-search"></i>
                 </tags:button>

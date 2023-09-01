@@ -40,6 +40,13 @@ public class GasRec implements Serializable {
     private String fuel_date;
 
     /**
+     *系統時間
+     */
+    @LogField
+    private String sys_time;
+
+
+    /**
      *加油時間
      */
     @LogField

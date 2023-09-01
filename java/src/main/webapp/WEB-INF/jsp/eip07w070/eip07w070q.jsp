@@ -46,7 +46,7 @@
             <tags:form-row>
             	<div class="col-12 col-md form-inline">
                     <form:label cssClass="col-form-label star" path="orderCondition">排序條件：</form:label>
-                	<form:radiobutton path="orderCondition" cssClass="mr-2" label="用車日期" value="1" checked="true" />
+                	<form:radiobutton path="orderCondition" label="用車日期" value="1" checked="true" />
                     <form:radiobutton path="orderCondition" label="車牌號碼" value="2" />
                 </div>
             </tags:form-row>
@@ -55,6 +55,7 @@
             </tags:form-note>
         </form:form>
     </tags:fieldset>
+    
 </jsp:attribute>
 <jsp:attribute name="footers">
 <script>

@@ -44,9 +44,9 @@
 				        	<td class="text-left"><c:out value="${data.role_desc}"/></td>
 				            <td class="text-right">
 				            	 <tags:button cssClass="btnEdit"
-                                            onclick="editMenu('${data.role_id}','${data.role_desc}')">編輯<i class="fas fa-edit"></i></tags:button>
+                                            onclick="editMenu('${data.role_id}','${data.role_desc}')">編輯</tags:button>
 				            	 <tags:button cssClass="btnEdit"
-                                            onclick="editMember('${data.role_id}','${data.role_desc}')">隸屬人員<i class="fas fa-search"></i></tags:button>
+                                            onclick="editMember('${data.role_id}','${data.role_desc}')">隸屬人員</tags:button>
 				            </th>
 				        </tr>
 			        </c:forEach>

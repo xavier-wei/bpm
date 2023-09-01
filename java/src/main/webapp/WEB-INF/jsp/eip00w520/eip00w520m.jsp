@@ -16,7 +16,7 @@
             min-width: 105px;
         }
         .dateCol {
-            min-width: 135px;
+            min-width: 150px;
         }
     </style>
 </jsp:attribute>
@@ -28,12 +28,6 @@
     <tags:button id="btnDelete">
         刪除<i class="fas fa-trash-alt"></i>
     </tags:button>
-<%--    <tags:button id="btnPut">--%>
-<%--        上架<i class="fas fa-user-check"></i>--%>
-<%--    </tags:button>--%>
-<%--    <tags:button id="btnDisabled">--%>
-<%--        停辦<i class="fas fa-user-times"></i>--%>
-<%--    </tags:button>--%>
 </jsp:attribute>
 
 <jsp:attribute name="contents">
@@ -46,7 +40,6 @@
                         <tr>
                             <th data-orderable="false" class="text-center align-middle"><input type="checkbox" id="selectAll"/><label class="d-inline" for="selectAll">全選</label></th>
                             <th class="text-center align-middle">項次</th>
-<%--                            <th class="text-center align-middle">主題代編</th>--%>
                             <th class="text-center align-middle">主題名稱</th>
                             <th class="text-center align-middle dateCol">投票<br>開始/結束日期</th>
                             <th class="text-center align-middle">狀態</th>
@@ -62,9 +55,8 @@
                             <tr>
                                 <td class="text-center align-middle"><form:checkbox path="osformnoList[${status.index}]" data-status="${item.statusVal}" data-anonymous="${item.isanonymous}" data-topicname="${item.topicname}" value="${item.osformno}"/></td>
                                 <td class="text-center align-middle"><c:out value="${status.index+1}"/></td>
-<%--                                <td class="text-center align-middle"><c:out value="${item.osformno}"/></td>--%>
                                 <td class="text-left align-middle"><c:out value="${item.topicname}" escapeXml="false"/></td>
-                                <td class="text-center align-middle"><c:out value="${item.osfmdt}"/><br><c:out value="${item.osendt}" /></td>
+                                <td class="text-center align-middle"><c:out value="${item.osfmdt}"/>~<br><c:out value="${item.osendt}" />&nbsp;&nbsp;</td>
                                 <td class="text-center align-middle btntd2"><c:out value="${item.status}"/></td>
                                 <td class="text-center align-middle btntd2"><tags:button cssClass="groupI groupC" data-action="1">檢視</tags:button></td>
                                 <td class="text-center align-middle btntd2"><tags:button cssClass="groupI groupC" data-action="2">匯出</tags:button></td>

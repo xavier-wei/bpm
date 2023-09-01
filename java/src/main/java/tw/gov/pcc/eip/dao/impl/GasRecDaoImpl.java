@@ -72,11 +72,11 @@ public class GasRecDaoImpl extends BaseDao<GasRec> implements GasRecDao {
    public int insert(GasRec gasRec) {
         return getNamedParameterJdbcTemplate().update(" INSERT INTO " + TABLE_NAME +
                         "(" +
-                        " carno1, carno2, fuel_date, fuel_time, gas_money, gas_amount, cre_user, " +
+                        " carno1, carno2, fuel_date, sys_time,fuel_time, gas_money, gas_amount, cre_user, " +
                         " cre_datetime, upd_user, upd_datetime" +
                         ")" +
                         " VALUES ( " +
-                        " :carno1, :carno2, :fuel_date, :fuel_time, :gas_money, :gas_amount, :cre_user, " +
+                        " :carno1, :carno2, :fuel_date,:sys_time, :fuel_time, :gas_money, :gas_amount, :cre_user, " +
                         " :cre_datetime, :upd_user, :upd_datetime" +
                         ")",
                 new BeanPropertySqlParameterSource(gasRec));

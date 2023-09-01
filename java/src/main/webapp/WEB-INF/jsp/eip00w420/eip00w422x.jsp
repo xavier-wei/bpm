@@ -25,18 +25,16 @@
     <tags:fieldset legend="報名審核">
     <form:form id="eip00w420Form" name="eip00w420Form" modelAttribute="${caseKey}" method="POST">
         <tags:form-row>
-            <div class="col-md-3">
+            <div class="col-lg-12 col-xl-11">
                 <form:label cssClass="col-form-label" path="vKeyword">關鍵字：</form:label>
                 <form:input path="vKeyword" cssClass="form-control d-inline-block" size="16" maxlength="50"/>
-            </div>
-            <div class="col-md-3">
                 <form:label cssClass="col-form-label" path="vStatus">狀態：</form:label>
                 <form:select path="vStatus" cssClass="form-control d-inline-block" multiple="false">
                     <form:option value="">請選擇</form:option>
                     <form:options items="${caseData.regstatusCombobox}" />
                 </form:select>
             </div>
-            <div class="col-md-1">
+            <div class="col-lg-12 col-xl-1">
                 <tags:button id="btnSearch">
                     查詢<i class="fas fa-search"></i>
                 </tags:button>

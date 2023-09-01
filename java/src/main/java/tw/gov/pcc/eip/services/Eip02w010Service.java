@@ -43,15 +43,6 @@ public class Eip02w010Service {
      * @param caseData
      */
     public void initOptions(Eip02w010Case caseData) {
-        Comparator<Eipcode> customComparator = new Comparator<Eipcode>() {
-            @Override
-            public int compare(Eipcode o1, Eipcode o2) {
-                if (Integer.parseInt(o1.getCodeno()) > Integer.parseInt(o2.getCodeno()))
-                    return 1;
-                else
-                    return -1;
-            }
-        };
         // 部門
         List<Eip02w010Case.Option> contactunits = deptsDao.getEip01wDepts().stream()
                 .filter(f -> !"00".equals(f.getDept_id())).map(m -> {
@@ -63,7 +54,8 @@ public class Eip02w010Service {
         caseData.setDept(contactunits);
         // 職稱
         List<Eip02w010Case.Option> titles = eipCodeDao.findByCodeKind("TITLE").stream()
-                .sorted(customComparator)
+                .filter(f -> 4 == StringUtils.length(f.getCodeno()))
+                .sorted(Comparator.comparing(Eipcode::getCodeno))
                 .map(m -> {
                     Eip02w010Case.Option option = new Eip02w010Case.Option();
                     option.setCodeno(m.getCodeno());
@@ -101,7 +93,7 @@ public class Eip02w010Service {
      */
     public void query(Eip02w010Case caseData) {
         boolean onOff = StringUtils.equals(" ", caseData.getOn_off()) ? true : false; // 有展開進階查詢才加條件
-        String deptId = onOff ? trimToNull(caseData.getDept_id()) : null;
+        String deptId = trimToNull(caseData.getDept_id());
         String userId = onOff ? trimToNull(caseData.getUser_id()) : null;
         String userEname = onOff ? trimToNull(caseData.getUser_ename()) : null;
         String email = onOff ? trimToNull(caseData.getEmail()) : null;

@@ -10,7 +10,7 @@
     	更新<i class="fas fa-edit"></i>
     </tags:button>
     <tags:button id="btnDelete">
-    	刪除<i class="fa-trash-alt"></i>
+    	刪除<i class="fas fa-trash-alt"></i>
     </tags:button>
     <tags:button id="btnBack">
     	返回<i class="fas fa-reply"></i>

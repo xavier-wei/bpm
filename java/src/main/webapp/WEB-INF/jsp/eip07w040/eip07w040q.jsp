@@ -33,15 +33,15 @@
             <tags:form-row>
             	<form:label cssClass="col-form-label" path="applydateStart">申請日期：</form:label>
                 <div class="col-12 col-md d-flex align-items-center">
-                    <form:input path="applydateStart" cssClass="add form-control dateTW date num_only" maxlength="7"/>〜
-                    <form:input path="applydateEnd" cssClass="add form-control dateTW date num_only" maxlength="7" />
+                    <form:input path="applydateStart" cssClass="add form-control dateTW cdate " maxlength="7"/>〜
+                    <form:input path="applydateEnd" cssClass="add form-control dateTW cdate " maxlength="7" />
                 </div>
             </tags:form-row>
             <tags:form-row>
             	<form:label cssClass="col-form-label" path="using_time_s">用車日期：</form:label>
                 <div class="col-12 col-md d-flex align-items-center">
-                    <form:input path="using_time_s" cssClass="add form-control dateTW date num_only" maxlength="7" />〜
-                    <form:input path="using_time_e" cssClass="add form-control dateTW date num_only" maxlength="7" />
+                    <form:input path="using_time_s" cssClass="add form-control dateTW cdate" maxlength="7" />〜
+                    <form:input path="using_time_e" cssClass="add form-control dateTW cdate" maxlength="7" />
                 </div>
             </tags:form-row>
             <tags:form-note>
@@ -52,15 +52,18 @@
             <fieldset>
             <legend>待處理派車案件</legend>
             <tags:form-row>
-            	    <table id="foodTable" class="table table-hover m-2">
+            	    <table id="notHandleListTable" class="table table-hover m-2">
                         <thead>
-                            <th class="align-middle"  style="width: 10%">序號</th>
-                            <th style="width: 10%">申請人<br>申請單位</th>
-                            <th class="align-middle"  style="width: 10%">用車日期</th>
-                            <th class="align-middle"  style="width: 20%">用車時間起迄</th>
-                            <th class="align-middle"  style="width: 30%">用車事由</th>
-                            <th class="align-middle"  style="width: 10%">表單狀態</th>
-                            <th class="align-middle"  style="width: 10%">明細</th>
+                        	<tr>
+	                            <th style="width: 5%">序號</th>
+	                            <th style="width: 10%">申請人</th>
+	                            <th style="width: 15%">申請單位</th>
+	                            <th style="width: 10%">用車日期</th>
+	                            <th style="width: 10%">用車時間起迄</th>
+	                            <th style="width: 30%">用車事由</th>
+	                            <th style="width: 10%">表單狀態</th>
+	                            <th style="width: 10%">明細</th>
+                        	</tr>
                         </thead>
                         <c:if test="${empty caseData.notHandleList}">
                         <tbody>
@@ -72,13 +75,15 @@
                         <c:forEach items="${caseData.notHandleList}" var="item" varStatus="status">
                         <tbody><tr>
                         	<td><c:out value="${status.index+1}"/></td>
-                        	<td><c:out value="${item.apply_user}"/><br>
-                        		<c:out value="${item.apply_deptStr}"/>
+                        	<td><func:username userid="${item.apply_user}"/>
+                        	</td>
+                        	<td>
+                        		<func:dept deptid="${item.apply_dept}"/>
                         	</td>
                         	<td><func:minguo value="${item.using_date}"/></td>
                         	<td>
-	                        	<c:out value="${item.using_time_s}"/>〜
-	                        	<c:out value="${item.using_time_e}"/>
+	                        	<func:timeconvert value="${item.using_time_s}"/>~
+	                        	<func:timeconvert value="${item.using_time_e}"/>
                         	</td>
                         	<td class="text-left">
 							<span class="ellipsisStr">
@@ -91,7 +96,7 @@
                         	</td>
                         	<td>
                         		<tags:button cssClass="btnDetail" value="${item.applyid}">
-									明細
+									明細<i class="fas fa-file-alt"></i>
 								</tags:button>
                         	</td>
                         	</tr>
@@ -108,14 +113,16 @@
                      <table id="qryListTable" class="table">
                        <thead data-orderable="true">
                         <tr>
-                            <th class="align-middle" style="width: 10%">全選<input type="checkbox" id="handledListTabcheckAllP" name="handledListTabcheckAllP"></th>
+                            <th class="align-middle" style="width: 5%">全選<input type="checkbox" id="handledListTabcheckAllP" name="handledListTabcheckAllP"></th>
                             <th class="align-middle" style="width: 10%">派車單號</th>
-                            <th class="align-middle" style="width: 10%">申請人<br>申請單位</th>
+                            <th class="align-middle" style="width: 10%">申請人</th>
+                            <th class="align-middle" style="width: 10%">申請單位</th>
                             <th class="align-middle" style="width: 10%">用車日期</th>
-                            <th class="align-middle" style="width: 10%">用車時間起迄</th>
-                            <th class="align-middle" style="width: 30%">用車事由</th>
-                            <th class="align-middle" style="width: 10%">已列印派車單註記</th>
+                            <th class="align-middle" style="width: 8%">用車時間起迄</th>
+                            <th class="align-middle" style="width: 20%">用車事由</th>
+                            <th class="align-middle" style="width: 5%">已列印派車單註記</th>
                             <th class="align-middle" style="width: 10%">補印</th>
+                            <th class="align-middle" style="width: 10%">明細</th>
                         </tr>
                        </thead>
                       <tbody>
@@ -128,12 +135,14 @@
                       	</c:if>
                       	</td>
                       	<td><c:out value="${item.applyid}"/></td>
-                      	<td><c:out value="${item.apply_user}"/><br>
-                      		<c:out value="${item.apply_deptStr}"/>
+                      	<td><func:username userid="${item.apply_user}"/>
+                      	</td>
+                      	<td>
+                      		<func:dept deptid="${item.apply_dept}"/>
                       	</td>
                       	<td><func:minguo value="${item.using_date}"/></td>
                       	<td>
-                       	<c:out value="${item.using_time_s}"/>〜<c:out value="${item.using_time_e}"/>
+                       	<func:timeconvert value="${item.using_time_s}"/>~<func:timeconvert value="${item.using_time_e}"/>
                       	</td>
                       	<td class="text-left">
 					<span class="ellipsisStr">
@@ -146,9 +155,14 @@
                       	<td>
                       	<c:if test="${item.print_mk eq 'Y'}">
                       		<tags:button cssClass="btnPrint2" value="${item.applyid}">
-							補印
-						</tags:button>
-					</c:if>
+							補印<i class="fas fa-download"></i>
+							</tags:button>
+						</c:if>
+                      	</td>
+                      	<td>
+                      		    <tags:button cssClass="btnDetail2" value="${item.applyid}">
+									明細<i class="fas fa-file-alt"></i>
+								</tags:button>
                       	</td>
                       </tr>
                       </c:forEach>
@@ -168,11 +182,12 @@
                        <thead data-orderable="true">
                         <tr>
                             <th style="width:15%" class="align-middle">派車單號</th>
-                            <th style="width:10%" class="align-middle">申請人<br>申請單位</th>
+                            <th style="width:10%" class="align-middle">申請人</th>
+                            <th style="width:10%" class="align-middle">申請單位</th>
                             <th style="width:10%" class="align-middle">用車日期</th>
                             <th style="width:10%" class="align-middle">用車時間起迄</th>
-                            <th style="width:45%" class="align-middle">用車事由</th>
-                            <th style="width:10%" class="align-middle">核派狀態</th>
+                            <th style="width:35%" class="align-middle">用車事由</th>
+                            <th style="width:20%" class="align-middle">核派狀態</th>
                         </tr>
                        </thead>
                       <tbody>
@@ -180,12 +195,14 @@
                       <c:forEach items="${caseData.reconfime_mk2List}" var="item" varStatus="status">
                       <tr>
                       	<td><c:out value="${item.applyid}"/></td>
-                      	<td><c:out value="${item.apply_user}"/><br>
-                      		<c:out value="${item.apply_deptStr}"/>
+                      	<td><func:username userid="${item.apply_user}"/>
+                      	</td>
+                      	<td>
+                      		<func:dept deptid="${item.apply_dept}"/>
                       	</td>
                       	<td><func:minguo value="${item.using_date}"/></td>
                       	<td>
-                       	<c:out value="${item.using_time_s}"/>〜<c:out value="${item.using_time_e}"/>
+                       	<func:timeconvert value="${item.using_time_s}"/>~<func:timeconvert value="${item.using_time_e}"/>
                       	</td>
                         <td class="text-left">
 							<span class="ellipsisStr">
@@ -220,6 +237,11 @@
             $('.btnDetail').click(function() {
 				$('#applyid').val($(this).val());
             	$('#eip07w040Form').attr('action', '<c:url value="/Eip07w040_query.action" />').submit();
+            });
+            
+            $('.btnDetail2').click(function() {
+				$('#applyid').val($(this).val());
+            	$('#eip07w040Form').attr('action', '<c:url value="/Eip07w040_detail.action" />').submit();
             });
             
             

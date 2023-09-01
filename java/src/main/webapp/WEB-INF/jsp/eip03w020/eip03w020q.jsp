@@ -27,9 +27,11 @@
                 <tags:form-row>
                     <div class="col-md-4 d-flex">
                         <form:label cssClass="col-form-label" path="allStDt">全案列管日期：</form:label>
-                        <form:input path="allStDtSt" cssClass="form-control num_only" size="13" placeholder="開始日期(民國年)" maxlength="7"/>
+<%--                        <form:input path="allStDtSt" cssClass="form-control num_only" size="13" placeholder="開始日期(民國年)" maxlength="7"/>--%>
+                        <form:input path="allStDtSt" cssClass="form-control dateTW" size="9" maxlength="9"  placeholder="開始日期" />
                         <span class="input-group-text px-1">~</span>
-                        <form:input path="allStDtEnd" cssClass="form-control num_only" size="13" placeholder="結束日期(民國年)" maxlength="7"/>
+<%--                        <form:input path="allStDtEnd" cssClass="form-control num_only" size="13" placeholder="結束日期(民國年)" maxlength="7"/>--%>
+                        <form:input path="allStDtEnd" cssClass="form-control dateTW" size="9" maxlength="9"  placeholder="結束日期" />
                     </div>
                 </tags:form-row>
                 <tags:form-row>

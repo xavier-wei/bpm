@@ -163,6 +163,8 @@
         if (this.isInline){
             this.show();
         }
+
+        this.xup(); //配合EIP 顯示 xxx/xx/xx
     };
 
     Datepicker.prototype = {
@@ -498,18 +500,23 @@
             //if (this.o.forceParse && this.inputField.val())
             //	this.setValue();
 
-            this._trigger('hide');
-
+            
             // EDIT 轉民國
             if(this.inputField.val().length == 10){
                 var inputFieldAry = this.inputField.val().split("/");
                 var inputYear = leftPad(inputFieldAry[0] -1911, 3, '0');
                 var inputMon = inputFieldAry[1];
                 var inputDay = inputFieldAry[2];
-                this.inputField.val(inputYear + inputMon + inputDay);
-                //console.log('inputField:' + inputYear + inputMon + inputDay);
+                this.inputField.val(inputYear +"/"+ inputMon+"/" + inputDay);
             }
 
+            this._trigger('hide');
+            
+            return this;
+        },
+
+        xup: function(){
+            convertDate(this.inputField);
             return this;
         },
 
@@ -2062,5 +2069,4 @@
     $(function(){
         datepickerPlugin.call($('[data-provide="datepicker-inline"]'));
     });
-
 }));

@@ -22,9 +22,9 @@
 <tags:fieldset legend="${caseData.mode eq 'A' ? '新增' : '修改'}分類">
 <form:form id="eip00w510Form" modelAttribute="${caseKey}">
     <tags:form-row>
-        <div class="col-md-6">
+        <div class="col-md-12">
             <form:label cssClass="col-form-label star" path="oscname">分類名稱：</form:label>
-            <form:input path="oscname" cssClass="form-control d-inline-block" maxlength="10"/>(最長10字)
+            <form:input path="oscname" cssClass="form-control d-inline-block" placeholder="最長10字" maxlength="10"/>
         </div>
     </tags:form-row>
     <tags:form-note>

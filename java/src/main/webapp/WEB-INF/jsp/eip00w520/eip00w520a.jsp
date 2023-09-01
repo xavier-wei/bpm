@@ -40,24 +40,24 @@
     <tags:form-row>
         <div class="col-md-12">
             <form:label cssClass="col-form-label star" path="topicname">主題名稱：</form:label>
-            <form:input path="topicname" cssClass="form-control d-inline-block" size="40" maxlength="100"/>(最長100字)
+            <form:input path="topicname" cssClass="form-control d-inline-block" placeholder="最長100字" size="40" maxlength="100"/>
         </div>
     </tags:form-row>
     <tags:form-row>
         <div class="col-md-12">
             <form:label cssClass="col-form-label star" path="topicname">開始時間：</form:label>
-            <form:input path="osfmdt" cssClass="form-control d-inline-block dateTW date" maxlength="7" size="10"/>
-            <form:input path="osfmdtHour" cssClass="form-control d-inline-block num_only padL" size="3" maxlength="2"/>時
-            <form:input path="osfmdtMinute" cssClass="form-control d-inline-block num_only padL" size="3" maxlength="2"/>分
+            <form:input path="osfmdt" cssClass="form-control d-inline-block dateTW cdate" maxlength="9" size="10"/>
+            <form:input path="osfmdtHour" cssClass="form-control d-inline-block num_only padL" placeholder="時" size="3" maxlength="2"/>：
+            <form:input path="osfmdtMinute" cssClass="form-control d-inline-block num_only padL" placeholder="分" size="3" maxlength="2"/>
             <label for="osfmdtChksys1"><form:checkbox path="osfmdtChksys" value="Y"/>系統時間</label>
         </div>
     </tags:form-row>
     <tags:form-row>
         <div class="col-md-12">
             <form:label cssClass="col-form-label star" path="topicname">結束時間：</form:label>
-            <form:input path="osendt" cssClass="form-control d-inline-block dateTW date" maxlength="7" size="10"/>
-            <form:input path="osendtHour" cssClass="form-control d-inline-block num_only padL" size="3" maxlength="2"/>時
-            <form:input path="osendtMinute" cssClass="form-control d-inline-block num_only padL" size="3" maxlength="2"/>分
+            <form:input path="osendt" cssClass="form-control d-inline-block dateTW cdate" maxlength="9" size="10"/>
+            <form:input path="osendtHour" cssClass="form-control d-inline-block num_only padL" placeholder="時" size="3" maxlength="2"/>：
+            <form:input path="osendtMinute" cssClass="form-control d-inline-block num_only padL" placeholder="分" size="3" maxlength="2"/>
             <label for="osendtChksys1"><form:checkbox path="osendtChksys" value="Y"/>系統時間</label>
         </div>
     </tags:form-row>
@@ -70,7 +70,7 @@
     <tags:form-row>
         <div class="col-md-12">
             <form:label cssClass="col-form-label star" path="organizer">主辦單位：</form:label>
-            <form:input path="organizer" cssClass="form-control d-inline-block" size="40" maxlength="25"/>(最長25字)
+            <form:input path="organizer" cssClass="form-control d-inline-block" placeholder="最長25字" size="40" maxlength="25"/>
         </div>
     </tags:form-row>
     <tags:form-row>
@@ -283,14 +283,15 @@ $(function(){
 
     function changeosFmdtChksys() {
         if ($("input[name='osfmdtChksys']").is(':checked')) {
-            $('#osfmdt').attr('readonly',true);
+            $('#osfmdt_OUTSIDE').attr('readonly',true);
             $('#osfmdtHour').attr('readonly',true);
             $('#osfmdtMinute').attr('readonly',true);
+            $('#osfmdt_OUTSIDE').val('');
             $('#osfmdt').val('');
             $('#osfmdtHour').val('');
             $('#osfmdtMinute').val('');
         } else {
-            $('#osfmdt').attr('readonly',false);
+            $('#osfmdt_OUTSIDE').attr('readonly',false);
             $('#osfmdtHour').attr('readonly',false);
             $('#osfmdtMinute').attr('readonly',false);
         }
@@ -302,14 +303,15 @@ $(function(){
 
     function changeosEndtChksys() {
         if ($("input[name='osendtChksys']").is(':checked')) {
-            $('#osendt').attr('readonly',true);
+            $('#osendt_OUTSIDE').attr('readonly',true);
             $('#osendtHour').attr('readonly',true);
             $('#osendtMinute').attr('readonly',true);
+            $('#osendt_OUTSIDE').val('');
             $('#osendt').val('');
             $('#osendtHour').val('');
             $('#osendtMinute').val('');
         } else {
-            $('#osendt').attr('readonly',false);
+            $('#osendt_OUTSIDE').attr('readonly',false);
             $('#osendtHour').attr('readonly',false);
             $('#osendtMinute').attr('readonly',false);
         }

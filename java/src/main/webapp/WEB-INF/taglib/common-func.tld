@@ -60,4 +60,41 @@
             <rtexprvalue>true</rtexprvalue>
         </attribute>
     </tag>
+    
+        <tag>
+        <description>TimeConvert</description>
+        <name>timeconvert</name>
+        <tag-class>tw.gov.pcc.common.tag.func.TimeConvertTag</tag-class>
+        <body-content>empty</body-content>
+        <attribute>
+            <name>value</name>
+            <required>true</required>
+            <rtexprvalue>true</rtexprvalue>
+        </attribute>
+    </tag>
+    
+    <tag>
+        <description>usingidToString</description>
+        <name>username</name>
+        <tag-class>tw.gov.pcc.common.tag.func.UsernameTag</tag-class>
+        <body-content>empty</body-content>
+        <attribute>
+            <name>userid</name>
+            <required>true</required>
+            <rtexprvalue>true</rtexprvalue>
+        </attribute>
+    </tag>
+    
+        <tag>
+        <description>deptidToString</description>
+        <name>dept</name>
+        <tag-class>tw.gov.pcc.common.tag.func.DeptTag</tag-class>
+        <body-content>empty</body-content>
+        <attribute>
+            <name>deptid</name>
+            <required>true</required>
+            <rtexprvalue>true</rtexprvalue>
+        </attribute>
+    </tag>
+    
 </taglib>

@@ -91,9 +91,9 @@
                             <form:option value="6">六</form:option>
                             <form:option value="7">日</form:option>
                         </form:select>
-                        <form:input id="periodStart"  name="periodStart"  path="periodStart" cssClass="form-control num_only ml-3 dateTW" size="8" maxlength="7" />
+                        <form:input id="periodStart"  name="periodStart"  path="periodStart" cssClass="form-control num_only ml-3 dateTW" size="9" maxlength="9" />
                         <span class="pt-2 mx-1">~</span>
-                        <form:input id="periodEnd"  name="periodEnd"  path="periodEnd" cssClass="form-control num_only dateTW" size="8" maxlength="7" disabled="true"/>
+                        <form:input id="periodEnd"  name="periodEnd"  path="periodEnd" cssClass="form-control num_only dateTW" size="9" maxlength="9" />
                     </div>
                 </tags:form-row>
                 <tags:form-row>
@@ -153,7 +153,7 @@
         //初始化會議畫面
 
         $('#repeat, #dateWeekMonth').change(function () {
-            let repeat = $('#repeat').val('true');
+            // let repeat = $('#repeat').val('true');
             let dateWeekMonth = $('#dateWeekMonth').val();
 
             // if(repeat === 'false'){
@@ -166,15 +166,15 @@
                 if(dateWeekMonth === 'date'){
                     $('#week').prop('disabled', true);
                     $('#day').prop('disabled', true);
-                    $('#periodEnd').prop('disabled', false);
+                    // $('#periodEnd').prop('disabled', false);
                 }else if(dateWeekMonth === 'week'){
                     $('#week').prop('disabled', true);
                     $('#day').prop('disabled', false);
-                    $('#periodEnd').prop('disabled', false);
+                    // $('#periodEnd').prop('disabled', false);
                 }else if (dateWeekMonth === 'month'){
                     $('#week').prop('disabled', false);
                     $('#day').prop('disabled', false);
-                    $('#periodEnd').prop('disabled', false);
+                    // $('#periodEnd').prop('disabled', false);
                 }
             // }
         })
@@ -298,7 +298,8 @@
             $('#week').val("first").prop('disabled', true);
             $('#day').val("mon").prop('disabled', true);
             $('#periodStart').val("");
-            $('#periodEnd').val("").prop('disabled', true);
+            // $('#periodEnd').val("").prop('disabled', true);
+            $('#periodEnd').val("");
             deleteAllItem();
             deleteAllFood();
         });

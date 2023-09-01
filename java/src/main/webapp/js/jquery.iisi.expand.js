@@ -90,6 +90,10 @@
 		    	}
 			});
 		},
+		//民國日期，只接受登打數字或\
+		cdate: ($src) => {
+			$src.val($src.val().replace(/[^0-9\\/]*/g, ''));
+		},
 		//格式化小數點兩位
 		rateForm: ($src) => {
 			const val = $src.val().match(/\d*\.?\d*/g).find(m => !!m);

@@ -9,7 +9,7 @@
         <c:if test="${caseData.trkSts == '暫存'}">
             <tags:button id="btnTemp" data-temp="0">暫存<i class="fas fa-check"></i></tags:button>
         </c:if>
-        <tags:button id="btnSave" data-temp="1">儲存<i class="fas fa-user-check"></i></tags:button>
+        <tags:button id="btnSave" data-temp="1">送出<i class="fas fa-user-check"></i></tags:button>
         <tags:button id="btnClear">清除<i class="fas fa-eraser"></i></tags:button>
         <tags:button id="btnBack">返回<i class="fas fa-reply"></i></tags:button>
     </jsp:attribute>
@@ -57,7 +57,8 @@
                 <tags:form-row>
                     <div class="col-md-4 d-flex">
                         <form:label cssClass="col-form-label star" path="allStDt">全案列管日期：</form:label>
-                        <form:input path="allStDt" cssClass="form-control num_only" size="13" maxlength="7"/>
+<%--                        <form:input path="allStDt" cssClass="form-control num_only" size="13" maxlength="7"/>--%>
+                        <form:input path="allStDt" cssClass="form-control d-inline-block dateTW" size="9" maxlength="9"/>
                     </div>
                 </tags:form-row>
                 <tags:form-row>

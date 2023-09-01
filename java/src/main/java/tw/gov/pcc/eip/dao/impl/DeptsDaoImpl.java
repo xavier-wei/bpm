@@ -150,7 +150,7 @@ public class DeptsDaoImpl extends BaseDao<Depts> implements DeptsDao {
         sql.append("   SELECT ");
         sql.append(ALL_COLUMNS_SQL);
         sql.append("     FROM DEPTS T");
-        sql.append("    WHERE DEPT_ID_P = CASE :level WHEN '1' THEN '9999' "); //根部門
+        sql.append("    WHERE DEPT_ID_P = CASE :level WHEN '1' THEN DEPT_ID "); //根部門
         sql.append("                                  WHEN '2' THEN :trkObj END ");  //改成畫面入trkobj
         sql.append("      AND IS_VALID = 'Y'  ");
         sql.append(" ORDER BY SORT_ORDER, DEPT_ID  ");

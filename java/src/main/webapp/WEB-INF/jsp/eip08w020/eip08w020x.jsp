@@ -18,9 +18,21 @@
       	<legend>領物單申請作業</legend>
 		<form:form id="eip08w020Form" name="eip08w020Form" modelAttribute="${caseKey}" method="POST">
             <tags:form-row>
-            	<div class="col-4 col-md-4">申請人：<c:out value="${caseData.apply_user}"/></div>
-            	<div class="col-4 col-md-4">申請單位：<c:out value="${caseData.apply_dept}"/></div>
-            	<div class="col-4 col-md-4">申請日期：<c:out value="${caseData.apply_date}"/></div>
+                <div class="col-4 col-md-4">
+	            	<tags:text-item label="申請人">
+	            		<c:out value="${caseData.apply_user}"/>
+	            	</tags:text-item>
+            	</div>
+            	<div class="col-4 col-md-4">
+            		<tags:text-item label="申請單位">
+            			<c:out value="${caseData.apply_dept}"/>
+            		</tags:text-item>
+            	</div>
+            	<div class="col-4 col-md-4">
+	            	<tags:text-item label="申請日期">
+	            		<func:minguo value="${caseData.apply_date}" pattern="yyy/MM/dd"/>
+	            	</tags:text-item>
+            	</div>
             </tags:form-row>
             <tags:form-row>
             	<form:label cssClass="col-form-label star" path="apply_memo">申請用途：</form:label>

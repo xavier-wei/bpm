@@ -151,10 +151,18 @@ public class Eip03w020Service {
         mixCase.setClsDt(km.getClsDt()); //結案日期
         mixCase.setCreDept(deptsDao.findByPk(km.getCreDept()).getDept_name());
         mixCase.setCreUser(usersDao.selectByKey(km.getCreUser()).getUser_name());
-        mixCase.setCreDt(km.getCreDt() == null? "": km.getCreDt().format(fmt).replaceAll("-",""));
-        mixCase.setUpdDept(deptsDao.findByPk(km.getUpdDept()).getDept_name());
-        mixCase.setUpdUser(usersDao.selectByKey(km.getUpdUser()).getUser_name());
-        mixCase.setUpdDt(km.getUpdDt() == null? "": km.getUpdDt().format(fmt).replaceAll("-",""));
+//        mixCase.setCreDt(km.getCreDt() == null? "": km.getCreDt().format(fmt).replaceAll("-",""));
+        String creDt = DateUtility.parseLocalDateTimeToChineseDateTime(km.getCreDt(),true);
+        creDt = DateUtility.formatChineseDateTimeString(creDt,false);
+        mixCase.setCreDt(creDt);
+//        mixCase.setUpdDt(km.getUpdDt() == null? "": km.getUpdDt().format(fmt).replaceAll("-",""));
+        if (km.getUpdDt() != null){
+            mixCase.setUpdDept(deptsDao.findByPk(km.getUpdDept()).getDept_name());
+            mixCase.setUpdUser(usersDao.selectByKey(km.getUpdUser()).getUser_name());
+            String updDt = DateUtility.parseLocalDateTimeToChineseDateTime(km.getUpdDt(),true);
+            updDt = DateUtility.formatChineseDateTimeString(updDt,false);
+            mixCase.setUpdDt(updDt);
+        }
 
         List<KeepTrkDtl> kdList = keepTrkDtlDao.selectDataByTrkIDAndTrkObj(caseData.getSelectedTrkID(),"");
 
@@ -187,7 +195,7 @@ public class Eip03w020Service {
             innerMap.put("rptRate", String.valueOf(list.get(0).getRptRate()));    //辦理完成進度(0-100)
 //            innerMap.put("rptAskEnd", StringUtils.equals(list.get(0).getRptAskEnd(), "Y")? "是" : "否");  //是否要求解列(Y/N)
             innerMap.put("rptAskEnd", list.get(0).getRptAskEnd());  //是否要求解列(Y/N)
-//            innerMap.put("rptDept", list.get(0).getRptDept());   //指定填報單位
+            innerMap.put("rptDept", list.get(0).getRptDept());   //指定填報單位
             innerMap.put("rptUser", list.get(0).getRptUser());    //指定填報人員
             List<Depts> rptDeptNameList = new ArrayList<>();
             List<Users> rptUserNameList = new ArrayList<>();

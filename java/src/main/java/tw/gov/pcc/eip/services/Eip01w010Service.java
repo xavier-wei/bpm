@@ -1,6 +1,7 @@
 package tw.gov.pcc.eip.services;
 
 import static org.apache.commons.lang3.StringUtils.trim;
+import static org.apache.commons.lang3.StringUtils.trimToNull;
 
 import java.io.File;
 import java.time.LocalDateTime;
@@ -208,6 +209,7 @@ public class Eip01w010Service {
             caseData.setStatusText("0-處理中");
             caseData.setLocatearea("");
             caseData.setAvailabledep("");
+            caseData.setIssearch("2");
             caseData.setIstop("2");
             caseData.setIsfront("2");
             caseData.setContactperson(userData.getUserId());
@@ -448,25 +450,29 @@ public class Eip01w010Service {
         m.setIstop(caseData.getIstop()); // 是否置頂
         m.setIsfront(caseData.getIsfront()); // 前台是否顯示
         m.setSubject(caseData.getSubject()); // 主旨/連結網址
-        m.setMcontent(caseData.getMcontent()); // 內文
+        m.setMcontent(trimToNull(caseData.getMcontent())); // 內文
         m.setOplink(caseData.getOplink()); // 是否需要另開視窗
-        m.setIndir(caseData.getIndir()); // 存放目錄
-
-        // 存放目錄
-        insertMsgdepositdir(caseData.getAttributype(), caseData.getTmpPath(), caseData.getIndir());
+        if ("A".equals(caseData.getPagetype()) && "4".equals(caseData.getAttributype())) {
+            m.setIndir(caseData.getIndir()); // 存放目錄
+            
+            // 存放目錄
+            insertMsgdepositdir(caseData.getAttributype(), caseData.getTmpPath(), caseData.getIndir());
+        } else {
+            m.setIndir(null);
+        }
 
         m.setReleasedt(DateUtility.changeDateTypeToWestDate(caseData.getReleasedt())); // 上架時間
         m.setOfftime(DateUtility.changeDateTypeToWestDate(caseData.getOfftime())); // 下架時間
         m.setContactunit(caseData.getContactunit()); // 連絡單位
         m.setContactperson(caseData.getContactperson()); // 聯絡人
         m.setContacttel(caseData.getContacttel()); // 連絡電話
-        m.setMemo(caseData.getMemo()); // 備註
-        m.setOffreason(caseData.getOffreason()); // 下架原因
+        m.setMemo(trimToNull(caseData.getMemo())); // 備註
+        m.setOffreason(null); // 下架原因
 
         m.setCreatid(userId); // 建立人員
         LocalDateTime ldt = LocalDateTime.now();
         m.setCreatdt(ldt); // 建立時間
-        m.setUpdid(""); // 更新人員
+        m.setUpdid(null); // 更新人員
         m.setUpddt(null); // 更新時間
         msgdataDao.insert(m);
 
@@ -601,11 +607,13 @@ public class Eip01w010Service {
                 ms.setSeq(origin.getSeq());
                 msgdepositDao.delete(ms); // 刪附檔
             });
-        } else {
+        } else if ("A".equals(caseData.getPagetype()) && "4".equals(caseData.getAttributype())) {
             m.setMcontent(caseData.getMcontent()); // 內文
             m.setIndir(caseData.getIndir()); // 存放目錄
             // 存放目錄
             insertMsgdepositdir(caseData.getAttributype(), caseData.getTmpPath(), caseData.getIndir());
+        } else {
+            m.setMcontent(trimToNull(caseData.getMcontent())); // 內文
         }
         m.setPagetype(caseData.getPagetype()); // 頁面型態
         m.setOplink(caseData.getOplink()); // 是否需要另開視窗
@@ -615,8 +623,8 @@ public class Eip01w010Service {
         m.setContactunit(caseData.getContactunit()); // 連絡單位
         m.setContactperson(caseData.getContactperson()); // 聯絡人
         m.setContacttel(caseData.getContacttel()); // 連絡電話
-        m.setMemo(caseData.getMemo()); // 備註
-        m.setOffreason(caseData.getOffreason()); // 下架原因
+        m.setMemo(trimToNull(caseData.getMemo())); // 備註
+        m.setOffreason(trimToNull(caseData.getOffreason())); // 下架原因
 
         m.setUpdid(userId); // 更新人員
         LocalDateTime ldt = LocalDateTime.now();

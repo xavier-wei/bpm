@@ -228,12 +228,12 @@
                 });
                 // 預覽
                 $('#querylistTable #btnPreview').click(function() {
-                    $('#fseq').val($(this).parent('td').data('fseq'));
+                    var fseq = $(this).parent('td').data('fseq');
                     $.ajax({
                         type: "POST",
                         url: '<c:url value="/Eip01w010_getDetail.action" />',
                         data: {
-                            'fseq': $(this).parent('td').data('fseq')
+                            'fseq': fseq
                         },
                         timeout: 100000,
                         success: function(data) {
@@ -243,7 +243,7 @@
                                 var str = '';
                                 $.each(data.file, function(i, e) {
                                     str +=
-                                        '<a href="javascript:;" class="alink" id=' +
+                                        '<a href="javascript:;" class="alink" data-fseq=' + fseq + ' data-seq=' +
                                         i + '>' +
                                         e + '</a>' + '　';
                                     //str += '<button type="button" class="btn btn-outline-info mr-3 mb-2" id='+i+'>'+e+'</button>';
@@ -335,9 +335,13 @@
             // 檔案下載連結
             $(document).on('click', '.alink', function(e) {
                 $('#pageNum').val($('.paginate_input').val()); // 紀錄當前頁碼
-                $('#seq').val($(this).attr('id'));
+                $('#fseq').val($(this).data('fseq'));
+                $('#seq').val($(this).data('seq'));
                 $('#eip01w010Form').attr('action', '<c:url value="/Eip01w010_getFile.action" />')
                     .submit();
+                
+                $('#fseq').val('');
+                $('#seq').val('');
             });
         </script>
     </jsp:attribute>

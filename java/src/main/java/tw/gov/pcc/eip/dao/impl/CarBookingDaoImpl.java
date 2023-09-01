@@ -91,19 +91,25 @@ public class CarBookingDaoImpl extends BaseDao<CarBooking> implements CarBooking
 		sql.append(" Select *  ");
 		sql.append(
 				" , (SELECT codename  FROM EIPCODE e where e.codekind ='CARPROCESSSTATUS' AND e.codeno = CARProcess_status) codeName ");
-		sql.append(" from CAR_BOOKING ");
-		sql.append(" Where apply_user=:applyName ");
-		sql.append("   And apply_dept =dbo.ufn_nvl(:applyUnit , apply_dept) ");
-		if (StringUtils.isNotBlank(caseData.getApplyDateStar()) || (StringUtils.isBlank(caseData.getApplyDateStar())
-				&& StringUtils.isBlank(caseData.getUseDateStar()))) {
-			sql.append("   And apply_date >=dbo.ufn_nvl(:applyDateStar, apply_date) ");
-			sql.append("   And apply_date <=dbo.ufn_nvl(:applyDateEnd , apply_date) ");
+		sql.append(" from CAR_BOOKING  Where ");
+		//判斷是否為秘書室同仁
+		if ("N".equals(caseData.getIsSecretarial())) {
+//		if (!"600023".equals(caseData.getApplyUnit())&&!"600024".equals(caseData.getApplyUnit())&&!"600025".equals(caseData.getApplyUnit())&&
+//				!"600026".equals(caseData.getApplyUnit())&&!"600027".equals(caseData.getApplyUnit()) ){
+			sql.append(" apply_user=:applyName And ");
+			sql.append("    apply_dept =dbo.ufn_nvl(:applyUnit , apply_dept ) And ");
 		}
-		if (StringUtils.isNotBlank(caseData.getUseDateStar()) || (StringUtils.isBlank(caseData.getApplyDateStar())
-				&& StringUtils.isBlank(caseData.getUseDateStar()))) {
-			sql.append("   And using_date >= dbo.ufn_nvl(:useDateStar , using_date) ");
+
+//		if (StringUtils.isNotBlank(caseData.getApplyDateStar()) || (StringUtils.isBlank(caseData.getApplyDateStar())
+//				&& StringUtils.isBlank(caseData.getUseDateStar()))) {
+			sql.append("    apply_date >=dbo.ufn_nvl(:applyDateStar, apply_date) ");
+			sql.append("   And apply_date <=dbo.ufn_nvl(:applyDateEnd , apply_date) And ");
+//		}
+//		if (StringUtils.isNotBlank(caseData.getUseDateStar()) || (StringUtils.isBlank(caseData.getApplyDateStar())
+//				&& StringUtils.isBlank(caseData.getUseDateStar()))) {
+			sql.append("    using_date >= dbo.ufn_nvl(:useDateStar , using_date) ");
 			sql.append("   And using_date <= dbo.ufn_nvl(:useDateEnd , using_date) ");
-		}
+//		}
 		sql.append(" ORDER BY APPLYID ");
 
 		SqlParameterSource params = new MapSqlParameterSource("applyName", caseData.getApplyName())

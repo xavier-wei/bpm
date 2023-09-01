@@ -58,7 +58,7 @@
                     </div>
                     <div class="col-md-3">
                         <form:label cssClass="col-form-label " path="creDt">建立時間：</form:label>
-                        <func:minguo value="${mixData.creDt}"/>
+                        <c:out value="${mixData.creDt}"/>
                     </div>
                 </tags:form-row>
                 <tags:form-row>
@@ -68,7 +68,7 @@
                     </div>
                     <div class="col-md-3">
                         <form:label cssClass="col-form-label " path="updDt">更新時間：</form:label>
-                        <func:minguo value="${mixData.updDt}"/>
+                        <c:out value="${mixData.updDt}"/>
                     </div>
                 </tags:form-row>
 <%--                <form:hidden path="trkObj"/>--%>
@@ -452,7 +452,7 @@
                 var dataLength = data.length - 1 ;
                 data.forEach(userData => {
                     // alert( userData.empID)
-                    if(count % 3 === 0){
+                    if(count > 0 && count % 3 === 0){
                         if (count !== 0){
                             wholeContent.append(rowContent);
                         }

@@ -29,18 +29,22 @@
                 <tags:form-row>
                     <div class="col-md-4 d-flex">
                         <form:label cssClass="col-form-label" path="meetingdtBegin">會議日期：</form:label>
-                        <form:input path="meetingdtBegin" cssClass="form-control num_only" size="13" placeholder="開始日期(民國年)" maxlength="7"/>
+<%--                        <form:input path="meetingdtBegin" cssClass="form-control num_only" size="13" placeholder="開始日期(民國年)" maxlength="7"/>--%>
+                        <form:input path="meetingdtBegin" cssClass="form-control d-inline-block dateTW cdate"  placeholder="開始日期" size="9" maxlength="9"/>
                         <span class="input-group-text px-1">~</span>
-                        <form:input path="meetingdtEnd" cssClass="form-control num_only" size="13" placeholder="結束日期(民國年)" maxlength="7"/>
+<%--                        <form:input path="meetingdtEnd" cssClass="form-control num_only" size="13" placeholder="結束日期(民國年)" maxlength="7"/>--%>
+                        <form:input path="meetingdtEnd"   cssClass="form-control d-inline-block dateTW cdate"  placeholder="結束日期" size="9" maxlength="9"/>
                     </div>
                     <div class="col-md-4 d-flex">
                         <form:label cssClass="col-form-label" path="meetingBegin">會議時間：</form:label>
                         <form:select path="meetingBegin" cssClass="form-control selector">
                             <form:option value="">開始時間</form:option>
+                            <form:options items="${caseData.meetingTimeCombobox }" />
                         </form:select>
                         <span class="input-group-text px-1">~</span>
                         <form:select path="meetingEnd" cssClass="form-control selector">
                             <form:option value="">結束時間</form:option>
+                            <form:options items="${caseData.meetingTimeCombobox }" />
                         </form:select>
                     </div>
                 </tags:form-row>
@@ -95,7 +99,7 @@
                                         <func:minguo value="${item.meetingdt}"/>
                                     </td>
                                     <td>
-                                        <c:out value='${item.meetingBegin} ~ ${item.meetingEnd}'/>
+                                        <c:out value='${item.meetingBegin.substring(0,2)}:${item.meetingBegin.substring(2)} ~ ${item.meetingEnd.substring(0,2)}:${item.meetingEnd.substring(2)}'/>
                                     </td>
                                     <td>
                                         <c:out value='${item.roomId}'/>

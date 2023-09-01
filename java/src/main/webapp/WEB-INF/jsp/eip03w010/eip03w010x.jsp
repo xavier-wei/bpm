@@ -41,7 +41,8 @@
                 <tags:form-row>
                     <div class="col">
                         <form:label cssClass="col-form-label " path="allStDt">全案列管日期：</form:label>
-                        <func:minguo value="${mixData.allStDt}"/>
+<%--                        <func:minguo value="${mixData.allStDt}"/>--%>
+                        <c:out value="${mixData.allStDt}"/>
                     </div>
                 </tags:form-row>
                 <tags:form-row>
@@ -51,23 +52,23 @@
                     </div>
                 </tags:form-row>
                 <tags:form-row>
-                    <div class="col-md-3">
+                    <div class="col-md-5">
                         <form:label cssClass="col-form-label " path="creUser">建立人員：</form:label>
                         <c:out value="${mixData.creDept}-${mixData.creUser}"/>
                     </div>
-                    <div class="col-md-3">
+                    <div class="col-md-5">
                         <form:label cssClass="col-form-label " path="creDt">建立時間：</form:label>
-                        <func:minguo value="${mixData.creDt}"/>
+                        <c:out value="${mixData.creDt}"/>
                     </div>
                 </tags:form-row>
                 <tags:form-row>
-                    <div class="col-md-3">
+                    <div class="col-md-5">
                         <form:label cssClass="col-form-label " path="updUser">更新人員：</form:label>
-                        <c:out value="${mixData.updDept }-${mixData.updUser}" />
+                        <c:out value="${mixData.updDept}-${mixData.updUser}" />
                     </div>
-                    <div class="col-md-3">
+                    <div class="col-md-5">
                         <form:label cssClass="col-form-label " path="updDt">更新時間：</form:label>
-                        <func:minguo value="${mixData.updDt}"/>
+                        <c:out value="${mixData.updDt}"/>
                     </div>
                 </tags:form-row>
                 <form:hidden path="trkObj"/>
@@ -94,8 +95,8 @@
                                 <td class="text-center"><c:out value='${status.count}'/></td>
                                 <td class="text-center"><a class="clickDept" href="#" data-obj="${item.trkObj.split('-')[0]}" data-prc="${item.prcSts}"><c:out value="${item.trkObj.split('-')[1]}" /></a></td>
                                 <td class="text-center"><c:out value='${item.prcSts}'/></td>
-                                <td class="text-center"><func:minguo value="${item.stDt}"/></td>
-                                <td class="text-center"><func:minguo value="${item.endDt}"/></td>
+                                <td class="text-center"><c:out value="${item.stDt}"/></td>
+                                <td class="text-center"><c:out value="${item.endDt}"/></td>
                             </tr>
                         </c:forEach>
                     </tbody>

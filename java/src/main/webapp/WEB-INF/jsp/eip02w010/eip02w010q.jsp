@@ -27,14 +27,6 @@
     <jsp:attribute name="contents">
         <form:form id="eip02w010Form" modelAttribute="${caseKey}">
             <tags:fieldset legend="查詢條件">
-                <tags:form-row>
-                    <form:label cssClass="col-form-label" path="user_name">員工姓名：</form:label>
-                    <div class="col-12 col-md">
-                        <form:input path="user_name" cssClass="form-control" size="10" maxlength="20" />
-                        <span class="ads"><a href="javascript:;">進階查詢</a></span>
-                    </div>
-                </tags:form-row>
-                <div id="condition">
                     <tags:form-row>
                         <form:label cssClass="col-form-label" path="dept_id">部門：</form:label>
                         <div class="col-12 col-md">
@@ -48,6 +40,14 @@
                             </form:select>
                         </div>
                     </tags:form-row>
+                <tags:form-row>
+                    <form:label cssClass="col-form-label" path="user_name">員工姓名：</form:label>
+                    <div class="col-12 col-md">
+                        <form:input path="user_name" cssClass="form-control" size="10" maxlength="20" />
+                        <span class="ads"><a href="javascript:;">進階查詢</a></span>
+                    </div>
+                </tags:form-row>
+                <div id="condition">
                     <tags:form-row>
                         <form:label cssClass="col-form-label" path="titlename">職稱：</form:label>
                         <div class="col-12 col-md">

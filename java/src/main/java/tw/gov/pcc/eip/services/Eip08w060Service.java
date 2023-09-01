@@ -123,6 +123,15 @@ public class Eip08w060Service {
 	 * @param caseData
 	 */
 	public ByteArrayOutputStream print(Eip08w060Case caseData) throws Exception {
+		//檢核是否已加入"以下空白"
+	if (!"以下空白".equals(caseData.getEip08w060CaseList().get(caseData.getEip08w060CaseList().size()-1).getItem())){
+		List<Eip08w060Case>dataList=caseData.getEip08w060CaseList();
+		Eip08w060Case data=new Eip08w060Case();
+		data.setItem("以下空白");
+		dataList.add(data);
+		caseData.setEip08w060CaseList(dataList);
+	}
+
 		Eip08w060l00 pdf = new Eip08w060l00();
 		pdf.createEip08w060DataPdf(caseData);
 		return pdf.getOutputStream();

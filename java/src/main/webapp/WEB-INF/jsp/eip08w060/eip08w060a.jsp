@@ -12,7 +12,7 @@
     </tags:button>
 
 	<tags:button id="btBack">
-    	回主畫面<i class="fas fa-user-plus"></i>
+    	回主畫面<i class="fas fa-reply"></i>
     </tags:button>
 
 </jsp:attribute>
@@ -21,12 +21,12 @@
     <tags:fieldset legend="物品請購/修繕請修單 申請作業">
 		<form:form id="Eip08W060xForm" name="Eip08W060xForm" modelAttribute="${caseKey}" method="POST">
 			<tags:form-row>
-				<label class="col-form-label text-left col-3">選項:<c:out value="${fn:substring(caseData.applyTpNm, 2,-1)}"/></label>
+				<label class="col-form-label text-left col-3">選項：<c:out value="${fn:substring(caseData.applyTpNm, 2,-1)}"/></label>
 			</tags:form-row>
 			<tags:form-row>
-				<label class="col-form-label text-left col-3">申請人:<c:out value="${caseData.user}"/></label>
-				<label class="col-form-label text-left col-3">申請日期:<c:out value="${caseData.applyDate}"/></label>
-				<label class="col-form-label text-left col-3">暫存:<c:out value="${caseData.save}"/></label>
+				<label class="col-form-label text-left col-3">申請人：<c:out value="${caseData.user}"/></label>
+				<label class="col-form-label text-left col-3">申請日期：<c:out value="${fn:substring(caseData.applyDate, 0,3)}"/>/<c:out value="${fn:substring(caseData.applyDate, 3,5)}"/>/<c:out value="${fn:substring(caseData.applyDate, 5,-1)}"/></label>
+				<label class="col-form-label text-left col-3">暫存：<c:out value="${caseData.save}"/></label>
             </tags:form-row>
 
      <div class="table-responsive" id="div1">

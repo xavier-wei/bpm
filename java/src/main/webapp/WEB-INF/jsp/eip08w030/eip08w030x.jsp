@@ -17,8 +17,8 @@
     <tags:fieldset  legend="查詢結果">
 		<form:form id="eip08w030Form" name="eip08w030Form" modelAttribute="${caseKey}" method="POST">
             <tags:form-row>
-            	<div class="col-4 col-md-4">申請日期(起)：<c:out value="${caseData.applydateStart}"/></div>
-            	<div class="col-4 col-md-4">申請日期(迄)：<c:out value="${caseData.applydateEnd}"/></div>
+            	<div class="col-4 col-md-4">申請日期(起)：<func:minguo value="${caseData.applydateStart}"  pattern="yyy/MM/dd"/></div>
+            	<div class="col-4 col-md-4">申請日期(迄)：<func:minguo value="${caseData.applydateEnd}"  pattern="yyy/MM/dd"/></div>
             </tags:form-row>
             <tags:form-row>
             	<div class="col-4 col-md-4">複核選項：
@@ -27,16 +27,20 @@
             	</div>
             </tags:form-row>
             <tags:form-row>
-            	    <table id="foodTable" class="table table-hover m-2">
-                        <thead>
+          	 <div class="table-responsive mt-2">	 
+            	    <table id="qryListTable" class="table">
+	            	    <thead data-orderable="true">
+	            	    <tr>
                             <th style="width: 10%">全選<input type="checkbox" id="dataListTabcheckAllP" name="dataListTabcheckAllP"></th>
                             <th style="width: 10%">領物單號</th>
                             <th style="width: 10%">申請人</th>
                             <th style="width: 50%">申請單位</th>
                             <th style="width: 10%">明細</th>
+                        </tr>
                         </thead>
-                        <c:forEach items="${caseData.dataList}" var="item" varStatus="status">
                         <tbody>
+                        <c:forEach items="${caseData.dataList}" var="item" varStatus="status">
+                        <tr>
                         	<td><form:checkbox path="dataList[${status.index}].Check"  value="applynos" cssClass="checkedgreen"/></td>
                         	<td>PL<c:out value="${item.applyno}"/></td>
                         	<td><c:out value="${item.apply_user}"/></td>
@@ -46,16 +50,22 @@
 									明細
 								</tags:button>
                         	</td>
-                        </tbody>
+                        	</tr>
                         </c:forEach>
+                        </tbody>
                         <form:hidden path="applyno"/>
                     </table>
+                    </div>
             </tags:form-row>
         </form:form>
     </tags:fieldset>
 </jsp:attribute>
 <jsp:attribute name="footers">
 <script>
+
+		let config = getDataTablesConfig();
+		var table = $("#qryListTable").DataTable(config);
+
         $(function() {
         	$('#selectFile').click(function(e){
         		$('input[name="agree"]')[0].checked = true;

@@ -7,7 +7,7 @@
 <jsp:attribute name="buttons">
 <!-- 選擇頁 -->
     <tags:button id="btnSave">
-        存檔<i class="fas fa-user-check"></i>
+        確認<i class="fas fa-user-check"></i>
     </tags:button>
 </jsp:attribute>
     <jsp:attribute name="contents">

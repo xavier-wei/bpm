@@ -174,10 +174,10 @@ public class KeepTrkMstDaoImpl extends BaseDao<KeepTrkMst> implements KeepTrkMst
         sql_1.append("              UNION ALL ");
         sql_1.append("                 SELECT A.* ");
         sql_1.append("                   FROM DEPTS A ");
-        sql_1.append("             INNER JOIN DeptRoot B ON A.DEPT_ID = B.DEPT_ID_P ");
+        sql_1.append("             INNER JOIN DeptRoot B ON A.DEPT_ID = B.DEPT_ID_P AND B.DEPT_ID != B.DEPT_ID_P ");
         sql_1.append("                  ) ");
         sql_1.append(" SELECT * FROM DeptRoot ");
-        sql_1.append("         WHERE DEPT_ID_P = '9999'; ");
+        sql_1.append("         WHERE DEPT_ID_P = DEPT_ID; ");
 
         //測試
         params.put("userDept", userDept);

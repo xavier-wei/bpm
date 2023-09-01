@@ -22,12 +22,14 @@ public class Eip07w060Case implements Serializable {
 	private List<CarBase> bosscarList;
 	private List<String> hourList;
 	private List<String> minuteList;
-	private List<CarBooking> thisMomthCarbookingList;
-
-	private String carType;
-	private String applyid;
+	private List<CarBooking> thisMomthCarbookingList;//查詢畫面下拉式選單用
+	
+	private List<CarBooking> bosscarMonthlyList;
+	private String keyinYm;//鍵入年月
+	private String carType;//Y:首長專用車,N:非首長專用車
+	private String applyid;//派車單號
 	private String bosscarno;//carno1,carno2
-	private String last3carno;
+	private String last3carno;//車牌末三碼
 	
 	private String usehms;
 	private String usehme;

@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.SessionAttributes;
 import org.springframework.web.servlet.ModelAndView;
 
+import tw.gov.pcc.eip.dao.DeptsDao;
 import tw.gov.pcc.eip.framework.domain.UserBean;
 import tw.gov.pcc.eip.framework.spring.controllers.BaseController;
 import tw.gov.pcc.eip.orderCar.cases.Eip07w030Case;
@@ -41,6 +42,9 @@ public class Eip07w030Controller extends BaseController {
 	@Autowired
 	private UserBean userData;
 	
+	@Autowired
+	private DeptsDao deptsDao;
+	
 	@ModelAttribute(CASE_KEY)
 	public Eip07w030Case getEip07w030Case() {
 		Eip07w030Case caseData = new Eip07w030Case();
@@ -57,7 +61,8 @@ public class Eip07w030Controller extends BaseController {
 		log.debug("導向 Eip07w030Case_enter 派車預約審核作業");
 		Eip07w030Case newCase = new Eip07w030Case();
 		BeanUtility.copyProperties(caseData, newCase);// 進來時清除caseData
-		caseData.setApply_dept(userData.getDeptId());
+		String deptid = deptsDao.findByPk(userData.getDeptId()).getDept_name();
+		caseData.setApply_dept(deptid);
 		try {
 			eip07w030Service.getData(caseData);
 		} catch (Exception e) {

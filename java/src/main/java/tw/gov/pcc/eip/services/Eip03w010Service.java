@@ -58,6 +58,8 @@ public class Eip03w010Service {
             if (a.getTrkCont() != null){
                 a.setTrkCont(a.getTrkCont().replaceAll("\r\n", "<br>"));
             }
+            String cnAllStDt = DateUtility.changeDateTypeToChineseDate(a.getAllStDt());
+            a.setAllStDt(cnAllStDt.substring(0,3) + "/" + cnAllStDt.substring(3,5) + "/" + cnAllStDt.substring(5));
         });
         caseData.setTrkStsList(trkStsList);
         caseData.setKeepTrkMstList(keepTrkMstList);
@@ -86,6 +88,8 @@ public class Eip03w010Service {
             if (a.getTrkCont() != null){
                 a.setTrkCont(a.getTrkCont().replaceAll("\r\n", "<br>"));
             }
+            String cnAllStDt = DateUtility.changeDateTypeToChineseDate(a.getAllStDt());
+            a.setAllStDt(cnAllStDt.substring(0,3) + "/" + cnAllStDt.substring(3,5) + "/" + cnAllStDt.substring(5));
         });
         if (caseData.getAllStDtSt() != null) {
             caseData.setAllStDtSt(DateUtility.changeDateTypeToChineseDate(caseData.getAllStDtSt()));
@@ -190,12 +194,24 @@ public class Eip03w010Service {
 //        caseData.setCreDept(ktm.getCreDept());
         caseData.setCreDept(deptsDao.findByPk(ktm.getCreDept()).getDept_name());
         caseData.setCreUser(usersDao.selectByKey(ktm.getCreUser()).getUser_name());
-        caseData.setCreDt(ktm.getCreDt());
+        String creDt = DateUtility.parseLocalDateTimeToChineseDateTime(ktm.getCreDt(),true);
+        creDt = DateUtility.formatChineseDateTimeString(creDt,false);
+        caseData.setCreDt(creDt);
 //        caseData.setUpdUser(ktm.getUpdUser());
 //        caseData.setUpdDept(ktm.getUpdDept());
-        caseData.setUpdUser(ktm.getUpdUser() != null? usersDao.selectByKey(ktm.getUpdUser()).getUser_name() : "");
-        caseData.setUpdDept(ktm.getUpdDept() != null? deptsDao.findByPk(ktm.getUpdDept()).getDept_name() : "");
-        caseData.setUpdDt(ktm.getUpdDt());
+//        caseData.setUpdUser(ktm.getUpdUser() != null? usersDao.selectByKey(ktm.getUpdUser()).getUser_name() : "");
+//        caseData.setUpdDept(ktm.getUpdDept() != null? deptsDao.findByPk(ktm.getUpdDept()).getDept_name() : "");
+        if(ktm.getUpdUser() != null && !ktm.getUpdUser().equals("")){
+            caseData.setUpdUser(usersDao.selectByKey(ktm.getUpdUser()).getUser_name());
+        }
+        if(ktm.getUpdDept() != null && !ktm.getUpdDept().equals("")){
+            caseData.setUpdDept(deptsDao.findByPk(ktm.getUpdDept()).getDept_name());
+        }
+        
+        //        updDt = updDt.substring(0, 3) + "/" + updDt.substring(3, 5) + "/" + updDt.substring(5, 7) + " " + updDt.substring(8);
+        String updDt = DateUtility.parseLocalDateTimeToChineseDateTime(ktm.getUpdDt(),true);
+        updDt = DateUtility.formatChineseDateTimeString(updDt,false);
+        caseData.setUpdDt(updDt);
 
         //KeepTrkDtl
         List<KeepTrkDtl> keepTrkDtlList = keepTrkDtlDao.selectDataByTrkIDAndTrkObj(caseData.getSelectedTrkID(),"");
@@ -335,18 +351,29 @@ public class Eip03w010Service {
             mixCase.setTrkCont(km.getTrkCont().replaceAll("\r\n","<br>"));
         }
         mixCase.setTrkFrom(km.getTrkFrom());
-        mixCase.setAllStDt(km.getAllStDt()); //全案列管日期
+//        mixCase.setAllStDt(km.getAllStDt()); //全案列管日期
+        mixCase.setAllStDt(DateUtility.formatChineseDateString(DateUtility.changeDateTypeToChineseDate(km.getAllStDt()), false));
         mixCase.setClsDt(km.getClsDt()); //結案日期
 //        mixCase.setCreDept(km.getCreDept());
 //        mixCase.setCreUser(km.getCreUser());
         mixCase.setCreDept(deptsDao.findByPk(km.getCreDept()).getDept_name());
         mixCase.setCreUser(usersDao.selectByKey(km.getCreUser()).getUser_name());
-        mixCase.setCreDt(km.getCreDt() == null? "": km.getCreDt().format(fmt).replaceAll("-",""));
+//        mixCase.setCreDt(km.getCreDt() == null? "": km.getCreDt().format(fmt).replaceAll("-",""));
+        String creDt = DateUtility.parseLocalDateTimeToChineseDateTime(km.getCreDt(),true);
+        creDt = DateUtility.formatChineseDateTimeString(creDt,false);
+        mixCase.setCreDt(creDt);
 //        mixCase.setUpdDept(km.getUpdDept());
 //        mixCase.setUpdUser(km.getUpdUser());
-        caseData.setUpdUser(km.getUpdUser() != null? usersDao.selectByKey(km.getUpdUser()).getUser_name() : "");
-        caseData.setUpdDept(km.getUpdDept() != null? deptsDao.findByPk(km.getUpdDept()).getDept_name() : "");
-        mixCase.setUpdDt(km.getUpdDt() == null? "": km.getUpdDt().format(fmt).replaceAll("-",""));
+        if(km.getUpdDept() != null && !km.getUpdDept().equals("")){
+            mixCase.setUpdDept(deptsDao.findByPk(km.getUpdDept()).getDept_name());
+        }
+        if(km.getUpdUser() != null && !km.getUpdUser().equals("")){
+            mixCase.setUpdUser(usersDao.selectByKey(km.getUpdUser()).getUser_name());
+        }
+        //        mixCase.setUpdDt(km.getUpdDt() == null? "": km.getUpdDt().format(fmt).replaceAll("-",""));
+        String updDt = DateUtility.parseLocalDateTimeToChineseDateTime(km.getUpdDt(),true);
+        updDt = DateUtility.formatChineseDateTimeString(updDt,false);
+        mixCase.setUpdDt(updDt);
 
         List<KeepTrkDtl> kdList = keepTrkDtlDao.selectDataByTrkIDAndTrkObj(caseData.getSelectedTrkID(),"");
         List<Eipcode> trkStsList = eipcodeDao.findByCodeKind("TRKPRCSTS");
@@ -360,6 +387,8 @@ public class Eip03w010Service {
             });
             //取得所有列管對象
             mixCase.getTrkObjList().add(a.getTrkObj());
+            a.setStDt(DateUtility.formatChineseDateString(a.getStDt(), false));
+            a.setEndDt(DateUtility.formatChineseDateString(a.getEndDt(), false));
         });
         mixCase.setKdList(kdList);
 
@@ -455,6 +484,9 @@ public class Eip03w010Service {
         BeanUtils.copyProperties(ktm, newKtm);
         newKtm.setTrkSts("D");
         newKtm.setClsDt(DateUtility.getNowWestDate());
+        newKtm.setUpdDept(userData.getDeptId()); //登入者之部室
+        newKtm.setUpdUser(userData.getUserId()); //登入者之員編
+        newKtm.setUpdDt(DateUtility.getNowDateTimeAsTimestamp().toLocalDateTime()); //CURRENT_TIMESTAMP
         keepTrkMstDao.updateByTrkID(newKtm);
     }
 }

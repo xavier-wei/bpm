@@ -44,7 +44,7 @@ public class Eip03w010Case implements Serializable {
 //    新增頁
     private String creDept; //建立部門
     private String creUser; //建立人員
-    private LocalDateTime creDt; //建立時間
+    private String creDt; //建立時間
     private String trkObj; //列管對象
     private Map<String, String> trkObjCombobox; //列管對象下拉選單
     private Map<String, String> trkFromCombobox; //交辦來源下拉選單
@@ -59,7 +59,7 @@ public class Eip03w010Case implements Serializable {
     //修改頁
     private String updDept; //更新部門
     private String updUser; //更新人員
-    private LocalDateTime updDt; //更新時間 含時分秒
+    private String updDt; //更新時間 含時分秒
     private List<KeepTrkDtl> keepTrkDtlList = new ArrayList<>();
 
     public void clear(){
@@ -179,11 +179,13 @@ public class Eip03w010Case implements Serializable {
             Map<String, Map<String, String>> jsonMap = objectMapper.readValue(getJsonMap(), Map.class);
             if(jsonMap.size() > 1){
                 for(String k : jsonMap.keySet()){
-                    Map<String, String> innerJsonMap = jsonMap.get(k);
-                    String stDt = innerJsonMap.get("stDt");
-                    String endDt = innerJsonMap.get("endDt");
-                    if (StringUtils.isNotBlank(stDt) && StringUtils.isNotBlank(endDt) && Integer.parseInt(stDt) > Integer.parseInt(endDt)){
-                        return false;
+                    if(!k.equals("")){
+                        Map<String, String> innerJsonMap = jsonMap.get(k);
+                        String stDt = innerJsonMap.get("stDt").replace("/","");
+                        String endDt = innerJsonMap.get("endDt").replace("/","");;
+                        if (StringUtils.isNotBlank(stDt) && StringUtils.isNotBlank(endDt) && Integer.parseInt(stDt) > Integer.parseInt(endDt)){
+                            return false;
+                        }
                     }
                 }
             }

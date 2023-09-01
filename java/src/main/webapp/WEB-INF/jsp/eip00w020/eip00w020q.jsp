@@ -52,7 +52,7 @@
 						            <td class="text-left"><c:out value="${data.dept_id}"/></td>
 						            <td class="text-center">
 							            <tags:button cssClass="btnEdit"
-	                                             onclick="doEdit('${data.user_id}','${data.dept_id}')">修改<i class="fas fa-edit"></i></tags:button>
+	                                             onclick="doEdit('${data.user_id}','${data.dept_id}')">修改</i></tags:button>
 						            </td>
 						        </tr>
 					        </c:forEach>

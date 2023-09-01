@@ -8,13 +8,11 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.SessionAttributes;
 import org.springframework.web.servlet.ModelAndView;
 import tw.gov.pcc.common.util.DateUtil;
-import tw.gov.pcc.eip.apply.cases.Eip08w020Case;
 import tw.gov.pcc.eip.domain.CarBooking;
 import tw.gov.pcc.eip.framework.domain.UserBean;
 import tw.gov.pcc.eip.framework.spring.controllers.BaseController;
 import tw.gov.pcc.eip.framework.spring.support.FileOutputView;
 import tw.gov.pcc.eip.orderCar.Validator.Eip07w020Validator;
-import tw.gov.pcc.eip.orderCar.cases.Eip07w010Case;
 import tw.gov.pcc.eip.orderCar.cases.Eip07w020Case;
 import tw.gov.pcc.eip.services.Eip07w020Service;
 import tw.gov.pcc.eip.util.BeanUtility;
@@ -72,6 +70,8 @@ public class Eip07w020Controller extends BaseController {
         caseData.setWorkTy("A");
         caseData.setApplyName(userData.getUserId());
         caseData.setApplyUnit(userData.getDeptId());
+        caseData.setApplyUnitNm(userData.getDeptName());
+        caseData.setUserName(userData.getUserName());
         caseData.setApplyDate(DateUtil.getNowChineseDate());
         caseData.setUseDateStar("");
         caseData.setUseDateEnd("");
@@ -86,6 +86,8 @@ public class Eip07w020Controller extends BaseController {
         caseData.setWorkTy("A");
         caseData.setApplyName(userData.getUserId());
         caseData.setApplyUnit(userData.getDeptId());
+        caseData.setApplyUnitNm(userData.getDeptName());
+        caseData.setUserName(userData.getUserName());
         caseData.setApplyDate(DateUtil.getNowChineseDate());
         caseData.setUseDateStar("");
         caseData.setUseDateEnd("");
@@ -159,11 +161,12 @@ public class Eip07w020Controller extends BaseController {
         try {
             List<Eip07w020Case> data =new ArrayList<>();
             data= eip07w020Service.quaryData(caseData);
+            eip07w020Service.secretarialLogin(caseData);
+            caseData.setApplyDateStar(DateUtility.changeDateType(caseData.getApplyDateStar()));
+            caseData.setApplyDateEnd(DateUtility.changeDateType(caseData.getApplyDateEnd()));
+            caseData.setUseDateStar(DateUtility.changeDateType(caseData.getUseDateStar()));
+            caseData.setUseDateEnd(DateUtility.changeDateType(caseData.getUseDateEnd()));
             if (data.isEmpty()) {
-                caseData.setApplyDateStar(DateUtility.changeDateType(caseData.getApplyDateStar()));
-                caseData.setApplyDateEnd(DateUtility.changeDateType(caseData.getApplyDateEnd()));
-                caseData.setUseDateStar(DateUtility.changeDateType(caseData.getUseDateStar()));
-                caseData.setUseDateEnd(DateUtility.changeDateType(caseData.getUseDateEnd()));
                 setSystemMessage("查無資料");
                 return QUERY_PAGE;
             }
@@ -187,7 +190,7 @@ public class Eip07w020Controller extends BaseController {
             arrayList = new ArrayList<>();
             CarBooking detail = eip07w020Service.selectByApplyId(caseData.getApplyId());
             arrayList.add(detail);
-            if ("U".equals(detail.getCarprocess_status())){
+            if ("U".equals(detail.getCarprocess_status())||"Y".equals(caseData.getIsSecretarial())){
                 caseData.setCheckMk("true");
             }else {
                 caseData.setRmMemo("1");
@@ -200,6 +203,7 @@ public class Eip07w020Controller extends BaseController {
         caseData.setDetailsList( arrayList.stream().map(x->(CarBooking)BeanUtility.cloneBean(x)).collect(Collectors.toList()));
 //        caseData.setDetailsList(arrayList);
         caseData.setChangeMkList(arrayList);
+        eip07w020Service.secretarialChoseApplyid(caseData);
         return Details_PAGE;
     }
 

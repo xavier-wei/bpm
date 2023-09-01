@@ -19,8 +19,10 @@ import tw.gov.pcc.eip.common.cases.Eip03w010Case;
 import tw.gov.pcc.eip.common.cases.Eip03w010MixCase;
 import tw.gov.pcc.eip.common.cases.Eip03w030Case;
 import tw.gov.pcc.eip.common.cases.Eip03w030MixCase;
+import tw.gov.pcc.eip.dao.DeptsDao;
 import tw.gov.pcc.eip.dao.KeepTrkDtlDao;
 import tw.gov.pcc.eip.dao.KeepTrkMstDao;
+import tw.gov.pcc.eip.dao.UsersDao;
 import tw.gov.pcc.eip.framework.domain.UserBean;
 import tw.gov.pcc.eip.framework.spring.annotation.SkipCSRFVerify;
 import tw.gov.pcc.eip.framework.spring.controllers.BaseController;
@@ -53,6 +55,10 @@ public class Eip03w010Controller extends BaseController {
     private UserBean userData;
     @Autowired
     private Eip03w010Service eip03w010Service;
+    @Autowired
+    private DeptsDao deptsDao;
+    @Autowired
+    private UsersDao usersDao;
     @Autowired
     private KeepTrkDtlDao keepTrkDtlDao;
 
@@ -123,8 +129,8 @@ public class Eip03w010Controller extends BaseController {
         caseData.setAllStDt(today);
         caseData.setTrkCont("");
         caseData.setTrkFrom("");
-        caseData.setCreDept(userData.getDeptId());
-        caseData.setCreUser(userData.getUserId());
+        caseData.setCreDept(deptsDao.findByPk(userData.getDeptId()).getDept_name());
+        caseData.setCreUser(usersDao.selectByKey(userData.getUserId()).getUser_name());
         caseData.setTrkObjCombobox(eip03w010Service.getAllTrkObj());
         caseData.setTrkFromCombobox(eip03w010Service.getAllTrkFrom());
         return INSERT_PAGE;

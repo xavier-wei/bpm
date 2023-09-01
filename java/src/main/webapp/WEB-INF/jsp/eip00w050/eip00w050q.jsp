@@ -5,7 +5,7 @@
 <c:set var="caseData" value="${requestScope[caseKey]}"/>
 <tags:layout>
     <jsp:attribute name="buttons">
-        <tags:button id="btnReload">重新整理<i class="fas fa-reply"></i></tags:button>
+        <tags:button id="btnReload">清除<i class="fas fa-eraser"></i></tags:button>
     </jsp:attribute>
     <jsp:attribute name="contents">
         
@@ -15,9 +15,9 @@
                 <tags:fieldset legend="節點資訊">
                 <div class="container-title">
                     <div class="title-function text-right">
-                        <tags:button id="save" cssClass="btn-sm">儲存新增<i class="fas fa-save"></i></tags:button>
-                        <tags:button id="update" cssClass="btn-sm">儲存更新<i class="fas fa-edit"></i></tags:button>
-                        <tags:button id="delete" cssClass="btn-sm">刪除<i class="fas fa-trash-alt"></i></tags:button>
+                        <tags:button id="save" cssClass="btn-sm">儲存新增</tags:button>
+                        <tags:button id="update" cssClass="btn-sm">儲存更新</tags:button>
+                        <tags:button id="delete" cssClass="btn-sm">刪除</tags:button>
                     </div>
                 </div>
                 <div class="container-content">
@@ -58,9 +58,9 @@
                 <tags:fieldset legend="功能節點樹">
                 <div class="container-title">
                     <div class="text-right">
-                        <tags:button id="open" cssClass="btn-sm">展開<i class="fas fa-expand"></i></tags:button>
-                        <tags:button id="close" cssClass="btn-sm">收合<i class="fas fa-compress"></i></tags:button>
-                        <tags:button id="create" cssClass="btn-sm">新增子項<i class="fas fa-plus"></i></tags:button>
+                        <tags:button id="open" cssClass="btn-sm">展開</tags:button>
+                        <tags:button id="close" cssClass="btn-sm">收合</tags:button>
+                        <tags:button id="create" cssClass="btn-sm">新增子項</tags:button>
                     </div>
                 </div>
                 <div id="treeBlock">
@@ -177,6 +177,11 @@
         });
 
         $('#btnReload').click(function () {
+            let dynatree = $(te).dynatree('getSelectedNodes');
+            if (dynatree && dynatree.length > 0){
+                dynatree[0].select(false);
+            }
+            $('#eip00w050Form input:text:enabled, #eip00w050Form input:hidden').val('');
             $('#eip00w050Form').attr('action', '<c:url value="/Eip00w050_enter.action"/>').submit();
         });
 

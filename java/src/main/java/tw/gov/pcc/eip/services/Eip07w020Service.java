@@ -42,6 +42,9 @@ public class Eip07w020Service {
     private Car_booking_recDao car_booking_recDao;
     @Autowired
     private  TimeConversionService timeConversionService;
+//    @Autowired
+//    private  MailService mailService;
+
     String sysDateTime = DateUtil.getNowWestDateTime(true);
     String sysDate = sysDateTime.substring(0, 8);
 
@@ -231,6 +234,8 @@ public class Eip07w020Service {
             oldData.setChange_reason("1");
             oldData.setApply_date(DateUtility.changeDateType(oldData.getApply_date()));
             oldData.setUsing_date(DateUtility.changeDateType(oldData.getUsing_date()));
+            oldData.setUpd_user(userData.getUserId());
+            oldData.setUpd_datetime(DateUtil.getNowWestDateTime(true));
             carBookingDao.updateByKey(oldData);
             data.setDetailsList(Collections.singletonList(oldData));
             Car_booking_rec carBookingRec = new Car_booking_rec();
@@ -239,16 +244,30 @@ public class Eip07w020Service {
             car_booking_recDao.deleteByKey(carBookingRec);
             }
         }else {//2取消申請
-            oldData.setChange_count(String.valueOf(count));
-            oldData.setChange_mk("Y");
-            oldData.setChange_reason("2");
-            oldData.setCarprocess_status("C");
-            oldData.setApply_date(DateUtility.changeDateType(oldData.getApply_date()));
-            oldData.setUsing_date(DateUtility.changeDateType(oldData.getUsing_date()));
+            if ("Y".equals(data.getIsSecretarial())){//判斷是否為秘書室取消
+                oldData.setCarprocess_status("9");
+                oldData.setUpd_user(userData.getUserId());
+                oldData.setApply_date(DateUtility.changeDateType(oldData.getApply_date()));
+                oldData.setUsing_date(DateUtility.changeDateType(oldData.getUsing_date()));
+                oldData.setUpd_datetime(DateUtil.getNowWestDateTime(true));
+            }else {
+                oldData.setChange_count(String.valueOf(count));
+                oldData.setChange_mk("Y");
+                oldData.setChange_reason("2");
+                oldData.setCarprocess_status("C");
+                oldData.setApply_date(DateUtility.changeDateType(oldData.getApply_date()));
+                oldData.setUsing_date(DateUtility.changeDateType(oldData.getUsing_date()));
+                oldData.setUpd_user(userData.getUserId());
+                oldData.setUpd_datetime(DateUtil.getNowWestDateTime(true));
+            }
+
+
             Car_booking_rec carBookingRec = new Car_booking_rec();
             carBookingRec.setApplyid(oldData.getApplyid());
             carBookingDao.updateByKey(oldData);
             car_booking_recDao.deleteByKey(carBookingRec);
+            //寄maile功能
+//            mailService.sendEmailNow("派車單號:"+oldData.getApplyid()+"取消派車","填mail",oldData.getApply_user()+"取消派車");
         }
     }
 
@@ -259,6 +278,26 @@ public class Eip07w020Service {
             using= StringUtils.substring(using,0,47)+"0";
         }
         oldData.setUsing(using);
+    }
+
+    //判斷是否為秘書室人員登入
+    public void secretarialLogin(Eip07w020Case data) {
+        //判斷登入user是否為秘書室
+        if ("600023".equals(data.getApplyUnit())||"600024".equals(data.getApplyUnit())||"600025".equals(data.getApplyUnit())&&
+                "600026".equals(data.getApplyUnit())||"600027".equals(data.getApplyUnit()) ){
+            data.setIsSecretarial("Y");
+        }else {
+            data.setIsSecretarial("N");
+        }
+    }
+
+    //判斷秘書室人員是否查詢自己的表單
+    public void secretarialChoseApplyid(Eip07w020Case data) {
+        if (data.getApplyUnit().equals(data.getDetailsList().get(0).getApply_dept())){
+            data.setIsSecretarial("N");
+        }else {
+            data.setIsSecretarial("Y");
+        }
     }
 
     /**
@@ -337,6 +376,8 @@ public class Eip07w020Service {
         pdf.createEip07w020DataPdf(caseData.getDetailsList().get(0));
         return pdf.getOutputStream();
     };
+
+
 
 
     private boolean userIsExist(String userid) {

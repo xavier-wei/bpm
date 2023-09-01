@@ -143,6 +143,7 @@ public class Eip00w520Service extends OpinionSurveyService{
      */
     public void getSingleFormData(Eip00w520Case caseData, Eip00w520ThemeCase themeCase) {
         Osformdata osformdata = osformdataDao.findByPk(caseData.getOsformno());
+        Map<String,String> usersMap = getUsers();
         themeCase.setOsccode(String.valueOf(osformdata.getOsccode()));
         themeCase.setTopicname(osformdata.getTopicname());
         themeCase.setOsfmdt(osformdata.getOsfmdt().format(minguoformatterForInput));
@@ -163,9 +164,9 @@ public class Eip00w520Service extends OpinionSurveyService{
         themeCase.setMailsubject(osformdata.getMailsubject());
         themeCase.setMailmsg(osformdata.getMailmsg());
         themeCase.setStatus(getOsstatus().get(osformdata.getStatus()));
-        themeCase.setCreuser(osformdata.getCreuser());
+        themeCase.setCreuser(StringUtils.defaultString(usersMap.get(osformdata.getCreuser())));
         themeCase.setCredt(osformdata.getCredt().format(minguoformatter));
-        themeCase.setUpduser(osformdata.getUpduser());
+        themeCase.setUpduser(StringUtils.defaultString(usersMap.get(osformdata.getUpduser())));
         themeCase.setUpddt(ObjectUtils.isNotEmpty(osformdata.getUpddt())?osformdata.getUpddt().format(minguoformatter):"");
     }
 
@@ -946,27 +947,34 @@ public class Eip00w520Service extends OpinionSurveyService{
      * @param themeCase
      */
     public void advancedValidate(Eip00w520ThemeCase themeCase, BindingResult result) {
+        boolean hasError = false;
         if (StringUtils.isBlank(themeCase.getOsfmdtChksys())) {
             if (StringUtils.isBlank(themeCase.getOsfmdt())) {
                 result.rejectValue("osfmdt", "", "「開始時間」為必填");
+                hasError = true;
             }
             if (StringUtils.isBlank(themeCase.getOsfmdtHour())) {
                 result.rejectValue("osfmdtHour", "", "「開始時間(時)」為必填");
+                hasError = true;
             }
             if (StringUtils.isBlank(themeCase.getOsfmdtMinute())) {
                 result.rejectValue("osfmdtMinute", "", "「開始時間(分)」為必填");
+                hasError = true;
             }
         }
 
         if (StringUtils.isBlank(themeCase.getOsendtChksys())) {
             if (StringUtils.isBlank(themeCase.getOsendt())) {
                 result.rejectValue("osendt", "", "「結束時間」為必填");
+                hasError = true;
             }
             if (StringUtils.isBlank(themeCase.getOsendtHour())) {
                 result.rejectValue("osendtHour", "", "「結束時間(時)」為必填");
+                hasError = true;
             }
             if (StringUtils.isBlank(themeCase.getOsendtMinute())) {
                 result.rejectValue("osendtMinute", "", "「結束時間(分)」為必填");
+                hasError = true;
             }
         }
 
@@ -974,29 +982,34 @@ public class Eip00w520Service extends OpinionSurveyService{
             result.rejectValue("osfmdtChksys", "", "「開始時間」需小於「結束時間」");
         }
 
-        if (StringUtils.isBlank(themeCase.getOsfmdtChksys()) && StringUtils.isNotBlank(themeCase.getOsendtChksys())) {
-            LocalDateTime fmdt = LocalDateTime.of(DateUtility.westDateToLocalDate(DateUtility.changeDateTypeToWestDate(themeCase.getOsfmdt())), LocalTime.of(Integer.parseInt(themeCase.getOsfmdtHour()), Integer.parseInt(themeCase.getOsfmdtMinute())));
-            LocalDateTime nowTime = LocalDateTime.now().withSecond(0).withNano(0);
-            if (fmdt.isAfter(nowTime) || fmdt.equals(nowTime)) {
-                result.rejectValue("osfmdtMinute", "", "「開始時間」需小於「結束時間」");
+        if (!hasError) {
+            if (StringUtils.isBlank(themeCase.getOsfmdtChksys()) && StringUtils.isNotBlank(themeCase.getOsendtChksys()) && themeCase.isOsfmdtHourValid() && themeCase.isOsfmdtMinuteValid()) {
+                LocalDateTime fmdt = LocalDateTime.of(DateUtility.westDateToLocalDate(DateUtility.changeDateTypeToWestDate(themeCase.getOsfmdt())), LocalTime.of(Integer.parseInt(themeCase.getOsfmdtHour()), Integer.parseInt(themeCase.getOsfmdtMinute())));
+                LocalDateTime nowTime = LocalDateTime.now().withSecond(0).withNano(0);
+                if (fmdt.isAfter(nowTime) || fmdt.equals(nowTime)) {
+                    result.rejectValue("osfmdtMinute", "", "「開始時間」需小於「結束時間」");
+                }
+            }
+
+            if (StringUtils.isNotBlank(themeCase.getOsfmdtChksys()) && StringUtils.isBlank(themeCase.getOsendtChksys()) && themeCase.isOsendtHourValid() && themeCase.isOsendtMinuteValid()) {
+                LocalDateTime endt = LocalDateTime.of(DateUtility.westDateToLocalDate(DateUtility.changeDateTypeToWestDate(themeCase.getOsendt())), LocalTime.of(Integer.parseInt(themeCase.getOsendtHour()), Integer.parseInt(themeCase.getOsendtMinute())));
+                LocalDateTime nowTime = LocalDateTime.now().withSecond(0).withNano(0);
+                if (endt.isBefore(nowTime) || endt.equals(nowTime)) {
+                    result.rejectValue("osendtMinute", "", "「開始時間」需小於「結束時間」");
+                }
+            }
+
+            if (StringUtils.isBlank(themeCase.getOsfmdtChksys()) && StringUtils.isBlank(themeCase.getOsendtChksys())) {
+                if (themeCase.isOsfmdtHourValid() && themeCase.isOsfmdtMinuteValid() && themeCase.isOsendtHourValid() && themeCase.isOsendtMinuteValid()) {
+                    LocalDateTime fmdt = LocalDateTime.of(DateUtility.westDateToLocalDate(DateUtility.changeDateTypeToWestDate(themeCase.getOsfmdt())), LocalTime.of(Integer.parseInt(themeCase.getOsfmdtHour()), Integer.parseInt(themeCase.getOsfmdtMinute())));
+                    LocalDateTime endt = LocalDateTime.of(DateUtility.westDateToLocalDate(DateUtility.changeDateTypeToWestDate(themeCase.getOsendt())), LocalTime.of(Integer.parseInt(themeCase.getOsendtHour()), Integer.parseInt(themeCase.getOsendtMinute())));
+                    if (fmdt.isAfter(endt) || fmdt.equals(endt)) {
+                        result.rejectValue("osfmdtMinute", "", "「開始時間」需小於「結束時間」");
+                    }
+                }
             }
         }
 
-        if (StringUtils.isNotBlank(themeCase.getOsfmdtChksys()) && StringUtils.isBlank(themeCase.getOsendtChksys())) {
-            LocalDateTime endt = LocalDateTime.of(DateUtility.westDateToLocalDate(DateUtility.changeDateTypeToWestDate(themeCase.getOsendt())), LocalTime.of(Integer.parseInt(themeCase.getOsendtHour()), Integer.parseInt(themeCase.getOsendtMinute())));
-            LocalDateTime nowTime = LocalDateTime.now().withSecond(0).withNano(0);
-            if (endt.isBefore(nowTime) || endt.equals(nowTime)) {
-                result.rejectValue("osendtMinute", "", "「開始時間」需小於「結束時間」");
-            }
-        }
-
-        if (StringUtils.isBlank(themeCase.getOsfmdtChksys()) && StringUtils.isBlank(themeCase.getOsendtChksys())) {
-            LocalDateTime fmdt = LocalDateTime.of(DateUtility.westDateToLocalDate(DateUtility.changeDateTypeToWestDate(themeCase.getOsfmdt())), LocalTime.of(Integer.parseInt(themeCase.getOsfmdtHour()), Integer.parseInt(themeCase.getOsfmdtMinute())));
-            LocalDateTime endt = LocalDateTime.of(DateUtility.westDateToLocalDate(DateUtility.changeDateTypeToWestDate(themeCase.getOsendt())), LocalTime.of(Integer.parseInt(themeCase.getOsendtHour()), Integer.parseInt(themeCase.getOsendtMinute())));
-            if (fmdt.isAfter(endt) || fmdt.equals(endt)) {
-                result.rejectValue("osfmdtMinute", "", "「開始時間」需小於「結束時間」");
-            }
-        }
     }
 
     /**

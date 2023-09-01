@@ -35,8 +35,6 @@ public class Eip08w020Case implements Serializable {
 	/**
 	 * 申請日期
 	 */
-	@RequiredString(label = "申請日期" , groups = { Apply.class })
-	@ChineseDate(label = "申請日期", groups = {Apply.class})
 	private String apply_date;
 
 	/**

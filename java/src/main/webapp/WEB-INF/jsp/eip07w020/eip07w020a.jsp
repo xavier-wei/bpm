@@ -7,11 +7,11 @@
 <jsp:attribute name="buttons">
 <!-- 選擇頁 -->
 	  <tags:button id="btnSelect">
-    	確認預約<i class="fas fa-search"></i>
+    	確認預約<i class="fas fa-user-check"></i>
       </tags:button>
 
 	  <tags:button id="btnClearn">
-    	回主畫面<i class="fa-step-backward"></i>
+    	回主畫面<i class="fas fa-reply"></i>
       </tags:button>
 
 </jsp:attribute>
@@ -33,7 +33,7 @@
 				</div>
 				<div  class="col-md d-flex">
 					<form:label cssClass="col-form-label" path="applyDate">申請日期：</form:label>
-					<form:input id="applyDate" name="applyDate" path="applyDate" cssClass="form-control"   size="7"
+					<form:input id="applyDate" name="applyDate" path="applyDate" cssClass="form-control  dateTW"   size="9"
 								maxlength="7" disabled="true"/>
 				</div>
 			</tags:form-row>
@@ -68,7 +68,7 @@
 			<tags:form-row>
 					<div  class="col-md d-flex">
 						<form:label cssClass="col-form-label star" path="useDate">用車日期：</form:label>
-						<form:input id="useDate" name="useDate" path="insterList[0].useDate" cssClass="form-control num_only dateTW"   size="7"
+						<form:input id="useDate" name="useDate" path="insterList[0].useDate" cssClass="form-control num_only dateTW"   size="9"
 									maxlength="7" />
 					</div>
 			</tags:form-row>

@@ -28,9 +28,11 @@
                 <tags:form-row>
                     <div class="col-md-4 d-flex">
                         <form:label cssClass="col-form-label" path="allStDt">全案列管日期：</form:label>
-                        <form:input path="allStDtSt" cssClass="form-control num_only" size="13" placeholder="開始日期(民國年)" maxlength="7"/>
+<%--                        <form:input path="allStDtSt" cssClass="form-control num_only" size="13" placeholder="開始日期(民國年)" maxlength="7"/>--%>
+                        <form:input path="allStDtSt" cssClass="form-control dateTW" size="9" maxlength="9"  placeholder="開始日期" />
                         <span class="input-group-text px-1">~</span>
-                        <form:input path="allStDtEnd" cssClass="form-control num_only" size="13" placeholder="結束日期(民國年)" maxlength="7"/>
+<%--                        <form:input path="allStDtEnd" cssClass="form-control num_only" size="13" placeholder="結束日期(民國年)" maxlength="7"/>--%>
+                        <form:input path="allStDtEnd" cssClass="form-control dateTW" size="9" maxlength="9"  placeholder="結束日期" />
                     </div>
                 </tags:form-row>
                 <tags:form-row>
@@ -78,7 +80,8 @@
                                         <c:out value='${item.trkCont}' escapeXml="false"/>
                                     </td>
                                     <td>
-                                        <func:minguo value="${item.allStDt}"/>
+<%--                                        <func:minguo value="${item.allStDt}"/>--%>
+                                        <c:out value='${item.allStDt}'/>
                                     </td>
                                     <td>
                                         <c:out value='${item.trkSts}'/>
@@ -132,11 +135,12 @@
         //btnClear 清除
         $('#btnClear').click(function(e) {
             e.preventDefault();
-            $('#trkID').val('');
-            $('#trkCont').val('');
-            $('#allStDtSt').val('');
-            $('#allStDtEnd').val("");
+            // $('#trkID').val('');
+            // $('#trkCont').val('');
+            // $('#allStDtSt').text('');
+            // $('#allStDtEnd').text("");
             $('#trkSts').val("");
+            $("input").val("");
         });
 
         //btnQuery
@@ -182,74 +186,6 @@
                 $('#eip03w010Form').attr('action', '<c:url value="/Eip03w010_forwardToCancel.action" />').submit();
             });
         })
-
-
-        // $('#dataTable').on('click', '.btnDetail', function (e) {
-        //     e.preventDefault()
-        //     $('input[id="selectedTrkID"]').val($(this).data('selected'));
-        //     $('#eip03w030Form').attr('action', 'Eip03w030_queryKeepTrkForDetail.action').submit();
-        // });
-
-        //btnApplyForm
-        // $('.btnApplyForm').click(function (e){
-        //     e.preventDefault();
-        //     $('input[id="meetingId"]').val($(this).data('meetingid'));
-        //     $('#eip06w011Form').attr('action', 'Eip06w010_getApplyForm.action').submit();
-        // })
-
-        // $('#dataTable').on('click', '.btnApplyForm', function (e) {
-        //         e.preventDefault();
-        //         $('input[id="meetingId"]').val($(this).data('meetingid'));
-        //         $('#eip06w011Form').attr('action', 'Eip06w010_getApplyForm.action').submit();
-        // });
-
-        //btnEdit
-        // $('.btnEdit').click(function (e){
-        //     e.preventDefault();
-        //     $('input[id="meetingId"]').val($(this).data('meetingid'));
-        //     $('input[id="operation"]').val("update");
-        //     alert($(this).data('meetingid'));
-        //     $('#eip06w011Form').attr('action', 'Eip06w010_queryMeetingForUpdate.action').submit();
-        // })
-
-        // $('#dataTable').on('click', '.btnEdit', function (e) {
-        //         e.preventDefault();
-        //         $('input[id="meetingId"]').val($(this).data('meetingid'));
-        //         $('input[id="operation"]').val("update");
-        //         $('#eip06w011Form').attr('action', 'Eip06w010_queryMeetingForUpdate.action').submit();
-        // });
-
-        //btnEdit
-        // $('.btnDetail').click(function (e){
-        //     e.preventDefault();
-        //     $('input[id="meetingId"]').val($(this).data('meetingid'));
-        //     $('input[id="operation"]').val("update");
-        //     $('#eip06w011Form').attr('action', 'Eip06w010_queryMeetingForDetail.action').submit();
-        // })
-
-        //btnCancel
-        <%--$('.btnCancel').click(function (e){--%>
-        <%--    e.preventDefault();--%>
-        <%--    // showAlert("確定要刪除此會議?")--%>
-        <%--    $('input[id="meetingId"]').val($(this).data('meetingid'));--%>
-        <%--    $('input[id="operation"]').val("update");--%>
-        <%--    showConfirm("確定要刪除此會議?", function() {--%>
-        <%--        $('#eip06w011Form')--%>
-        <%--            .attr('action', '<c:url value="/Eip06w010_deleteMeeting.action" />')--%>
-        <%--            .submit();--%>
-        <%--    });--%>
-        <%--})--%>
-        <%--$('#dataTable').on('click', '.btnCancel', function (e) {--%>
-        <%--        e.preventDefault();--%>
-        <%--        // showAlert("確定要刪除此會議?")--%>
-        <%--        $('input[id="meetingId"]').val($(this).data('meetingid'));--%>
-        <%--        $('input[id="operation"]').val("update");--%>
-        <%--        showConfirm("確定要刪除此會議?", function() {--%>
-        <%--            $('#eip06w011Form')--%>
-        <%--                .attr('action', '<c:url value="/Eip06w010_deleteMeeting.action" />')--%>
-        <%--                .submit();--%>
-        <%--        });--%>
-        <%--});--%>
 
     })
 </script>

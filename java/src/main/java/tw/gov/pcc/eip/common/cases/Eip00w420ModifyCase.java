@@ -6,10 +6,7 @@ import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.util.CollectionUtils;
 import org.springframework.web.multipart.MultipartFile;
 import tw.gov.pcc.common.util.DateUtil;
-import tw.gov.pcc.eip.framework.validation.ChineseDate;
-import tw.gov.pcc.eip.framework.validation.NotEmpty;
-import tw.gov.pcc.eip.framework.validation.RequiredInteger;
-import tw.gov.pcc.eip.framework.validation.RequiredString;
+import tw.gov.pcc.eip.framework.validation.*;
 import tw.gov.pcc.eip.util.DateUtility;
 
 import javax.validation.constraints.AssertTrue;
@@ -111,10 +108,10 @@ public class Eip00w420ModifyCase implements Serializable {
     @RequiredString(label = "辦理開始時間(分)")
     private String profmdtMinute;
 
-    @RequiredString(label = "辦理開始時間(時)")
+    @RequiredString(label = "辦理結束時間(時)")
     private String proendtHour;
 
-    @RequiredString(label = "辦理開始時間(分)")
+    @RequiredString(label = "辦理結束時間(分)")
     private String proendtMinute;
 
     @RequiredString(label = "接受報名人數")
@@ -193,16 +190,90 @@ public class Eip00w420ModifyCase implements Serializable {
         return true;
     }
 
+    @AssertTrue(message = "「報名開始時間(時)」格式不正確(0~23)")
+    private boolean isRegisfmdtHourValid() {
+        if (StringUtils.isNotBlank(this.regisfmdtHour)) {
+            int iHour = Integer.parseInt(this.regisfmdtHour);
+            return iHour <= 23;
+        }
+        return true;
+    }
+
+    @AssertTrue(message = "「報名開始時間(分)」格式不正確(0~59)")
+    private boolean isRegisfmdtMinuteValid() {
+        if (StringUtils.isNotBlank(this.regisfmdtMinute)) {
+            int iMinute = Integer.parseInt(this.regisfmdtMinute);
+            return iMinute <= 59;
+        }
+        return true;
+    }
+
+    @AssertTrue(message = "「報名結束時間(時)」格式不正確(0~23)")
+    private boolean isRegisendtHourValid() {
+        if (StringUtils.isNotBlank(this.regisendtHour)) {
+            int iHour = Integer.parseInt(this.regisendtHour);
+            return iHour <= 23;
+        }
+        return true;
+    }
+
+    @AssertTrue(message = "「報名結束時間(分)」格式不正確(0~59)")
+    private boolean isRegisendtMinuteValid() {
+        if (StringUtils.isNotBlank(this.regisendtMinute)) {
+            int iMinute = Integer.parseInt(this.regisendtMinute);
+            return iMinute <= 59;
+        }
+        return true;
+    }
+
+    @AssertTrue(message = "「辦理開始時間(時)」格式不正確(0~23)")
+    private boolean isProfmdtHourValid() {
+        if (StringUtils.isNotBlank(this.profmdtHour)) {
+            int iHour = Integer.parseInt(this.profmdtHour);
+            return iHour <= 23;
+        }
+        return true;
+    }
+
+    @AssertTrue(message = "「辦理開始時間(分)」格式不正確(0~59)")
+    private boolean isProfmdtMinuteValid() {
+        if (StringUtils.isNotBlank(this.profmdtMinute)) {
+            int iMinute = Integer.parseInt(this.profmdtMinute);
+            return iMinute <= 59;
+        }
+        return true;
+    }
+
+    @AssertTrue(message = "「辦理結束時間(時)」格式不正確(0~23)")
+    private boolean isProendtHourValid() {
+        if (StringUtils.isNotBlank(this.proendtHour)) {
+            int iHour = Integer.parseInt(this.proendtHour);
+            return iHour <= 23;
+        }
+        return true;
+    }
+
+    @AssertTrue(message = "「辦理結束時間(分)」格式不正確(0~59)")
+    private boolean isProendtMinuteValid() {
+        if (StringUtils.isNotBlank(this.proendtMinute)) {
+            int iMinute = Integer.parseInt(this.proendtMinute);
+            return iMinute <= 59;
+        }
+        return true;
+    }
+
     @AssertTrue(message = "「報名開始時間」需小於「報名結束時間」")
     private boolean isRegisfmdtLessthanRegisendt() {
         // 如果其中一個欄位為NULL無法比較，讓其他驗證處理
         if (StringUtils.isBlank(this.regisfmdt) || StringUtils.isBlank(this.getRegisendt())) {
             return true;
         }
-        LocalDateTime fmdt = DateUtil.toLocalDateTime(DateUtility.changeDateTypeToWestDate(this.regisfmdt) + this.regisfmdtHour + this.regisfmdtMinute);
-        LocalDateTime endt = DateUtil.toLocalDateTime(DateUtility.changeDateTypeToWestDate(this.regisendt) + this.regisendtHour + this.regisendtMinute);
-        if (endt.isBefore(fmdt) || endt.isEqual(fmdt)) {
-            return false;
+        if (isRegisfmdtHourValid() && isRegisfmdtMinuteValid() && isRegisendtHourValid() && isRegisendtMinuteValid()) {
+            LocalDateTime fmdt = DateUtil.toLocalDateTime(DateUtility.changeDateTypeToWestDate(this.regisfmdt) + this.regisfmdtHour + this.regisfmdtMinute);
+            LocalDateTime endt = DateUtil.toLocalDateTime(DateUtility.changeDateTypeToWestDate(this.regisendt) + this.regisendtHour + this.regisendtMinute);
+            if (endt.isBefore(fmdt) || endt.isEqual(fmdt)) {
+                return false;
+            }
         }
         return true;
     }
@@ -213,10 +284,12 @@ public class Eip00w420ModifyCase implements Serializable {
         if (StringUtils.isBlank(this.profmdt) || StringUtils.isBlank(this.proendt)) {
             return true;
         }
-        LocalDateTime fmdt = DateUtil.toLocalDateTime(DateUtility.changeDateTypeToWestDate(this.profmdt) + this.profmdtHour + this.profmdtMinute);
-        LocalDateTime endt = DateUtil.toLocalDateTime(DateUtility.changeDateTypeToWestDate(this.proendt) + this.proendtHour + this.proendtMinute);
-        if (endt.isBefore(fmdt) || endt.isEqual(fmdt)) {
-            return false;
+        if (isProfmdtHourValid() && isProfmdtMinuteValid() && isProendtHourValid() && isProendtMinuteValid()) {
+            LocalDateTime fmdt = DateUtil.toLocalDateTime(DateUtility.changeDateTypeToWestDate(this.profmdt) + this.profmdtHour + this.profmdtMinute);
+            LocalDateTime endt = DateUtil.toLocalDateTime(DateUtility.changeDateTypeToWestDate(this.proendt) + this.proendtHour + this.proendtMinute);
+            if (endt.isBefore(fmdt) || endt.isEqual(fmdt)) {
+                return false;
+            }
         }
         return true;
     }

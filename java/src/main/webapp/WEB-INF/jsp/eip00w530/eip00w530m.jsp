@@ -52,17 +52,10 @@
                             <td class="text-center align-middle"><c:out value="${status.index+1}" /></td>
                             <td class="text-left align-middle"><c:out value="${item.topicname}" /></td>
                             <td class="text-center align-middle">
-                                <form:form id="eip00w530Form" name="eip00w530Form" modelAttribute="${caseKeyA}" method="POST">
                                 <tags:button cssClass="btnWrite" data-formno="${item.osformno}" data-completed="${item.iscompleted}" data-status="${item.status}">填寫</tags:button>
-                                <form:hidden path="osformno"/>
-                                <form:hidden path="promptmsg"/>
-                                </form:form>
                             </td>
                             <td class="text-center align-middle">
-                                <form:form id="eip00w520Form" name="eip00w520Form" modelAttribute="${caseKeyB}" method="POST">
                                 <tags:button cssClass="btnResult" data-formno="${item.osformno}" data-disstatic="${item.isdisstatic}">結果</tags:button>
-                                <form:hidden path="osformno"/>
-                                </form:form>
                             </td>
                             <td style="display: none"></td>
                         </tr>
@@ -92,6 +85,10 @@
                 </tbody>
             </table>
         </div>
+        <form:form id="eip00w520Form" name="eip00w520Form" modelAttribute="${caseKeyA}" method="POST">
+        <form:hidden path="osformno"/>
+        <form:hidden path="promptmsg"/>
+        </form:form>
     </tags:form-row>
 
 
@@ -120,18 +117,18 @@ $(function(){
     //初始化
     $('#tab1').trigger("click");
 
-    $('.btnWrite,.btnHisWrite').click(function(e) {
+    $('.btnWrite').click(function(e) {
         e.preventDefault();
         $('#promptmsg').val('');
         $('#osformno').val($(this).data('formno'));
-        $('#eip00w530Form').attr('action', '<c:url value="/Eip00w530_write.action" />').submit();
+        $('#eip00w520Form').attr('action', '<c:url value="/Eip00w530_write.action" />').submit();
     });
 
     $('.btnResult,.btnHisResult').click(function(e) {
         e.preventDefault();
         $('#promptmsg').val('');
         $('#osformno').val($(this).data('formno'));
-        $('#eip00w530Form').attr('action', '<c:url value="/Eip00w530_result.action" />').submit();
+        $('#eip00w520Form').attr('action', '<c:url value="/Eip00w530_result.action" />').submit();
     });
     
     //初始化

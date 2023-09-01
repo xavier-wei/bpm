@@ -42,27 +42,36 @@
             console.log(e);
         }
 
-        $(".dateTW").datepicker({
+        $(".dateTW").each((i, e) => {
+            let clone = $(e).clone();
+            clone.removeClass('dateTW').attr('type', 'hidden').insertAfter($(e));
+            $(e).data('real',$(e).prop('id')).prop('name', $(e).prop('name') + '_OUTSIDE').prop('id', $(e).prop('id') + '_OUTSIDE');
+        });
+
+        let $dateTW = $(".dateTW"); //上面那個不要替換
+        $dateTW.datepicker({
             weekStart: 1,
             daysOfWeekHighlighted: "6,0",
             autoclose: true,
             todayHighlight: true,
-            format : 'yyyy/mm/dd',
-            language : 'zh-TW'
-        }).on('show', function(ev) {
+            format: 'yyyy/mm/dd',
+            language: 'zh-TW'
+        }).on('show', function (ev) {
             $(this).val() || $(this).trigger('change');
-        }).on('keyup', function(e) {
-            var charCode = (e.which) ? e.which : e.keyCode;
+        }).on('keyup', function (e) {
+            const charCode = (e.which) ? e.which : e.keyCode;
             // 輸入數字
             if ((charCode >= 48 && charCode <= 57) || (charCode >= 96 && charCode <= 105)) {
-                convertDate($(this), false);
+                convertDate($(this));
             }
-        }).on('blur', function(e) {
-            convertDate($(this), true);
+            $('#'+$(this).data('real')).val($(this).val().replaceAll('/', ''));
+        }).on('hide',function (e) {
+            //裡面做了轉換
+            $('#'+$(this).data('real')).val($(this).val().replaceAll('/', ''));
         });
 
-        $(".dateTW").each(function() {
-            var $each = $(this);
+        $dateTW.each(function () {
+            const $each = $(this);
             if ($each.attr('readonly')) {
                 $each.data('datepicker')._detachEvents();
             }
@@ -76,37 +85,24 @@
      * @param isBlur
      * @returns
      */
-    function convertDate(inputDate, isBlur){
-        var inputVal = inputDate.val();
-        var dateLen = inputVal.length;
-        var year = "";
-        var month = "";
-        var day = "";
+    function convertDate(inputDate) {
+        let inputVal = inputDate.val();
+        let year = "";
+        let month = "";
+        let day = "";
 
-        if(isBlur){
-            if(dateLen > 0){
-                year = inputVal.substring(0, dateLen - 4);
-                month = leftPad(inputVal.substring(dateLen - 4, dateLen - 2), 2, '0');
-                day = leftPad(inputVal.substring(dateLen - 2), 2, '0');
-
-                if(leftPad(year, 3, '0') != year){
-                    // 年度有補0，重新設置日期
-                    inputDate.datepicker('update',  (parseInt(year) + 1911) + '/' + month + '/' + day);
-                }
-
-                inputDate.val(leftPad(year, 3, '0') + month + day);
-                //console.log('blur:' + leftPad(year, 3, '0') + month + day);
-            }
-        } else {
+        let orgInputVal = inputVal;
+        inputVal = inputVal.replaceAll('/', '')
+        let dateLen = inputVal.length;
+        if (dateLen === 7) {
             year = inputVal.substring(0, dateLen - 4);
             month = inputVal.substring(dateLen - 4, dateLen - 2);
             day = inputVal.substring(dateLen - 2);
-
-            if(dateLen == 7){
-                // 資料長度為7時，重置日期
-                inputDate.datepicker('update',  (parseInt(year) + 1911) + '/' + month + '/' + day);
-            }
-            inputDate.val(inputVal);
+            // 資料長度為7時，重置日期
+            inputDate.datepicker('update', (parseInt(year) + 1911) + '/' + month + '/' + day);
+            inputDate.val(year + '/' + month + '/' + day);
+        } else {
+            inputDate.val(orgInputVal);
         }
     }
 </script>
@@ -120,15 +116,15 @@
 
 <%-- 超過50個字以"..."取代，滑鼠移過去會顯示完整字串 --%>
 <script>
-$(function(){
-    var len = 51; 
-    $(".ellipsisStr").each(function(i){
-        if($(this).text().trim().length>len){
-        	$(this).attr("title",$(this).text().trim());
-            var text=$(this).text().trim().substring(0,len-1)+"...";
-            $(this).text(text);
-            console.log(text);
-        }
+    $(function () {
+        var len = 51;
+        $(".ellipsisStr").each(function (i) {
+            if ($(this).text().trim().length > len) {
+                $(this).attr("title", $(this).text().trim());
+                var text = $(this).text().trim().substring(0, len - 1) + "...";
+                $(this).text(text);
+                console.log(text);
+            }
+        });
     });
-});
 </script>

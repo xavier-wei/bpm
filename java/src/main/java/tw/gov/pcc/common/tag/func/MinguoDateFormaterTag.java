@@ -32,11 +32,11 @@ public class MinguoDateFormaterTag extends TagSupport {
 	private static final DateTimeFormatter STRING_TW_YMDHMS_PATTERN = DateTimeFormatter.ofPattern("yyyMMddHHmmss").withChronology(MinguoChronology.INSTANCE);
 
 	private static final DateTimeFormatter DEFAULT_Y_PATTERN = DateTimeFormatter.ofPattern("yyy").withChronology(MinguoChronology.INSTANCE);
-	private static final DateTimeFormatter DEFAULT_YM_PATTERN = DateTimeFormatter.ofPattern("yyyMM").withChronology(MinguoChronology.INSTANCE);
-	private static final DateTimeFormatter DEFAULT_YMD_PATTERN = DateTimeFormatter.ofPattern("yyyMMdd").withChronology(MinguoChronology.INSTANCE);
-	private static final DateTimeFormatter DEFAULT_YMDH_PATTERN = DateTimeFormatter.ofPattern("yyyMMdd HH").withChronology(MinguoChronology.INSTANCE);
-	private static final DateTimeFormatter DEFAULT_YMDHM_PATTERN = DateTimeFormatter.ofPattern("yyyMMdd HH:mm").withChronology(MinguoChronology.INSTANCE);
-	private static final DateTimeFormatter DEFAULT_YMDHMS_PATTERN = DateTimeFormatter.ofPattern("yyyMMdd HH:mm:ss").withChronology(MinguoChronology.INSTANCE);
+	private static final DateTimeFormatter DEFAULT_YM_PATTERN = DateTimeFormatter.ofPattern("yyy/MM").withChronology(MinguoChronology.INSTANCE);
+	private static final DateTimeFormatter DEFAULT_YMD_PATTERN = DateTimeFormatter.ofPattern("yyy/MM/dd").withChronology(MinguoChronology.INSTANCE);
+	private static final DateTimeFormatter DEFAULT_YMDH_PATTERN = DateTimeFormatter.ofPattern("yyy/MM/dd HH").withChronology(MinguoChronology.INSTANCE);
+	private static final DateTimeFormatter DEFAULT_YMDHM_PATTERN = DateTimeFormatter.ofPattern("yyy/MM/dd HH:mm").withChronology(MinguoChronology.INSTANCE);
+	private static final DateTimeFormatter DEFAULT_YMDHMS_PATTERN = DateTimeFormatter.ofPattern("yyy/MM/dd HH:mm:ss").withChronology(MinguoChronology.INSTANCE);
 	private static final Function<String, DateTimeFormatter> MAPPER = p -> DateTimeFormatter.ofPattern(p).withChronology(MinguoChronology.INSTANCE);
 	private Object value;
 	private String pattern;

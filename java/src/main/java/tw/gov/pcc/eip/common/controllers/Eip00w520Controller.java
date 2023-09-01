@@ -135,9 +135,9 @@ public class Eip00w520Controller extends BaseController {
             log.debug("新增或修改意見調查表單");
             eip00w520Service.init(caseData);
             String msg = "A".equals(caseData.getMode()) ? getSaveSuccessMessage() : getUpdateSuccessMessage();
-            if (result.hasErrors()) {
-                return THEME_PAGE;
-            }
+//            if (result.hasErrors()) {
+//                return THEME_PAGE;
+//            }
             eip00w520Service.advancedValidate(themeCaseData, result);
             if (result.hasErrors()) {
                 return THEME_PAGE;

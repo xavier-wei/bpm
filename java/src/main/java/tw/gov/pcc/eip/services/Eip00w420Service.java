@@ -308,7 +308,7 @@ public class Eip00w420Service extends OnlineRegService {
             ormodihis.setCreuser(userData.getUserId());
             ormodihis.setCredt(LocalDateTime.now());
             ormodihis.setUserdept(userData.getDeptId());
-            ormodihis.setUserinfo(userData.getUserId() + "-" + userData.getUserName());
+            ormodihis.setUserinfo(userData.getUserId());
             ormodihisDao.insertData(ormodihis);
             orformdataDao.insertData(orformdata);
         }
@@ -325,7 +325,7 @@ public class Eip00w420Service extends OnlineRegService {
             ormodihis.setCreuser(userData.getUserId());
             ormodihis.setCredt(LocalDateTime.now());
             ormodihis.setUserdept(userData.getDeptId());
-            ormodihis.setUserinfo(userData.getUserId() + "-" + userData.getUserName());
+            ormodihis.setUserinfo(userData.getUserId());
             ormodihisDao.insertData(ormodihis);
             orformdataDao.updateData(orformdata, modifyCaseData.getOrformno());
         }
@@ -381,6 +381,9 @@ public class Eip00w420Service extends OnlineRegService {
      * @return
      */
     public String calculateCertiHours(String certihours) {
+        if (StringUtils.isBlank(certihours)){
+            return "0";
+        }
         if (StringUtils.startsWith(certihours, ",")) {
             certihours = certihours.substring(1);
         }
@@ -415,10 +418,12 @@ public class Eip00w420Service extends OnlineRegService {
     public void getHisData(Eip00w420Case caseData) {
         List<Eip00w420HisCase> list = ormodihisDao.getDataByOrformno(caseData.getOrformno()).stream().map(t -> {
             Eip00w420HisCase eip00w420HisCase = new Eip00w420HisCase();
+            Map<String,String>deptMap = getRegisqualDept();
+            Map<String,String>usersMap = getUsers();
             eip00w420HisCase.setUppdt(t.getCredt().format(minguoformatter));
             eip00w420HisCase.setChgtype(t.getChgtype());
-            eip00w420HisCase.setOperator(t.getUserinfo());
-            eip00w420HisCase.setOperatorDept(t.getUserdept());
+            eip00w420HisCase.setOperator(StringUtils.defaultString(usersMap.get(t.getUserinfo())));
+            eip00w420HisCase.setOperatorDept(StringUtils.defaultString(deptMap.get("D" + t.getUserdept())));
             return eip00w420HisCase;
         }).collect(Collectors.toList());
         caseData.setHisList(list);
@@ -555,36 +560,56 @@ public class Eip00w420Service extends OnlineRegService {
             return null;
         }
         StringBuilder sb = new StringBuilder()
-                .append("身分證字號(*)").append(",")
-                .append("課程名稱(*)").append(",")
-                .append("課程開始日期(*)").append(",")
-                .append("課程結束時間(*)").append(",")
-                .append("姓名(*)").append(",")
-                .append("課程類別代碼(*)").append(",")
-                .append("上課縣市(*)").append(",")
-                .append("期別(*)").append(",")
-                .append("訓練總數(即認證時數)(*)").append(",")
+                .append("*課程代碼").append(",")
+                .append("*期別").append(",")
+                .append("*身分證字號").append(",")
+                .append("*姓名").append(",")
+                .append("*通過").append(",")
+                .append("訓練成績").append(",")
+                .append("訓練總數").append(",")
+                .append("證件字號").append(",")
+                .append("出勤上課狀況").append(",")
                 .append("生日").append(",")
-                .append("核可時數(*)").append(",")
-                .append("課程代碼").append(System.getProperty("line.separator"));
+                .append("*學習性質").append(",")
+                .append("*數位時數").append(",")
+                .append("*實體時數").append(",")
+                .append("*實際上課起始日期").append(",")
+                .append("實際上課起始時間").append(",")
+                .append("*實際上課結束日期").append(",")
+                .append("實際上課結束時間").append(System.getProperty("line.separator"));
         for (Orresult orresult : list) {
-            sb.append(StringUtils.trimToEmpty(orresult.getRegisidn())).append(",")
-                    .append(StringUtils.trimToEmpty(orformdata.getTopicname())).append(",")
-                    .append(StringUtils.trimToEmpty(orformdata.getProfmdt().format(minguoformatter))).append(",")
-                    .append(StringUtils.trimToEmpty(orformdata.getProendt().format(minguoformatter))).append(",")
-                    .append(StringUtils.trimToEmpty(orresult.getRegisname())).append(",")
-                    .append(StringUtils.trimToEmpty(String.valueOf(orformdata.getCourseclacode()))).append(",")
-                    .append(StringUtils.trimToEmpty(orformdata.getCountry())).append(",")
-                    .append(StringUtils.trimToEmpty(String.valueOf(orformdata.getPeriod()))).append(",")
-                    .append(StringUtils.trimToEmpty(calculateCertiHours(orformdata.getCertihours()))).append(",")
-                    .append(StringUtils.trimToEmpty(DateUtility.changeDateTypeToChineseDate(orresult.getRegisbrth()))).append(",");
-                    if (StringUtils.isAllBlank(orresult.getCertiphours(),orresult.getCertidhours())) {
-                        sb.append("0,");
-                    } else {
-                        sb.append(StringUtils.trimToEmpty(calculateCertiHours(StringUtils.defaultString(orresult.getCertiphours()) + "," + StringUtils.defaultString(orresult.getCertidhours())))).append(",");
-                    }
-                    sb.append(StringUtils.trimToEmpty(orformdata.getCoursecode()))
-                    .append(System.getProperty("line.separator"));
+            String chours = orformdata.getCertihours();
+            String phours = calculateCertiHours(orresult.getCertiphours());
+            String dhours = calculateCertiHours(orresult.getCertidhours());
+            String isPass = Integer.parseInt(phours) > 0 || Integer.parseInt(dhours) > 0 ? "通過":"不通過";
+            String profmt = orformdata.getProfmdt().format(minguoformatter);
+            String proend = orformdata.getProendt().format(minguoformatter);
+            String type = "";
+            if (chours.contains("P") && chours.contains("D")) {
+                type = "實體+數位";
+            } else if (chours.contains("P")) {
+                type = "實體";
+            } else if (chours.contains("D")) {
+                type = "數位";
+            }
+            sb.append(StringUtils.trimToEmpty(orformdata.getCoursecode())).append(",")
+            .append(StringUtils.trimToEmpty(String.valueOf(orformdata.getPeriod()))).append(",")
+            .append(StringUtils.trimToEmpty(orresult.getRegisidn())).append(",")
+            .append(StringUtils.trimToEmpty(orresult.getRegisname())).append(",")
+            .append(isPass).append(",")
+            .append(",")
+            .append(StringUtils.trimToEmpty(calculateCertiHours(orformdata.getCertihours()))).append(",")
+            .append(",")
+            .append(",")
+            .append(DateUtility.formatChineseDateTimeString(DateUtility.changeDateTypeToChineseDate(orresult.getRegisbrth()),false)).append(",")
+            .append(type).append(",")
+            .append(dhours).append(",")
+            .append(phours).append(",")
+            .append(StringUtils.substringBefore(profmt," ")).append(",")
+            .append(StringUtils.substringAfter(profmt," ")).append(",")
+            .append(StringUtils.substringBefore(proend," ")).append(",")
+            .append(StringUtils.substringAfter(proend," ")).append(",")
+            .append(System.getProperty("line.separator"));
         }
         return sb.toString().getBytes(Charset.forName("big5"));
     }

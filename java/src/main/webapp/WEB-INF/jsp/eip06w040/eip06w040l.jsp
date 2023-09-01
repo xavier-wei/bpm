@@ -16,7 +16,8 @@
                 <tags:form-row>
                     <div class="col-md-3 d-flex">
                         <form:label cssClass="col-form-label star" path="meetingdt">會議日期：</form:label>
-                        <form:input path="meetingdt" cssClass="form-control" size="9"/>
+<%--                        <form:input path="meetingdt" cssClass="form-control" size="9"/>--%>
+                        <form:input id="meetingdt"  name="meetingdt"  path="meetingdt" cssClass="form-control num_only ml-3 dateTW" size="9" maxlength="9" />
                     </div>
                 </tags:form-row>
                  <tags:form-note>

@@ -48,6 +48,8 @@
         <link rel="stylesheet" href="<c:url value='/css/framework.css'/>"/>
         <link rel="stylesheet" href="<c:url value='/css/print.css'/>" media="print"/>
         <link rel="stylesheet" href="<c:url value="/js/dynatree/skin/ui.dynatree.css"/>">
+        <link rel="stylesheet" href="<c:url value="/css/bootstrap-datepicker.css"/>" />
+        
         <script type="text/javascript">
             if (navigator.userAgent.indexOf("MSIE") > 0 || navigator.userAgent.indexOf("Trident") > 0) {
                 alert('本網站不支援IE，請使用EDGE或CHROME瀏覽器。')
@@ -112,8 +114,8 @@
                     </div>
                 </div>
                 <div class="sys_info">
-                    <div>登入帳號：<c:out value="${frameworkUserData.userId}"/></div>
-                    <div> 單位：<c:out value="${frameworkUserData.deptId}"/></div>
+                    <div>登入帳號：<c:out value="${frameworkUserData.userId}-${frameworkUserData.userName}"/></div>
+                    <div> 單位：<c:out value="${frameworkUserData.deptName}"/></div>
                     <div> 登入日期：<c:out value="${frameworkUserData.loginDateString}"/></div>
                     <div>登入時間：<c:out value="${frameworkUserData.loginTimeString}"/></div>
                 </div>

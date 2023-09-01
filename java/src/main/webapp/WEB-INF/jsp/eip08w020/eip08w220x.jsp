@@ -16,23 +16,27 @@
             <tags:form-row>
             	<div class="col-4 col-md-4">申請人：<c:out value="${caseData.apply_user}"/></div>
             	<div class="col-4 col-md-4">申請單位：<c:out value="${caseData.apply_dept}"/></div>
-            	<div class="col-4 col-md-4">申請日期：<c:out value="${caseData.apply_date}"/></div>
+            	<div class="col-4 col-md-4">申請日期：<func:minguo value="${caseData.apply_date}" pattern="yyy/MM/dd"/></div>
             </tags:form-row>
             <tags:form-row>
-            	    <table id="foodTable" class="table table-hover m-2">
-                        <thead>
+          	 <div class="table-responsive mt-2">	 
+            	    <table id="qryListTable" class="table">
+	            	    <thead data-orderable="true">
+	            	    <tr>
                             <th style="width: 10%">序號</th>
                             <th style="width: 10%">領物單號</th>
                             <th style="width: 10%">申請日期</th>
                             <th style="width: 50%">申請用途</th>
                             <th style="width: 10%">表單狀態</th>
                             <th style="width: 10%">明細</th>
+                         </tr>
                         </thead>
-                        <c:forEach items="${caseData.applyitemList}" var="item" varStatus="status">
                         <tbody>
+                        <c:forEach items="${caseData.applyitemList}" var="item" varStatus="status">
+                        	<tr>
                         	<td><c:out value="${status.index+1}"/></td>
                         	<td>PL<c:out value="${item.applyno}"/></td>
-                        	<td><func:minguo value = "${item.apply_date}"/></td>
+                        	<td><func:minguo value = "${item.apply_date}"  pattern="yyy/MM/dd"/></td>
                         	<td class="text-left"><c:out value="${item.apply_memo}"/></td>
                         	<td><c:out value="${item.process_status}"/></td>
                         	<td>
@@ -40,8 +44,9 @@
 									明細
 								</tags:button>
                         	</td>
-                        </tbody>
+                        	</tr>
                         </c:forEach>
+                        </tbody>
                         <form:hidden path="applyno"/>
                     </table>
             </tags:form-row>
@@ -50,6 +55,10 @@
 </jsp:attribute>
 <jsp:attribute name="footers">
 <script>
+
+		let config = getDataTablesConfig();
+		var table = $("#qryListTable").DataTable(config);
+
         $(function() {
             $('.btnDetail').click(function() {
             	$('#applyno').val($(this).val());

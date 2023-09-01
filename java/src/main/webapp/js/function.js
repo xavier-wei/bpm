@@ -232,44 +232,13 @@ var DATATABLES_LANG_CFG = {
     },
 };
 
-
-// 取得本系統預設之 DataTables Options
-//
-// 參數說明：
-// columnDefs 的說明請參考 https://datatables.net/reference/option/
-// exportOptions 的說明請參考 http://www.edihor.datatables.net/extensions/buttons/examples/html5/columns.html
-function getDataTablesConfig(columnDefs, exportOptions) {
-
-    if (exportOptions == null)
-        exportOptions = {};
-
-    var config = {
-        dom: "<'pagination'pli>t",
-        autoWidth: false,
-        searching: false,
-        paging: true,
-        pagingType: "input",
-        ordering:"true",
-        pageLength: 20,
-        lengthChange: false,
-        order: [],
-        language: DATATABLES_LANG_CFG,
-    };
-
-    if (columnDefs != null) {
-        config.columnDefs = columnDefs;
-    }
-
-    return config;
-}
-
 function getDataTablesConfig(columnDefs, exportOptions, pageLength) {
 
     if (exportOptions == null)
         exportOptions = {};
 
     var config = {
-        dom: "<'pagination'pli>t",
+        dom: "t<'pagination'pli>",
         autoWidth: false,
         searching: false,
         paging: true,

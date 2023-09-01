@@ -33,17 +33,10 @@
                     </div>
                     <div class="col-md">
                         <form:label cssClass="col-form-label " path="meetingBegin">會議時間：</form:label>
-<%--                        <form:select path="meetingBegin" cssClass="form-control selector">--%>
-<%--                            <form:option value="">開始時間</form:option>--%>
-<%--                            <form:options items="${caseData.meetingTimeCombobox }" />--%>
-<%--                        </form:select>--%>
-                        <c:out value="${caseData.meetingBegin}"/>
-                        <span>~</span>
-<%--                        <form:select path="meetingEnd" cssClass="form-control selector">--%>
-<%--                            <form:option value="">結束時間</form:option>--%>
-<%--                            <form:options items="${caseData.meetingTimeCombobox }" />--%>
-<%--                        </form:select>--%>
-                        <c:out value="${caseData.meetingEnd}"/>
+<%--                        <c:out value="${caseData.meetingBegin}"/>--%>
+<%--                        <span>~</span>--%>
+<%--                        <c:out value="${caseData.meetingEnd}"/>--%>
+                        <c:out value='${caseData.meetingBegin.substring(0,2)}:${caseData.meetingBegin.substring(2)} ~ ${caseData.meetingEnd.substring(0,2)}:${caseData.meetingEnd.substring(2)}'/>
                     </div>
                 </tags:form-row>
                 <tags:form-row>

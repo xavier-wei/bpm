@@ -14,9 +14,9 @@
 </jsp:attribute>
 
 <jsp:attribute name="contents">
+		<form:form id="eip07w040Form" name="eip07w040Form" modelAttribute="${caseKey}" method="POST">
      	<fieldset>
       	<legend>待處理派車明細</legend>
-		<form:form id="eip07w040Form" name="eip07w040Form" modelAttribute="${caseKey}" method="POST">
 		    <tags:form-row>
 		        <tags:text-item label="派車單號">
                     <c:out value="${caseData.carBookingDetailData.applyid}"/>
@@ -26,12 +26,12 @@
             	<form:hidden path="using" value="${caseData.carBookingDetailData.using}"/>
             	<div class="col-4 col-md-4">
 	            	<tags:text-item label="申請人">
-	            		<c:out value="${caseData.carBookingDetailData.apply_user}"/>
+	            		<func:username userid="${caseData.carBookingDetailData.apply_user}"/>
 	            	</tags:text-item>
             	</div>
             	<div class="col-4 col-md-4">
             		<tags:text-item label="申請單位">
-            			<c:out value="${caseData.carBookingDetailData.apply_dept}"/>
+            			<func:dept deptid="${caseData.carBookingDetailData.apply_dept}"/>
             		</tags:text-item>
             	</div>
             	<div class="col-4 col-md-4">
@@ -74,8 +74,8 @@
             <tags:form-row>
             	<div class="col-4 col-md-4">
             		<tags:text-item label="用車時間">
-		            	<c:out value="${caseData.carBookingDetailData.using_time_s}"/>~
-		            	<c:out value="${caseData.carBookingDetailData.using_time_e}"/>
+	            		<func:timeconvert value="${caseData.carBookingDetailData.using_time_s}"/>~
+	            		<func:timeconvert value="${caseData.carBookingDetailData.using_time_e}"/>
             		</tags:text-item>
             	</div>
             	<div class="col-4 col-md-4">
@@ -110,32 +110,97 @@
             <form:hidden path="timeMK" value="${caseData.timeMK}"/>
             
             <c:if test="${not empty caseData.carBookingList}">
-            	<table  class="table table-hover m-2">
-            		<thead>
-            			<th style="width: 10%">派車單號</th>
-            			<th style="width: 10%">申請人</th>
-            			<th style="width: 10%">申請單位</th>
-            			<th style="width: 10%">用車區間</th>
-            			<th style="width: 30%">用車事由</th>
-            			<th style="width: 30%">目的地</th>
-            		</thead>
-		            <c:forEach items="${caseData.carBookingList}" var="item" varStatus="status">
-            		<tbody>
-            		<tr>
-		                 <td><c:out value="${item.applyid }"/></td>
-		                 <td class="text-left"><c:out value="${item.apply_user}"/></td>
-		                 <td class="text-left"><c:out value="${item.apply_dept}"/></td>
-		                 <td><c:out value="${item.using_time_s}"/>〜<c:out value="${item.using_time_e}"/></td>
-		                 <td class="text-left">
-						<span class="ellipsisStr">
-	                 		<c:out value="${item.apply_memo}"/>
-	                 	</span>
-	                 	</td>
-	                 	<td class="text-left"><c:out value="${item.destination}"/></td>
-            		</tr>
-            		</tbody>
-		            </c:forEach>
-            	</table>
+		    <table class="table table-bordered">
+		    	<thead>
+		        <tr>
+		        	<td  class="text-center">申請單位</td>
+		            <td  class="text-center">申請人</td>
+		            <td  class="text-center">用車區間</td>
+		            <td  class="text-center">目的地</td>
+		            <td colspan="2" class="p-2 text-center">0</td>
+		            <td colspan="2" class="p-2 text-center">1</td>
+		            <td colspan="2" class="p-2 text-center">2</td>
+		            <td colspan="2" class="p-2 text-center">3</td>
+		            <td colspan="2" class="p-2 text-center">4</td>
+		            <td colspan="2" class="p-2 text-center">5</td>
+		            <td colspan="2" class="p-2 text-center">6</td>
+		            <td colspan="2" class="p-2 text-center">7</td>
+		            <td colspan="2" class="p-2 text-center">8</td>
+		            <td colspan="2" class="p-2 text-center">9</td>
+		            <td colspan="2" class="p-2 text-center">10</td>
+		            <td colspan="2" class="p-2 text-center">11</td>
+		            <td colspan="2" class="p-2 text-center">12</td>
+		            <td colspan="2" class="p-2 text-center">13</td>
+		            <td colspan="2" class="p-2 text-center">14</td>
+		            <td colspan="2" class="p-2 text-center">15</td>
+		            <td colspan="2" class="p-2 text-center">16</td>
+		            <td colspan="2" class="p-2 text-center">17</td>
+		            <td colspan="2" class="p-2 text-center">18</td>
+		            <td colspan="2" class="p-2 text-center">19</td>
+		            <td colspan="2" class="p-2 text-center">20</td>
+		            <td colspan="2" class="p-2 text-center">21</td>
+		            <td colspan="2" class="p-2 text-center">22</td>
+		            <td colspan="2" class="p-2 text-center">23</td>
+		        </tr>
+		        </thead>
+		        <c:forEach items="${caseData.carBookingList}" var="cbdata" varStatus="status">
+		        <tr style="background:#fff " class="datatr">
+		        	<td><func:dept deptid="${cbdata.apply_dept}"/></td>
+		            <td><func:username userid="${cbdata.apply_user}"/></td>
+		            <td class="text-center"><func:timeconvert value="${cbdata.using_time_s}"/>〜<func:timeconvert value="${cbdata.using_time_e}"/></td>
+		            <td><c:out value="${cbdata.destination}"/></td>
+		            <td class="p-2 datatd" title="00:00-00:30"></td>
+		            <td class="p-2 datatd" title="00:30-01:00"></td>
+		            <td class="p-2 datatd"  title="01:00-01:30"></td>
+		            <td class="p-2 datatd"  title="01:30-02:00"></td>
+		            <td class="p-2 datatd"  title="02:00-02:30"></td>
+		            <td class="p-2 datatd"  title="02:30-03:00"></td>
+		            <td class="p-2 datatd"  title="03:00-03:30"></td>
+		            <td class="p-2 datatd"  title="03:30-04:00"></td>
+		            <td class="p-2 datatd"  title="04:00-04:30"></td>
+		            <td class="p-2 datatd"  title="04:30-05:00"></td>
+		            <td class="p-2 datatd"  title="05:00-05:30"></td>
+		            <td class="p-2 datatd"  title="05:30-06:00"></td>
+		            <td class="p-2 datatd"  title="06:00-06:30"></td>
+		            <td class="p-2 datatd"  title="06:30-07:00"></td>
+		            <td class="p-2 datatd"  title="07:00-07:30"></td>
+		            <td class="p-2 datatd"  title="07:30-08:00"></td>
+		            <td class="p-2 datatd"  title="08:00-08:30"></td>
+		            <td class="p-2 datatd"  title="08:30-09:00"></td>
+		            <td class="p-2 datatd"  title="09:00-09:30"></td>
+		            <td class="p-2 datatd"  title="09:30-10:00"></td>
+		            <td class="p-2 datatd"  title="10:00-10:30"></td>
+		            <td class="p-2 datatd"  title="10:30-11:00"></td>
+		            <td class="p-2 datatd"  title="11:00-11:30"></td>
+		            <td class="p-2 datatd"  title="11:30-12:00"></td>
+		            <td class="p-2 datatd"  title="12:00-12:30"></td>
+		            <td class="p-2 datatd"  title="12:30-13:00"></td>
+		            <td class="p-2 datatd"  title="13:00-13:30"></td>
+		            <td class="p-2 datatd"  title="13:30-14:00"></td>
+		            <td class="p-2 datatd"  title="14:00-14:30"></td>
+		            <td class="p-2 datatd"  title="14:30-15:00"></td>
+		            <td class="p-2 datatd"  title="15:00-15:30"></td>
+		            <td class="p-2 datatd"  title="15:30-16:00"></td>
+		            <td class="p-2 datatd"  title="16:00-16:30"></td>
+		            <td class="p-2 datatd"  title="16:30-17:00"></td>
+		            <td class="p-2 datatd"  title="17:00-17:30"></td>
+		            <td class="p-2 datatd"  title="17:30-18:00"></td>
+		            <td class="p-2 datatd"  title="18:00-18:30"></td>
+		            <td class="p-2 datatd"  title="18:30-19:00"></td>
+		            <td class="p-2 datatd"  title="19:00-19:30"></td>
+		            <td class="p-2 datatd"  title="19:30-20:00"></td>
+		            <td class="p-2 datatd"  title="20:00-20:30"></td>
+		            <td class="p-2 datatd"  title="20:30-21:00"></td>
+		            <td class="p-2 datatd"  title="21:00-21:30"></td>
+		            <td class="p-2 datatd"  title="21:30-22:00"></td>
+		            <td class="p-2 datatd"  title="22:00-22:30"></td>
+		            <td class="p-2 datatd"  title="22:30-23:00"></td>
+		            <td class="p-2 datatd"  title="23:00-23:30"></td>
+		            <td class="p-2 datatd"  title="23:30-24:00"></td>
+		            <form:hidden path="usingTimeList" class="usingTimeList" value="${cbdata.usingTimeList}"/>
+		        </tr>
+		        </c:forEach>
+		    </table>
             </c:if>
             
             <c:if test="${caseData.showButton}">
@@ -167,21 +232,30 @@
 				</form:select>
 	           	</div>
 	         </c:if>   	
-        </form:form>
  		</fieldset>
+        </form:form>
 </jsp:attribute>
 <jsp:attribute name="footers">
 <script>
         $(function() {
-        	
+
+        	//處理時間表
         	if($('#timeMK').val() !==''){
         		changeOption();
+        	    var listLength = $(".datatr").length;
+        	    for(var i=0; i<listLength; i++){
+        	    	let num = $(".usingTimeList").eq(i).val();
+        	    	let index = num.split(",");
+        	        index.forEach((e)=> $(".datatr").eq(i).children(".datatd").eq(e).addClass("bg-info"));
+        	    		     
+        	    }
         	}
 
 			$('.mergeReason').hide();
 			$('.mergeApplyid').hide();
         	
         	$('#carno').change(function(e){
+        		e.preventDefault();
         		if($('#carno').val()!==''){
         			$('#eip07w040Form').attr('action', '<c:url value="/Eip07w040_getUsingData.action" />').submit();
         		}
@@ -205,9 +279,9 @@
         		var num = ""; 
         		var timeMK = $('#timeMK').val();
         		var merge = $("input[name='merge']:checked").val();
-        		if(timeMK=='Y' && merge=='N'){num = [1,2,4,5];}
-        		if(timeMK=='N' && merge=='N'){num = [4,5];}
-        		if(merge=='Y'){num = [1,2];}
+        		if(timeMK=='Y' && merge=='N'){num = [3,4,6,7];}
+        		if(timeMK=='N' && merge=='N'){num = [6,7];}
+        		if(merge=='Y'){num = [3,4];}
         		num.forEach(e => $("#status>option").eq(e).hide());
         	}
 

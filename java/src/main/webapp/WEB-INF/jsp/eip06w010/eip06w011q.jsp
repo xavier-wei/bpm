@@ -37,10 +37,12 @@
                         <form:label cssClass="col-form-label" path="meetingBegin">會議時間：</form:label>
                         <form:select path="meetingBegin" cssClass="form-control selector">
                             <form:option value="">開始時間</form:option>
+                            <form:options items="${caseData.meetingTimeCombobox }" />
                         </form:select>
                         <span class="input-group-text px-1">~</span>
                         <form:select path="meetingEnd" cssClass="form-control selector">
                             <form:option value="">結束時間</form:option>
+                            <form:options items="${caseData.meetingTimeCombobox }" />
                         </form:select>
                     </div>
                 </tags:form-row>
@@ -96,7 +98,7 @@
                                         <func:minguo value="${item.meetingdt}"/>
                                     </td>
                                     <td>
-                                        <c:out value='${item.meetingBegin} ~ ${item.meetingEnd}'/>
+                                        <c:out value='${item.meetingBegin.substring(0,2)}:${item.meetingBegin.substring(2)} ~ ${item.meetingEnd.substring(0,2)}:${item.meetingEnd.substring(2)}'/>
                                     </td>
                                     <td>
                                         <c:out value='${item.roomId}'/>

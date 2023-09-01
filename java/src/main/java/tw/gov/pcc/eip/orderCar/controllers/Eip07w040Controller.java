@@ -34,9 +34,7 @@ public class Eip07w040Controller extends BaseController {
 	private static final org.slf4j.Logger log = org.slf4j.LoggerFactory.getLogger(Eip07w040Controller.class);
 	private static final String QUERY_PAGE = "/eip07w040/eip07w040q";// 選擇頁
 	private static final String DETAIL_PAGE = "/eip07w040/eip07w040x";// 明細頁
-	private final static String SEARCH_BY_STATUS234 = "1";
-	private final static String SEARCH_BY_CONDITION = "2";
-	
+	private static final String CANCEL_PAGE = "/eip07w040/eip07w041x";// 取消的明細頁
 	@Autowired
 	private Eip07w040Service eip07w040Service;
 
@@ -116,10 +114,10 @@ public class Eip07w040Controller extends BaseController {
 	 * @return
 	 */
 	@RequestMapping("/Eip07w040_getUsingData.action")
-	public String updateData(@ModelAttribute(CASE_KEY) Eip07w040Case caseData, BindingResult result) {
+	public ModelAndView updateData(@ModelAttribute(CASE_KEY) Eip07w040Case caseData, BindingResult result) {
 		log.debug("導向   Eip07w040  秘書處進行派車作業：更新資料 ");
 		eip07w040Service.getUsingData(caseData);
-		return DETAIL_PAGE;
+		return new ModelAndView(DETAIL_PAGE);
 	}
 	
 	
@@ -195,5 +193,50 @@ public class Eip07w040Controller extends BaseController {
 		}
 		
 		return QUERY_PAGE;
+	}
+	
+	/**
+	 * 秘書處進行派車作業 進入頁面
+	 *
+	 * @return
+	 */
+	@RequestMapping({"/Eip07w040_detail.action"})
+	public ModelAndView cancelData(@ModelAttribute(CASE_KEY) Eip07w040Case caseData) {
+		log.debug("導向 臨時取消派車  ");
+		try {
+			caseData.setCarBookingList(null);//清除資料
+			caseData.setCarno("");//清除資料
+			caseData.setShowEmptyStr(false);//清除資料
+			caseData.setTimeMK("");
+			caseData.setShowButton(false);
+			caseData.setUsing("");
+			caseData.setStatus("");
+			eip07w040Service.getDetailData(caseData);
+		} catch (Exception e) {
+			log.error("Eip07w040Controller查詢失敗" + ExceptionUtility.getStackTrace(e));
+			setSystemMessage("查詢失敗");
+			return new ModelAndView(QUERY_PAGE);
+		}
+		
+		return new ModelAndView(CANCEL_PAGE);
+	}
+	
+	/**
+	 * 秘書處進行派車作業 進入頁面
+	 *
+	 * @return
+	 */
+	@RequestMapping({"/Eip07w040_delete.action"})
+	public ModelAndView delete(@ModelAttribute(CASE_KEY) Eip07w040Case caseData) {
+		log.debug("導向 臨時取消派車  ");
+		try {
+			eip07w040Service.cancelData(caseData);
+		} catch (Exception e) {
+			log.error("Eip07w040Controller臨時取消失敗" + ExceptionUtility.getStackTrace(e));
+			setSystemMessage("臨時取消失敗");
+			return new ModelAndView(QUERY_PAGE);
+		}
+		setSystemMessage("臨時取消成功");
+		return new ModelAndView(QUERY_PAGE);
 	}
 }

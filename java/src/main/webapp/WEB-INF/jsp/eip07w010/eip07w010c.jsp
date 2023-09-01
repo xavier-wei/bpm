@@ -11,7 +11,7 @@
       </tags:button>
 
 	  <tags:button id="btnBack">
-    	回主畫面<i class="fas fa-user-plus"></i>
+    	回主畫面<i class="fas fa-reply"></i>
       </tags:button>
 
 

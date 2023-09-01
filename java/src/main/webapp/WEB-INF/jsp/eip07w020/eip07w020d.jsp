@@ -9,23 +9,23 @@
 
 
 	<tags:button id="btnUpdate">
-    	修改<i class="fas fa-search"></i>
+    	修改<i class="fas fa-user-edit"></i>
       </tags:button>
 
 	  <tags:button id="btnRmUpdate">
-    	異動申請<i class="fas fa-search"></i>
+    	異動申請<i class="fas fa-user-check"></i>
       </tags:button>
 
 	 <tags:button id="btnPrint">
-    	列印<i class="fas fa-search"></i>
+    	列印<i class="fas fa-download"></i>
       </tags:button>
 
 	<tags:button id="btnDelete">
-    	刪除<i class="fas fa-search"></i>
+    	刪除<i class="fas fa-trash-alt"></i>
       </tags:button>
 
 	  <tags:button id="btnClearn">
-    	回主畫面<i class="fa-step-backward"></i>
+    	回主畫面<i class="fas fa-reply"></i>
       </tags:button>
 
 </jsp:attribute>
@@ -46,8 +46,8 @@
 				</div>
 				<div  class="col-md d-flex">
 					<form:label cssClass="col-form-label" path="lable">申請日期：</form:label>
-					<form:input id="apply_date" name="apply_date" path="detailsList[0].apply_date" cssClass="form-control"   size="7"
-								maxlength="7" disabled="true"/>
+					<form:input id="apply_date" name="apply_date" path="detailsList[0].apply_date" cssClass="form-control  dateTW"   size="9"
+								maxlength="9" disabled="true"/>
 				</div>
 			</tags:form-row>
 			<tags:form-row>
@@ -97,8 +97,8 @@
 				<tags:form-row>
 						<div  class="col-md d-flex">
 							<form:label cssClass="col-form-label star" path="lable">用車日期：</form:label>
-							<form:input  path="detailsList[0].using_date" cssClass="form-control num_only dateTW"   size="7"
-										maxlength="7" disabled="true"/>
+							<form:input  path="detailsList[0].using_date" cssClass="form-control num_only dateTW"   size="9"
+										maxlength="9" disabled="true"/>
 						</div>
 				</tags:form-row>
 				<tags:form-row>
@@ -115,7 +115,7 @@
 							<form:option value="${minute}"><c:out value="${minute}"/></form:option>
 						</c:forEach>
 					</form:select>
-					<span class="input-group-text px-1">~</span>
+					<span class="input-group-text px-1">-</span>
 					<form:select   path="detailsList[0].rmEndH" cssClass="form-control" disabled="true">
 						<c:forEach var="hour" items="${caseData.hourList}" varStatus="status">
 							<form:option value="${hour}"><c:out value="${hour}"/></form:option>
@@ -169,8 +169,8 @@
 				<tags:form-row>
 					<div  class="col-md d-flex">
 						<form:label cssClass="col-form-label star" path="lable">用車日期：</form:label>
-						<form:input id="using_date" name="using_date" path="detailsList[0].using_date" cssClass="form-control num_only dateTW"   size="7"
-									maxlength="7" disabled="true"/>
+						<form:input id="using_date" name="using_date" path="detailsList[0].using_date" cssClass="form-control num_only dateTW"   size="9"
+									maxlength="9" disabled="true"/>
 					</div>
 			</tags:form-row>
 				<tags:form-row>
@@ -289,9 +289,16 @@
 								<form:option value="1">1.原申請資料需變更</form:option>
 								<form:option id="2" value="2">2.取消申請</form:option>
 							</form:select>
+							<div id="cancelMg" class="text-danger" >&nbsp;&nbsp;&nbsp;&nbsp;請電話通知管理者及駕駛取消派車</div>
 						</div>
-				</tags:form-row>
+
+					</tags:form-row>
 			</div>
+<%--			<div id="cancelMg">--%>
+<%--				<tags:form-note>--%>
+<%--                請電話通知管理者及駕駛取消派車--%>
+<%--           		 </tags:form-note>--%>
+<%--			</div>--%>
 			<div id="changMk">
 				<tags:form-row>
 					<div  class="col-md d-flex" >
@@ -324,7 +331,7 @@
 				<tags:form-row>
 						<div  class="col-md-4 d-flex">
 							<form:label cssClass="col-form-label star" path="lable">用車日期：</form:label>
-							<form:input id="rmUsingDateMk" name="rmUsingDateMk" path="detailsList[0].using_date" cssClass="form-control"    size="7" maxlength="7" disabled="true"/>
+							<form:input id="rmUsingDateMk" name="rmUsingDateMk" path="detailsList[0].using_date" cssClass="form-control  dateTW"    size="9" maxlength="7" disabled="true"/>
 					</div>
 				</tags:form-row>
 				<div  class="col-md d-flex"  style="margin: 0; padding: 0;">
@@ -367,6 +374,7 @@
 				</tags:form-row>
 			</div>
 		<form:hidden id="combine_mk" path="combine_mk" />
+		<form:hidden id="isSecretarial" path="isSecretarial" />
 		<form:hidden id="carprocess_status" path="detailsList[0].carprocess_status" />
 	  </form:form>
 	</tags:fieldset>
@@ -375,12 +383,13 @@
 <script>
 
         $(function() {
+			var isSecretarial=$("#isSecretarial").val();
 			controlDiv();
 			controlcheckMk();
 			btnRmUpdate();
 			CombineMk();
 			status_U();
-
+			isSecretarial_Y();
 			$('#btnUpdate').click(function() {
 				$('#eip07w020Form').attr('action', '<c:url value="/Eip07w020_update.action" />').submit();
 			});
@@ -413,7 +422,6 @@
 			function controlDiv(){//控制[申請相關資料]及[車輛相關資料]
 				var combineMk=$("#combine_mk").val();
 				var carprocess_status=$("#carprocess_status").val();
-
 				if(combineMk == 'Y'){
 					$("#mark").show();
 				} else {
@@ -450,6 +458,7 @@
 					$("#status_5").hide();
 				}
 
+
 			}
 
 			function controlcheckMk(){//控制是否顯示"異動註記"checkBox
@@ -460,8 +469,11 @@
 				} else {
 					$("#checkMk").hide();
 				}
-
-				if (carprocess_status=='1'||carprocess_status=='2'){
+				if (isSecretarial==='Y'){
+					$("#btnRmUpdate").show();
+					$("#btnDelete").hide();
+					$("#btnUpdate").hide();
+				}else if (carprocess_status=='1'||carprocess_status=='2'){
 					$("#btnUpdate").show();
 					$("#btnDelete").show();
 					$("#footer").show();
@@ -489,6 +501,8 @@
 				if (carprocess_status=='1'){//本來是!=2
 					$("#using_date").removeAttr("disabled");
 				}
+
+
 			}
 
 				$('input[name="checkMk"]:checkbox').change(function() {//控制"異動註記"是否勾選
@@ -508,6 +522,7 @@
 					$("#rmMemo").hide()
 					$("#rmMemoLabel").hide()
 					$("#changMk").hide();
+					$("#cancelMg").hide();
 				}
 			}
 
@@ -523,6 +538,11 @@
 				}else {
 					$("#changMk").hide();
 				}
+				if (rmMemo=='2'){//寫警告
+					$("#cancelMg").show();
+				}else {
+					$("#cancelMg").hide();
+				}
 			}
 			function CombineMk() {//控制併單註記為Y時
 				var combineMk = $("#combine_mk").val();
@@ -536,9 +556,21 @@
 			function status_U() {//控制表單狀態為U時
 				var carprocess_status=$("#carprocess_status").val();
 				if (carprocess_status=='U') {
-					// $('#rmMemo option[value="1"]').remove()
 					$("#rmMemo").prop("disabled", true);
 					$("#btnRmUpdate").text("取消申請");
+				}
+			}
+			function isSecretarial_Y() {//控制秘書室登入
+				var newOption = $('<option>', {
+					value: '2',
+					text: '3.秘書處臨時取消派車(請務必聯絡到申請人才可取消)'
+				});
+				if (isSecretarial==='Y') {
+					$('#rmMemo option[value="1"]').remove()
+					$('#rmMemo option[value="2"]').remove()
+					$('#rmMemo').append(newOption);
+					$("#btnRmUpdate").text("取消申請");
+					$("form").find(":input").prop("disabled", true);
 				}
 			}
          });

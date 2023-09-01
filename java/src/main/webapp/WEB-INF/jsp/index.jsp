@@ -80,7 +80,7 @@
                     <div id="nav-tabContent" class="tab-content">
                         <div id="nav-inform" role="tabpanel" aria-labelledby="nav-inform-tab"
                              class="tab-pane fade active show">
-                            <section class="container pt-2 pl-0 pr-0">
+                            <section class="pt-2 pl-0 pr-0">
                                 <div class="card">
                                     <div class="card-body p-0">
                                         <div class="px-1 py-1 collapse show">
@@ -113,7 +113,7 @@
                         </div>
                         <div id="nav-download" role="tabpanel" aria-labelledby="nav-download-tab"
                              class="tab-pane fade">
-                            <section class="container pt-2 pl-0 pr-0">
+                            <section class="pt-2 pl-0 pr-0">
                                 <div class="card">
                                     <div class="card-body p-0">
                                         <div class="px-1 py-1 collapse show">
@@ -276,7 +276,7 @@
           $(function () {
             let msgListTableConfig = getDataTablesConfig();
             msgListTableConfig.searching = true;
-            msgListTableConfig.dom = "<'d-flex text-nowrap'f<'d-flex ml-auto mr-0 mt-auto pagination text-wrap'pli>>tr";
+            msgListTableConfig.dom = "<'text-nowrap'f>t<' ml-auto mr-0 mt-auto pagination text-wrap'lpi>r";
             msgListTableConfig.lengthChange = true;
             msgListTableConfig.lengthMenu = [[5, 25, 50, -1], [5, 25, 50, '全部']];
             msgListTableConfig.sNoFooter = '';
@@ -305,7 +305,7 @@
                 data: 'fseq', createdCell: (t, d) => {
                   $(t).data('fseq', d);
                 }, render: (d, t, r, m) => {
-                  return '<button type=\"button\" class=\"btn btn-outline-be btnDetailMsg text-nowrap \"> <span class=\"btn-txt\">明細<i class=\"fas fa-list-alt\"><\/i><\/span> <\/button>';
+                  return '<button type=\"button\" class=\"btn btn-outline-be btnDetailMsg text-nowrap \"> <span class=\"btn-txt\">明細<\/span> <\/button>';
                 }, orderable: false
               }
             ];
@@ -322,7 +322,7 @@
                 data: 'fseq', createdCell: (t, d) => {
                   $(t).data('fseq', d);
                 }, render: (d, t, r, m) => {
-                  return '<button type=\"button\" class=\"btn btn-outline-be btnDetailMsg \"> <span class=\"btn-txt\">明細<i class=\"fas fa-list-alt\"><\/i><\/span> <\/button>';
+                  return '<button type=\"button\" class=\"btn btn-outline-be btnDetailMsg \"> <span class=\"btn-txt\">明細<\/span> <\/button>';
                 }, orderable: false
               }
             ];

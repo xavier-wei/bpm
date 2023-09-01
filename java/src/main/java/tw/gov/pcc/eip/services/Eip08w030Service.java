@@ -12,9 +12,11 @@ import tw.gov.pcc.eip.dao.ApplyitemDao;
 import tw.gov.pcc.eip.dao.DeptsDao;
 import tw.gov.pcc.eip.dao.ItemcodeDao;
 import tw.gov.pcc.eip.dao.ItemcodeuDao;
+import tw.gov.pcc.eip.dao.UsersDao;
 import tw.gov.pcc.eip.domain.Applyitem;
 import tw.gov.pcc.eip.domain.Depts;
 import tw.gov.pcc.eip.domain.Itemcode;
+import tw.gov.pcc.eip.domain.Users;
 import tw.gov.pcc.eip.framework.domain.UserBean;
 import tw.gov.pcc.eip.util.DateUtility;
 
@@ -44,6 +46,9 @@ public class Eip08w030Service {
 	
 	@Autowired
 	private DeptsDao deptsDao;
+	
+	@Autowired
+	private UsersDao usersDao;
 
 	private static final String PROCESS_STATUS_AGREE = "2";
 	private static final String PROCESS_STATUS_DISAGREE = "9";
@@ -64,7 +69,8 @@ public class Eip08w030Service {
 			for (Applyitem item : list) {
 				Eip08w030Case data = new Eip08w030Case();
 				data.setApplyno(item.getApplyno());
-				data.setApply_user(item.getApply_user());
+				Users user = usersDao.selectByKey(item.getApply_user());
+				data.setApply_user(user.getUser_name());
 				Depts deptName = deptsDao.findByPk(item.getApply_dept());
 				data.setApply_dept(deptName.getDept_name());
 				dataList.add(data);
@@ -83,8 +89,11 @@ public class Eip08w030Service {
 		List<Applyitem> list = applyitemDao.selectByApplyno(caseData.getApplyno());
 		List<Eip08w030Case> dataList = new ArrayList<>();
 		if (CollectionUtils.isNotEmpty(list)) {
-			caseData.setApply_user(list.get(0).getApply_user());
-			caseData.setApply_dept(list.get(0).getApply_dept());
+			
+			Users user = usersDao.selectByKey(list.get(0).getApply_user());
+			caseData.setApply_user(user.getUser_name());
+			Depts deptName = deptsDao.findByPk(list.get(0).getApply_dept());
+			caseData.setApply_dept(deptName.getDept_name());
 			caseData.setApply_date(list.get(0).getApply_date());
 			caseData.setApply_memo(list.get(0).getApply_memo());
 			for (Applyitem item : list) {

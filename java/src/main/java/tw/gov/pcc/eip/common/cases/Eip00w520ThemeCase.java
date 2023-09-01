@@ -74,6 +74,43 @@ public class Eip00w520ThemeCase implements Serializable {
         return true;
     }
 
+
+    @AssertTrue(message = "「開始時間(時)」格式不正確(0~23)")
+    public boolean isOsfmdtHourValid() {
+        if (StringUtils.isNotBlank(this.osfmdtHour)) {
+            int iHour = Integer.parseInt(this.osfmdtHour);
+            return iHour <= 23;
+        }
+        return true;
+    }
+
+    @AssertTrue(message = "「開始時間(分)」格式不正確(0~59)")
+    public boolean isOsfmdtMinuteValid() {
+        if (StringUtils.isNotBlank(this.osfmdtMinute)) {
+            int iMinute = Integer.parseInt(this.osfmdtMinute);
+            return iMinute <= 59;
+        }
+        return true;
+    }
+
+    @AssertTrue(message = "「結束時間(時)」格式不正確(0~23)")
+    public boolean isOsendtHourValid() {
+        if (StringUtils.isNotBlank(this.osendtHour)) {
+            int iHour = Integer.parseInt(this.osendtHour);
+            return iHour <= 23;
+        }
+        return true;
+    }
+
+    @AssertTrue(message = "「結束時間(分)」格式不正確(0~59)")
+    public boolean isOsendtMinuteValid() {
+        if (StringUtils.isNotBlank(this.osendtMinute)) {
+            int iMinute = Integer.parseInt(this.osendtMinute);
+            return iMinute <= 59;
+        }
+        return true;
+    }
+
 //    @AssertTrue(message = "「開始時間」需小於「結束時間」")
 //    private boolean isOsfmdtLessthanOsendt() {
 //        // 如果其中一個欄位為NULL無法比較，讓其他驗證處理

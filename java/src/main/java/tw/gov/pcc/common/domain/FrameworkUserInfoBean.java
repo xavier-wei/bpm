@@ -34,6 +34,10 @@ public class FrameworkUserInfoBean implements UserInfo, Serializable {
      */
     private String deptId;
     /**
+     * 部門名稱
+     */
+    private String deptName;
+    /**
      * 員工編號
      */
     private String empId;
@@ -150,7 +154,7 @@ public class FrameworkUserInfoBean implements UserInfo, Serializable {
      * @return 登入日期格式化字串
      */
     public String getLoginDateString() {
-        return DateUtil.formatChineseDateString(loginDate, true);
+        return DateUtil.formatChineseDateString(loginDate, false);
     }
 
     /**

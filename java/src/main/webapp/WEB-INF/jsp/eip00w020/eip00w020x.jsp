@@ -6,10 +6,10 @@
 <tags:layout>
 <jsp:attribute name="buttons">    
     <tags:button id="btnEdit">
-    	更新<i class="fas fa-edit"></i>
+    	修改<i class="fas fa-edit"></i>
     </tags:button>
         <tags:button id="btnBack">
-    	取消<i class="fas fa-reply"></i>
+    	返回<i class="fas fa-reply"></i>
     </tags:button>
 </jsp:attribute>
 
@@ -172,7 +172,7 @@
 					        	<td class="text-left"><c:out value="${data.role_desc}"/></td>
 					            <td class="text-right">
 					            	 <tags:button cssClass="btnEdit"
-		                                           onclick="delRole('${data.role_id}')">刪除帳戶角色<i class="fas fa-trash"></i></tags:button>
+		                                           onclick="delRole('${data.role_id}')">刪除帳戶角色</tags:button>
 					            </td>
 					        </tr>
 				        </c:forEach>
@@ -204,7 +204,7 @@
 				        	</td>
 				            <td class="text-right">
 				            	 <tags:button cssClass="btnEdit"
-	                                           onclick="addRole()">新增<i class="fas fa-edit"></i></tags:button>
+	                                           onclick="addRole()">新增</tags:button>
 				            </td>
 					    </tr>
 					</tbody> 

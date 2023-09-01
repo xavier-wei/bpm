@@ -56,7 +56,7 @@ public class Eip06w020Service {
         for (int i = 0; i < 24; i++) {
             for (int j = 0; j < 60; j += 30) {
                 String time = StringUtils.leftPad(String.valueOf(i),2, "0") + StringUtils.leftPad(String.valueOf(j),2, "0");
-                meetingTimeMap.put(time, time);
+                meetingTimeMap.put(time, time.substring(0,2) + ":" + time.substring(2));
             }
         }
         caseData.setMeetingTimeCombobox(meetingTimeMap);

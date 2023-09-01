@@ -181,7 +181,7 @@ public class ApplyitemDaoImpl extends BaseDao<Applyitem> implements ApplyitemDao
 	public List<Applyitem> selectApplyItemReportByUnit(String applyYearMonth) {
         StringBuilder sql=new StringBuilder();
         
-        sql.append(" Select apply_dept, itemkind, itemno, ");
+        sql.append(" Select itemkind, itemno,(select top(1)dept_name from DEPTS  where dept_id = a.apply_dept ) as apply_dept , ");
         sql.append(" (select itemno+'-'+itemname from itemcode where itemkind='MAIN' AND  substring(a.itemno,1,1)=itemno) as itemkind_nm, ");
         sql.append(" (select itemno+'-'+itemname from itemcode where itemkind=a.itemkind And itemno=a.itemno) as itemno_nm, ");
         sql.append(" sum(approve_cnt) approve_cnt ");

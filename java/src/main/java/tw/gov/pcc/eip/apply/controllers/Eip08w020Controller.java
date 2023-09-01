@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.SessionAttributes;
 import org.springframework.web.servlet.ModelAndView;
 
 import tw.gov.pcc.eip.apply.cases.Eip08w020Case;
+import tw.gov.pcc.eip.dao.DeptsDao;
 import tw.gov.pcc.eip.domain.Itemcode;
 import tw.gov.pcc.eip.framework.domain.UserBean;
 import tw.gov.pcc.eip.framework.spring.annotation.SkipCSRFVerify;
@@ -48,6 +49,8 @@ public class Eip08w020Controller extends BaseController {
 	private UserBean userData;
 	@Autowired
 	private Eip08w020Service eip08w020Service;
+	@Autowired
+	private DeptsDao deptsDao;
 
 	@ModelAttribute(CASE_KEY)
 	public Eip08w020Case getRo0w100Case() {
@@ -65,9 +68,9 @@ public class Eip08w020Controller extends BaseController {
 		log.debug("導向 Eip08w020_enter 領物單申請作業");
 		Eip08w020Case newCase = new Eip08w020Case();
 		BeanUtility.copyProperties(caseData, newCase);// 進來時清除caseData
-		caseData.setApply_date(DateUtility.getNowChineseDate());// 申請日期(預設系統日)
-		caseData.setApply_dept(userData.getDeptId());// 申請單位
-		caseData.setApply_user(userData.getUserId());// 申請人
+		String deptname = deptsDao.findByPk(userData.getDeptId()).getDept_name();
+		caseData.setApply_dept(deptname);// 申請單位
+		caseData.setApply_user(userData.getUserName());// 申請人
 		caseData.setOriApply_dept(userData.getDeptId());
 		caseData.setOriApply_user(userData.getUserId());
 		return new ModelAndView(QUERY_PAGE);
@@ -76,9 +79,9 @@ public class Eip08w020Controller extends BaseController {
 	private void resetData(Eip08w020Case caseData) {
 		Eip08w020Case newCase = new Eip08w020Case();
 		BeanUtility.copyProperties(caseData, newCase);// 進來時清除caseData
-		caseData.setApply_date(DateUtility.getNowChineseDate());// 申請日期(預設系統日)
-		caseData.setApply_dept(userData.getDeptId());// 申請單位
-		caseData.setApply_user(userData.getUserId());// 申請人
+		String deptname = deptsDao.findByPk(userData.getDeptId()).getDept_name();
+		caseData.setApply_dept(deptname);// 申請單位
+		caseData.setApply_user(userData.getUserName());// 申請人
 		caseData.setOriApply_dept(userData.getDeptId());
 		caseData.setOriApply_user(userData.getUserId());
 	}

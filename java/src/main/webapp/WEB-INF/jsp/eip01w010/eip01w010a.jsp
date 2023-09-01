@@ -728,7 +728,7 @@
                 showhide('<c:out value="${caseData.pagetype }"/>');
                 function showhide(pagetype) {
 	                if(pagetype === 'A'){ // 文章
-	                    $('.mcontent-row, .images-row, .imgblock, .files-row, .indir-row, .textblock').show();
+	                    $('.mcontent-row, .images-row, .imgblock, .files-row, .textblock').show();
 	                    $('.oplink-row, #btnLink').hide();
 	                    $('input:radio[name="oplink"]').prop('checked', false);
 	                    $('.subject-label-name').html('主旨：');
@@ -738,7 +738,7 @@
 	                    $('#files').next('.custom-file-label').html('Choose files');
 	                    $('#images').next('.custom-file-label').html('Choose images');
 	                    
-	                    $('.mcontent-row, .images-row, .imgblock, .files-row, .indir-row, .textblock').hide();
+	                    $('.mcontent-row, .images-row, .imgblock, .files-row, .textblock').hide();
 	                    $('.oplink-row, #btnLink').show();
 	                    $('input:radio[name="oplink"][value="1"]').prop('checked', true);
 	                    $('.subject-label-name').html('連結網址：');
@@ -748,8 +748,13 @@
 	                    $('.subject-label-name').html('主旨/連結網址：');
 	                    $('#files').next('.custom-file-label').html('Choose files');
 	                    $('#images').next('.custom-file-label').html('Choose images');
-	                    $('.mcontent-row, .images-row, .imgblock, .files-row, .indir-row, .oplink-row, #btnLink, .textblock').hide();
+	                    $('.mcontent-row, .images-row, .imgblock, .files-row, .oplink-row, .indir-row, #btnLink, .textblock').hide();
 	                }
+                    if ($('#attributype').val() === '4' && pagetype === 'A') {
+                        $('.indir-row').show();
+                    } else {
+                        $('.indir-row').hide();
+                    }
                 }
                 // 測試連結
                 $('#btnLink').click(function(){
@@ -816,6 +821,11 @@
                     // 清空存放目錄 帶預設部門
                     getMsgtypeOptions(selectValue);
                     getAllNode(selectValue, false);
+                    if (selectValue === '4' && $('#pagetype').val() === 'A') {
+                        $('.indir-row').show();
+                    } else {
+                        $('.indir-row').hide();
+                    }
                 });
                 var attribute = $('#attributype').val();
                 getMsgtypeOptions(attribute);

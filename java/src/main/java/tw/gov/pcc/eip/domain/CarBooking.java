@@ -354,7 +354,15 @@ public class CarBooking implements Serializable {
 
     private String carTyNm;
     private String usingStr;//eip07w040
-
+    
+	private String startuseH;//eip07w060 用車時間起 時
+	private String startuseM;//eip07w060 用車時間起 分
+	private String enduseH;//eip07w060 用車時間迄 時
+	private String enduseM;//eip07w060 用車時間迄 分
+	private String milageStart;//eip07w060 出場公里數
+	private String milageEnd;//eip07w060 回場公里數
+	private String milage;//eip07w060 行駛公里數
+	private String gasUsed;//eip07w060 耗油公里數
 
     @LogField
     private String rmStarH;
@@ -368,5 +376,7 @@ public class CarBooking implements Serializable {
     @LogField
     private String rmEndM;
     
-    private String apply_deptStr;//eip07w040
+    private String apply_deptStr;//eip07w040y
+    
+    private String usingTimeList;//eip07w040用於畫面顯示今日該車輛已派出的時間
 }

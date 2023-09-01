@@ -234,6 +234,7 @@ public class Eip07w010Service {
         gasData.setFuel_time(caseData.getGasH()+caseData.getGasM());
         gasData.setUpd_user(userData.getUserId());
         gasData.setCre_user(userData.getUserId());
+        gasData.setSys_time(DateUtil.getNowWestDateTime(true));
         gasData.setCre_datetime(sysDate);
         gasData.setUpd_datetime(sysDate);
         gasRecDao.insert(gasData);

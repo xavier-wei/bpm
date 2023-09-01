@@ -23,7 +23,7 @@
       </tags:button>
 
 	  <tags:button id="btnUpdate">
-    	修改<i class="fas fa-user-plus"></i>
+    	修改<i class="fas fa-user-edit"></i>
       </tags:button>
 
 	  <tags:button id="btnDelete">
@@ -31,7 +31,7 @@
       </tags:button>
 
 	 <tags:button id="btnBack">
-    	回主畫面<i class="fas fa-user-plus"></i>
+    	回主畫面<i class="fas fa-reply"></i>
       </tags:button>
 
 </jsp:attribute>
@@ -143,11 +143,11 @@
 						<tags:form-row>
 							<div class="col-md-4 d-flex">
 								<form:label cssClass="col-form-label" path="insuranceStart">保險期間(起):</form:label>
-								<form:input id="insuranceStart"  name="insuranceStart"  path="eip07w010CarDataList[0].insuranceStart" cssClass="form-control num_only dateTW" size="7" maxlength="7"/>
+								<form:input id="insuranceStart"  name="insuranceStart"  path="eip07w010CarDataList[0].insuranceStart" cssClass="form-control num_only dateTW" size="9" maxlength="7"/>
 							</div>
 							<div class="col-md-4 d-flex">
 								<form:label cssClass="col-form-label" path="InsuranceEnd">保險期間(迄):</form:label>
-								<form:input id="InsuranceEnd"  name="InsuranceEnd"  path="eip07w010CarDataList[0].InsuranceEnd" cssClass="form-control num_only dateTW" size="7" maxlength="7"/>
+								<form:input id="InsuranceEnd"  name="InsuranceEnd"  path="eip07w010CarDataList[0].InsuranceEnd" cssClass="form-control num_only dateTW" size="9" maxlength="7"/>
 							</div>
 						</tags:form-row>
 						<tags:form-row></tags:form-row>
@@ -170,11 +170,11 @@
 						<tags:form-row>
 							<div   class="col-md-4 d-flex" >
 								<form:label cssClass="col-form-label star" path="lable">加油日期：</form:label>
-								<form:input id="fuel_date"  name="fuel_date"  path="gasRec.fuel_date" cssClass="form-control num_only dateTW" size="7" maxlength="7"/>
+								<form:input id="fuel_date"  name="fuel_date"  path="gasRec.fuel_date" cssClass="form-control num_only dateTW" size="9" maxlength="7"/>
 
 							</div>
 							<div   class="col-md-4 d-flex" >
-								<form:label cssClass="col-form-label star" path="lable">加油時間：</form:label>
+								<form:label cssClass="col-form-label" path="lable">加油時間：</form:label>
 								<form:select id="gasH"  name="gasH"  path="gasH" cssClass="form-control">
 									<form:option value=""></form:option>
 									<c:forEach var="hour" items="${caseData.hourList}" varStatus="status">
@@ -198,9 +198,8 @@
 
 							</div>
 							<div   class="col-md-4 d-flex" >
-								<form:label cssClass="col-form-label " path="lable">加油量：</form:label>
-								<form:input id="gas_amount"  name="gas_amount"  path="gasRec.gas_amount" cssClass="form-control" size="3" maxlength="3"/>
-
+								<form:label cssClass="col-form-label " path="lable">加油量(公升)：</form:label>
+								<form:input id="gas_amount"  name="gas_amount"  path="gasRec.gas_amount" cssClass="form-control" size="6" maxlength="6"/>
 							</div>
 						</tags:form-row>
 						<tags:form-row>
@@ -222,8 +221,16 @@
 							<c:forEach items="${caseData.oilList}" var="data" varStatus="status">
 								        <tr>
 											<td class="text-left"><c:out value="${status.count }"/></td>
-											<td class="text-left"><c:out value="${data.fuelDate }"/></td>
-											<td class="text-left"><c:out value="${data.fuelTime }"/></td>
+											<td class="text-left">
+											<c:out value="${fn:substring(data.fuelDate, 0,3)}"/>/<c:out value="${fn:substring(data.fuelDate, 3,5)}"/>/<c:out value="${fn:substring(data.fuelDate, 5,-1)}"/>
+											</td>
+											<td class="text-left">
+											<c:choose>
+												 <c:when test="${not empty data.fuelTime}">
+													<c:out value="${fn:substring(data.fuelTime, 0,2)}"/>:<c:out value="${fn:substring(data.fuelTime, 2,-1)}"/>
+												 </c:when>
+											</c:choose>
+											</td>
 											<td class="text-left"><c:out value="${data.gasMoney }"/></td>
 											<td class="text-left"><c:out value="${data.gasAmount }"/></td>
 										</tr>
@@ -257,8 +264,13 @@
 							<c:forEach items="${caseData.mileageList}" var="data" varStatus="status">
 								        <tr>
 											<td class="text-left"><c:out value="${status.count }"/></td>
-											<td class="text-left"><c:out value="${data.useDate }"/></td>
-											<td class="text-left"><c:out value="${data.useTimeS}-${data.useTimeE}"/></td>
+											<td class="text-left">
+												<c:out value="${fn:substring(data.useDate, 0,3)}"/>/<c:out value="${fn:substring(data.useDate, 3,5)}"/>/<c:out value="${fn:substring(data.useDate, 5,-1)}"/>
+											</td>
+											<td class="text-left">
+												<c:out value="${fn:substring(data.useTimeS, 0,2)}"/>:<c:out value="${fn:substring(data.useTimeS, 2,-1)}"/>
+												-<c:out value="${fn:substring(data.useTimeE, 0,2)}"/>:<c:out value="${fn:substring(data.useTimeE, 2,-1)}"/>
+											</td>
 											<td class="text-left"><c:out value="${data.milageStart }"/></td>
 											<td class="text-left"><c:out value="${data.milageEnd }"/></td>
 											<td class="text-left"><c:out value="${data.milage }"/></td>

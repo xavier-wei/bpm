@@ -89,9 +89,16 @@ public class Eip07w020Case implements Serializable {
 
 
 	/**
-	 *申請人
+	 *申請人(ID)
 	 */
 	private String applyName;
+
+
+
+	/**
+	 *申請人(中文)
+	 */
+	private String userName;
 
 
 	/**
@@ -103,6 +110,11 @@ public class Eip07w020Case implements Serializable {
 	 *申請單位
 	 */
 	private String applyUnit;
+
+	/**
+	 *申請單位(中文)
+	 */
+	private String applyUnitNm;
 
 	/**
 	 *用車事由
@@ -225,6 +237,12 @@ public class Eip07w020Case implements Serializable {
 	 */
 	@LogField
 	private String lable;
+
+	/**
+	 *秘書人員: 是:Y 否:N
+	 */
+	@LogField
+	private String isSecretarial;
 
 
 	public interface Query {
