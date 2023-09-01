@@ -46,7 +46,7 @@ public class ProcessResource {
 
     @RequestMapping("/queryProcessingTask")
     public List<TaskDTO> queryProcessingTask(@RequestBody String id) {
-        System.out.println(id);
+
         return service.queryProcessingTask(id);
     }
 
