@@ -11,6 +11,7 @@ import tw.gov.pcc.flowable.domain.ProcessEnum;
 import tw.gov.pcc.flowable.domain.ProcessRes;
 import tw.gov.pcc.flowable.service.dto.TaskDTO;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -36,7 +37,7 @@ public class ProcessFlowService {
         Task task = taskService.createTaskQuery()
                 .taskCandidateOrAssigned((String) variables.get("applier"))
                 .processInstanceId(processInstance.getId()).singleResult();
-        TaskDTO taskDTO =new  TaskDTO(task, processInstance.getProcessDefinitionKey());
+        TaskDTO taskDTO = new TaskDTO(task, processInstance.getProcessDefinitionKey());
 
         if ("1".equals((String) variables.get("isSubmit"))) {
             taskService.complete(task.getId());
@@ -74,7 +75,7 @@ public class ProcessFlowService {
     // query task
     public List<TaskDTO> queryProcessingTask(String id) {
 
-        return taskService.createTaskQuery()
+        List<TaskDTO> taskDTOS = taskService.createTaskQuery()
                 .taskCandidateOrAssigned(id)
                 .orderByTaskCreateTime()
                 .desc()
@@ -82,7 +83,31 @@ public class ProcessFlowService {
                 .stream()
                 .map(this::getTaskDTO)
                 .collect(Collectors.toList());
+        filterIfAdditionSigning(taskDTOS);
+
+        return taskDTOS;
     }
+
+    private static void filterIfAdditionSigning(List<TaskDTO> taskDTOS) {
+        List<String> additionalProcessIds = new ArrayList<>();
+        taskDTOS.forEach(taskDTO -> {
+            if ("Additional".equals(taskDTO.getFormName())) {
+                additionalProcessIds.add(taskDTO.getProcessInstanceId());
+            }
+        });
+        taskDTOS.stream().filter(taskDTO -> {
+            if ("Additional".equals(taskDTO.getFormName())) {
+                return true;
+            }
+            for (String additionalProcessId : additionalProcessIds) {
+                if (additionalProcessId.equals(taskDTO.getFormName())) {
+                    return false;
+                }
+            }
+            return true;
+        });
+    }
+
 
     // delete processInstance
     public void deleteProcessInstance(String processInstanceId) {
