@@ -19,7 +19,7 @@ import tw.gov.pcc.service.mapper.BpmSignStatusMapper;
 import javax.validation.Valid;
 import java.io.IOException;
 import java.sql.Timestamp;
-import java.time.Instant;
+import java.time.LocalDateTime;
 import java.util.*;
 
 @RestController
@@ -168,7 +168,7 @@ public class IsmsProcessResource {
         bpmSignStatusDTO.setSignerId(completeReqDTO.getSignerId());
         bpmSignStatusDTO.setSigner(completeReqDTO.getSigner());
         bpmSignStatusDTO.setSignUnit(completeReqDTO.getSignUnit());
-        bpmSignStatusDTO.setSigningDatetime(Timestamp.from(Instant.now()));
+        bpmSignStatusDTO.setSigningDatetime(Timestamp.valueOf(LocalDateTime.now()));
         bpmSignStatusDTO.setOpinion(completeReqDTO.getOpinion());
         bpmSignStatusDTO.setDirections(completeReqDTO.getDirections());
         if (completeReqDTO.getVariables().isEmpty()) {
