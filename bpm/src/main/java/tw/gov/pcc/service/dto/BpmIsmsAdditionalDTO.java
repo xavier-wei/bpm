@@ -4,18 +4,18 @@ import java.sql.Timestamp;
 
 public class BpmIsmsAdditionalDTO {
 
-    private String formId;
-    private String processInstanceId;
-    private String mainFormId;
-    private String mainProcessInstanceId;
-    private String mainProcessTaskId;
-    private String requesterId;
-    private String requester;
-    private String additionalSignerId;
-    private String additionalSigner;
-    private String additionalSignReason;
-    private String processInstanceStatus;
-    private Timestamp createTime;
+    private String formId;//不傳資料
+    private String processInstanceId;//不傳資料
+    private String mainFormId; //發起加簽的流程FormId
+    private String mainProcessInstanceId; // 發起加簽的流程id
+    private String mainProcessTaskId; // 發起加簽的TASKID
+    private String requesterId;//ChiefTester
+    private String requester;//ChiefTester
+    private String additionalSignerId;//AdditionalSignerTester
+    private String additionalSigner;//AdditionalSignerTester
+    private String additionalSignReason;//加簽理由
+    private String processInstanceStatus;//預設'0'
+    private Timestamp createTime;//不傳資料
 
     public String getFormId() {
         return formId;
