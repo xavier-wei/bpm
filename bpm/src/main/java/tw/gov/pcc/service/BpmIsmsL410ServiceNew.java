@@ -21,6 +21,7 @@ import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 @Service("L410Service")
@@ -92,7 +93,7 @@ public class BpmIsmsL410ServiceNew implements BpmIsmsService {
                 taskDTO,
                 bpmIsmsL410DTO.getAppEmpid(),
                 bpmIsmsL410DTO.getAppName(),
-                bpmIsmsL410DTO.getSignUnit()
+                bpmIsmsL410DTO.getAppUnit1()
             );
         }
 
@@ -113,10 +114,34 @@ public class BpmIsmsL410ServiceNew implements BpmIsmsService {
     public UUID setVariables(HashMap<String, Object> variables, String form) {
         BpmIsmsL410DTO bpmIsmsL410DTO = gson.fromJson(form, BpmIsmsL410DTO.class);
         UUID uuid = UUID.randomUUID();
+
+
         DTO_HOLDER.put(uuid, bpmIsmsL410DTO);
+
+
+
         variables.put("applier", bpmIsmsL410DTO.getAppName());
         variables.put("isSubmit", bpmIsmsL410DTO.getIsSubmit());
+
+        // todo 判斷上級
+        variables.put("sectionChief", "ChiefTester");
+        variables.put("director", "DirectorTester");
+
+
+
+
+
         return uuid;
+    }
+
+    @Override
+    public Map<String, Object> getBpm(String formId) {
+
+        List<Map<String,Object>> bpmIsmsL410 =  bpmIsmsL410Repository.findByFormId(formId);
+
+        if(!bpmIsmsL410.isEmpty()) return bpmIsmsL410Repository.findByFormId(formId).get(0);
+
+        return null;
     }
 
     private void savePhoto(List<BpmUploadFileDTO> dto, List<MultipartFile> appendixFiles, String formId) {
