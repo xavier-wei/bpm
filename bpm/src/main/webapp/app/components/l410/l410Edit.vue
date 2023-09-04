@@ -555,6 +555,10 @@ export default {
       type: Boolean,
       default: true,
     },
+    taskData: {
+      required: false,
+      type: Object,
+    },
   },
   components: {
     'i-form-group-check': IFormGroupCheck,
@@ -569,6 +573,7 @@ export default {
     const l410Data = ref({});
     const formIdProp = toRef(props, 'formId');
     const stateStatusRef = toRef(props, 'stateStatus');
+    const taskDataRef = toRef(props, 'taskData');
     const bpmUnitOptions = ref(useGetters(['getBpmUnitOptions']).getBpmUnitOptions).value;
     const $bvModal = useBvModal();
     const notificationService = useNotification();

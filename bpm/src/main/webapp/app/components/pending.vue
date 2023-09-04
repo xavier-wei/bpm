@@ -48,9 +48,9 @@
                                :disabled-date="notAfterPublicDateEnd"></i-date-picker>
                 <b-input-group-text>至</b-input-group-text>
                 <i-date-picker
-                  v-model="$v.dateEnd.$model"
-                  placeholder="yyy/MM/dd"
-                  :disabled-date="notBeforePublicDateStart"
+                    v-model="$v.dateEnd.$model"
+                    placeholder="yyy/MM/dd"
+                    :disabled-date="notBeforePublicDateStart"
                 ></i-date-picker>
               </b-input-group>
             </i-form-group-check>
@@ -67,12 +67,12 @@
     <section class="mt-2" v-show="queryStatus">
       <div class="container">
         <i-table
-          ref="iTable"
-          :itemsUndefinedBehavior="'loading'"
-          :items="table.data"
-          :fields="table.fields"
-          :totalItems="table.totalItems"
-          :is-server-side-paging="false"
+            ref="iTable"
+            :itemsUndefinedBehavior="'loading'"
+            :items="table.data"
+            :fields="table.fields"
+            :totalItems="table.totalItems"
+            :is-server-side-paging="false"
         >
 
           <template #cell(filAndApp)="row">
@@ -241,20 +241,24 @@ export default defineComponent({
         table.data = data.slice(0, data.length);
         table.totalItems = data.length;
       })
-        .catch(notificationErrorHandler(notificationService));
+          .catch(notificationErrorHandler(notificationService));
     };
 
     function toEdit(item, i) {
 
-      console.log('item.formId', item.formId.substring(0, 4).toLowerCase())
-
       let prefix = item.formId.substring(0, 4).toLowerCase()
       // let prefix = 'l410'
+
+      let taskData ={
+        taskId: item.taskId,
+        taskName: item.taskName,
+        decisionRole: item.decisionRole,
+      }
 
       if (i === '0') {
         navigateByNameAndParams(prefix + 'Edit', {
           formId: item.formId,
-          // formId: 'L410-11209-0001',
+          taskData:taskData,
           formStatus: FormStatusEnum.MODIFY,
           isNotKeepAlive: false,
           stateStatus: userData !== 'InfoTester'
@@ -262,7 +266,7 @@ export default defineComponent({
       } else {
         navigateByNameAndParams(prefix + 'Edit', {
           formId: item.formId,
-          // formId: 'L410-11209-0001',
+          taskData:taskData,
           formStatus: FormStatusEnum.VERIFY,
           isNotKeepAlive: false,
           stateStatus: userData !== 'InfoTester'

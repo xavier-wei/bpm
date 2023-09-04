@@ -559,6 +559,10 @@ export default {
       type: Boolean,
       default: true,
     },
+    taskData: {
+      required: false,
+      type: Object,
+    },
   },
   components: {
     'i-form-group-check': IFormGroupCheck,
@@ -574,6 +578,7 @@ export default {
     const formIdProp = toRef(props, 'formId');
     const formStatusRef = toRef(props, 'formStatus');
     const stateStatusRef = toRef(props, 'stateStatus');
+    const taskDataRef = toRef(props, 'taskData');
     const tabIndex = ref(0);
     const dual1 = ref(null);
     const dual2 = ref(null);
@@ -770,7 +775,12 @@ export default {
           const formData = new FormData();
 
           form.isSubmit = isSubmit;
-          formData.append('form', new Blob([JSON.stringify(form)], {type: 'application/json'}));
+
+          let body = {
+            "L414": JSON.stringify(form)
+          }
+
+          formData.append('form', new Blob([JSON.stringify(body)], {type: 'application/json'}));
 
           if (JSON.stringify(appendixData.value) !== '[]') {
             for (let i in appendixData.value) {
@@ -778,11 +788,9 @@ export default {
             }
             formData.append('fileDto', new Blob([JSON.stringify(appendixData.value)], {type: 'application/json'}));
           }
-          let body = {
-            "L414": JSON.stringify(form)
-          }
+
           axios
-              .patch(`/process/patch/L414`, body, headers)
+              .patch(`/process/patch/L414`, formData, headers)
               .then(({data}) => {
                 if (isSubmit === '1') {
                   reviewStart(isSubmit);
@@ -801,10 +809,11 @@ export default {
     function reviewStart(item) {
 
       let variables = {};
+      console.log('taskDataRef',taskDataRef.value)
 
-      if (form.decisionRole !== null) {
+      if (taskDataRef.value.decisionRole !== null) {
         let mapData = new Map<string, object>();
-        mapData.set(form.decisionRole, item)
+        mapData.set(taskDataRef.value.decisionRole, item)
         let arrData = Array.from(mapData);
         variables = Object.fromEntries(arrData)
       }
@@ -824,8 +833,8 @@ export default {
         signerId: form.appEmpid,
         signUnit: userUnit,
         processInstanceId: form.processInstanceId,
-        taskId: form.taskId,
-        taskName: form.taskName,
+        taskId: taskDataRef.value.taskId !== '' ? taskDataRef.value.taskId : '',
+        taskName:taskDataRef.value.taskName !== '' ? taskDataRef.value.taskName : '',
         variables,
         form: {"L414": JSON.stringify(form)},
         directions: changeDirections(userData),
