@@ -88,6 +88,7 @@
                         foundImage.tableauNewUrl = foundImage.tableauUrl.replace("#", "trusted/" + ticket);
                         console.log(foundImage.tableauNewUrl);
                         window.open(foundImage.tableauNewUrl, "_blank");
+                        window.history.back();
                     } else {
                         alert('找不到對應的儀錶板網址');
                     }
