@@ -1,6 +1,7 @@
 package tw.gov.pcc.web.rest.process;
 
 import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -10,7 +11,10 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.multipart.MultipartFile;
 import tw.gov.pcc.domain.BpmIsmsServiceBeanNameEnum;
+import tw.gov.pcc.domain.SingerEnum;
+import tw.gov.pcc.domain.entity.BpmIsmsAdditional;
 import tw.gov.pcc.domain.entity.BpmSignStatus;
+import tw.gov.pcc.repository.BpmIsmsAdditionalRepository;
 import tw.gov.pcc.service.BpmIsmsService;
 import tw.gov.pcc.service.BpmSignStatusService;
 import tw.gov.pcc.service.dto.*;
@@ -19,9 +23,11 @@ import tw.gov.pcc.utils.MapUtils;
 
 import javax.validation.Valid;
 import java.io.IOException;
+import java.lang.reflect.Type;
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/process")
@@ -39,19 +45,21 @@ public class IsmsProcessResource {
 
     private final BpmSignStatusService bpmSignStatusService;
     private final BpmSignStatusMapper bpmSignStatusMapper;
+    private final BpmIsmsAdditionalRepository bpmIsmsAdditionalRepository;
 
-    public IsmsProcessResource(ApplicationContext applicationContext, BpmSignStatusService bpmSignStatusService, BpmSignStatusMapper bpmSignStatusMapper) {
+    public IsmsProcessResource(ApplicationContext applicationContext, BpmSignStatusService bpmSignStatusService, BpmSignStatusMapper bpmSignStatusMapper, BpmIsmsAdditionalRepository bpmIsmsAdditionalRepository) {
         this.applicationContext = applicationContext;
         this.bpmSignStatusService = bpmSignStatusService;
         this.bpmSignStatusMapper = bpmSignStatusMapper;
+        this.bpmIsmsAdditionalRepository = bpmIsmsAdditionalRepository;
     }
 
     @PostMapping(path = "/start/{key}", consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
     public String start(
-            @Valid @RequestPart("form") HashMap<String, String> form,
-            @PathVariable String key,
-            @Valid @RequestPart(name = "fileDto", required = false) List<BpmUploadFileDTO> dto,
-            @RequestPart(name = "appendixFiles", required = false) List<MultipartFile> appendixFiles) throws IOException {
+        @Valid @RequestPart("form") HashMap<String, String> form,
+        @PathVariable String key,
+        @Valid @RequestPart(name = "fileDto", required = false) List<BpmUploadFileDTO> dto,
+        @RequestPart(name = "appendixFiles", required = false) List<MultipartFile> appendixFiles) throws IOException {
 
         // 產生要送給流程引擎的request dto
         ProcessReqDTO processReqDTO = new ProcessReqDTO();
@@ -90,8 +98,8 @@ public class IsmsProcessResource {
 
     @PostMapping(path = "/startTest/{key}", consumes = {MediaType.APPLICATION_JSON_VALUE})
     public String start(
-            @PathVariable String key,
-            @RequestBody HashMap<String, String> form) throws IOException {
+        @PathVariable String key,
+        @RequestBody HashMap<String, String> form) throws IOException {
 
         // 產生要送給流程引擎的request dto
         ProcessReqDTO processReqDTO = new ProcessReqDTO();
@@ -129,10 +137,10 @@ public class IsmsProcessResource {
 
     @PatchMapping(path = "/patch/{key}", consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
     public String patch(
-            @PathVariable String key,
-            @Valid @RequestPart("form") HashMap<String, String> form,
-            @Valid @RequestPart(name = "fileDto", required = false) List<BpmUploadFileDTO> dto,
-            @RequestPart(name = "appendixFiles", required = false) List<MultipartFile> appendixFiles) throws IOException {
+        @PathVariable String key,
+        @Valid @RequestPart("form") HashMap<String, String> form,
+        @Valid @RequestPart(name = "fileDto", required = false) List<BpmUploadFileDTO> dto,
+        @RequestPart(name = "appendixFiles", required = false) List<MultipartFile> appendixFiles) throws IOException {
         log.info("ProcessL414Resource.java - start - 60 :: " + dto);
         log.info("ProcessL414Resource.java - start - 61 :: " + appendixFiles);
         BpmIsmsService service = (BpmIsmsService) applicationContext.getBean(Objects.requireNonNull(BpmIsmsServiceBeanNameEnum.getServiceBeanNameByKey(key)));
@@ -206,14 +214,71 @@ public class IsmsProcessResource {
         ResponseEntity<String> exchange = restTemplate.exchange(FLOWABLE_PROCESS_URL + "/deleteProcess", HttpMethod.POST, requestEntity, String.class);
 
     }
+
     @PostMapping("/getIsms/{key}/{formId}")
     public Map<String, Object> getIsms(
-            @PathVariable String key,
-            @PathVariable String formId
-    ){
+        @PathVariable String key,
+        @PathVariable String formId
+    ) {
         BpmIsmsService service = (BpmIsmsService) applicationContext.getBean(Objects.requireNonNull(BpmIsmsServiceBeanNameEnum.getServiceBeanNameByKey(key)));
 
-        return  new MapUtils().getNewMap(service.getBpm(formId));
+        return new MapUtils().getNewMap(service.getBpm(formId));
+    }
+
+    @RequestMapping("/queryTask/{id}")
+    public List<Map<String, Object>> queryTask(@PathVariable String id, @Valid @RequestPart(required = false) BpmFormQueryDto bpmFormQueryDto) {
+        log.info("ProcessL414Resource.java - queryTask - 193 :: " + id);
+        log.info("ProcessL414Resource.java - queryTask - 194 :: " + bpmFormQueryDto);
+
+//        String id="ApplyTester";
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+        HttpEntity<String> requestEntity = new HttpEntity<>(id, headers);
+        ResponseEntity<String> exchange = restTemplate.exchange(FLOWABLE_PROCESS_URL + "/queryProcessingTask", HttpMethod.POST, requestEntity, String.class);
+        if (exchange.getStatusCodeValue() == 200) {
+            String body = exchange.getBody();
+            Type listType = new TypeToken<ArrayList<TaskDTO>>() {
+            }.getType();
+            List<TaskDTO> taskDTOS = new Gson().fromJson(body, listType);
+            assert taskDTOS != null;
+            return taskDTOS.isEmpty() ? null :
+                taskDTOS.stream()
+                    .map(taskDTO -> {
+
+                        if (taskDTO.getTaskName().equals("Additional")) {
+
+                            BpmIsmsAdditional bpmIsmsAdditional = bpmIsmsAdditionalRepository.findByProcessInstanceId(taskDTO.getProcessInstanceId());
+
+
+                            List<Map<String, Object>> aaaa = bpmIsmsAdditionalRepository.findAllByProcessInstanceId(bpmIsmsAdditional.getMainProcessInstanceId());
+
+                            log.info("IsmsProcessResource.java - queryTask - 255 :: " + aaaa);
+
+                            return aaaa.get(0);
+
+                        } else {
+                            //                        BpmIsmsL414DTO dto = bpmIsmsL414Mapper.toDto(bpmIsmsL414Repository.findFirstByProcessInstanceId(taskDTO.getProcessInstanceId()));
+//                            BpmIsmsL414DTO dto = bpmIsmsL414Repository.findByBpmIsmsL414(bpmFormQueryDto, taskDTO.getProcessInstanceId());
+
+                            List<Map<String, Object>> aaaa = bpmIsmsAdditionalRepository.findAllByProcessInstanceId(taskDTO.getProcessInstanceId());
+
+                            if (!aaaa.isEmpty()) {
+                                Map<String, Object> map = new HashMap<>(aaaa.get(0));
+                                map.put("taskId", taskDTO.getTaskId());
+                                map.put("taskName", taskDTO.getTaskName());
+                                map.put("decisionRole", SingerEnum.getDecisionByName(taskDTO.getTaskName()));
+                                return  new MapUtils().getNewMap(map);
+                            } else {
+                                return null;
+                            }
+                        }
+
+                    })
+                    .filter(Objects::nonNull)
+                    .collect(Collectors.toList());
+        }
+
+        return null;
     }
 
 }

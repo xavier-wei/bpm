@@ -1,7 +1,6 @@
 package tw.gov.pcc.web.rest.process;
 
 import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,7 +10,6 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.multipart.MultipartFile;
 import tw.gov.pcc.domain.BpmIsmsL414;
-import tw.gov.pcc.domain.SingerEnum;
 import tw.gov.pcc.domain.entity.BpmSignStatus;
 import tw.gov.pcc.repository.BpmIsmsL414Repository;
 import tw.gov.pcc.service.BpmIsmsL414Service;
@@ -25,12 +23,10 @@ import tw.gov.pcc.utils.SeqNumber;
 
 import javax.validation.Valid;
 import java.io.IOException;
-import java.lang.reflect.Type;
 import java.sql.Timestamp;
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.util.*;
-import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/process")
@@ -188,40 +184,40 @@ public class ProcessL414Resource {
     }
 
 
-    @RequestMapping("/queryTask/{id}")
-    public List<BpmIsmsL414DTO> queryTask(@PathVariable String id, @Valid @RequestPart(required = false) BpmFormQueryDto bpmFormQueryDto) {
-        log.info("ProcessL414Resource.java - queryTask - 193 :: " + id);
-        log.info("ProcessL414Resource.java - queryTask - 194 :: " + bpmFormQueryDto);
-
-//        String id="ApplyTester";
-        HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.APPLICATION_JSON);
-        HttpEntity<String> requestEntity = new HttpEntity<>(id, headers);
-        ResponseEntity<String> exchange = restTemplate.exchange(FLOWABLE_PROCESS_URL + "/queryProcessingTask", HttpMethod.POST, requestEntity, String.class);
-        if (exchange.getStatusCodeValue() == 200) {
-            String body = exchange.getBody();
-            Type listType = new TypeToken<ArrayList<TaskDTO>>() {
-            }.getType();
-            List<TaskDTO> taskDTOS = new Gson().fromJson(body, listType);
-            assert taskDTOS != null;
-            return taskDTOS.isEmpty() ? null :
-                taskDTOS.stream()
-                    .map(taskDTO -> {
-//                        BpmIsmsL414DTO dto = bpmIsmsL414Mapper.toDto(bpmIsmsL414Repository.findFirstByProcessInstanceId(taskDTO.getProcessInstanceId()));
-                        BpmIsmsL414DTO dto = bpmIsmsL414Repository.findByBpmIsmsL414(bpmFormQueryDto, taskDTO.getProcessInstanceId());
-                        if (dto != null) {
-                            dto.setTaskId(taskDTO.getTaskId());
-                            dto.setTaskName(taskDTO.getTaskName());
-                            dto.setDecisionRole(SingerEnum.getDecisionByName(taskDTO.getTaskName()));
-                        }
-                        return dto;
-                    })
-                    .filter(Objects::nonNull)
-                    .collect(Collectors.toList());
-        }
-
-        return null;
-    }
+//    @RequestMapping("/queryTask/{id}")
+//    public List<BpmIsmsL414DTO> queryTask(@PathVariable String id, @Valid @RequestPart(required = false) BpmFormQueryDto bpmFormQueryDto) {
+//        log.info("ProcessL414Resource.java - queryTask - 193 :: " + id);
+//        log.info("ProcessL414Resource.java - queryTask - 194 :: " + bpmFormQueryDto);
+//
+////        String id="ApplyTester";
+//        HttpHeaders headers = new HttpHeaders();
+//        headers.setContentType(MediaType.APPLICATION_JSON);
+//        HttpEntity<String> requestEntity = new HttpEntity<>(id, headers);
+//        ResponseEntity<String> exchange = restTemplate.exchange(FLOWABLE_PROCESS_URL + "/queryProcessingTask", HttpMethod.POST, requestEntity, String.class);
+//        if (exchange.getStatusCodeValue() == 200) {
+//            String body = exchange.getBody();
+//            Type listType = new TypeToken<ArrayList<TaskDTO>>() {
+//            }.getType();
+//            List<TaskDTO> taskDTOS = new Gson().fromJson(body, listType);
+//            assert taskDTOS != null;
+//            return taskDTOS.isEmpty() ? null :
+//                taskDTOS.stream()
+//                    .map(taskDTO -> {
+////                        BpmIsmsL414DTO dto = bpmIsmsL414Mapper.toDto(bpmIsmsL414Repository.findFirstByProcessInstanceId(taskDTO.getProcessInstanceId()));
+//                        BpmIsmsL414DTO dto = bpmIsmsL414Repository.findByBpmIsmsL414(bpmFormQueryDto, taskDTO.getProcessInstanceId());
+//                        if (dto != null) {
+//                            dto.setTaskId(taskDTO.getTaskId());
+//                            dto.setTaskName(taskDTO.getTaskName());
+//                            dto.setDecisionRole(SingerEnum.getDecisionByName(taskDTO.getTaskName()));
+//                        }
+//                        return dto;
+//                    })
+//                    .filter(Objects::nonNull)
+//                    .collect(Collectors.toList());
+//        }
+//
+//        return null;
+//    }
 
 
     @RequestMapping("/completeTask")

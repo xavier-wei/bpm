@@ -30,7 +30,7 @@ export default {
   },
   setup(props) {
     const filePathNameProp = reactive(props.filePathName);
-    const currentScale = reactive({data: 0.8});
+    const currentScale = reactive({data: 1});
 
     // 處理滑鼠滾輪
     const handleWheel = (event) => {
