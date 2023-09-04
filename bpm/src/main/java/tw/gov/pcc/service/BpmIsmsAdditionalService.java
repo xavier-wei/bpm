@@ -72,9 +72,10 @@ public class BpmIsmsAdditionalService implements BpmIsmsService{
         BpmIsmsAdditionalDTO bpmIsmsAdditionalDTO = gson.fromJson(form, BpmIsmsAdditionalDTO.class);
         UUID uuid = UUID.randomUUID();
         DTO_HOLDER.put(uuid, bpmIsmsAdditionalDTO);
-
+//        DirectorTester
         variables.put("additionalSigner", bpmIsmsAdditionalDTO.getAdditionalSigner());
-
+//        variables.put("additionalSigner", "DirectorTester");
+        variables.put("mainProcessInstanceId", bpmIsmsAdditionalDTO.getMainProcessInstanceId());
 
         return uuid;
     }

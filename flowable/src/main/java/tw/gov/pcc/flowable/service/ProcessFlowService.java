@@ -11,9 +11,9 @@ import tw.gov.pcc.flowable.domain.ProcessEnum;
 import tw.gov.pcc.flowable.domain.ProcessRes;
 import tw.gov.pcc.flowable.service.dto.TaskDTO;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.stream.Collectors;
 
 @Service
@@ -39,7 +39,7 @@ public class ProcessFlowService {
                 .processInstanceId(processInstance.getId()).singleResult();
         TaskDTO taskDTO = new TaskDTO(task, processInstance.getProcessDefinitionKey());
 
-        if ("1".equals((String) variables.get("isSubmit"))) {
+        if ("1".equals(variables.get("isSubmit"))) {
             taskService.complete(task.getId());
         }
 
@@ -75,39 +75,36 @@ public class ProcessFlowService {
     // query task
     public List<TaskDTO> queryProcessingTask(String id) {
 
-        List<TaskDTO> taskDTOS = taskService.createTaskQuery()
+        List<ProcessInstance> additionalProcesses = runtimeService.createProcessInstanceQuery().processDefinitionKey("AdditionalProcess").list();
+        List<String> mainProcessInstanceIds = additionalProcesses
+                .stream()
+                .map(additionalProcess ->
+                        (String) runtimeService
+                                .getVariables(additionalProcess.getProcessInstanceId()).get("mainProcessInstanceId"))
+                .collect(Collectors.toList());
+
+        return taskService.createTaskQuery()
                 .taskCandidateOrAssigned(id)
                 .orderByTaskCreateTime()
                 .desc()
                 .list()
                 .stream()
                 .map(this::getTaskDTO)
-                .collect(Collectors.toList());
-        filterIfAdditionSigning(taskDTOS);
+                .filter(taskDTO -> {
+                    if (!"Additional".equals(taskDTO.getFormName())) {
+                        AtomicBoolean filterSwitch = new AtomicBoolean(true);
+                        mainProcessInstanceIds.forEach(mainProcessInstanceId -> {
+                            if (taskDTO.getProcessInstanceId().equals(mainProcessInstanceId)) {
+                                filterSwitch.set(false);
+                            }
+                        });
+                        return filterSwitch.get();
+                    } else {
+                        return true;
+                    }
 
-        return taskDTOS;
+                }).collect(Collectors.toList());
     }
-
-    private static void filterIfAdditionSigning(List<TaskDTO> taskDTOS) {
-        List<String> additionalProcessIds = new ArrayList<>();
-        taskDTOS.forEach(taskDTO -> {
-            if ("Additional".equals(taskDTO.getFormName())) {
-                additionalProcessIds.add(taskDTO.getProcessInstanceId());
-            }
-        });
-        taskDTOS.stream().filter(taskDTO -> {
-            if ("Additional".equals(taskDTO.getFormName())) {
-                return true;
-            }
-            for (String additionalProcessId : additionalProcessIds) {
-                if (additionalProcessId.equals(taskDTO.getFormName())) {
-                    return false;
-                }
-            }
-            return true;
-        });
-    }
-
 
     // delete processInstance
     public void deleteProcessInstance(String processInstanceId) {
