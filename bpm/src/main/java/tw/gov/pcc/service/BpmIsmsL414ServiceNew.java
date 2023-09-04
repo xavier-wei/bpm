@@ -18,9 +18,7 @@ import tw.gov.pcc.utils.SeqNumber;
 import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
-import java.util.HashMap;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 
 @Service("L414Service")
 public class BpmIsmsL414ServiceNew implements BpmIsmsService {
@@ -121,7 +119,15 @@ public class BpmIsmsL414ServiceNew implements BpmIsmsService {
         return uuid;
     }
 
+    @Override
+    public Map<String, Object> getBpm(String formId) {
 
+        List<Map<String,Object>> bpmIsmsL414 =  bpmIsmsL414Repository.findByFormId(formId);
+
+        if(!bpmIsmsL414.isEmpty()) return bpmIsmsL414Repository.findByFormId(formId).get(0);
+
+        return null;
+    }
 
 
 }

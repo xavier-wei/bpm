@@ -19,6 +19,7 @@ import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 @Service("AdditionalService")
@@ -77,5 +78,10 @@ public class BpmIsmsAdditionalService implements BpmIsmsService{
 
 
         return uuid;
+    }
+
+    @Override
+    public Map<String, Object> getBpm(String formId) {
+        return null;
     }
 }

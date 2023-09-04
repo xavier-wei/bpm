@@ -7,6 +7,7 @@ import tw.gov.pcc.service.dto.TaskDTO;
 
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 @Service
@@ -18,5 +19,7 @@ public interface BpmIsmsService {
 
     String saveBpmByPatch(String form, List<BpmUploadFileDTO> dto, List<MultipartFile> appendixFiles);
     UUID setVariables(HashMap<String, Object> variables, String form);
+
+    Map<String,Object> getBpm(String formId);
 
 }

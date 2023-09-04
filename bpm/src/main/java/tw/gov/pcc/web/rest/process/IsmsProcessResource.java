@@ -15,6 +15,7 @@ import tw.gov.pcc.service.BpmIsmsService;
 import tw.gov.pcc.service.BpmSignStatusService;
 import tw.gov.pcc.service.dto.*;
 import tw.gov.pcc.service.mapper.BpmSignStatusMapper;
+import tw.gov.pcc.utils.MapUtils;
 
 import javax.validation.Valid;
 import java.io.IOException;
@@ -45,12 +46,12 @@ public class IsmsProcessResource {
         this.bpmSignStatusMapper = bpmSignStatusMapper;
     }
 
-    @PostMapping(path = "/start/{key}", consumes = {MediaType.MULTIPART_FORM_DATA_VALUE })
+    @PostMapping(path = "/start/{key}", consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
     public String start(
-        @Valid @RequestPart("form") HashMap<String, String> form,
-        @PathVariable String key,
-        @Valid @RequestPart(name = "fileDto", required = false) List<BpmUploadFileDTO> dto,
-        @RequestPart(name = "appendixFiles", required = false) List<MultipartFile> appendixFiles) throws IOException {
+            @Valid @RequestPart("form") HashMap<String, String> form,
+            @PathVariable String key,
+            @Valid @RequestPart(name = "fileDto", required = false) List<BpmUploadFileDTO> dto,
+            @RequestPart(name = "appendixFiles", required = false) List<MultipartFile> appendixFiles) throws IOException {
 
         // 產生要送給流程引擎的request dto
         ProcessReqDTO processReqDTO = new ProcessReqDTO();
@@ -86,10 +87,11 @@ public class IsmsProcessResource {
         return processInstanceId;
 
     }
-    @PostMapping(path = "/startTest/{key}", consumes = {MediaType.APPLICATION_JSON_VALUE })
+
+    @PostMapping(path = "/startTest/{key}", consumes = {MediaType.APPLICATION_JSON_VALUE})
     public String start(
-           @PathVariable String key,
-           @RequestBody HashMap<String,String> form) throws IOException {
+            @PathVariable String key,
+            @RequestBody HashMap<String, String> form) throws IOException {
 
         // 產生要送給流程引擎的request dto
         ProcessReqDTO processReqDTO = new ProcessReqDTO();
@@ -124,18 +126,20 @@ public class IsmsProcessResource {
         return processInstanceId;
 
     }
+
     @PatchMapping(path = "/patch/{key}", consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
     public String patch(
-        @PathVariable String key,
-        @Valid @RequestPart("form") HashMap<String, String> form,
-        @Valid @RequestPart(name = "fileDto", required = false) List<BpmUploadFileDTO> dto,
-        @RequestPart(name = "appendixFiles", required = false) List<MultipartFile> appendixFiles) throws IOException {
+            @PathVariable String key,
+            @Valid @RequestPart("form") HashMap<String, String> form,
+            @Valid @RequestPart(name = "fileDto", required = false) List<BpmUploadFileDTO> dto,
+            @RequestPart(name = "appendixFiles", required = false) List<MultipartFile> appendixFiles) throws IOException {
         log.info("ProcessL414Resource.java - start - 60 :: " + dto);
         log.info("ProcessL414Resource.java - start - 61 :: " + appendixFiles);
         BpmIsmsService service = (BpmIsmsService) applicationContext.getBean(Objects.requireNonNull(BpmIsmsServiceBeanNameEnum.getServiceBeanNameByKey(key)));
 
         return service.saveBpmByPatch(form.get(key), dto, appendixFiles);
     }
+
     @RequestMapping("/completeTask/{formId}")
     public String completeTask(@RequestBody CompleteReqDTO completeReqDTO, @PathVariable String formId) {
         log.info("ProcessL414Resource.java - completeTask - 183 :: " + completeReqDTO);
@@ -157,7 +161,6 @@ public class IsmsProcessResource {
         }
         return "伺服器忙碌中或查無任務，請稍候再試";
     }
-
 
 
     private static BpmSignStatusDTO getBpmSignStatusDTO(CompleteReqDTO completeReqDTO, String formId) {
@@ -186,12 +189,10 @@ public class IsmsProcessResource {
     }
 
 
-
     /**
      * Delete processInstance when Bpm insert failed
      *
      * @param processInstanceId the id of the prcocessInstance.
-     *
      */
     public void deleteProcessWhenSaveBpmFailed(String processInstanceId) {
         log.info("ProcessL414Resource.java - deleteProcessInstance - 206 :: " + processInstanceId);
@@ -205,4 +206,14 @@ public class IsmsProcessResource {
         ResponseEntity<String> exchange = restTemplate.exchange(FLOWABLE_PROCESS_URL + "/deleteProcess", HttpMethod.POST, requestEntity, String.class);
 
     }
+    @PostMapping("/getIsms/{key}/{formId}")
+    public Map<String, Object> getIsms(
+            @PathVariable String key,
+            @PathVariable String formId
+    ){
+        BpmIsmsService service = (BpmIsmsService) applicationContext.getBean(Objects.requireNonNull(BpmIsmsServiceBeanNameEnum.getServiceBeanNameByKey(key)));
+
+        return  new MapUtils().getNewMap(service.getBpm(formId));
+    }
+
 }

@@ -9,6 +9,7 @@ import tw.gov.pcc.domain.BpmIsmsL414;
 import tw.gov.pcc.repository.custom.BpmIsmsL414RepositoryCustom;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * Spring Data SQL repository for the BpmIsmsL414 entity.
@@ -29,6 +30,9 @@ public interface BpmIsmsL414Repository extends JpaRepository<BpmIsmsL414, String
             "AND (LENGTH(COALESCE(:processInstanceStatus,'')) = 0 OR l414.processInstanceStatus = :processInstanceStatus)" +
             "ORDER BY l414.updateTime DESC")
     List<BpmIsmsL414> findByWord(@Param("word") String word, @Param("appEmpid") String appEmpid, @Param("processInstanceStatus") String processInstanceStatus);
+
+    @Query(value = "SELECT * FROM BPM_ISMS_L414 WHERE FORM_ID = :formId ", nativeQuery = true)
+    List<Map<String,Object>> findByFormId(@Param("formId") String formId);
 
 
 }
