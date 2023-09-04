@@ -9,6 +9,7 @@ import org.springframework.web.multipart.MultipartFile;
 import tw.gov.pcc.repository.BpmIsmsAdditionalRepository;
 import tw.gov.pcc.service.dto.BpmIsmsAdditionalDTO;
 import tw.gov.pcc.service.dto.BpmUploadFileDTO;
+import tw.gov.pcc.service.dto.EndEventDTO;
 import tw.gov.pcc.service.dto.TaskDTO;
 import tw.gov.pcc.service.mapper.BpmIsmsAdditionalMapper;
 import tw.gov.pcc.service.mapper.BpmSignStatusMapper;
@@ -19,6 +20,7 @@ import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 @Service("AdditionalService")
@@ -72,10 +74,21 @@ public class BpmIsmsAdditionalService implements BpmIsmsService{
         BpmIsmsAdditionalDTO bpmIsmsAdditionalDTO = gson.fromJson(form, BpmIsmsAdditionalDTO.class);
         UUID uuid = UUID.randomUUID();
         DTO_HOLDER.put(uuid, bpmIsmsAdditionalDTO);
-
+//        DirectorTester
         variables.put("additionalSigner", bpmIsmsAdditionalDTO.getAdditionalSigner());
-
+//        variables.put("additionalSigner", "DirectorTester");
+        variables.put("mainProcessInstanceId", bpmIsmsAdditionalDTO.getMainProcessInstanceId());
 
         return uuid;
+    }
+
+    @Override
+    public void endForm(EndEventDTO endEventDTO) {
+
+    }
+
+    @Override
+    public Map<String, Object> getBpm(String formId) {
+        return null;
     }
 }

@@ -48,9 +48,9 @@
                                :disabled-date="notAfterPublicDateEnd"></i-date-picker>
                 <b-input-group-text>至</b-input-group-text>
                 <i-date-picker
-                    v-model="$v.dateEnd.$model"
-                    placeholder="yyy/MM/dd"
-                    :disabled-date="notBeforePublicDateStart"
+                  v-model="$v.dateEnd.$model"
+                  placeholder="yyy/MM/dd"
+                  :disabled-date="notBeforePublicDateStart"
                 ></i-date-picker>
               </b-input-group>
             </i-form-group-check>
@@ -67,12 +67,12 @@
     <section class="mt-2" v-show="queryStatus">
       <div class="container">
         <i-table
-            ref="iTable"
-            :itemsUndefinedBehavior="'loading'"
-            :items="table.data"
-            :fields="table.fields"
-            :totalItems="table.totalItems"
-            :is-server-side-paging="false"
+          ref="iTable"
+          :itemsUndefinedBehavior="'loading'"
+          :items="table.data"
+          :fields="table.fields"
+          :totalItems="table.totalItems"
+          :is-server-side-paging="false"
         >
 
           <template #cell(filAndApp)="row">
@@ -91,8 +91,12 @@
           </template>
 
           <template #cell(action)="row">
-            <b-button class="ml-1" v-if="userData === row.item.appName" style="background-color: #17a2b8" @click="toEdit(row.item,'0')">編輯</b-button>
-            <b-button class="ml-1" v-if="userData !== 'ApplyTester'" style="background-color: #17a2b8" @click="toEdit(row.item,'1')">處理</b-button>
+            <b-button class="ml-1" v-if="userData === row.item.appName" style="background-color: #17a2b8"
+                      @click="toEdit(row.item,'0')">編輯
+            </b-button>
+            <b-button class="ml-1" v-if="userData !== 'ApplyTester'" style="background-color: #17a2b8"
+                      @click="toEdit(row.item,'1')">處理
+            </b-button>
           </template>
         </i-table>
       </div>
@@ -112,8 +116,8 @@ import {required} from '@/shared/validators';
 import {Pagination} from "@/shared/model/pagination.model";
 import {notificationErrorHandler} from "@/shared/http/http-response-helper";
 import {useNotification} from "@/shared/notification";
-import { newformatDate} from "@/shared/date/minguo-calendar-utils";
-import { changeSubject} from "@/shared/word/change-word-utils";
+import {newformatDate} from "@/shared/date/minguo-calendar-utils";
+import {changeSubject} from "@/shared/word/change-word-utils";
 import {useGetters, useStore} from "@u3u/vue-hooks";
 import {navigateByNameAndParams} from "@/router/router";
 
@@ -136,7 +140,7 @@ export default defineComponent({
       CREATE = '新增',
       MODIFY = '編輯',
       READONLY = '檢視',
-      VERIFY ='簽核'
+      VERIFY = '簽核'
     }
 
     onActivated(() => {
@@ -229,35 +233,41 @@ export default defineComponent({
     const toQuery = () => {
       table.data = [];
       const params = new FormData();
-      params.append('bpmFormQueryDto', new Blob([JSON.stringify(form)], { type: 'application/json' }));
-      axios.post(`/process/queryTask/${userData}`,params).then(({data}) => {
+      params.append('bpmFormQueryDto', new Blob([JSON.stringify(form)], {type: 'application/json'}));
+      axios.post(`/process/queryTask/${userData}`, params).then(({data}) => {
         console.log('data+++', data);
         queryStatus.value = true;
-        if(data.length <= 0) return;
+        if (data.length <= 0) return;
         table.data = data.slice(0, data.length);
         table.totalItems = data.length;
       })
         .catch(notificationErrorHandler(notificationService));
     };
 
-    function toEdit(item,i) {
+    function toEdit(item, i) {
+
+      console.log('item.formId', item.formId.substring(0, 4).toLowerCase())
+
+      let prefix = item.formId.substring(0, 4).toLowerCase()
+      // let prefix = 'l410'
 
       if (i === '0') {
-        navigateByNameAndParams('l414Edit', {
-          l414Data: item,
+        navigateByNameAndParams(prefix + 'Edit', {
+          formId: item.formId,
+          // formId: 'L410-11209-0001',
           formStatus: FormStatusEnum.MODIFY,
           isNotKeepAlive: false,
-          stateStatus : userData !== 'InfoTester'
+          stateStatus: userData !== 'InfoTester'
         });
-      }else {
-        navigateByNameAndParams('l414Edit', {
-          l414Data: item,
+      } else {
+        navigateByNameAndParams(prefix + 'Edit', {
+          formId: item.formId,
+          // formId: 'L410-11209-0001',
           formStatus: FormStatusEnum.VERIFY,
           isNotKeepAlive: false,
-          stateStatus : userData !== 'InfoTester'
+          stateStatus: userData !== 'InfoTester'
         });
       }
-
     }
 
     return {

@@ -10,6 +10,7 @@ import tw.gov.pcc.domain.BpmIsmsL410;
 import tw.gov.pcc.repository.BpmIsmsL410Repository;
 import tw.gov.pcc.service.dto.BpmIsmsL410DTO;
 import tw.gov.pcc.service.dto.BpmUploadFileDTO;
+import tw.gov.pcc.service.dto.EndEventDTO;
 import tw.gov.pcc.service.dto.TaskDTO;
 import tw.gov.pcc.service.mapper.BpmIsmsL410Mapper;
 import tw.gov.pcc.service.mapper.BpmUploadFileMapper;
@@ -21,6 +22,7 @@ import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 @Service("L410Service")
@@ -117,6 +119,21 @@ public class BpmIsmsL410ServiceNew implements BpmIsmsService {
         variables.put("applier", bpmIsmsL410DTO.getAppName());
         variables.put("isSubmit", bpmIsmsL410DTO.getIsSubmit());
         return uuid;
+    }
+
+    @Override
+    public void endForm(EndEventDTO endEventDTO) {
+
+    }
+
+    @Override
+    public Map<String, Object> getBpm(String formId) {
+
+        List<Map<String,Object>> bpmIsmsL410 =  bpmIsmsL410Repository.findByFormId(formId);
+
+        if(!bpmIsmsL410.isEmpty()) return bpmIsmsL410Repository.findByFormId(formId).get(0);
+
+        return null;
     }
 
     private void savePhoto(List<BpmUploadFileDTO> dto, List<MultipartFile> appendixFiles, String formId) {

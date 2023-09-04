@@ -10,6 +10,7 @@ import tw.gov.pcc.domain.BpmIsmsL414;
 import tw.gov.pcc.repository.BpmIsmsL414Repository;
 import tw.gov.pcc.service.dto.BpmIsmsL414DTO;
 import tw.gov.pcc.service.dto.BpmUploadFileDTO;
+import tw.gov.pcc.service.dto.EndEventDTO;
 import tw.gov.pcc.service.dto.TaskDTO;
 import tw.gov.pcc.service.mapper.BpmIsmsL414Mapper;
 import tw.gov.pcc.service.mapper.BpmUploadFileMapper;
@@ -18,9 +19,7 @@ import tw.gov.pcc.utils.SeqNumber;
 import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
-import java.util.HashMap;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 
 @Service("L414Service")
 public class BpmIsmsL414ServiceNew implements BpmIsmsService {
@@ -121,7 +120,22 @@ public class BpmIsmsL414ServiceNew implements BpmIsmsService {
         return uuid;
     }
 
+    @Override
+    public Map<String, Object> getBpm(String formId) {
+
+        List<Map<String,Object>> bpmIsmsL414 =  bpmIsmsL414Repository.findByFormId(formId);
+
+        if(!bpmIsmsL414.isEmpty()) return bpmIsmsL414Repository.findByFormId(formId).get(0);
+
+        return null;
+    }
 
 
-
+    @Override
+    public void endForm(EndEventDTO endEventDTO) {
+        BpmIsmsL414 bpmIsmsL414 = bpmIsmsL414Repository.findFirstByProcessInstanceId(endEventDTO.getProcessInstanceId());
+        bpmIsmsL414.setProcessInstanceStatus(endEventDTO.getProcessStatus());
+        bpmIsmsL414.setUpdateTime(Timestamp.valueOf(LocalDateTime.now()));
+        bpmIsmsL414Repository.save(bpmIsmsL414);
+    }
 }
