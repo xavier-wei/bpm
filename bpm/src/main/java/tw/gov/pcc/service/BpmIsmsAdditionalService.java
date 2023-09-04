@@ -9,6 +9,7 @@ import org.springframework.web.multipart.MultipartFile;
 import tw.gov.pcc.repository.BpmIsmsAdditionalRepository;
 import tw.gov.pcc.service.dto.BpmIsmsAdditionalDTO;
 import tw.gov.pcc.service.dto.BpmUploadFileDTO;
+import tw.gov.pcc.service.dto.EndEventDTO;
 import tw.gov.pcc.service.dto.TaskDTO;
 import tw.gov.pcc.service.mapper.BpmIsmsAdditionalMapper;
 import tw.gov.pcc.service.mapper.BpmSignStatusMapper;
@@ -79,6 +80,11 @@ public class BpmIsmsAdditionalService implements BpmIsmsService{
         variables.put("mainProcessInstanceId", bpmIsmsAdditionalDTO.getMainProcessInstanceId());
 
         return uuid;
+    }
+
+    @Override
+    public void endForm(EndEventDTO endEventDTO) {
+
     }
 
     @Override

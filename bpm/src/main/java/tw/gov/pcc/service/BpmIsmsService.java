@@ -3,6 +3,7 @@ package tw.gov.pcc.service;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import tw.gov.pcc.service.dto.BpmUploadFileDTO;
+import tw.gov.pcc.service.dto.EndEventDTO;
 import tw.gov.pcc.service.dto.TaskDTO;
 
 import java.util.HashMap;
@@ -22,4 +23,5 @@ public interface BpmIsmsService {
 
     Map<String,Object> getBpm(String formId);
 
+    void endForm(EndEventDTO endEventDTO);
 }

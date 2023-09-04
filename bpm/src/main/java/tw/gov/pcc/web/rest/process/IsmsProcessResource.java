@@ -162,6 +162,17 @@ public class IsmsProcessResource {
         return "伺服器忙碌中或查無任務，請稍候再試";
     }
 
+    @PostMapping("/receiveEndEvent")
+    public void receiveEndEvent(@RequestBody EndEventDTO endEventDTO) {
+        log.info("ProcessL414Resource.java - receiveEndEvent - 196 :: " + endEventDTO.getProcessInstanceId());
+        if (TOKEN.equals(endEventDTO.getToken())) {
+            BpmIsmsService service = (BpmIsmsService) applicationContext.getBean(Objects.requireNonNull(BpmIsmsServiceBeanNameEnum.getServiceBeanNameByKey(endEventDTO.getFormName())));
+            service.endForm(endEventDTO);
+
+            return;
+        }
+        log.warn("ProcessL414Resource.java - receiveEndEvent - 203 ::{} ", "流程發生意外終止");
+    }
 
     private static BpmSignStatusDTO getBpmSignStatusDTO(CompleteReqDTO completeReqDTO, String formId) {
         BpmSignStatusDTO bpmSignStatusDTO = new BpmSignStatusDTO();

@@ -10,6 +10,7 @@ import tw.gov.pcc.domain.BpmIsmsL410;
 import tw.gov.pcc.repository.BpmIsmsL410Repository;
 import tw.gov.pcc.service.dto.BpmIsmsL410DTO;
 import tw.gov.pcc.service.dto.BpmUploadFileDTO;
+import tw.gov.pcc.service.dto.EndEventDTO;
 import tw.gov.pcc.service.dto.TaskDTO;
 import tw.gov.pcc.service.mapper.BpmIsmsL410Mapper;
 import tw.gov.pcc.service.mapper.BpmUploadFileMapper;
@@ -93,7 +94,7 @@ public class BpmIsmsL410ServiceNew implements BpmIsmsService {
                 taskDTO,
                 bpmIsmsL410DTO.getAppEmpid(),
                 bpmIsmsL410DTO.getAppName(),
-                bpmIsmsL410DTO.getAppUnit1()
+                bpmIsmsL410DTO.getSignUnit()
             );
         }
 
@@ -114,24 +115,15 @@ public class BpmIsmsL410ServiceNew implements BpmIsmsService {
     public UUID setVariables(HashMap<String, Object> variables, String form) {
         BpmIsmsL410DTO bpmIsmsL410DTO = gson.fromJson(form, BpmIsmsL410DTO.class);
         UUID uuid = UUID.randomUUID();
-
-
         DTO_HOLDER.put(uuid, bpmIsmsL410DTO);
-
-
-
         variables.put("applier", bpmIsmsL410DTO.getAppName());
         variables.put("isSubmit", bpmIsmsL410DTO.getIsSubmit());
-
-        // todo 判斷上級
-        variables.put("sectionChief", "ChiefTester");
-        variables.put("director", "DirectorTester");
-
-
-
-
-
         return uuid;
+    }
+
+    @Override
+    public void endForm(EndEventDTO endEventDTO) {
+
     }
 
     @Override

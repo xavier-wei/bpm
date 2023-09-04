@@ -10,6 +10,7 @@ import tw.gov.pcc.domain.BpmIsmsL414;
 import tw.gov.pcc.repository.BpmIsmsL414Repository;
 import tw.gov.pcc.service.dto.BpmIsmsL414DTO;
 import tw.gov.pcc.service.dto.BpmUploadFileDTO;
+import tw.gov.pcc.service.dto.EndEventDTO;
 import tw.gov.pcc.service.dto.TaskDTO;
 import tw.gov.pcc.service.mapper.BpmIsmsL414Mapper;
 import tw.gov.pcc.service.mapper.BpmUploadFileMapper;
@@ -130,4 +131,11 @@ public class BpmIsmsL414ServiceNew implements BpmIsmsService {
     }
 
 
+    @Override
+    public void endForm(EndEventDTO endEventDTO) {
+        BpmIsmsL414 bpmIsmsL414 = bpmIsmsL414Repository.findFirstByProcessInstanceId(endEventDTO.getProcessInstanceId());
+        bpmIsmsL414.setProcessInstanceStatus(endEventDTO.getProcessStatus());
+        bpmIsmsL414.setUpdateTime(Timestamp.valueOf(LocalDateTime.now()));
+        bpmIsmsL414Repository.save(bpmIsmsL414);
+    }
 }

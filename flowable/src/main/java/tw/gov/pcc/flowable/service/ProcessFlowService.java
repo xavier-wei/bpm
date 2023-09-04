@@ -75,6 +75,7 @@ public class ProcessFlowService {
     // query task
     public List<TaskDTO> queryProcessingTask(String id) {
 
+        // 查出所有加簽任務
         List<ProcessInstance> additionalProcesses = runtimeService.createProcessInstanceQuery().processDefinitionKey("AdditionalProcess").list();
         List<String> mainProcessInstanceIds = additionalProcesses
                 .stream()
@@ -91,6 +92,7 @@ public class ProcessFlowService {
                 .stream()
                 .map(this::getTaskDTO)
                 .filter(taskDTO -> {
+                    // 過濾非加簽任務外發起加簽任務之任務
                     if (!"Additional".equals(taskDTO.getFormName())) {
                         AtomicBoolean filterSwitch = new AtomicBoolean(true);
                         mainProcessInstanceIds.forEach(mainProcessInstanceId -> {
