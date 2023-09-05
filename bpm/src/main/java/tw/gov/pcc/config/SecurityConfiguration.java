@@ -85,6 +85,7 @@ public class SecurityConfiguration {
             .antMatchers("/api/eip/**").permitAll()
             .antMatchers("/api/process/**").permitAll()
             .antMatchers("/api/loginBpm").permitAll()
+            .antMatchers("/api/loginBpmDev").permitAll()
             .antMatchers("/api/admin/**").hasAuthority(AuthoritiesConstants.ADMIN)
             .antMatchers("/api/**").authenticated()
             .antMatchers("/management/health").permitAll()
