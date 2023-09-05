@@ -828,11 +828,13 @@ export default {
 
       console.log('changeDirections(userData)', changeDirections(userData));
 
+
+
       let body = {
         signer: userData,
         signerId: form.appEmpid,
         signUnit: userUnit,
-        processInstanceId: form.processInstanceId,
+        processInstanceId: taskDataRef.value.additional ? taskDataRef.value.processInstanceId  : form.processInstanceId,
         taskId: taskDataRef.value.taskId !== '' ? taskDataRef.value.taskId : '',
         taskName:taskDataRef.value.taskName !== '' ? taskDataRef.value.taskName : '',
         variables,

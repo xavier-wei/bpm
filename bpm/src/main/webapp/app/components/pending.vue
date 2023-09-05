@@ -250,10 +250,14 @@ export default defineComponent({
       // let prefix = 'l410'
 
       let taskData ={
+        processInstanceId:item.processInstanceId,
         taskId: item.taskId,
         taskName: item.taskName,
         decisionRole: item.decisionRole,
+        additional:item.additional,
       }
+
+      console.log('taskData',taskData)
 
       if (i === '0') {
         navigateByNameAndParams(prefix + 'Edit', {

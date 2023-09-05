@@ -52,7 +52,7 @@ public class ProcessResource {
 
     @RequestMapping("/completeTask")
     public ProcessRes completeTask(@Validated @RequestBody CompleteReqDTO completeReqDTO) {
-        if (completeReqDTO.getVariables() != null) {
+        if (completeReqDTO.getVariables() != null&& !completeReqDTO.getVariables().isEmpty()) {
             return service.completeTask(completeReqDTO.getProcessInstanceId(), completeReqDTO.getTaskId(), completeReqDTO.getVariables());
         }
         return service.completeTask(completeReqDTO.getProcessInstanceId(), completeReqDTO.getTaskId());

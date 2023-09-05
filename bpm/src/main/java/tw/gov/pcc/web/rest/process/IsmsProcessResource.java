@@ -264,9 +264,11 @@ public class IsmsProcessResource {
 
                             if (!mapList.isEmpty()) {
                                 Map<String, Object> map = new HashMap<>(new MapUtils().getNewMap(mapList.get(0)));
+                                map.put("processInstanceId", taskDTO.getProcessInstanceId());
                                 map.put("taskId", taskDTO.getTaskId());
                                 map.put("taskName", taskDTO.getTaskName());
                                 map.put("decisionRole", SingerEnum.getDecisionByName(taskDTO.getTaskName()));
+                                map.put("additional", true);
                                 return map;
                             } else {
                                 return null;
@@ -281,6 +283,7 @@ public class IsmsProcessResource {
                                 map.put("taskId", taskDTO.getTaskId());
                                 map.put("taskName", taskDTO.getTaskName());
                                 map.put("decisionRole", SingerEnum.getDecisionByName(taskDTO.getTaskName()));
+                                map.put("additional", false);
                                 return map;
                             } else {
                                 return null;
