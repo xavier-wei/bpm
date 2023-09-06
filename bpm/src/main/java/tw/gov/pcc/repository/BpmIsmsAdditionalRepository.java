@@ -16,7 +16,7 @@ public interface BpmIsmsAdditionalRepository extends JpaRepository<BpmIsmsAdditi
     @Query(value = " select top 1 * from BPM_ISMS_ADDITIONAL order by CREATE_TIME desc  ",nativeQuery = true)
     List<BpmIsmsAdditional> getMaxFormId();
 
-
+    BpmIsmsAdditional findFirstByProcessInstanceId(String processInstanceId);
     BpmIsmsAdditional findByProcessInstanceId(String processInstanceId);
 
     @Query(value = " select * " +

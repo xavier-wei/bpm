@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 import tw.gov.pcc.domain.BpmIsmsL410;
+import tw.gov.pcc.domain.User;
 import tw.gov.pcc.repository.BpmIsmsL410Repository;
 import tw.gov.pcc.service.dto.BpmIsmsL410DTO;
 import tw.gov.pcc.service.dto.BpmUploadFileDTO;
@@ -38,16 +39,18 @@ public class BpmIsmsL410ServiceNew implements BpmIsmsService {
 
     private BpmUploadFileMapper bpmUploadFileMapper;
 
-    private BpmSignStatusService bpmSignStatusService;
+    private  BpmSignStatusService bpmSignStatusService;
 
     private final BpmIsmsL410Mapper bpmIsmsL410Mapper;
+    private final SupervisorService supervisorService;
 
-    public BpmIsmsL410ServiceNew(BpmIsmsL410Repository bpmIsmsL410Repository, BpmUploadFileService bpmUploadFileService, BpmUploadFileMapper bpmUploadFileMapper, BpmSignStatusService bpmSignStatusService, BpmIsmsL410Mapper bpmIsmsL410Mapper) {
+    public BpmIsmsL410ServiceNew(BpmIsmsL410Repository bpmIsmsL410Repository, BpmUploadFileService bpmUploadFileService, BpmUploadFileMapper bpmUploadFileMapper, BpmSignStatusService bpmSignStatusService, BpmIsmsL410Mapper bpmIsmsL410Mapper, SupervisorService supervisorService) {
         this.bpmIsmsL410Repository = bpmIsmsL410Repository;
         this.bpmUploadFileService = bpmUploadFileService;
         this.bpmUploadFileMapper = bpmUploadFileMapper;
         this.bpmSignStatusService = bpmSignStatusService;
         this.bpmIsmsL410Mapper = bpmIsmsL410Mapper;
+        this.supervisorService = supervisorService;
     }
 
     @Override
@@ -112,12 +115,15 @@ public class BpmIsmsL410ServiceNew implements BpmIsmsService {
     }
 
     @Override
-    public UUID setVariables(HashMap<String, Object> variables, String form) {
+    public UUID setVariables(HashMap<String, Object> variables, String form, User userInfo) {
         BpmIsmsL410DTO bpmIsmsL410DTO = gson.fromJson(form, BpmIsmsL410DTO.class);
         UUID uuid = UUID.randomUUID();
         DTO_HOLDER.put(uuid, bpmIsmsL410DTO);
         variables.put("applier", bpmIsmsL410DTO.getAppName());
         variables.put("isSubmit", bpmIsmsL410DTO.getIsSubmit());
+
+        // 填入上級
+        supervisorService.setSupervisor(variables,bpmIsmsL410DTO.getAppEmpid(),userInfo);
         return uuid;
     }
 

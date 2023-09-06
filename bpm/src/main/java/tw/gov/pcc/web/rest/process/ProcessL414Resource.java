@@ -1,7 +1,6 @@
 package tw.gov.pcc.web.rest.process;
 
 import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,8 +9,6 @@ import org.springframework.http.*;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.multipart.MultipartFile;
-import tw.gov.pcc.domain.SingerEnum;
-import tw.gov.pcc.domain.BpmIsmsL414;
 import tw.gov.pcc.domain.entity.BpmSignStatus;
 import tw.gov.pcc.repository.BpmIsmsL414Repository;
 import tw.gov.pcc.service.BpmIsmsL414Service;
@@ -282,18 +279,18 @@ public class ProcessL414Resource {
 //        log.warn("ProcessL414Resource.java - receiveEndEvent - 203 ::{} ", "流程發生意外終止");
 //    }
 
-    @RequestMapping("/deleteProcessInstance/{processInstanceId}")
-    public void deleteProcessInstance(@PathVariable String processInstanceId) {
-        log.info("ProcessL414Resource.java - deleteProcessInstance - 206 :: " + processInstanceId);
-        HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.APPLICATION_JSON);
-
-        HashMap<String, String> deleteRequest = new HashMap<>();
-        deleteRequest.put("processInstanceId", processInstanceId);
-        deleteRequest.put("token", TOKEN);
-        HttpEntity<String> requestEntity = new HttpEntity<>(gson.toJson(deleteRequest), headers);
-        ResponseEntity<String> exchange = restTemplate.exchange(FLOWABLE_PROCESS_URL + "/deleteProcess", HttpMethod.POST, requestEntity, String.class);
-
-    }
+//    @RequestMapping("/deleteProcessInstance/{processInstanceId}")
+//    public void deleteProcessInstance(@PathVariable String processInstanceId) {
+//        log.info("ProcessL414Resource.java - deleteProcessInstance - 206 :: " + processInstanceId);
+//        HttpHeaders headers = new HttpHeaders();
+//        headers.setContentType(MediaType.APPLICATION_JSON);
+//
+//        HashMap<String, String> deleteRequest = new HashMap<>();
+//        deleteRequest.put("processInstanceId", processInstanceId);
+//        deleteRequest.put("token", TOKEN);
+//        HttpEntity<String> requestEntity = new HttpEntity<>(gson.toJson(deleteRequest), headers);
+//        ResponseEntity<String> exchange = restTemplate.exchange(FLOWABLE_PROCESS_URL + "/deleteProcess", HttpMethod.POST, requestEntity, String.class);
+//
+//    }
 
 }

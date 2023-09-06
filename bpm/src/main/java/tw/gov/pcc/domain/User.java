@@ -1,9 +1,6 @@
 package tw.gov.pcc.domain;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.Table;
+import javax.persistence.*;
 import java.io.Serializable;
 import java.sql.Timestamp;
 
@@ -68,6 +65,12 @@ public class User implements Serializable {
 
     @Column(name = "ORG_ID")
     private String orgId;
+
+    @OneToOne(cascade = CascadeType.ALL)
+    @JoinTable(name = "VIEW_CPAPE05M",
+        joinColumns = @JoinColumn(name = "PECARD"),
+        inverseJoinColumns = @JoinColumn(name = "USER_ID"))
+    private Cpape05m cpape05m;
 
     public String getUserId() {
         return userId;
@@ -244,5 +247,13 @@ public class User implements Serializable {
             ", fromHr='" + fromHr + '\'' +
             ", orgId='" + orgId + '\'' +
             '}';
+    }
+
+    public Cpape05m getCpape05m() {
+        return cpape05m;
+    }
+
+    public void setCpape05m(Cpape05m cpape05m) {
+        this.cpape05m = cpape05m;
     }
 }
