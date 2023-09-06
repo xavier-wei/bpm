@@ -1,104 +1,94 @@
 <template>
   <div>
-    <section class="container mt-2">
-      <div class="card">
-        <div class="card-header py-1 text-left" style="background-color: #b0ded4">
-          <div class="row align-items-center">
-            <div class="col-sm-11 p-0">
-              <h5 class="m-0">
-                <font-awesome-icon icon="search"/>
-                查詢條件
-              </h5>
-            </div>
-          </div>
-        </div>
-        <div class="card-body clo-12" style="background-color: #d3ede8">
-          <b-form-row>
-            <i-form-group-check class="col-4" label-cols="4" content-cols="8" :label="'關鍵字：'" :item="$v.word">
-              <b-form-input v-model="$v.word.$model"></b-form-input>
-            </i-form-group-check>
+    <div style="background-color: #b0ded4; padding-top: 10px">
+      <b-row class="d-flex">
+        <p class="ml-4" style="color: white">L414-網路服務連結申請單</p>
 
-<!--            <i-form-group-check class="col-4" label-cols="4" content-cols="8" :label="`版號：`" :item="$v.number">-->
-<!--              <b-form-select v-model="$v.number.$model" :options="queryOptions.number">-->
-<!--                <template #first>-->
-<!--                  <option value="">請選擇</option>-->
-<!--                </template>-->
-<!--              </b-form-select>-->
-<!--            </i-form-group-check>-->
-          </b-form-row>
+        <P class="ml-3">機密等級： 敏感</P>
+      </b-row>
+    </div>
+    <div class="card-body clo-12" style="background-color: #d3ede8">
+      <b-form-row>
+        <i-form-group-check class="col-4" label-cols="4" content-cols="8" :label="'關鍵字：'" :item="$v.word">
+          <b-form-input v-model="$v.word.$model"></b-form-input>
+        </i-form-group-check>
 
-          <div class="text-center pt-5">
-            <b-button class="ml-2" style="background-color: #17a2b8" @click="toL414Apply()"> 新增</b-button>
-            <b-button class="ml-2" style="background-color: #17a2b8" @click="toQuery()">查詢</b-button>
-            <b-button class="ml-2" style="background-color: #17a2b8" @click="reset()">清除</b-button>
-          </div>
-        </div>
+        <!--            <i-form-group-check class="col-4" label-cols="4" content-cols="8" :label="`版號：`" :item="$v.number">-->
+        <!--              <b-form-select v-model="$v.number.$model" :options="queryOptions.number">-->
+        <!--                <template #first>-->
+        <!--                  <option value="">請選擇</option>-->
+        <!--                </template>-->
+        <!--              </b-form-select>-->
+        <!--            </i-form-group-check>-->
+      </b-form-row>
+
+      <div class="text-center pt-5">
+        <b-button class="ml-2" style="background-color: #17a2b8" @click="toL414Apply()"> 新增</b-button>
+        <b-button class="ml-2" style="background-color: #17a2b8" @click="toQuery()">查詢</b-button>
+        <b-button class="ml-2" style="background-color: #17a2b8" @click="reset()">清除</b-button>
       </div>
-    </section>
+    </div>
 
-    <section class="mt-2" v-show="queryStatus">
-      <div class="container">
-        <i-table
-            ref="iTable"
-            :itemsUndefinedBehavior="'loading'"
-            :items="table.data"
-            :fields="table.fields"
-            :totalItems="table.totalItems"
-            :is-server-side-paging="false"
-            :hideNo="true"
-        >
-          <template #cell(formId)="row">
-            <b-button variant="link" style="color: blue" @click="toEdit(row.item)">
-              <u>{{ row.item.formId }}</u>
-            </b-button>
-          </template>
+    <i-table
+        ref="iTable"
+        :itemsUndefinedBehavior="'loading'"
+        :items="table.data"
+        :fields="table.fields"
+        :totalItems="table.totalItems"
+        :is-server-side-paging="false"
+        :hideNo="true"
+        v-show="queryStatus"
+    >
+      <template #cell(formId)="row">
+        <b-button variant="link" style="color: blue" @click="toEdit(row.item)">
+          <u>{{ row.item.formId }}</u>
+        </b-button>
+      </template>
 
-          <template #cell(isEnable)="row">
-            <div v-if="row.item.isEnable === '0'">
-              停用
+      <template #cell(isEnable)="row">
+        <div v-if="row.item.isEnable === '0'">
+          停用
+        </div>
+        <div v-if="row.item.isEnable === '1'">
+          啟用
+        </div>
+      </template>
+
+      <template #cell(needNarrative)="row">
+        <b-row>
+          <b-col class="col-12">
+            <div>
+              來源IP：{{ row.item.sourceIp }},
             </div>
-            <div v-if="row.item.isEnable === '1'">
-              啟用
+          </b-col>
+          <b-col class="col-12">
+            <div>
+              目的IP：{{ row.item.sourceIp }},
             </div>
-          </template>
-
-          <template #cell(needNarrative)="row">
-            <b-row>
-              <b-col class="col-12" >
-                <div>
-                  來源IP：{{row.item.sourceIp}},
-                </div>
-              </b-col>
-              <b-col class="col-12">
-                <div>
-                  目的IP：{{row.item.sourceIp}},
-                </div>
-              </b-col>
-              <b-col class="col-12">
-                <div>
-                  使用協定(Port)：{{row.item.port}},
-                </div>
-              </b-col>
-              <b-col class="col-12">
-                <div>
-                  <b-input-group>
-                    <div>傳輸模式：</div>
-                    <div class="mx-1" v-if="row.item.isTcp ==='Y'">TCP</div>
-                    <div class="mx-1" v-if="row.item.isUdp ==='Y'">UDP</div>
-                    <div>,</div>
-                  </b-input-group>
-                </div>
-              </b-col>
-              <b-col class="col-12">
-                <div>
-                  用途說明：{{row.item.instructions}}
-                </div>
-              </b-col>
-            </b-row>
-          </template>
-        </i-table>
-      </div>
-    </section>
+          </b-col>
+          <b-col class="col-12">
+            <div>
+              使用協定(Port)：{{ row.item.port }},
+            </div>
+          </b-col>
+          <b-col class="col-12">
+            <div>
+              <b-input-group>
+                <div>傳輸模式：</div>
+                <div class="mx-1" v-if="row.item.isTcp ==='Y'">TCP</div>
+                <div class="mx-1" v-if="row.item.isUdp ==='Y'">UDP</div>
+                <div>,</div>
+              </b-input-group>
+            </div>
+          </b-col>
+          <b-col class="col-12">
+            <div>
+              用途說明：{{ row.item.instructions }}
+            </div>
+          </b-col>
+        </b-row>
+      </template>
+    </i-table>
   </div>
 </template>
 
@@ -129,11 +119,12 @@ export default {
     const notificationService = useNotification();
     const userData = ref(useGetters(['getUserData']).getUserData).value.user;
     const bpmUnitOptions = ref(useGetters(['getBpmUnitOptions']).getBpmUnitOptions).value;
+
     enum FormStatusEnum {
       CREATE = '新增',
       MODIFY = '編輯',
       READONLY = '檢視',
-      VERIFY ='簽核'
+      VERIFY = '簽核'
     }
 
     const formDefault = {
@@ -241,7 +232,7 @@ export default {
             queryStatus.value = true
             if (iTable.value) iTable.value.state.pagination.currentPage = 1;
             if (data) {
-              console.log('l414Query - data :: ',data)
+              console.log('l414Query - data :: ', data)
               table.data = data
             }
           })
@@ -257,10 +248,10 @@ export default {
 
     const toEdit = (item) => {
       navigateByNameAndParams('l414Edit', {
-        l414Data: item,
+        formId: item.formId,
         formStatus: FormStatusEnum.READONLY,
         isNotKeepAlive: false,
-        stateStatus : userData === 'InfoTester'
+        stateStatus: userData === 'InfoTester'
       });
     };
 

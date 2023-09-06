@@ -1,7 +1,5 @@
 <template>
   <div>
-    <section class="container mt-2">
-      <div class="card">
         <div class="card-header py-1 text-left" style="background-color: #b0ded4">
           <div class="row align-items-center">
             <div class="col-sm-11 p-0">
@@ -61,11 +59,7 @@
             <b-button class="ml-2" style="background-color: #17a2b8" @click="reset()">清除</b-button>
           </div>
         </div>
-      </div>
-    </section>
 
-    <section class="mt-2" v-show="queryStatus">
-      <div class="container">
         <i-table
             ref="iTable"
             :itemsUndefinedBehavior="'loading'"
@@ -73,6 +67,7 @@
             :fields="table.fields"
             :totalItems="table.totalItems"
             :is-server-side-paging="false"
+            v-show="queryStatus"
         >
 
           <template #cell(filAndApp)="row">
@@ -99,8 +94,6 @@
             </b-button>
           </template>
         </i-table>
-      </div>
-    </section>
   </div>
 </template>
 
@@ -130,7 +123,7 @@ export default defineComponent({
     IFormGroupCheck,
   },
   setup() {
-    const userData = ref(useGetters(['getUserData']).getUserData).value.user;
+    const userData = ref(useGetters(['getUserData']).getUserData).value;
 
     const iTable = ref(null);
     const queryStatus = ref(false);
@@ -231,6 +224,7 @@ export default defineComponent({
     });
 
     const toQuery = () => {
+      console.log('登入者資訊',userData)
       table.data = [];
       const params = new FormData();
       params.append('bpmFormQueryDto', new Blob([JSON.stringify(form)], {type: 'application/json'}));

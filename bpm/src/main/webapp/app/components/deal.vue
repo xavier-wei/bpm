@@ -1,23 +1,24 @@
 <template>
   <div>
-    <section class="container mt-2">
-      <div class="card">
-        <div class="card-body">
-          <b-form-row>
-            <i-form-group-check
-              class="col-sm-12"
-              label-cols="2"
-              content-cols="8"
-              :label="'選擇腳色 ：'"
-              :item="form"
-              style="margin-left: 7px"
-            >
-              <b-form-select v-model="form.user" :options="options.selectRole"> </b-form-select>
-            </i-form-group-check>
-          </b-form-row>
-        </div>
-      </div>
-    </section>
+<!--    <section class="container mt-2">-->
+<!--      <div class="card">-->
+<!--        <div class="card-body">-->
+<!--          <b-form-row>-->
+<!--            <i-form-group-check-->
+<!--              class="col-sm-12"-->
+<!--              label-cols="2"-->
+<!--              content-cols="8"-->
+<!--              :label="'選擇腳色 ：'"-->
+<!--              :item="form"-->
+<!--              style="margin-left: 7px"-->
+<!--            >-->
+<!--              <b-form-select v-model="form.user" :options="options.selectRole"> </b-form-select>-->
+<!--            </i-form-group-check>-->
+<!--          </b-form-row>-->
+<!--        </div>-->
+<!--      </div>-->
+<!--    </section>-->
+    <p>請重新選取功能</p>
   </div>
 </template>
 
@@ -53,6 +54,8 @@ export default {
         { value: 'serverRoomManagerTester', text: '機房管理人員' },
       ],
     });
+
+
 
     watch(
       () => form.user,

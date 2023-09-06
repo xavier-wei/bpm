@@ -1,17 +1,15 @@
 <template>
   <div>
-    <section class="container mt-2">
-      <div class="card">
-        <div class="card-header py-1 text-left" style="background-color: #b0ded4">
-          <div class="row align-items-center">
-            <div class="col-sm-11 p-0">
-              <h5 class="m-0">
-                <font-awesome-icon icon="search"/>
-                查詢條件
-              </h5>
-            </div>
-          </div>
-        </div>
+
+    <div style="background-color: #b0ded4;padding-top: 10px;">
+      <b-row class=" d-flex">
+        <p class="ml-4" style="color: white">
+          L410-共用系統使用者帳號申請單
+        </p>
+
+        <P class="ml-3">機密等級： 敏感</P>
+      </b-row>
+    </div>
 
         <div class="card-body clo-12" style="background-color: #d3ede8">
           <b-form-row>
@@ -34,11 +32,7 @@
             <b-button class="ml-2" style="background-color: #17a2b8" @click="reset()">清除</b-button>
           </div>
         </div>
-      </div>
-    </section>
 
-    <section class="mt-2" v-show="queryStatus">
-      <div class="container">
         <i-table
           ref="iTable"
           :itemsUndefinedBehavior="'loading'"
@@ -47,6 +41,7 @@
           :totalItems="table.totalItems"
           :is-server-side-paging="false"
           :hideNo="true"
+          v-show="queryStatus"
         >
           <template #cell(formId)="row">
             <!-- <b-button variant="link" class="ml-2" style="background-color: #17a2b8" @click="toEdit(row)">{{ roq.item.number }}</b-button> -->
@@ -78,8 +73,6 @@
           </template>
 
         </i-table>
-      </div>
-    </section>
   </div>
 </template>
 
@@ -231,7 +224,7 @@ export default defineComponent({
 
     function toEdit(item) {
       navigateByNameAndParams('l410Edit', {
-        l410Data: item,
+        formId: item.formId,
         formStatus: FormStatusEnum.READONLY,
         isNotKeepAlive: false,
         stateStatus : userData === 'InfoTester'
