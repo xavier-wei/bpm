@@ -16,13 +16,13 @@
     <sequenceFlow id="sid-f2e4bd36-e58d-47ca-b556-d08a7bfb238c" sourceRef="applierConfirm" targetRef="chiefSign"/>
     <sequenceFlow id="sid-adf2e3e0-2e3d-4a13-a318-2285ba8de519" sourceRef="chiefSign" targetRef="chiefGateWay"/>
     <sequenceFlow id="sid-a82d4d53-8343-4943-9229-b17d95f6ad3e" sourceRef="chiefGateWay" targetRef="chiefRejectMail">
-      <conditionExpression xsi:type="tFormalExpression"><![CDATA[${chiefDecision=="0"}]]></conditionExpression>
+      <conditionExpression xsi:type="tFormalExpression"><![CDATA[${sectionChiefDecision=="0"}]]></conditionExpression>
     </sequenceFlow>
     <sequenceFlow id="sid-b474bb4b-bcd9-4b21-8786-c78d97d47533" sourceRef="chiefGateWay" targetRef="directorSign">
-      <conditionExpression xsi:type="tFormalExpression"><![CDATA[${chiefDecision=="1"}]]></conditionExpression>
+      <conditionExpression xsi:type="tFormalExpression"><![CDATA[${sectionChiefDecision=="1"}]]></conditionExpression>
     </sequenceFlow>
     <sequenceFlow id="sid-475da72a-c724-4397-8fa1-adf49066b0da" sourceRef="chiefGateWay" targetRef="applierConfirm">
-      <conditionExpression xsi:type="tFormalExpression"><![CDATA[${chiefDecision=="2"}]]></conditionExpression>
+      <conditionExpression xsi:type="tFormalExpression"><![CDATA[${sectionChiefDecision=="2"}]]></conditionExpression>
     </sequenceFlow>
     <sequenceFlow id="sid-ca1c0dd4-ff15-4554-9239-ac93e3a6fffe" sourceRef="directorSign" targetRef="sid-4bf1326d-ee7f-4890-82aa-c49ba38c1e92"/>
     <sequenceFlow id="sid-5acd1457-8dc3-4e20-a376-d305bec9906d" sourceRef="chiefRejectMail" targetRef="rejectEndEvent"/>

@@ -9,11 +9,12 @@ import org.flowable.task.api.Task;
 import org.springframework.stereotype.Service;
 import tw.gov.pcc.flowable.domain.ProcessEnum;
 import tw.gov.pcc.flowable.domain.ProcessRes;
+import tw.gov.pcc.flowable.domain.SupervisorSignerEnum;
 import tw.gov.pcc.flowable.service.dto.TaskDTO;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.stream.Collectors;
 
 @Service
@@ -41,6 +42,8 @@ public class ProcessFlowService {
 
         if ("1".equals(variables.get("isSubmit"))) {
             taskService.complete(task.getId());
+            String processInstanceId = processInstance.getId();
+            jumpIfSupervisor(processKey, variables, processInstanceId);
         }
 
         return taskDTO;
@@ -48,6 +51,7 @@ public class ProcessFlowService {
     }
 
     // for completing task
+
     public ProcessRes completeTask(String processInstanceId, String taskId, Map<String, Object> variables) {
         Task task = taskService.createTaskQuery().processInstanceId(processInstanceId).taskId(taskId).singleResult();
         if (task.getId() != null) {
@@ -61,18 +65,25 @@ public class ProcessFlowService {
         Task task = taskService.createTaskQuery().processInstanceId(processInstanceId).taskId(taskId).singleResult();
         if (task.getId() != null) {
             taskService.complete(task.getId());
+            if ("applierConfirm".equals(task.getTaskDefinitionKey())) {
+                Map<String, Object> variables = runtimeService.getVariables(processInstanceId);
+                String processKey = task.getProcessDefinitionId().split(":")[0];
+                jumpIfSupervisor(processKey, variables, processInstanceId);
+
+            }
             return new ProcessRes(SIGNATURE_STATUS[0], MESSAGE[0]);
         }
         return new ProcessRes(SIGNATURE_STATUS[1], MESSAGE[1]);
     }
 
     // query single task by processInstanceId
+
     public TaskDTO querySingleTask(String processInstanceId) {
         Task task = taskService.createTaskQuery().processInstanceId(processInstanceId).singleResult();
         return getTaskDTO(task);
     }
-
     // query task
+
     public List<TaskDTO> queryProcessingTask(String id) {
 
         // 查出所有加簽任務
@@ -81,7 +92,8 @@ public class ProcessFlowService {
                 .stream()
                 .map(additionalProcess ->
                         (String) runtimeService
-                                .getVariables(additionalProcess.getProcessInstanceId()).get("mainProcessInstanceId"))
+                                .getVariables(additionalProcess.getProcessInstanceId())
+                                .get("mainProcessInstanceId"))
                 .collect(Collectors.toList());
 
         return taskService.createTaskQuery()
@@ -91,24 +103,11 @@ public class ProcessFlowService {
                 .list()
                 .stream()
                 .map(this::getTaskDTO)
-                .filter(taskDTO -> {
-                    // 過濾非加簽任務外發起加簽任務之任務
-                    if (!"Additional".equals(taskDTO.getFormName())) {
-                        AtomicBoolean filterSwitch = new AtomicBoolean(true);
-                        mainProcessInstanceIds.forEach(mainProcessInstanceId -> {
-                            if (taskDTO.getProcessInstanceId().equals(mainProcessInstanceId)) {
-                                filterSwitch.set(false);
-                            }
-                        });
-                        return filterSwitch.get();
-                    } else {
-                        return true;
-                    }
-
-                }).collect(Collectors.toList());
+                .filter(taskDTO -> "Additional".equals(taskDTO.getFormName()) || !mainProcessInstanceIds.contains(taskDTO.getProcessInstanceId())
+                ).collect(Collectors.toList());
     }
-
     // delete processInstance
+
     public void deleteProcessInstance(String processInstanceId) {
         runtimeService.deleteProcessInstance(processInstanceId, "delete");
     }
@@ -130,6 +129,7 @@ public class ProcessFlowService {
     }
 
     // query processInstance is complete return true
+
     public boolean isProcessComplete(String processInstanceId, String formName) {
         HistoricProcessInstance historicProcessInstance = historyService
                 .createHistoricProcessInstanceQuery()
@@ -139,5 +139,18 @@ public class ProcessFlowService {
         return (historicProcessInstance != null && historicProcessInstance.getEndTime() != null);
     }
 
-
+    private void jumpIfSupervisor(String processKey, Map<String, Object> variables, String processInstanceId) {
+        String[] supervisors = SupervisorSignerEnum.getSupervisors(processKey);
+        if (supervisors != null) {
+            Arrays.stream(supervisors)
+                    .filter(supervisor -> "NO_SIGN".equals(variables.get(supervisor)))
+                    .forEach(supervisor -> {
+                        Task supervisorTask = taskService.createTaskQuery()
+                                .taskCandidateOrAssigned((String) variables.get(supervisor))
+                                .processInstanceId(processInstanceId).singleResult();
+                        variables.put(supervisor + "Decision", 1);
+                        taskService.complete(supervisorTask.getId(), variables);
+                    });
+        }
+    }
 }
