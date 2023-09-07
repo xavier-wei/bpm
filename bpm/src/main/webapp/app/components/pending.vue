@@ -86,10 +86,10 @@
           </template>
 
           <template #cell(action)="row">
-            <b-button class="ml-1" v-if="userData === row.item.appName" style="background-color: #17a2b8"
+            <b-button class="ml-1" v-if="userData.userData.userName === row.item.appName" style="background-color: #17a2b8"
                       @click="toEdit(row.item,'0')">編輯
             </b-button>
-            <b-button class="ml-1" v-if="userData !== 'ApplyTester'" style="background-color: #17a2b8"
+            <b-button class="ml-1" v-else style="background-color: #17a2b8"
                       @click="toEdit(row.item,'1')">處理
             </b-button>
           </template>
@@ -124,7 +124,6 @@ export default defineComponent({
   },
   setup() {
     const userData = ref(useGetters(['getUserData']).getUserData).value;
-
     const iTable = ref(null);
     const queryStatus = ref(false);
     const notificationService = useNotification();
@@ -253,13 +252,14 @@ export default defineComponent({
 
       console.log('taskData',taskData)
 
+
       if (i === '0') {
         navigateByNameAndParams(prefix + 'Edit', {
           formId: item.formId,
           taskData:taskData,
           formStatus: FormStatusEnum.MODIFY,
           isNotKeepAlive: false,
-          stateStatus: userData !== 'InfoTester'
+          stateStatus: userData.userData.cpape05m.unitName !== '資訊推動小組'
         });
       } else {
         navigateByNameAndParams(prefix + 'Edit', {
@@ -267,7 +267,7 @@ export default defineComponent({
           taskData:taskData,
           formStatus: FormStatusEnum.VERIFY,
           isNotKeepAlive: false,
-          stateStatus: userData !== 'InfoTester'
+          stateStatus: userData.userData.cpape05m.unitName !== '資訊推動小組'
         });
       }
     }

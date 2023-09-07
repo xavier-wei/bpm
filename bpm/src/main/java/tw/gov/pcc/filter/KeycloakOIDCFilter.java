@@ -5,6 +5,7 @@ import org.keycloak.adapters.servlet.FilterRequestAuthenticator;
 import org.keycloak.adapters.servlet.OIDCFilterSessionStore;
 import org.keycloak.adapters.servlet.OIDCServletHttpFacade;
 import org.keycloak.adapters.spi.*;
+import tw.gov.pcc.utils.TokenUtil;
 
 import javax.servlet.*;
 import javax.servlet.annotation.WebFilter;
@@ -24,7 +25,6 @@ import java.util.logging.Logger;
 import java.util.regex.Pattern;
 
 @WebFilter("/*")
-//@Profile("dev")
 public class KeycloakOIDCFilter  implements Filter {
     private static final Logger log = Logger.getLogger("" + KeycloakOIDCFilter.class);
     public static final String SKIP_PATTERN_PARAM = "keycloak.config.skipPattern";
@@ -133,13 +133,14 @@ public class KeycloakOIDCFilter  implements Filter {
         HttpServletRequest request = (HttpServletRequest)req;
         HttpServletResponse response = (HttpServletResponse)res;
 
-        String referer = request.getHeader("referer");
+//        String referer = request.getHeader("referer");
+        String flowableToken = request.getHeader("flowableToken");
 //        if (referer == null ||referer.isEmpty()) {
 //            response.setContentType("text/html; charset=utf-8");
 //            response.getWriter().println("請由EIP首頁進入");
 //            return;
 //        }
-        if (this.shouldSkip(request)) {
+        if (this.shouldSkip(request)|| TokenUtil.TOKEN.equals(flowableToken)) {
             chain.doFilter(req, res);
         } else {
             OIDCServletHttpFacade facade = new OIDCServletHttpFacade(request, response);

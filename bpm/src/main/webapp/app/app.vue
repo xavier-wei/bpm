@@ -131,18 +131,11 @@ export default {
     onMounted(() => {
       dynamicSizeForDev();
       lockInputTypeNumberWheelEvent();
-      getUser()
+
     });
 
 
-    function getUser() {
-      axios
-          .patch(`/loginBpmDev`)
-          .then(({data}) => {
-            useStore().value.commit('setUserData', {userData:data});
-          })
-          .catch(notificationErrorHandler(notificationService));
-    }
+
 
     return {
       isContentAlive,

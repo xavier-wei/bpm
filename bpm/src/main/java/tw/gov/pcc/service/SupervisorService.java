@@ -26,7 +26,12 @@ public class SupervisorService {
         String sectionChief;
         String director;
         if ("科員".equals(positionData.get("POSNAME"))) {
-           sectionChief = positionData.get("F1_ACCOUNT") == null ? NO_SIGN : (String) positionData.get("F1_ACCOUNT");
+            if (positionData.get("F1_ACCOUNT") == null) {
+                sectionChief = NO_SIGN;
+                variables.put("sectionChiefDecision", "1");
+            } else {
+                sectionChief = (String) positionData.get("F1_ACCOUNT");
+            }
            director = (String) positionData.get("F2_ACCOUNT");
             variables.put("sectionChief", sectionChief);
             variables.put("director", director);

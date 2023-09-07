@@ -35,7 +35,7 @@ public class Bpm01w010Controller {
             referer = referer.replace(referer.substring(index, referer.length()), "");
             RefererTemp.refererMap.put("referer", referer);
             StringBuilder path = new StringBuilder(referer)
-                                    .append("/BPM/api/loginBpm")
+                                    .append("/bpm/api/loginBpm")
                                     .append("?referer=")
                                     .append(referer)
                                     .append("&path=/BPM/L414QUERY");

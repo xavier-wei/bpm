@@ -255,13 +255,13 @@
                     <b-form-row>
                       <!--處理意見 : agreeType-->
                       <i-form-group-check class="col-sm-12" label-cols="2" content-cols="10" :label="'處理意見：'">
-                        <b-form-radio-group v-model="$v.agreeType.$model" :disabled="userData !== 'InfoTester'">
+                        <b-form-radio-group v-model="$v.agreeType.$model" disabled>
                           <!--預定完成日期 : scheduleDate-->
                           <b-form-radio class="col-12" value="1">
                             <b-input-group>
                               <div>同意設定 : 預定完成日期 : 　</div>
                               <i-date-picker
-                                :disabled="$v.agreeType.$model !== '1' && userData !== 'InfoTester'"
+                                disabled
                                 placeholder="yyy/MM/dd"
                                 v-model="$v.scheduleDate.$model"
                                 :state="validateState($v.scheduleDate)"
@@ -276,7 +276,7 @@
                             <b-input-group>
                               <div>部分同意設定 : 原因 :　　 　</div>
                               <b-form-textarea
-                                :disabled="$v.agreeType.$model !== '2' && userData !== 'InfoTester'"
+                                disabled
                                 v-model="$v.partialAgreeReason.$model"
                                 rows="1"
                                 maxlength="2000"
@@ -291,7 +291,7 @@
                             <b-input-group>
                               <div>不同意設定 : 原因 :　　　 　</div>
                               <b-form-textarea
-                                :disabled="$v.agreeType.$model !== '3' && userData !== 'InfoTester'"
+                                disabled
                                 v-model="$v.notAgreeReason.$model"
                                 rows="1"
                                 maxlength="2000"
@@ -311,12 +311,12 @@
                         <b-input-group>
                           <!--是否為外部防火牆 : isExternalFirewall-->
                           <b-form-checkbox v-model="$v.isExternalFirewall.$model" value="Y" unchecked-value="N"
-                                           :disabled="userData !== 'InfoTester'">
+                                           disabled>
                             外部防火牆
                           </b-form-checkbox>
                           <!--變更設備：是否為內部防火牆 : isInternalFirewall-->
                           <b-form-checkbox v-model="$v.isInternalFirewall.$model" value="Y" unchecked-value="N"
-                                           :disabled="userData !== 'InfoTester'">
+                                           disabled>
                             外部防火牆
                           </b-form-checkbox>
                         </b-input-group>
@@ -334,7 +334,7 @@
                       >
                         <!--設定內容 : firewallContent-->
                         <b-form-textarea v-model="$v.firewallContent.$model" rows="1" maxlength="2000" trim lazy
-                                         :disabled="userData !== 'InfoTester'"/>
+                                         disabled/>
                       </i-form-group-check>
                     </b-form-row>
 
@@ -355,7 +355,7 @@
                             :state="validateState($v.finishDatetime)"
                             lazy
                             trim
-                            :disabled="userData !== 'InfoTester'"
+                            disabled
                           ></i-date-picker>
                           <span class="m-1">，並以電話通知申請單位。</span>
                         </b-input-group>
@@ -448,7 +448,7 @@ export default {
     flowChart,
   },
   setup(props) {
-    const userData = ref(useGetters(['getUserData']).getUserData).value.user;
+    const userData = ref(useGetters(['getUserData']).getUserData).value
     const bpmUnitOptions = ref(useGetters(['getBpmUnitOptions']).getBpmUnitOptions).value;
     const formStatusRef = toRef(props, 'formStatus');
     const tabIndex = ref(0);
@@ -465,8 +465,8 @@ export default {
     const formDefault = {
       formId: '', //表單編號
       applyDate: new Date(new Date().getFullYear(), new Date().getMonth(), new Date().getDate(),new Date().getHours(),new Date().getMinutes(),new Date().getSeconds(),new Date().getMilliseconds()), //	申請日期
-      filEmpid: '', //	填表人員工編號
-      filName: '', //	填表人姓名
+      filEmpid: userData.userData.userName != null ? userData.userData.empId : '', //	填表人員工編號
+      filName: userData.userData.userName != null ? userData.userData.userName : '' , //	填表人姓名
       filUnit: '', //	填表人單位名稱
       appEmpid: '', //	申請人員工編號
       appName: '', //	申請人姓名
@@ -600,6 +600,7 @@ export default {
     function toQueryView() {
       handleBack({isReload: false, isNotKeepAlive: true});
     }
+
 
     return {
       $v,

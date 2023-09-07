@@ -77,7 +77,7 @@ public class BpmIsmsAdditionalService implements BpmIsmsService{
         UUID uuid = UUID.randomUUID();
         DTO_HOLDER.put(uuid, bpmIsmsAdditionalDTO);
 //        DirectorTester
-        variables.put("additionalSigner", bpmIsmsAdditionalDTO.getAdditionalSigner());
+        variables.put("additionalSigner", bpmIsmsAdditionalDTO.getAdditionalSignerId());
 //        variables.put("additionalSigner", "DirectorTester");
         variables.put("mainProcessInstanceId", bpmIsmsAdditionalDTO.getMainProcessInstanceId());
 
