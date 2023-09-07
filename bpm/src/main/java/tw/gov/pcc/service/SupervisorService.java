@@ -39,7 +39,6 @@ public class SupervisorService {
         }
         variables.put("sectionChief", sectionChief);
         variables.put("director", director);
-
     }
 
 }
