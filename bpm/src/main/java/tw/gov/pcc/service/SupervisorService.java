@@ -26,13 +26,13 @@ public class SupervisorService {
         String sectionChief;
         String director;
         if ("科員".equals(positionData.get("POSNAME"))) {
-           sectionChief = positionData.get("F1_ID") == null ? NO_SIGN : (String) positionData.get("F1_ID");
-           director = (String) positionData.get("F2_ID");
+           sectionChief = positionData.get("F1_ACCOUNT") == null ? NO_SIGN : (String) positionData.get("F1_ACCOUNT");
+           director = (String) positionData.get("F2_ACCOUNT");
             variables.put("sectionChief", sectionChief);
             variables.put("director", director);
         } else if ("科長".equals(positionData.get("POSNAME"))) {
             sectionChief = NO_SIGN;
-            director = (String) positionData.get("F1_ID");
+            director = (String) positionData.get("F1_ACCOUNT");
         }else{
             sectionChief = NO_SIGN;
             director = NO_SIGN;
