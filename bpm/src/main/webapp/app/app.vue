@@ -2,21 +2,23 @@
   <div class="app">
     <div class="sidebar">
       <!-- 側邊攔内容 -->
-      <Home @reloadContent="reload"></Home>
+<!--      <Home @reloadContent="reload"></Home>-->
     </div>
 
     <!--Loading畫面-->
     <block-ui :is-loading="isLoading"></block-ui>
 
     <!--麵包屑-->
-    <div class="d-flex">
-      <div class="bg pb-3 col-md-10">
-        <breadcrumb></breadcrumb>
-        <keep-alive :include="keepAlivePage">
-          <router-view v-if="isContentAlive"></router-view>
-        </keep-alive>
-      </div>
-    </div>
+<!--    <div class="d-flex">-->
+<!--      <div class="bg pb-3 col-md-10">-->
+<!--&lt;!&ndash;        <breadcrumb></breadcrumb>&ndash;&gt;-->
+<!--   -->
+<!--      </div>-->
+<!--    </div>-->
+
+    <keep-alive :include="keepAlivePage">
+      <router-view v-if="isContentAlive"></router-view>
+    </keep-alive>
   </div>
 </template>
 
@@ -35,6 +37,7 @@ import NotificationService from './shared/notification/notification-service';
 import axios from 'axios';
 import Breadcrumb from '@/core/menu/breadcrumb.vue';
 import BlockUi from '@/core/block-ui/block-ui.vue';
+import {notificationErrorHandler} from "@/shared/http/http-response-helper";
 
 const ALERT_HEADER = 'x-pwc-alert';
 const ALERT_MESSAGE = 'x-pwc-params';
@@ -56,16 +59,16 @@ export default {
     function overrideBvModal(bvModal: BvModal): BvModal {
       return {
         msgBoxOk: (message, options) =>
-          bvModal.msgBoxOk(message, {
-            ...options,
-            okTitle: options && options.okTitle ? options.okTitle : '確定',
-          }),
+            bvModal.msgBoxOk(message, {
+              ...options,
+              okTitle: options && options.okTitle ? options.okTitle : '確定',
+            }),
         msgBoxConfirm: (message, options) =>
-          bvModal.msgBoxConfirm(message, {
-            ...options,
-            okTitle: options && options.okTitle ? options.okTitle : '確定',
-            cancelTitle: options && options.cancelTitle ? options.cancelTitle : '取消',
-          }),
+            bvModal.msgBoxConfirm(message, {
+              ...options,
+              okTitle: options && options.okTitle ? options.okTitle : '確定',
+              cancelTitle: options && options.cancelTitle ? options.cancelTitle : '取消',
+            }),
         show: id => bvModal.show(id),
         hide: id => bvModal.hide(id),
       };
@@ -98,15 +101,15 @@ export default {
     };
 
     axios.interceptors.response.use(
-      response => {
-        if (response.headers[ALERT_HEADER] === 'SUCCESS' || response.headers[ALERT_HEADER] === 'INFO') {
-          notificationService.info(decodeURIComponent(response.headers[ALERT_MESSAGE]));
+        response => {
+          if (response.headers[ALERT_HEADER] === 'SUCCESS' || response.headers[ALERT_HEADER] === 'INFO') {
+            notificationService.info(decodeURIComponent(response.headers[ALERT_MESSAGE]));
+          }
+          return response;
+        },
+        error => {
+          return Promise.reject(error);
         }
-        return response;
-      },
-      error => {
-        return Promise.reject(error);
-      }
     );
 
     const lockInputTypeNumberWheelEvent = () => {
@@ -128,7 +131,11 @@ export default {
     onMounted(() => {
       dynamicSizeForDev();
       lockInputTypeNumberWheelEvent();
+
     });
+
+
+
 
     return {
       isContentAlive,

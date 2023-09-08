@@ -22,6 +22,7 @@ public class ProcessEndServiceTask implements JavaDelegate {
 
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
+        headers.set("flowableToken", TokenUtil.TOKEN);
         Gson gson=new Gson();
         HttpEntity<String> requestEntity = new HttpEntity<>(gson.toJson(endEventDTO), headers);
         RestTemplate restTemplate = new RestTemplate();

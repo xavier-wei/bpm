@@ -25,17 +25,17 @@
             <Column name="MESSAGE" pattern="%m"/>
         </JDBC>
     </Appenders>
-    <Loggers>
-        <!-- 由於工程會端要求修改，這裡不分區，移除所有PROFILE，分區由工程會端處理 -->
-        <Root level="DEBUG"> 
-            <AppenderRef ref="A1"/>
-            <AppenderRef ref="A2"/>
-            <AppenderRef ref="DB"/>
-        </Root>
-        <logger name="org.apache.commons" level="ERROR"/>
-        <logger name="org.apache.commons.digester.Digester" level="ERROR"/>
-        <logger name="org.springframework.util.ClassUtils" level="ERROR"/>
-        <logger name="org.springframework.web.servlet.mvc.support.DefaultHandlerExceptionResolver" level="ERROR"/>
-        <logger name="org.springframework.web.servlet.DispatcherServlet" level="WARN"/>
-    </Loggers>
+<!--    <Loggers>-->
+<!--        &lt;!&ndash; 由於工程會端要求修改，這裡不分區，移除所有PROFILE，分區由工程會端處理 &ndash;&gt;-->
+<!--        <Root level="DEBUG"> -->
+<!--            <AppenderRef ref="A1"/>-->
+<!--            <AppenderRef ref="A2"/>-->
+<!--            <AppenderRef ref="DB"/>-->
+<!--        </Root>-->
+<!--        <logger name="org.apache.commons" level="ERROR"/>-->
+<!--        <logger name="org.apache.commons.digester.Digester" level="ERROR"/>-->
+<!--        <logger name="org.springframework.util.ClassUtils" level="ERROR"/>-->
+<!--        <logger name="org.springframework.web.servlet.mvc.support.DefaultHandlerExceptionResolver" level="ERROR"/>-->
+<!--        <logger name="org.springframework.web.servlet.DispatcherServlet" level="WARN"/>-->
+<!--    </Loggers>-->
 </Configuration>

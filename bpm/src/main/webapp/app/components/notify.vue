@@ -1,7 +1,6 @@
 <template>
   <div>
-    <section class="container mt-2">
-      <div class="card">
+
         <div class="card-header py-1 text-left" style="background-color: #b0ded4">
           <div class="row align-items-center">
             <div class="col-sm-11 p-0">
@@ -76,11 +75,7 @@
             <b-button class="ml-2" style="background-color: #17a2b8" @click="reset()">清除</b-button>
           </div>
         </div>
-      </div>
-    </section>
 
-    <section class="mt-2" v-show="queryStatus">
-      <div class="container">
         <i-table
           ref="iTable"
           :itemsUndefinedBehavior="'loading'"
@@ -88,6 +83,7 @@
           :fields="table.fields"
           :totalItems="table.totalItems"
           :is-server-side-paging="false"
+          v-show="queryStatus"
         >
 
           <template #cell(filAndApp)="row">
@@ -134,8 +130,6 @@
           </template>
 
         </i-table>
-      </div>
-    </section>
   </div>
 </template>
 
@@ -309,7 +303,7 @@ export default defineComponent({
 
     function toEdit(item) {
       navigateByNameAndParams('l414Edit', {
-        l414Data: item,
+        formId: item.formId,
         formStatus: FormStatusEnum.READONLY,
         isNotKeepAlive: false,
         stateStatus: userData === 'InfoTester'

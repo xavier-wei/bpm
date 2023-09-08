@@ -1,9 +1,14 @@
 package tw.gov.pcc.domain;
 
 public enum SingerEnum {
-    CHIEF("科長簽核","chiefDecision"), // 0、1、2
+    APPLIER("申請人確認","applierConfirm"),
+    CHIEF("科長簽核","sectionChiefDecision"), // 0、1、2
     DIRECTOR("主管簽核","directorDecision"), // 0、1、2
-    INFO_GROUP("資推小組承辦人員","infoGroupDecision"); // 0、1
+    INFO_GROUP("資推小組承辦人員","infoGroupDecision"), // 0、1
+    SENIOR_SPECIALIST("簡任技正簽核","seniorTechSpecialistSign"),
+    SERVER_ROOM_OPERATOR("機房操作人員","serverRoomOperatorSetting"),
+    REVIEW_STAFF("複核人員", "reviewStaff"),
+    SERVER_ROOM_MANAGER("機房管理人員", "serverRoomManager");
 
     private final String name;
     private final String decision;

@@ -31,7 +31,7 @@ public class CompleteReqDTO {
     private HashMap<String, String> form;
     private Boolean ipt; //用來判斷登入者使否為InfoTester，判斷是否儲存資推小組填寫的欄位
 
-    // 科長簽核：  "chiefDecision": "0"(不同意) || "1" (同意) || "2"(補件)
+    // 科長簽核：  "sectionChiefDecision": "0"(不同意) || "1" (同意) || "2"(補件)
     // 主管簽核：  "directorDecision": "0"(不同意) || "1" (同意) || "2"(補件)
     // 簡任技正簽核： "seniorTechSpecialistDecision": "0"(不同意) || "1" (同意))
 

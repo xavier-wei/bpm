@@ -1,7 +1,5 @@
 <template>
   <div>
-    <section class="container mt-2">
-      <div class="card">
         <div class="card-header py-1 text-left" style="background-color: #b0ded4">
           <div class="row align-items-center">
             <div class="col-sm-11 p-0">
@@ -61,11 +59,7 @@
             <b-button class="ml-2" style="background-color: #17a2b8" @click="reset()">清除</b-button>
           </div>
         </div>
-      </div>
-    </section>
 
-    <section class="mt-2" v-show="queryStatus">
-      <div class="container">
         <i-table
             ref="iTable"
             :itemsUndefinedBehavior="'loading'"
@@ -73,6 +67,7 @@
             :fields="table.fields"
             :totalItems="table.totalItems"
             :is-server-side-paging="false"
+            v-show="queryStatus"
         >
 
           <template #cell(filAndApp)="row">
@@ -91,12 +86,14 @@
           </template>
 
           <template #cell(action)="row">
-            <b-button class="ml-1" v-if="userData === row.item.appName" style="background-color: #17a2b8" @click="toEdit(row.item,'0')">編輯</b-button>
-            <b-button class="ml-1" v-if="userData !== 'ApplyTester'" style="background-color: #17a2b8" @click="toEdit(row.item,'1')">處理</b-button>
+            <b-button class="ml-1" v-if="userData.userData.userName === row.item.appName" style="background-color: #17a2b8"
+                      @click="toEdit(row.item,'0')">編輯
+            </b-button>
+            <b-button class="ml-1" v-else style="background-color: #17a2b8"
+                      @click="toEdit(row.item,'1')">處理
+            </b-button>
           </template>
         </i-table>
-      </div>
-    </section>
   </div>
 </template>
 
@@ -112,8 +109,8 @@ import {required} from '@/shared/validators';
 import {Pagination} from "@/shared/model/pagination.model";
 import {notificationErrorHandler} from "@/shared/http/http-response-helper";
 import {useNotification} from "@/shared/notification";
-import { newformatDate} from "@/shared/date/minguo-calendar-utils";
-import { changeSubject} from "@/shared/word/change-word-utils";
+import {newformatDate} from "@/shared/date/minguo-calendar-utils";
+import {changeSubject} from "@/shared/word/change-word-utils";
 import {useGetters, useStore} from "@u3u/vue-hooks";
 import {navigateByNameAndParams} from "@/router/router";
 
@@ -126,8 +123,7 @@ export default defineComponent({
     IFormGroupCheck,
   },
   setup() {
-    const userData = ref(useGetters(['getUserData']).getUserData).value.user;
-
+    const userData = ref(useGetters(['getUserData']).getUserData).value;
     const iTable = ref(null);
     const queryStatus = ref(false);
     const notificationService = useNotification();
@@ -136,7 +132,7 @@ export default defineComponent({
       CREATE = '新增',
       MODIFY = '編輯',
       READONLY = '檢視',
-      VERIFY ='簽核'
+      VERIFY = '簽核'
     }
 
     onActivated(() => {
@@ -227,37 +223,53 @@ export default defineComponent({
     });
 
     const toQuery = () => {
+      console.log('登入者資訊',userData)
       table.data = [];
       const params = new FormData();
-      params.append('bpmFormQueryDto', new Blob([JSON.stringify(form)], { type: 'application/json' }));
-      axios.post(`/process/queryTask/${userData}`,params).then(({data}) => {
+      params.append('bpmFormQueryDto', new Blob([JSON.stringify(form)], {type: 'application/json'}));
+      axios.post(`/process/queryTask`, params).then(({data}) => {
         console.log('data+++', data);
         queryStatus.value = true;
-        if(data.length <= 0) return;
+        if (data.length <= 0) return;
         table.data = data.slice(0, data.length);
         table.totalItems = data.length;
       })
-        .catch(notificationErrorHandler(notificationService));
+          .catch(notificationErrorHandler(notificationService));
     };
 
-    function toEdit(item,i) {
+    function toEdit(item, i) {
 
-      if (i === '0') {
-        navigateByNameAndParams('l414Edit', {
-          l414Data: item,
-          formStatus: FormStatusEnum.MODIFY,
-          isNotKeepAlive: false,
-          stateStatus : userData !== 'InfoTester'
-        });
-      }else {
-        navigateByNameAndParams('l414Edit', {
-          l414Data: item,
-          formStatus: FormStatusEnum.VERIFY,
-          isNotKeepAlive: false,
-          stateStatus : userData !== 'InfoTester'
-        });
+      let prefix = item.formId.substring(0, 4).toLowerCase()
+      // let prefix = 'l410'
+
+      let taskData ={
+        processInstanceId:item.processInstanceId,
+        taskId: item.taskId,
+        taskName: item.taskName,
+        decisionRole: item.decisionRole,
+        additional:item.additional,
       }
 
+      console.log('taskData',taskData)
+
+
+      if (i === '0') {
+        navigateByNameAndParams(prefix + 'Edit', {
+          formId: item.formId,
+          taskData:taskData,
+          formStatus: FormStatusEnum.MODIFY,
+          isNotKeepAlive: false,
+          stateStatus: userData.userData.cpape05m.unitName !== '資訊推動小組'
+        });
+      } else {
+        navigateByNameAndParams(prefix + 'Edit', {
+          formId: item.formId,
+          taskData:taskData,
+          formStatus: FormStatusEnum.VERIFY,
+          isNotKeepAlive: false,
+          stateStatus: userData.userData.cpape05m.unitName !== '資訊推動小組'
+        });
+      }
     }
 
     return {

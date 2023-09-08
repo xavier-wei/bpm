@@ -7,9 +7,11 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 import tw.gov.pcc.domain.BpmIsmsL414;
+import tw.gov.pcc.domain.User;
 import tw.gov.pcc.repository.BpmIsmsL414Repository;
 import tw.gov.pcc.service.dto.BpmIsmsL414DTO;
 import tw.gov.pcc.service.dto.BpmUploadFileDTO;
+import tw.gov.pcc.service.dto.EndEventDTO;
 import tw.gov.pcc.service.dto.TaskDTO;
 import tw.gov.pcc.service.mapper.BpmIsmsL414Mapper;
 import tw.gov.pcc.service.mapper.BpmUploadFileMapper;
@@ -18,14 +20,13 @@ import tw.gov.pcc.utils.SeqNumber;
 import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
-import java.util.HashMap;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 
 @Service("L414Service")
 public class BpmIsmsL414ServiceNew implements BpmIsmsService {
     private final Logger log = LoggerFactory.getLogger(BpmIsmsL414ServiceNew.class);
     public static final HashMap<UUID, BpmIsmsL414DTO> DTO_HOLDER = new HashMap<>();
+    private final SupervisorService supervisorService;
     private final BpmIsmsL414Repository bpmIsmsL414Repository;
     private final BpmIsmsL414Mapper bpmIsmsL414Mapper;
     private final BpmUploadFileService bpmUploadFileService;
@@ -33,7 +34,8 @@ public class BpmIsmsL414ServiceNew implements BpmIsmsService {
     private final BpmSignStatusService bpmSignStatusService;
     private final Gson gson = new Gson();
 
-    public BpmIsmsL414ServiceNew(BpmIsmsL414Repository bpmIsmsL414Repository, BpmIsmsL414Mapper bpmIsmsL414Mapper, BpmUploadFileService bpmUploadFileService, BpmUploadFileMapper bpmUploadFileMapper, BpmSignStatusService bpmSignStatusService) {
+    public BpmIsmsL414ServiceNew(SupervisorService supervisorService, BpmIsmsL414Repository bpmIsmsL414Repository, BpmIsmsL414Mapper bpmIsmsL414Mapper, BpmUploadFileService bpmUploadFileService, BpmUploadFileMapper bpmUploadFileMapper, BpmSignStatusService bpmSignStatusService) {
+        this.supervisorService = supervisorService;
         this.bpmIsmsL414Repository = bpmIsmsL414Repository;
         this.bpmIsmsL414Mapper = bpmIsmsL414Mapper;
         this.bpmUploadFileService = bpmUploadFileService;
@@ -102,15 +104,20 @@ public class BpmIsmsL414ServiceNew implements BpmIsmsService {
     }
 
     @Override
-    public UUID setVariables(HashMap<String, Object> variables, String form) {
+    public UUID setVariables(HashMap<String, Object> variables, String form, User userInfo) {
         BpmIsmsL414DTO bpmIsmsL414DTO = gson.fromJson(form, BpmIsmsL414DTO.class);
         UUID uuid = UUID.randomUUID();
         DTO_HOLDER.put(uuid, bpmIsmsL414DTO);
-        variables.put("applier", bpmIsmsL414DTO.getAppName());
+
+
+
+
+
+        variables.put("applier",bpmIsmsL414DTO.getAppEmpid());
         variables.put("isSubmit", bpmIsmsL414DTO.getIsSubmit());
-        // todo 判斷上級
-        variables.put("sectionChief", "ChiefTester");
-        variables.put("director", "DirectorTester");
+
+        // 填入上級
+        supervisorService.setSupervisor(variables,bpmIsmsL414DTO.getAppEmpid(),userInfo);
 
         // todo 依據表單取得固定簽核人員
         variables.put("infoGroup", "InfoTester");
@@ -121,7 +128,22 @@ public class BpmIsmsL414ServiceNew implements BpmIsmsService {
         return uuid;
     }
 
+    @Override
+    public Map<String, Object> getBpm(String formId) {
+
+        List<Map<String, Object>> bpmIsmsL414 = bpmIsmsL414Repository.findByFormId(formId);
+
+        if (!bpmIsmsL414.isEmpty()) return bpmIsmsL414Repository.findByFormId(formId).get(0);
+
+        return null;
+    }
 
 
-
+    @Override
+    public void endForm(EndEventDTO endEventDTO) {
+        BpmIsmsL414 bpmIsmsL414 = bpmIsmsL414Repository.findFirstByProcessInstanceId(endEventDTO.getProcessInstanceId());
+        bpmIsmsL414.setProcessInstanceStatus(endEventDTO.getProcessStatus());
+        bpmIsmsL414.setUpdateTime(Timestamp.valueOf(LocalDateTime.now()));
+        bpmIsmsL414Repository.save(bpmIsmsL414);
+    }
 }

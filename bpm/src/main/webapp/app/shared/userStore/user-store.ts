@@ -1,16 +1,18 @@
 import { Module } from 'vuex'
+import {EipCodeDataModel} from "@/shared/model/bpm/eipCodeDataModel";
+import {UserModel} from "@/shared/model/bpm/userModel";
 
 export interface PeoStateStorable {
-  userData: {user:string,unit:string},
+  userData: UserModel[] | null;
 }
 
-export const defaultPeoStateStorable: PeoStateStorable = {
-  userData: {user:'',unit:''},
-}
+// export const defaultPeoStateStorable: PeoStateStorable = {
+//   userData: {user:'',unit:''},
+// }
 
 export const userStore: Module<PeoStateStorable, any> = {
   state: {
-    ...defaultPeoStateStorable
+    userData:[],
   },
   getters: {
     getUserData: state => state.userData,
