@@ -11,6 +11,8 @@ import tw.gov.pcc.eip.domain.Eipcode;
 import tw.gov.pcc.eip.domain.Users;
 
 import java.io.File;
+import java.time.chrono.MinguoChronology;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -30,6 +32,18 @@ public class OnlineRegService {
     @Autowired
     UsersDao usersDao;
     private static final org.slf4j.Logger log = org.slf4j.LoggerFactory.getLogger(OnlineRegService.class);
+
+    DateTimeFormatter minguoformatter = DateTimeFormatter.ofPattern("yyy/MM/dd HH:mm")
+            .withChronology(MinguoChronology.INSTANCE)
+            .withLocale(Locale.TAIWAN);
+
+    DateTimeFormatter minguoformatterForInput = DateTimeFormatter.ofPattern("yyyMMdd")
+            .withChronology(MinguoChronology.INSTANCE)
+            .withLocale(Locale.TAIWAN);
+
+    DateTimeFormatter westdatetimeformatter = DateTimeFormatter.ofPattern("yyyyMMddHHmm");
+
+    DateTimeFormatter timeformatter = DateTimeFormatter.ofPattern("HH:mm");
 
     /**
      * 取得全部報名資格

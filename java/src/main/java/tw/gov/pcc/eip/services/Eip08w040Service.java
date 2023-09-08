@@ -56,7 +56,7 @@ public class Eip08w040Service {
 	 * 
 	 */
 	public void getCaseData(Eip08w040Case caseData) {
-		List<Applyitem>list = applyitemDao.selectByApply_dateAndProcess_status(caseData.getApply_dateStart(), caseData.getApply_dateEnd(),"2");
+		List<Applyitem>list = applyitemDao.selectByApply_dateAndProcess_status(caseData.getApply_dateStart(), caseData.getApply_dateEnd(),"2","");
 		List<Eip08w040Case>dataList = new ArrayList<>();
 		if(CollectionUtils.isNotEmpty(list)) {
 			for(Applyitem item : list) {

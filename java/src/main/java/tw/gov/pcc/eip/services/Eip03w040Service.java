@@ -10,6 +10,7 @@ import tw.gov.pcc.eip.common.report.Eip03w040l00xls;
 import tw.gov.pcc.eip.dao.EipcodeDao;
 import tw.gov.pcc.eip.dao.KeepTrkDtlDao;
 import tw.gov.pcc.eip.domain.Eipcode;
+import tw.gov.pcc.eip.framework.domain.UserBean;
 import tw.gov.pcc.eip.util.DateUtility;
 import tw.gov.pcc.eip.util.ExceptionUtility;
 
@@ -29,8 +30,14 @@ public class Eip03w040Service {
     private KeepTrkDtlDao keepTrkDtlDao;
     @Autowired
     private EipcodeDao eipcodeDao;
+    @Autowired
+    private UserBean userData;
+
     public void initDataList(Eip03w040Case caseData) {
         List<Eip03w040Case> list = keepTrkDtlDao.selectAll();
+        list.forEach(a->{
+            a.setSameDept(userData.getDeptId().equals(a.getTrkObj()));
+        });
         caseData.setEip03w040CaseList(list);
     }
 

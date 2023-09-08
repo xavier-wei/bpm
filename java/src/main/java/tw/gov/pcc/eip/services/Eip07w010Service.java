@@ -231,6 +231,7 @@ public class Eip07w010Service {
     public void gasAdd(GasRec gasData,Eip07w010Case caseData) throws Exception{
         gasData.setCarno1(caseData.getEip07w010CarDataList().get(0).getCarno1());
         gasData.setCarno2(caseData.getEip07w010CarDataList().get(0).getCarno2());
+        gasData.setFuel_date(DateUtility.changeDateType(gasData.getFuel_date()));
         gasData.setFuel_time(caseData.getGasH()+caseData.getGasM());
         gasData.setUpd_user(userData.getUserId());
         gasData.setCre_user(userData.getUserId());
@@ -238,6 +239,7 @@ public class Eip07w010Service {
         gasData.setCre_datetime(sysDate);
         gasData.setUpd_datetime(sysDate);
         gasRecDao.insert(gasData);
+        gasData.setFuel_date(DateUtility.changeDateType(gasData.getFuel_date()));
     }
 
     /**

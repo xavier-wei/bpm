@@ -24,6 +24,7 @@
             </tags:form-row>
             <tags:form-row>
             	<form:hidden path="using" value="${caseData.carBookingDetailData.using}"/>
+            	<form:hidden path="num_of_people" value="${caseData.carBookingDetailData.num_of_people}"/>
             	<div class="col-4 col-md-4">
 	            	<tags:text-item label="申請人">
 	            		<func:username userid="${caseData.carBookingDetailData.apply_user}"/>
@@ -99,58 +100,82 @@
             <c:if test="${not empty caseData.carBookingList}">
             	<c:choose>
             		<c:when test="${caseData.timeMK eq 'Y'}">
-            			<div class="pt-2 text-danger pl-2">本車該用車時間已有人預約</div>
+            			<div class="pt-2 text-danger pl-2 mb-2">本車該用車時間已有人預約</div>
             		</c:when>
             		<c:otherwise>
-            			<div class="pt-2 text-danger  pl-2">本車該用車時間無人預約</div>
+            			<div class="pt-2 text-danger  pl-2 mb-2">本車該用車時間無人預約</div>
             		</c:otherwise>
             	</c:choose>
             </c:if>
             </tags:form-row>
             <form:hidden path="timeMK" value="${caseData.timeMK}"/>
-            
             <c:if test="${not empty caseData.carBookingList}">
+            
+            <tags:text-item label="今日該車輛用車明細"></tags:text-item>
+                <table  class="table table-hover mb-4">
+            		<thead>
+            		<tr>
+            			<th style="width: 10%">派車單號</th>
+            			<th style="width: 10%">申請人</th>
+            			<th style="width: 10%">申請單位</th>
+            			<th style="width: 10%">用車區間</th>
+            			<th style="width: 30%">用車事由</th>
+            			<th style="width: 30%">目的地</th>
+            		</tr>
+            		</thead>
+            		<tbody>
+		            <c:forEach items="${caseData.carBookingList}" var="item" varStatus="status">
+            		<tr>
+		                 <td><c:out value="${item.applyid }"/></td>
+		                 <td class="text-left"><func:username userid="${item.apply_user}"/></td>
+		                 <td class="text-left"><func:dept deptid="${item.apply_dept}"/></td>
+		                 <td><c:out value="${item.using_time_s}"/>〜<c:out value="${item.using_time_e}"/></td>
+		                 <td class="text-left">
+						<span class="ellipsisStr">
+	                 		<c:out value="${item.apply_memo}"/>
+	                 	</span>
+	                 	</td>
+	                 	<td class="text-left"><c:out value="${item.destination}"/></td>
+            		</tr>
+		            </c:forEach>
+            		</tbody>
+            	</table>
+            <tags:text-item label="今日該車輛用車時間一覽"></tags:text-item>
 		    <table class="table table-bordered">
 		    	<thead>
 		        <tr>
-		        	<td  class="text-center">申請單位</td>
-		            <td  class="text-center">申請人</td>
-		            <td  class="text-center">用車區間</td>
-		            <td  class="text-center">目的地</td>
-		            <td colspan="2" class="p-2 text-center">0</td>
-		            <td colspan="2" class="p-2 text-center">1</td>
-		            <td colspan="2" class="p-2 text-center">2</td>
-		            <td colspan="2" class="p-2 text-center">3</td>
-		            <td colspan="2" class="p-2 text-center">4</td>
-		            <td colspan="2" class="p-2 text-center">5</td>
-		            <td colspan="2" class="p-2 text-center">6</td>
-		            <td colspan="2" class="p-2 text-center">7</td>
-		            <td colspan="2" class="p-2 text-center">8</td>
-		            <td colspan="2" class="p-2 text-center">9</td>
-		            <td colspan="2" class="p-2 text-center">10</td>
-		            <td colspan="2" class="p-2 text-center">11</td>
-		            <td colspan="2" class="p-2 text-center">12</td>
-		            <td colspan="2" class="p-2 text-center">13</td>
-		            <td colspan="2" class="p-2 text-center">14</td>
-		            <td colspan="2" class="p-2 text-center">15</td>
-		            <td colspan="2" class="p-2 text-center">16</td>
-		            <td colspan="2" class="p-2 text-center">17</td>
-		            <td colspan="2" class="p-2 text-center">18</td>
-		            <td colspan="2" class="p-2 text-center">19</td>
-		            <td colspan="2" class="p-2 text-center">20</td>
-		            <td colspan="2" class="p-2 text-center">21</td>
-		            <td colspan="2" class="p-2 text-center">22</td>
-		            <td colspan="2" class="p-2 text-center">23</td>
+		            <th class="p-2 text-center">用車區間</th>
+		            <th colspan="2" class="p-2 text-center">0</th>
+		            <th colspan="2" class="p-2 text-center">1</th>
+		            <th colspan="2" class="p-2 text-center">2</th>
+		            <th colspan="2" class="p-2 text-center">3</th>
+		            <th colspan="2" class="p-2 text-center">4</th>
+		            <th colspan="2" class="p-2 text-center">5</th>
+		            <th colspan="2" class="p-2 text-center">6</th>
+		            <th colspan="2" class="p-2 text-center">7</th>
+		            <th colspan="2" class="p-2 text-center">8</th>
+		            <th colspan="2" class="p-2 text-center">9</th>
+		            <th colspan="2" class="p-2 text-center">10</th>
+		            <th colspan="2" class="p-2 text-center">11</th>
+		            <th colspan="2" class="p-2 text-center">12</th>
+		            <th colspan="2" class="p-2 text-center">13</th>
+		            <th colspan="2" class="p-2 text-center">14</th>
+		            <th colspan="2" class="p-2 text-center">15</th>
+		            <th colspan="2" class="p-2 text-center">16</th>
+		            <th colspan="2" class="p-2 text-center">17</th>
+		            <th colspan="2" class="p-2 text-center">18</th>
+		            <th colspan="2" class="p-2 text-center">19</th>
+		            <th colspan="2" class="p-2 text-center">20</th>
+		            <th colspan="2" class="p-2 text-center">21</th>
+		            <th colspan="2" class="p-2 text-center">22</th>
+		            <th colspan="2" class="p-2 text-center">23</th>
 		        </tr>
 		        </thead>
 		        <c:forEach items="${caseData.carBookingList}" var="cbdata" varStatus="status">
 		        <tr style="background:#fff " class="datatr">
-		        	<td><func:dept deptid="${cbdata.apply_dept}"/></td>
-		            <td><func:username userid="${cbdata.apply_user}"/></td>
 		            <td class="text-center"><func:timeconvert value="${cbdata.using_time_s}"/>〜<func:timeconvert value="${cbdata.using_time_e}"/></td>
-		            <td><c:out value="${cbdata.destination}"/></td>
-		            <td class="p-2 datatd" title="00:00-00:30"></td>
-		            <td class="p-2 datatd" title="00:30-01:00"></td>
+		            <td class="p-2 datatd"  title="00:00-00:30"></td>
+		            <td class="p-2 datatd"  title="00:30-01:00"></td>
 		            <td class="p-2 datatd"  title="01:00-01:30"></td>
 		            <td class="p-2 datatd"  title="01:30-02:00"></td>
 		            <td class="p-2 datatd"  title="02:00-02:30"></td>
@@ -279,9 +304,15 @@
         		var num = ""; 
         		var timeMK = $('#timeMK').val();
         		var merge = $("input[name='merge']:checked").val();
-        		if(timeMK=='Y' && merge=='N'){num = [3,4,6,7];}
-        		if(timeMK=='N' && merge=='N'){num = [6,7];}
-        		if(merge=='Y'){num = [3,4];}
+        		
+        		if($('#num_of_people').val()>4){
+        			num = [1,2,3,4,5,7];
+        		} else {
+	        		if(timeMK=='Y' && merge=='N'){num = [1,2,4,5,6,7];}
+	        		if(timeMK=='N' && merge=='N'){num = [4,5,6,7];}
+	        		if(merge=='Y'){num = [1,2,6,7];}
+        		}
+        		
         		num.forEach(e => $("#status>option").eq(e).hide());
         	}
 

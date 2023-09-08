@@ -163,7 +163,7 @@ public class Eip00w050Controller extends BaseController {
             items.setHyperlink(eip00w050Case.getHyperlink());
             items.setSort_order(new BigDecimal(eip00w050Case.getSort_order()));
             items.setDisable(eip00w050Case.getDisable());
-            items.setSub_link(StringUtils.defaultIfBlank(StringUtils.substringBetween(items.getHyperlink(), "/", "@"), StringUtils.substring(items.getHyperlink(), 0, 10)));
+            items.setSub_link(StringUtils.defaultIfBlank(StringUtils.substringBetween(items.getHyperlink(), "/", "@"), StringUtils.substring(items.getHyperlink(), 1, 10)));
             items.setModify_user_id(userData.getUserId());
             items.setModify_timestamp(LocalDateTime.now());
             itemService.saveOrUpdate(items);

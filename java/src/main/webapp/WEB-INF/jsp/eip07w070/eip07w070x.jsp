@@ -35,23 +35,23 @@
 	                    <th class="align-middle"  style="width: 10%">用車時間起迄</th>
 	                    <th class="align-middle" style="width: 10%">車牌號碼</th>
 	                    <th class="align-middle" style="width: 10%">駕駛人姓名</th>
-	                    <th class="align-middle"  style="width: 40%">用車事由</th>
-	                    <th class="align-middle"  style="width: 10%">目的地</th>
+	                    <th class="align-middle"  style="width: 25%">用車事由</th>
+	                    <th class="align-middle"  style="width: 25%">目的地</th>
 	                    <th class="align-middle"  style="width: 10%">派車單號</th>
 	                </thead>
-	                <c:forEach items="${caseData.dataList}" var="item" varStatus="status">
 	                <tbody>
+	                <c:forEach items="${caseData.dataList}" var="item" varStatus="status">
 	                 	<tr>
 	                 		<td><func:minguo value="${item.using_date}"/></td>
 	                 		<td><func:timeconvert value="${item.using_time_s}"/>~<func:timeconvert value="${item.using_time_e}"/></td>
 	                 		<td><c:out value="${item.carno1}"/>-<c:out value="${item.carno2}"/></td>
 	                 		<td><c:out value="${item.name}"/></td>
 	                 		<td class="text-left"><span class="ellipsisStr"><c:out value="${item.apply_memo}"/></span></td>
-	                 		<td><c:out value="${item.destination}"/></td>
+	                 		<td class="text-left"><c:out value="${item.destination}"/></td>
 	                 		<td><c:out value="${item.applyid}"/></td>
 	                 	</tr>
-	                </tbody>
 	                </c:forEach>
+	                </tbody>
                 </table>
             	</tags:form-row>
          </c:if>
@@ -61,25 +61,27 @@
 				<tags:form-row>
          	    <table id="foodTable" class="table table-hover m-2">
 	                <thead>
-	                	<th class="align-middle" style="width: 10%">車牌號碼</th>
+	                	<th class="align-middle"  style="width: 10%">用車日期</th>
+	                    <th class="align-middle"  style="width: 10%">用車時間起迄</th>
+	                    <th class="align-middle"  style="width: 10%">車牌號碼</th>
+	                    <th class="align-middle"  style="width: 10%">駕駛人姓名</th>
+	                    <th class="align-middle"  style="width: 25%">用車事由</th>
+	                    <th class="align-middle"  style="width: 25%">目的地</th>
 	                    <th class="align-middle"  style="width: 10%">派車單號</th>
-	                    <th class="align-middle"  style="width: 10%">用車日期</th>
-	                    <th class="align-middle"  style="width: 10%">用車區間</th>
-	                    <th class="align-middle" style="width: 10%">駕駛人姓名</th>
-	                    <th class="align-middle"  style="width: 60%">用車事由</th>
 	                </thead>
-	                <c:forEach items="${caseData.dataList}" var="item" varStatus="status">
 	                <tbody>
-	                	<tr>
-	                	    <td><c:out value="${item.carno1}"/>-<c:out value="${item.carno2}"/></td>
-	                		<td><c:out value="${item.applyid}"/></td>
-	                		<td><func:minguo value="${item.using_date}"/></td>
-	                		<td><func:timeconvert value="${item.using_time_s}"/>~<func:timeconvert value="${item.using_time_e}"/></td>
-	                		<td><c:out value="${item.name}"/></td>
-	                		<td class="text-left"><span class="ellipsisStr"><c:out value="${item.apply_memo}"/></span></td>
-	                	</tr>
-	                </tbody>
+	                <c:forEach items="${caseData.dataList}" var="item" varStatus="status">
+	                 	<tr>
+	                 		<td><func:minguo value="${item.using_date}"/></td>
+	                 		<td><func:timeconvert value="${item.using_time_s}"/>~<func:timeconvert value="${item.using_time_e}"/></td>
+	                 		<td><c:out value="${item.carno1}"/>-<c:out value="${item.carno2}"/></td>
+	                 		<td><c:out value="${item.name}"/></td>
+	                 		<td class="text-left"><span class="ellipsisStr"><c:out value="${item.apply_memo}"/></span></td>
+	                 		<td class="text-left"><c:out value="${item.destination}"/></td>
+	                 		<td><c:out value="${item.applyid}"/></td>
+	                 	</tr>
                      </c:forEach>
+	                </tbody>
                  </table>
 		         </tags:form-row>
          </c:if>

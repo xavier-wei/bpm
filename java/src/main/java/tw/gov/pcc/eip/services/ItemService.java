@@ -1,8 +1,10 @@
 package tw.gov.pcc.eip.services;
 
+import lombok.AllArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 import tw.gov.pcc.eip.dao.ItemsDao;
+import tw.gov.pcc.eip.dao.Pwc_tb_tableau_user_infoDao;
 import tw.gov.pcc.eip.dao.Role_aclDao;
 import tw.gov.pcc.eip.domain.CursorAcl;
 import tw.gov.pcc.eip.domain.Items;
@@ -13,16 +15,15 @@ import java.util.Objects;
 import java.util.Optional;
 
 @Service
+@AllArgsConstructor
 public class ItemService {
 
     private final ItemsDao itemsDao;
 
     private final Role_aclDao roleAclDao;
 
-    public ItemService(ItemsDao itemsDao, Role_aclDao role_aclDao) {
-        this.itemsDao = itemsDao;
-        this.roleAclDao = role_aclDao;
-    }
+    private final Pwc_tb_tableau_user_infoDao pwc_tb_tableau_user_infoDao;
+
 
     public String getNewItemIdByLevel(List<CursorAcl> cursor, BigDecimal level,
                                       String pid) {
@@ -76,5 +77,6 @@ public class ItemService {
             roleAclDao.findByItem(item.getItem_id())
                     .forEach(roleAclDao::deleteByKey);
         });
+        pwc_tb_tableau_user_infoDao.findUnauthoriedList().forEach(pwc_tb_tableau_user_infoDao::deleteByKey);
     }
 }

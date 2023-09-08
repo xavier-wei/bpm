@@ -62,6 +62,14 @@
 	                    </form:select>
 	                </div>
 	            </tags:form-row>
+	            <div id = "div2N">
+		            <tags:form-row>
+			            <form:label cssClass="col-form-label star" path="keyinYm">鍵入年月：</form:label>
+		            	<div class="col-6 col-md form-inline">
+		            		<form:input path="keyinYm" cssClass="form-control num_only" size="5" maxlength="5"/>
+		                </div>
+		            </tags:form-row>
+	            </div>
 	            <tags:form-note>
 	                車牌號碼為必填欄位
 	            </tags:form-note>
@@ -83,6 +91,14 @@
             $('input[type=radio][name=carType]').change(function() {
             	changeCarDiv(this.value);
             });
+            
+            $('input[type=radio][name=carType]').change(function() {
+            	changeCarDiv(this.value);
+            });
+            
+            $('#btmk').change(function() {
+            	changeBtmkDiv(this.value);
+            });
          });
         
         function changeCarDiv(carType){
@@ -93,6 +109,15 @@
             else if (carType == 'N') {
             	$('#div1').show();
             	$('#div2').hide();
+            }
+        }
+        
+        function changeBtmkDiv(btmk){
+            if (btmk == 'Y') {
+            	$('#div2N').hide();
+            }
+            else if (btmk == 'N') {
+            	$('#div2N').show();
             }
         }
         

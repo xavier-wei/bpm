@@ -24,7 +24,9 @@ public class Eip07w060Case implements Serializable {
 	private List<String> minuteList;
 	private List<CarBooking> thisMomthCarbookingList;//查詢畫面下拉式選單用
 	
-	private List<CarBooking> bosscarMonthlyList;
+	private String queryMode;//Y為資料查詢結果頁面
+	private List<CarBooking> bosscarMonthlyList;//首長車非出差,用於輸入一個月的里程
+	private List<CaruseRec> bosscarMonthlyUseList;//首長車非出差,已輸入資料顯示用
 	private String keyinYm;//鍵入年月
 	private String carType;//Y:首長專用車,N:非首長專用車
 	private String applyid;//派車單號
@@ -53,6 +55,9 @@ public class Eip07w060Case implements Serializable {
 	
 	private CarBooking carbooking;
 	private CaruseRec caruserec;
+	
+	private String totalMileage;
+	private String totalGasused;
 	
 	
 }

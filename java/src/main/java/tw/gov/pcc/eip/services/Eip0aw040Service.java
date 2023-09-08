@@ -4,7 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import tw.gov.pcc.eip.dao.DeptsDao;
-import tw.gov.pcc.eip.dao.View_out_unitDao;
+import tw.gov.pcc.eip.dao.WEBITR_View_out_unitDao;
 import tw.gov.pcc.eip.domain.Depts;
 import tw.gov.pcc.eip.domain.View_oup_unit;
 import tw.gov.pcc.eip.util.BeanUtility;
@@ -26,14 +26,14 @@ import java.util.concurrent.atomic.AtomicInteger;
 public class Eip0aw040Service {
 
     private final DeptsDao deptsDao;
-    private final View_out_unitDao view_out_unitDao;
+    private final WEBITR_View_out_unitDao WEBITRView_out_unitDao;
 
     public void updateAllDeptsFromView_out_unit() {
         AtomicInteger passCnt = new AtomicInteger();
         AtomicInteger updateCnt = new AtomicInteger();
         AtomicInteger insertCnt = new AtomicInteger();
         AtomicInteger errorCnt = new AtomicInteger();
-        view_out_unitDao.selectAll().forEach(x -> {
+        WEBITRView_out_unitDao.selectAll().forEach(x -> {
             try {
                 Depts dept = deptsDao.findByPk(x.getUnit_id());
                 Optional.ofNullable(dept).ifPresentOrElse(y -> {

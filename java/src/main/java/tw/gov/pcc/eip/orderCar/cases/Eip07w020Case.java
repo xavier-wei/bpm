@@ -93,6 +93,10 @@ public class Eip07w020Case implements Serializable {
 	 */
 	private String applyName;
 
+	/**
+	 *報表(中文)
+	 */
+	private String rpApplyNm;
 
 
 	/**
@@ -115,6 +119,11 @@ public class Eip07w020Case implements Serializable {
 	 *申請單位(中文)
 	 */
 	private String applyUnitNm;
+
+	/**
+	 *申請單位明細(中文)
+	 */
+	private String rpApplyUnitNm;
 
 	/**
 	 *用車事由

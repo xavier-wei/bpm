@@ -17,16 +17,32 @@
 		<form:form id="eip07w020Form" name="eip07w020Form" modelAttribute="${caseKey}" method="POST">
 			 <fieldset>
       	<legend>查詢條件</legend>
-			<tags:form-row>
-				<div   class="col-md-4 d-flex" >
-					<form:label cssClass="col-form-label " path="lable">申請人：</form:label>
-					<label class="col-form-label text-left col-3" ><c:out value="${caseData.userName}"/></label>
-				</div>
-				<div   class="col-md-4 d-flex" >
-					<form:label cssClass="col-form-label " path="lable">申請單位：</form:label>
-					<label class="col-form-label text-left col-3" ><c:out value="${caseData.applyUnitNm}"/></label>
-				</div>
-			</tags:form-row>
+				 <c:choose>
+					 <c:when test="${caseData.isSecretarial eq 'Y'}">
+						 	 <tags:form-row>
+							<div   class="col-md-4 d-flex" >
+								<form:label cssClass="col-form-label " path="lable">申請人：</form:label>
+							</div>
+							<div   class="col-md-4 d-flex" >
+								<form:label cssClass="col-form-label " path="lable">申請單位：</form:label>
+							</div>
+						</tags:form-row>
+					 </c:when>
+					 <c:otherwise>
+						 <tags:form-row>
+							<div   class="col-md-4 d-flex" >
+								<form:label cssClass="col-form-label " path="lable">申請人：</form:label>
+								<label class="col-form-label text-left col-3" ><c:out value="${caseData.userName}"/></label>
+							</div>
+							<div   class="col-md-4 d-flex" >
+								<form:label cssClass="col-form-label " path="lable">申請單位：</form:label>
+								<label class="col-form-label text-left col-3" ><c:out value="${caseData.applyUnitNm}"/></label>
+							</div>
+						</tags:form-row>
+					 </c:otherwise>
+				 </c:choose>
+
+
 		<tags:form-row>
 				<div   class="col-md-4 d-flex" >
 					<form:label cssClass="col-form-label " path="lable">申請日期(起)：</form:label>
@@ -110,11 +126,11 @@
 									<td id="useCarMemo">
 										<c:out value='${item.useCarMemo}'/>
 									</td>
-									<td id="processStaus" class="text-center">
+									<td id="processStaus" class="text-left">
 										<c:out value='${item.processStaus}'/>-<c:out value='${item.processStausNm}'/>
 									</td>
 									<td class="text-left" >
-										<tags:button onclick="detailReport('${item.applyId}')"  >明細</tags:button>
+										<tags:button onclick="detailReport('${item.applyId}')"  >明細<i class="fas fa-file-alt"></i></tags:button>
 									</td>
 								</tr>
                             </c:forEach>

@@ -93,5 +93,25 @@ public class CaruseRecDaoImpl extends BaseDao<CaruseRec> implements CaruseRecDao
         List<CaruseRec> list = getNamedParameterJdbcTemplate().query(sql, new BeanPropertySqlParameterSource(caruseRec), BeanPropertyRowMapper.newInstance(CaruseRec.class));
         return CollectionUtils.isEmpty(list) ? null : list.get(0);
     }
+    
+    /**
+     * 根據applyid查詢
+     *
+     * @param CaruseRec 條件
+     * @return 唯一值
+     */
+    @Override
+    public List<CaruseRec> selectDataByCarAndYearMpnth(CaruseRec caruseRec) {
+        String sql = "SELECT * FROM " + TABLE_NAME + " t "
+        		   + " WHERE t.carno1 = :carno1 "
+        		   + "   AND t.carno2 = :carno2 "
+        		   + "   AND t.use_date like :useym + '%' ";
+        
+        SqlParameterSource params = new MapSqlParameterSource("carno1",caruseRec.getCarno1())
+                                                   .addValue("carno2", caruseRec.getCarno2())
+                                                   .addValue("useym", caruseRec.getUseYm());
+        List<CaruseRec> list = getNamedParameterJdbcTemplate().query(sql, params, BeanPropertyRowMapper.newInstance(CaruseRec.class));
+        return list;
+    }
 
 }

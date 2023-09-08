@@ -30,7 +30,7 @@ public interface ApplyitemDao {
 
     List<Applyitem> selectByApplyno(String applyno);
     
-    List<Applyitem> selectByApply_dateAndProcess_status(String apply_dateStart, String apply_dateEnd,String process_status);
+    List<Applyitem> selectByApply_dateAndProcess_status(String apply_dateStart, String apply_dateEnd,String process_status,String apply_dept);
 
     List<Applyitem> selectReconfirm_mkNData(List<String>applynos);
     

@@ -10,7 +10,7 @@
                     查詢<i class="fas fa-search"></i>
                 </tags:button>
                 <tags:button id="btnUpload">
-                    上稿<i class="fas fa-paper-plane"></i>
+                    上稿<i class="fas fa-arrow-circle-up"></i>
                 </tags:button>
                 <tags:button id="btnDelete">
                     刪除<i class="fas fa-trash-alt"></i>

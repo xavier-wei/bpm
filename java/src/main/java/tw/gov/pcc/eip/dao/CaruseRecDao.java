@@ -20,4 +20,6 @@ public interface CaruseRecDao {
     public int insert(CaruseRec caruseRec);
     
 	public CaruseRec selectDataByApplyid(CaruseRec caruseRec);
+
+	public List<CaruseRec> selectDataByCarAndYearMpnth(CaruseRec caruseRec);
 }

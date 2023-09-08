@@ -170,7 +170,7 @@ public class Eip03w030Service {
             innerMap.put("rptAskEnd", StringUtils.equals(list.get(0).getRptAskEnd(), "Y")? "是" : "否");  //是否要求解列(Y/N)
             innerMap.put("rptDept", list.get(0).getRptDept());   //指定填報單位
             innerMap.put("rptUser", list.get(0).getRptUser());    //指定填報人員
-            innerMap.put("rptUpdUser", list.get(0).getRptUpdUser()); //填報更新人員
+            innerMap.put("rptUpdUser", list.get(0).getRptUpdUser() != null? usersDao.selectByKey(list.get(0).getRptUpdUser()).getUser_name() : ""); //填報更新人員
             List<Depts> rptDeptNameList = new ArrayList<>();
             List<Users> rptUserNameList = new ArrayList<>();
             if (list.get(0).getRptDept() != null){
@@ -204,8 +204,8 @@ public class Eip03w030Service {
             innerMap.put("rptUpdDt", rptUpdDt);   //填報更新日期時間
             innerMap.put("supCont", list.get(0).getSupCont());    //回應內容
             innerMap.put("supAgree", list.get(0).getSupAgree());   //是否同意解列(Y/N)
-            innerMap.put("supDept", list.get(0).getSupDept());    //回應人員所屬部門
-            innerMap.put("supUser", list.get(0).getSupUser());    //回應人員
+            innerMap.put("supDept", list.get(0).getSupDept()!= null? deptsDao.findByPk(list.get(0).getSupDept()).getDept_name():"");    //回應人員所屬部門
+            innerMap.put("supUser", list.get(0).getSupUser()!= null? usersDao.selectByKey(list.get(0).getSupUser()).getUser_name():"");    //回應人員
 
             String supDt = DateUtility.parseLocalDateTimeToChineseDateTime(list.get(0).getSupDt(), true);
             if(StringUtils.isNotBlank(supDt)){

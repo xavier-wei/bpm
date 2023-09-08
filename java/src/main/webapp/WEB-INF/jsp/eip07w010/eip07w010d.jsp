@@ -215,24 +215,24 @@
 								<th style="vertical-align:middle;">加油日期</th>
 								<th style="vertical-align:middle;">時間</th>
 								<th style="vertical-align:middle;">加油金額</th>
-								<th style="vertical-align:middle;">加油量</th>
+								<th style="vertical-align:middle;">加油量(公升)</th>
 							</thead>
 							<tbody>
 							<c:forEach items="${caseData.oilList}" var="data" varStatus="status">
 								        <tr>
-											<td class="text-left"><c:out value="${status.count }"/></td>
-											<td class="text-left">
-											<c:out value="${fn:substring(data.fuelDate, 0,3)}"/>/<c:out value="${fn:substring(data.fuelDate, 3,5)}"/>/<c:out value="${fn:substring(data.fuelDate, 5,-1)}"/>
+											<td class="text-center"><c:out value="${status.count }"/></td>
+											<td class="text-center">
+											<func:minguo value="${data.fuelDate}"/>
 											</td>
-											<td class="text-left">
+											<td class="text-center">
 											<c:choose>
 												 <c:when test="${not empty data.fuelTime}">
 													<c:out value="${fn:substring(data.fuelTime, 0,2)}"/>:<c:out value="${fn:substring(data.fuelTime, 2,-1)}"/>
 												 </c:when>
 											</c:choose>
 											</td>
-											<td class="text-left"><c:out value="${data.gasMoney }"/></td>
-											<td class="text-left"><c:out value="${data.gasAmount }"/></td>
+											<td class="text-right"><c:out value="${data.gasMoney }"/></td>
+											<td class="text-right"><c:out value="${data.gasAmount }"/></td>
 										</tr>
 							    </c:forEach>
 							</tbody>
@@ -256,25 +256,25 @@
 								<th style="vertical-align:middle;">出場里程數</th>
 								<th style="vertical-align:middle;">回場里程數</th>
 								<th style="vertical-align:middle;">行駛公里數</th>
-								<th style="vertical-align:middle;">耗油量</th>
+								<th style="vertical-align:middle;">耗油量(公升)</th>
 <%--
 <%--							</tr>--%>
 							</thead>
 							<tbody>
 							<c:forEach items="${caseData.mileageList}" var="data" varStatus="status">
 								        <tr>
-											<td class="text-left"><c:out value="${status.count }"/></td>
-											<td class="text-left">
-												<c:out value="${fn:substring(data.useDate, 0,3)}"/>/<c:out value="${fn:substring(data.useDate, 3,5)}"/>/<c:out value="${fn:substring(data.useDate, 5,-1)}"/>
+											<td class="text-center"><c:out value="${status.count }"/></td>
+											<td class="text-center">
+												<func:minguo value="${data.useDate}"/>
 											</td>
-											<td class="text-left">
+											<td class="text-center">
 												<c:out value="${fn:substring(data.useTimeS, 0,2)}"/>:<c:out value="${fn:substring(data.useTimeS, 2,-1)}"/>
 												-<c:out value="${fn:substring(data.useTimeE, 0,2)}"/>:<c:out value="${fn:substring(data.useTimeE, 2,-1)}"/>
 											</td>
-											<td class="text-left"><c:out value="${data.milageStart }"/></td>
-											<td class="text-left"><c:out value="${data.milageEnd }"/></td>
-											<td class="text-left"><c:out value="${data.milage }"/></td>
-											<td class="text-left"><c:out value="${data.gasUsed }"/></td>
+											<td class="text-right"><c:out value="${data.milageStart }"/></td>
+											<td class="text-right"><c:out value="${data.milageEnd }"/></td>
+											<td class="text-right"><c:out value="${data.milage }"/></td>
+											<td class="text-right"><c:out value="${data.gasUsed }"/></td>
 										</tr>
 						        </c:forEach>
 							</tbody>
@@ -362,18 +362,7 @@
 		$('#btnGasAdd').click(function() {
 				$('#eip07w010Form').attr('action', '<c:url value="/Eip07w010_gasAdd.action" />').submit();
 		});
-			// function controlBtn(){
-			// 	$("#baseTab").click();
-			// 	var workTy=$("#workTy").val();
-			// 	if(workTy == 'Q'){
-			// 		$("#btnUpdate").show();
-			// 		$("#btnDelete").show();
-			// 		$("#btnInster").hide();
-			// 	} else {
-			// 		$("#btnUpdate").hide();
-			// 		$("#btnDelete").hide();
-			// 	}
-			// }
+
 		$('#bossMk').change(function() {//控制首長專用下拉式選單
 			controlCarStatusk();
 		});

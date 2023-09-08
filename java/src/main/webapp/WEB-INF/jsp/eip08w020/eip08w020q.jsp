@@ -35,7 +35,7 @@
             <tags:form-row>
             	<form:label cssClass="col-form-label apply_date" path="apply_date">申請日期：</form:label>
                 <div class="col-12 col-md">
-                    <form:input path="apply_date" cssClass="add form-control num_only dateTW date" maxlength="7"/>
+                    <form:input path="apply_date" cssClass="add form-control dateTW cdate" maxlength="7"/>
                 </div>
             </tags:form-row>
             <form:hidden path="oriApply_user"/>
@@ -46,24 +46,19 @@
 <jsp:attribute name="footers">
 <script>
         $(function() {
-
         	
             $('#btnConfirm').click(function() {
-           			$('#eip08w020Form').attr('action', '<c:url value="/Eip08w020_add.action" />').submit();
+           		$('#eip08w020Form').attr('action', '<c:url value="/Eip08w020_add.action" />').submit();
             });
             
             $('#btnSearch').click(function() {
 	    		$('#eip08w020Form').attr('action', '<c:url value="/Eip08w020_query.action" />').submit();
             });
-            
-    		
-            
+                        
             $('#btnClear').click(function() {
             	$('#eip08w020Form').attr('action', '<c:url value="/Eip08w020_enter.action" />').submit();
             });
-            
          });
-        
 </script>
 </jsp:attribute>
 </tags:layout>

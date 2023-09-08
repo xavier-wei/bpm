@@ -3,6 +3,7 @@ package tw.gov.pcc.eip.services;
 import java.io.ByteArrayOutputStream;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import org.apache.commons.collections.CollectionUtils;
@@ -13,11 +14,15 @@ import org.springframework.stereotype.Service;
 import tw.gov.pcc.eip.dao.CarBaseDao;
 import tw.gov.pcc.eip.dao.CarBookingDao;
 import tw.gov.pcc.eip.dao.Car_booking_recDao;
+import tw.gov.pcc.eip.dao.DeptsDao;
 import tw.gov.pcc.eip.dao.EipcodeDao;
+import tw.gov.pcc.eip.dao.UsersDao;
 import tw.gov.pcc.eip.domain.CarBase;
 import tw.gov.pcc.eip.domain.CarBooking;
 import tw.gov.pcc.eip.domain.Car_booking_rec;
+import tw.gov.pcc.eip.domain.Depts;
 import tw.gov.pcc.eip.domain.Eipcode;
+import tw.gov.pcc.eip.domain.Users;
 import tw.gov.pcc.eip.framework.domain.UserBean;
 import tw.gov.pcc.eip.orderCar.cases.Eip07w040Case;
 import tw.gov.pcc.eip.report.Eip07w040l00;
@@ -44,7 +49,12 @@ public class Eip07w040Service {
 	private Car_booking_recDao car_booking_recDao;
 	@Autowired
 	private TimeConversionService timeConversionService;
-	
+    @Autowired
+    private UsersDao usersDao;
+    @Autowired
+    private DeptsDao deptsDao;
+    @Autowired
+    private  MailService mailService;
 	
 	/**
 	 * 依照申請日期、用車日期起迄搜尋審核資料
@@ -121,7 +131,7 @@ public class Eip07w040Service {
 	 * @param caseData
 	 * 
 	 */
-	public void getDetailData(Eip07w040Case caseData) {
+	public void getDetailData(Eip07w040Case caseData,String enterpage) {
 		CarBooking carBookingDetailData = carBookingDao.selectByApplyId(caseData.getApplyid());
 		Eipcode eipcode = new Eipcode();
 		eipcode.setCodekind("CARTYPE");
@@ -133,13 +143,17 @@ public class Eip07w040Service {
 		carBookingDetailData.setUsingStr(usingTime[0].substring(0,2)+":"+usingTime[0].substring(2,4) + "~"+usingTime[1].substring(0,2)+":"+usingTime[1].substring(2,4));
 		carBookingDetailData.setApply_user(carBookingDetailData.getApply_user());
 		
-//		Depts deptName = deptsDao.findByPk(carBookingDetailData.getApply_dept());
-//		carBookingDetailData.setApply_dept(deptName.getDept_name());
-		caseData.setCarBookingDetailData(carBookingDetailData);//案件明細資料
+
+		caseData.setCarBookingDetailData(carBookingDetailData);//案件明細資料		
 		
-		List<CarBase> carList = carBaseDao.getAllData();//取得所有非首長&&carstatus=1的車輛
-		List<CarBase>carnoList = carList.stream().filter(e -> "N".equals(e.getBoss_mk()) && "1".equals(e.getCarstatus())).collect(Collectors.toList());
-		caseData.setCarnoList(carnoList);
+		if("eip07w040x".equals(enterpage)) {			
+			List<CarBase> carList = carBaseDao.getAllData();//取得所有非首長&&carstatus=1的車輛
+			List<CarBase>carnoList = carList.stream().filter(e -> "N".equals(e.getBoss_mk()) && "1".equals(e.getCarstatus())).collect(Collectors.toList());
+			caseData.setCarnoList(carnoList);
+		} else if("eip07w041x".equals(enterpage)) {
+			Car_booking_rec rec = car_booking_recDao.selectByKey(caseData.getApplyid());
+			caseData.setRecData(rec);
+		}
 
 	}
 	
@@ -286,10 +300,9 @@ public class Eip07w040Service {
 		for(String applyid : applyids) {
 			Eip07w040L_Vo vo = new Eip07w040L_Vo();
 			CarBooking data = carBookingDao.selectByApplyId(applyid);
-			vo.setApply_user(data.getApply_user());//申請人
-//			Depts deptName = deptsDao.findByPk(data.getApply_dept());
-			vo.setApply_dept(data.getApply_dept());
-			vo.setApply_date(data.getApply_date());//申請日期
+			vo.setApply_user(getUserNameOrDeptName(data.getApply_user(),true));//申請人
+			vo.setApply_dept(getUserNameOrDeptName(data.getApply_dept(),false));
+			vo.setApply_date(DateUtility.formatChineseDateString(data.getApply_date(),false));//申請日期
 			vo.setApply_memo(data.getApply_memo());//用車事由
 			vo.setDestination(data.getDestination());//目的地
 			Eipcode eipcode = new Eipcode();
@@ -298,9 +311,9 @@ public class Eip07w040Service {
 			Eipcode code = eipcodeDao.selectDataByPrimaryKey(eipcode);
 			vo.setApply_car_type(code.getCodename());//車輛種類
 			vo.setNum_of_people(data.getNum_of_people());//人數
-			vo.setUsing_date(data.getUsing_date());//用車日期
-			vo.setUsing_time_s(data.getUsing_time_s());//用車時間起
-			vo.setUsing_time_e(data.getUsing_time_e());//用車時間迄
+			vo.setUsing_date(DateUtility.formatChineseDateString(data.getUsing_date(),false));//用車日期
+			vo.setUsing_time_s(data.getUsing_time_s().substring(0,2)+":"+data.getUsing_time_s().substring(2,4));//用車時間起
+			vo.setUsing_time_e(data.getUsing_time_e().substring(0,2)+":"+data.getUsing_time_e().substring(2,4));//用車時間迄
 			vo.setCombine_mk(data.getCombine_mk());//並單註記
 			vo.setCombine_applyid(data.getCombine_applyid());//併單派車單號
 			vo.setCombine_reason(data.getCombine_reason());//併單原因
@@ -336,12 +349,42 @@ public class Eip07w040Service {
 		cb.setUpd_datetime(DateUtility.getNowWestDateTime(true));
 		cb.setUpd_user(userData.getUserId());
 		carBookingDao.updateByKey(cb);
+
 		
+		Users user = usersDao.selectByKey(cb.getApply_user());		
+        String using_date = DateUtility.formatChineseDateString(cb.getUsing_date(),false);
+        String using_time = cb.getUsing_time_s().substring(0,2)+cb.getUsing_time_s().substring(2,4)+"~"
+    	        +cb.getUsing_time_e().substring(0,2)+cb.getUsing_time_e().substring(2,3);
+		StringBuffer sb = new StringBuffer();
+        sb.append("派車單號：" + cb.getApplyid() +"\r\n");
+        sb.append("申請人:"+ getUserNameOrDeptName(cb.getApply_user(),true)+"\r\n");
+        sb.append("申請單位:"+ getUserNameOrDeptName(cb.getApply_dept(),false)+"\r\n");
+        sb.append("用車日期" + using_date +"\r\n");
+        sb.append("用車時間" + using_time +"\r\n");
+        sb.append("用車事由" + cb.getApply_memo());
+        mailService.sendEmailNow("【秘書處臨時取消派車】用車日期："+using_date+"，"+using_time +"車號："+cb.getCarno1()+"-"+cb.getCarno2()  ,user.getEmail() ,sb.toString());
 		
 		Car_booking_rec rec = new Car_booking_rec();
 		rec.setApplyid(caseData.getApplyid());
 		car_booking_recDao.deleteByKey(rec);
 
+	}
+	
+	public String getUserNameOrDeptName(String id , boolean getUserData) {
+		
+		if(getUserData) {
+			Users user = usersDao.selectByKey(id);
+			if(user != null) {
+				return StringUtils.isEmpty(user.getUser_name()) ? "" : user.getUser_name();
+			}
+		} else {
+			Depts dept = deptsDao.findByPk(id);
+			if(dept != null) {
+				return StringUtils.isEmpty(dept.getDept_name()) ? "" : dept.getDept_name();
+			}
+		}
+		
+		return "";
 	}
 	
 }

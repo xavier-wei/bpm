@@ -31,7 +31,8 @@
 					<form:radiobutton id="workTy" cssClass="checkedgreen" value="Q" path="workTy"/>查詢派車結果
 				</div>
 			</tags:form-row>
-			<tags:form-row>
+			<div id="applyData">
+				<tags:form-row>
 				<div class="col-md-4 d-flex">
 					<form:label cssClass="col-form-label  star" path="userName">申請人：</form:label>
 					<form:input id="userName" name="userName" path="userName" cssClass="form-control"   size="8" disabled="true"
@@ -45,6 +46,7 @@
 								maxlength="8" />
 				</div>
 			</tags:form-row>
+			</div>
 			<div id="A">
 				<tags:form-row>
 				<div class="col-md-4 d-flex">
@@ -84,6 +86,7 @@
                 若申請日期起或用車日期起有輸入時，只需擇一輸入
             </tags:form-note>
 			</div>
+			<form:hidden id="isSecretarial" path="isSecretarial" />
         </form:form>
     </tags:fieldset>
 </jsp:attribute>
@@ -114,18 +117,23 @@
 
 			function controlBt(){
 				var workTy=$("input[id=workTy]:checked").val();
+				var isSecretarial=$("#isSecretarial").val();
 				if(workTy == 'A'){
 					$("#A").show();
 					$("#Q").hide();
 					$("#btnAdd").show();
 					$("#btnSelect").hide();
 					$("#main>fieldset>legend").html("新增條件")
+					$("#applyData").show();
 				} else {
 					$("#Q").show();
 					$("#A").hide();
 					$("#btnSelect").show();
 					$("#btnAdd").hide();
 					$("#main>fieldset>legend").html("查詢條件")
+					if (isSecretarial==='Y'){
+						$("#applyData").hide();
+					}
 				}
 			}
          });

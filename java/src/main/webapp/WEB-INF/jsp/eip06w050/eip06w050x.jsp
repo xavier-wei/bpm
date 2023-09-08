@@ -14,7 +14,7 @@
 <jsp:attribute name="buttons">
 <!-- 明細頁 -->
     <tags:button id="btnSave">
-        儲存<i class="fas fa-user-check"></i>
+        送出<i class="fas fa-user-check"></i>
     </tags:button>
     <tags:button id="btnReply">
         返回<i class="fas fa-reply"></i>

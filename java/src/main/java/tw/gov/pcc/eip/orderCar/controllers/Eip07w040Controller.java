@@ -95,7 +95,7 @@ public class Eip07w040Controller extends BaseController {
 			caseData.setShowButton(false);
 			caseData.setUsing("");
 			caseData.setStatus("");
-			eip07w040Service.getDetailData(caseData);
+			eip07w040Service.getDetailData(caseData,"eip07w040x");
 		} catch (Exception e) {
 			log.error("Eip07w040Controller查詢失敗" + ExceptionUtility.getStackTrace(e));
 			setSystemMessage("查詢失敗");
@@ -211,7 +211,7 @@ public class Eip07w040Controller extends BaseController {
 			caseData.setShowButton(false);
 			caseData.setUsing("");
 			caseData.setStatus("");
-			eip07w040Service.getDetailData(caseData);
+			eip07w040Service.getDetailData(caseData,"eip07w041x");
 		} catch (Exception e) {
 			log.error("Eip07w040Controller查詢失敗" + ExceptionUtility.getStackTrace(e));
 			setSystemMessage("查詢失敗");

@@ -114,7 +114,7 @@ public class Eip08w040Controller extends BaseController {
 	}
 
 	/**
-	 * 秘書處進行領物單核發作業 查詢畫面
+	 * 秘書處進行領物單核發作業 核發畫面
 	 *
 	 * @param caseData
 	 * @param result
@@ -134,9 +134,16 @@ public class Eip08w040Controller extends BaseController {
 			setSystemMessage("資料更新失敗");
 			return LIST_APGE;
 		}
-
+		
+		eip08w040Service.getCaseData(caseData);
 		setSystemMessage("核發成功");
-		return QUERY_PAGE;
+		
+		if (CollectionUtils.isEmpty(caseData.getDataList())) {
+			return QUERY_PAGE;
+		} else {
+			return LIST_APGE;
+		}
+
 	}
 
 }

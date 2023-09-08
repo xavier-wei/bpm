@@ -22,7 +22,7 @@
             <tags:form-row>
             	<form:label cssClass="col-form-label star" path="applyYearMonth">申請年月：</form:label>
                 <div class="col-12 col-md d-flex align-items-center">
-                    <form:input path="applyYearMonth" cssClass="form-control num_only" />
+                    <form:input path="applyYearMonth" cssClass="form-control" />
                 </div>
             </tags:form-row>
             <tags:form-note>

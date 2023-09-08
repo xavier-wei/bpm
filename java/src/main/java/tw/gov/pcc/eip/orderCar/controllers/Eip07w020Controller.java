@@ -8,7 +8,11 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.SessionAttributes;
 import org.springframework.web.servlet.ModelAndView;
 import tw.gov.pcc.common.util.DateUtil;
+import tw.gov.pcc.eip.dao.DeptsDao;
+import tw.gov.pcc.eip.dao.UsersDao;
 import tw.gov.pcc.eip.domain.CarBooking;
+import tw.gov.pcc.eip.domain.Depts;
+import tw.gov.pcc.eip.domain.Users;
 import tw.gov.pcc.eip.framework.domain.UserBean;
 import tw.gov.pcc.eip.framework.spring.controllers.BaseController;
 import tw.gov.pcc.eip.framework.spring.support.FileOutputView;
@@ -51,6 +55,12 @@ public class Eip07w020Controller extends BaseController {
     @Autowired
     private Eip07w020Validator eip07w020Validator;
 
+    @Autowired
+    private UsersDao usersDao;
+
+    @Autowired
+    private DeptsDao deptsDao;
+
     @ModelAttribute(CASE_KEY)
     public Eip07w020Case getEip07w020Case() {
         Eip07w020Case caseData = new Eip07w020Case();
@@ -73,8 +83,14 @@ public class Eip07w020Controller extends BaseController {
         caseData.setApplyUnitNm(userData.getDeptName());
         caseData.setUserName(userData.getUserName());
         caseData.setApplyDate(DateUtil.getNowChineseDate());
-        caseData.setUseDateStar("");
-        caseData.setUseDateEnd("");
+        eip07w020Service.secretarialLogin(caseData);
+        if ("Y".equals(caseData.getIsSecretarial())){
+            caseData.setUseDateStar(DateUtil.getNowChineseDate());
+            caseData.setUseDateEnd(DateUtility.calDay(DateUtil.getNowChineseDate(),5));
+        }else {
+            caseData.setUseDateStar("");
+            caseData.setUseDateEnd("");
+        }
         caseData.setApplyDateStar("");
         caseData.setApplyDateEnd("");
         caseData.setCheckMk("false");
@@ -89,7 +105,12 @@ public class Eip07w020Controller extends BaseController {
         caseData.setApplyUnitNm(userData.getDeptName());
         caseData.setUserName(userData.getUserName());
         caseData.setApplyDate(DateUtil.getNowChineseDate());
-        caseData.setUseDateStar("");
+        eip07w020Service.secretarialLogin(caseData);
+        if ("Y".equals(caseData.getIsSecretarial())){
+            caseData.setUseDateStar(DateUtil.getNowChineseDate());
+        }else {
+            caseData.setUseDateStar("");
+        }
         caseData.setUseDateEnd("");
         caseData.setApplyDateStar("");
         caseData.setApplyDateEnd("");
@@ -160,8 +181,8 @@ public class Eip07w020Controller extends BaseController {
         }
         try {
             List<Eip07w020Case> data =new ArrayList<>();
-            data= eip07w020Service.quaryData(caseData);
             eip07w020Service.secretarialLogin(caseData);
+            data= eip07w020Service.quaryData(caseData);
             caseData.setApplyDateStar(DateUtility.changeDateType(caseData.getApplyDateStar()));
             caseData.setApplyDateEnd(DateUtility.changeDateType(caseData.getApplyDateEnd()));
             caseData.setUseDateStar(DateUtility.changeDateType(caseData.getUseDateStar()));
@@ -189,6 +210,12 @@ public class Eip07w020Controller extends BaseController {
         try {
             arrayList = new ArrayList<>();
             CarBooking detail = eip07w020Service.selectByApplyId(caseData.getApplyId());
+            List<Users> users=new ArrayList<>();
+            users = usersDao.selectDataByUserIdAndDeptId(detail.getApply_user(),detail.getApply_dept());
+            caseData.setRpApplyNm(users.get(0).getUser_name());
+            List<Depts> deptsData=new ArrayList<>();
+            deptsData =  deptsDao.findByDeptid(detail.getApply_dept());
+            caseData.setRpApplyUnitNm(deptsData.get(0).getDept_name());
             arrayList.add(detail);
             if ("U".equals(detail.getCarprocess_status())||"Y".equals(caseData.getIsSecretarial())){
                 caseData.setCheckMk("true");
@@ -201,7 +228,6 @@ public class Eip07w020Controller extends BaseController {
             return DATA_PAGE;
         }
         caseData.setDetailsList( arrayList.stream().map(x->(CarBooking)BeanUtility.cloneBean(x)).collect(Collectors.toList()));
-//        caseData.setDetailsList(arrayList);
         caseData.setChangeMkList(arrayList);
         eip07w020Service.secretarialChoseApplyid(caseData);
         return Details_PAGE;
@@ -250,9 +276,6 @@ public class Eip07w020Controller extends BaseController {
             return Details_PAGE;
         }
 
-//            if ("U".equals(caseData.getDetailsList().get(0).getCarprocess_status())){
-//                caseData.setRmMemo("2");
-//            }
             eip07w020Service.changeApplication(caseData);
             setSystemMessage(getUpdateSuccessMessage());
         }catch (Exception e){

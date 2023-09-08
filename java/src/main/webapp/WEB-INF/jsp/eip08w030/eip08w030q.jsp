@@ -19,8 +19,8 @@
             <tags:form-row>
             	<form:label cssClass="col-form-label star" path="applydateStart">申請日期：</form:label>
                 <div class="col-12 col-md d-flex align-items-center">
-                    <form:input path="applydateStart" cssClass="add form-control dateTW date" />~
-                    <form:input path="applydateEnd" cssClass="add form-control dateTW date" />
+                    <form:input path="applydateStart" cssClass="add form-control dateTW cdate" />~
+                    <form:input path="applydateEnd" cssClass="add form-control dateTW cdate" />
                 </div>
             </tags:form-row>
             <tags:form-note>
@@ -41,7 +41,8 @@
                 
                 if($('#applydateEnd').val()==''){
                 	$('#applydateEnd').val(changeDateType(getSysdate()));
-                }   	
+                }
+                
             	$('#eip08w030Form').attr('action', '<c:url value="/Eip08w030_query.action" />').submit();
             });
             

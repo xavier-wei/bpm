@@ -8,14 +8,14 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import tw.gov.pcc.common.annotation.LogField;
 import tw.gov.pcc.common.annotation.Table;
-import tw.gov.pcc.eip.dao.View_out_unitDao;
+import tw.gov.pcc.eip.dao.WEBITR_View_out_unitDao;
 
 /**
  * 單位資料檔
  *
  * @author swho
  */
-@Table(View_out_unitDao.TABLE_NAME)
+@Table(WEBITR_View_out_unitDao.TABLE_NAME)
 @Data
 @Builder
 @NoArgsConstructor

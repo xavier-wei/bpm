@@ -82,6 +82,43 @@
             		</tags:text-item>
             	</div>
             </tags:form-row>
+            <tags:form-row>
+            	<div class="col-4 col-md-4">
+            		<tags:text-item label="車牌號碼">
+		            	<c:out value="${caseData.recData.carno1}"/>-<c:out value="${caseData.recData.carno2}"/>
+            		</tags:text-item>
+            	</div>
+            </tags:form-row>
+            <tags:form-row>
+            	<div class="col-4 col-md-4">
+            		<tags:text-item label="是否併單">
+	            		<c:if test="${caseData.carBookingDetailData.combine_mk =='Y'}">是</c:if>
+	            		<c:if test="${caseData.carBookingDetailData.combine_mk =='N'}">否</c:if>
+            		</tags:text-item>
+            	</div>
+            	<c:if test="${caseData.carBookingDetailData.combine_mk =='Y'}">
+	            	<div class="col-4 col-md-4">
+	            		<tags:text-item label="併單單號">
+	            			<c:out value="${caseData.carBookingDetailData.combine_applyid}"/>
+	            		</tags:text-item>
+	            	</div>
+	            	<div class="col-4 col-md-4">
+	            		<tags:text-item label="併單原因">
+	            			<c:out value="${caseData.carBookingDetailData.combine_reason}"/>
+	            		</tags:text-item>
+	            	</div>
+            	</c:if>
+            </tags:form-row>
+            <tags:form-row>
+            	<div class="col-4 col-md-4">
+            		<tags:text-item label="派車單狀態">
+						<c:out value="${caseData.carBookingDetailData.carprocess_status}"/>-<func:code codekind = 'CARPROCESSSTATUS' codeno = '${caseData.carBookingDetailData.carprocess_status}' />
+            		</tags:text-item>
+            	</div>
+            </tags:form-row>
+            <tags:form-note>
+            	<font color="red">秘書處臨時取消派車(請務必聯絡到申請人才可取消)</font>
+            </tags:form-note>
         </form:form>
  		</fieldset>
 </jsp:attribute>

@@ -22,8 +22,6 @@ import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
-import java.time.chrono.MinguoChronology;
-import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -49,17 +47,8 @@ public class Eip00w420Service extends OnlineRegService {
     DeptsDao deptsDao;
     @Autowired
     EipcodeDao eipcodeDao;
-    DateTimeFormatter minguoformatter = DateTimeFormatter.ofPattern("yyy/MM/dd HH:mm")
-            .withChronology(MinguoChronology.INSTANCE)
-            .withLocale(Locale.TAIWAN);
-
-    DateTimeFormatter minguoformatterForInput = DateTimeFormatter.ofPattern("yyyMMdd")
-            .withChronology(MinguoChronology.INSTANCE)
-            .withLocale(Locale.TAIWAN);
-
-    DateTimeFormatter westdatetimeformatter = DateTimeFormatter.ofPattern("yyyyMMddHHmm");
-
-    DateTimeFormatter timeformatter = DateTimeFormatter.ofPattern("HH:mm");
+    @Autowired
+    MailService mailService;
 
     /**
      * 初始化下拉選單
@@ -463,7 +452,11 @@ public class Eip00w420Service extends OnlineRegService {
      * @param caseData
      */
     public void verify(Eip00w420Case caseData) {
+        Orformdata orformdata = orformdataDao.findByPk(caseData.getOrformno());
+        List<Orresult>oldResults = orresultDao.getDataByOrformno(caseData.getOrformno(),"D");
         List<Eip00w420VerifyCase>list = caseData.getVerList().stream().filter(t->StringUtils.isNotBlank(t.getSeqno())).collect(Collectors.toList());
+        // 審核結果map
+        Map<String,String>newResMap = list.stream().collect(Collectors.toMap(Eip00w420VerifyCase::getSeqno, Eip00w420VerifyCase::getIsPass));
         for (Eip00w420VerifyCase c : list) {
             Orresult orresult = orresultDao.findByPk(caseData.getOrformno(),c.getSeqno());
             if (!"D".equals(orresult.getIspass())) {
@@ -475,6 +468,15 @@ public class Eip00w420Service extends OnlineRegService {
                 orresultDao.updateData(orresult, caseData.getOrformno(),c.getSeqno());
             }
         }
+        replaceMailContent(orformdata);
+        oldResults.forEach(orresult -> {
+            String newPass = newResMap.get(orresult.getSeqno());
+            if (!StringUtils.equals(newPass, orresult.getIspass())) {
+                log.debug("寄出審核結果至:"+orresult.getRegisemail());
+                mailService.sendEmailNow(orformdata.getSubject(), orresult.getRegisemail(), "Y".equals(newPass)? orformdata.getPassmsg():orformdata.getRejectmst());
+            }
+        });
+
     }
 
     /**
@@ -823,6 +825,22 @@ public class Eip00w420Service extends OnlineRegService {
             }
         }
         return data;
+    }
+
+    /**
+     * 取代郵件內容
+     * @param orformdata
+     * @return
+     */
+    private void replaceMailContent(Orformdata orformdata) {
+        String passmsg = orformdata.getPassmsg();
+        String rejectmsg = orformdata.getRejectmst();
+        passmsg = StringUtils.replace(passmsg, "○年○月○日", DateUtility.formatChineseDateTimeString(orformdata.getProfmdt().format(minguoformatterForInput),true).trim());
+        passmsg = StringUtils.replace(passmsg, "○○○活動", orformdata.getTopicname());
+        rejectmsg = StringUtils.replace(rejectmsg, "○年○月○日", DateUtility.formatChineseDateTimeString(orformdata.getProfmdt().format(minguoformatterForInput),true).trim());
+        rejectmsg = StringUtils.replace(rejectmsg, "○○○活動", orformdata.getTopicname());
+        orformdata.setPassmsg(passmsg);
+        orformdata.setRejectmst(rejectmsg);
     }
 
 }

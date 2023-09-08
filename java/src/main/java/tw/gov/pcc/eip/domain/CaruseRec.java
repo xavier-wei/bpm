@@ -122,5 +122,6 @@ public class CaruseRec implements Serializable {
     @LogField
     private String upd_datetime;
 
+    private String useYm;//eip07w060
 
 }

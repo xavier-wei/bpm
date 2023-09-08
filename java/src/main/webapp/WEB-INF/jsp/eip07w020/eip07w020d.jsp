@@ -36,18 +36,17 @@
 			<tags:form-row>
 				<div  class="col-md d-flex">
 					<form:label cssClass="col-form-label" path="lable">申請人：</form:label>
-					<form:input id="apply_user" name="apply_user" path="detailsList[0].apply_user" cssClass="form-control "   size="8"
-								maxlength="8" disabled="true"/>
+					<label class="col-form-label text-left col-3" ><func:username userid="${caseData.detailsList[0].apply_user}"/></label>
+
+
 				</div>
 				<div  class="col-md d-flex">
 					<form:label cssClass="col-form-label" path="lable">申請單位：</form:label>
-					<form:input id="apply_dept" name="apply_dept" path="detailsList[0].apply_dept" cssClass="form-control"   size="8"
-								maxlength="8" disabled="true"/>
+					<label class="col-form-label text-left col-3" ><func:dept deptid="${caseData.detailsList[0].apply_dept}"/></label>
 				</div>
 				<div  class="col-md d-flex">
 					<form:label cssClass="col-form-label" path="lable">申請日期：</form:label>
-					<form:input id="apply_date" name="apply_date" path="detailsList[0].apply_date" cssClass="form-control  dateTW"   size="9"
-								maxlength="9" disabled="true"/>
+					<label class="col-form-label text-left col-3" ><func:minguo value="${caseData.detailsList[0].apply_date}"/></label>
 				</div>
 			</tags:form-row>
 			<tags:form-row>
@@ -395,13 +394,6 @@
 			});
 			$('#btnRmUpdate').click(function() {
 				var carprocess_status=$("#carprocess_status").val();
-				// var combineMk = $("#combine_mk").val();
-				// var rmMemo = '2';
-				// alert(carprocess_status+combineMk);
-				// if (carprocess_status=='U'||combineMk == 'Y'||carprocess_status == '6'||carprocess_status == '7') {
-				// 	alert("有近");
-				// 	$("#rmMemo").val(rmMemo);
-				// }
 				$('#eip07w020Form').attr('action', '<c:url value="/Eip07w020_changeApplication.action" />').submit();
             });
 
@@ -470,7 +462,6 @@
 					$("#checkMk").hide();
 				}
 				if (isSecretarial==='Y'){
-					$("#btnRmUpdate").show();
 					$("#btnDelete").hide();
 					$("#btnUpdate").hide();
 				}else if (carprocess_status=='1'||carprocess_status=='2'){
@@ -512,18 +503,34 @@
 
 			function btnRmUpdate() {
 				var check =$("input[name=checkMk]:checked").val();
-				if(check){
-					$("#btnRmUpdate").show();
-					$("#rmMemo").show();
-					$("#rmMemoLabel").show();
-					controlChangMk();
-				} else {
-					$("#btnRmUpdate").hide();
-					$("#rmMemo").hide()
-					$("#rmMemoLabel").hide()
-					$("#changMk").hide();
-					$("#cancelMg").hide();
+				var carprocess_status=$("#carprocess_status").val();
+				if (isSecretarial==='N'){
+					if(check){
+						$("#btnRmUpdate").show();
+						$("#rmMemo").show();
+						$("#rmMemoLabel").show();
+						controlChangMk();
+					} else {
+						$("#btnRmUpdate").hide();
+						$("#rmMemo").hide()
+						$("#rmMemoLabel").hide()
+						$("#changMk").hide();
+						$("#cancelMg").hide();
+					}
+				}else {
+					if(check){
+						$("#rmMemo").show();
+						$("#rmMemoLabel").show();
+						controlChangMk();
+						$("#changMk").hide();
+						if (carprocess_status==='3'||carprocess_status==='4'||carprocess_status==='5'||carprocess_status==='6'||carprocess_status==='7'){
+							$("#btnRmUpdate").show();
+						}else {
+							$("#btnRmUpdate").hide();
+						}
+					}
 				}
+
 			}
 
 			$('#rmMemo').change(function() {//控制異動原因下拉式選單
@@ -566,10 +573,11 @@
 					text: '3.秘書處臨時取消派車(請務必聯絡到申請人才可取消)'
 				});
 				if (isSecretarial==='Y') {
+					$("#btnPrint").hide();
 					$('#rmMemo option[value="1"]').remove()
 					$('#rmMemo option[value="2"]').remove()
 					$('#rmMemo').append(newOption);
-					$("#btnRmUpdate").text("取消申請");
+					$("#btnRmUpdate").text("臨時取消");
 					$("form").find(":input").prop("disabled", true);
 				}
 			}

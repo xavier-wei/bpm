@@ -6,7 +6,7 @@
 <tags:layout>
 <jsp:attribute name="buttons">
      <c:choose>
-        <c:when test="${caseData.carType == 'N' && caseData.carbooking.carprocess_status == 'F'}">
+        <c:when test="${caseData.queryMode == 'Y'}">
 	  	</c:when>
 	  	<c:otherwise>
 	  		<tags:button id="btnSubmit">確認<i class="fas fa-user-check"></i>
@@ -22,12 +22,19 @@
 <jsp:attribute name="contents">
     <tags:fieldset legend="里程鍵入">
 		<form:form id="eip07w060Form" name="eip07w060Form" modelAttribute="${caseKey}" method="POST">
-			<tags:form-row>
-				<div class="col-12 col-md-6">
-            		<form:label path="keyinYm" cssClass="col-form-label">鍵入年月：</form:label>
-            		<func:minguo value="${caseData.keyinYm}"/>
-            	</div> 
-			</tags:form-row>
+
+			<c:choose>
+				 <c:when test="${caseData.carType eq 'Y' && caseData.btmk eq 'N'}">
+					<tags:form-row>
+						<div class="col-12 col-md-6">
+							<form:label path="keyinYm" cssClass="col-form-label">鍵入年月：</form:label>
+							<func:minguo value="${caseData.keyinYm}"/>
+						</div>
+					</tags:form-row>
+				 </c:when>
+			</c:choose>
+
+
             <tags:form-row>
             	<div class="col-12 col-md-6">
             		<form:label path="carType" cssClass="col-form-label">首長專用車：</form:label>
@@ -85,18 +92,32 @@
             	</div>
             </tags:form-row>
             <tags:form-row>
-            	<c:if test = "${caseData.carType == 'N'}">
-	                <div class="col-12 col-md-6">
-	                	<form:label path="carbooking.apply_memo" cssClass="col-form-label">用車事由：</form:label>
-	                    <c:out value="${caseData.carbooking.apply_memo}"/>
-	                </div>
-		        </c:if>
-            	<c:if test = "${caseData.carType == 'Y'}">
-            		 <form:label path="carbooking.apply_memo" cssClass="col-form-label">用車事由：</form:label>
-	                 <div class="col-12 col-md-6 form-in-line">
-	                    <form:input path="carbooking.apply_memo" cssClass="form-control" size="50" maxlength="50"/>
-	                 </div>
-            	</c:if>
+            	<c:choose>
+            		<c:when test="${caseData.carType == 'Y' && caseData.queryMode != 'Y'}">
+	            	     <form:label path="carbooking.apply_memo" cssClass="col-form-label">用車事由：</form:label>
+		                 <div class="col-12 col-md-6 form-in-line">
+		                    <form:input path="carbooking.apply_memo" cssClass="form-control" size="50" maxlength="50"/>
+		                 </div>
+            		</c:when>
+            		<c:otherwise>
+	            		<div class="col-12 col-md-6">
+		                	<form:label path="carbooking.apply_memo" cssClass="col-form-label">用車事由：</form:label>
+		                    <c:out value="${caseData.carbooking.apply_memo}"/>
+		                </div>
+            		</c:otherwise>
+            	</c:choose>
+<%--             	<c:if test = "${caseData.carType == 'N'}"> --%>
+<!-- 	                <div class="col-12 col-md-6"> -->
+<%-- 	                	<form:label path="carbooking.apply_memo" cssClass="col-form-label">用車事由：</form:label> --%>
+<%-- 	                    <c:out value="${caseData.carbooking.apply_memo}"/> --%>
+<!-- 	                </div> -->
+<%-- 		        </c:if> --%>
+<%--             	<c:if test = "${caseData.carType == 'Y'}"> --%>
+<%--             		 <form:label path="carbooking.apply_memo" cssClass="col-form-label">用車事由：</form:label> --%>
+<!-- 	                 <div class="col-12 col-md-6 form-in-line"> -->
+<%-- 	                    <form:input path="carbooking.apply_memo" cssClass="form-control" size="50" maxlength="50"/> --%>
+<!-- 	                 </div> -->
+<%--             	</c:if> --%>
             </tags:form-row>
             <tags:form-row>
             	<c:if test = "${caseData.carType == 'N'}">
@@ -179,7 +200,7 @@
 		            </tags:form-row>
 		            <tags:form-row>
 		            	<c:choose>
-		            		<c:when test="${caseData.carType == 'N' && caseData.carbooking.carprocess_status == 'F'}">
+		            		<c:when test="${caseData.queryMode == 'Y'}">
 								<div class="col-12 col-md-2">
 									<form:label path="caruserec.driver_time_s" cssClass="col-form-label">開出時間：</form:label>
 									<c:out value="${caseData.caruserec.driver_time_s}"/>
@@ -226,7 +247,7 @@
 		            </tags:form-row>
 		            <tags:form-row>
 		            	<c:choose>
-		            		<c:when test="${caseData.carType == 'N' && caseData.carbooking.carprocess_status == 'F'}">
+		            		<c:when test="${caseData.queryMode == 'Y'}">
 								<div class="col-12 col-md-6">
 									<form:label path="caruserec.drive_road" cssClass="col-form-label star">行駛路線：</form:label>
 									<c:out value="${caseData.caruserec.drive_road}"/>
@@ -257,63 +278,64 @@
 									<th class="text-center" width=10%>出場公里數</th>
 									<th class="text-center" width=10%>回場公里數</th>
 									<th class="text-center" width=10%>行駛公里數</th>
-									<th class="text-center" width=10%>耗油公里數</th>
+									<th class="text-center" width=10%>耗油量(公升)</th>
 								</tr>
 							</thead>
 						    <tbody>
-		                        <c:forEach items="${caseData.bosscarMonthlyList}" var="item" varStatus="status">
-							        <tr>
-							        	<td class="text-center">
-							        		<func:minguo value="${item.using_date}"/>
-							        	</td>
-							        	<td class="text-center">
-							        		<div class="col-12 col-md form-inline">
-											 <form:select  path="bosscarMonthlyList[${status.index}].startuseH" cssClass="form-control">
-							                   	<form:option value=""></form:option>
-							                       <c:forEach var="hour" items="${caseData.hourList}" varStatus="timestatus">
-							                           <form:option value="${hour}"><c:out value="${hour}"/></form:option>
-							                       </c:forEach>
-							                    </form:select>
-											 ：
-											 <form:select  path="bosscarMonthlyList[${status.index}].startuseM" cssClass="form-control">
-							                   	<form:option value=""></form:option>
-							                       <c:forEach var="minute" items="${caseData.minuteList}" varStatus="timestatus">
-							                           <form:option value="${minute}"><c:out value="${minute}"/></form:option>
-							                       </c:forEach>
-							                 </form:select>
-							                </div>
-							        	</td>
-							        	<td class="text-center">
-							        		<div class="col-12 col-md form-inline">
-							        		 <form:select path="bosscarMonthlyList[${status.index}].enduseH" cssClass="form-control">
-							                   	<form:option value=""></form:option>
-							                       <c:forEach var="hour" items="${caseData.hourList}" varStatus="timestatus">
-							                           <form:option value="${hour}"><c:out value="${hour}"/></form:option>
-							                       </c:forEach>
-							                    </form:select>
-											 ：
-											 <form:select path="bosscarMonthlyList[${status.index}].enduseM" cssClass="form-control">
-							                   	<form:option value=""></form:option>
-							                       <c:forEach var="minute" items="${caseData.minuteList}" varStatus="timestatus">
-							                           <form:option value="${minute}"><c:out value="${minute}"/></form:option>
-							                       </c:forEach>
-							                 </form:select>
-							                </div>
-							        	</td>
-							        	<td class="text-center">
-											<form:input path="bosscarMonthlyList[${status.index}].milageStart" cssClass="form-control num_only milageStart${status.index}" onchange="calListMilage(${status.index})" size="10" maxlength="10"/>
-							        	</td>
-							        	<td class="text-center">
-											<form:input path="bosscarMonthlyList[${status.index}].milageEnd" cssClass="form-control num_only milageEnd${status.index}" onchange="calListMilage(${status.index})" size="10" maxlength="10"/>
-							        	</td>
-										<td class="text-center">
-											<form:input path="bosscarMonthlyList[${status.index}].milage" cssClass="form-control num_only milage${status.index}" size="10" maxlength="10"/>
-							            </td>
-							            <td class="text-center">	
-											<form:input path="bosscarMonthlyList[${status.index}].gasUsed" cssClass="form-control float_only" size="10" maxlength="10"/>
-		 	                        	</td>
-							        </tr>
-						        </c:forEach>
+						    	<c:if test = "${caseData.queryMode != 'Y'}">
+							    	<c:forEach items="${caseData.bosscarMonthlyList}" var="item" varStatus="status">
+								        <tr>
+								        	<td class="text-center">
+								        		<func:minguo value="${item.using_date}"/>
+								        	</td>
+								        	<td class="text-center">
+								        		<div class="col-12 col-md form-inline">
+												 <form:select  path="bosscarMonthlyList[${status.index}].startuseH" cssClass="form-control">
+								                   	<form:option value=""></form:option>
+								                       <c:forEach var="hour" items="${caseData.hourList}" varStatus="timestatus">
+								                           <form:option value="${hour}"><c:out value="${hour}"/></form:option>
+								                       </c:forEach>
+								                    </form:select>
+												 ：
+												 <form:select  path="bosscarMonthlyList[${status.index}].startuseM" cssClass="form-control">
+								                   	<form:option value=""></form:option>
+								                       <c:forEach var="minute" items="${caseData.minuteList}" varStatus="timestatus">
+								                           <form:option value="${minute}"><c:out value="${minute}"/></form:option>
+								                       </c:forEach>
+								                 </form:select>
+								                </div>
+								        	</td>
+								        	<td class="text-center">
+								        		<div class="col-12 col-md form-inline">
+								        		 <form:select path="bosscarMonthlyList[${status.index}].enduseH" cssClass="form-control">
+								                   	<form:option value=""></form:option>
+								                       <c:forEach var="hour" items="${caseData.hourList}" varStatus="timestatus">
+								                           <form:option value="${hour}"><c:out value="${hour}"/></form:option>
+								                       </c:forEach>
+								                    </form:select>
+												 ：
+												 <form:select path="bosscarMonthlyList[${status.index}].enduseM" cssClass="form-control">
+								                   	<form:option value=""></form:option>
+								                       <c:forEach var="minute" items="${caseData.minuteList}" varStatus="timestatus">
+								                           <form:option value="${minute}"><c:out value="${minute}"/></form:option>
+								                       </c:forEach>
+								                 </form:select>
+								                </div>
+								        	</td>
+								        	<td class="text-center">
+												<form:input path="bosscarMonthlyList[${status.index}].milageStart" cssClass="form-control num_only milageStart${status.index}" onchange="calListMilage(${status.index})" size="10" maxlength="10"/>
+								        	</td>
+								        	<td class="text-center">
+												<form:input path="bosscarMonthlyList[${status.index}].milageEnd" cssClass="form-control num_only milageEnd${status.index}" onchange="calListMilage(${status.index})" size="10" maxlength="10"/>
+								        	</td>
+											<td class="text-center">
+												<form:input path="bosscarMonthlyList[${status.index}].milage" cssClass="form-control num_only milage${status.index}" onchange="summilage()" size="10" maxlength="10"/>
+								            </td>
+								            <td class="text-center">	
+												<form:input path="bosscarMonthlyList[${status.index}].gasUsed" cssClass="form-control float_only gasused${status.index}" onchange="sumgasused()" size="10" maxlength="10"/>
+			 	                        	</td>
+								        </tr>
+							        </c:forEach>
 						        	<tr>
 						        		<td class="text-center">
 						        			合計
@@ -327,10 +349,59 @@
 		 	                        	<td class="text-center">
 		 	                        	</td>
 		 	                        	<td class="text-center">
+		 	                        		<span id="totalMileage">0</span>
+		 	                        	</td>
+		 	                        	<td class="text-center">
+		 	                        		<span id="totalGasused">0</span>
+		 	                        	</td>
+						        	</tr>
+						        </c:if>
+						        <c:if test = "${caseData.queryMode == 'Y'}">
+							    	<c:forEach items="${caseData.bosscarMonthlyUseList}" var="item" varStatus="status">
+								        <tr>
+								        	<td class="text-center">
+								        		<func:minguo value="${item.use_date}"/>
+								        	</td>
+								        	<td class="text-center">
+								        		<span><func:timeconvert value="${item.use_time_s}"/></span>
+								        	</td>
+								        	<td class="text-center">
+								        		<span><func:timeconvert value="${item.use_time_e}"/></span>
+								        	</td>
+								        	<td class="text-center">
+								        		<span><c:out value = "${item.milage_start}"/></span>
+											</td>
+								        	<td class="text-center">
+								        		<span><c:out value = "${item.milage_end}"/></span>
+											</td>
+											<td class="text-center">
+												<span><c:out value = "${item.milage}"/></span>
+											</td>
+								            <td class="text-center">
+								            	<span><c:out value = "${item.gas_used}"/></span>
+			 	                        	</td>
+								        </tr>
+							        </c:forEach>
+						        	<tr>
+						        		<td class="text-center">
+						        			合計
 		 	                        	</td>
 		 	                        	<td class="text-center">
 		 	                        	</td>
+		 	                        	<td class="text-center">
+		 	                        	</td>
+		 	                        	<td class="text-center">
+		 	                        	</td>
+		 	                        	<td class="text-center">
+		 	                        	</td>
+		 	                        	<td class="text-center">
+		 	                        		<span><c:out value = "${caseData.totalMileage}"/></span>
+		 	                        	</td>
+		 	                        	<td class="text-center">
+		 	                        		<span><c:out value = "${caseData.totalGasused}"/></span>
+		 	                        	</td>
 						        	</tr>
+						        </c:if>
 							</tbody> 
 						</table>  
 					</div>
@@ -352,7 +423,7 @@
 						        <tr>
 						        	<td class="text-center">
 										<c:choose>
-							           		<c:when test="${caseData.carType == 'N' && caseData.carbooking.carprocess_status == 'F'}">
+							           		<c:when test="${caseData.queryMode == 'Y'}">
 							           			<c:out value="${caseData.caruserec.milage_start}"/>
 										  	</c:when>
 										  	<c:otherwise>
@@ -363,7 +434,7 @@
 						        	</td>
 						        	<td class="text-center">
 						        		<c:choose>
-							           		<c:when test="${caseData.carType == 'N' && caseData.carbooking.carprocess_status == 'F'}">
+							           		<c:when test="${caseData.queryMode == 'Y'}">
 							           			<c:out value="${caseData.caruserec.milage_end}"/>
 										  	</c:when>
 										  	<c:otherwise>
@@ -373,7 +444,7 @@
 						        	</td>
 									<td class="text-center">
 										<c:choose>
-							           		<c:when test="${caseData.carType == 'N' && caseData.carbooking.carprocess_status == 'F'}">
+							           		<c:when test="${caseData.queryMode == 'Y'}">
 							           			<c:out value="${caseData.caruserec.milage}"/>
 										  	</c:when>
 										  	<c:otherwise>
@@ -383,7 +454,7 @@
 						            </td>
 						            <td class="text-center">	
 						            	<c:choose>
-							           		<c:when test="${caseData.carType == 'N' && caseData.carbooking.carprocess_status == 'F'}">
+							           		<c:when test="${caseData.queryMode == 'Y'}">
 							           			<c:out value="${caseData.caruserec.gas_used}"/>
 										  	</c:when>
 										  	<c:otherwise>
@@ -482,6 +553,30 @@
         		$(milagestring).val('');
         	}
         }
+        
+        function summilage(){
+            var total = 0;
+            $("input[class*='milage']").each(function () {
+                var value = $(this).val();
+                if ($.isNumeric(value)) {
+                    total += parseFloat(value);
+                }
+            });
+            $("#totalMileage").text(total);
+        }
+        
+        function sumgasused(){
+            var total = 0;
+            $("input[class*='gasused']").each(function () {
+                var value = $(this).val();
+                if ($.isNumeric(value)) {
+                    total += parseFloat(value);
+                }
+            });
+            $("#totalGasused").text(total);
+        }
+        
+        
         
 
 </script>

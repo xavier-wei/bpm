@@ -52,24 +52,24 @@ public class Eip07w070l00 extends PdfReportBase {
 		}
 		if("1".equals(caseData.getOrderCondition())){
 			addCell(table, 100, 1, "派車記錄表(依用車日期排序)" , titleFontSize, 0, CENTER);
-			addCell(table, 100, 1, "用車日期："+caseData.getUsing_date_s() +"至"+caseData.getUsing_date_e() , subTitleFontSizeMid, 0, CENTER);
+			addCell(table, 100, 1, "用車日期："+DateUtility.formatChineseDateString(caseData.getUsing_date_s(),false) +"至"+DateUtility.formatChineseDateString(caseData.getUsing_date_e(),false) , subTitleFontSizeMid, 0, CENTER);
 			addCellAssignVAlignmentAndAllPadding(table, 18, 1, "派車單號", subTitleFontSizeMid, 1, CENTER, MIDDLE, 0, 3);
-			addCellAssignVAlignmentAndAllPadding(table, 10, 1, "用車日期", subTitleFontSizeMid, 1, CENTER, MIDDLE, 0, 3);
-			addCellAssignVAlignmentAndAllPadding(table, 12, 1, "用車區間", subTitleFontSizeMid, 1, CENTER, MIDDLE, 0, 3);
+			addCellAssignVAlignmentAndAllPadding(table, 12, 1, "用車日期", subTitleFontSizeMid, 1, CENTER, MIDDLE, 0, 3);
+			addCellAssignVAlignmentAndAllPadding(table, 14, 1, "用車區間", subTitleFontSizeMid, 1, CENTER, MIDDLE, 0, 3);
 			addCellAssignVAlignmentAndAllPadding(table, 10, 1, "車牌號碼", subTitleFontSizeMid, 1, CENTER, MIDDLE, 0, 3);
 			addCellAssignVAlignmentAndAllPadding(table, 12, 1, "駕駛人姓名", subTitleFontSizeMid, 1, CENTER, MIDDLE, 0, 3);
-			addCellAssignVAlignmentAndAllPadding(table, 38, 1, "用車事由", subTitleFontSizeMid, 1, CENTER, MIDDLE, 0, 3);
+			addCellAssignVAlignmentAndAllPadding(table, 34, 1, "用車事由", subTitleFontSizeMid, 1, CENTER, MIDDLE, 0, 3);
 		}
 		
 		if("2".equals(caseData.getOrderCondition())){
 			addCell(table, 100, 1, "派車記錄表(依車牌號碼排序)" , titleFontSize, 0, CENTER);
-			addCell(table, 100, 1, "用車日期："+caseData.getUsing_date_s() +"至"+caseData.getUsing_date_e() , subTitleFontSizeMid, 0, CENTER);
+			addCell(table, 100, 1, "用車日期："+DateUtility.formatChineseDateString(caseData.getUsing_date_s(),false) +"至"+DateUtility.formatChineseDateString(caseData.getUsing_date_e(),false) , subTitleFontSizeMid, 0, CENTER);
 			addCell(table, 100, 1, "車牌號碼："+item.getCarno1()+"-"+item.getCarno2()+"，駕駛人："+item.getName() , subTitleFontSizeMid, 0, CENTER);
-			addCellAssignVAlignmentAndAllPadding(table, 10, 1, "用車日期", subTitleFontSizeMid, 1, CENTER, MIDDLE, 0, 3);
-			addCellAssignVAlignmentAndAllPadding(table, 12, 1, "用車區間", subTitleFontSizeMid, 1, CENTER, MIDDLE, 0, 3);
-			addCellAssignVAlignmentAndAllPadding(table, 50, 1, "用車事由", subTitleFontSizeMid, 1, CENTER, MIDDLE, 0, 3);
+			addCellAssignVAlignmentAndAllPadding(table, 12, 1, "用車日期", subTitleFontSizeMid, 1, CENTER, MIDDLE, 0, 3);
+			addCellAssignVAlignmentAndAllPadding(table, 14, 1, "用車區間", subTitleFontSizeMid, 1, CENTER, MIDDLE, 0, 3);
+			addCellAssignVAlignmentAndAllPadding(table, 28, 1, "用車事由", subTitleFontSizeMid, 1, CENTER, MIDDLE, 0, 3);
+			addCellAssignVAlignmentAndAllPadding(table, 28, 1, "目的地", subTitleFontSizeMid, 1, CENTER, MIDDLE, 0, 3);
 			addCellAssignVAlignmentAndAllPadding(table, 18, 1, "派車單號", subTitleFontSizeMid, 1, CENTER, MIDDLE, 0, 3);
-			addCellAssignVAlignmentAndAllPadding(table, 10, 1, "車牌號碼", subTitleFontSizeMid, 1, CENTER, MIDDLE, 0, 3);
 		}
         return table;
     }
@@ -82,20 +82,22 @@ public class Eip07w070l00 extends PdfReportBase {
     public void addDataRow(CarBooking item,Eip07w070Case caseData) throws Exception  {
     	if("1".equals(caseData.getOrderCondition())){
             addCellAssignVAlignmentAndAllPadding(table, 18, 1, item.getApplyid(), subTitleFontSizeMid, 1, CENTER, MIDDLE, 0, 3);
-            addCellAssignVAlignmentAndAllPadding(table, 10, 1, DateUtility.changeDateType(item.getUsing_date()), subTitleFontSizeMid, 1, CENTER, MIDDLE, 0, 3);
-            addCellAssignVAlignmentAndAllPadding(table, 12, 1,
-            		item.getUsing_time_s()+"~"+item.getUsing_time_e(), subTitleFontSizeMid, 1, CENTER, MIDDLE, 0, 3);
+            addCellAssignVAlignmentAndAllPadding(table, 12, 1, DateUtility.formatChineseDateString(DateUtility.changeDateType(item.getUsing_date()) ,false), subTitleFontSizeMid, 1, CENTER, MIDDLE, 0, 3);
+            addCellAssignVAlignmentAndAllPadding(table, 14, 1,
+            		convertTime(item.getUsing_time_s())
+            		+"~"+convertTime(item.getUsing_time_e()), subTitleFontSizeMid, 1, CENTER, MIDDLE, 0, 3);
             addCellAssignVAlignmentAndAllPadding(table, 10, 1, item.getCarno1()+"-"+item.getCarno2(), subTitleFontSizeMid, 1, CENTER, MIDDLE, 0, 3);
             addCellAssignVAlignmentAndAllPadding(table, 12, 1, item.getName(), subTitleFontSizeMid, 1, CENTER, MIDDLE, 0, 3);
-            addCellAssignVAlignmentAndAllPadding(table, 38, 1, item.getApply_memo(), subTitleFontSizeMid, 1, LEFT, MIDDLE, 0, 3);
+            addCellAssignVAlignmentAndAllPadding(table, 34, 1, item.getApply_memo(), subTitleFontSizeMid, 1, LEFT, MIDDLE, 0, 3);
     	}
     	
     	if("2".equals(caseData.getOrderCondition())){
-            addCellAssignVAlignmentAndAllPadding(table, 10, 1, DateUtility.changeDateType(item.getUsing_date()), subTitleFontSizeMid, 1, CENTER, MIDDLE, 0, 3);
-            addCellAssignVAlignmentAndAllPadding(table, 12, 1, item.getUsing_time_s()+"~"+item.getUsing_time_e(), subTitleFontSizeMid, 1, CENTER, MIDDLE, 0, 3);
-            addCellAssignVAlignmentAndAllPadding(table, 50, 1, item.getApply_memo(), subTitleFontSizeMid, 1, LEFT, MIDDLE, 0, 3);
+            addCellAssignVAlignmentAndAllPadding(table, 12, 1, DateUtility.formatChineseDateString(DateUtility.changeDateType(item.getUsing_date()) ,false), subTitleFontSizeMid, 1, CENTER, MIDDLE, 0, 3);
+            addCellAssignVAlignmentAndAllPadding(table, 14, 1, convertTime(item.getUsing_time_s())
+            		+"~"+convertTime(item.getUsing_time_e()), subTitleFontSizeMid, 1, CENTER, MIDDLE, 0, 3);
+            addCellAssignVAlignmentAndAllPadding(table, 28, 1, item.getApply_memo(), subTitleFontSizeMid, 1, LEFT, MIDDLE, 0, 3);
+            addCellAssignVAlignmentAndAllPadding(table, 28, 1, item.getDestination(), subTitleFontSizeMid, 1, LEFT, MIDDLE, 0, 3);
             addCellAssignVAlignmentAndAllPadding(table, 18, 1, item.getApplyid(), subTitleFontSizeMid, 1, CENTER, MIDDLE, 0, 3);
-    		addCellAssignVAlignmentAndAllPadding(table, 10, 1, item.getCarno1()+"-"+item.getCarno2(), subTitleFontSizeMid, 1, CENTER, MIDDLE, 0, 3);
     	}
     }
     
@@ -149,4 +151,8 @@ public class Eip07w070l00 extends PdfReportBase {
         }
     }
 
+    private String convertTime(String time) {
+    	String str = time.toString().substring(0,2)+":"+time.toString().substring(2,4);
+    	return str;
+    }
 }

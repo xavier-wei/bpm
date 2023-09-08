@@ -61,9 +61,9 @@ public class Eip08w030Service {
 	 * @param caseData
 	 * 
 	 */
-	public void getCaseData(Eip08w030Case caseData) {
+	public void getCaseData(Eip08w030Case caseData,UserBean userData) {
 		List<Applyitem> list = applyitemDao.selectByApply_dateAndProcess_status(caseData.getApplydateStart(),
-				caseData.getApplydateEnd(), "1");
+				caseData.getApplydateEnd(), "1",userData.getDeptId());
 		List<Eip08w030Case> dataList = new ArrayList<>();
 		if (CollectionUtils.isNotEmpty(list)) {
 			for (Applyitem item : list) {

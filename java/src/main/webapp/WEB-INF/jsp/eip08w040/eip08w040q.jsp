@@ -42,6 +42,7 @@
                 if($('#apply_dateEnd').val()==''){
                 	$('#apply_dateEnd').val(changeDateType(getSysdate()));
                 }
+                
             	$('#eip08w040Form').attr('action', '<c:url value="/Eip08w040_query.action" />').submit();
             });
             

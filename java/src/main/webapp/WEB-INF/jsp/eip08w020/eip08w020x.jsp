@@ -30,7 +30,7 @@
             	</div>
             	<div class="col-4 col-md-4">
 	            	<tags:text-item label="申請日期">
-	            		<func:minguo value="${caseData.apply_date}" pattern="yyy/MM/dd"/>
+	            		<func:minguo value="${caseData.apply_date}"/>
 	            	</tags:text-item>
             	</div>
             </tags:form-row>
@@ -48,7 +48,7 @@
                             <th style="width: 30%"><font color="red">*</font>品名</th>
                             <th style="width: 10%">庫存數量</th>
                             <th style="width: 10%"><font color="red">*</font>申請數量</th>
-                            <th style="width: 10%"><font color="red">*</font>單位</th>
+                            <th style="width: 10%">單位</th>
                         </thead>
 					<c:forEach  begin="0" end="14" step="1" var="num"  varStatus="numstatus">
                         <tbody>

@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.client.RestTemplate;
 import tw.gov.pcc.eip.dao.EipcodeDao;
-import tw.gov.pcc.eip.dao.View_flowDao;
+import tw.gov.pcc.eip.dao.WEBITR_View_flowDao;
 import tw.gov.pcc.eip.domain.Eipcode;
 import tw.gov.pcc.eip.domain.View_flow;
 import tw.gov.pcc.eip.framework.domain.UserBean;
@@ -41,7 +41,7 @@ public class Eip0aw010Controller {
     private static final PropertyPlaceholderHelper helper = new PropertyPlaceholderHelper("${", "}");
     private final UserBean userData;
     private final EipcodeDao eipcodeDao;
-    private final View_flowDao viewFlowDao;
+    private final WEBITR_View_flowDao viewFlowDao;
 
 
     @RequestMapping(value = "/Common_getSysApi.action", method = RequestMethod.POST)

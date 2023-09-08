@@ -139,17 +139,21 @@ public class ApplyitemDaoImpl extends BaseDao<Applyitem> implements ApplyitemDao
 
 
 	@Override
-	public List<Applyitem> selectByApply_dateAndProcess_status(String apply_dateStart, String apply_dateEnd,String process_status) {
+	public List<Applyitem> selectByApply_dateAndProcess_status(String apply_dateStart, String apply_dateEnd,String process_status,String apply_dept) {
         StringBuilder sql=new StringBuilder();
         sql.append(" SELECT  * ");
         sql.append(" FROM " + TABLE_NAME + " WHERE    ");
         sql.append(" apply_date >= :apply_dateStart ");
         sql.append(" And apply_date <= :apply_dateEnd ");
         sql.append(" And process_status= :process_status ");
+        if(StringUtils.isNotBlank(apply_dept)) {        	
+        	sql.append(" And apply_dept = :apply_dept ");
+        }
         sql.append(" And seqno = '1' order by applyno");
         
         SqlParameterSource params = new MapSqlParameterSource("apply_dateStart", DateUtility.changeDateType(apply_dateStart))
         		.addValue("apply_dateEnd", DateUtility.changeDateType(apply_dateEnd))
+        			.addValue("apply_dept", apply_dept)
         		.addValue("process_status", process_status);
 
         List<Applyitem> list = getNamedParameterJdbcTemplate().query(sql.toString(), params,

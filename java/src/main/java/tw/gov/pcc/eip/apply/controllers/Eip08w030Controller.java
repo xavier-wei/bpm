@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.SessionAttributes;
 import org.springframework.web.servlet.ModelAndView;
 
 import tw.gov.pcc.eip.apply.cases.Eip08w030Case;
+import tw.gov.pcc.eip.framework.domain.UserBean;
 import tw.gov.pcc.eip.framework.spring.controllers.BaseController;
 import tw.gov.pcc.eip.services.Eip08w030Service;
 import tw.gov.pcc.eip.util.BeanUtility;
@@ -35,7 +36,10 @@ public class Eip08w030Controller extends BaseController {
 	private static final String QUERY_PAGE = "/eip08w030/eip08w030q";// 選擇頁
 	private static final String LIST_APGE = "/eip08w030/eip08w030x";// 資料列表
 	private static final String DETAIL_PAGE = "/eip08w030/eip08w330x";// 明細頁
-
+    
+	@Autowired
+    private UserBean userData;
+	
 	@Autowired
 	private Eip08w030Service eip08w030Service;
 
@@ -72,7 +76,7 @@ public class Eip08w030Controller extends BaseController {
 		if (result.hasErrors()) {
 			return QUERY_PAGE;
 		}
-		eip08w030Service.getCaseData(caseData);
+		eip08w030Service.getCaseData(caseData,userData);
 		if(CollectionUtils.isEmpty(caseData.getDataList())) {
 			setSystemMessage("查無資料");
 			return QUERY_PAGE;
@@ -135,9 +139,17 @@ public class Eip08w030Controller extends BaseController {
 			setSystemMessage("查詢失敗");
 			return LIST_APGE;
 		}
-		Eip08w030Case newCase = new Eip08w030Case();
-		BeanUtility.copyProperties(caseData, newCase);// 進來時清除caseData
-		caseData.setApplydateStart(DateUtility.getNowChineseDate());
+		
+		eip08w030Service.getCaseData(caseData,userData);
+		if(CollectionUtils.isEmpty(caseData.getDataList())) {
+			setSystemMessage("查無資料");
+			Eip08w030Case newCase = new Eip08w030Case();
+			BeanUtility.copyProperties(caseData, newCase);// 進來時清除caseData
+			caseData.setApplydateStart(DateUtility.getNowChineseDate());
+		} else {
+			return LIST_APGE;
+		}
+		
 		setSystemMessage("複核成功");
 		return QUERY_PAGE;
 	}

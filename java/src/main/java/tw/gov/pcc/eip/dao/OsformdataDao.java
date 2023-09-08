@@ -27,7 +27,7 @@ public interface OsformdataDao {
      * @param osformdata
      * @return
      */
-    public List<Osformdata> getListByMultiCondition(Osformdata osformdata);
+    public List<Osformdata> getListByMultiCondition(Osformdata osformdata, List<String>statusList);
 
     /**
      * 取得本月最大流水號

@@ -5,10 +5,13 @@ import java.util.List;
 
 import javax.print.DocFlavor.STRING;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.BindingResult;
+
+import com.cronutils.utils.DateUtils;
 
 import tw.gov.pcc.eip.dao.CarBaseDao;
 import tw.gov.pcc.eip.dao.CarBookingDao;
@@ -51,6 +54,7 @@ public class Eip07w060Service {
 		caseData.setBosscarList(getBosscarnoList());
 		caseData.setCarType("N");
 		caseData.setBtmk("N");
+		caseData.setKeyinYm(DateUtility.getNowChineseYearMonth());
 		setTimelist(caseData);
 		caseData.setThisMomthCarbookingList(carBookingDao.selectOneMonthApplyidAndStatusIn3467F(DateUtility.getNowWestYearMonth()));
 	}
@@ -77,6 +81,10 @@ public class Eip07w060Service {
 			}
 			if(StringUtils.isBlank(caseData.getBtmk())) {
 				bindingResult.reject(null, "出差排程為必填欄位");
+			}
+			
+			if(StringUtils.equals("N", caseData.getBtmk()) && StringUtils.isBlank(caseData.getKeyinYm())) {
+				bindingResult.reject(null, "鍵入年月為必填欄位");
 			}
 			
 		}
@@ -307,26 +315,36 @@ public class Eip07w060Service {
 			carnoLast3 = carnoString;
 		}
 		
-		
-		CarBooking insertbooking = new CarBooking();
 		if(StringUtils.equals("N", caseData.getBtmk())) {
-			List<CarBooking>  carbookingList= new ArrayList<CarBooking>();
-			String westYm = DateUtility.getNowWestYearMonth();
-			int days = DateUtility.lastDay(DateUtility.getNowWestDate());
-			for(int i = 1; i<=days ; i++) {
-				CarBooking cb = new CarBooking();
-				String westYmD = westYm + (i<10?"0"+String.valueOf(i):String.valueOf(i));
-				cb.setUsing_date(westYmD);
-				cb.setStartuseH("08");
-				cb.setStartuseM("00");
-				cb.setEnduseH("18");
-				cb.setEnduseM("00");
-				carbookingList.add(cb);
+			String westKeyinYm = DateUtility.changeChineseYearMonthType(caseData.getKeyinYm());
+			
+			List<CaruseRec> curList = findBossCarYMRecode(carnos[0], carnos[1], caseData.getKeyinYm());
+			
+			if(CollectionUtils.isNotEmpty(curList)) {
+				int sumMilage = curList.stream().mapToInt(cur -> Integer.parseInt(cur.getMilage())).sum();
+				double sumGasused = curList.stream().mapToDouble(cur -> Double.parseDouble(cur.getGas_used())).sum();
+				caseData.setQueryMode("Y");
+				caseData.setBosscarMonthlyUseList(curList);
+				caseData.setTotalMileage(String.valueOf(sumMilage));
+				caseData.setTotalGasused(String.valueOf(sumGasused));
+			}else {
+				List<CarBooking>  carbookingList= new ArrayList<CarBooking>();
+				int days = DateUtility.lastDay(DateUtility.getNowWestDate());
+				for(int i = 1; i<=days ; i++) {
+					CarBooking cb = new CarBooking();
+					String westYmD = westKeyinYm + (i<10?"0"+String.valueOf(i):String.valueOf(i));
+					cb.setUsing_date(westYmD);
+					cb.setStartuseH("08");
+					cb.setStartuseM("00");
+					cb.setEnduseH("18");
+					cb.setEnduseM("00");
+					carbookingList.add(cb);
+				}
+				caseData.setBosscarMonthlyList(carbookingList);
 			}
-			caseData.setKeyinYm(westYm);
-			caseData.setBosscarMonthlyList(carbookingList);
 		}
 		
+		CarBooking insertbooking = new CarBooking();
 		insertbooking.setCarno1(carnos[0]);
 		insertbooking.setCarno2(carnos[1]);
 		insertbooking.setApply_memo("接送長官");
@@ -343,6 +361,7 @@ public class Eip07w060Service {
 		caseData.setCarbooking(carbooking);
 		
 		if(StringUtils.equals("F", carbooking.getCarprocess_status())) {
+			caseData.setQueryMode("Y");
 			CaruseRec caruseRec = new CaruseRec();
 			caruseRec.setApplyid(carbooking.getApplyid());
 			caseData.setCaruserec(caruseRecDao.selectDataByApplyid(caruseRec));
@@ -405,5 +424,13 @@ public class Eip07w060Service {
 				return "0";
 			}
 		}
+    }
+    
+    private List<CaruseRec> findBossCarYMRecode(String carno1, String carno2, String keyinYm){
+    	CaruseRec caruseRec = new CaruseRec();
+    	caruseRec.setCarno1(carno1);
+    	caruseRec.setCarno2(carno2);
+    	caruseRec.setUseYm(DateUtility.changeChineseYearMonthType(keyinYm));
+    	return caruseRecDao.selectDataByCarAndYearMpnth(caruseRec);
     }
 }

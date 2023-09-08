@@ -75,9 +75,17 @@ public class OsformdataDaoImpl extends BaseDao<Osformdata> implements Osformdata
     }
 
     @Override
-    public List<Osformdata> getListByMultiCondition(Osformdata osformdata) {
-
-        return new ArrayList<>();
+    public List<Osformdata> getListByMultiCondition(Osformdata osformdata, List<String> statusList) {
+        StringBuilder sql = new StringBuilder();
+        sql.append(" SELECT ");
+        sql.append(ALL_COLUMNS_SQL);
+        sql.append(" FROM " + TABLE_NAME);
+        sql.append(" WHERE status IN (:statusList) ");
+        Map<String, Object> params = new HashMap<>();
+        params.put("statusList", statusList);
+        List<Osformdata> list = getNamedParameterJdbcTemplate().query(sql.toString(),params,
+                BeanPropertyRowMapper.newInstance(Osformdata.class));
+        return CollectionUtils.isEmpty(list) ? new ArrayList<>() : list;
     }
 
 

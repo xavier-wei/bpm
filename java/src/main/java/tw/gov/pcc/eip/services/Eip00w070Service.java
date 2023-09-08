@@ -8,12 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import tw.gov.pcc.eip.adm.cases.Eip00w070Case;
-import tw.gov.pcc.eip.dao.ItemsDao;
-import tw.gov.pcc.eip.dao.PortalMenuAclDao;
-import tw.gov.pcc.eip.dao.Role_aclDao;
-import tw.gov.pcc.eip.dao.RolesDao;
-import tw.gov.pcc.eip.dao.User_rolesDao;
-import tw.gov.pcc.eip.dao.UsersDao;
+import tw.gov.pcc.eip.dao.*;
 import tw.gov.pcc.eip.domain.CursorAcl;
 import tw.gov.pcc.eip.domain.Role_acl;
 import tw.gov.pcc.eip.domain.Roles;
@@ -44,6 +39,8 @@ public class Eip00w070Service {
     ItemsDao itemsDao;
     @Autowired
     Role_aclDao role_aclDao;
+	@Autowired
+	Pwc_tb_tableau_user_infoDao pwc_tb_tableau_user_infoDao;
     
     private final String SYS_ID = "EI";
     
@@ -117,6 +114,7 @@ public class Eip00w070Service {
     			user_rolesDao.deleteByKey(delUserRoles);
     		}
     	}
+		deleteUnauthorizedTabList();
     }
     
     /*
@@ -139,14 +137,20 @@ public class Eip00w070Service {
     	this.deleteRoleAclByRoleid(eipadm0w070Case.getRole_id());
     	//新增新的role_acl
     	this.insertRoleAcl(eipadm0w070Case.getSelectedIdlist(), SYS_ID, eipadm0w070Case.getRole_id(), userData.getDeptId(), userData.getUserId(), nowldt);
+		this.deleteUnauthorizedTabList();
     }
-    
-    /*
+
+	private void deleteUnauthorizedTabList() {
+		pwc_tb_tableau_user_infoDao.findUnauthoriedList().forEach(pwc_tb_tableau_user_infoDao::deleteByKey);
+	}
+
+	/*
      * 刪除角色
      */
     public void deleteCharacter(Eip00w070Case eipadm0w070Case) {
     	this.deleteRolesByRoleid(eipadm0w070Case.getRole_id());
     	this.deleteRoleAclByRoleid(eipadm0w070Case.getRole_id());
+		this.deleteUnauthorizedTabList();
     }
     	
     private void insertRoles(String sys_id, String dept_id, String role_id, String role_desc, String create_id, LocalDateTime nowldt) {

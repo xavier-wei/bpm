@@ -16,12 +16,16 @@ public interface View_cpape05mDao {
 
     String TABLE_NAME = "view_cpape05m";
 
-    View_cpape05m selectByKey(String login_id) ;
-
+    View_cpape05m selectByKey(String login_id);
 
     @SkipLog
     List<View_cpape05m> selectAllPetitTitle();
 
+    int insert(View_cpape05m view_cpape05m);
+
     @SkipLog
     View_cpape05m selectMaxPeupdateRecordByPecard(String pecard);
+
+    @SkipLog
+    void truncateAll();
 }

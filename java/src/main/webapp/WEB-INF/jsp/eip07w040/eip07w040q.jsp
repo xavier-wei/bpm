@@ -107,7 +107,8 @@
             </fieldset>
             
             <fieldset>
-            <legend>已處理派車案件，用車日期：${caseData.using_time_sStrForTable2} ~ ${caseData.using_time_eStrForTable2}</legend>
+            <legend>已處理派車案件，用車日期：
+            <func:minguo value="${caseData.using_time_sStrForTable2}"/>~<func:minguo value="${caseData.using_time_eStrForTable2}"/></legend>
             <tags:form-row>
             <div class="table-responsive">	 
                      <table id="qryListTable" class="table">
@@ -117,12 +118,13 @@
                             <th class="align-middle" style="width: 10%">派車單號</th>
                             <th class="align-middle" style="width: 10%">申請人</th>
                             <th class="align-middle" style="width: 10%">申請單位</th>
-                            <th class="align-middle" style="width: 10%">用車日期</th>
+                            <th class="align-middle" style="width: 7%">用車日期</th>
                             <th class="align-middle" style="width: 8%">用車時間起迄</th>
-                            <th class="align-middle" style="width: 20%">用車事由</th>
-                            <th class="align-middle" style="width: 5%">已列印派車單註記</th>
-                            <th class="align-middle" style="width: 10%">補印</th>
-                            <th class="align-middle" style="width: 10%">明細</th>
+                            <th class="align-middle" style="width: 18%">用車事由</th>
+                            <th class="align-middle" style="width: 7%">已列印派車單註記</th>
+                            <th class="align-middle" style="width: 8%">車號</th>
+                            <th class="align-middle" style="width: 7%">補印</th>
+                            <th class="align-middle" style="width: 13%">臨時取消</th>
                         </tr>
                        </thead>
                       <tbody>
@@ -142,7 +144,7 @@
                       	</td>
                       	<td><func:minguo value="${item.using_date}"/></td>
                       	<td>
-                       	<func:timeconvert value="${item.using_time_s}"/>~<func:timeconvert value="${item.using_time_e}"/>
+                       		<func:timeconvert value="${item.using_time_s}"/>~<func:timeconvert value="${item.using_time_e}"/>
                       	</td>
                       	<td class="text-left">
 					<span class="ellipsisStr">
@@ -153,6 +155,9 @@
                       		<c:out value="${item.print_mk}"/>
                       	</td>
                       	<td>
+                      		<c:out value="${item.carno1}"/>-<c:out value="${item.carno2}"/>
+                      	</td>
+                      	<td>
                       	<c:if test="${item.print_mk eq 'Y'}">
                       		<tags:button cssClass="btnPrint2" value="${item.applyid}">
 							補印<i class="fas fa-download"></i>
@@ -160,9 +165,9 @@
 						</c:if>
                       	</td>
                       	<td>
-                      		    <tags:button cssClass="btnDetail2" value="${item.applyid}">
-									明細<i class="fas fa-file-alt"></i>
-								</tags:button>
+                      		<tags:button cssClass="btnDetail2" value="${item.applyid}">
+								臨時取消<i class="fas fa-eraser"></i>
+							</tags:button>
                       	</td>
                       </tr>
                       </c:forEach>
@@ -175,7 +180,8 @@
 			<form:hidden path="reprintApplyid"/>
 
             <fieldset>
-            <legend>秘書處長官核派案件，用車日期：${caseData.using_time_sStrForTable3} ~ ${caseData.using_time_eStrForTable3}</legend>
+            <legend>秘書處長官核派案件，用車日期：
+            <func:minguo value="${caseData.using_time_sStrForTable3}"/> ~ <func:minguo value="${caseData.using_time_eStrForTable3}"/></legend>
             <tags:form-row>
             <div class="table-responsive">	 
                      <table id="dataList" class="table">

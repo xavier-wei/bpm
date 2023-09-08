@@ -33,7 +33,7 @@
                 <div class="col-12 col-md-6 m-2">
                     <form:select path="detailkindno" cssClass="form-control">
                     	<option value = ''>請選擇</option>
-                                        	<c:forEach items="${caseData.detailKindList}" var="item" varStatus="status">
+                            <c:forEach items="${caseData.detailKindList}" var="item" varStatus="status">
 							<form:option value="${item.itemno}">${item.itemno}-${item.itemname}</form:option>
 						</c:forEach>
                     </form:select>

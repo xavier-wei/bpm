@@ -14,12 +14,19 @@
 </jsp:attribute>
 
 <jsp:attribute name="contents">
-    <tags:fieldset  legend="查詢結果">
-		<form:form id="eip08w030Form" name="eip08w030Form" modelAttribute="${caseKey}" method="POST">
+	<form:form id="eip08w030Form" name="eip08w030Form" modelAttribute="${caseKey}" method="POST">
+	<fieldset> 
+    	<legend>查詢條件</legend>
             <tags:form-row>
             	<div class="col-4 col-md-4">申請日期(起)：<func:minguo value="${caseData.applydateStart}"  pattern="yyy/MM/dd"/></div>
             	<div class="col-4 col-md-4">申請日期(迄)：<func:minguo value="${caseData.applydateEnd}"  pattern="yyy/MM/dd"/></div>
             </tags:form-row>
+    </fieldset>
+	
+	
+    <fieldset> 
+    <legend>查詢結果</legend>
+
             <tags:form-row>
             	<div class="col-4 col-md-4">複核選項：
             	<label><input type="radio" name="agree"  value="agree">同意</label>
@@ -57,8 +64,9 @@
                     </table>
                     </div>
             </tags:form-row>
+   		</fieldset> 
+   		 
         </form:form>
-    </tags:fieldset>
 </jsp:attribute>
 <jsp:attribute name="footers">
 <script>

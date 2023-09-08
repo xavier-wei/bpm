@@ -100,4 +100,47 @@ public class PortalMenuAclDaoImpl extends BaseDao<CursorAcl> implements PortalMe
                 BeanPropertyRowMapper.newInstance(CursorAcl.class));
         return list;
     }
+
+    @Override
+    @SkipLog
+    public List<CursorAcl> findUsersAcl(String userId) {
+        String sql = "WITH DeptHierarchy AS (" +
+                "    SELECT i.item_id," +
+                "           i.item_id_p, i.item_name, i.hyperlink AS url," +
+                "           i.DISABLE AS is_disabled, i.sort_order," +
+                "           i.sub_link, 1 AS levelv," +
+                "           CAST(i.sort_order AS varchar(8000)) AS sort_path," +
+                "           CAST(i.item_id AS varchar(8000)) AS id_path" +
+                "    FROM items i" +
+                "    INNER JOIN items ii ON ii.item_id = i.item_id_p" +
+                "    WHERE i.item_id_p = 'root'" +
+                "    UNION ALL" +
+                "    SELECT i.item_id," +
+                "           i.item_id_p, i.item_name, i.hyperlink AS url," +
+                "           i.DISABLE AS is_disabled, i.sort_order," +
+                "           i.sub_link, dh.levelv + 1," +
+                "           dh.sort_path + '.' + CAST(i.sort_order AS varchar(8000))," +
+                "           dh.id_path + '.' + CAST(i.item_id AS varchar(8000))" +
+                "    FROM items i" +
+                "    INNER JOIN items ii ON ii.item_id = i.item_id_p" +
+                "    INNER JOIN DeptHierarchy dh ON dh.item_id = i.item_id_p" +
+                ")" +
+                "SELECT dh.item_id, dh.item_id_p, dh.item_name, dh.url," +
+                "       dh.is_disabled, dh.sort_order, dh.levelv," +
+                "       CASE" +
+                "           WHEN NOT EXISTS (SELECT * FROM DeptHierarchy dh2 WHERE dh2.item_id_p = dh.item_id)" +
+                "           THEN 1 " +
+                "           ELSE 0 " +
+                "       END AS is_leaf, sub_link AS func_id, " +
+                " CASE WHEN u.user_id IS NOT NULL THEN 'Y' ELSE '' END isChecked " +
+                "FROM DeptHierarchy dh " +
+                "INNER JOIN role_acl o ON dh.item_id = o.item_id AND o.role_id in( select r.role_id from USER_ROLES r where r.user_id = :user_id)  " +
+                "ORDER BY sort_path ;";
+
+        SqlParameterSource params = new MapSqlParameterSource("user_id", userId);
+        List<CursorAcl> list = getNamedParameterJdbcTemplate().query(sql, params,
+                BeanPropertyRowMapper.newInstance(CursorAcl.class));
+        return list;
+    }
 }
+

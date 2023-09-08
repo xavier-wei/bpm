@@ -7,6 +7,7 @@
         <style>
             .col-form-label {
                 min-width: 170px;
+                margin-right : 2px;
             }
 
             .custom-file-label {
@@ -112,10 +113,10 @@
             存檔<i class="fas fa-user-check"></i>
         </tags:button>
         <tags:button id="btnPreview">
-            預覽<i class="fas fa-window-restore"></i>
+            預覽<i class="fas fa-eye"></i>
         </tags:button>
         <tags:button id="btnUpload">
-            上稿<i class="fas fa-paper-plane"></i>
+            上稿<i class="fas fa-arrow-circle-up"></i>
         </tags:button>
         <c:choose>
             <c:when test="${caseData.fseq != '' }">
@@ -195,7 +196,7 @@
                     <form:label cssClass="col-form-label star" path="locatearea">顯示位置：</form:label>
                     <div class="col-sm-6 d-flex my-auto">
                         <c:forEach var="item" items="${caseData.locateareas}" varStatus="status">
-                            <label class="mb-0 d-inline-flex">
+                            <label class="mb-0 d-inline-flex" style="margin-left:0px;">
                                 <form:radiobutton path="locatearea" value="${item.codeno }" cssClass="mr-1" />
                                 <span class="mr-2">${item.codename }</span>
                             </label>
@@ -219,11 +220,11 @@
                 <tags:form-row>
                     <div class="col-3 col-md d-flex align-items-center">
                         <form:label cssClass="col-form-label star" path="issearch">是否提供外部查詢：</form:label>
-                        <label class="mb-0 d-flex">
+                        <label class="mb-0 d-flex" style="margin-left:0px;">
                             <form:radiobutton path="issearch" value="1" cssClass="mr-1" />
                             <span class="mr-2">是</span>
                         </label>
-                        <label class="mb-0 d-flex">
+                        <label class="mb-0 d-flex" style="margin-left:0px;">
                             <form:radiobutton path="issearch" value="2" cssClass="mr-1" />
                             <span class="mr-2">否</span>
                         </label>
@@ -238,11 +239,11 @@
                 <tags:form-row>
                     <div class="col-3 col-md d-flex align-items-center">
                         <form:label cssClass="col-form-label" path="istop">是否置頂：</form:label>
-                        <label class="mb-0 d-flex">
+                        <label class="mb-0 d-flex" style="margin-left:0px;">
                             <form:radiobutton path="istop" value="1" cssClass="mr-1" />
                             <span class="mr-2">是</span>
                         </label>
-                        <label class="mb-0 d-flex">
+                        <label class="mb-0 d-flex" style="margin-left:0px;">
                             <form:radiobutton path="istop" value="2" cssClass="mr-1" />
                             <span class="mr-2">否</span>
                         </label>
@@ -251,11 +252,11 @@
                 <tags:form-row>
                     <div class="col-3 col-md d-flex align-items-center">
                         <form:label cssClass="col-form-label" path="isfront">前台是否顯示：</form:label>
-                        <label class="mb-0 d-flex">
+                        <label class="mb-0 d-flex" style="margin-left:0px;">
                             <form:radiobutton path="isfront" value="1" cssClass="mr-1" />
                             <span class="mr-2">是</span>
                         </label>
-                        <label class="mb-0 d-flex">
+                        <label class="mb-0 d-flex" style="margin-left:0px;">
                             <form:radiobutton path="isfront" value="2" cssClass="mr-1" />
                             <span class="mr-2">否</span>
                         </label>
@@ -272,11 +273,11 @@
                 <tags:form-row cssClass="oplink-row">
                     <div class="col-3 col-md d-flex align-items-center">
                         <form:label cssClass="col-form-label" path="oplink">是否需要另開視窗：</form:label>
-                        <label class="mb-0 d-flex">
+                        <label class="mb-0 d-flex" style="margin-left:0px;">
                             <form:radiobutton path="oplink" value="1" cssClass="mr-1" />
                             <span class="mr-2">是</span>
                         </label>
-                        <label class="mb-0 d-flex">
+                        <label class="mb-0 d-flex" style="margin-left:0px;">
                             <form:radiobutton path="oplink" value="2" cssClass="mr-1" />
                             <span class="mr-2">否</span>
                         </label>
@@ -340,12 +341,14 @@
                     <div class="col-sm-6 my-auto">
                          <c:choose>
                             <c:when test="${caseData.status == '4' || caseData.status == 'X'}">
-                                <form:hidden path="releasedt" />
-                                <c:out value="${caseData.releasedt}" />
+                                <div style="margin-left:2px;">
+                                    <form:hidden path="releasedt" />
+                                    <func:minguo value="${caseData.releasedt}" />
+                                </div>
                             </c:when>
                             <c:otherwise>
-                                <form:input path="releasedt" cssClass="form-control d-inline-block dateTW date" size="10"
-                                    maxlength="7" />
+                                <form:input path="releasedt" cssClass="form-control d-inline-block dateTW cdate" size="10"
+                                    maxlength="9" />
                             </c:otherwise>
                         </c:choose>
                     </div>
@@ -353,8 +356,8 @@
                 <tags:form-row>
                     <form:label cssClass="col-form-label star" path="offtime">下架時間：</form:label>
                     <div class="col-sm-6">
-                        <form:input path="offtime" cssClass="form-control d-inline-block dateTW date" size="10"
-                            maxlength="7" />
+                        <form:input path="offtime" cssClass="form-control d-inline-block dateTW cdate" size="10"
+                            maxlength="9" />
                     </div>
                 </tags:form-row>
                 <tags:form-row>
@@ -405,24 +408,24 @@
                     </tags:form-row>
                 </c:if>
                 <tags:form-row>
-                    <div class="col-xl-3 col-6 my-auto">
+                    <div class="col-xl-4 col-lg-6 col-12 my-auto">
                         <form:label cssClass="col-form-label" path="creatid">建立人員：</form:label>
                         <c:out value="${caseData.creatid }" />
                         <form:hidden path="creatid" />
                     </div>
-                    <div class="col-md-6 col-sm-12 my-auto">
+                    <div class="my-auto">
                         <form:label cssClass="col-form-label" path="creatdt">建立時間：</form:label>
                         <c:out value="${caseData.creatdt }" />
                         <form:hidden path="creatdt" />
                     </div>
                 </tags:form-row>
                 <tags:form-row>
-                    <div class="col-xl-3 col-6 my-auto">
+                    <div class="col-xl-4 col-lg-6 col-12 my-auto">
                         <form:label cssClass="col-form-label" path="updid">更新人員：</form:label>
                         <c:out value="${caseData.updid }" />
                         <form:hidden path="updid" />
                     </div>
-                    <div class="col-md-6 col-sm-12 my-auto">
+                    <div class="my-auto">
                         <form:label cssClass="col-form-label" path="upddt">更新時間：</form:label>
                         <c:out value="${caseData.upddt }" />
                         <form:hidden path="upddt" />

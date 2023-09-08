@@ -85,7 +85,7 @@
 										<c:out value='${item.carno2}'/>
 									</td>
 									<td class="text-left" >
-										<tags:button onclick="driverDetailReport('${item.driverid}','${item.stillWork}')"  >明細</tags:button>
+										<tags:button onclick="driverDetailReport('${item.driverid}','${item.stillWork}')"  >明細<i class="fas fa-file-alt"></i></tags:button>
 									</td>
 								</tr>
                             </c:forEach>
@@ -139,7 +139,7 @@
 										</c:choose>
 									</td>
 									<td class="text-left" >
-										<tags:button onclick="carDetailReport('${item.carno1}','${item.carno2}')"  >明細</tags:button>
+										<tags:button  onclick="carDetailReport('${item.carno1}','${item.carno2}')"  >明細<i class="fas fa-file-alt"></i></tags:button>
 									</td>
 								</tr>
                             </c:forEach>

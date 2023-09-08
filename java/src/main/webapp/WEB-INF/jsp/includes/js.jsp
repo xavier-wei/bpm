@@ -19,6 +19,8 @@
 <script src='<c:url value="/js/bootstrap-datepicker.js"/>'></script>
 <script src='<c:url value="/js/bootstrap-datepicker-zh-TW.min.js"/>'></script>
 
+<script src='<c:url value="/js/Sortable.min.js"/>'></script>
+
 <%--websocket--%>
 <script>
     $(function () {

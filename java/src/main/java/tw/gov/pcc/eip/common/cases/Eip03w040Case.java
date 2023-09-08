@@ -37,6 +37,7 @@ public class Eip03w040Case implements Serializable {
     private String fmtSupDt;
     private String supAgree; //
     private List<Eip03w040Case> eip03w040CaseDetailList = new ArrayList<>();
+    private boolean isSameDept;
 
 //    報表
     private ByteArrayOutputStream baos; // 報表內容

@@ -15,7 +15,6 @@ import com.itextpdf.text.pdf.PdfPTable;
 import tw.gov.pcc.eip.framework.report.PdfReportBase;
 import tw.gov.pcc.eip.orderCar.cases.Eip07w040Case;
 import tw.gov.pcc.eip.report.vo.Eip07w040L_Vo;
-import tw.gov.pcc.eip.util.DateUtility;
 
 /**
  * 秘書處進行派車作業Report
@@ -26,7 +25,6 @@ public class Eip07w040l00 extends PdfReportBase {
 	private static Log log = LogFactory.getLog(Eip07w040l00.class);
 	private int titleFontSize = 18;	   // 標題大小
     private int subTitleFontSizeMid = 12;  // 子標題大小(中型)
-    private PdfPTable table;
 	
     public Eip07w040l00() throws ReportException {
         super();
@@ -53,14 +51,14 @@ public class Eip07w040l00 extends PdfReportBase {
         
         addCell(table, 30, 4, "申請人："+vo.getApply_user() , subTitleFontSizeMid, 0, LEFT);
         addCell(table, 40, 4, "申請單位："+vo.getApply_dept() , subTitleFontSizeMid, 0, LEFT);
-        addCell(table, 30, 4, "申請日期："+DateUtility.changeDateType(vo.getApply_date()), subTitleFontSizeMid, 0, LEFT);
+        addCell(table, 30, 4, "申請日期："+vo.getApply_date(), subTitleFontSizeMid, 0, LEFT);
         
         addCell(table, 100, 4, "用車事由："+vo.getApply_memo() , subTitleFontSizeMid, 0, LEFT);
         addCell(table, 100, 4, "目的地："+vo.getDestination() , subTitleFontSizeMid, 0, LEFT);
         
         addCell(table, 100, 4, "人數："+vo.getNum_of_people() , subTitleFontSizeMid, 0, LEFT);
         
-        addCell(table, 100, 4, "用車日期："+DateUtility.changeDateType(vo.getUsing_date()), subTitleFontSizeMid, 0, LEFT);
+        addCell(table, 100, 4, "用車日期："+vo.getUsing_date(), subTitleFontSizeMid, 0, LEFT);
         addCell(table, 100, 4, "用車時間："+vo.getUsing_time_s() + "~" + vo.getUsing_time_e(), subTitleFontSizeMid, 0, LEFT);
         
         if("Y".equals(vo.getCombine_mk())) {

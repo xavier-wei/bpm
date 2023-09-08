@@ -2,15 +2,21 @@ package tw.gov.pcc.eip.services;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import tw.gov.pcc.eip.dao.CarBookingDao;
+import tw.gov.pcc.eip.dao.DeptsDao;
 import tw.gov.pcc.eip.dao.EipcodeDao;
+import tw.gov.pcc.eip.dao.UsersDao;
 import tw.gov.pcc.eip.domain.CarBooking;
+import tw.gov.pcc.eip.domain.Depts;
 import tw.gov.pcc.eip.domain.Eipcode;
+import tw.gov.pcc.eip.domain.Users;
 import tw.gov.pcc.eip.framework.domain.UserBean;
 import tw.gov.pcc.eip.orderCar.cases.Eip07w030Case;
 import tw.gov.pcc.eip.util.DateUtility;
@@ -29,6 +35,12 @@ public class Eip07w030Service {
 	private EipcodeDao eipcodeDao;
 	@Autowired
 	private CarBookingDao carBookingDao;
+    @Autowired
+    private  MailService mailService;
+    @Autowired
+    private UsersDao usersDao;
+    @Autowired
+    private DeptsDao deptsDao;
 	
 	/**
 	 * 依照申請日期起迄搜尋審核資料
@@ -43,7 +55,6 @@ public class Eip07w030Service {
 			for (CarBooking car : list) {
 				Eip07w030Case data = new Eip07w030Case();
 				data.setApplyid(car.getApplyid());
-				//撈單位名稱中文
 				data.setApply_user(car.getApply_user());
 				data.setApply_dept(car.getApply_dept());
 				data.setUsing_date(car.getUsing_date());
@@ -88,7 +99,51 @@ public class Eip07w030Service {
 			updateData.setUpd_datetime(nowdatetime);
 			carBookingDao.updateByKey(updateData);
 			
+			//處理完畢，寄mail給秘書室
+			//		@複核後，發email通知秘書處進行派
+			//		信件標題:有派車預約申請，請秘書處進行派車處理
+			//		信件內容:
+			//		派車單號:
+			//		申請人:             申請單位:
+			//		用車日期
+			//		用車時間起:         迄:
+			//		用車事由:
+	        
+	        Optional<Eipcode> codeName= eipcodeDao.findByCodeKindCodeNo("CARPROCESSSTATUSMAIL","1");
+	        String mail=codeName.get().getCodename();
+	        StringBuffer sb = new StringBuffer();
+	        
+	        String using_date = DateUtility.formatChineseDateString(updateData.getUsing_date(),false);
+	        String using_time = updateData.getUsing_time_s().substring(0,2)+updateData.getUsing_time_s().substring(2,4)+"~"
+	    	        +updateData.getUsing_time_e().substring(0,2)+updateData.getUsing_time_e().substring(2,3);
+	        
+	        sb.append("派車單號：" + applyId +"\r\n");
+	        sb.append("申請人:"+ getUserNameOrDeptName(updateData.getApply_user(),true)+"\r\n");
+	        sb.append("申請單位:"+ getUserNameOrDeptName(updateData.getApply_dept(),false)+"\r\n");
+	        sb.append("用車日期" + using_date +"\r\n");
+	        sb.append("用車時間" + using_time +"\r\n");
+	        sb.append("用車事由" + updateData.getApply_memo());
+	        mailService.sendEmailNow("【有派車預約申請】請秘書處進行派車處理，用車時間："+using_date+"，"+using_time ,mail,sb.toString());
 		}
+		
+
+	}
+
+	public String getUserNameOrDeptName(String id , boolean getUserData) {
+		
+		if(getUserData) {
+			Users user = usersDao.selectByKey(id);
+			if(user != null) {
+				return StringUtils.isEmpty(user.getUser_name()) ? "" : user.getUser_name();
+			}
+		} else {
+			Depts dept = deptsDao.findByPk(id);
+			if(dept != null) {
+				return StringUtils.isEmpty(dept.getDept_name()) ? "" : dept.getDept_name();
+			}
+		}
+		
+		return "";
 	}
 
 }

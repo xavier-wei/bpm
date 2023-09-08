@@ -27,13 +27,6 @@
                     </div>
                 </tags:form-row>
                 <tags:form-row>
-<%--                    <div class="col-md-6">--%>
-<%--                        <form:label cssClass="col-form-label star" path="trkFrom">交辦來源：</form:label>--%>
-<%--                        <form:select path="trkFrom" cssClass="form-control d-inline-block">--%>
-<%--&lt;%&ndash;                            <form:option value="">請選擇</form:option>&ndash;%&gt;--%>
-<%--                            <form:options items="${caseData.trkObjCombobox}" />--%>
-<%--                        </form:select>--%>
-<%--                    </div>--%>
                     <div class="col-md-6 d-flex">
                         <form:label cssClass="col-form-label star" path="trkFrom">交辦來源：</form:label>
                         <form:select path="trkFrom" cssClass="selectpicker form-control" data-live-search="true">
@@ -66,7 +59,6 @@
                     <div class="col-md-6">
                         <form:label cssClass="col-form-label star" path="trkObj">列管對象：</form:label>
                         <form:select path="trkObj" cssClass="form-control d-inline-block">
-<%--                            <form:option value="">請選擇</form:option>--%>
                             <form:options items="${caseData.trkObjCombobox}" />
                         </form:select>
                         &nbsp
@@ -114,8 +106,10 @@
             $('table tr').each(function (){
                 var itemIds = $(this).find('#itemContent').text();
                 var rowText = $(this).text();
-                var stDt = $(this).find('input[path="stDt"]').val();
-                var endDt = $(this).find('input[path="endDt"]').val();
+                // var stDt = $(this).find('input[path="stDt"]').val();
+                // var endDt = $(this).find('input[path="endDt"]').val();
+                var stDt = $(this).find('.stDt').val();
+                var endDt = $(this).find('.endDt').val();
                 // alert(itemIds + rowText  + stDt + allStDtEnd);
                 var row = {
                     "rowText" : rowText,
@@ -199,11 +193,15 @@
                 '<td id="itemContentTxt" class="text-left">' +  selectedText + '</td>'+
                 '<td id="itemContent" style="display: none;">' +  selectedID + '</td>'+
                 '<td >' +  "待處理" + '</td>'+
-                '<td >' +  '<input path="stDt" class="form-control num_only ml-5" size="7" maxlength="7" value="' + (allStDt > sysdate? allStDt : sysdate) + '"/>' + '</td>'+
-                '<td >' +  '<input path="endDt" class="form-control num_only ml-5" size="7" maxlength="7"/>' + '</td>'+
+                // '<td >' +  '<input path="stDt" class="form-control num_only ml-5" size="7" maxlength="7" value="' + (allStDt > sysdate? allStDt : sysdate) + '"/>' + '</td>'+
+                // '<td >' +  '<input path="endDt" class="form-control num_only ml-5" size="7" maxlength="7"/>' + '</td>'+
+                '<td >' + '<input id="stDt' + (rowCount) + '"  name="stDt' + (rowCount) + '" class="form-control num_only ml-5 stDt dateTW" size="9" maxlength="9" value="' + (allStDt > sysdate? allStDt : sysdate) + '"/>' + '</td>'+
+                '<td >' + '<input id="endDt' + (rowCount) + '" name="endDt' + (rowCount) + '" class="form-control num_only ml-5 endDt dateTW" size="9" maxlength="9" />' + '</td>'+
                 '<td>' + buildDeleteItemButton(rowCount).prop('outerHTML') + '</td>'+
             '</tr>';
         $('#trkObjTable > tbody').append(rowHtml);
+        activeDatepicker('stDt' + (rowCount) );
+        activeDatepicker('endDt' + (rowCount) );
     }
 
     //回填已增加列管對象資料行
@@ -226,11 +224,15 @@
             '<td id="itemContentTxt" class="text-left">' +  selectedText + '</td>'+
             '<td id="itemContent" style="display: none;">' +  selectedID + '</td>'+
             '<td >' +  "待處理" + '</td>'+
-            '<td >' +  '<input path="stDt" class="form-control num_only ml-5 stDt" size="7" maxlength="7" value="' + stDt + '"/>' + '</td>'+
-            '<td >' +  '<input path="endDt" class="form-control num_only ml-5 endDt" size="7" maxlength="7" value="' + endDt + '"/>' + '</td>'+
+            // '<td >' +  '<input path="stDt" class="form-control num_only ml-5 stDt" size="7" maxlength="7" value="' + stDt + '"/>' + '</td>'+
+            // '<td >' +  '<input path="endDt" class="form-control num_only ml-5 endDt" size="7" maxlength="7" value="' + endDt + '"/>' + '</td>'+
+            '<td>' +  '<input id="stDt' + (rowCount) + '"  name="stDt' + (rowCount) + '" class="form-control num_only ml-5 stDt dateTW" size="9" maxlength="9" value="' + stDt + '" />' + '</td>'+
+            '<td>' +  '<input id="endDt' + (rowCount) + '" name="endDt' + (rowCount) + '" class="form-control num_only ml-5 endDt dateTW" size="9" maxlength="9" value="' + endDt + '" />' + '</td>'+
             '<td>' + buildDeleteItemButton(rowCount).prop('outerHTML') + '</td>'+
             '</tr>';
         $('#trkObjTable > tbody').append(rowHtml);
+        activeDatepicker('stDt' + (rowCount) );
+        activeDatepicker('endDt' + (rowCount) );
     }
 
     //新增列管對象資料行-刪除按鍵
@@ -282,6 +284,44 @@
             $('#otherTrkFrom').val("");
             $('#otherTrkFrom').hide();
         }
+    }
+
+    function activeDatepicker(idName) {
+        // $(".dateTW").each((i, e) => {
+        $(idName).each((i, e) => {
+            let clone = $(e).clone();
+            clone.removeClass('dateTW').attr('type', 'hidden').insertAfter($(e));
+            $(e).data('real',$(e).prop('id')).prop('name', $(e).prop('name') + '_OUTSIDE').prop('id', $(e).prop('id') + '_OUTSIDE');
+        });
+
+        let $dateTW = $(".dateTW"); //上面那個不要替換
+        $dateTW.datepicker({
+            weekStart: 1,
+            daysOfWeekHighlighted: "6,0",
+            autoclose: true,
+            todayHighlight: true,
+            format: 'yyyy/mm/dd',
+            language: 'zh-TW'
+        }).on('show', function (ev) {
+            $(this).val() || $(this).trigger('change');
+        }).on('keyup', function (e) {
+            const charCode = (e.which) ? e.which : e.keyCode;
+            // 輸入數字
+            if ((charCode >= 48 && charCode <= 57) || (charCode >= 96 && charCode <= 105)) {
+                convertDate($(this));
+            }
+            $('#'+$(this).data('real')).val($(this).val().replaceAll('/', ''));
+        }).on('hide',function (e) {
+            //裡面做了轉換
+            $('#'+$(this).data('real')).val($(this).val().replaceAll('/', ''));
+        });
+
+        $dateTW.each(function () {
+            const $each = $(this);
+            if ($each.attr('readonly')) {
+                $each.data('datepicker')._detachEvents();
+            }
+        });
     }
 </script>
 

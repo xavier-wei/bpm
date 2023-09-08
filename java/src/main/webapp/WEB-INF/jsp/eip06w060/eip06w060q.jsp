@@ -45,9 +45,9 @@
                         <c:forEach items="${caseData.roomIsableCaseList}" var="item" varStatus="status" >
                             <tr>
                                 <td class="text-center align-middle">${status.count}</td>
-                                <td class="text-left align-middle"><c:out value="${item.isableDate}" /></td>
-                                <td class="text-center align-middle"><c:out value="${item.meetingBegin}" /></td>
-                                <td class="text-center align-middle"><c:out value="${item.meetingEnd}" /></td>
+                                <td class="text-left align-middle"><c:out value="${item.isableDate.substring(0,3)}/${item.isableDate.substring(3,5)}/${item.isableDate.substring(5)}" /></td>
+                                <td class="text-center align-middle"><c:out value="${item.meetingBegin.substring(0,2)}:${item.meetingBegin.substring(2)}" /></td>
+                                <td class="text-center align-middle"><c:out value="${item.meetingEnd.substring(0,2)}:${item.meetingEnd.substring(2)}" /></td>
                                 <td data-itemid="${item.itemId}"
                                     data-itemno="${item.itemNo}" class="text-center align-middle">
                                     <tags:button name="deleteButton" onclick="deleteItem(${item.itemNo})">刪除</tags:button>

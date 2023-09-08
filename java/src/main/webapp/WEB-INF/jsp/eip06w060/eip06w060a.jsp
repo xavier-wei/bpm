@@ -15,7 +15,7 @@
 <jsp:attribute name="buttons">
 <!-- 新增頁 -->
     <tags:button id="btnSave">
-        儲存<i class="fas fa-user-check"></i>
+        送出<i class="fas fa-user-check"></i>
     </tags:button>
     <tags:button id="btnReply">
         返回<i class="fas fa-reply"></i>
@@ -54,6 +54,7 @@
                             <form:option value="2">二</form:option>
                             <form:option value="3">三</form:option>
                             <form:option value="4">四</form:option>
+                            <form:option value="5">五</form:option>
                         </form:select>
                         <span class="pt-2">個</span>
                         <span class="pt-2 ml-3">星期</span>
@@ -66,9 +67,11 @@
                             <form:option value="6">六</form:option>
                             <form:option value="7">日</form:option>
                         </form:select>
-                        <form:input id="periodStart"  name="periodStart"  path="periodStart" cssClass="form-control num_only ml-3 dateTW" size="8" maxlength="7" />
+
+<%--                        如使用dateTW樣式，cssClass="form-control dateTW"、maxlength="9"--%>
+                        <form:input path="periodStart" cssClass="form-control dateTW" size="8" maxlength="9" />
                         <span class="pt-2 mx-1">~</span>
-                        <form:input id="periodEnd"  name="periodEnd"  path="periodEnd" cssClass="form-control num_only dateTW" size="8" maxlength="7" disabled="true"/>
+                        <form:input path="periodEnd" cssClass="form-control dateTW" size="8" maxlength="9" />
                     </div>
                 </tags:form-row>
 
@@ -77,12 +80,16 @@
                         <form:label cssClass="col-form-label star" path="meetingBegin">啟用時間：</form:label>
                         <form:select path="meetingBegin" cssClass="form-control selector">
                             <form:option value="">開啟時間</form:option>
-                            <form:options items="${caseData.timeBeginMap}" />
+                            <c:forEach items="${caseData.timeBeginMap}" var="opts" varStatus="optStatus">
+                                <option value="${opts.key}">${opts.value.substring(0,2)}:${opts.value.substring(2)}</option>
+                            </c:forEach>
                         </form:select>
                         <span class="input-group-text">~</span>
                         <form:select path="meetingEnd" cssClass="form-control selector">
                             <form:option value="">關閉時間</form:option>
-                            <form:options items="${caseData.timeEndMap}" />
+                            <c:forEach items="${caseData.timeEndMap}" var="opts" varStatus="optStatus">
+                                <option value="${opts.key}">${opts.value.substring(0,2)}:${opts.value.substring(2)}</option>
+                            </c:forEach>
                         </form:select>
                     </div>
                 </tags:form-row>
@@ -97,6 +104,8 @@
 <jsp:attribute name="footers">
 <script>
     $('#btnSave').click(function(){
+        // 送出時需解除disabled為false，才有作用
+        $('#periodEnd').prop('disabled', false);
         $('#eip06w060Form').attr('action', '<c:url value="/Eip06w060_save.action" />').submit();
     })
 
@@ -112,21 +121,22 @@
             $('#dateWeekMonth').prop('disabled', true);
             $('#week').prop('disabled', true);
             $('#day').prop('disabled', true);
-            $('#periodEnd').prop('disabled', true);
+            $('#periodEnd_OUTSIDE').prop('disabled', true);
         }else {
             $('#dateWeekMonth').prop('disabled', false);
             if(dateWeekMonth === 'date'){
+                console.log(repeat, dateWeekMonth);
                 $('#week').prop('disabled', true);
                 $('#day').prop('disabled', true);
-                $('#periodEnd').prop('disabled', false);
+                $('#periodEnd_OUTSIDE').prop('disabled', false);
             }else if(dateWeekMonth === 'week'){
                 $('#week').prop('disabled', true);
                 $('#day').prop('disabled', false);
-                $('#periodEnd').prop('disabled', false);
+                $('#periodEnd_OUTSIDE').prop('disabled', false);
             }else if (dateWeekMonth === 'month'){
                 $('#week').prop('disabled', false);
                 $('#day').prop('disabled', false);
-                $('#periodEnd').prop('disabled', false);
+                $('#periodEnd_OUTSIDE').prop('disabled', false);
             }
         }
     })
@@ -137,21 +147,23 @@
         $('#dateWeekMonth').prop('disabled', true);
         $('#week').prop('disabled', true);
         $('#day').prop('disabled', true);
+        // 如使用dateTW樣式，disabled效果呈現，#XXX_OUTSIDE，作用
+        $('#periodEnd_OUTSIDE').prop('disabled', true);
         $('#periodEnd').prop('disabled', true);
     }else {
         $('#dateWeekMonth').prop('disabled', false);
         if(dateWeekMonth === 'date'){
             $('#week').prop('disabled', true);
             $('#day').prop('disabled', true);
-            $('#periodEnd').prop('disabled', false);
+            $('#periodEnd_OUTSIDE').prop('disabled', false);
         }else if(dateWeekMonth === 'week'){
             $('#week').prop('disabled', true);
             $('#day').prop('disabled', false);
-            $('#periodEnd').prop('disabled', false);
+            $('#periodEnd_OUTSIDE').prop('disabled', false);
         }else if (dateWeekMonth === 'month'){
             $('#week').prop('disabled', false);
             $('#day').prop('disabled', false);
-            $('#periodEnd').prop('disabled', false);
+            $('#periodEnd_OUTSIDE').prop('disabled', false);
         }
     }
 </script>

@@ -9,7 +9,6 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import tw.gov.pcc.eip.domain.Applyitem;
 import tw.gov.pcc.eip.domain.Itemcode;
-import tw.gov.pcc.eip.framework.validation.ChineseDate;
 import tw.gov.pcc.eip.framework.validation.RequiredString;
 
 /**

@@ -103,14 +103,14 @@ public class Eip08w020Service{
 	 * @param caseData
 	 * 
 	 */
-	public void insertApplyItem(Eip08w020Case caseData) throws Exception {
+	public int insertApplyItem(Eip08w020Case caseData) throws Exception {
 		String nowDate = DateUtility.getNowWestDate();
 		String nowDatetime = DateUtility.getNowWestDateTime(true);
 		Integer index = 1;
 		String applyno = nowDate+StringUtils.leftPad(applyitemDao.getApplynoSeq(), 3, '0');
 		
 		for (Eip08w020Case data : caseData.getAllData()) {
-			if (!StringUtils.isAnyEmpty(data.getItemkind(), data.getItemno(), data.getUnit())
+			if (!StringUtils.isAnyEmpty(data.getItemkind(), data.getItemno())
 					&& data.getBook_cnt() != null && data.getBook_cnt() > 0) {
 
 				// 1.insert Applyitem
@@ -128,7 +128,7 @@ public class Eip08w020Service{
 				applyitem.setBook_cnt_b(data.getBook_cnt()); // 申請前帳面數量
 				applyitem.setBook_cnt_a(data.getBook_cnt() - data.getApply_cnt());// 申請前帳面數量-[畫面].申請數量
 				applyitem.setApply_cnt(data.getApply_cnt()); // [畫面].申請數量
-				applyitem.setUnit(data.getUnit()); // [畫面].單位單位
+				applyitem.setUnit(StringUtils.isEmpty(data.getUnit())? "" : data.getUnit()); // [畫面].單位單位
 				applyitem.setProcess_status("1");
 				applyitem.setCre_user(caseData.getOriApply_user()); // [畫面輸入].申請人
 				applyitem.setCre_datetime(nowDatetime); // 系統日期時間
@@ -142,7 +142,7 @@ public class Eip08w020Service{
 			}
 
 		}
-
+		return index;
 	}
 
 	/**
@@ -228,23 +228,25 @@ public class Eip08w020Service{
 			Eip08w020Case data = caseData.getAllData().get(i);
 			StringBuffer each = new StringBuffer();
 			
-			if(StringUtils.isNotEmpty(data.getItemkind()) && data.getBook_cnt()!=null && data.getBook_cnt()!=0){
+			if(StringUtils.isNotEmpty(data.getItemkind()) ){
 				
 				if(data.getItemno()==null) {
 					each.append("品名、");
 				}
 				
-				if(data.getApply_cnt()==null) {
-					each.append("數量、");
+				if(data.getBook_cnt()==null || data.getBook_cnt()==0) {
+					sb.append("序號"+(i+1)+"：庫存為零，請調整品項\r\n");
 				}
 				
-				if(StringUtils.isEmpty(data.getUnit())) {
-					each.append("單位");
+				if( data.getBook_cnt()!=0 && data.getApply_cnt()==null) {
+					each.append("數量、");
 				}
 				
 				if(StringUtils.isNotBlank(each.toString())) {
 					sb.append("序號"+(i+1)+"："+ StringUtils.removeEnd(each.toString(),"、")+"未填寫\r\n");
 				}
+				
+
 			}
 			
 			if(data.getApply_cnt()!=null && data.getBook_cnt()!=null && data.getApply_cnt()>data.getBook_cnt()) {
@@ -255,7 +257,6 @@ public class Eip08w020Service{
 		if(StringUtils.isEmpty(sb.toString())) {
 			List<String>itemkindList = new ArrayList<>();
 			List<String>itemnoList = new ArrayList<>();
-			List<String>unitList = new ArrayList<>();
 			List<Integer>bookCntList = new ArrayList<>();
 			for(Eip08w020Case each : caseData.getAllData()) {
 				
@@ -267,16 +268,12 @@ public class Eip08w020Service{
 					itemnoList.add(each.getItemno());
 				}
 				
-				if(StringUtils.isNotBlank(each.getUnit())) {
-					unitList.add(each.getUnit());
-				}
-				
 				if(each.getBook_cnt()!=null) {
 					bookCntList.add(each.getBook_cnt());
 				}
 			}
 			
-			if(CollectionUtils.isEmpty(itemkindList)|| CollectionUtils.isEmpty(bookCntList) || CollectionUtils.isEmpty(itemnoList)|| CollectionUtils.isEmpty(unitList) ) {
+			if(CollectionUtils.isEmpty(itemkindList)|| CollectionUtils.isEmpty(bookCntList) || CollectionUtils.isEmpty(itemnoList) ) {
 				sb.append("請至少申請一項");
 			}
 		}
@@ -289,7 +286,7 @@ public class Eip08w020Service{
 		StringBuffer sb = new StringBuffer();
 		
 		for(Eip08w020Case data : caseData.getAllData()) {
-			if (!StringUtils.isAnyEmpty(data.getItemkind(), data.getItemno(), data.getUnit())
+			if (!StringUtils.isAnyEmpty(data.getItemkind(), data.getItemno())
 					&& data.getBook_cnt() != null && data.getBook_cnt() > 0) {
 				if (!itemcodeService.validItemTakeCnt(data.getItemkind(), data.getItemno(), data.getApply_cnt())) {
 					Itemcode code = new Itemcode();
@@ -304,5 +301,18 @@ public class Eip08w020Service{
 		return sb.toString();
 	}
 
-	
+	public String alert0Cnt(Eip08w020Case caseData) {
+		for(int i=0; i<caseData.getAllData().size() ; i++) {
+			Eip08w020Case data = caseData.getAllData().get(i);
+			StringBuffer sb = new StringBuffer();
+			if(!StringUtils.isAnyEmpty(data.getItemkind(), data.getItemno())
+					&& data.getBook_cnt() != null && data.getBook_cnt() == 0) {
+				sb.append(i+1+",");
+			}
+			if(StringUtils.isNotBlank(sb.toString())){
+				return StringUtils.removeEnd(sb.toString(),",");
+			}
+		}
+		return null;
+	}
 }

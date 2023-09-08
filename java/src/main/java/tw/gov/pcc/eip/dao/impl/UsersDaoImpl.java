@@ -263,4 +263,27 @@ public class UsersDaoImpl extends BaseDao<Users> implements UsersDao {
         String sql = "insert into USERS (USER_ID, USER_NAME) select v.PECARD USER_ID, v.PENAME  USER_NAME  from view_cpape05m v where v.PEUNIT!='600037'";
     }
 
+    @Override
+    public List<Users> getUsersByDeptOrTitle(List<String> deptID, List<String> titleID) {
+        StringBuilder sql = new StringBuilder();
+        sql.append("   SELECT ");
+        sql.append(ALL_COLUMNS_SQL);
+        sql.append("     FROM USERS t");
+        sql.append("    WHERE ACNT_IS_VALID = 'Y' ");
+        if (!CollectionUtils.isEmpty(deptID) && !CollectionUtils.isEmpty(titleID)) {
+            sql.append("      AND ( DEPT_ID in (:deptID) OR TITLE_ID in (:titleID) )");
+        } else if (!CollectionUtils.isEmpty(deptID)) {
+            sql.append("      AND DEPT_ID in (:deptID) ");
+        } else if (!CollectionUtils.isEmpty(titleID)) {
+            sql.append("      AND TITLE_ID in (:titleID) ");
+        }
+        sql.append(" ORDER BY EMP_ID  ");
+
+        Map<String, Object> params = new HashMap<>();
+        params.put("deptID", deptID);
+        params.put("titleID", titleID);
+        return getNamedParameterJdbcTemplate().query(sql.toString(), params,
+                BeanPropertyRowMapper.newInstance(Users.class));
+    }
+
 }

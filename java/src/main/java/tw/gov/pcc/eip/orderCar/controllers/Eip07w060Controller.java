@@ -69,7 +69,7 @@ public class Eip07w060Controller extends BaseController {
 		} catch (Exception e) {
 			log.error("Eip07w060Controller查詢失敗" + ExceptionUtility.getStackTrace(e));
 			setSystemMessage(getQueryFailMessage());
-			return enter(caseData);
+			return new ModelAndView(QUERY_PAGE);
 		}
 		
 	}

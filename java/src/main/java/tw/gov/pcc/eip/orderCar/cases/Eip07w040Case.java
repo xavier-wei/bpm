@@ -12,6 +12,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import tw.gov.pcc.eip.domain.CarBase;
 import tw.gov.pcc.eip.domain.CarBooking;
+import tw.gov.pcc.eip.domain.Car_booking_rec;
 import tw.gov.pcc.eip.domain.Eipcode;
 import tw.gov.pcc.eip.framework.validation.ChineseDate;
 import tw.gov.pcc.eip.framework.validation.RequiredString;
@@ -154,7 +155,6 @@ public class Eip07w040Case implements Serializable {
 	private String status;
 	
 	private List<CarBooking>Reconfime_mk2List;
-
 	private String usingTimeList; 
-
+	private Car_booking_rec recData;
 }

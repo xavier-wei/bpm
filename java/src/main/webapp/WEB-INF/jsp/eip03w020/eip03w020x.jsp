@@ -404,7 +404,7 @@
                     }
 
                     checkbox += '>';
-                    checkbox += '<label class="form-check-label" for="' + rowData.deptID + '">' + rowData.deptID + '&nbsp;' + rowData.deptName + '</label>';
+                    checkbox += '<label class="form-check-label" for="' + rowData.deptID + '">' + rowData.deptName + '</label>';
                     checkbox += '</div>';
 
                     var col = $('<div class="col-4"/>').append(checkbox);
@@ -473,7 +473,7 @@
                     }
 
                     checkbox += '>';
-                    checkbox += '<label class="form-check-label" for="' + userData.empID + '">' + userData.empID + '&nbsp;' + userData.userName + '</label>';
+                    checkbox += '<label class="form-check-label" for="' + userData.empID + '">' + userData.userName + '</label>';
                     checkbox += '</div>';
 
                     var col = $('<div class="col-4"/>').append(checkbox);

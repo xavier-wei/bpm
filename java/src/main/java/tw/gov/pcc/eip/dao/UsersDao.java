@@ -61,4 +61,12 @@ public interface UsersDao {
     public List<Users> findUserIDByUserName(String userName);
 
     void insertUsersFromView_cpape05m();
+
+    /**
+     * 根據多個部門id或多個職稱id取得user清單
+     * @param deptID
+     * @param titleID
+     * @return
+     */
+    public List<Users> getUsersByDeptOrTitle(List<String> deptID, List<String> titleID);
 }

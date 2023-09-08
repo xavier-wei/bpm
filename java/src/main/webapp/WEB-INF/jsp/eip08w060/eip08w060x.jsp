@@ -49,7 +49,7 @@
 										<c:out value='${item.itemId}'/>
 									</td>
 									<td class="text-left" >
-                                         <tags:button onclick="printDetailReport('${item.itemId}')"  >明細</tags:button>
+                                         <tags:button onclick="printDetailReport('${item.itemId}')"  >明細<i class="fas fa-file-alt"></i></tags:button>
 									</td>
 								</tr>
                             </c:forEach>

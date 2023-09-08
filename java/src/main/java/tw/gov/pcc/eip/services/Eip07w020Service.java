@@ -42,8 +42,8 @@ public class Eip07w020Service {
     private Car_booking_recDao car_booking_recDao;
     @Autowired
     private  TimeConversionService timeConversionService;
-//    @Autowired
-//    private  MailService mailService;
+    @Autowired
+    private  MailService mailService;
 
     String sysDateTime = DateUtil.getNowWestDateTime(true);
     String sysDate = sysDateTime.substring(0, 8);
@@ -60,15 +60,6 @@ public class Eip07w020Service {
      * @param insterData
      */
     public void addReserve(Eip07w020Case insterData,Eip07w020Case caseData) throws Exception{
-//        //取ApplyId
-//        List<CarBooking> applyId=carBookingDao.getApplyId();
-//        int maxApplyId= 0;
-//        if (applyId.size()>0){
-//            maxApplyId=Integer.parseInt(StringUtils.substring(applyId.get(0).getApplyid(),10 ))+1;
-//        }
-//        else {
-//        maxApplyId= 1;
-//        }
         String applyId="DC"+sysDate+String.format("%3s", carBookingDao.getApplyCarnoSeq()).replace(' ', '0');
        insterData.setApplyId(applyId);
         //取using  48位元
@@ -267,7 +258,9 @@ public class Eip07w020Service {
             carBookingDao.updateByKey(oldData);
             car_booking_recDao.deleteByKey(carBookingRec);
             //寄maile功能
-//            mailService.sendEmailNow("派車單號:"+oldData.getApplyid()+"取消派車","填mail",oldData.getApply_user()+"取消派車");
+            Optional<Eipcode> codeName= eipcodeDao.findByCodeKindCodeNo("CARPROCESSSTATUSMAIL","1");
+            String mail=codeName.get().getCodename();
+            mailService.sendEmailNow("派車單號:"+oldData.getApplyid()+"取消派車",mail,oldData.getApply_user()+"取消派車");
         }
     }
 
@@ -373,7 +366,7 @@ public class Eip07w020Service {
      */
     public ByteArrayOutputStream print(Eip07w020Case caseData) throws Exception {
         Eip07w020l00 pdf = new Eip07w020l00();
-        pdf.createEip07w020DataPdf(caseData.getDetailsList().get(0));
+        pdf.createEip07w020DataPdf(caseData.getDetailsList().get(0),caseData);
         return pdf.getOutputStream();
     };
 
