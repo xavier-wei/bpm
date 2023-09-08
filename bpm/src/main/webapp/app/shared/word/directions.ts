@@ -22,7 +22,6 @@ export function changeDirections(user: any): string {
     }
 }
 export function changeDealWithUnit(unit: any, unitList: any): string {
-
     if (unit == null) return '';
     let unitName = '';
     unitList.forEach(data => {
@@ -30,7 +29,6 @@ export function changeDealWithUnit(unit: any, unitList: any): string {
         if (data.value === unit) {
             unitName = data.text
         }
-
     })
     return unitName;
 }

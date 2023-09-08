@@ -18,7 +18,7 @@ public class Bpm01w010Controller {
     public static final String CASE_KEY = "_bpm01w010Controller_caseData";
     private static final String MAIN_PAGE = "/bpm/Bpm01w010";//主頁
 
-    @RequestMapping("/BPM/L414QUERY")
+    @RequestMapping("/BPM/L414QUERY.bpmAction")
     public ModelAndView l414(HttpServletRequest request) {
 
         // 確認是否有無bpmLogin資訊
@@ -38,7 +38,7 @@ public class Bpm01w010Controller {
                                     .append("/bpm/api/loginBpm")
                                     .append("?referer=")
                                     .append(referer)
-                                    .append("&path=/BPM/L414QUERY");
+                                    .append("&path=/BPM/L414QUERY.bpmAction");
             return new ModelAndView("redirect:"+path);
         }
 
@@ -54,7 +54,7 @@ public class Bpm01w010Controller {
         return new ModelAndView("/bpm/Bpm01w010").addAllObjects(Map.of("bpmPath", referer + "/bpm/l414Query"));
     }
 
-    @RequestMapping("/BPM/L410QUERY")
+    @RequestMapping("/BPM/L410QUERY.bpmAction")
     public ModelAndView l410(HttpServletRequest request) {
 
         // 確認是否有無bpmLogin資訊
@@ -74,7 +74,7 @@ public class Bpm01w010Controller {
                     .append("/bpm/api/loginBpm")
                     .append("?referer=")
                     .append(referer)
-                    .append("&path=/BPM/L410QUERY");
+                    .append("&path=/BPM/L410QUERY.bpmAction");
             return new ModelAndView("redirect:"+path);
         }
 
@@ -89,7 +89,7 @@ public class Bpm01w010Controller {
         return new ModelAndView("/bpm/Bpm01w010").addAllObjects(Map.of("bpmPath", referer + "/bpm/l410Query"));
     }
 
-    @RequestMapping("/BPM/PENDING")
+    @RequestMapping("/BPM/PENDING.bpmAction")
     public ModelAndView pending(HttpServletRequest request) {
 
         // 確認是否有無bpmLogin資訊
@@ -109,7 +109,7 @@ public class Bpm01w010Controller {
                     .append("/bpm/api/loginBpm")
                     .append("?referer=")
                     .append(referer)
-                    .append("&path=/BPM/PENDING");
+                    .append("&path=/BPM/PENDING.bpmAction");
             return new ModelAndView("redirect:"+path);
         }
 
@@ -125,7 +125,7 @@ public class Bpm01w010Controller {
         return new ModelAndView("/bpm/Bpm01w010").addAllObjects(Map.of("bpmPath", referer + "/bpm/pending"));
     }
 
-    @RequestMapping("/BPM/NOTIFY")
+    @RequestMapping("/BPM/NOTIFY.bpmAction")
     public ModelAndView notify(HttpServletRequest request) {
 
         // 確認是否有無bpmLogin資訊
@@ -145,7 +145,7 @@ public class Bpm01w010Controller {
                     .append("/bpm/api/loginBpm")
                     .append("?referer=")
                     .append(referer)
-                    .append("&path=/BPM/NOTIFY");
+                    .append("&path=/BPM/NOTIFY.bpmAction");
             return new ModelAndView("redirect:"+path);
         }
 

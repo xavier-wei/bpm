@@ -35,8 +35,11 @@ import {trim as _trim, size as _size, keys as _keys, cloneDeep as _cloneDeep, cl
 import '../content/scss/global.scss';
 import '../content/scss/vendor.scss';
 import BpmUnitOptionsService from "@/shared/config/service/bpm-unit-options.service";
+import BpmDeptsOptionsService from "@/shared/config/service/bpm-depts-options.service";
+
 import {notificationErrorHandler} from "@/shared/http/http-response-helper";
 import {useNotification} from "@/shared/notification";
+import BpmUserDataService from "@/shared/config/service/bpm-user-data-service";
 /* tslint:disable */
 
 // jhipster-needle-add-entity-service-to-main-import - JHipster will import entities services here
@@ -64,10 +67,11 @@ axios.defaults.baseURL = '/bpm/api';
 const loginService = new LoginService();
 const accountService = new AccountService(store, router);
 new BpmUnitOptionsService(store);
+new BpmDeptsOptionsService(store);
+new BpmUserDataService(store);
 const serviceUrlList: string[] = ['/login', '/service/', '/home'];
 //透過hashMap處理上下一頁的props
 const paramMap = {};
-const notificationService = useNotification();
 
 router.beforeEach(async (to, from, next) => {
   if (!to.matched.length) {
@@ -103,7 +107,6 @@ router.beforeEach(async (to, from, next) => {
 function routeGuard(to, from, next) {
   //紀錄router name對應的props，處理上下一頁props不見的問題
   recordProps(to);
-  getUser();
   // console.log('接到paramMap',paramMap);
   //處理找不到router
   if (!to.matched.length) {
@@ -133,15 +136,7 @@ function recordProps(to) {
   }
 }
 
-function getUser() {
-  axios
-    .patch(`/loginBpmDev`)
-    .then(({data}) => {
-      console.log('登入者資訊',data)
-      useStore().value.commit('setUserData', {userData: data});
-    })
-    .catch(notificationErrorHandler(notificationService));
-}
+
 
 
 /* tslint:disable */

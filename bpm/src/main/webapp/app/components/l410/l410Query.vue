@@ -105,7 +105,7 @@ export default defineComponent({
     const $bvModal = useBvModal();
     const queryStatus = ref(false);
     const notificationService = useNotification();
-    const userData = ref(useGetters(['getUserData']).getUserData).value.user;
+    const userData = ref(useGetters(['getUserData']).getUserData).value;
 
     enum FormStatusEnum {
       CREATE = '新增',
@@ -227,7 +227,7 @@ export default defineComponent({
         formId: item.formId,
         formStatus: FormStatusEnum.READONLY,
         isNotKeepAlive: false,
-        stateStatus : userData === 'InfoTester'
+        stateStatus : userData.cpape05m.unitName !== '資訊推動小組'
       });
 
     }

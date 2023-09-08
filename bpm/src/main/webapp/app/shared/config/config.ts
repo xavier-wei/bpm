@@ -51,6 +51,7 @@ import {userStore} from "@/shared/userStore/user-store";
 import {keepAliveStore} from "@/shared/config/store/keep-alive-store";
 import { axiosScrollStore } from '@/shared/config/store/axios-scroll-store';
 import {bpmUnitOptionsStore} from "@/shared/config/store/bpm-unit-options-store";
+import {bpmDeptsOptionsStore} from "@/shared/config/store/bpm-depts-options-store";
 
 
 export function initVueApp(vue) {
@@ -111,7 +112,8 @@ export function initVueXStore(vue) {
       userStore,
       keepAliveStore,
       axiosScrollStore,
-      bpmUnitOptionsStore
+      bpmUnitOptionsStore,
+      bpmDeptsOptionsStore
     },
   });
 }

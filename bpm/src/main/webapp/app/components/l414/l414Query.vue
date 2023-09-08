@@ -117,9 +117,8 @@ export default {
     const iTable = ref(null);
     const queryStatus = ref(false);
     const notificationService = useNotification();
-    const userData = ref(useGetters(['getUserData']).getUserData).value.user;
-    const bpmUnitOptions = ref(useGetters(['getBpmUnitOptions']).getBpmUnitOptions).value;
-
+    const userData = ref(useGetters(['getUserData']).getUserData).value;
+    const bpmDeptsOptions = ref(useGetters(['getBpmDeptsOptions']).getBpmDeptsOptions).value;
     enum FormStatusEnum {
       CREATE = '新增',
       MODIFY = '編輯',
@@ -184,7 +183,7 @@ export default {
           thStyle: 'width:10%',
           thClass: 'text-center',
           tdClass: 'text-center align-middle',
-          formatter: value => (value == undefined ? '' : changeDealWithUnit(value, bpmUnitOptions)),
+          formatter: value => (value == undefined ? '' : changeDealWithUnit(value, bpmDeptsOptions)),
         },
         {
           key: 'isEnable',
@@ -251,7 +250,7 @@ export default {
         formId: item.formId,
         formStatus: FormStatusEnum.READONLY,
         isNotKeepAlive: false,
-        stateStatus: userData === 'InfoTester'
+        stateStatus: userData.cpape05m.unitName !== '資訊推動小組'
       });
     };
 

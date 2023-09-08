@@ -135,7 +135,7 @@ export default {
     let filePathNameProp = reactive(props.vData);
     let fileDataIdProp = reactive(props.fileDataId);
     const formStatusRef = toRef(props, 'formStatus');
-    const userData = ref(useGetters(['getUserData']).getUserData).value.user;
+    const userData = ref(useGetters(['getUserData']).getUserData).value;
     let appendixDataList = ref([]);
     const notificationService = useNotification();
     const pdfViewer = ref(null);
@@ -271,7 +271,7 @@ export default {
       let fileModel = new FileModel()
       fileModel.updateTime = new Date();
       fileModel.createTime = new Date();
-      fileModel.authorName = userData
+      fileModel.authorName = userData.userName != null ? userData.userName : '';
       appendixData.appendix.push(fileModel);
     }
 
@@ -299,7 +299,7 @@ export default {
       let fileModel = new FileModel()
       fileModel.updateTime = new Date();
       fileModel.createTime = new Date();
-      fileModel.authorName = userData
+      fileModel.authorName = userData.userName != null ? userData.userName : '';
       appendixData.appendix.push(fileModel);
     }
 
@@ -316,7 +316,7 @@ export default {
       let fileModel = new FileModel()
       fileModel.updateTime = new Date();
       fileModel.createTime = new Date();
-      fileModel.authorName = userData
+      fileModel.authorName = userData.userName != null ? userData.userName : '';
       appendixData.appendix.push(fileModel);
     }
 
