@@ -1,135 +1,137 @@
 <template>
   <div>
 
-        <div class="card-header py-1 text-left" style="background-color: #b0ded4">
-          <div class="row align-items-center">
-            <div class="col-sm-11 p-0">
-              <h5 class="m-0">
-                <font-awesome-icon icon="search"/>
-                查詢條件
-              </h5>
-            </div>
-          </div>
+    <div class="card-header py-1 text-left" style="background-color: #b0ded4">
+      <div class="row align-items-center">
+        <div class="col-sm-11 p-0">
+          <h5 class="m-0">
+            <font-awesome-icon icon="search"/>
+            查詢條件
+          </h5>
         </div>
-        <div class="card-body clo-12" style="background-color: #d3ede8">
-          <b-form-row>
-            <i-form-group-check class="col-4" label-cols="4" content-cols="8" :label="'部門：'" :item="$v.unit">
-              <b-form-select v-model="$v.unit.$model" :options="bpmUnitOptions">
-                <template #first>
-                  <option value="">請選擇</option>
-                </template>
-              </b-form-select>
-            </i-form-group-check>
+      </div>
+    </div>
+    <div class="card-body clo-12" style="background-color: #d3ede8">
+      <b-form-row>
+        <i-form-group-check class="col-4" label-cols="4" content-cols="8" :label="'部門：'" :item="$v.unit">
+          <b-form-select v-model="$v.unit.$model" :options="bpmDeptsOptions">
+            <template #first>
+              <option value="">請選擇</option>
+            </template>
+          </b-form-select>
+        </i-form-group-check>
 
-            <i-form-group-check class="col-4" label-cols="4" content-cols="8" :label="`申請者：`" :item="$v.appName">
-              <b-form-select v-model="$v.appName.$model">
-                <template #first>
-                  <option value="">請選擇</option>
-                </template>
-              </b-form-select>
-            </i-form-group-check>
-          </b-form-row>
-          <b-form-row>
-            <i-form-group-check class="col-4" label-cols="4" content-cols="8" label="表單：" :item="$v.formId">
-              <b-form-select v-model="$v.formId.$model" :options="queryOptions.formCase">
-                <template #first>
-                  <option value="">請選擇</option>
-                </template>
-              </b-form-select>
-            </i-form-group-check>
-            <i-form-group-check class="col-4" label-cols="4" content-cols="8" label="處理狀況："
-                                :item="$v.processInstanceStatus">
-              <b-form-select v-model="$v.processInstanceStatus.$model" :options="queryOptions.status">
-                <template #first>
-                  <option value="">請選擇</option>
-                </template>
-              </b-form-select>
-            </i-form-group-check>
-            <i-form-group-check class="col-4" label-cols="4" content-cols="8" label="表單分類：" :item="$v.formType">
-              <b-form-select v-model="$v.formType.$model" :options="queryOptions.formTypeList">
-                <template #first>
-                  <option value="">請選擇</option>
-                </template>
-              </b-form-select>
-            </i-form-group-check>
-          </b-form-row>
-          <!-- 填表日期 -->
-          <b-form-row>
-            <i-form-group-check :label="'期間：'" class="col-8" label-cols="2" content-cols="6" :dual1="$v.dateStart"
-                                :dual2="$v.dateEnd">
-              <b-input-group>
-                <i-date-picker v-model="$v.dateStart.$model" placeholder="yyy/MM/dd"
-                               :disabled-date="notAfterPublicDateEnd"></i-date-picker>
-                <b-input-group-text>至</b-input-group-text>
-                <i-date-picker
-                  v-model="$v.dateEnd.$model"
-                  placeholder="yyy/MM/dd"
-                  :disabled-date="notBeforePublicDateStart"
-                ></i-date-picker>
-              </b-input-group>
-            </i-form-group-check>
-          </b-form-row>
+        <i-form-group-check class="col-4" label-cols="4" content-cols="8" :label="`申請者：`" :item="$v.appName">
+          <b-form-select v-model="$v.appName.$model">
+            <template #first>
+              <option value="">請選擇</option>
+            </template>
+          </b-form-select>
+        </i-form-group-check>
+      </b-form-row>
+      <b-form-row>
+        <i-form-group-check class="col-4" label-cols="4" content-cols="8" label="表單：" :item="$v.formId">
+          <b-form-select v-model="$v.formId.$model" :options="queryOptions.formCase">
+            <template #first>
+              <option value="">請選擇</option>
+            </template>
+          </b-form-select>
+        </i-form-group-check>
+        <i-form-group-check class="col-4" label-cols="4" content-cols="8" label="處理狀況："
+                            :item="$v.processInstanceStatus">
+          <b-form-select v-model="$v.processInstanceStatus.$model" :options="queryOptions.status">
+            <template #first>
+              <option value="">請選擇</option>
+            </template>
+          </b-form-select>
+        </i-form-group-check>
+        <i-form-group-check class="col-4" label-cols="4" content-cols="8" label="表單分類：" :item="$v.formType">
+          <b-form-select v-model="$v.formType.$model" :options="queryOptions.formTypeList">
+            <template #first>
+              <option value="">請選擇</option>
+            </template>
+          </b-form-select>
+        </i-form-group-check>
+      </b-form-row>
+      <!-- 填表日期 -->
+      <b-form-row>
+        <i-form-group-check :label="'期間：'" class="col-8" label-cols="2" content-cols="6" :dual1="$v.dateStart"
+                            :dual2="$v.dateEnd">
+          <b-input-group>
+            <i-date-picker v-model="$v.dateStart.$model" placeholder="yyy/MM/dd"
+                           :disabled-date="notAfterPublicDateEnd"></i-date-picker>
+            <b-input-group-text>至</b-input-group-text>
+            <i-date-picker
+                v-model="$v.dateEnd.$model"
+                placeholder="yyy/MM/dd"
+                :disabled-date="notBeforePublicDateStart"
+            ></i-date-picker>
+          </b-input-group>
+        </i-form-group-check>
+      </b-form-row>
 
-          <div class="text-center pt-5">
-            <b-button class="ml-2" style="background-color: #17a2b8" @click="toQuery()">查詢</b-button>
-            <b-button class="ml-2" style="background-color: #17a2b8" @click="reset()">清除</b-button>
-          </div>
+      <div class="text-center pt-5">
+        <b-button class="ml-2" style="background-color: #17a2b8" @click="toQuery()">查詢</b-button>
+        <b-button class="ml-2" style="background-color: #17a2b8" @click="reset()">清除</b-button>
+      </div>
+    </div>
+
+    <i-table
+        ref="iTable"
+        :itemsUndefinedBehavior="'loading'"
+        :items="table.data"
+        :fields="table.fields"
+        :totalItems="table.totalItems"
+        :is-server-side-paging="false"
+        v-show="queryStatus"
+    >
+
+      <template #cell(filAndApp)="row">
+        <div v-if="row.item.appEmpid === row.item.filEmpid">
+          {{ row.item.appName }}
         </div>
+        <div v-else>
+          {{ row.item.appName }} / {{ row.item.filName }}
+        </div>
+      </template>
 
-        <i-table
-          ref="iTable"
-          :itemsUndefinedBehavior="'loading'"
-          :items="table.data"
-          :fields="table.fields"
-          :totalItems="table.totalItems"
-          :is-server-side-paging="false"
-          v-show="queryStatus"
-        >
+      <template #cell(processInstanceStatus)="row">
+        <div v-if="row.item.processInstanceStatus === '1'">
+          已處理完畢
+        </div>
+        <div v-else>
+          處理中
+        </div>
+      </template>
 
-          <template #cell(filAndApp)="row">
-            <div v-if="row.item.appEmpid === row.item.filEmpid">
-              {{ row.item.appName }}
-            </div>
-            <div v-else>
-              {{ row.item.appName }} / {{ row.item.filName }}
-            </div>
-          </template>
-
-          <template #cell(processInstanceStatus)="row">
-            <div v-if="row.item.processInstanceStatus === '1'">
-              已處理完畢
-            </div>
-            <div v-else>
-              處理中
-            </div>
-          </template>
-
-          <template #cell(subject)="row">
-            <div>
-              {{ changeSubject(row.item) }}
-            </div>
-          </template>
+      <template #cell(subject)="row">
+        <div>
+          {{ changeSubject(row.item) }}
+        </div>
+      </template>
 
 
-          <template #cell(signUnit)="row">
-            <div v-if="!!row.item.signer">
-              {{ row.item.signer }}
-              ({{ changeDealWithUnit(row.item.signUnit, bpmUnitOptions) }})
-            </div>
-          </template>
+      <template #cell(signUnit)="row">
+        <div v-if="!!row.item.signer">
+          {{ row.item.signer }}
+        </div>
+        <div v-if="!!row.item.directions">
+          ({{ row.item.directions }})
+        </div>
+      </template>
 
 
-          <template #cell(formId)="row">
-            <div>
-              {{ changeFormId(row.item.formId) }}
-            </div>
-          </template>
+      <template #cell(formId)="row">
+        <div>
+          {{ changeFormId(row.item.formId) }}
+        </div>
+      </template>
 
-          <template #cell(action)="row">
-            <b-button class="ml-2" style="background-color: #17a2b8" @click="toEdit(row.item)">檢視</b-button>
-          </template>
+      <template #cell(action)="row">
+        <b-button class="ml-2" style="background-color: #17a2b8" @click="toEdit(row.item)">檢視</b-button>
+      </template>
 
-        </i-table>
+    </i-table>
   </div>
 </template>
 
@@ -158,11 +160,12 @@ export default defineComponent({
     IFormGroupCheck,
   },
   setup() {
-    const bpmUnitOptions = ref(useGetters(['getBpmUnitOptions']).getBpmUnitOptions).value;
+    const bpmDeptsOptions = ref(useGetters(['getBpmDeptsOptions']).getBpmDeptsOptions).value;
     const iTable = ref(null);
     const stepVisible = ref(true);
     const queryStatus = ref(false);
     const notificationService = useNotification();
+    const userData = ref(useGetters(['getUserData']).getUserData).value;
 
     enum FormStatusEnum {
       CREATE = '新增',
@@ -242,7 +245,7 @@ export default defineComponent({
           sortable: false,
           thClass: 'text-center',
           tdClass: 'text-center align-middle',
-          // formatter: value => (value == undefined ? '' : changeDealWithUnit(value, bpmUnitOptions)),
+          // formatter: value => (value == undefined ? '' : changeDealWithUnit(value, bpmDeptsOptions)),
         },
         {
           key: 'processInstanceStatus',
@@ -282,15 +285,12 @@ export default defineComponent({
     });
 
     const toQuery = () => {
-
-      if (form.dateStart !== null) {
-        form.dateEnd = form.dateEnd !== null ? form.dateEnd : new Date()
-      }
-
+      console.log('登入者資訊', userData)
       table.data = [];
       const params = new FormData();
       params.append('bpmFormQueryDto', new Blob([JSON.stringify(form)], {type: 'application/json'}));
-      axios.post(`/eip/getNotify`, params).then(({data}) => {
+      params.append('isNotify', new Blob([JSON.stringify(true)], {type: 'application/json'}));
+      axios.post(`/process/queryTask`, params).then(({data}) => {
         console.log('data+++', data);
         queryStatus.value = true;
         if (data.length <= 0) return;
@@ -299,14 +299,13 @@ export default defineComponent({
       }).catch(notificationErrorHandler(notificationService));
     };
 
-    const userData = ref(useGetters(['getUserData']).getUserData).value.user;
-
     function toEdit(item) {
-      navigateByNameAndParams('l414Edit', {
+      let prefix = item.formId.substring(0, 4).toLowerCase()
+      navigateByNameAndParams(prefix + 'Edit', {
         formId: item.formId,
         formStatus: FormStatusEnum.READONLY,
         isNotKeepAlive: false,
-        stateStatus: userData === 'InfoTester'
+        stateStatus: userData.cpape05m.unitName !== '資訊推動小組'
       });
     }
 
@@ -325,7 +324,7 @@ export default defineComponent({
       notAfterPublicDateEnd,
       toEdit,
       queryStatus,
-      bpmUnitOptions,
+      bpmDeptsOptions,
       changeDealWithUnit
     };
   },

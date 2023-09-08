@@ -86,7 +86,7 @@
           </template>
 
           <template #cell(action)="row">
-            <b-button class="ml-1" v-if="userData.userData.userName === row.item.appName" style="background-color: #17a2b8"
+            <b-button class="ml-1" v-if="userData.userName === row.item.appName" style="background-color: #17a2b8"
                       @click="toEdit(row.item,'0')">編輯
             </b-button>
             <b-button class="ml-1" v-else style="background-color: #17a2b8"
@@ -99,19 +99,17 @@
 
 <script lang="ts">
 import axios from 'axios';
-import {ref, reactive, computed, toRefs, defineComponent, onActivated} from '@vue/composition-api';
+import {ref, reactive, defineComponent, onActivated} from '@vue/composition-api';
 import IDatePicker from '../shared/i-date-picker/i-date-picker.vue';
 import ITable from '../shared/i-table/i-table.vue';
 import IFormGroupCheck from '../shared/form/i-form-group-check.vue';
 import {useValidation, validateState} from '@/shared/form';
-import {useBvModal} from '../shared/modal';
 import {required} from '@/shared/validators';
-import {Pagination} from "@/shared/model/pagination.model";
 import {notificationErrorHandler} from "@/shared/http/http-response-helper";
 import {useNotification} from "@/shared/notification";
 import {newformatDate} from "@/shared/date/minguo-calendar-utils";
 import {changeSubject} from "@/shared/word/change-word-utils";
-import {useGetters, useStore} from "@u3u/vue-hooks";
+import {useGetters} from "@u3u/vue-hooks";
 import {navigateByNameAndParams} from "@/router/router";
 
 export default defineComponent({
@@ -227,6 +225,7 @@ export default defineComponent({
       table.data = [];
       const params = new FormData();
       params.append('bpmFormQueryDto', new Blob([JSON.stringify(form)], {type: 'application/json'}));
+      params.append('isNotify', new Blob([JSON.stringify(false)], {type: 'application/json'}));
       axios.post(`/process/queryTask`, params).then(({data}) => {
         console.log('data+++', data);
         queryStatus.value = true;
@@ -259,7 +258,7 @@ export default defineComponent({
           taskData:taskData,
           formStatus: FormStatusEnum.MODIFY,
           isNotKeepAlive: false,
-          stateStatus: userData.userData.cpape05m.unitName !== '資訊推動小組'
+          stateStatus: userData.cpape05m.unitName !== '資訊推動小組'
         });
       } else {
         navigateByNameAndParams(prefix + 'Edit', {
@@ -267,7 +266,7 @@ export default defineComponent({
           taskData:taskData,
           formStatus: FormStatusEnum.VERIFY,
           isNotKeepAlive: false,
-          stateStatus: userData.userData.cpape05m.unitName !== '資訊推動小組'
+          stateStatus: userData.cpape05m.unitName !== '資訊推動小組'
         });
       }
     }

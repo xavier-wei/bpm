@@ -67,7 +67,7 @@
               <i-form-group-check class="col-sm-4" label-cols="5" content-cols="7" :label="`單位：`"
                                   :item="$v.filUnit">
                 <!--填表人單位名稱　: filUnit-->
-                <b-form-select v-model="$v.filUnit.$model" :options="bpmUnitOptions">
+                <b-form-select v-model="$v.filUnit.$model" :options="bpmDeptsOptions">
                   <template #first>
                     <b-form-select-option value="null" disabled>請選擇</b-form-select-option>
                   </template>
@@ -90,7 +90,7 @@
               <i-form-group-check label-star class="col-sm-5" label-cols="5" content-cols="7" :label="`單位別 ：`"
                                   :item="$v.appUnit1">
                 <!--單位別 : -->
-                <b-form-select v-model="$v.appUnit1.$model" :options="bpmUnitOptions">
+                <b-form-select v-model="$v.appUnit1.$model" :options="bpmDeptsOptions">
                   <template #first>
                     <b-form-select-option value="null" disabled>請選擇</b-form-select-option>
                   </template>
@@ -381,7 +381,7 @@
 
                 <!--管理單位-->
                 <template #cell(managementUnit)="row">
-                  <b-form-select :options="bpmUnitOptions" v-model="row.item.admUnit">
+                  <b-form-select :options="bpmDeptsOptions" v-model="row.item.admUnit">
                     <template #first>
                       <b-form-select-option value="null" disabled>請選擇</b-form-select-option>
                     </template>
@@ -515,16 +515,17 @@ export default {
   },
   setup(props) {
     let appendixData = reactive({});
+    const userData = ref(useGetters(['getUserData']).getUserData).value
     const formStatusRef = toRef(props, 'formStatus');
-    const bpmUnitOptions = ref(useGetters(['getBpmUnitOptions']).getBpmUnitOptions).value;
+    const bpmDeptsOptions = ref(useGetters(['getBpmDeptsOptions']).getBpmDeptsOptions).value;
     const $bvModal = useBvModal();
     const notificationService = useNotification();
     const formDefault = {
       formId: '',//表單編號
       applyDate: new Date(new Date().getFullYear(), new Date().getMonth(), new Date().getDate(),new Date().getHours(),new Date().getMinutes(),new Date().getSeconds(),new Date().getMilliseconds()),//	申請日期
-      filEmpid: '',//	填表人員工編號
-      filName: '',//	填表人姓名
-      filUnit: '',//	填表人單位名稱
+      filEmpid: userData.empId != null ? userData.empId : '',//	填表人員工編號
+      filName: userData.userName != null ? userData.userName : '',//	填表人姓名
+      filUnit: userData.deptId != null ? userData.deptId : '' ,//	填表人單位名稱
       isSubmit: '',//	是否暫存、送出
       appName: '', // 中文姓名
       appEngName: '', // 英文姓名
@@ -838,7 +839,7 @@ export default {
       formStatusRef,
       reset,
       toQueryView,
-      bpmUnitOptions
+      bpmDeptsOptions
     }
   }
 }

@@ -51,6 +51,11 @@ public class ProcessResource {
         return service.queryProcessingTask(id);
     }
 
+    @RequestMapping("/queryProcessingAllTask")
+    public List<TaskDTO> queryProcessingAllTask(@RequestBody String id) {
+        return service.queryProcessingAllTask(id);
+    }
+
     @RequestMapping("/completeTask")
     public ProcessRes completeTask(@Validated @RequestBody CompleteReqDTO completeReqDTO) {
         if (completeReqDTO.getVariables() != null && !completeReqDTO.getVariables().isEmpty()) {

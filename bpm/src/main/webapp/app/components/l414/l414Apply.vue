@@ -61,7 +61,7 @@
                       <i-form-group-check class="col-sm-4" label-cols="5" content-cols="7" :label="`單位：`"
                                           :item="$v.filUnit">
                         <!--填表人單位名稱　: filUnit-->
-                        <b-form-select v-model="$v.filUnit.$model" :options="bpmUnitOptions">
+                        <b-form-select v-model="$v.filUnit.$model" :options="bpmDeptsOptions">
                           <template #first>
                             <b-form-select-option value="" disabled>請選擇</b-form-select-option>
                           </template>
@@ -90,7 +90,7 @@
                       <i-form-group-check class="col-sm-4" label-cols="5" content-cols="7" :label="`單位：`"
                                           :item="$v.appUnit">
                         <!--申請人單位名稱 : appUnit-->
-                        <b-form-select v-model="$v.appUnit.$model" :options="bpmUnitOptions">
+                        <b-form-select v-model="$v.appUnit.$model" :options="bpmDeptsOptions">
                           <template #first>
                             <b-form-select-option value="" disabled>請選擇</b-form-select-option>
                           </template>
@@ -449,7 +449,7 @@ export default {
   },
   setup(props) {
     const userData = ref(useGetters(['getUserData']).getUserData).value
-    const bpmUnitOptions = ref(useGetters(['getBpmUnitOptions']).getBpmUnitOptions).value;
+    const bpmDeptsOptions = ref(useGetters(['getBpmDeptsOptions']).getBpmDeptsOptions).value;
     const formStatusRef = toRef(props, 'formStatus');
     const tabIndex = ref(0);
     const dual1 = ref(null);
@@ -465,9 +465,9 @@ export default {
     const formDefault = {
       formId: '', //表單編號
       applyDate: new Date(new Date().getFullYear(), new Date().getMonth(), new Date().getDate(),new Date().getHours(),new Date().getMinutes(),new Date().getSeconds(),new Date().getMilliseconds()), //	申請日期
-      filEmpid: userData.userData.userName != null ? userData.userData.empId : '', //	填表人員工編號
-      filName: userData.userData.userName != null ? userData.userData.userName : '' , //	填表人姓名
-      filUnit: '', //	填表人單位名稱
+      filEmpid: userData.empId != null ? userData.empId : '', //	填表人員工編號
+      filName: userData.userName != null ? userData.userName : '' , //	填表人姓名
+      filUnit: userData.deptId != null ? userData.deptId : ''  , //	填表人單位名稱
       appEmpid: '', //	申請人員工編號
       appName: '', //	申請人姓名
       appUnit: '', //	申請人單位名稱
@@ -618,7 +618,7 @@ export default {
       toQueryView,
       reset,
       formStatusRef,
-      bpmUnitOptions
+      bpmDeptsOptions
     }
   }
 }

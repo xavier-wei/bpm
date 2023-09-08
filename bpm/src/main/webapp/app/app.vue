@@ -90,10 +90,10 @@ export default {
       window.addEventListener('resize', e => {
         useStore().value.commit('setCurrentWidth', window.innerWidth);
         useStore().value.commit('setCurrentHeight', window.innerHeight);
-        const isMobileDevice = currentWidth.value < mobileUpperLimit.value;
+        // const isMobileDevice = currentWidth.value < mobileUpperLimit.value;
         const isPadDevice = currentWidth.value >= padLowerLimit.value && currentWidth.value < padUpperLimit.value;
         const isDeskTopDevice = currentWidth.value >= deskTopLowerLimit.value;
-        useStore().value.commit('setMobileDevice', isMobileDevice);
+        // useStore().value.commit('setMobileDevice', isMobileDevice);
         useStore().value.commit('setPadDevice', isPadDevice);
         useStore().value.commit('setDeskTopDevice', isDeskTopDevice);
         // useStore().value.commit('setMenuState', isDeskTopDevice);

@@ -106,6 +106,17 @@ public class ProcessFlowService {
                 .filter(taskDTO -> "Additional".equals(taskDTO.getFormName()) || !mainProcessInstanceIds.contains(taskDTO.getProcessInstanceId())
                 ).collect(Collectors.toList());
     }
+
+    public List<TaskDTO> queryProcessingAllTask(String id) {
+        return taskService.createTaskQuery()
+                .taskCandidateOrAssigned(id)
+                .orderByTaskCreateTime()
+                .desc()
+                .list()
+                .stream()
+                .map(this::getTaskDTO)
+                .collect(Collectors.toList());
+    }
     // delete processInstance
 
     public void deleteProcessInstance(String processInstanceId) {
