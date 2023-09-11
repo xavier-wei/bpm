@@ -82,8 +82,8 @@
                     // 等待获取 ticket 的 Promise 解决
                     // let ticket =  getTicket();
 
-                    const dashboardFigId = type;
-                    const foundImage = backendResponse.find(item => item.dashboardFigId === dashboardFigId);
+                    const dashboardFigId = type;  //BID_01_01.action
+                    const foundImage = backendResponse.find(item =>  dashboardFigId.include(item.dashboardFigId));
                     if (foundImage) {
                         foundImage.tableauNewUrl = foundImage.tableauUrl.replace("#", "trusted/" + ticket);
                         console.log(foundImage.tableauNewUrl);
