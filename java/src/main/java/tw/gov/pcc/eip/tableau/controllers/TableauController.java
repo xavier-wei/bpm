@@ -93,6 +93,7 @@ public class TableauController extends BaseController {
 
     /**
      * 取得點選menu轉導的頁面，用來window.open相對應的tableau url
+     * ex ./tableau_enter.action/BID_01_01.action
      */
     @RequestMapping("/tableau_enter.action/{tableauId}")
     public ModelAndView showTableauPage(
