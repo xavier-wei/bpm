@@ -78,10 +78,10 @@
         <filter-name>Keycloak Filter</filter-name>
         <url-pattern>*.bpmAction</url-pattern>
     </filter-mapping>
-    <filter-mapping>
-        <filter-name>Keycloak Filter</filter-name>
-        <url-pattern>*.action/*</url-pattern>
-    </filter-mapping>
+<!--    <filter-mapping>-->
+<!--        <filter-name>Keycloak Filter</filter-name>-->
+<!--        <url-pattern>*.action/*</url-pattern>-->
+<!--    </filter-mapping>-->
     <!-- Framework Authorize Filter -->
     <!-- [ -->
     <filter>

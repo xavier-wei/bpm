@@ -204,25 +204,17 @@ public class IsmsProcessResource {
     }
 
     @RequestMapping("/queryTask")
-    public List<Map<String, Object>> queryTask(@Valid @RequestPart(required = false) BpmFormQueryDto bpmFormQueryDto,
-                                               @RequestPart(required = false) Boolean isNotify) {
+    public List<Map<String, Object>> queryTask(@Valid @RequestPart(required = false) BpmFormQueryDto bpmFormQueryDto) {
         User userInfo = getUserInfo();
         log.info("ProcessL414Resource.java - queryTask - 193 :: " + userInfo.getUserId());
         log.info("ProcessL414Resource.java - queryTask - 194 :: " + bpmFormQueryDto);
-        log.info("IsmsProcessResource.java - queryTask - 212 :: " + isNotify);
 
 //        String id="ApplyTester";
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
         HttpEntity<String> requestEntity = new HttpEntity<>(userInfo.getUserId(), headers);
 
-        ResponseEntity<String> exchange = null;
-
-        if (isNotify) {
-            exchange = restTemplate.exchange(FLOWABLE_PROCESS_URL + "/queryProcessingAllTask", HttpMethod.POST, requestEntity, String.class);
-        } else {
-            exchange = restTemplate.exchange(FLOWABLE_PROCESS_URL + "/queryProcessingTask", HttpMethod.POST, requestEntity, String.class);
-        }
+        ResponseEntity<String>   exchange = restTemplate.exchange(FLOWABLE_PROCESS_URL + "/queryProcessingTask", HttpMethod.POST, requestEntity, String.class);
 
         if (exchange.getStatusCodeValue() == 200) {
             String body = exchange.getBody();
@@ -308,6 +300,29 @@ public class IsmsProcessResource {
 
     private User getUserInfo() {
         return (User) httpSession.getAttribute("userInfo");
+    }
+
+    @RequestMapping("/notify/queryTask")
+    public List<Map<String, Object>> notifyQueryTask(@Valid @RequestPart(required = false) BpmFormQueryDto bpmFormQueryDto) {
+
+       log.info("IsmsProcessResource.java - notifyQueryTask - 308 :: " + bpmFormQueryDto );
+
+        List<Map<String,Object>> findAllToNotify =  bpmIsmsAdditionalRepository.findAllToNotify(
+            bpmFormQueryDto.getFormId(),
+            bpmFormQueryDto.getProcessInstanceStatus(),
+            bpmFormQueryDto.getUnit(),
+            bpmFormQueryDto.getAppName(),
+            bpmFormQueryDto.getDateStart(),
+            bpmFormQueryDto.getDateEnd()
+        );
+
+        List<Map<String, Object>> aaa = new ArrayList<>();
+
+        findAllToNotify.forEach(data -> {
+            aaa.add(new MapUtils().getNewMap(data));
+        });
+
+        return aaa;
     }
 
 }
