@@ -31,7 +31,7 @@
         function getTicket() {
             return new Promise((resolve, reject) => {
                 $.ajax({
-                    url: '<c:url value="/get_ticket.action" />',
+                    url: '<c:url value="/Common_getTableauTicket.action" />',
                     type: 'POST',
                     async: true,
                     timeout: 100000,
@@ -56,7 +56,7 @@
         //取得所有儀表板資訊
         function getAllTableauData(ticket) {
         $.ajax({
-              url: '<c:url value="/get_tableau_data.action" />',
+              url: '<c:url value="/Common_getAllTableauData.action" />',
               type: 'POST',
               async: true,
               timeout: 100000,
