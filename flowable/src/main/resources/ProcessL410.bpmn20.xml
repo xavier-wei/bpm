@@ -21,7 +21,7 @@
     </sequenceFlow>
     <exclusiveGateway id="sid-7907c237-afa5-456b-a420-ae7c92353a2d"/>
     <sequenceFlow id="sid-ec743bfe-bf17-4813-829a-6c563e9dcd65" sourceRef="directorSign" targetRef="sid-7907c237-afa5-456b-a420-ae7c92353a2d"/>
-    <serviceTask id="directorRejectMail" flowable:exclusive="true"/>
+    <serviceTask id="directorRejectMail" flowable:exclusive="true" flowable:class="tw.gov.pcc.flowable.act.ProcessEndServiceTask"/>
     <sequenceFlow id="sid-411ab37e-9571-4e19-a0a9-d6b250ef3fb0" sourceRef="sid-7907c237-afa5-456b-a420-ae7c92353a2d" targetRef="directorRejectMail">
       <conditionExpression xsi:type="tFormalExpression"><![CDATA[${directorDecision=="0"}]]></conditionExpression>
     </sequenceFlow>
@@ -41,47 +41,47 @@
     <userTask id="pccAccount" name="全球資訊網&amp;會內資訊網"/>
     <userTask id="ADAccount" name="AD帳號"/>
     <userTask id="personnelAttendanceSys" name="人事差勤系統"/>
-    <userTask id="sid-78a3ae73-f379-4e4f-a0d8-9099350776f4" name="政府電子採購網"/>
-    <userTask id="sid-9d9f825e-fb8c-4274-b0bd-d85d5dda5f8f" name="本會其他資通系統"/>
-    <userTask id="sid-b4f8f617-ba09-45dc-8bcc-20c9c712ba7b" name="技師與工程技術顧問公司管理資訊系統"/>
-    <userTask id="sid-d9c5d878-e22b-4f0c-aa0a-201627909297" name="公共工程案件審議資訊系統"/>
-    <userTask id="sid-ff2f2566-ec1d-417f-9edd-6a8c2f5798e0" name="公共工程標案管理系統"/>
-    <userTask id="sid-c2730aac-f147-41c1-83a4-095c4fde87a3" name="災後復建工程經費審議及執行資訊系統"/>
-    <sequenceFlow id="sid-cb85460f-4624-43e8-9918-0556294321c5" sourceRef="sid-a1383f52-47a0-48a3-8551-67c550ace4d3" targetRef="sid-9d9f825e-fb8c-4274-b0bd-d85d5dda5f8f">
-      <conditionExpression xsi:type="tFormalExpression"/>
+    <userTask id="govEProcurementSystem" name="政府電子採購網"/>
+    <userTask id="otherInfoSys" name="本會其他資通系統"/>
+    <userTask id="engAndPrjConsultantManageInfoSys" name="技師與工程技術顧問公司管理資訊系統"/>
+    <userTask id="publicWorkCaseReviewInfoSys" name="公共工程案件審議資訊系統"/>
+    <userTask id="publicWorkBidManageSys" name="公共工程標案管理系統"/>
+    <userTask id="disasterRecoveryPrjBudgetAndExecuteInfoSys" name="災後復建工程經費審議及執行資訊系統"/>
+    <sequenceFlow id="sid-cb85460f-4624-43e8-9918-0556294321c5" sourceRef="sid-a1383f52-47a0-48a3-8551-67c550ace4d3" targetRef="otherInfoSys">
+      <conditionExpression xsi:type="tFormalExpression"><![CDATA[${otherInfoSys=="1"}]]></conditionExpression>
     </sequenceFlow>
-    <sequenceFlow id="sid-8ffa49d8-15c1-4f5d-ae7e-622d845eee3f" sourceRef="sid-a1383f52-47a0-48a3-8551-67c550ace4d3" targetRef="sid-ff2f2566-ec1d-417f-9edd-6a8c2f5798e0">
-      <conditionExpression xsi:type="tFormalExpression"/>
+    <sequenceFlow id="sid-8ffa49d8-15c1-4f5d-ae7e-622d845eee3f" sourceRef="sid-a1383f52-47a0-48a3-8551-67c550ace4d3" targetRef="publicWorkBidManageSys">
+      <conditionExpression xsi:type="tFormalExpression"><![CDATA[${publicWorkBidManageSys=="1"}]]></conditionExpression>
     </sequenceFlow>
-    <sequenceFlow id="sid-4e47f305-8190-4f3d-b507-3631d5255988" sourceRef="sid-a1383f52-47a0-48a3-8551-67c550ace4d3" targetRef="sid-c2730aac-f147-41c1-83a4-095c4fde87a3">
-      <conditionExpression xsi:type="tFormalExpression"/>
+    <sequenceFlow id="sid-4e47f305-8190-4f3d-b507-3631d5255988" sourceRef="sid-a1383f52-47a0-48a3-8551-67c550ace4d3" targetRef="disasterRecoveryPrjBudgetAndExecuteInfoSys">
+      <conditionExpression xsi:type="tFormalExpression"><![CDATA[${disasterRecoveryPrjBudgetAndExecuteInfoSys=="1"}]]></conditionExpression>
     </sequenceFlow>
-    <sequenceFlow id="sid-d9b3e3d0-f397-4ff4-96e6-6197edde70e2" sourceRef="sid-a1383f52-47a0-48a3-8551-67c550ace4d3" targetRef="sid-d9c5d878-e22b-4f0c-aa0a-201627909297">
-      <conditionExpression xsi:type="tFormalExpression"/>
+    <sequenceFlow id="sid-d9b3e3d0-f397-4ff4-96e6-6197edde70e2" sourceRef="sid-a1383f52-47a0-48a3-8551-67c550ace4d3" targetRef="publicWorkCaseReviewInfoSys">
+      <conditionExpression xsi:type="tFormalExpression"><![CDATA[${publicWorkCaseReviewInfoSys=="1"}]]></conditionExpression>
     </sequenceFlow>
-    <sequenceFlow id="sid-049ff67f-519b-40e1-9b38-21a4b31204f6" sourceRef="sid-a1383f52-47a0-48a3-8551-67c550ace4d3" targetRef="sid-b4f8f617-ba09-45dc-8bcc-20c9c712ba7b">
-      <conditionExpression xsi:type="tFormalExpression"/>
+    <sequenceFlow id="sid-049ff67f-519b-40e1-9b38-21a4b31204f6" sourceRef="sid-a1383f52-47a0-48a3-8551-67c550ace4d3" targetRef="engAndPrjConsultantManageInfoSys">
+      <conditionExpression xsi:type="tFormalExpression"><![CDATA[${engAndPrjConsultantManageInfoSys=="1"}]]></conditionExpression>
     </sequenceFlow>
-    <sequenceFlow id="sid-2af9252d-91fc-432a-893a-328cf8129937" sourceRef="sid-a1383f52-47a0-48a3-8551-67c550ace4d3" targetRef="sid-78a3ae73-f379-4e4f-a0d8-9099350776f4">
-      <conditionExpression xsi:type="tFormalExpression"/>
+    <sequenceFlow id="sid-2af9252d-91fc-432a-893a-328cf8129937" sourceRef="sid-a1383f52-47a0-48a3-8551-67c550ace4d3" targetRef="govEProcurementSystem">
+      <conditionExpression xsi:type="tFormalExpression"><![CDATA[${govEProcurementSystem=="1"}]]></conditionExpression>
     </sequenceFlow>
     <sequenceFlow id="sid-a3389f0b-f45d-4e29-b086-68a974559d0a" sourceRef="sid-a1383f52-47a0-48a3-8551-67c550ace4d3" targetRef="pccAccount">
-      <conditionExpression xsi:type="tFormalExpression"/>
+      <conditionExpression xsi:type="tFormalExpression"><![CDATA[${pccAccount=="1"}]]></conditionExpression>
     </sequenceFlow>
     <sequenceFlow id="sid-21594fa3-6ba3-4d01-9e90-a66f03787403" sourceRef="sid-a1383f52-47a0-48a3-8551-67c550ace4d3" targetRef="emailAccount">
-      <conditionExpression xsi:type="tFormalExpression"/>
+      <conditionExpression xsi:type="tFormalExpression"><![CDATA[${emailAccount=="1"}]]></conditionExpression>
     </sequenceFlow>
     <sequenceFlow id="sid-b1ea373e-5f21-413f-b4ba-3a8ccac58e32" sourceRef="sid-a1383f52-47a0-48a3-8551-67c550ace4d3" targetRef="meetingRoomManageSys">
-      <conditionExpression xsi:type="tFormalExpression"/>
+      <conditionExpression xsi:type="tFormalExpression"><![CDATA[${meetingRoomManageSys=="1"}]]></conditionExpression>
     </sequenceFlow>
     <sequenceFlow id="sid-2d63cfda-0118-4bfc-b83a-54c3fbccf392" sourceRef="sid-a1383f52-47a0-48a3-8551-67c550ace4d3" targetRef="govDocManageSys">
-      <conditionExpression xsi:type="tFormalExpression"/>
+      <conditionExpression xsi:type="tFormalExpression"><![CDATA[${govDocManageSys=="1"}]]></conditionExpression>
     </sequenceFlow>
     <sequenceFlow id="sid-d37d7eaa-6bb9-4bb8-986c-a65fc3e4a4ce" sourceRef="sid-a1383f52-47a0-48a3-8551-67c550ace4d3" targetRef="ADAccount">
-      <conditionExpression xsi:type="tFormalExpression"/>
+      <conditionExpression xsi:type="tFormalExpression"><![CDATA[${ADAccount=="1"}]]></conditionExpression>
     </sequenceFlow>
     <sequenceFlow id="sid-7ac91be8-1a37-4216-86d1-c1b02ded4d5a" sourceRef="sid-a1383f52-47a0-48a3-8551-67c550ace4d3" targetRef="personnelAttendanceSys">
-      <conditionExpression xsi:type="tFormalExpression"/>
+      <conditionExpression xsi:type="tFormalExpression"><![CDATA[${personnelAttendanceSys=="1"}]]></conditionExpression>
     </sequenceFlow>
     <inclusiveGateway id="sid-a1383f52-47a0-48a3-8551-67c550ace4d3"/>
     <inclusiveGateway id="sid-c5603955-9758-45c7-abad-cc1a06dcceaf"/>
@@ -91,13 +91,13 @@
     <sequenceFlow id="sid-720be980-dcc0-4b20-a5e1-c93c3c73f7fc" sourceRef="meetingRoomManageSys" targetRef="sid-c5603955-9758-45c7-abad-cc1a06dcceaf"/>
     <sequenceFlow id="sid-928abc36-7be5-4506-bdc9-fc49ea23ce6f" sourceRef="emailAccount" targetRef="sid-c5603955-9758-45c7-abad-cc1a06dcceaf"/>
     <sequenceFlow id="sid-c21fd203-952f-45f4-a40f-c61b349699d5" sourceRef="pccAccount" targetRef="sid-c5603955-9758-45c7-abad-cc1a06dcceaf"/>
-    <sequenceFlow id="sid-09b33cbe-c0fc-44f1-bd43-a84257e1d663" sourceRef="sid-78a3ae73-f379-4e4f-a0d8-9099350776f4" targetRef="sid-c5603955-9758-45c7-abad-cc1a06dcceaf"/>
-    <sequenceFlow id="sid-cde33ceb-97eb-4a13-ad46-82b2aaf4c8d2" sourceRef="sid-b4f8f617-ba09-45dc-8bcc-20c9c712ba7b" targetRef="sid-c5603955-9758-45c7-abad-cc1a06dcceaf"/>
-    <sequenceFlow id="sid-a5576118-c270-45f0-9e6e-63e182db15e7" sourceRef="sid-d9c5d878-e22b-4f0c-aa0a-201627909297" targetRef="sid-c5603955-9758-45c7-abad-cc1a06dcceaf"/>
-    <sequenceFlow id="sid-5d09d946-a42b-4afd-9b4a-4ced3c20be8b" sourceRef="sid-c2730aac-f147-41c1-83a4-095c4fde87a3" targetRef="sid-c5603955-9758-45c7-abad-cc1a06dcceaf"/>
-    <sequenceFlow id="sid-25d1f1e8-e420-42b8-8b2e-50e1208f9d88" sourceRef="sid-ff2f2566-ec1d-417f-9edd-6a8c2f5798e0" targetRef="sid-c5603955-9758-45c7-abad-cc1a06dcceaf"/>
-    <sequenceFlow id="sid-dfad0943-0f2e-427b-ab3e-b08c33770c2f" sourceRef="sid-9d9f825e-fb8c-4274-b0bd-d85d5dda5f8f" targetRef="sid-c5603955-9758-45c7-abad-cc1a06dcceaf"/>
-    <serviceTask id="sid-85e370a6-a553-41a7-a727-438cf656201b" flowable:exclusive="true"/>
+    <sequenceFlow id="sid-09b33cbe-c0fc-44f1-bd43-a84257e1d663" sourceRef="govEProcurementSystem" targetRef="sid-c5603955-9758-45c7-abad-cc1a06dcceaf"/>
+    <sequenceFlow id="sid-cde33ceb-97eb-4a13-ad46-82b2aaf4c8d2" sourceRef="engAndPrjConsultantManageInfoSys" targetRef="sid-c5603955-9758-45c7-abad-cc1a06dcceaf"/>
+    <sequenceFlow id="sid-a5576118-c270-45f0-9e6e-63e182db15e7" sourceRef="publicWorkCaseReviewInfoSys" targetRef="sid-c5603955-9758-45c7-abad-cc1a06dcceaf"/>
+    <sequenceFlow id="sid-5d09d946-a42b-4afd-9b4a-4ced3c20be8b" sourceRef="disasterRecoveryPrjBudgetAndExecuteInfoSys" targetRef="sid-c5603955-9758-45c7-abad-cc1a06dcceaf"/>
+    <sequenceFlow id="sid-25d1f1e8-e420-42b8-8b2e-50e1208f9d88" sourceRef="publicWorkBidManageSys" targetRef="sid-c5603955-9758-45c7-abad-cc1a06dcceaf"/>
+    <sequenceFlow id="sid-dfad0943-0f2e-427b-ab3e-b08c33770c2f" sourceRef="otherInfoSys" targetRef="sid-c5603955-9758-45c7-abad-cc1a06dcceaf"/>
+    <serviceTask id="sid-85e370a6-a553-41a7-a727-438cf656201b" flowable:exclusive="true" flowable:class="tw.gov.pcc.flowable.act.ProcessEndServiceTask"/>
     <endEvent id="sid-d4372764-ce99-4242-b68e-4e846209468e"/>
     <sequenceFlow id="sid-9d016b53-6a17-4f4d-91a1-1e4a7b592ce3" sourceRef="sid-c5603955-9758-45c7-abad-cc1a06dcceaf" targetRef="sid-85e370a6-a553-41a7-a727-438cf656201b">
       <conditionExpression xsi:type="tFormalExpression"/>
@@ -219,22 +219,22 @@
       <bpmndi:BPMNShape id="sid-fe98eb69-fb4f-44ce-9650-55d265fe57e3" bpmnElement="personnelAttendanceSys">
         <omgdc:Bounds x="875.1449" y="164.99997" width="100.0" height="80.0"/>
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="sid-e490fab0-38b0-46a5-835e-5609afe56a37" bpmnElement="sid-78a3ae73-f379-4e4f-a0d8-9099350776f4">
+      <bpmndi:BPMNShape id="sid-e490fab0-38b0-46a5-835e-5609afe56a37" bpmnElement="govEProcurementSystem">
         <omgdc:Bounds x="1895.1449" y="164.99998" width="100.0" height="80.0"/>
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="sid-38b9879e-6ae4-41b4-95d8-9e64c7bb9cbc" bpmnElement="sid-9d9f825e-fb8c-4274-b0bd-d85d5dda5f8f">
+      <bpmndi:BPMNShape id="sid-38b9879e-6ae4-41b4-95d8-9e64c7bb9cbc" bpmnElement="otherInfoSys">
         <omgdc:Bounds x="2685.145" y="165.00003" width="100.0" height="80.0"/>
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="sid-f9aeb008-fa03-4c07-ab6f-98ebd15fe973" bpmnElement="sid-b4f8f617-ba09-45dc-8bcc-20c9c712ba7b">
+      <bpmndi:BPMNShape id="sid-f9aeb008-fa03-4c07-ab6f-98ebd15fe973" bpmnElement="engAndPrjConsultantManageInfoSys">
         <omgdc:Bounds x="2050.145" y="164.99998" width="100.0" height="80.0"/>
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="sid-7714bf8c-b93f-46e8-ab3c-dc967225b735" bpmnElement="sid-d9c5d878-e22b-4f0c-aa0a-201627909297">
+      <bpmndi:BPMNShape id="sid-7714bf8c-b93f-46e8-ab3c-dc967225b735" bpmnElement="publicWorkCaseReviewInfoSys">
         <omgdc:Bounds x="2211.2336" y="165.0" width="100.0" height="80.0"/>
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="sid-644a7685-8011-4944-bdb8-712a80ed3438" bpmnElement="sid-ff2f2566-ec1d-417f-9edd-6a8c2f5798e0">
+      <bpmndi:BPMNShape id="sid-644a7685-8011-4944-bdb8-712a80ed3438" bpmnElement="publicWorkBidManageSys">
         <omgdc:Bounds x="2531.2336" y="165.0" width="100.0" height="80.0"/>
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="sid-8016bd0f-7b3c-481c-81c7-630a8e53b367" bpmnElement="sid-c2730aac-f147-41c1-83a4-095c4fde87a3">
+      <bpmndi:BPMNShape id="sid-8016bd0f-7b3c-481c-81c7-630a8e53b367" bpmnElement="disasterRecoveryPrjBudgetAndExecuteInfoSys">
         <omgdc:Bounds x="2366.2336" y="165.0" width="100.0" height="80.0"/>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNEdge id="edge-f7d85a34-1e82-488e-b845-475358c2ce9c" bpmnElement="sid-cb85460f-4624-43e8-9918-0556294321c5">

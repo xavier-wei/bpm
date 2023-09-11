@@ -85,6 +85,33 @@ public class ProcessResource {
     }
 
     // todo 測試完成用api，上線需刪除
+
+    @RequestMapping("/startProcessL410")
+    public TaskDTO startProcessL410() {
+
+
+        HashMap<String, Object> variables = new HashMap<>();
+        variables.put("isSubmit", "1");
+        variables.put("chiefDecision", "1");
+        variables.put("directorDecision", "1");
+        variables.put("infoUndertakerDecision", "1");
+        variables.put("otherInfoSys", "0");
+        variables.put("publicWorkBidManageSys", "1");
+        variables.put("disasterRecoveryPrjBudgetAndExecuteInfoSys", "1");
+        variables.put("publicWorkCaseReviewInfoSys", "1");
+        variables.put("engAndPrjConsultantManageInfoSys", "1");
+        variables.put("govEProcurementSystem", "1");
+        variables.put("pccAccount", null);
+        variables.put("emailAccount", null);
+        variables.put("meetingRoomManageSys", null);
+        variables.put("govDocManageSys", null);
+        variables.put("ADAccount", "1");
+        variables.put("personnelAttendanceSys", "1");
+
+        return service.startProcess("ProcessL410", variables);
+
+    }
+
     @RequestMapping("/completeTaskTest/{pId}/{tId}")
     public String completeTest(@PathVariable String pId, @PathVariable String tId) {
 
