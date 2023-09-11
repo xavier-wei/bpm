@@ -444,7 +444,7 @@
            //取得使用者訂閱的儀表板
            function getUserData() {
            $.ajax({
-                url: '<c:url value="/get-tableau-data-by-user" />',
+                url: '<c:url value="/get_tableau_data_by_user.action" />',
                 type: 'POST',
                 async: true,
                 timeout: 100000,
@@ -552,7 +552,7 @@
          //獲取tableau授權碼，不用再二次登入
          function getTicket() {
           $.ajax({
-                 url: '<c:url value="/get-ticket" />',
+                 url: '<c:url value="/get_ticket.action" />',
                  type: 'POST',
                  async: true,
                  timeout: 100000,
