@@ -289,8 +289,7 @@ export default defineComponent({
       table.data = [];
       const params = new FormData();
       params.append('bpmFormQueryDto', new Blob([JSON.stringify(form)], {type: 'application/json'}));
-      params.append('isNotify', new Blob([JSON.stringify(true)], {type: 'application/json'}));
-      axios.post(`/process/queryTask`, params).then(({data}) => {
+      axios.post(`/process/notify/queryTask`, params).then(({data}) => {
         console.log('data+++', data);
         queryStatus.value = true;
         if (data.length <= 0) return;

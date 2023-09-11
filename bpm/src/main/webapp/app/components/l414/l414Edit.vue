@@ -452,7 +452,7 @@
 
                       </b-table>
 
-                      <div class="m-1">
+                      <div class="m-1" v-show="formStatusRef === FormStatusEnum.VERIFY">
                         <P> 填寫意見： </P>
                       </div>
 
