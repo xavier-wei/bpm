@@ -10,7 +10,6 @@
     </parent>
     <groupId>tw.gov.pcc</groupId>
     <artifactId>flowable</artifactId>
-    <version>0.0.1-SNAPSHOT</version>
     <packaging>war</packaging>
     <name>flowable</name>
     <description>flowable</description>

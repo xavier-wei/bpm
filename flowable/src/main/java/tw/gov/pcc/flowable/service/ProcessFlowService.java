@@ -6,12 +6,14 @@ import org.flowable.engine.TaskService;
 import org.flowable.engine.history.HistoricProcessInstance;
 import org.flowable.engine.runtime.ProcessInstance;
 import org.flowable.task.api.Task;
+import org.flowable.task.api.history.HistoricTaskInstance;
 import org.springframework.stereotype.Service;
 import tw.gov.pcc.flowable.domain.ProcessEnum;
 import tw.gov.pcc.flowable.domain.ProcessRes;
 import tw.gov.pcc.flowable.domain.SupervisorSignerEnum;
 import tw.gov.pcc.flowable.service.dto.TaskDTO;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
@@ -38,7 +40,7 @@ public class ProcessFlowService {
         Task task = taskService.createTaskQuery()
                 .taskCandidateOrAssigned((String) variables.get("applier"))
                 .processInstanceId(processInstance.getId()).singleResult();
-        TaskDTO taskDTO = new TaskDTO(task, processInstance.getProcessDefinitionKey());
+        TaskDTO taskDTO = new TaskDTO(task);
 
         if ("1".equals(variables.get("isSubmit"))) {
             taskService.complete(task.getId());
@@ -80,7 +82,7 @@ public class ProcessFlowService {
 
     public TaskDTO querySingleTask(String processInstanceId) {
         Task task = taskService.createTaskQuery().processInstanceId(processInstanceId).singleResult();
-        return getTaskDTO(task);
+        return new TaskDTO(task);
     }
     // query task
 
@@ -102,7 +104,7 @@ public class ProcessFlowService {
                 .desc()
                 .list()
                 .stream()
-                .map(this::getTaskDTO)
+                .map(TaskDTO::new)
                 .filter(taskDTO -> "Additional".equals(taskDTO.getFormName()) || !mainProcessInstanceIds.contains(taskDTO.getProcessInstanceId())
                 ).collect(Collectors.toList());
     }
@@ -114,7 +116,7 @@ public class ProcessFlowService {
                 .desc()
                 .list()
                 .stream()
-                .map(this::getTaskDTO)
+                .map(TaskDTO::new)
                 .collect(Collectors.toList());
     }
     // delete processInstance
@@ -128,7 +130,7 @@ public class ProcessFlowService {
                 .processInstanceId(task.getProcessInstanceId())
                 .singleResult();
         String processDefinitionKey = processInstance.getProcessDefinitionKey();
-        return new TaskDTO(task, processDefinitionKey);
+        return new TaskDTO(task);
     }
 
     public boolean isProcessComplete(String processInstanceId) {
@@ -159,9 +161,17 @@ public class ProcessFlowService {
                         Task supervisorTask = taskService.createTaskQuery()
                                 .taskCandidateOrAssigned((String) variables.get(supervisor))
                                 .processInstanceId(processInstanceId).singleResult();
+
                         variables.put(supervisor + "Decision", 1);
                         taskService.complete(supervisorTask.getId(), variables);
                     });
         }
+    }
+    public List<TaskDTO> queryList(String id) {
+        List<TaskDTO> taskDTOS = new ArrayList<>();
+        List<HistoricTaskInstance> historicTaskInstances = historyService.createHistoricTaskInstanceQuery().taskAssignee(id).list();
+        historicTaskInstances.forEach(historicTaskInstance -> taskDTOS.add(new TaskDTO(historicTaskInstance)));
+        taskService.createTaskQuery().taskAssignee(id).list().forEach(task -> taskDTOS.add(new TaskDTO(task)) );
+        return taskDTOS;
     }
 }
