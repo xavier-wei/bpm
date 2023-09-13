@@ -56,6 +56,10 @@ public class ProcessResource {
         return service.queryProcessingAllTask(id);
     }
 
+    @RequestMapping("/getAllTask/{id}")
+    public List<TaskDTO> getAllTask(@RequestBody String id) {
+        return service.queryList(id);
+    }
     @RequestMapping("/completeTask")
     public ProcessRes completeTask(@Validated @RequestBody CompleteReqDTO completeReqDTO) {
         if (completeReqDTO.getVariables() != null && !completeReqDTO.getVariables().isEmpty()) {
@@ -120,4 +124,6 @@ public class ProcessResource {
 
         return "成功";
     }
+
+
 }
