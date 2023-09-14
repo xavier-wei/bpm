@@ -292,10 +292,12 @@ export default defineComponent({
       axios.post(`/process/notify/queryTask`, params).then(({data}) => {
         queryStatus.value = true;
         if (data.length <= 0) return;
+
         table.data = data.sort((a, b) => {
           return parseInt(a.formId.replace(/-/g, '').substring(4, a.formId.replace(/-/g, '').length)) - parseInt(b.formId.replace(/-/g, '').substring(4, b.formId.replace(/-/g, '').length ))
         });
         table.totalItems = data.length;
+        console.log('data-notify: ',table.data)
       }).catch(notificationErrorHandler(notificationService));
     };
 
