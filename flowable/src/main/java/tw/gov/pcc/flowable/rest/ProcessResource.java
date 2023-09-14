@@ -56,7 +56,7 @@ public class ProcessResource {
         return service.queryProcessingAllTask(id);
     }
 
-    @RequestMapping("/getAllTask/{id}")
+    @RequestMapping("/getAllTask")
     public List<TaskDTO> getAllTask(@RequestBody String id) {
         return service.queryList(id);
     }
