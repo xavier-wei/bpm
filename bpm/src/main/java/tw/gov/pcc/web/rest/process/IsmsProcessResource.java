@@ -304,25 +304,84 @@ public class IsmsProcessResource {
 
     @RequestMapping("/notify/queryTask")
     public List<Map<String, Object>> notifyQueryTask(@Valid @RequestPart(required = false) BpmFormQueryDto bpmFormQueryDto) {
+        User userInfo = getUserInfo();
 
-       log.info("IsmsProcessResource.java - notifyQueryTask - 308 :: " + bpmFormQueryDto );
+        log.info("IsmsProcessResource.java - notifyQueryTask - 309 :: " + userInfo);
 
-        List<Map<String,Object>> findAllToNotify =  bpmIsmsAdditionalRepository.findAllToNotify(
-            bpmFormQueryDto.getFormId(),
-            bpmFormQueryDto.getProcessInstanceStatus(),
-            bpmFormQueryDto.getUnit(),
-            bpmFormQueryDto.getAppName(),
-            bpmFormQueryDto.getDateStart(),
-            bpmFormQueryDto.getDateEnd()
-        );
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+        HttpEntity<String> requestEntity = new HttpEntity<>(userInfo.getUserId(), headers);
 
-        List<Map<String, Object>> aaa = new ArrayList<>();
+        ResponseEntity<String> exchange = restTemplate.exchange(FLOWABLE_PROCESS_URL + "/getAllTask", HttpMethod.POST, requestEntity, String.class);
 
-        findAllToNotify.forEach(data -> {
-            aaa.add(new MapUtils().getNewMap(data));
-        });
+        if (exchange.getStatusCodeValue() == 200) {
+            String body = exchange.getBody();
+            Type listType = new TypeToken<ArrayList<TaskDTO>>() {
+            }.getType();
+            List<TaskDTO> taskDTOS = new Gson().fromJson(body, listType);
+            log.info("IsmsProcessResource.java - notifyQueryTask - 322 :: " + taskDTOS);
 
-        return aaa;
+            assert taskDTOS != null;
+            return taskDTOS.isEmpty() ? null :
+                taskDTOS.stream()
+                    .map(taskDTO -> {
+
+                        if (taskDTO.getFormName().equals("Additional")) {
+
+                            BpmIsmsAdditional bpmIsmsAdditional = bpmIsmsAdditionalRepository.findByProcessInstanceId(taskDTO.getProcessInstanceId());
+
+                            List<Map<String, Object>> mapList = bpmIsmsAdditionalRepository.findAllByProcessInstanceId(
+                                bpmIsmsAdditional.getMainProcessInstanceId(),
+                                bpmFormQueryDto.getFormId(),
+                                bpmFormQueryDto.getProcessInstanceStatus(),
+                                bpmFormQueryDto.getUnit(),
+                                bpmFormQueryDto.getAppName(),
+                                bpmFormQueryDto.getDateStart(),
+                                bpmFormQueryDto.getDateEnd()
+                            );
+
+                            if (!mapList.isEmpty()) {
+                                Map<String, Object> map = new HashMap<>(new MapUtils().getNewMap(mapList.get(0)));
+                                map.put("processInstanceId", taskDTO.getProcessInstanceId());
+                                map.put("taskId", taskDTO.getTaskId());
+                                map.put("taskName", taskDTO.getTaskName());
+                                map.put("decisionRole", SingerEnum.getDecisionByName(taskDTO.getTaskName()));
+                                map.put("additional", true);
+                                return map;
+                            } else {
+                                return null;
+                            }
+                        } else {
+                            //                        BpmIsmsL414DTO dto = bpmIsmsL414Mapper.toDto(bpmIsmsL414Repository.findFirstByProcessInstanceId(taskDTO.getProcessInstanceId()));
+//                            BpmIsmsL414DTO dto = bpmIsmsL414Repository.findByBpmIsmsL414(bpmFormQueryDto, taskDTO.getProcessInstanceId());
+                            List<Map<String, Object>> mapList = bpmIsmsAdditionalRepository.findAllByProcessInstanceId(
+                                taskDTO.getProcessInstanceId(),
+                                bpmFormQueryDto.getFormId(),
+                                bpmFormQueryDto.getProcessInstanceStatus(),
+                                bpmFormQueryDto.getUnit(),
+                                bpmFormQueryDto.getAppName(),
+                                bpmFormQueryDto.getDateStart(),
+                                bpmFormQueryDto.getDateEnd()
+                            );
+
+                            if (!mapList.isEmpty()) {
+                                Map<String, Object> map = new HashMap<>(new MapUtils().getNewMap(mapList.get(0)));
+                                map.put("taskId", taskDTO.getTaskId());
+                                map.put("taskName", taskDTO.getTaskName());
+                                map.put("decisionRole", SingerEnum.getDecisionByName(taskDTO.getTaskName()));
+                                map.put("additional", false);
+                                return map;
+                            } else {
+                                return null;
+                            }
+                        }
+
+                    })
+                    .filter(Objects::nonNull)
+                    .collect(Collectors.toList());
+        }
+
+        return null;
     }
 
 }
