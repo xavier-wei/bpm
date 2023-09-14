@@ -737,7 +737,7 @@ export default {
           table.data = data
 
           if (formData.processInstanceId !== null && formData.processInstanceId !== undefined) {
-            filePathData.filePathName = 'http://localhost:8081/pic?processId=' + formData.processInstanceId;
+            filePathData.filePathName = 'http://localhost:9973/pic?processId=' + formData.processInstanceId;
           }
 
           formData.applyDate = formData.applyDate != null ? new Date(formData.applyDate) : null

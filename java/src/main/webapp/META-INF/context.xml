@@ -17,9 +17,9 @@
             name="jdbc/itrDS"
             type="javax.sql.DataSource"
             driverClassName="com.microsoft.sqlserver.jdbc.SQLServerDriver"
-            username="eip"
-            password="iisi@12345"
-            url="jdbc:sqlserver://192.168.57.201:9981;databaseName=eip;encrypt=true;trustServerCertificate=true;"
+            username="EIPSYS"
+            password="1qaz#EDC5tgb"
+            url="jdbc:sqlserver://192.168.57.201:9981;databaseName=webitr;encrypt=true;trustServerCertificate=true;"
             minIdle="2"
             maxTotal="10"/>
 </Context>
