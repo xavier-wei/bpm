@@ -86,7 +86,7 @@ public class Bpm01w010Controller {
             referer = "http://localhost:9000";
         }
         log.info("BPM表單管理:: 導向{}頁面","Bpm01w010 表單申請-l410");
-        return new ModelAndView("/Bpm_Bpm01w010").addAllObjects(Map.of("bpmPath", referer + "/bpm/l410Query"));
+        return new ModelAndView("/bpm/Bpm01w010").addAllObjects(Map.of("bpmPath", referer + "/bpm/l410Query"));
     }
 
     @RequestMapping("/Bpm_PENDING.action")
