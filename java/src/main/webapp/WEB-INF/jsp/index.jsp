@@ -493,6 +493,12 @@
                        backendResponse = response
                          //動態生成tableau div
                          const myTableau = createTableauTitleAndContainer();
+
+                        //排序儀錶板
+                        backendResponse.sort((a, b) => {
+                            return  a.sort_order - b.sort_order;
+                        });
+
                          backendResponse.forEach((imageData) => {
                             console.log("imageData",imageData)
                             const tableauElement = createTableauElement(imageData);

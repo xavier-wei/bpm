@@ -49,4 +49,11 @@ public class TableauUserInfo {
      */
     @LogField
     private LocalDateTime update_time;
+
+
+    /**
+     * 排序
+     */
+    @LogField
+    private Integer sort_order;
 }
