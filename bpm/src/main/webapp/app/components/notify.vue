@@ -290,10 +290,11 @@ export default defineComponent({
       const params = new FormData();
       params.append('bpmFormQueryDto', new Blob([JSON.stringify(form)], {type: 'application/json'}));
       axios.post(`/process/notify/queryTask`, params).then(({data}) => {
-        console.log('data+++', data);
         queryStatus.value = true;
         if (data.length <= 0) return;
-        table.data = data.slice(0, data.length);
+        table.data = data.sort((a, b) => {
+          return parseInt(a.formId.replace(/-/g, '').substring(4, a.formId.replace(/-/g, '').length)) - parseInt(b.formId.replace(/-/g, '').substring(4, b.formId.replace(/-/g, '').length ))
+        });
         table.totalItems = data.length;
       }).catch(notificationErrorHandler(notificationService));
     };
