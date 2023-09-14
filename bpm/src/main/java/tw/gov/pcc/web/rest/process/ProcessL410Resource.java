@@ -37,7 +37,7 @@ public class ProcessL410Resource {
     private String TOKEN;
     private final Gson gson = new Gson();
     // todo
-    private final String FLOWABLE_PROCESS_URL = "http://localhost:8081/process";
+    private final String FLOWABLE_PROCESS_URL = "http://localhost:9973/process";
     private final RestTemplate restTemplate = new RestTemplate();
 
     @Autowired

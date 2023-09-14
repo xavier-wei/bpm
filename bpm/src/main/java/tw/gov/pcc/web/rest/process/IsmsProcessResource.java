@@ -42,7 +42,7 @@ public class IsmsProcessResource {
 
     private final ApplicationContext applicationContext;
     private final Gson gson = new Gson();
-    private final String FLOWABLE_PROCESS_URL = "http://localhost:8081/process";
+    private final String FLOWABLE_PROCESS_URL = "http://localhost:9973/process";
     private final RestTemplate restTemplate = new RestTemplate();
     private HttpSession httpSession;
     private final BpmSignStatusService bpmSignStatusService;

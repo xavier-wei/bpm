@@ -736,7 +736,7 @@ export default {
             if (!data) return;
 
             if (data.processInstanceId !== null && data.processInstanceId !== undefined) {
-              filePathData.filePathName = 'http://localhost:8081/pic?processId=' + data.processInstanceId;
+              filePathData.filePathName = 'http://localhost:9973/pic?processId=' + data.processInstanceId;
             }
 
             data.applyDate = data.applyDate != null ? new Date(data.applyDate) : null

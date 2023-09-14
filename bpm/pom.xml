@@ -135,10 +135,6 @@
             <groupId>com.fasterxml.jackson.datatype</groupId>
             <artifactId>jackson-datatype-jsr310</artifactId>
         </dependency>
-<!--        <dependency>-->
-<!--            <groupId>org.springdoc</groupId>-->
-<!--            <artifactId>springdoc-openapi-webmvc-core</artifactId>-->
-<!--        </dependency>-->
         <dependency>
             <groupId>com.zaxxer</groupId>
             <artifactId>HikariCP</artifactId>
@@ -159,12 +155,6 @@
         <dependency>
             <groupId>org.hibernate.validator</groupId>
             <artifactId>hibernate-validator</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.liquibase</groupId>
-            <artifactId>liquibase-core</artifactId>
-            <!-- Inherited version from Spring Boot can't be used because of regressions -->
-            <version>${liquibase.version}</version>
         </dependency>
         <dependency>
             <groupId>org.mapstruct</groupId>
@@ -267,10 +257,6 @@
             <groupId>org.zalando</groupId>
             <artifactId>problem-spring-web</artifactId>
         </dependency>
-<!--        <dependency>-->
-<!--            <groupId>org.springframework.boot</groupId>-->
-<!--            <artifactId>spring-boot-starter-undertow</artifactId>-->
-<!--        </dependency>-->
         <dependency>
             <groupId>io.jsonwebtoken</groupId>
             <artifactId>jjwt-api</artifactId>
@@ -335,6 +321,16 @@
             <groupId>org.jetbrains</groupId>
             <artifactId>annotations</artifactId>
             <version>20.1.0</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-collections4</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>javax.servlet</groupId>
+            <artifactId>javax.servlet-api</artifactId>
+            <version>4.0.1</version>
             <scope>provided</scope>
         </dependency>
     </dependencies>
@@ -978,11 +974,6 @@
                     <artifactId>mssql-jdbc</artifactId>
                 </dependency>
                 <dependency>
-                    <groupId>org.liquibase.ext</groupId>
-                    <artifactId>liquibase-mssql</artifactId>
-                    <version>${liquibase.version}</version>
-                </dependency>
-                <dependency>
                     <groupId>org.testcontainers</groupId>
                     <artifactId>mssqlserver</artifactId>
                     <scope>test</scope>
@@ -1026,46 +1017,6 @@
                                 </execution>
                             </executions>
                         </plugin>
-                        <plugin>
-                            <groupId>org.liquibase</groupId>
-                            <artifactId>liquibase-maven-plugin</artifactId>
-                            <version>${liquibase.version}</version>
-                            <configuration>
-                                <changeLogFile>${project.basedir}/src/main/resources/config/liquibase/master.xml</changeLogFile>
-                                <diffChangeLogFile>${project.basedir}/src/main/resources/config/liquibase/changelog/${maven.build.timestamp}_changelog.xml</diffChangeLogFile>
-                                <driver></driver>
-                                <url>jdbc:sqlserver://localhost:1433;database=bpm</url>
-                                <defaultSchemaName></defaultSchemaName>
-                                <username>SA</username>
-                                <password>yourStrong(!)Password</password>
-                                <referenceUrl>hibernate:spring:tw.gov.pcc.domain?dialect=org.hibernate.dialect.SQLServer2012Dialect&amp;hibernate.physical_naming_strategy=org.springframework.boot.orm.jpa.hibernate.SpringPhysicalNamingStrategy&amp;hibernate.implicit_naming_strategy=org.springframework.boot.orm.jpa.hibernate.SpringImplicitNamingStrategy</referenceUrl>
-                                <verbose>true</verbose>
-                                <logging>debug</logging>
-                                <contexts>!test</contexts>
-                            </configuration>
-                            <dependencies>
-                                <dependency>
-                                    <groupId>org.liquibase</groupId>
-                                    <artifactId>liquibase-core</artifactId>
-                                    <version>${liquibase.version}</version>
-                                </dependency>
-                                <dependency>
-                                    <groupId>org.liquibase.ext</groupId>
-                                    <artifactId>liquibase-hibernate5</artifactId>
-                                    <version>${liquibase-hibernate5.version}</version>
-                                </dependency>
-                                <dependency>
-                                    <groupId>org.springframework.boot</groupId>
-                                    <artifactId>spring-boot-starter-data-jpa</artifactId>
-                                    <version>${spring-boot.version}</version>
-                                </dependency>
-                                <dependency>
-                                    <groupId>javax.validation</groupId>
-                                    <artifactId>validation-api</artifactId>
-                                    <version>${validation-api.version}</version>
-                                </dependency>
-                            </dependencies>
-                        </plugin>
                     </plugins>
                 </pluginManagement>
             </build>
@@ -1090,11 +1041,6 @@
                 <dependency>
                     <groupId>com.microsoft.sqlserver</groupId>
                     <artifactId>mssql-jdbc</artifactId>
-                </dependency>
-                <dependency>
-                    <groupId>org.liquibase.ext</groupId>
-                    <artifactId>liquibase-mssql</artifactId>
-                    <version>${liquibase.version}</version>
                 </dependency>
             </dependencies>
             <build>
@@ -1130,46 +1076,6 @@
                                     </goals>
                                 </execution>
                             </executions>
-                        </plugin>
-                        <plugin>
-                            <groupId>org.liquibase</groupId>
-                            <artifactId>liquibase-maven-plugin</artifactId>
-                            <version>${liquibase.version}</version>
-                            <configuration>
-                                <changeLogFile>${project.basedir}/src/main/resources/config/liquibase/master.xml</changeLogFile>
-                                <diffChangeLogFile>${project.basedir}/src/main/resources/config/liquibase/changelog/${maven.build.timestamp}_changelog.xml</diffChangeLogFile>
-                                <driver></driver>
-                                <url>jdbc:sqlserver://localhost:1433;database=bpm</url>
-                                <defaultSchemaName></defaultSchemaName>
-                                <username>SA</username>
-                                <password>yourStrong(!)Password</password>
-                                <referenceUrl>hibernate:spring:tw.gov.pcc.domain?dialect=org.hibernate.dialect.SQLServer2012Dialect&amp;hibernate.physical_naming_strategy=org.springframework.boot.orm.jpa.hibernate.SpringPhysicalNamingStrategy&amp;hibernate.implicit_naming_strategy=org.springframework.boot.orm.jpa.hibernate.SpringImplicitNamingStrategy</referenceUrl>
-                                <verbose>true</verbose>
-                                <logging>debug</logging>
-                                <contexts>!test</contexts>
-                            </configuration>
-                            <dependencies>
-                                <dependency>
-                                    <groupId>org.liquibase</groupId>
-                                    <artifactId>liquibase-core</artifactId>
-                                    <version>${liquibase.version}</version>
-                                </dependency>
-                                <dependency>
-                                    <groupId>org.liquibase.ext</groupId>
-                                    <artifactId>liquibase-hibernate5</artifactId>
-                                    <version>${liquibase-hibernate5.version}</version>
-                                </dependency>
-                                <dependency>
-                                    <groupId>org.springframework.boot</groupId>
-                                    <artifactId>spring-boot-starter-data-jpa</artifactId>
-                                    <version>${spring-boot.version}</version>
-                                </dependency>
-                                <dependency>
-                                    <groupId>javax.validation</groupId>
-                                    <artifactId>validation-api</artifactId>
-                                    <version>${validation-api.version}</version>
-                                </dependency>
-                            </dependencies>
                         </plugin>
                     </plugins>
                 </pluginManagement>

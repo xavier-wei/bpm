@@ -18,7 +18,7 @@ spring:
 flowable:
   database-schema-update: true
 server:
-  port: 8081
+  port: 9973
 
 bpm:
   token: QAZWSXEDCRffvYTHnujkljkfyffd14651456uhweuhuijwdijoichchuhqiheciqhoieh
