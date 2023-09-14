@@ -13,6 +13,7 @@ public class TaskDTO {
     private String taskId; // 任務ID
     private String taskName; // 任務名稱
     private String createdTime; // 任務創建時間
+    private String endTime; // 任務創建時間
     public TaskDTO(Task task) {
         this.formName= ProcessEnum.getFormNameByProcessKey(task.getProcessDefinitionId().split(":")[0]);
         this.taskId = task.getId();
@@ -27,5 +28,6 @@ public class TaskDTO {
         this.taskName = historicTaskInstance.getName();
         this.processInstanceId = historicTaskInstance.getProcessInstanceId();
         this.createdTime = ConvertTimeZone.convertTimezoneTaipei(historicTaskInstance.getCreateTime());
+        this.endTime = historicTaskInstance.getEndTime()==null?null:ConvertTimeZone.convertTimezoneTaipei(historicTaskInstance.getEndTime());
     }
 }
