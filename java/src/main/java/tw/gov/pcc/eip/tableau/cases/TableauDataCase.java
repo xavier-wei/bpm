@@ -2,6 +2,7 @@ package tw.gov.pcc.eip.tableau.cases;
 
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import tw.gov.pcc.common.annotation.LogField;
 
 import java.io.Serializable;
 
@@ -42,6 +43,12 @@ public class TableauDataCase implements Serializable {
      * tableau dashboard url
      */
     private String tableauUrl;  // "http://223.200.84.115/#/views/__2023071701/_?:iid=4"
+
+
+    /**
+     * 排序
+     */
+    private Integer sort_order;
 
     public interface Query {
     }

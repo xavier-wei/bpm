@@ -66,7 +66,7 @@
                   <i-form-group-check class="col-sm-4" label-cols="5" content-cols="7" :label="`單位：`"
                                       :item="$v.filUnit">
                     <!--填表人單位名稱　: filUnit-->
-                    <b-form-select v-model="$v.filUnit.$model" :options="bpmUnitOptions"
+                    <b-form-select v-model="$v.filUnit.$model" :options="bpmDeptsOptions"
                                    :disabled=" stateStatusRef || formStatusRef === FormStatusEnum.READONLY">
                       <template #first>
                         <b-form-select-option value="null" disabled>請選擇</b-form-select-option>
@@ -91,7 +91,7 @@
                   <i-form-group-check label-star class="col-sm-5" label-cols="5" content-cols="7" :label="`單位別 ：`"
                                       :item="$v.appUnit1">
                     <!--單位別 : -->
-                    <b-form-select v-model="$v.appUnit1.$model" :options="bpmUnitOptions"
+                    <b-form-select v-model="$v.appUnit1.$model" :options="bpmDeptsOptions"
                                    :disabled=" stateStatusRef || formStatusRef === FormStatusEnum.READONLY">
                       <template #first>
                         <b-form-select-option value="null" disabled>請選擇</b-form-select-option>
@@ -403,7 +403,7 @@
 
                     <!--管理單位-->
                     <template #cell(managementUnit)="row">
-                      <b-form-select :options="bpmUnitOptions" v-model="row.item.admUnit"
+                      <b-form-select :options="bpmDeptsOptions" v-model="row.item.admUnit"
                                      :disabled=" stateStatusRef || formStatusRef === FormStatusEnum.READONLY">
                         <template #first>
                           <b-form-select-option value="null" disabled>請選擇</b-form-select-option>
@@ -574,7 +574,7 @@ export default {
     const formIdProp = toRef(props, 'formId');
     const stateStatusRef = toRef(props, 'stateStatus');
     const taskDataRef = toRef(props, 'taskData');
-    const bpmUnitOptions = ref(useGetters(['getBpmUnitOptions']).getBpmUnitOptions).value;
+    const bpmDeptsOptions = ref(useGetters(['getBpmDeptsOptions']).getBpmDeptsOptions).value;
     const $bvModal = useBvModal();
     const notificationService = useNotification();
     let fileDataId = reactive({
@@ -737,7 +737,7 @@ export default {
           table.data = data
 
           if (formData.processInstanceId !== null && formData.processInstanceId !== undefined) {
-            filePathData.filePathName = 'http://localhost:8081/pic?processId=' + formData.processInstanceId;
+            filePathData.filePathName = 'http://localhost:9973/pic?processId=' + formData.processInstanceId;
           }
 
           formData.applyDate = formData.applyDate != null ? new Date(formData.applyDate) : null
@@ -858,7 +858,7 @@ export default {
       formStatusRef,
       reset,
       toQueryView,
-      bpmUnitOptions,
+      bpmDeptsOptions,
       fileDataId,
       reviewStart,
       FormStatusEnum,

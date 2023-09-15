@@ -16,16 +16,16 @@
             margin: 0;
           }
 
-          .pic-scale-up {
-            position: relative; /* 設定定位上下文，使 z-index 生效 */
-            z-index: 1; /* 設定 z-index 值為 1，放在其他元素之上 */
-          }
+          /*.pic-scale-up {*/
+          /*  position: relative; !* 設定定位上下文，使 z-index 生效 *!*/
+          /*  z-index: 1; !* 設定 z-index 值為 1，放在其他元素之上 *!*/
+          /*}*/
 
-          .pic-scale-up:hover {
-            transform: scale(3,3);
-            transition: transform 0.25s ease;
-            z-index: 2; /* 懸停時，將 z-index 值提高到 2，使其放在最外層 */
-          }
+          /*.pic-scale-up:hover {*/
+          /*  transform: scale(3,3);*/
+          /*  transition: transform 0.25s ease;*/
+          /*  z-index: 2; !* 懸停時，將 z-index 值提高到 2，使其放在最外層 *!*/
+          /*}*/
         </style>
     </jsp:attribute>
     <jsp:attribute name="contents">
@@ -201,6 +201,25 @@
             <form:hidden path="key"/>
             <form:hidden path="subject"/>
         </form:form>
+        <div id="popTableauModal" class="modal fade" tabindex="-1" role="dialog">
+            <div class="modal-dialog modal-xl" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">儀錶板放大圖片</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <div id="bigTableau"></div>
+                    </div>
+                    <div class="modal-footer">
+                        <button id="openTableauBtn" type="button" class="btn btn-secondary">確定開啟儀錶板
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
     </jsp:attribute>
     <jsp:attribute name="footers">
         <script type="text/javascript">
@@ -415,17 +434,36 @@
 
           });
 
-
+           let tableauId = '';
            $(function() {
                getUserData();
                getTicket()
+               $(document).on('click', '.pic-scale-up', function(e) {
+                   $("#bigTableau").empty(); //清空modal裡面的圖片元素，避免一直append
+                   var parentElementId = $(this).closest('.tableau_btn').attr('id'); //找父元素的id
+                   console.log("parentElementId",parentElementId)
+                   tableauId = parentElementId;
+                   const bigTableauDiv =  document.getElementById("bigTableau");
+                   const img = document.createElement("img");
+                   const base64String = e.target.src;
+                   img.src = base64String;
+                   img.style.borderRadius = "10px";
+                   img.style.maxWidth = "100%";
+                   img.style.maxHeight = "100%";
+                   img.alt = "儀錶板";
+                   bigTableauDiv.appendChild(img);
+                   $('#popTableauModal').modal('show');
+               });
+               $(document).on('click', '#openTableauBtn', function(e) {
+                   openTableau(tableauId.replace("tableau_btn_",""));
+               });
            });
 
            let backendResponse = [];
            function openTableau(type) {
                  // 顯示確認視窗
-                 const isConfirmed = confirm('將開啟Tableau視窗，確認繼續嗎？');
-                 if (isConfirmed) {
+                 // const isConfirmed = confirm('將開啟Tableau視窗，確認繼續嗎？');
+                 // if (isConfirmed) {
                  //每新開一個url都要再拿一次ticket，不然ticket會失效
                  getTicket();
                  const dashboardFigId = type;
@@ -434,17 +472,18 @@
                      foundImage.tableauNewUrl = foundImage.tableauUrl.replace("#","trusted/"+ticket)
                      console.log(foundImage.tableauNewUrl)
                      window.open(foundImage.tableauNewUrl, "_blank");
+                     $('#popTableauModal').modal('hide');
                  } else {
                            alert('找不到對應的儀錶板網址');
                  }
-                }
+                // }
            }
 
 
            //取得使用者訂閱的儀表板
            function getUserData() {
            $.ajax({
-                url: '<c:url value="/get-tableau-data-by-user" />',
+                url: '<c:url value="/Common_getTableauDataByUser.action" />',
                 type: 'POST',
                 async: true,
                 timeout: 100000,
@@ -454,6 +493,12 @@
                        backendResponse = response
                          //動態生成tableau div
                          const myTableau = createTableauTitleAndContainer();
+
+                        //排序儀錶板
+                        backendResponse.sort((a, b) => {
+                            return  a.sort_order - b.sort_order;
+                        });
+
                          backendResponse.forEach((imageData) => {
                             console.log("imageData",imageData)
                             const tableauElement = createTableauElement(imageData);
@@ -527,9 +572,9 @@
 
              const link = document.createElement("a");
              link.href = "#";
-             link.onclick = function() {
-                 openTableau(imageData.dashboardFigId);
-             };
+             // link.onclick = function() {
+             //     openTableau(imageData.dashboardFigId);
+             // };
 
              const imgDiv = document.createElement("div");
              const img = document.createElement("img");
@@ -552,7 +597,7 @@
          //獲取tableau授權碼，不用再二次登入
          function getTicket() {
           $.ajax({
-                 url: '<c:url value="/get-ticket" />',
+                 url: '<c:url value="/Common_getTableauTicket.action" />',
                  type: 'POST',
                  async: true,
                  timeout: 100000,

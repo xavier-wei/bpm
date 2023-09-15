@@ -14,4 +14,6 @@ public interface TableauUserInfoDao {
     String TABLE_NAME = "PWC_TB_TABLEAU_USER_INFO";
 
     List<TableauUserInfo> selectByUserId(String user_id);
+
+    List<TableauUserInfo> selectByFigId(String fig_id);
 }

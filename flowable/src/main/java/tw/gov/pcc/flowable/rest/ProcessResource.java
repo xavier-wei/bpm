@@ -51,6 +51,15 @@ public class ProcessResource {
         return service.queryProcessingTask(id);
     }
 
+    @RequestMapping("/queryProcessingAllTask")
+    public List<TaskDTO> queryProcessingAllTask(@RequestBody String id) {
+        return service.queryProcessingAllTask(id);
+    }
+
+    @RequestMapping("/getAllTask")
+    public List<TaskDTO> getAllTask(@RequestBody String id) {
+        return service.queryList(id);
+    }
     @RequestMapping("/completeTask")
     public ProcessRes completeTask(@Validated @RequestBody CompleteReqDTO completeReqDTO) {
         if (completeReqDTO.getVariables() != null && !completeReqDTO.getVariables().isEmpty()) {
@@ -72,7 +81,7 @@ public class ProcessResource {
             Gson gson = new Gson();
             HttpEntity<String> requestEntity = new HttpEntity<>(gson.toJson(endEventDTO), headers);
             RestTemplate restTemplate = new RestTemplate();
-            ResponseEntity<String> exchange = restTemplate.exchange("http://localhost:8080/bpm/api/process/receiveEndEvent", HttpMethod.POST, requestEntity, String.class);
+            ResponseEntity<String> exchange = restTemplate.exchange("http://localhost:9986/bpm/api/process/receiveEndEvent", HttpMethod.POST, requestEntity, String.class);
             return "Delete process instance: " + exchange.getStatusCodeValue();
         } else {
             return "Bad request";
@@ -80,6 +89,33 @@ public class ProcessResource {
     }
 
     // todo 測試完成用api，上線需刪除
+
+    @RequestMapping("/startProcessL410")
+    public TaskDTO startProcessL410() {
+
+
+        HashMap<String, Object> variables = new HashMap<>();
+        variables.put("isSubmit", "1");
+        variables.put("chiefDecision", "1");
+        variables.put("directorDecision", "1");
+        variables.put("infoUndertakerDecision", "1");
+        variables.put("otherInfoSys", "0");
+        variables.put("publicWorkBidManageSys", "1");
+        variables.put("disasterRecoveryPrjBudgetAndExecuteInfoSys", "1");
+        variables.put("publicWorkCaseReviewInfoSys", "1");
+        variables.put("engAndPrjConsultantManageInfoSys", "1");
+        variables.put("govEProcurementSystem", "1");
+        variables.put("pccAccount", null);
+        variables.put("emailAccount", null);
+        variables.put("meetingRoomManageSys", null);
+        variables.put("govDocManageSys", null);
+        variables.put("ADAccount", "1");
+        variables.put("personnelAttendanceSys", "1");
+
+        return service.startProcess("ProcessL410", variables);
+
+    }
+
     @RequestMapping("/completeTaskTest/{pId}/{tId}")
     public String completeTest(@PathVariable String pId, @PathVariable String tId) {
 
@@ -88,4 +124,6 @@ public class ProcessResource {
 
         return "成功";
     }
+
+
 }

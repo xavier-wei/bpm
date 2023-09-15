@@ -31,7 +31,7 @@
         function getTicket() {
             return new Promise((resolve, reject) => {
                 $.ajax({
-                    url: '<c:url value="/get-ticket" />',
+                    url: '<c:url value="/Common_getTableauTicket.action" />',
                     type: 'POST',
                     async: true,
                     timeout: 100000,
@@ -56,7 +56,7 @@
         //取得所有儀表板資訊
         function getAllTableauData(ticket) {
         $.ajax({
-              url: '<c:url value="/get-tableau-data" />',
+              url: '<c:url value="/Common_getAllTableauData.action" />',
               type: 'POST',
               async: true,
               timeout: 100000,
@@ -82,8 +82,8 @@
                     // 等待获取 ticket 的 Promise 解决
                     // let ticket =  getTicket();
 
-                    const dashboardFigId = type;
-                    const foundImage = backendResponse.find(item => item.dashboardFigId === dashboardFigId);
+                    const dashboardFigId = type;  //BID_01_01.action
+                    const foundImage = backendResponse.find(item =>  dashboardFigId.include(item.dashboardFigId));
                     if (foundImage) {
                         foundImage.tableauNewUrl = foundImage.tableauUrl.replace("#", "trusted/" + ticket);
                         console.log(foundImage.tableauNewUrl);

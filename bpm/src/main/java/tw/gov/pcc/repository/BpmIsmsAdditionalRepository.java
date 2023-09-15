@@ -7,6 +7,7 @@ import org.springframework.stereotype.Repository;
 import tw.gov.pcc.domain.entity.BpmIsmsAdditional;
 import tw.gov.pcc.repository.custom.BpmIsmsAdditionalRepositoryCustom;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Map;
 
@@ -20,20 +21,139 @@ public interface BpmIsmsAdditionalRepository extends JpaRepository<BpmIsmsAdditi
     BpmIsmsAdditional findByProcessInstanceId(String processInstanceId);
 
     @Query(value = " select * " +
-        "from (select l414.FORM_ID, " +
-        "             l414.PROCESS_INSTANCE_ID, " +
-        "             l414.APPLY_DATE, " +
-        "             l414.APP_NAME, " +
-        "             l414.FIL_NAME " +
-        "      from BPM_ISMS_L414 l414 " +
-        "      union " +
-        "      select l410.form_id, " +
-        "             l410.PROCESS_INSTANCE_ID, " +
-        "             l410.APPLY_DATE, " +
-        "             l410.APP_NAME, " +
-        "             l410.FIL_NAME " +
-        "      from BPM_ISMS_L410 l410) allData " +
-        "where allData.PROCESS_INSTANCE_ID = :processInstanceId ", nativeQuery = true)
-    List<Map<String,Object>> findAllByProcessInstanceId(@Param("processInstanceId") String processInstanceId);
+            " from (select l414.FORM_ID, " +
+            "             l414.PROCESS_INSTANCE_ID, " +
+            "             l414.PROCESS_INSTANCE_STATUS, " +
+            "             l414.APP_UNIT, " +
+            "             l414.APPLY_DATE, " +
+            "             l414.APP_NAME, " +
+            "             l414.FIL_NAME, " +
+            "             bss.SIGNING_DATETIME, " +
+            "             bss.SIGN_UNIT ,       " +
+            "             bss.signer, " +
+            "             bss.DIRECTIONS " +
+            "             from BPM_ISMS_L414 l414 " +
+            "             LEFT JOIN (Select FORM_ID, SIGN_UNIT, SIGNING_DATETIME, SIGNER ,DIRECTIONS                                              " +
+            "                        From (Select FORM_ID,                                                                             " +
+            "                                     SIGN_UNIT,                                                                           " +
+            "                                     SIGNING_DATETIME,                                                                    " +
+            "                                     SIGNER,    " +
+            "                                     DIRECTIONS, " +
+            "                                     ROW_NUMBER() Over (Partition By FORM_ID Order By SIGNING_DATETIME Desc) As Sort      " +
+            "                              From BPM_SIGN_STATUS) bss                                                                   " +
+            "                        Where bss.Sort = 1) bss ON l414.FORM_ID = bss.FORM_ID                                             " +
+            "      union " +
+            "      select l410.form_id, " +
+            "             l410.PROCESS_INSTANCE_ID, " +
+            "             l410.PROCESS_INSTANCE_STATUS, " +
+            "             l410.APP_UNIT1 AS APP_UNIT, " +
+            "             l410.APPLY_DATE, " +
+            "             l410.APP_NAME, " +
+            "             l410.FIL_NAME, " +
+            "             bss.SIGNING_DATETIME," +
+            "             bss.SIGN_UNIT,   " +
+            "             bss.signer, " +
+            "             bss.DIRECTIONS " +
+            "      from BPM_ISMS_L410 l410" +
+            "      LEFT JOIN (Select FORM_ID, SIGN_UNIT, SIGNING_DATETIME, SIGNER,DIRECTIONS                                            " +
+            "                  From (Select FORM_ID,                                                                          " +
+            "                               SIGN_UNIT,                                                                        " +
+            "                               SIGNING_DATETIME,                                                                 " +
+            "                               SIGNER, " +
+            "                               DIRECTIONS, " +
+            "                               ROW_NUMBER() Over (Partition By FORM_ID Order By SIGNING_DATETIME Desc) As Sort   " +
+            "                        From BPM_SIGN_STATUS) bss                                                                " +
+            "                  Where bss.Sort = 1) bss ON l410.FORM_ID = bss.FORM_ID  ) allData " +
+            " where allData.PROCESS_INSTANCE_ID = :processInstanceId " +
+            " AND (LEN(COALESCE(:formId,'')) =0 OR substring(allData.form_id,1,4) = :formId) " +
+            " AND (LEN(COALESCE(:processInstanceStatus,'')) =0 OR allData.PROCESS_INSTANCE_STATUS = :processInstanceStatus) " +
+            " AND (LEN(COALESCE(:unit,'')) =0 OR allData.APP_UNIT = :unit) " +
+            " AND (LEN(COALESCE(:appName,'')) =0 OR allData.APP_NAME = :appName) " +
+            " AND (:dateStart IS NULL OR :dateStart <= substring(CONVERT(varchar, allData.APPLY_DATE, 120) ,1,10)) " +
+            " AND (:dateEnd IS NULL OR substring(CONVERT(varchar, allData.APPLY_DATE, 120) ,1,10) <= :dateEnd) ", nativeQuery = true)
+    List<Map<String,Object>> findAllByProcessInstanceId(
+            @Param("processInstanceId") String processInstanceId,
+            @Param("formId") String formId,
+            @Param("processInstanceStatus") String processInstanceStatus,
+            @Param("unit") String unit,
+            @Param("appName") String appName,
+            @Param("dateStart") LocalDate dateStart,
+            @Param("dateEnd") LocalDate dateEnd
+    );
+
+    @Query(value = " select * " +
+        " from (select l414.FORM_ID, " +
+        "              l414.PROCESS_INSTANCE_ID, " +
+        "              l414.APP_UNIT, " +
+        "              l414.APPLY_DATE, " +
+        "              l414.APP_NAME, " +
+        "              l414.FIL_NAME, " +
+        "              bss.SIGNING_DATETIME, " +
+        "              bss.SIGN_UNIT, " +
+        "              bss.signer, " +
+        "              bss.DIRECTIONS, " +
+        "              bia.FORM_ID as ADDITIONAL " +
+        "       from BPM_ISMS_L414 l414 " +
+        "                LEFT JOIN (Select FORM_ID, SIGN_UNIT, SIGNING_DATETIME, SIGNER, DIRECTIONS " +
+        "                           From (Select FORM_ID, " +
+        "                                        SIGN_UNIT, " +
+        "                                        SIGNING_DATETIME, " +
+        "                                        SIGNER, " +
+        "                                        DIRECTIONS, " +
+        "                                        ROW_NUMBER() Over (Partition By FORM_ID Order By SIGNING_DATETIME Desc) As Sort " +
+        "                                 From BPM_SIGN_STATUS) bss " +
+        "                           Where bss.Sort = 1) bss ON l414.FORM_ID = bss.FORM_ID " +
+        "                LEFT JOIN (SELECT FORM_ID, MAIN_FORM_ID " +
+        "                           FROM (SELECT FORM_ID, " +
+        "                                        MAIN_FORM_ID, " +
+        "                                        PROCESS_INSTANCE_STATUS, " +
+        "                                        ROW_NUMBER() Over (Partition By MAIN_FORM_ID Order By CREATE_TIME Desc) As Sort " +
+        "                                 FROM BPM_ISMS_ADDITIONAL) bia " +
+        "                           WHERE bia.Sort = 1 AND bia.PROCESS_INSTANCE_STATUS ='0') bia on l414.FORM_ID = bia.MAIN_FORM_ID " +
+        "       union " +
+        "       select l410.form_id, " +
+        "              l410.PROCESS_INSTANCE_ID, " +
+        "              l410.APP_UNIT1 AS APP_UNIT, " +
+        "              l410.APPLY_DATE, " +
+        "              l410.APP_NAME, " +
+        "              l410.FIL_NAME, " +
+        "              bss.SIGNING_DATETIME, " +
+        "              bss.SIGN_UNIT, " +
+        "              bss.signer, " +
+        "              bss.DIRECTIONS, " +
+        "              bia.FORM_ID as ADDITIONAL " +
+        "       from BPM_ISMS_L410 l410 " +
+        "                LEFT JOIN (Select FORM_ID, SIGN_UNIT, SIGNING_DATETIME, SIGNER, DIRECTIONS " +
+        "                           From (Select FORM_ID, " +
+        "                                        SIGN_UNIT, " +
+        "                                        SIGNING_DATETIME, " +
+        "                                        SIGNER, " +
+        "                                        DIRECTIONS, " +
+        "                                        ROW_NUMBER() Over (Partition By FORM_ID Order By SIGNING_DATETIME Desc) As Sort " +
+        "                                 From BPM_SIGN_STATUS) bss " +
+        "                           Where bss.Sort = 1) bss ON l410.FORM_ID = bss.FORM_ID " +
+        "                left join (select FORM_ID, MAIN_FORM_ID " +
+        "                           from (select FORM_ID, " +
+        "                                        MAIN_FORM_ID, " +
+        "                                        PROCESS_INSTANCE_STATUS, " +
+        "                                        ROW_NUMBER() Over (Partition By MAIN_FORM_ID Order By CREATE_TIME Desc) As Sort " +
+        "                                 from BPM_ISMS_ADDITIONAL) bia " +
+        "                           Where bia.Sort = 1 and bia.PROCESS_INSTANCE_STATUS ='0') bia on l410.FORM_ID = bia.MAIN_FORM_ID " +
+        "       ) allData " +
+        " where 1 = 1 " +
+        "   AND (LEN(COALESCE(:formId,'')) =0 OR substring(allData.form_id,1,4) = :formId) " +
+        "   AND (LEN(COALESCE(:processInstanceStatus,'')) =0 OR allData.PROCESS_INSTANCE_ID = :processInstanceStatus) " +
+        "   AND (LEN(COALESCE(:unit,'')) =0 OR allData.APP_UNIT = :unit) " +
+        "   AND (LEN(COALESCE(:appName,'')) =0 OR allData.APP_NAME = :appName) " +
+        "   AND (:dateStart IS NULL OR :dateStart <= substring(CONVERT(varchar, allData.APPLY_DATE, 120), 1, 10)) " +
+        "   AND (:dateEnd IS NULL OR substring(CONVERT(varchar, allData.APPLY_DATE, 120), 1, 10) <= :dateEnd) ", nativeQuery = true)
+    List<Map<String,Object>> findAllToNotify(
+        @Param("formId") String formId,
+        @Param("processInstanceStatus") String processInstanceStatus,
+        @Param("unit") String unit,
+        @Param("appName") String appName,
+        @Param("dateStart") LocalDate dateStart,
+        @Param("dateEnd") LocalDate dateEnd
+    );
 
 }

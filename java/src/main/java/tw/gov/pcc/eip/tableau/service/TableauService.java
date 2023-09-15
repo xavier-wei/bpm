@@ -103,6 +103,14 @@ public class TableauService {
 //            }
             tableauDataCase.setImageBase64String(getImageBase64String(tableauFolderPathPrefix.replaceAll("/", "\\" + File.separator) + path));
             tableauDataCase.setTableauUrl(dashboard.getDashboard_url());
+            //找排序
+            List<TableauUserInfo> userInfoList = tableauUserInfoDao.selectByFigId(dashboard.getDashboard_fig_id());
+            TableauUserInfo firstUserInfo = userInfoList.stream()
+                    .findFirst()
+                    .orElse(null);
+            if (firstUserInfo != null) {
+                tableauDataCase.setSort_order(firstUserInfo.getSort_order());
+            }
             resultList.add(tableauDataCase);
         }
         return resultList;

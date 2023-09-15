@@ -18,7 +18,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
-import java.util.Iterator;
+import java.lang.reflect.Modifier;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -50,7 +50,7 @@ public class KeycloakOIDCFilter  implements Filter {
     public void init(FilterConfig filterConfig) throws ServletException {
         String skipPatternDefinition = filterConfig.getInitParameter("keycloak.config.skipPattern");
         if (skipPatternDefinition != null) {
-            this.skipPattern = Pattern.compile(skipPatternDefinition, 32);
+            this.skipPattern = Pattern.compile(skipPatternDefinition, Pattern.DOTALL);
         }
 
         String idMapperClassName = filterConfig.getInitParameter("keycloak.config.idMapper");
@@ -60,7 +60,7 @@ public class KeycloakOIDCFilter  implements Filter {
                 Class<?> idMapperClass = this.getClass().getClassLoader().loadClass(idMapperClassName);
                 Constructor<?> idMapperConstructor = idMapperClass.getDeclaredConstructor();
                 is = null;
-                if (idMapperConstructor.getModifiers() == 2) {
+                if (idMapperConstructor.getModifiers() == Modifier.PRIVATE) {
                     is = idMapperClass.getMethod("getInstance").invoke((Object)null);
                 } else {
                     is = idMapperConstructor.newInstance();
@@ -205,14 +205,10 @@ public class KeycloakOIDCFilter  implements Filter {
 
         public void logoutHttpSessions(List<String> ids) {
             KeycloakOIDCFilter.log.fine("**************** logoutHttpSessions");
-            Iterator var2 = ids.iterator();
-
-            while(var2.hasNext()) {
-                String id = (String)var2.next();
+            for (String id : ids) {
                 KeycloakOIDCFilter.log.finest("removed idMapper: " + id);
                 KeycloakOIDCFilter.this.idMapper.removeSession(id);
             }
-
         }
     }
 }

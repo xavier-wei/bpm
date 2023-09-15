@@ -38,7 +38,7 @@ public class TableauController extends BaseController {
     /**
      * 取得首頁應顯示的各儀表板資訊
      */
-    @RequestMapping("/get-tableau-data-by-user")
+    @RequestMapping("/get_tableau_data_by_user.action")
     @ResponseBody
     public List<TableauDataCase> getUserdata() {
         List<TableauDataCase> resultList = new ArrayList<>();
@@ -56,7 +56,7 @@ public class TableauController extends BaseController {
     /**
      * 取得 tableau ticket
      */
-    @RequestMapping(path = "/get-ticket")
+    @RequestMapping(path = "/get_ticket.action")
     @ResponseBody
     public Map<String, String> getTrustedTicket() {
         Map<String, String> map = new HashMap<>();
@@ -75,7 +75,7 @@ public class TableauController extends BaseController {
     /**
      * 取得首頁應顯示的各儀表板資訊
      */
-    @RequestMapping("/get-tableau-data")
+    @RequestMapping("/get_tableau_data.action")
     @ResponseBody
     public List<TableauDataCase> getAllTableauData() {
         List<TableauDataCase> resultList = new ArrayList<>();
@@ -93,6 +93,7 @@ public class TableauController extends BaseController {
 
     /**
      * 取得點選menu轉導的頁面，用來window.open相對應的tableau url
+     * ex ./tableau_enter.action/BID_01_01.action
      */
     @RequestMapping("/tableau_enter.action/{tableauId}")
     public ModelAndView showTableauPage(

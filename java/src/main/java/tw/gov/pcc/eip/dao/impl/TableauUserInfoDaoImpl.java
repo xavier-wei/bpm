@@ -25,6 +25,15 @@ public class TableauUserInfoDaoImpl extends BaseDao<TableauUserInfo> implements 
     }
 
     @Override
+    public List<TableauUserInfo> selectByFigId(String fig_id) {
+        StringBuilder sql = new StringBuilder();
+        sql.append("SELECT * FROM " + TABLE_NAME + " where DASHBOARD_FIG_ID = :figId ");
+        SqlParameterSource params = new MapSqlParameterSource("figId", fig_id);
+        List<TableauUserInfo> list = getNamedParameterJdbcTemplate().query(sql.toString(), params, BeanPropertyRowMapper.newInstance(TableauUserInfo.class));
+        return list;
+    }
+
+    @Override
     public TableauUserInfo selectDataByPrimaryKey(TableauUserInfo tableauUserInfo) {
         return null;
     }
