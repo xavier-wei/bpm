@@ -200,7 +200,8 @@ public class Eip06w010Service {
         caseData.setMeetingdt(DateUtility.changeDateType(mt.getMeetingdt()));
         caseData.setMeetingBegin(mt.getMeetingBegin());
         caseData.setMeetingEnd(mt.getMeetingEnd());
-        caseData.setOrganizerId(userData.getUserId() + "-" + usersDao.selectByKey(mt.getOrganizerId()).getUser_name());
+        caseData.setOrganizerId(userData.getUserId());
+        caseData.setOrganizerIdName(usersDao.selectByKey(mt.getOrganizerId()).getUser_name());
         caseData.setRoomId(mt.getRoomId() + "-" + meetingCodeDao.selectDataByItemId(mt.getRoomId()).get(0).getItemName());
         caseData.setMeetingQty(mt.getQty());
         caseData.setApplydt(mt.getApplydt());

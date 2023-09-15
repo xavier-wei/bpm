@@ -7,6 +7,7 @@ import java.util.Map;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
+import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.stereotype.Repository;
 import org.springframework.util.CollectionUtils;
 
@@ -14,6 +15,7 @@ import tw.gov.pcc.common.annotation.DaoTable;
 import tw.gov.pcc.common.framework.dao.BaseDao;
 import tw.gov.pcc.eip.common.cases.Eip02w010Case.addressBook;
 import tw.gov.pcc.eip.dao.UsersDao;
+import tw.gov.pcc.eip.domain.Eipcode;
 import tw.gov.pcc.eip.domain.Users;
 
 /**
@@ -284,6 +286,19 @@ public class UsersDaoImpl extends BaseDao<Users> implements UsersDao {
         params.put("titleID", titleID);
         return getNamedParameterJdbcTemplate().query(sql.toString(), params,
                 BeanPropertyRowMapper.newInstance(Users.class));
+    }
+
+
+    @Override
+    public List<Users> getEmailList(List<String> codeNameList) {
+
+        StringBuilder sql = new StringBuilder();
+        sql.append(" SELECT " + ALL_COLUMNS_SQL);
+        sql.append("   FROM " + TABLE_NAME + " T ");
+        sql.append("   WHERE USER_ID IN (:codeNameList)");
+
+        return getNamedParameterJdbcTemplate()
+                .query(sql.toString(), new MapSqlParameterSource("codeNameList", codeNameList),BeanPropertyRowMapper.newInstance(Users.class));
     }
 
 }

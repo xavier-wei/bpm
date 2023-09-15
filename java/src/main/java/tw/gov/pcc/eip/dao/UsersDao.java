@@ -5,6 +5,7 @@ import org.springframework.stereotype.Repository;
 import tw.gov.pcc.common.annotation.DaoTable;
 import tw.gov.pcc.eip.common.cases.Eip02w010Case.addressBook;
 import tw.gov.pcc.eip.domain.Depts;
+import tw.gov.pcc.eip.domain.Eipcode;
 import tw.gov.pcc.eip.domain.Users;
 
 /**
@@ -69,4 +70,12 @@ public interface UsersDao {
      * @return
      */
     public List<Users> getUsersByDeptOrTitle(List<String> deptID, List<String> titleID);
+
+
+    /**
+     * [重要列管維護之列管單位窗口聯絡對象]
+     * @param codeNameList
+     * @return
+     */
+    public List<Users> getEmailList(List<String> codeNameList);
 }

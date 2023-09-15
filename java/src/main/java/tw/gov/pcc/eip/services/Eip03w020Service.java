@@ -37,6 +37,9 @@ public class Eip03w020Service {
     private DeptsDao deptsDao;
     @Autowired
     private UserBean userData;
+    @Autowired
+    private MailService mailService;
+
     public void initDataList(Eip03w020Case caseData) {
         //預設撈取 TrkSts = 1-未完成 PrcSts = 1-待處理
         List<Eip03w020Case> keepTrkMstList = keepTrkMstDao.selectByColumnsForFillInProgress(null,null,null,null,
@@ -268,7 +271,40 @@ public class Eip03w020Service {
                     ktd.setRptUpdUser(userData.getUserId());
                     ktd.setRptUpdDt(DateUtility.getNowDateTimeAsTimestamp().toLocalDateTime());
                     keepTrkDtlDao.updateForApplyProgress(ktd);
+
+                    // 若為要求解列(即KeepTrkDtl.RptAskEnd=Y者)，須通知解列人員
+                    if(innerMap.get("rptAskEnd").equals("Y")){
+                        List<String> receiverIDList = new ArrayList<>();
+                        receiverIDList.add("AGREEMAN");
+                        sendMail(receiverIDList, "003", ktd);
+                    }
                 }
             }
         }
+
+    //取得相關部門email後寄發
+    public void sendMail(List<String> receiverIDList, String trkStatus, KeepTrkDtl ktd ){
+        List<Eipcode> codeNameList = eipcodeDao.getCodeNameList(receiverIDList);
+        List<String> newCodeNameList = new ArrayList<>();
+        for (Eipcode eipcode : codeNameList){
+            if (eipcode.getCodename() != null){
+                newCodeNameList.addAll(Arrays.asList(eipcode.getCodename().split(",")));
+            }
+        }
+        if (newCodeNameList.size() > 0){
+            List<Users> emailList = usersDao.getEmailList(newCodeNameList);
+            for (Users users : emailList) {
+                log.debug("發送郵件至:" + users.getEmail());
+                List<Eipcode> content = eipcodeDao.findByCodeKindScodeno("TRKMAILMSG", trkStatus);
+                String trkObj = deptsDao.findByPk(ktd.getTrkObj()).getDept_name();
+                String subject = content.get(0).getCodename().replace("@TrkId@", ktd.getTrkID())
+                                                             .replace("@TrkObj@", trkObj);
+
+                String mailMsg = content.get(1).getCodename().replaceAll("@TrkId@", ktd.getTrkID())
+                                                             .replace("@TrkObj@", trkObj);
+
+                mailService.sendEmailNow(subject, users.getEmail(), mailMsg);
+            }
+        }
+    }
 }

@@ -6,12 +6,12 @@
 <tags:layout>
 <jsp:attribute name="buttons">
 <!-- 選擇頁 -->
-    <tags:button id="btnInsert">
-    	新增<i class="fas fa-user-plus"></i>
-    </tags:button>          
-    <tags:button id="btnSearch">
+	<tags:button id="btnSearch">
     	查詢<i class="fas fa-search"></i>
     </tags:button>
+    <tags:button id="btnInsert">
+    	新增<i class="fas fa-user-plus"></i>
+    </tags:button>     
 </jsp:attribute>
 
 <jsp:attribute name="contents">
@@ -23,40 +23,40 @@
                         <form:input path="dept_id" cssClass="form-control eng_num_only" size="19" maxlength="18"/>
                     </div>
             </tags:form-row>
-            <tags:form-row>
-				<div class="table-responsive">	           
-					<table class="table" id="listTable">
-						<thead data-orderable="true">
-							<tr>
-								<th class="text-center">部門代號</th>
-								<th class="text-center">部門名稱</th>
-								<th class="text-center">部門說明</th>
-								<th class="text-center"></th>
-							</tr>
-						</thead>
-					    <tbody>
-					    	<c:forEach items="${caseData.deptList}" var="data" varStatus="status">
-						        <tr>
-						        	<td class="text-left"><c:out value="${data.dept_id}"/></td>
-						        	<td class="text-left"><c:out value="${data.dept_name}"/></td>
-						        	<td class="text-right"><c:out value="${data.dept_desc}"/></td>
-
-						            <td class="text-center">
-<%-- 						            		<tags:button cssClass="btnEdit" --%>
-<%--  	                                             onclick="detail('${data.dept_id}')">查詢<i class="fas fa-edit"></i></tags:button>   --%>
- 						            	<c:if test="${data.from_hr != 'Y'}"> 
- 						            		<tags:button cssClass="btnEdit" 
- 	                                             onclick="doEdit('${data.dept_id}')">修改</tags:button>  
- 						            	</c:if> 
-						            </td>
-						        </tr>
-					        </c:forEach>
-						</tbody> 
-					</table>  
-				</div>
-            </tags:form-row>
         </form:form>
     </tags:fieldset>
+    <tags:form-row>
+		<div class="table-responsive">	           
+			<table class="table" id="listTable">
+				<thead data-orderable="true">
+					<tr>
+						<th class="text-center">部門代號</th>
+						<th class="text-center">部門名稱</th>
+						<th class="text-center">部門說明</th>
+						<th class="text-center"></th>
+					</tr>
+				</thead>
+			    <tbody>
+			    	<c:forEach items="${caseData.deptList}" var="data" varStatus="status">
+				        <tr>
+				        	<td class="text-left"><c:out value="${data.dept_id}"/></td>
+				        	<td class="text-left"><c:out value="${data.dept_name}"/></td>
+				        	<td class="text-right"><c:out value="${data.dept_desc}"/></td>
+	
+				            <td class="text-center">
+	<%-- 						            		<tags:button cssClass="btnEdit" --%>
+	<%--  	                                             onclick="detail('${data.dept_id}')">查詢<i class="fas fa-edit"></i></tags:button>   --%>
+					            	<c:if test="${data.from_hr != 'Y'}"> 
+					            		<tags:button cssClass="btnEdit" 
+	                                            onclick="doEdit('${data.dept_id}')">修改</tags:button>  
+					            	</c:if> 
+				            </td>
+				        </tr>
+			        </c:forEach>
+				</tbody> 
+			</table>  
+		</div>
+    </tags:form-row>
 </jsp:attribute>
 <jsp:attribute name="footers">
 <script>

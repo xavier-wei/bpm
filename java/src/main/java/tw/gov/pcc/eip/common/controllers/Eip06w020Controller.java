@@ -45,7 +45,8 @@ public class Eip06w020Controller extends BaseController {
     @ModelAttribute(CASE_KEY)
     public Eip06w020Case getEip06w020Case(){
         Eip06w020Case caseData = new Eip06w020Case();
-        caseData.setOrganizerId(userData.getUserId() + "-" + userData.getUserName());
+        caseData.setOrganizerId(userData.getUserId());
+        caseData.setOrganizerIdName(userData.getUserName());
         eip06w020Service.initSelectList(caseData);
         return ObjectUtility.normalizeObject(caseData);
     }

@@ -230,15 +230,15 @@ public class Eip08w020Service{
 			
 			if(StringUtils.isNotEmpty(data.getItemkind()) ){
 				
-				if(data.getItemno()==null) {
+				if(StringUtils.isEmpty(data.getItemno())) {
 					each.append("品名、");
 				}
 				
-				if(data.getBook_cnt()==null || data.getBook_cnt()==0) {
+				if(StringUtils.isNotEmpty(data.getItemno()) && (data.getBook_cnt()==null || data.getBook_cnt()==0)) {
 					sb.append("序號"+(i+1)+"：庫存為零，請調整品項\r\n");
 				}
 				
-				if( data.getBook_cnt()!=0 && data.getApply_cnt()==null) {
+				if(data.getApply_cnt()==null && data.getBook_cnt()!=null) {
 					each.append("數量、");
 				}
 				

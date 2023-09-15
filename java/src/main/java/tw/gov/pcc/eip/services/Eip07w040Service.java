@@ -3,7 +3,6 @@ package tw.gov.pcc.eip.services;
 import java.io.ByteArrayOutputStream;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 import org.apache.commons.collections.CollectionUtils;
@@ -146,7 +145,7 @@ public class Eip07w040Service {
 
 		caseData.setCarBookingDetailData(carBookingDetailData);//案件明細資料		
 		
-		if("eip07w040x".equals(enterpage)) {			
+		if("eip07w040x".equals(enterpage)) {
 			List<CarBase> carList = carBaseDao.getAllData();//取得所有非首長&&carstatus=1的車輛
 			List<CarBase>carnoList = carList.stream().filter(e -> "N".equals(e.getBoss_mk()) && "1".equals(e.getCarstatus())).collect(Collectors.toList());
 			caseData.setCarnoList(carnoList);
@@ -175,6 +174,8 @@ public class Eip07w040Service {
 				CarBooking check = carBookingDao.checkTime(caseData.getUsing(),carbooking.getUsing_rec());
 				if("Y".equals(check.getUsing())) {
 					caseData.setTimeMK("Y");//顯示該用車時間已有人預約
+				} else {
+					caseData.setTimeMK("N");
 				}
 
 //				carbooking.setApply_user(getUserName(carbooking.getApply_user()));
@@ -201,6 +202,7 @@ public class Eip07w040Service {
 		} else {
 			caseData.setCarBookingList(null);//顯示今日尚未有人預約使用
 			caseData.setShowEmptyStr(true);
+			caseData.setTimeMK("N");//顯示該用車時間無人預約
 		}
 		
 		if(StringUtils.isEmpty(caseData.getTimeMK())) {
@@ -258,24 +260,27 @@ public class Eip07w040Service {
 		carBooking.setCarprocess_status(caseData.getStatus());
 		carBookingDao.updateByKey(carBooking);
 		
-		Car_booking_rec rec = new Car_booking_rec();
-		rec.setApplyid(carBooking.getApplyid());
-		rec.setCarno1(carno[0]);
-		rec.setCarno2(carno[1]);
-		rec.setUsing_date(carBooking.getUsing_date());
-		rec.setUsing_rec(carBooking.getUsing());
-		rec.setCombine_mk(caseData.getMerge());
-		rec.setCombine_reason(StringUtils.isNotEmpty(caseData.getMergeReason()) ? caseData.getMergeReason() : "");
-		if("Y".equals(caseData.getMerge()) && CollectionUtils.isNotEmpty(caseData.getCarBookingList())) {
-			rec.setCombine_applyid(caseData.getCarBookingList().get(0).getApplyid());
+		if(!"5,8".contains(caseData.getStatus())) { //若表單狀態為五或八則不寫入carBooking_rec
+			Car_booking_rec rec = new Car_booking_rec();
+			rec.setApplyid(carBooking.getApplyid());
+			rec.setCarno1(carno[0]);
+			rec.setCarno2(carno[1]);
+			rec.setUsing_date(carBooking.getUsing_date());
+			rec.setUsing_rec(carBooking.getUsing());
+			rec.setCombine_mk(caseData.getMerge());
+			rec.setCombine_reason(StringUtils.isNotEmpty(caseData.getMergeReason()) ? caseData.getMergeReason() : "");
+			if("Y".equals(caseData.getMerge()) && CollectionUtils.isNotEmpty(caseData.getCarBookingList())) {
+				rec.setCombine_applyid(caseData.getCarBookingList().get(0).getApplyid());
+			}
+
+			rec.setCre_user(userData.getUserId());
+			rec.setCre_datetime(dateTime);
+			rec.setUpd_user(userData.getUserId());
+			rec.setUpd_datetime(dateTime);
+			
+			car_booking_recDao.insert(rec);
 		}
 
-		rec.setCre_user(userData.getUserId());
-		rec.setCre_datetime(dateTime);
-		rec.setUpd_user(userData.getUserId());
-		rec.setUpd_datetime(dateTime);
-		
-		car_booking_recDao.insert(rec);
 	}
 	
 	/**

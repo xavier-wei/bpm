@@ -94,4 +94,13 @@ public interface EipcodeDao {
     public Eipcode selectDataByPrimaryKey(Eipcode eipcode);
 
     int updateByKey(Eipcode eipcode);
+
+    /**
+     * 以列管對象清單(根部門)取得聯絡對象之員工編號
+     *  以列管對象清單(根部門)取得聯絡對象之員工編號
+     *  &參數 = 列管對象清單。
+     * @param deptIDList
+     * @return
+     */
+    public List<Eipcode> getCodeNameList(List<String> deptIDList);
 }

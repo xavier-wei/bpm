@@ -33,15 +33,27 @@ public class WEBITR_View_flowDaoImpl extends ItrBaseDao<View_flow> implements WE
     public BigDecimal selectCountByNext_card_id(View_flow viewFlow) {
         return getNamedParameterJdbcTemplate()
                 .queryForObject(
-                        " with cpap as (" +
-                                "select top 1 * from  cpap.dbo.view_cpape05m v where v.pecard = :next_card_id " +
-                                "), flow as(" +
-                                "select * from webitr.dbo.view_flow o " +
-                                "where o.next_card_id = (select  PECARD  from cpap )" +
-                                "), flow_his as(" +
-                                "select * from webitr.dbo.view_flowhistory v where v.deputyid = (select PEIDNO  from cpap )" +
-                                ")" +
-                                "select (select COUNT(1) from flow) + (select COUNT(1) from flow_his) as cnt ",
+                        "with cpap as (  " +
+                                "select top 1 * from  cpap.dbo.view_cpape05m v where v.pecard = :next_card_id   " +
+                                "), flow as( " +
+                                "select * from webitr.dbo.view_flow where next_card_id = :next_card_id    " +
+                                "), flow_d as( " +
+                                "select * from webitr.dbo.view_flow where deputy_card_id = :next_card_id   and format(getdate(), 'yyyy-MM-dd HH:mm ') between begintime  and endtime  " +
+                                "), flow_his as(  " +
+                                "select * from webitr.dbo.view_flowhistory v where v.deputyid = (select PEIDNO  from cpap )  and format(getdate(), 'yyyy-MM-dd HH:mm ') between begintime  and endtime   " +
+                                "), flow_d_a as( " +
+                                "select * from webitr.dbo.view_deputy_active where " +
+                                "((is_indefinite = '0' AND " +
+                                "format(getdate(),'yyyyMMddHHmm') between  " +
+                                "cast(cast(dateb as int)+  19110000 as NVARCHAR ) + timeb  and  " +
+                                "cast(cast(datee as int)+  19110000 as NVARCHAR ) + timee ) " +
+                                "OR is_indefinite = '1') " +
+                                "and deputy_id = (select PEIDNO  from cpap ) " +
+                                ") " +
+                                "select (select COUNT(1) from flow) +  " +
+                                "(select COUNT(1) from flow_d)+  " +
+                                "(select COUNT(1) from flow_his)+ " +
+                                "(select COUNT(1) from flow_d_a)as cnt  ",
                         new BeanPropertySqlParameterSource(viewFlow),
                         BigDecimal.class);
     }

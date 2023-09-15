@@ -300,7 +300,6 @@
         	});
         	
         	function changeOption(){
-        		$("#status>option").show();
         		var num = ""; 
         		var timeMK = $('#timeMK').val();
         		var merge = $("input[name='merge']:checked").val();
@@ -312,7 +311,7 @@
 	        		if(timeMK=='N' && merge=='N'){num = [4,5,6,7];}
 	        		if(merge=='Y'){num = [1,2,6,7];}
         		}
-        		
+
         		num.forEach(e => $("#status>option").eq(e).hide());
         	}
 

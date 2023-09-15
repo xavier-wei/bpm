@@ -44,6 +44,8 @@ public class Eip03w010Service {
     private UsersDao usersDao;
     @Autowired
     private UserBean userData;
+    @Autowired
+    private MailService mailService;
     public void initDataList(Eip03w010Case caseData) {
         List<Eip03w010Case> keepTrkMstList = keepTrkMstDao.selectByColumns(null,null,null,null, null);
         List<Eipcode> trkStsList = eipcodeDao.findByCodeKind("TRKSTS");
@@ -133,6 +135,7 @@ public class Eip03w010Service {
         KeepTrkDtl ktd;
         ObjectMapper objectMapper = new ObjectMapper();
         Map<String, Map<String, String>> jsonMap = objectMapper.readValue(caseData.getJsonMap(), Map.class);
+        List<String> deptIDList = new ArrayList<>();
         if(jsonMap.size() > 1){
             for(String k : jsonMap.keySet()){
                 if(StringUtils.isNotBlank(k)){
@@ -149,6 +152,7 @@ public class Eip03w010Service {
                     ktd.setRptRate(0);
                     ktd.setRptAskEnd("N");
                     ktd.setSupAgree("N");
+                    deptIDList.add(k);
 
                     keepTrkDtlDao.insert(ktd);
                 }
@@ -163,6 +167,10 @@ public class Eip03w010Service {
             ktm.setCreDt(DateUtility.getNowDateTimeAsTimestamp().toLocalDateTime());
 
             keepTrkMstDao.insert(ktm);
+        }
+        // 使用者點選送出後，寄email通知相關單位
+        if(caseData.getTemp().equals("1")){
+            sendMail(deptIDList, "001", ktm);
         }
     }
 
@@ -247,6 +255,7 @@ public class Eip03w010Service {
         ktm.setTrkID(caseData.getSelectedTrkID());
         ktm = keepTrkMstDao.selectDataByPrimaryKey(ktm);
         KeepTrkMst newKtm = new KeepTrkMst();
+        List<String> receiverIDList = new ArrayList<>();
         BeanUtils.copyProperties(ktm, newKtm);
 
         newKtm.setTrkCont(caseData.getTrkCont()); // 畫面輸入之內容
@@ -293,6 +302,7 @@ public class Eip03w010Service {
                     Map<String, String> innerJsonMap = jsonMap.get(k);
                     String stDt = innerJsonMap.get("stDt").replace("/","");
                     String endDt = innerJsonMap.get("endDt").replace("/","");
+                    receiverIDList.add(k);
 
                     if(ktd!=null){
                         BeanUtils.copyProperties(ktd, newktd);
@@ -329,6 +339,13 @@ public class Eip03w010Service {
             closektm.setUpdDt(DateUtility.getNowDateTimeAsTimestamp().toLocalDateTime());
             keepTrkMstDao.closeByTrkID(closektm);
 
+        }
+
+        // 使用者點選送出後，寄email通知相關單位
+        if(caseData.getTemp().equals("1")){
+            //原資料KeepTrkMst.TrkSts為空值，為首次儲存：使用001文。
+            //原資料KeepTrkMst.TrkSts不為空值，是為修改：使用002文。
+            sendMail(receiverIDList, ktm.getTrkSts() == null || ktm.getTrkSts().equals("0") ? "001" : "002", newKtm);
         }
     }
 
@@ -488,5 +505,42 @@ public class Eip03w010Service {
         newKtm.setUpdUser(userData.getUserId()); //登入者之員編
         newKtm.setUpdDt(DateUtility.getNowDateTimeAsTimestamp().toLocalDateTime()); //CURRENT_TIMESTAMP
         keepTrkMstDao.updateByTrkID(newKtm);
+    }
+
+    //取得相關部門email後寄發
+    //原資料KeepTrkMst.TrkSts為空值，為首次儲存：使用001文。
+    //原資料KeepTrkMst.TrkSts不為空值，是為修改：使用002文。
+    public void sendMail(List<String> receiverIDList, String trkStatus, KeepTrkMst ktm ){
+        List<Eipcode> codeNameList = eipcodeDao.getCodeNameList(receiverIDList);
+        List<String> newCodeNameList = new ArrayList<>();
+        for (Eipcode eipcode : codeNameList){
+            if (eipcode.getCodename() != null){
+                newCodeNameList.addAll(Arrays.asList(eipcode.getCodename().split(",")));
+            }
+        }
+        if (newCodeNameList.size() > 0){
+        List<Users> emailList = usersDao.getEmailList(newCodeNameList);
+            for (Users users : emailList) {
+                log.debug("發送郵件至:" + users.getEmail());
+                List<Eipcode> content = eipcodeDao.findByCodeKindScodeno("TRKMAILMSG", trkStatus);
+                String subject = content.get(0).getCodename().replace("@TrkId@", ktm.getTrkID());
+
+                StringBuilder trkObjs = new StringBuilder();
+                for(int i = 0 ; i<receiverIDList.size() ; i++){
+                    if(i != (receiverIDList.size()-1)){
+                        trkObjs.append(deptsDao.findByPk(receiverIDList.get(i)).getDept_name()).append(",");
+                    }else {
+                        trkObjs.append(deptsDao.findByPk(receiverIDList.get(i)).getDept_name());
+                    }
+                }
+
+                String mailMsg = content.get(1).getCodename().replaceAll("@TrkId@", ktm.getTrkID())
+                                                             .replace("@TrkFrom@",ktm.getTrkFrom())
+                                                             .replace("@TrkCont@", ktm.getTrkCont())
+                                                             .replace("@TrkObjList@",trkObjs);
+
+                mailService.sendEmailNow(subject, users.getEmail(), mailMsg);
+            }
+        }
     }
 }

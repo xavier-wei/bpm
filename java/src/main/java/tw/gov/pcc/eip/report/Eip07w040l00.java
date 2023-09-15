@@ -7,10 +7,10 @@ import org.apache.commons.logging.LogFactory;
 
 import com.iisigroup.easyreport.pdf.exception.ReportException;
 import com.iisigroup.easyreport.pdf.utility.NumberFormatUtility;
-import com.itextpdf.text.Document;
-import com.itextpdf.text.DocumentException;
-import com.itextpdf.text.PageSize;
-import com.itextpdf.text.pdf.PdfPTable;
+import com.lowagie.text.Document;
+import com.lowagie.text.DocumentException;
+import com.lowagie.text.PageSize;
+import com.lowagie.text.pdf.PdfPTable;
 
 import tw.gov.pcc.eip.framework.report.PdfReportBase;
 import tw.gov.pcc.eip.orderCar.cases.Eip07w040Case;
@@ -28,11 +28,6 @@ public class Eip07w040l00 extends PdfReportBase {
 	
     public Eip07w040l00() throws ReportException {
         super();
-    }
-
-    public Eip07w040l00(String outputFilename) throws ReportException {
-        super(outputFilename);
-
     }
 	
     @Override

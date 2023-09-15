@@ -161,11 +161,6 @@
 
                                                 <%
                                                     String pageName = FilenameUtils.getBaseName(StringUtils.upperCase(StringUtils.defaultString(application.getRealPath(request.getServletPath()))));
-                                                    String pageNameForMultiple = StringUtils.upperCase(StringUtils.substringBeforeLast(StringUtils.substringAfterLast((String) request.getAttribute("javax.servlet.forward.request_uri"), "/"), "_")) + StringUtils.substring(FilenameUtils.getBaseName(StringUtils.upperCase(StringUtils.defaultString(application.getRealPath(request.getServletPath())))), -1);
-                                                    tw.gov.pcc.common.domain.FrameworkUserInfoBean frameworkUserData = tw.gov.pcc.common.helper.UserSessionHelper.getFrameworkUserData(request);
-                                                    if (StringUtils.length(pageNameForMultiple) == 10) {
-                                                        pageName = pageNameForMultiple;
-                                                    }
                                                     pageName = StringUtils.defaultIfBlank((String) jspContext.getAttribute("pgcode"), pageName);
                                                 %>
                                             </ol>

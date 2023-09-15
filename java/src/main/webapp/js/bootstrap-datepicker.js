@@ -1483,7 +1483,7 @@
                     }
                     if (newViewDate){
                         this.focusDate = this.viewDate = newViewDate;
-                        this.setValue();
+                        // this.setValue();
                         this.fill();
                         e.preventDefault();
                     }

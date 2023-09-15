@@ -28,6 +28,7 @@ public class Eip06w020Case implements Serializable {
     @RequiredString(groups={Sequence.First.class}, label = "主持人")
     private String chairman; //主持人
     private String organizerId; //申請人
+    private String organizerIdName; //申請人
     @RequiredString(groups={Sequence.First.class}, label = "會議日期")
     private String meetingdt; //會議日期
     @RequiredString(groups={Sequence.First.class}, label = "會議開始時間")

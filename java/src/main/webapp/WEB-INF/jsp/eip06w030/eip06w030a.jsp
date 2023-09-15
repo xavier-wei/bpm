@@ -24,7 +24,7 @@
                     </div>
                     <div class="col-md-3">
                          <form:label cssClass="col-form-label" path="organizerId">申請人：</form:label>
-                         <c:out value="${caseData.organizerId}"/>
+                         <c:out value="${caseData.organizerIdName}"/>
                     </div>
                 </tags:form-row>
                 <tags:form-row>

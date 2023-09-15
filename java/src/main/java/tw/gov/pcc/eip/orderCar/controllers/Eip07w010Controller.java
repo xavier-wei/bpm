@@ -218,7 +218,7 @@ public class Eip07w010Controller extends BaseController {
     @RequestMapping("/Eip07w010_update.action")
     public String update(@Validated @ModelAttribute(CASE_KEY) Eip07w010Case caseData, BindingResult result) {
         log.debug("導向    Eip07w010Case_update 派車基本資料駕駛更新作業");
-        eip07w010Validator.driverValidate(caseData.getEip07w010QueryDataList().get(0),result);
+        eip07w010Validator.driverUpdateValidate(caseData.getEip07w010QueryDataList().get(0),result);
         if (result.hasErrors()) {
             return ADD_APGE;
         }
@@ -231,8 +231,6 @@ public class Eip07w010Controller extends BaseController {
             log.error("修改失敗，原因:{}", ExceptionUtility.getStackTrace(e));
             return ADD_APGE;
         }
-        caseData.setStillWork("");
-        caseData.setEip07w010QueryDataList(new ArrayList<>());
         resetData(caseData);
         return QUERY_PAGE;
 
@@ -356,7 +354,7 @@ public class Eip07w010Controller extends BaseController {
     public String updateCar(@Validated @ModelAttribute(CASE_KEY) Eip07w010Case caseData, BindingResult result) {
         log.debug("導向    Eip07w010Case_update 派車基本資料建置作業  車籍資料更新作業");
         try {
-        eip07w010Validator.carValidate(caseData.getEip07w010CarDataList().get(0),result);
+        eip07w010Validator.carUpdateValidate(caseData.getEip07w010CarDataList().get(0),result);
         if (result.hasErrors()) {
             return CAR_DATA;
         }

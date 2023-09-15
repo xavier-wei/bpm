@@ -2,11 +2,11 @@ package tw.gov.pcc.eip.apply.report;
 
 
 import com.iisigroup.easyreport.pdf.exception.ReportException;
-import com.itextpdf.text.Document;
-import com.itextpdf.text.DocumentException;
-import com.itextpdf.text.Element;
-import com.itextpdf.text.PageSize;
-import com.itextpdf.text.pdf.PdfPTable;
+import com.lowagie.text.Document;
+import com.lowagie.text.DocumentException;
+import com.lowagie.text.Element;
+import com.lowagie.text.PageSize;
+import com.lowagie.text.pdf.PdfPTable;
 import tw.gov.pcc.eip.Global;
 import tw.gov.pcc.eip.apply.cases.Eip08w060Case;
 import tw.gov.pcc.eip.framework.report.PdfReportBase;
@@ -41,11 +41,7 @@ public class Eip08w060l00 extends PdfReportBase {
 	public Eip08w060l00() throws ReportException {
 		super();
 	}
-
-	public Eip08w060l00(String outputFilename) throws ReportException {
-		super(outputFilename);
-	}
-
+	
 	@Override
 	public Document createDocument() {
 		// 參數說明: Document(頁面大小, 左邊空白, 右邊空白, 上面空白, 下面空白)

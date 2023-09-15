@@ -231,6 +231,7 @@ public class Eip07w040Controller extends BaseController {
 		log.debug("導向 臨時取消派車  ");
 		try {
 			eip07w040Service.cancelData(caseData);
+			eip07w040Service.getDefaultData(caseData);
 		} catch (Exception e) {
 			log.error("Eip07w040Controller臨時取消失敗" + ExceptionUtility.getStackTrace(e));
 			setSystemMessage("臨時取消失敗");

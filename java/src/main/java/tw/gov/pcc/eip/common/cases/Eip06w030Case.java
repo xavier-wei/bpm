@@ -20,6 +20,7 @@ public class Eip06w030Case implements Serializable {
     private String meetingName; //會議室名稱
     private String chairman; //主持人
     private String organizerId; //申請人
+    private String organizerIdName; //申請人
     private String meetingdt; //會議日期
     private String meetingBegin; //會議開始時間
     private String meetingEnd; //會議結束時間

@@ -94,6 +94,49 @@
 
         $(function() {
             $('#btnConfirm').click(function() {
+            	var returnStr = '';
+            	
+            	if($("#apply_memo").val()==''){
+            		returnStr += "「申請用途」必須輸入\r\n";
+            	}
+            	
+            	$(".itemkind").each(function(e){
+            		var index = $('.itemkind').index(this);
+            		var num = "序號"+ (index+1)+"：";
+            		var eachStr = '';
+            		
+            		if($(".itemkind").eq(index).val()!==''){
+                		if($(".itemno").eq(index).val()==''){
+                			eachStr += '品名未填寫、';
+                		}
+                		
+                		if($(".itemno").eq(index).val()!=='' && $(".book_cnt").eq(index).val()==''){
+                			eachStr += '庫存為零，請調整品項、';
+                		}
+                		
+                		if($(".apply_cnt").eq(index).val()=='' && $(".book_cnt").eq(index).val()!=='' ){
+                			eachStr += '數量未填寫';
+                		}
+                		
+                		if($(".apply_cnt").eq(index).val()!=='' && 
+                				$(".book_cnt").eq(index).val()!==''&&  
+                				$(".apply_cnt").eq(index).val()>$(".book_cnt").eq(index).val()	
+                		){
+                			eachStr +='申請數量不得大於庫存數量';
+                		}
+            		}
+            		
+            		if(eachStr !==''){
+            			returnStr += (num+eachStr+"\r\n");	
+            		}
+       
+            	});
+            	
+            	if(returnStr!==''){
+            		showAlert(returnStr);
+            		return
+            	}
+            	
            		$('#eip08w020Form').attr('action', '<c:url value="/Eip08w020_insert.action" />').submit();
             });
             
@@ -231,11 +274,13 @@
    							
    							
    					   }
-   					
+   					   
+   					   
+   					   
    					   $(".itemno option").each(function() {
-   					    if($(this).val() ==  itemno) {
-   					     $(this).prop("selected",true);
-   					    }
+	   					    if($(this).val() ==  itemno) {
+	   					     $(this).prop("selected",true);
+	   					    }
 
    					   })
    					   

@@ -3,12 +3,12 @@ package tw.gov.pcc.eip.framework.report;
 import com.iisigroup.easyreport.pdf.ReportBase;
 import com.iisigroup.easyreport.pdf.exception.ReportException;
 import com.iisigroup.easyreport.pdf.utility.PdfPTableUtility;
-import com.itextpdf.text.Font;
-import com.itextpdf.text.Phrase;
-import com.itextpdf.text.Rectangle;
-import com.itextpdf.text.pdf.PdfPCell;
-import com.itextpdf.text.pdf.PdfPCellEvent;
-import com.itextpdf.text.pdf.PdfPTable;
+import com.lowagie.text.Font;
+import com.lowagie.text.Phrase;
+import com.lowagie.text.Rectangle;
+import com.lowagie.text.pdf.PdfPCell;
+import com.lowagie.text.pdf.PdfPCellEvent;
+import com.lowagie.text.pdf.PdfPTable;
 import org.apache.commons.lang3.StringUtils;
 
 /**
@@ -21,10 +21,6 @@ public class PdfReportBase extends ReportBase {
 
     public PdfReportBase() throws ReportException {
         super();
-    }
-
-    public PdfReportBase(String outputFilename) throws ReportException {
-        super(outputFilename);
     }
 
     /**

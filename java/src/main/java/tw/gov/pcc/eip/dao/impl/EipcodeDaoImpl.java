@@ -1,5 +1,6 @@
 package tw.gov.pcc.eip.dao.impl;
 
+import org.apache.xmlbeans.impl.xb.xsdschema.All;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
@@ -281,4 +282,16 @@ public class EipcodeDaoImpl extends BaseDao<Eipcode> implements EipcodeDao {
                 new BeanPropertySqlParameterSource(eipcode));
     }
 
+    @Override
+    public List<Eipcode> getCodeNameList(List<String> deptIDList) {
+
+        StringBuilder sql = new StringBuilder();
+        sql.append(" SELECT codename ");
+        sql.append("   FROM " + TABLE_NAME + " T ");
+        sql.append("  WHERE codekind = 'TRKOBJ_CONTACTOR' ");
+        sql.append("    AND codeno IN (:deptIDList) ");
+
+        return getNamedParameterJdbcTemplate()
+                .query(sql.toString(), new MapSqlParameterSource("deptIDList", deptIDList),BeanPropertyRowMapper.newInstance(Eipcode.class));
+    }
 }

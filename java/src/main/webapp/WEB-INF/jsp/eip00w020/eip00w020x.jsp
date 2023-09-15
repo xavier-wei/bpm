@@ -108,7 +108,7 @@
             </tags:form-row>      
 			<tags:form-row>
 				<c:if test="${caseData.users.from_hr == 'Y'}">
-                    <form:label cssClass="col-form-label" path="users.tel2">連絡電話：</form:label>
+                    <form:label cssClass="col-form-label" path="users.tel2">分機：</form:label>
            			<div class="col-12 col-md form-inline">
                      	<c:out value="${caseData.users.tel2}"/>
                     </div>

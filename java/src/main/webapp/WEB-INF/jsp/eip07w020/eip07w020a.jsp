@@ -22,13 +22,13 @@
 
 			<tags:form-row>
 				<div  class="col-md d-flex">
-					<form:label cssClass="col-form-label" path="applyName">申請人：</form:label>
-					<form:input id="applyName" name="applyName" path="applyName" cssClass="form-control"   size="8"
+					<form:label cssClass="col-form-label" path="userName">申請人：</form:label>
+					<form:input id="userName" name="userName" path="userName" cssClass="form-control"   size="8"
 								maxlength="8" disabled="true"/>
 				</div>
 				<div  class="col-md d-flex">
-					<form:label cssClass="col-form-label" path="applyUnit">申請單位：</form:label>
-					<form:input id="applyUnit" name="applyUnit" path="applyUnit" cssClass="form-control"   size="8"
+					<form:label cssClass="col-form-label" path="applyUnitNm">申請單位：</form:label>
+					<form:input id="applyUnitNm" name="applyUnitNm" path="applyUnitNm" cssClass="form-control"   size="8"
 								maxlength="8" disabled="true"/>
 				</div>
 				<div  class="col-md d-flex">
