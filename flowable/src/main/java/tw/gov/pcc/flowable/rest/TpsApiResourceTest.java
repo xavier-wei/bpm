@@ -21,8 +21,8 @@ public class TpsApiResourceTest {
 
     private final String RESPONSE_JSON = "{\n" +
             "  \"apiVersion\": \"1.0\",\n" +
-            "  \"txnSq\": \"000024\",\n" +
-            "  \"txnTime\": \"20230809133211\",\n" +
+            "  \"txnSq\": \"%s\",\n" +
+            "  \"txnTime\": \"%s\",\n" +
             "  \"returnCode\": \"%s\",\n" +
             "  \"retMsg\": \"%s\",\n" +
             "  \"data\": [%s]\n" +
@@ -65,13 +65,13 @@ public class TpsApiResourceTest {
 
         if (bindingResult.hasErrors()) {
 
-            return ResponseEntity.badRequest().body(String.format(RESPONSE_JSON, "E003", "格式錯誤", ""));
+            return ResponseEntity.badRequest().body(String.format(RESPONSE_JSON,tpsAgenciesDTO.getTxnSq(),tpsAgenciesDTO.getTxnTime(), "E003", "格式錯誤", ""));
         }
 
         if (timeComaprison(tpsAgenciesDTO.getAwardNoticeDateFrom(), tpsAgenciesDTO.getAwardNoticeDateTo())) {
-            return ResponseEntity.ok().body(String.format(RESPONSE_JSON, "0000", "成功", DATA));
+            return ResponseEntity.ok().body(String.format(RESPONSE_JSON,tpsAgenciesDTO.getTxnSq(),tpsAgenciesDTO.getTxnTime(), "0000", "成功", DATA));
         } else {
-            return ResponseEntity.badRequest().body(String.format(RESPONSE_JSON, "E002", "參數錯誤或查詢起迄日期超過允許區間", ""));
+            return ResponseEntity.badRequest().body(String.format(RESPONSE_JSON,tpsAgenciesDTO.getTxnSq(),tpsAgenciesDTO.getTxnTime(), "E002", "參數錯誤或查詢起迄日期超過允許區間", ""));
 
         }
 
@@ -115,10 +115,4 @@ class TpsAgenciesDTO implements Serializable {
 
 
 
-}
-
-class ValidException extends RuntimeException {
-    public ValidException(String message) {
-        super(message);
-    }
 }

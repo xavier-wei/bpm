@@ -8,7 +8,9 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 import tw.gov.pcc.domain.BpmIsmsL414;
 import tw.gov.pcc.domain.User;
+import tw.gov.pcc.domain.UserRole;
 import tw.gov.pcc.repository.BpmIsmsL414Repository;
+import tw.gov.pcc.repository.UserRoleRepository;
 import tw.gov.pcc.service.dto.BpmIsmsL414DTO;
 import tw.gov.pcc.service.dto.BpmUploadFileDTO;
 import tw.gov.pcc.service.dto.EndEventDTO;
@@ -21,9 +23,11 @@ import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Service("L414Service")
 public class BpmIsmsL414ServiceNew implements BpmIsmsService {
+    private final String[] ROLE_IDS = {"BPM_IPT_Operator", "BPM_IPT_Mgr", "BPM_CR_Operator", "BPM_CR_Reviewer", "BPM_CR_Reviewer"};
     private final Logger log = LoggerFactory.getLogger(BpmIsmsL414ServiceNew.class);
     public static final HashMap<UUID, BpmIsmsL414DTO> DTO_HOLDER = new HashMap<>();
     private final SupervisorService supervisorService;
@@ -32,15 +36,17 @@ public class BpmIsmsL414ServiceNew implements BpmIsmsService {
     private final BpmUploadFileService bpmUploadFileService;
     private final BpmUploadFileMapper bpmUploadFileMapper;
     private final BpmSignStatusService bpmSignStatusService;
+    private UserRoleRepository userRoleRepository;
     private final Gson gson = new Gson();
 
-    public BpmIsmsL414ServiceNew(SupervisorService supervisorService, BpmIsmsL414Repository bpmIsmsL414Repository, BpmIsmsL414Mapper bpmIsmsL414Mapper, BpmUploadFileService bpmUploadFileService, BpmUploadFileMapper bpmUploadFileMapper, BpmSignStatusService bpmSignStatusService) {
+    public BpmIsmsL414ServiceNew(SupervisorService supervisorService, BpmIsmsL414Repository bpmIsmsL414Repository, BpmIsmsL414Mapper bpmIsmsL414Mapper, BpmUploadFileService bpmUploadFileService, BpmUploadFileMapper bpmUploadFileMapper, BpmSignStatusService bpmSignStatusService, UserRoleRepository userRoleRepository) {
         this.supervisorService = supervisorService;
         this.bpmIsmsL414Repository = bpmIsmsL414Repository;
         this.bpmIsmsL414Mapper = bpmIsmsL414Mapper;
         this.bpmUploadFileService = bpmUploadFileService;
         this.bpmUploadFileMapper = bpmUploadFileMapper;
         this.bpmSignStatusService = bpmSignStatusService;
+        this.userRoleRepository = userRoleRepository;
     }
 
     @Override
@@ -108,23 +114,25 @@ public class BpmIsmsL414ServiceNew implements BpmIsmsService {
         BpmIsmsL414DTO bpmIsmsL414DTO = gson.fromJson(form, BpmIsmsL414DTO.class);
         UUID uuid = UUID.randomUUID();
         DTO_HOLDER.put(uuid, bpmIsmsL414DTO);
-
-
-
-
-
-        variables.put("applier",bpmIsmsL414DTO.getAppEmpid());
+        variables.put("applier", bpmIsmsL414DTO.getAppEmpid());
         variables.put("isSubmit", bpmIsmsL414DTO.getIsSubmit());
 
         // 填入上級
-        supervisorService.setSupervisor(variables,bpmIsmsL414DTO.getAppEmpid(),userInfo);
+        supervisorService.setSupervisor(variables, bpmIsmsL414DTO.getAppEmpid(), userInfo);
 
-        // todo 依據表單取得固定簽核人員
-        variables.put("infoGroup", "InfoTester");
-        variables.put("seniorTechSpecialist", "seniorTechSpecialistTester");
-        variables.put("serverRoomOperator", "serverRoomOperatorTester");
-        variables.put("reviewStaff", "reviewStaffTester");
-        variables.put("serverRoomManager", "serverRoomManagerTester");
+        List<UserRole> userRoles = userRoleRepository.findByRoleIdIn(ROLE_IDS);
+
+        HashMap<String, String> signers = new HashMap<>();
+        Arrays.stream(ROLE_IDS).forEach(s -> {
+            List<String> userIds = userRoles.stream().filter(userRole -> userRole.getRoleId().equals(s)).map(userRole -> userRole.getUserId()).collect(Collectors.toList());
+            signers.put(s, String.join(",", userIds));
+        });
+
+        variables.put("infoGroup", signers.get("BPM_IPT_Operator"));
+        variables.put("seniorTechSpecialist", signers.get("BPM_IPT_Mgr"));
+        variables.put("serverRoomOperator", signers.get("BPM_CR_Operator"));
+        variables.put("reviewStaff", signers.get("BPM_CR_Reviewer"));
+        variables.put("serverRoomManager", signers.get("BPM_CR_Reviewer"));
         return uuid;
     }
 

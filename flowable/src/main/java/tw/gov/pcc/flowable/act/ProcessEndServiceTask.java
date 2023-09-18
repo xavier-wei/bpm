@@ -7,6 +7,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.*;
 import org.springframework.web.client.RestTemplate;
+import tw.gov.pcc.flowable.config.BpmSetting;
 import tw.gov.pcc.flowable.domain.ProcessEnum;
 import tw.gov.pcc.flowable.service.dto.EndEventDTO;
 import tw.gov.pcc.flowable.utils.TokenUtil;
@@ -28,7 +29,7 @@ public class ProcessEndServiceTask implements JavaDelegate {
         Gson gson=new Gson();
         HttpEntity<String> requestEntity = new HttpEntity<>(gson.toJson(endEventDTO), headers);
         RestTemplate restTemplate = new RestTemplate();
-        ResponseEntity<String> exchange = restTemplate.exchange("http://localhost:9986/bpm/api/process/receiveEndEvent", HttpMethod.POST, requestEntity, String.class);
+        ResponseEntity<String> exchange = restTemplate.exchange(BpmSetting.url+"/bpm/api/process/receiveEndEvent", HttpMethod.POST, requestEntity, String.class);
         log.info("process end event response: {}",exchange.getBody());
     }
 }
