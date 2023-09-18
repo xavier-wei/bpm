@@ -15,6 +15,7 @@ import java.time.chrono.MinguoChronology;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
  * 線上報名共用Service
@@ -59,6 +60,30 @@ public class OnlineRegService {
     }
 
     /**
+     * 取得全部報名資格(部門、職稱)供報名時轉換使用(k為中文,v為id)
+     * @return
+     */
+    public Map<String,String> getRegisqualAllForReg() {
+        List<Eipcode>titleList = eipcodeDao.findByCodeKindOrderByScodeno("TITLE");
+        List<Depts>deptList = deptsDao.getEip03wDepts("1",null);
+        Map<String, String> map = new LinkedHashMap<>();
+        titleList.forEach(t -> map.putIfAbsent(t.getCodename(), t.getCodeno()));
+        deptList.forEach(t -> map.putIfAbsent(t.getDept_name(), "D" + t.getDept_id()));
+        return map;
+    }
+
+    /**
+     * 取得全部公司供報名時轉換使用(k為中文,v為id)
+     * @return
+     */
+    public Map<String,String> getCompanyForReg() {
+        List<Eipcode>companyList = eipcodeDao.findByCodeKindOrderByScodeno("ORG");
+        Map<String, String> map = new LinkedHashMap<>();
+        companyList.forEach(t -> map.putIfAbsent(t.getCodename(), t.getCodeno()));
+        return map;
+    }
+
+    /**
      * 取得單位列表提供畫面使用
      * @return map
      */
@@ -70,7 +95,7 @@ public class OnlineRegService {
     }
 
     /**
-     * 取得單位列表提供畫面使用
+     * 取得使用者列表提供畫面使用
      * @return map
      */
     public Map<String,String> getUsers() {
@@ -78,6 +103,19 @@ public class OnlineRegService {
         Map<String, String> map = new LinkedHashMap<>();
         list.forEach(t -> map.put(t.getUser_id(), StringUtils.isEmpty(t.getUser_name()) ? "" : t.getUser_name()));
         return map;
+    }
+
+    /**
+     * 合併不同類型職稱
+     * @return
+     */
+    public Map<String,String> getAllTitle() {
+        Map<String,String> titleMap = new HashMap<>();
+        titleMap.putAll(getRegisqualE1());
+        titleMap.putAll(getRegisqualE2());
+        titleMap.putAll(getRegisqualE3());
+        titleMap.putAll(getRegisqualE4());
+        return titleMap;
     }
 
     /**
@@ -127,6 +165,17 @@ public class OnlineRegService {
         List<Eipcode>list = eipcodeDao.findByCodekindScodekindOrderByCodeno("TITLE","4")
                 .stream().sorted(Comparator.comparing(Eipcode::getCodeno))
                 .collect(Collectors.toList());
+        Map<String, String> map = new LinkedHashMap<>();
+        list.forEach(t -> map.put(t.getCodeno(), StringUtils.isEmpty(t.getCodename()) ? "" : t.getCodename()));
+        return map;
+    }
+
+    /**
+     * 取得公司全銜資料提供畫面使用
+     * @return map
+     */
+    public Map<String,String> getCompany() {
+        List<Eipcode>list = eipcodeDao.findByCodeKind("ORG");
         Map<String, String> map = new LinkedHashMap<>();
         list.forEach(t -> map.put(t.getCodeno(), StringUtils.isEmpty(t.getCodename()) ? "" : t.getCodename()));
         return map;
