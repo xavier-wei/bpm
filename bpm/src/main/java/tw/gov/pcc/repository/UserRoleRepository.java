@@ -8,7 +8,7 @@ import java.util.List;
 
 public interface UserRoleRepository extends JpaRepository<UserRole, UserRolesPrimaryKey> {
 
-    List<UserRole> findByRoleIdIn(String[] roleIds);
+    List<UserRole> findByRoleIdIn(List<String> roleIds);
 
 
 }

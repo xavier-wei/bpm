@@ -22,4 +22,4 @@ server:
 
 bpm:
   token: QAZWSXEDCRffvYTHnujkljkfyffd14651456uhweuhuijwdijoichchuhqiheciqhoieh
-  url: http://localhost:9986
+  url: http://localhost:8080

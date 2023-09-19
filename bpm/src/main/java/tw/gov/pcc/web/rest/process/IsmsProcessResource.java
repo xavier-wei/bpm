@@ -73,8 +73,6 @@ public class IsmsProcessResource {
         UUID uuid = service.setVariables(variables, form.get(key), userInfo);
         processReqDTO.setFormName(key);
         processReqDTO.setVariables(variables);
-
-
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
         HttpEntity<String> requestEntity = new HttpEntity<>(gson.toJson(processReqDTO), headers);
@@ -121,23 +119,24 @@ public class IsmsProcessResource {
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
         HttpEntity<String> requestEntity = new HttpEntity<>(gson.toJson(completeReqDTO), headers);
+        if (Objects.equals(completeReqDTO.getIpt(), true)) {
+            int i = formId.indexOf("-");
+            String key = formId.substring(0, i);
+            BpmIsmsService service = (BpmIsmsService) applicationContext.getBean(Objects.requireNonNull(BpmIsmsServiceBeanNameEnum.getServiceBeanNameByKey(key)));
+            service.saveBpmByPatch(completeReqDTO.getForm().get(key));
+
+        }
         ResponseEntity<String> exchange = restTemplate.exchange(FLOWABLE_PROCESS_URL + "/completeTask", HttpMethod.POST, requestEntity, String.class);
         if (exchange.getStatusCodeValue() == 200) {
             BpmSignStatusDTO bpmSignStatusDTO = getBpmSignStatusDTO(completeReqDTO, formId);
             BpmSignStatus bpmSignStatus = bpmSignStatusMapper.toEntity(bpmSignStatusDTO);
             bpmSignStatusService.saveBpmSignStatus(bpmSignStatus);
-            if (Objects.equals(completeReqDTO.getIpt(), true)) {
-                int i = formId.indexOf("-");
-                String key = formId.substring(0, i);
-                BpmIsmsService service = (BpmIsmsService) applicationContext.getBean(Objects.requireNonNull(BpmIsmsServiceBeanNameEnum.getServiceBeanNameByKey(key)));
-                service.saveBpmByPatch(completeReqDTO.getForm().get(key));
-            }
             return exchange.getBody();
         }
         return "伺服器忙碌中或查無任務，請稍候再試";
     }
 
-    @PostMapping("/receiveEndEvent")
+    @PutMapping("/receiveEndEvent")
     public void receiveEndEvent(@RequestBody EndEventDTO endEventDTO) {
         log.info("ProcessL414Resource.java - receiveEndEvent - 196 :: " + endEventDTO.getProcessInstanceId());
         if (TOKEN.equals(endEventDTO.getToken())) {
@@ -225,11 +224,8 @@ public class IsmsProcessResource {
             return taskDTOS.isEmpty() ? null :
                 taskDTOS.stream()
                     .map(taskDTO -> {
-
                         if (taskDTO.getFormName().equals("Additional")) {
-
                             BpmIsmsAdditional bpmIsmsAdditional = bpmIsmsAdditionalRepository.findByProcessInstanceId(taskDTO.getProcessInstanceId());
-
                             List<Map<String, Object>> mapList = bpmIsmsAdditionalRepository.findAllByProcessInstanceId(
                                 bpmIsmsAdditional.getMainProcessInstanceId(),
                                 bpmFormQueryDto.getFormId(),
@@ -245,7 +241,8 @@ public class IsmsProcessResource {
                                 map.put("processInstanceId", taskDTO.getProcessInstanceId());
                                 map.put("taskId", taskDTO.getTaskId());
                                 map.put("taskName", taskDTO.getTaskName());
-                                map.put("decisionRole", SingerEnum.getDecisionByName(taskDTO.getTaskName()));
+                                String decisionByName = SingerEnum.getDecisionByName(taskDTO.getTaskName());
+                                map.put("decisionRole", decisionByName);
                                 map.put("additional", true);
                                 return map;
                             } else {
@@ -268,7 +265,8 @@ public class IsmsProcessResource {
                                 Map<String, Object> map = new HashMap<>(new MapUtils().getNewMap(mapList.get(0)));
                                 map.put("taskId", taskDTO.getTaskId());
                                 map.put("taskName", taskDTO.getTaskName());
-                                map.put("decisionRole", SingerEnum.getDecisionByName(taskDTO.getTaskName()));
+                                String decisionByName = SingerEnum.getDecisionByName(taskDTO.getTaskName());
+                                map.put("decisionRole", decisionByName);
                                 map.put("additional", false);
                                 return map;
                             } else {
@@ -347,5 +345,6 @@ public class IsmsProcessResource {
 
         return null;
     }
+
 
 }

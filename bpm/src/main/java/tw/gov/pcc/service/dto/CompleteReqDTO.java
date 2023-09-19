@@ -8,9 +8,7 @@ import java.util.Objects;
 public class CompleteReqDTO {
 
     private String signer;
-
     private String signerId;
-
     private String signUnit;
     private String directions;
     private String opinion;

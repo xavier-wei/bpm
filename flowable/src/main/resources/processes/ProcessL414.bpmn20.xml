@@ -37,7 +37,7 @@
     </sequenceFlow>
     <sequenceFlow id="sid-a3b0317d-0b47-465f-88be-86307b0e95da" sourceRef="directorRejectMail" targetRef="rejectEndEvent"/>
     <sequenceFlow id="sid-f4bc83e3-2dbc-407b-9673-2d1eb66b1235" sourceRef="infoUndertaker" targetRef="seniorTechSpecialistSign"/>
-    <userTask id="seniorTechSpecialistSign" name="簡任技正/科長簽核" flowable:assignee="${seniorTechSpecialist}"/>
+    <userTask id="seniorTechSpecialistSign" name="簡任技正/科長簽核" flowable:candidateUsers="${seniorTechSpecialist}"/>
     <exclusiveGateway id="sid-33c0400d-ddf4-4c58-aa18-89595f34b830"/>
     <sequenceFlow id="sid-1099a18e-c73a-4708-a10f-4d5cadb21d13" sourceRef="seniorTechSpecialistSign" targetRef="sid-33c0400d-ddf4-4c58-aa18-89595f34b830"/>
     <serviceTask id="infoGroupRejectMail" flowable:exclusive="true" flowable:class="tw.gov.pcc.flowable.act.ProcessEndServiceTask"/>

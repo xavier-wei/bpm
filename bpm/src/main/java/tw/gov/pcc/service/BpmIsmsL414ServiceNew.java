@@ -120,19 +120,19 @@ public class BpmIsmsL414ServiceNew implements BpmIsmsService {
         // 填入上級
         supervisorService.setSupervisor(variables, bpmIsmsL414DTO.getAppEmpid(), userInfo);
 
-        List<UserRole> userRoles = userRoleRepository.findByRoleIdIn(ROLE_IDS);
+        List<UserRole> userRoles = userRoleRepository.findByRoleIdIn(List.of(ROLE_IDS));
 
         HashMap<String, String> signers = new HashMap<>();
         Arrays.stream(ROLE_IDS).forEach(s -> {
-            List<String> userIds = userRoles.stream().filter(userRole -> userRole.getRoleId().equals(s)).map(userRole -> userRole.getUserId()).collect(Collectors.toList());
+            List<String> userIds = userRoles.stream().filter(userRole -> userRole.getRoleId().equals(s)).map(UserRole::getUserId).collect(Collectors.toList());
             signers.put(s, String.join(",", userIds));
         });
-
         variables.put("infoGroup", signers.get("BPM_IPT_Operator"));
         variables.put("seniorTechSpecialist", signers.get("BPM_IPT_Mgr"));
         variables.put("serverRoomOperator", signers.get("BPM_CR_Operator"));
         variables.put("reviewStaff", signers.get("BPM_CR_Reviewer"));
         variables.put("serverRoomManager", signers.get("BPM_CR_Reviewer"));
+
         return uuid;
     }
 
@@ -148,6 +148,7 @@ public class BpmIsmsL414ServiceNew implements BpmIsmsService {
 
 
     @Override
+    @Transactional(rollbackFor = SQLException.class)
     public void endForm(EndEventDTO endEventDTO) {
         BpmIsmsL414 bpmIsmsL414 = bpmIsmsL414Repository.findFirstByProcessInstanceId(endEventDTO.getProcessInstanceId());
         bpmIsmsL414.setProcessInstanceStatus(endEventDTO.getProcessStatus());
