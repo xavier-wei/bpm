@@ -2,9 +2,9 @@
 <definitions xmlns="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:flowable="http://flowable.org/bpmn" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:omgdc="http://www.omg.org/spec/DD/20100524/DC" xmlns:omgdi="http://www.omg.org/spec/DD/20100524/DI" typeLanguage="http://www.w3.org/2001/XMLSchema" expressionLanguage="http://www.w3.org/1999/XPath" targetNamespace="http://www.flowable.org/processdef">
   <process id="ProcessL410" name="共用系統使用者帳號申請單" isExecutable="true">
     <startEvent id="sid-45abc639-8a45-4cb0-9823-9c56a9242e9e"/>
-    <userTask id="applierConfirm" name="申請人確認" flowable:assignee="applier"/>
+    <userTask id="applierConfirm" name="申請人確認" flowable:assignee="${applier}"/>
     <sequenceFlow id="sid-b8f2370a-7ef5-488a-b592-14d9c3f8c8a7" sourceRef="sid-45abc639-8a45-4cb0-9823-9c56a9242e9e" targetRef="applierConfirm"/>
-    <userTask id="chiefSign" name="科長簽核" flowable:assignee="sectionChief"/>
+    <userTask id="chiefSign" name="科長簽核" flowable:assignee="${sectionChief}"/>
     <sequenceFlow id="sid-b61c0f86-7f00-4272-a48b-790f7b46b166" sourceRef="applierConfirm" targetRef="chiefSign"/>
     <exclusiveGateway id="chiefGateWay"/>
     <sequenceFlow id="sid-c09d9be5-d468-40a9-9e3a-04290f00d2fa" sourceRef="chiefSign" targetRef="chiefGateWay"/>
@@ -12,7 +12,7 @@
     <sequenceFlow id="sid-88c67787-774d-4c41-a851-08d252438b36" sourceRef="chiefGateWay" targetRef="chiefRejectMail">
       <conditionExpression xsi:type="tFormalExpression"><![CDATA[${chiefDecision=="0"}]]></conditionExpression>
     </sequenceFlow>
-    <userTask id="directorSign" name="主管簽核" flowable:assignee="director"/>
+    <userTask id="directorSign" name="主管簽核" flowable:assignee="${director}"/>
     <sequenceFlow id="sid-057bfd71-18ac-4c92-9204-10fe7b168d62" sourceRef="chiefGateWay" targetRef="directorSign">
       <conditionExpression xsi:type="tFormalExpression"><![CDATA[${chiefDecision=="1"}]]></conditionExpression>
     </sequenceFlow>

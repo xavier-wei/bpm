@@ -9,10 +9,7 @@ import org.springframework.web.multipart.MultipartFile;
 import tw.gov.pcc.domain.BpmIsmsL410;
 import tw.gov.pcc.domain.User;
 import tw.gov.pcc.repository.BpmIsmsL410Repository;
-import tw.gov.pcc.service.dto.BpmIsmsL410DTO;
-import tw.gov.pcc.service.dto.BpmUploadFileDTO;
-import tw.gov.pcc.service.dto.EndEventDTO;
-import tw.gov.pcc.service.dto.TaskDTO;
+import tw.gov.pcc.service.dto.*;
 import tw.gov.pcc.service.mapper.BpmIsmsL410Mapper;
 import tw.gov.pcc.service.mapper.BpmUploadFileMapper;
 import tw.gov.pcc.utils.SeqNumber;
@@ -97,7 +94,7 @@ public class BpmIsmsL410ServiceNew implements BpmIsmsService {
                 taskDTO,
                 bpmIsmsL410DTO.getAppEmpid(),
                 bpmIsmsL410DTO.getAppName(),
-                bpmIsmsL410DTO.getSignUnit()
+                bpmIsmsL410DTO.getAppUnit1()
             );
         }
 
@@ -111,7 +108,16 @@ public class BpmIsmsL410ServiceNew implements BpmIsmsService {
 
     @Override
     public String saveBpmByPatch(String form, List<BpmUploadFileDTO> dto, List<MultipartFile> appendixFiles) {
-        return null;
+        BpmIsmsL410DTO bpmIsmsL410DTO = gson.fromJson(form, BpmIsmsL410DTO.class);
+        bpmIsmsL410DTO.setUpdateTime(Timestamp.valueOf(LocalDateTime.now()));
+        bpmIsmsL410DTO.setUpdateUser(bpmIsmsL410DTO.getFilName());
+        String formId = bpmIsmsL410DTO.getFormId();
+
+        //儲存照片
+        bpmUploadFileService.savePhoto(dto, appendixFiles, formId);
+
+        return gson.toJson(bpmIsmsL410Mapper.toDto(bpmIsmsL410Repository.save(bpmIsmsL410Mapper.toEntity(bpmIsmsL410DTO))));
+
     }
 
     @Override
@@ -119,7 +125,7 @@ public class BpmIsmsL410ServiceNew implements BpmIsmsService {
         BpmIsmsL410DTO bpmIsmsL410DTO = gson.fromJson(form, BpmIsmsL410DTO.class);
         UUID uuid = UUID.randomUUID();
         DTO_HOLDER.put(uuid, bpmIsmsL410DTO);
-        variables.put("applier", bpmIsmsL410DTO.getAppName());
+        variables.put("applier", bpmIsmsL410DTO.getAppEmpid());
         variables.put("isSubmit", bpmIsmsL410DTO.getIsSubmit());
 
         // 填入上級

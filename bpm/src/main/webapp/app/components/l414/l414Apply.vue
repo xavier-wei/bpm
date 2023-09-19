@@ -25,6 +25,7 @@
                           :state="validateState($v.applyDate)"
                           lazy
                           trim
+                          disabled
                         ></i-date-picker>
                       </i-form-group-check>
 
@@ -468,9 +469,9 @@ export default {
       filEmpid: userData.empId != null ? userData.empId : '', //	填表人員工編號
       filName: userData.userName != null ? userData.userName : '' , //	填表人姓名
       filUnit: userData.deptId != null ? userData.deptId : ''  , //	填表人單位名稱
-      appEmpid: '', //	申請人員工編號
-      appName: '', //	申請人姓名
-      appUnit: '', //	申請人單位名稱
+      appEmpid: userData.empId != null ? userData.empId : '', //	申請人員工編號
+      appName: userData.userName != null ? userData.userName : '', //	申請人姓名
+      appUnit: userData.deptId != null ? userData.deptId : '', //	申請人單位名稱
       isSubmit: '', //	是否暫存、送出
       isEnable: '1', //	規則
       enableTime: '', //使用時段
@@ -557,7 +558,6 @@ export default {
 
               formData.append('form', new Blob([JSON.stringify(body)], {type: 'application/json'}));
 
-
               if (JSON.stringify(appendixData.value) !== '[]') {
                 for (let i in appendixData.value) {
                   formData.append('appendixFiles', appendixData.value[i].file[0]);
@@ -565,12 +565,9 @@ export default {
                 formData.append('fileDto', new Blob([JSON.stringify(appendixData.value)], {type: 'application/json'}));
               }
 
-              console.log(form);
-
               axios
                 .post(`/process/start/L414`, formData, headers)
                 .then(({data}) => {
-                  // filePathData.filePathName = 'http://localhost:8081/pic?processId=' + data;
                   $bvModal.msgBoxOk('表單新增完畢');
                   reset();
                   navigateByNameAndParams('l414Query', {isReload: false, isNotKeepAlive: true});
@@ -590,11 +587,7 @@ export default {
     };
 
     const activeTab = (index: number) => {
-      if (tabIndex.value === index) {
-        return true;
-      } else {
-        return false;
-      }
+      return tabIndex.value === index;
     };
 
     function toQueryView() {
