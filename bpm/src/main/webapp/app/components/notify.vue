@@ -22,7 +22,7 @@
         </i-form-group-check>
 
         <i-form-group-check class="col-4" label-cols="4" content-cols="8" :label="`申請者：`" :item="$v.appName">
-          <b-form-select v-model="$v.appName.$model">
+          <b-form-select v-model="$v.appName.$model" :options="queryOptions.peunitOptions">
             <template #first>
               <option value="">請選擇</option>
             </template>
@@ -137,7 +137,7 @@
 
 <script lang="ts">
 import axios from 'axios';
-import {ref, reactive, defineComponent} from '@vue/composition-api';
+import {ref, reactive, defineComponent, onMounted} from '@vue/composition-api';
 import IDatePicker from '../shared/i-date-picker/i-date-picker.vue';
 import ITable from '../shared/i-table/i-table.vue';
 import IFormGroupCheck from '../shared/form/i-form-group-check.vue';
@@ -166,6 +166,10 @@ export default defineComponent({
     const queryStatus = ref(false);
     const notificationService = useNotification();
     const userData = ref(useGetters(['getUserData']).getUserData).value;
+
+    onMounted(() => {
+      peunitOptions();
+    });
 
     enum FormStatusEnum {
       CREATE = '新增',
@@ -282,10 +286,11 @@ export default defineComponent({
       formTypeList: [
         {value: '0', text: 'ISMS簽核表單'},
       ],
+      peunitOptions: [],
     });
 
     const toQuery = () => {
-      console.log('登入者資訊', userData)
+      console.log('form', form)
       table.data = [];
       const params = new FormData();
       params.append('bpmFormQueryDto', new Blob([JSON.stringify(form)], {type: 'application/json'}));
@@ -310,6 +315,19 @@ export default defineComponent({
         stateStatus: userData.cpape05m.unitName !== '資訊推動小組'
       });
     }
+
+    function peunitOptions() {
+      axios.get(`/eip/peunitOptions/${userData.empId}`)
+        .then(({data}) => {
+          console.log(' data++ : ', JSON.parse(JSON.stringify(data)))
+          queryOptions.peunitOptions = data.map(item => {
+            return {value: item.pename, text: item.pename};
+          })
+        })
+        .catch(notificationErrorHandler(notificationService))
+    }
+
+
 
     return {
       $v,

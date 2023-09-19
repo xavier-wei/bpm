@@ -65,8 +65,8 @@ public class BpmL410ApplyManage implements Serializable {
     @Column(name = "other_reason", length = 30)
     private String otherReason;
 
-    @Size(max = 1)
-    @Column(name = "adm_unit", length = 1)
+    @Size(max = 7)
+    @Column(name = "adm_unit", length = 7)
     private String admUnit;
 
     @Size(max = 10)

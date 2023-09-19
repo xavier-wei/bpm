@@ -69,9 +69,8 @@ public class BpmIsmsL410 implements Serializable {
     @Column(name = "app_unit1", length = 30, nullable = false)
     private String appUnit1;
 
-    @NotNull
     @Size(max = 30)
-    @Column(name = "app_unit2", length = 30, nullable = false)
+    @Column(name = "app_unit2", length = 30)
     private String appUnit2;
 
     @NotNull

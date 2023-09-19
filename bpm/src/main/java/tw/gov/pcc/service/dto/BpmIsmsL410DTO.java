@@ -52,7 +52,6 @@ public class BpmIsmsL410DTO implements Serializable {
     @Size(max = 30)
     private String appUnit1;
 
-    @NotNull
     @Size(max = 30)
     private String appUnit2;
 

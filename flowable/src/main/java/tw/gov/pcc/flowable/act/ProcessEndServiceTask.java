@@ -28,7 +28,7 @@ public class ProcessEndServiceTask implements JavaDelegate {
         Gson gson=new Gson();
         HttpEntity<String> requestEntity = new HttpEntity<>(gson.toJson(endEventDTO), headers);
         RestTemplate restTemplate = new RestTemplate();
-        ResponseEntity<String> exchange = restTemplate.exchange("http://localhost:9986/bpm/api/process/receiveEndEvent", HttpMethod.POST, requestEntity, String.class);
+        ResponseEntity<String> exchange = restTemplate.exchange("http://localhost:8080/bpm/api/process/receiveEndEvent", HttpMethod.POST, requestEntity, String.class);
         log.info("process end event response: {}",exchange.getBody());
     }
 }

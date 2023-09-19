@@ -21,6 +21,7 @@ export interface IUserModel {
     titleId ?: string | null;
     userId ?: string | null;
     userName ?: string | null;
+    userEName ?: string | null;
 }
 
 
@@ -46,6 +47,7 @@ export class UserModel implements IUserModel {
        public titleId ?: string | null,
        public userId ?: string | null,
        public userName ?: string | null,
+       public userEName ?: string | null,
     ) {
     }
 

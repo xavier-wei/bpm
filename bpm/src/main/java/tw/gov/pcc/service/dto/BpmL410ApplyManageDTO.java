@@ -43,7 +43,7 @@ public class BpmL410ApplyManageDTO implements Serializable {
     private String isWebSiteOther;
     @Size(max = 30)
     private String otherReason;
-    @Size(max = 1)
+    @Size(max = 7)
     private String admUnit;
 
     @Size(max = 10)

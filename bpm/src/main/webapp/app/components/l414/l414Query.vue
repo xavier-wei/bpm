@@ -250,7 +250,8 @@ export default {
         formId: item.formId,
         formStatus: FormStatusEnum.READONLY,
         isNotKeepAlive: false,
-        stateStatus: userData.cpape05m.unitName !== '資訊推動小組'
+        stateStatus: userData.cpape05m.unitName !== '資訊推動小組',
+        isSignature : false
       });
     };
 
