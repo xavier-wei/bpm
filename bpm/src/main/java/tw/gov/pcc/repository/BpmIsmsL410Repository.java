@@ -28,5 +28,7 @@ public interface BpmIsmsL410Repository extends JpaRepository<BpmIsmsL410, String
     @Query(value = "SELECT * FROM BPM_ISMS_L410 WHERE FORM_ID = :formId ", nativeQuery = true)
     List<Map<String,Object>> findByFormId(@Param("formId") String formId);
 
+    BpmIsmsL410 findFirstByProcessInstanceId(String processInstanceId);
+
 
 }

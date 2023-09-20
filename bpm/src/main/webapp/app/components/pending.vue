@@ -251,8 +251,6 @@ export default defineComponent({
 
       console.log('taskData',taskData)
 
-      console.log('安安安',item.taskName !== '加簽')
-
       if (i === '0') {
         navigateByNameAndParams(prefix + 'Edit', {
           formId: item.formId,

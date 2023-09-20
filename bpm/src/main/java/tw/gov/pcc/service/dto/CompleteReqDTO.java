@@ -23,9 +23,6 @@ public class CompleteReqDTO {
     private String taskName;
     private HashMap<String, Object> variables;
 
-    @NotNull
-    private BpmIsmsL414DTO bpmIsmsL414DTO;
-
     private HashMap<String, String> form;
     private Boolean ipt; //用來判斷登入者使否為InfoTester，判斷是否儲存資推小組填寫的欄位
 
@@ -38,7 +35,7 @@ public class CompleteReqDTO {
     }
 
 
-    public CompleteReqDTO(String signer, String signerId, String signUnit, Boolean ipt, String processInstanceId, String taskId, String taskName, HashMap<String, Object> variables, BpmIsmsL414DTO bpmIsmsL414DTO, String directions, String opinion, HashMap<String, String> form) {
+    public CompleteReqDTO(String signer, String signerId, String signUnit, Boolean ipt, String processInstanceId, String taskId, String taskName, HashMap<String, Object> variables, String directions, String opinion, HashMap<String, String> form) {
         this.signer = signer;
         this.signerId = signerId;
         this.signUnit = signUnit;
@@ -46,7 +43,6 @@ public class CompleteReqDTO {
         this.taskId = taskId;
         this.taskName = taskName;
         this.variables = variables;
-        this.bpmIsmsL414DTO = bpmIsmsL414DTO;
         this.directions = directions;
         this.opinion = opinion;
         this.ipt = ipt;
@@ -109,14 +105,6 @@ public class CompleteReqDTO {
         this.variables = variables;
     }
 
-    public BpmIsmsL414DTO getBpmIsmsL414DTO() {
-        return bpmIsmsL414DTO;
-    }
-
-    public void setBpmIsmsL414DTO(BpmIsmsL414DTO bpmIsmsL414DTO) {
-        this.bpmIsmsL414DTO = bpmIsmsL414DTO;
-    }
-
     public String getDirections() {
         return directions;
     }
@@ -141,41 +129,41 @@ public class CompleteReqDTO {
         this.ipt = ipt;
     }
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        CompleteReqDTO that = (CompleteReqDTO) o;
-        return Objects.equals(signer, that.signer) && Objects.equals(signerId, that.signerId) && Objects.equals(signUnit, that.signUnit) && Objects.equals(directions, that.directions) && Objects.equals(opinion, that.opinion) && Objects.equals(processInstanceId, that.processInstanceId) && Objects.equals(taskId, that.taskId) && Objects.equals(taskName, that.taskName) && Objects.equals(variables, that.variables) && Objects.equals(bpmIsmsL414DTO, that.bpmIsmsL414DTO) && Objects.equals(ipt, that.ipt);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(signer, signerId, signUnit, directions, opinion, processInstanceId, taskId, taskName, variables, bpmIsmsL414DTO, ipt);
-    }
-
-    @Override
-    public String toString() {
-        return "CompleteReqDTO{" +
-                "signer='" + signer + '\'' +
-                ", signerId='" + signerId + '\'' +
-                ", signUnit='" + signUnit + '\'' +
-                ", directions='" + directions + '\'' +
-                ", opinion='" + opinion + '\'' +
-                ", processInstanceId='" + processInstanceId + '\'' +
-                ", taskId='" + taskId + '\'' +
-                ", taskName='" + taskName + '\'' +
-                ", variables=" + variables +
-                ", bpmIsmsL414DTO=" + bpmIsmsL414DTO +
-                ", ipt=" + ipt +
-                '}';
-    }
-
     public HashMap<String, String> getForm() {
         return form;
     }
 
     public void setForm(HashMap<String, String> form) {
         this.form = form;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        CompleteReqDTO that = (CompleteReqDTO) o;
+        return Objects.equals(signer, that.signer) && Objects.equals(signerId, that.signerId) && Objects.equals(signUnit, that.signUnit) && Objects.equals(directions, that.directions) && Objects.equals(opinion, that.opinion) && Objects.equals(processInstanceId, that.processInstanceId) && Objects.equals(taskId, that.taskId) && Objects.equals(taskName, that.taskName) && Objects.equals(variables, that.variables) && Objects.equals(form, that.form) && Objects.equals(ipt, that.ipt);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(signer, signerId, signUnit, directions, opinion, processInstanceId, taskId, taskName, variables, form, ipt);
+    }
+
+    @Override
+    public String toString() {
+        return "CompleteReqDTO{" +
+            "signer='" + signer + '\'' +
+            ", signerId='" + signerId + '\'' +
+            ", signUnit='" + signUnit + '\'' +
+            ", directions='" + directions + '\'' +
+            ", opinion='" + opinion + '\'' +
+            ", processInstanceId='" + processInstanceId + '\'' +
+            ", taskId='" + taskId + '\'' +
+            ", taskName='" + taskName + '\'' +
+            ", variables=" + variables +
+            ", form=" + form +
+            ", ipt=" + ipt +
+            '}';
     }
 }

@@ -343,7 +343,7 @@ public class BpmIsmsL410DTO implements Serializable {
     private String signUnit;
     private String signer;
 
-    private List<HashMap<String, HashMap<String, Object>>> variables;
+    private List<HashMap<String, HashMap<String, Object>>> l410Variables;
 
     public String getFormId() {
         return formId;
@@ -1257,12 +1257,12 @@ public class BpmIsmsL410DTO implements Serializable {
         this.signer = signer;
     }
 
-    public List<HashMap<String, HashMap<String, Object>>> getVariables() {
-        return variables;
+    public List<HashMap<String, HashMap<String, Object>>> getL410Variables() {
+        return l410Variables;
     }
 
-    public void setVariables(List<HashMap<String, HashMap<String, Object>>> variables) {
-        this.variables = variables;
+    public void setL410Variables(List<HashMap<String, HashMap<String, Object>>> l410Variables) {
+        this.l410Variables = l410Variables;
     }
 
     @Override
@@ -1287,7 +1287,6 @@ public class BpmIsmsL410DTO implements Serializable {
     }
 
     // prettier-ignore
-
     @Override
     public String toString() {
         return "BpmIsmsL410DTO{" +
@@ -1405,7 +1404,7 @@ public class BpmIsmsL410DTO implements Serializable {
             ", formName='" + formName + '\'' +
             ", signUnit='" + signUnit + '\'' +
             ", signer='" + signer + '\'' +
-            ", variables=" + variables +
+            ", l410Variables=" + l410Variables +
             '}';
     }
 }
