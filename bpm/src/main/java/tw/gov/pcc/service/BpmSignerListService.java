@@ -40,7 +40,7 @@ public class BpmSignerListService {
                 BpmSignerList bpmSignerList = new BpmSignerList();
                 bpmSignerList.setFormId(formId);
                 bpmSignerList.setTaskName(SinerTaskEnum.getNameByTask(key));
-                bpmSignerList.setDeptId(users.get(0).getDeptId());
+                bpmSignerList.setDeptId(users.get(0).getCpape05m().getPeunit());
                 bpmSignerList.setEmpIds(ids);
                 List<String> empNames = users.stream().map(User::getUserName).collect(Collectors.toList());
                 bpmSignerList.setEmpNames(String.join(",", empNames));
@@ -51,7 +51,7 @@ public class BpmSignerListService {
                 BpmSignerList bpmSignerList = new BpmSignerList();
                 bpmSignerList.setFormId(formId);
                 bpmSignerList.setTaskName(SinerTaskEnum.getNameByTask(key));
-                bpmSignerList.setDeptId(user.getDeptId());
+                bpmSignerList.setDeptId(user.getCpape05m().getPeunit());
                 bpmSignerList.setEmpIds(ids);
                 bpmSignerList.setEmpNames(user.getUserName());
                 bpmSignerList.setCreateTime(Timestamp.valueOf(LocalDateTime.now()));
