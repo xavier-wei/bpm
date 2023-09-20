@@ -11,13 +11,14 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.multipart.MultipartFile;
 import tw.gov.pcc.domain.BpmIsmsServiceBeanNameEnum;
-import tw.gov.pcc.domain.SingerEnum;
+import tw.gov.pcc.domain.SingerDecisionEnum;
 import tw.gov.pcc.domain.User;
 import tw.gov.pcc.domain.entity.BpmIsmsAdditional;
 import tw.gov.pcc.domain.entity.BpmSignStatus;
 import tw.gov.pcc.repository.BpmIsmsAdditionalRepository;
 import tw.gov.pcc.service.BpmIsmsService;
 import tw.gov.pcc.service.BpmSignStatusService;
+import tw.gov.pcc.service.BpmSignerListService;
 import tw.gov.pcc.service.dto.*;
 import tw.gov.pcc.service.mapper.BpmSignStatusMapper;
 import tw.gov.pcc.utils.MapUtils;
@@ -48,13 +49,15 @@ public class IsmsProcessResource {
     private final BpmSignStatusService bpmSignStatusService;
     private final BpmSignStatusMapper bpmSignStatusMapper;
     private final BpmIsmsAdditionalRepository bpmIsmsAdditionalRepository;
+    private final BpmSignerListService bpmSignerListService;
 
-    public IsmsProcessResource(ApplicationContext applicationContext, HttpSession httpSession, BpmSignStatusService bpmSignStatusService, BpmSignStatusMapper bpmSignStatusMapper, BpmIsmsAdditionalRepository bpmIsmsAdditionalRepository) {
+    public IsmsProcessResource(ApplicationContext applicationContext, HttpSession httpSession, BpmSignStatusService bpmSignStatusService, BpmSignStatusMapper bpmSignStatusMapper, BpmIsmsAdditionalRepository bpmIsmsAdditionalRepository, BpmSignerListService bpmSignerListService) {
         this.applicationContext = applicationContext;
         this.httpSession = httpSession;
         this.bpmSignStatusService = bpmSignStatusService;
         this.bpmSignStatusMapper = bpmSignStatusMapper;
         this.bpmIsmsAdditionalRepository = bpmIsmsAdditionalRepository;
+        this.bpmSignerListService = bpmSignerListService;
     }
 
     @PostMapping(path = "/start/{key}", consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
@@ -241,7 +244,7 @@ public class IsmsProcessResource {
                                 map.put("processInstanceId", taskDTO.getProcessInstanceId());
                                 map.put("taskId", taskDTO.getTaskId());
                                 map.put("taskName", taskDTO.getTaskName());
-                                String decisionByName = SingerEnum.getDecisionByName(taskDTO.getTaskName());
+                                String decisionByName = SingerDecisionEnum.getDecisionByName(taskDTO.getTaskName());
                                 map.put("decisionRole", decisionByName);
                                 map.put("additional", true);
                                 return map;
@@ -265,7 +268,7 @@ public class IsmsProcessResource {
                                 Map<String, Object> map = new HashMap<>(new MapUtils().getNewMap(mapList.get(0)));
                                 map.put("taskId", taskDTO.getTaskId());
                                 map.put("taskName", taskDTO.getTaskName());
-                                String decisionByName = SingerEnum.getDecisionByName(taskDTO.getTaskName());
+                                String decisionByName = SingerDecisionEnum.getDecisionByName(taskDTO.getTaskName());
                                 map.put("decisionRole", decisionByName);
                                 map.put("additional", false);
                                 return map;
@@ -332,7 +335,7 @@ public class IsmsProcessResource {
                             Map<String, Object> map = new HashMap<>(new MapUtils().getNewMap(mapList.get(0)));
                             map.put("taskId", taskDTO.getTaskId());
                             map.put("taskName", taskDTO.getTaskName());
-                            map.put("decisionRole", SingerEnum.getDecisionByName(taskDTO.getTaskName()));
+                            map.put("decisionRole", SingerDecisionEnum.getDecisionByName(taskDTO.getTaskName()));
                             map.put("additional", false);
                             return map;
                         } else {

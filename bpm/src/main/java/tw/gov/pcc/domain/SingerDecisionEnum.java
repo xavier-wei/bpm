@@ -1,6 +1,6 @@
 package tw.gov.pcc.domain;
 
-public enum SingerEnum {
+public enum SingerDecisionEnum {
     APPLIER("申請人確認","applierConfirm"),
     CHIEF("科長簽核","sectionChiefDecision"), // 0、1、2
     DIRECTOR("主管簽核","directorDecision"), // 0、1、2
@@ -12,33 +12,30 @@ public enum SingerEnum {
 
     private final String name;
     private final String decision;
-    SingerEnum(String name,String decision) {
+    SingerDecisionEnum(String name, String decision) {
         this.name = name;
         this.decision = decision;
     }
 
     // getDecisionByName
     public static String getDecisionByName(String name) {
-        for (SingerEnum singerEnum : SingerEnum.values()) {
-            if (singerEnum.name.equals(name)) {
-                return singerEnum.decision;
+        for (SingerDecisionEnum singerDecisionEnum : SingerDecisionEnum.values()) {
+            if (singerDecisionEnum.name.equals(name)) {
+                return singerDecisionEnum.decision;
             }
         }
         return null;
     }
     // getNameByDecision
     public static String getNameByDecision(String decision) {
-        for (SingerEnum singerEnum : SingerEnum.values()) {
-            if (singerEnum.decision.equals(decision)) {
-                return singerEnum.name;
+        for (SingerDecisionEnum singerDecisionEnum : SingerDecisionEnum.values()) {
+            if (singerDecisionEnum.decision.equals(decision)) {
+                return singerDecisionEnum.name;
             }
         }
         return null;
     }
 
-    public static void main(String[] args) {
-        System.out.println(getDecisionByName("簡任技正/科長簽核"));
-    }
 }
 
 

@@ -28,6 +28,7 @@ public class BpmIsmsL410ServiceNew implements BpmIsmsService {
 
     private final Logger log = LoggerFactory.getLogger(BpmIsmsL410ServiceNew.class);
     public static final HashMap<UUID, BpmIsmsL410DTO> DTO_HOLDER = new HashMap<>();
+    private static final HashMap<UUID,Map<String,Object>> VARIABLES_HOLDER = new HashMap<>();
     private Gson gson = new Gson();
 
     private BpmIsmsL410Repository bpmIsmsL410Repository;
@@ -38,14 +39,16 @@ public class BpmIsmsL410ServiceNew implements BpmIsmsService {
 
     private  BpmSignStatusService bpmSignStatusService;
 
+    private final BpmSignerListService bpmSignerListService;
     private final BpmIsmsL410Mapper bpmIsmsL410Mapper;
     private final SupervisorService supervisorService;
 
-    public BpmIsmsL410ServiceNew(BpmIsmsL410Repository bpmIsmsL410Repository, BpmUploadFileService bpmUploadFileService, BpmUploadFileMapper bpmUploadFileMapper, BpmSignStatusService bpmSignStatusService, BpmIsmsL410Mapper bpmIsmsL410Mapper, SupervisorService supervisorService) {
+    public BpmIsmsL410ServiceNew(BpmIsmsL410Repository bpmIsmsL410Repository, BpmUploadFileService bpmUploadFileService, BpmUploadFileMapper bpmUploadFileMapper, BpmSignStatusService bpmSignStatusService, BpmSignerListService bpmSignerListService, BpmIsmsL410Mapper bpmIsmsL410Mapper, SupervisorService supervisorService) {
         this.bpmIsmsL410Repository = bpmIsmsL410Repository;
         this.bpmUploadFileService = bpmUploadFileService;
         this.bpmUploadFileMapper = bpmUploadFileMapper;
         this.bpmSignStatusService = bpmSignStatusService;
+        this.bpmSignerListService = bpmSignerListService;
         this.bpmIsmsL410Mapper = bpmIsmsL410Mapper;
         this.supervisorService = supervisorService;
     }
@@ -97,7 +100,8 @@ public class BpmIsmsL410ServiceNew implements BpmIsmsService {
                 bpmIsmsL410DTO.getAppUnit1()
             );
         }
-
+        bpmSignerListService.saveBpmSignerList(VARIABLES_HOLDER.get(uuid), formId);
+        VARIABLES_HOLDER.remove(uuid);
         DTO_HOLDER.remove(uuid);
     }
 
@@ -130,6 +134,8 @@ public class BpmIsmsL410ServiceNew implements BpmIsmsService {
 
         // 填入上級
         supervisorService.setSupervisor(variables,bpmIsmsL410DTO.getAppEmpid(),userInfo);
+
+        VARIABLES_HOLDER.put(uuid, variables);
         return uuid;
     }
 
