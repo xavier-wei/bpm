@@ -35,28 +35,18 @@ public class BpmSignerListService {
         List<BpmSignerList> bpmSignerLists = new ArrayList<>();
         userTaskMap.keySet().forEach(key->{
             String ids = userTaskMap.get(key);
-            if (ids.contains(",")) {
-                List<User> users = userRepository.findByUserIdIn(List.of(ids.split(",")));
-                BpmSignerList bpmSignerList = new BpmSignerList();
-                bpmSignerList.setFormId(formId);
-                bpmSignerList.setTaskName(SinerTaskEnum.getNameByTask(key));
-                bpmSignerList.setDeptId(users.get(0).getCpape05m().getPeunit());
-                bpmSignerList.setEmpIds(ids);
-                List<String> empNames = users.stream().map(User::getUserName).collect(Collectors.toList());
-                bpmSignerList.setEmpNames(String.join(",", empNames));
-                bpmSignerList.setCreateTime(Timestamp.valueOf(LocalDateTime.now()));
-                bpmSignerLists.add(bpmSignerList);
-            }else {
-                User user = userRepository.findByUserId(ids);
+            List<User> users = ids.contains(",") ? userRepository.findByUserIdIn(List.of(ids.split(","))) : List.of(userRepository.findByUserId(ids));
+
+            users.forEach(user -> {
                 BpmSignerList bpmSignerList = new BpmSignerList();
                 bpmSignerList.setFormId(formId);
                 bpmSignerList.setTaskName(SinerTaskEnum.getNameByTask(key));
                 bpmSignerList.setDeptId(user.getCpape05m().getPeunit());
                 bpmSignerList.setEmpIds(ids);
-                bpmSignerList.setEmpNames(user.getUserName());
+                bpmSignerList.setEmpNames(ids.contains(",") ? users.stream().map(User::getUserName).collect(Collectors.joining(",")) : user.getUserName());
                 bpmSignerList.setCreateTime(Timestamp.valueOf(LocalDateTime.now()));
                 bpmSignerLists.add(bpmSignerList);
-            }
+            });
         });
         bpmSignerListRepository.saveAll(bpmSignerLists);
     }
