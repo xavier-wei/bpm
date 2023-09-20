@@ -638,12 +638,12 @@ export default {
       isInternalFirewall: '', //	變更設備：是否為內部防火牆
       firewallContent: '', //	設定內容
       finishDatetime: '', //	實際完成日期
-      formName: 'L414',
       processInstanceId: '', //流程實體編號
-      taskId: '',
-      taskName: '',
+      taskId: '',   //任務ID
+      taskName: '', //任務名稱
+      opinion: '', //審核的處理意見
       decisionRole: '',
-      opinion: '',
+      formName: 'L414',
     };
     const form = reactive(Object.assign({}, formDefault));
     const rules = {

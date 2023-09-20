@@ -298,11 +298,15 @@ export default defineComponent({
         queryStatus.value = true;
         if (data.length <= 0) return;
 
+        // 最新的日期到最舊的日期排序
         table.data = data.sort((a, b) => {
-          return parseInt(a.formId.replace(/-/g, '').substring(4, a.formId.replace(/-/g, '').length)) - parseInt(b.formId.replace(/-/g, '').substring(4, b.formId.replace(/-/g, '').length ))
+          const dateA: any = new Date(a.signingDatetime);
+          const dateB: any = new Date(b.signingDatetime);
+          return dateB - dateA;
         });
+
         table.totalItems = data.length;
-        console.log('data-notify: ',table.data)
+        console.log(' table.data : ', JSON.parse(JSON.stringify(table.data)))
       }).catch(notificationErrorHandler(notificationService));
     };
 

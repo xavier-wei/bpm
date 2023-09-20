@@ -208,7 +208,7 @@ export default defineComponent({
       const params = new URLSearchParams()
       params.append('word', form.word)
       // params.append('number', form.number)
-      // params.append('processInstanceStatus', '1')
+      params.append('processInstanceStatus', '1')
 
       axios.get(`/eip/eip-bpm-isms-l410/findByWord?${params.toString()}`)
         .then(({data}) => {

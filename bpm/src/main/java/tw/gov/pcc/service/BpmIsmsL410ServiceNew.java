@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 import tw.gov.pcc.domain.BpmIsmsL410;
+import tw.gov.pcc.domain.BpmIsmsL414;
 import tw.gov.pcc.domain.User;
 import tw.gov.pcc.repository.BpmIsmsL410Repository;
 import tw.gov.pcc.service.dto.*;
@@ -103,7 +104,8 @@ public class BpmIsmsL410ServiceNew implements BpmIsmsService {
 
     @Override
     public void saveBpmByPatch(String form) {
-
+        BpmIsmsL410DTO bpmIsmsL410DTO = gson.fromJson(form, BpmIsmsL410DTO.class);
+        bpmIsmsL410Repository.save(bpmIsmsL410Mapper.toEntity(bpmIsmsL410DTO));
     }
 
     @Override
@@ -135,7 +137,10 @@ public class BpmIsmsL410ServiceNew implements BpmIsmsService {
 
     @Override
     public void endForm(EndEventDTO endEventDTO) {
-
+        BpmIsmsL410 bpmIsmsL410 = bpmIsmsL410Repository.findFirstByProcessInstanceId(endEventDTO.getProcessInstanceId());
+        bpmIsmsL410.setProcessInstanceStatus(endEventDTO.getProcessStatus());
+        bpmIsmsL410.setUpdateTime(Timestamp.valueOf(LocalDateTime.now()));
+        bpmIsmsL410Repository.save(bpmIsmsL410);
     }
 
     @Override

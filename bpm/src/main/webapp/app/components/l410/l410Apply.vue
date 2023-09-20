@@ -167,12 +167,18 @@
                   trim
                   :disabled="$v.isEnableDate.$model !== '1'"
                 ></i-date-picker>
+                <div class="text-danger text1 mx-1"
+                     v-if="$v.enableDate.$model === null || $v.isEnableDate.$model === '0'">請輸入值
+                </div>
                 <!--其他 checkbox : isOther-->
                 <b-form-checkbox class="col-2 offset-1" v-model="$v.isOther.$model" value="1" unchecked-value="0">
                   其他 :
                 </b-form-checkbox>
                 <!--其他說明 : otherReason-->
                 <b-form-input class="col-3" v-model="$v.otherReason.$model"/>
+                <div class="text-danger text1 mx-1" v-if="$v.otherReason.$model === '' && $v.isOther.$model === '1'">
+                  請輸入值
+                </div>
               </b-input-group>
             </b-form-row>
 
@@ -195,7 +201,8 @@
               >
 
                 <template #cell(checkbox)="row">
-                  <b-form-checkbox :value="'1'" :unchecked-value="'0'" v-model="row.item.checkbox"/>
+                  <b-form-checkbox :value="'1'" :unchecked-value="'0'" v-model="row.item.checkbox"
+                                   @change="resetCheckboxValue(row.item)"/>
                 </template>
 
                 <!--申請項目-->
@@ -339,9 +346,6 @@
 
                   <div v-if="row.item.permissionsVersion == '4'">
                     <b-form-radio-group v-model="row.item.sys" @change="resetValue(row.item)">
-
-                      {{ row.item.sys }}
-
                       <b-form-radio class="col-12" value="1">
                         <div>新增</div>
                       </b-form-radio>
@@ -362,7 +366,7 @@
                         </b-form-checkbox>
 
                         <b-form-checkbox value="1" unchecked-value="0" v-model="row.item.isWebSiteOther"
-                                         :disabled="row.item.sys !== '2'" >
+                                         :disabled="row.item.sys !== '2'">
                           其他 :　
                         </b-form-checkbox>
                         <b-form-input maxlength="200" v-model="row.item.otherRemark"
@@ -532,18 +536,18 @@ export default {
       appUnit1: userData.deptId != null ? userData.deptId : '',//	單位別
       position: userData.cpape05m.title != null ? userData.cpape05m.title : '',//	職稱
       appReason: '1',//	申請事由 1.新進 2.離職 3.職務異動
-      isEnableDate: '',//	生效日期
+      isEnableDate: '0',//	是否有生效日期
       enableDate: null,//	生效日期
-      isOther: '',//	其他
+      isOther: '0',//	其他
       otherReason: '',//	其他說明
-      isHrSys: '',
+      isHrSys: '0',
       hrSys: '',
       hrSysChange: '',
       hrSysAdmUnit: '',
       hrSysStatus: '',
       hrSysEnableDate: null,
       hrSysAdmName: '',
-      isAdSys: '',
+      isAdSys: '0',
       adAccount: '',
       adSys: '',
       adSysChange: '',
@@ -551,14 +555,14 @@ export default {
       adSysStatus: '',
       adSysEnableDate: null,
       adSysAdmName: '',
-      isMeetingRoom: '',
+      isMeetingRoom: '0',
       meetingRoom: '',
       meetingRoomChange: '',
       meetingRoomAdmUnit: '',
       meetingRoomStatus: '',
       meetingRoomEnableDate: null,
       meetingRoomAdmName: '',
-      isOdSys: '',
+      isOdSys: '0',
       odSysRole: '',
       odSys: '',
       odSysOther: '',
@@ -566,7 +570,7 @@ export default {
       odSysStatus: '',
       odSysEnableDate: null,
       odSysAdmName: '',
-      isEmailSys: '',
+      isEmailSys: '0',
       emailSysAccount: '',
       emailSys: '',
       emailApply1: '',
@@ -576,19 +580,19 @@ export default {
       emailSysStatus: '',
       emailSysEnableDate: null,
       emailSysAdmName: '',
-      isWebSite: '',
-      isPccWww: '', //全球資訊網
-      isPccHome: '',//會內資訊網站
+      isWebSite: '0',
+      isPccWww: '0', //全球資訊網
+      isPccHome: '0',//會內資訊網站
       webSite: '',
-      isUnitAdm: '',
-      isUnitDataMgr: '',
-      isWebSiteOther: '',
+      isUnitAdm: '0',
+      isUnitDataMgr: '0',
+      isWebSiteOther: '0',
       webSiteOther: '',
       webSiteAdmUnit: '',
       webSiteStatus: '',
       webSiteEnableDate: null,
       webSiteAdmName: '',
-      isPccPis: '',
+      isPccPis: '0',
       pccPisAccount: '',
       pccPis: '',
       pccPisChange: '',
@@ -596,7 +600,7 @@ export default {
       pccPisStatus: '',
       pccPisEnableDate: null,
       pccPisAdmName: '',
-      isOtherSys1: '',
+      isOtherSys1: '0',
       otherSys1ServerName: '',
       otherSys1Account: '',
       otherSys1: '',
@@ -605,7 +609,7 @@ export default {
       otherSys1Status: '',
       otherSys1EnableDate: null,
       otherSys1AdmName: '',
-      isOtherSys2: '',
+      isOtherSys2: '0',
       otherSys2ServerName: '',
       otherSys2Account: '',
       otherSys2: '',
@@ -614,7 +618,7 @@ export default {
       otherSys2Status: '',
       otherSys2EnableDate: null,
       otherSys2AdmName: '',
-      isOtherSys3: '',
+      isOtherSys3: '0',
       otherSys3ServerName: '',
       otherSys3Account: '',
       otherSys3: '',
@@ -625,7 +629,7 @@ export default {
       otherSys3AdmName: '',
       applyItem: [],
       webSiteList: [],
-      variables: {},
+      l410Variables: {},
       formName: 'L410',
     };
     const form = reactive(Object.assign({}, formDefault));
@@ -789,7 +793,7 @@ export default {
             variables.push(Object.fromEntries(arrData))
           }
 
-          form.variables = variables;
+          form.l410Variables = variables;
 
           let body = {
             "L410": JSON.stringify(form)
@@ -835,13 +839,35 @@ export default {
     }
 
     function resetValue(data) {
+      data.emailApply1 = null;
+      data.emailApply2 = null;
+      data.sysChange = null;
+      data.isUnitAdm = null;
+      data.isUnitDataMgr = null;
+      data.isWebSiteOther = null;
+      data.otherRemark = null;
+    }
+
+    function resetCheckboxValue(data) {
+      if (data.checkbox === '0') {
+        data.otherSys = null;
+        data.otherSysAccount = null;
+        data.systemApplyInput = null;
+        data.sys = null;
+        data.sysChange = null;
         data.emailApply1 = null;
         data.emailApply2 = null;
-        data.sysChange = null;
         data.isUnitAdm = null;
         data.isUnitDataMgr = null;
         data.isWebSiteOther = null;
         data.otherRemark = null;
+        if (data.systemApply === '2') {
+          form.applyItem = [];
+        }
+        if (data.systemApply === '5') {
+          form.webSiteList = [];
+        }
+      }
     }
 
 
@@ -862,7 +888,8 @@ export default {
       reset,
       toQueryView,
       bpmDeptsOptions,
-      resetValue
+      resetValue,
+      resetCheckboxValue
     }
   }
 }
@@ -903,6 +930,11 @@ export default {
   color: #333333;
   text-align: center;
   line-height: normal;
+}
+
+.text1 {
+  margin-top: 0.25rem;
+  font-size: 80%;
 }
 
 </style>
