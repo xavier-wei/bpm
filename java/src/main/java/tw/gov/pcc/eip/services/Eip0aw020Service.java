@@ -49,7 +49,6 @@ public class Eip0aw020Service {
                 x.setAcnt_is_valid("Y");
                 x.setCreate_timestamp(LocalDateTime.now());
                 x.setCreate_user_id("SYS");
-                x.setAcnt_is_valid("Y");
                 Optional.ofNullable(usersDao.selectByKey(x.getUser_id())).ifPresentOrElse(r -> {
                     log.debug("使用者{}已存在", ObjectUtility.normalizeObject(r.getUser_id()));
                     passCnt.getAndIncrement();

@@ -486,7 +486,7 @@
                       <b-button class="ml-2" style="background-color: #17a2b8; color: white"
                                 variant="outline-secondary"
                                 @click="signature"
-                                v-show="formStatusRef === FormStatusEnum.VERIFY && userData.cpape05m.title === '科長' || userData.cpape05m.title === '主管'">加簽
+                                v-show="formStatusRef === FormStatusEnum.VERIFY && isSignatureRef">加簽
                       </b-button>
                       <b-button class="ml-2" style="background-color: #17a2b8; color: white"
                                 variant="outline-secondary"
@@ -563,6 +563,11 @@ export default {
       required: false,
       type: Object,
     },
+    isSignature: {
+      required: false,
+      type: Boolean,
+      default: true,
+    },
   },
   components: {
     'i-form-group-check': IFormGroupCheck,
@@ -578,6 +583,7 @@ export default {
     const formStatusRef = toRef(props, 'formStatus');
     const stateStatusRef = toRef(props, 'stateStatus');
     const taskDataRef = toRef(props, 'taskData');
+    const isSignatureRef = toRef(props, 'isSignature');
     const tabIndex = ref(0);
     const dual1 = ref(null);
     const dual2 = ref(null);
@@ -632,12 +638,12 @@ export default {
       isInternalFirewall: '', //	變更設備：是否為內部防火牆
       firewallContent: '', //	設定內容
       finishDatetime: '', //	實際完成日期
-      formName: 'L414',
       processInstanceId: '', //流程實體編號
-      taskId: '',
-      taskName: '',
+      taskId: '',   //任務ID
+      taskName: '', //任務名稱
+      opinion: '', //審核的處理意見
       decisionRole: '',
-      opinion: '',
+      formName: 'L414',
     };
     const form = reactive(Object.assign({}, formDefault));
     const rules = {
@@ -829,13 +835,10 @@ export default {
 
       console.log('changeDirections(userData)', changeDirections(userData));
 
-
-
       let body = {
-        signer: form.appName,
-        signerId: form.appEmpid,
-        //TODO: 未確認單位 先用畫面上的單位
-        signUnit: form.appUnit,
+        signer: userData.userName,
+        signerId: userData.userId,
+        signUnit: userData.deptId,
         processInstanceId: taskDataRef.value.additional ? taskDataRef.value.processInstanceId  : form.processInstanceId,
         taskId: taskDataRef.value.taskId !== '' ? taskDataRef.value.taskId : '',
         taskName:taskDataRef.value.taskName !== '' ? taskDataRef.value.taskName : '',
@@ -868,12 +871,9 @@ export default {
     };
 
     const activeTab = (index: number) => {
-      if (tabIndex.value === index) {
-        return true;
-      } else {
-        return false;
-      }
+      return tabIndex.value === index;
     };
+
     const getItem = (item) => {
       switch (item) {
         case '0':
@@ -973,6 +973,7 @@ export default {
       stateStatusRef,
       table,
       signature,
+      isSignatureRef,
     }
   }
 }

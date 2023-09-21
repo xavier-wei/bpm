@@ -251,14 +251,14 @@ export default defineComponent({
 
       console.log('taskData',taskData)
 
-
       if (i === '0') {
         navigateByNameAndParams(prefix + 'Edit', {
           formId: item.formId,
           taskData:taskData,
           formStatus: FormStatusEnum.MODIFY,
           isNotKeepAlive: false,
-          stateStatus: userData.cpape05m.unitName !== '資訊推動小組'
+          stateStatus: userData.cpape05m.unitName !== '資訊推動小組',
+          isSignature : false
         });
       } else {
         navigateByNameAndParams(prefix + 'Edit', {
@@ -266,7 +266,8 @@ export default defineComponent({
           taskData:taskData,
           formStatus: FormStatusEnum.VERIFY,
           isNotKeepAlive: false,
-          stateStatus: userData.cpape05m.unitName !== '資訊推動小組'
+          stateStatus: userData.cpape05m.unitName !== '資訊推動小組',
+          isSignature : item.taskName !== '加簽'
         });
       }
     }

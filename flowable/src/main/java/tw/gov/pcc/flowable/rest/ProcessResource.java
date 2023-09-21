@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.client.RestTemplate;
+import tw.gov.pcc.flowable.config.BpmSetting;
 import tw.gov.pcc.flowable.domain.ProcessReq;
 import tw.gov.pcc.flowable.domain.ProcessRes;
 import tw.gov.pcc.flowable.service.ProcessFlowService;
@@ -60,6 +61,7 @@ public class ProcessResource {
     public List<TaskDTO> getAllTask(@RequestBody String id) {
         return service.queryList(id);
     }
+
     @RequestMapping("/completeTask")
     public ProcessRes completeTask(@Validated @RequestBody CompleteReqDTO completeReqDTO) {
         if (completeReqDTO.getVariables() != null && !completeReqDTO.getVariables().isEmpty()) {
@@ -81,7 +83,7 @@ public class ProcessResource {
             Gson gson = new Gson();
             HttpEntity<String> requestEntity = new HttpEntity<>(gson.toJson(endEventDTO), headers);
             RestTemplate restTemplate = new RestTemplate();
-            ResponseEntity<String> exchange = restTemplate.exchange("http://localhost:9986/bpm/api/process/receiveEndEvent", HttpMethod.POST, requestEntity, String.class);
+            ResponseEntity<String> exchange = restTemplate.exchange(BpmSetting.url+"/bpm/api/process/receiveEndEvent", HttpMethod.POST, requestEntity, String.class);
             return "Delete process instance: " + exchange.getStatusCodeValue();
         } else {
             return "Bad request";
@@ -125,5 +127,8 @@ public class ProcessResource {
         return "成功";
     }
 
-
+    @RequestMapping("/test")
+    public String test() {
+        return BpmSetting.url;
+    }
 }

@@ -12,6 +12,11 @@ export function checkboxToMapAndForm(data: any, form: any, variables: any): any 
     mapData.set('hrSys', data)
     let arrData = Array.from(mapData);
     variables.push(Object.fromEntries(arrData))
+  }else if(data.systemApplyName === '人事差勤系統'){
+    let mapData = new Map<string, object>();
+    mapData.set('hrSys', null)
+    let arrData = Array.from(mapData);
+    variables.push(Object.fromEntries(arrData))
   }
 
   if (data.checkbox === '1' && data.systemApplyName === 'AD帳號') {
@@ -28,7 +33,14 @@ export function checkboxToMapAndForm(data: any, form: any, variables: any): any 
     mapData.set('adSys', data)
     let arrData = Array.from(mapData);
     variables.push(Object.fromEntries(arrData))
+  }else if(data.systemApplyName === 'AD帳號'){
+    let mapData = new Map<string, object>();
+    mapData.set('adSys', null)
+    let arrData = Array.from(mapData);
+    variables.push(Object.fromEntries(arrData))
   }
+
+
   if (data.checkbox === '1' && data.systemApplyName === '會議室管理系統') {
 
     form.isMeetingRoom = '1'
@@ -43,7 +55,14 @@ export function checkboxToMapAndForm(data: any, form: any, variables: any): any 
     mapData.set('meetingRoom', data)
     let arrData = Array.from(mapData);
     variables.push(Object.fromEntries(arrData))
+  }else if(data.systemApplyName === '會議室管理系統'){
+    let mapData = new Map<string, object>();
+    mapData.set('meetingRoom', null)
+    let arrData = Array.from(mapData);
+    variables.push(Object.fromEntries(arrData))
   }
+
+
   if (data.checkbox === '1' && data.systemApplyName === '公文管理系統角色') {
 
     form.isOdSys = '1'
@@ -60,10 +79,17 @@ export function checkboxToMapAndForm(data: any, form: any, variables: any): any 
     form.odSysAdmName = data.admName
 
     let mapData = new Map<string, object>();
-    mapData.set('odAys', data)
+    mapData.set('odSys', data)
+    let arrData = Array.from(mapData);
+    variables.push(Object.fromEntries(arrData))
+  }else if(data.systemApplyName === '公文管理系統角色'){
+    let mapData = new Map<string, object>();
+    mapData.set('odSys', null)
     let arrData = Array.from(mapData);
     variables.push(Object.fromEntries(arrData))
   }
+
+
   if (data.checkbox === '1' && data.systemApplyName === '電子郵件帳號') {
 
     form.isEmailSys = '1'
@@ -79,6 +105,11 @@ export function checkboxToMapAndForm(data: any, form: any, variables: any): any 
 
     let mapData = new Map<string, object>();
     mapData.set('emailSys', data)
+    let arrData = Array.from(mapData);
+    variables.push(Object.fromEntries(arrData))
+  }else if(data.systemApplyName === '電子郵件帳號'){
+    let mapData = new Map<string, object>();
+    mapData.set('emailSys', null)
     let arrData = Array.from(mapData);
     variables.push(Object.fromEntries(arrData))
   }
@@ -143,7 +174,13 @@ export function checkboxToMapAndForm(data: any, form: any, variables: any): any 
     mapData.set('pccPis', data)
     let arrData = Array.from(mapData);
     variables.push(Object.fromEntries(arrData))
+  }else if(data.systemApplyName === '政府電子採購網'){
+    let mapData = new Map<string, object>();
+    mapData.set('pccPis', null)
+    let arrData = Array.from(mapData);
+    variables.push(Object.fromEntries(arrData))
   }
+
 
   if (data.checkbox === '1' && data.systemApplyName === '其他系統1') {
 
@@ -161,7 +198,13 @@ export function checkboxToMapAndForm(data: any, form: any, variables: any): any 
     mapData.set('otherSys1', data)
     let arrData = Array.from(mapData);
     variables.push(Object.fromEntries(arrData))
+  }else if(data.systemApplyName === '其他系統1'){
+    let mapData = new Map<string, object>();
+    mapData.set('otherSys1', null)
+    let arrData = Array.from(mapData);
+    variables.push(Object.fromEntries(arrData))
   }
+
 
   if (data.checkbox === '1' && data.systemApplyName === '其他系統2') {
 
@@ -177,6 +220,11 @@ export function checkboxToMapAndForm(data: any, form: any, variables: any): any 
 
     let mapData = new Map<string, object>();
     mapData.set('otherSys2', data)
+    let arrData = Array.from(mapData);
+    variables.push(Object.fromEntries(arrData))
+  }else if(data.systemApplyName === '其他系統2'){
+    let mapData = new Map<string, object>();
+    mapData.set('otherSys2', null)
     let arrData = Array.from(mapData);
     variables.push(Object.fromEntries(arrData))
   }
@@ -197,8 +245,12 @@ export function checkboxToMapAndForm(data: any, form: any, variables: any): any 
     mapData.set('otherSys3', data)
     let arrData = Array.from(mapData);
     variables.push(Object.fromEntries(arrData))
+  }else if(data.systemApplyName === '其他系統3'){
+    let mapData = new Map<string, object>();
+    mapData.set('otherSys3', null)
+    let arrData = Array.from(mapData);
+    variables.push(Object.fromEntries(arrData))
   }
-
 
   return variables;
 }

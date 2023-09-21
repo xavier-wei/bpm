@@ -1,8 +1,8 @@
 package tw.gov.pcc.flowable.domain;
 
 public enum SupervisorSignerEnum {
-    L414("ProcessL414", new String[]{"sectionChief", "director"});
-
+    L414("ProcessL414", new String[]{"sectionChief", "director"}),
+    L410("ProcessL410", new String[]{"sectionChief", "director"});
     private final String processKey;
     private final String[] supervisors;
 

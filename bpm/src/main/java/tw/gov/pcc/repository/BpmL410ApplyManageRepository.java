@@ -9,4 +9,4 @@ import tw.gov.pcc.domain.BpmL410ApplyManage;
  */
 @SuppressWarnings("unused")
 @Repository
-public interface BpmL410ApplyManageRepository extends JpaRepository<BpmL410ApplyManage, String> {}
+public interface BpmL410ApplyManageRepository extends JpaRepository<BpmL410ApplyManage, Long> {}

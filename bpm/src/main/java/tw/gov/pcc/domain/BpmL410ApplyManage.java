@@ -1,13 +1,11 @@
 package tw.gov.pcc.domain;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.Table;
+import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.io.Serializable;
 import java.time.Instant;
+import java.util.Objects;
 
 /**
  * A BpmL410ApplyManage.
@@ -18,10 +16,14 @@ public class BpmL410ApplyManage implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
-    @NotNull
-    @Size(max = 50)
+
     @Id
-    @Column(name = "system_apply", length = 50, nullable = false)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "sequenceGenerator")
+    @SequenceGenerator(name = "sequenceGenerator")
+    @Column(name = "id", nullable = false)
+    private Long id;
+    @NotNull
+    @Column(name = "system_apply", length = 3, nullable = false)
     private String systemApply;
 
     @Size(max = 40)
@@ -65,8 +67,8 @@ public class BpmL410ApplyManage implements Serializable {
     @Column(name = "other_reason", length = 30)
     private String otherReason;
 
-    @Size(max = 1)
-    @Column(name = "adm_unit", length = 1)
+    @Size(max = 7)
+    @Column(name = "adm_unit", length = 7)
     private String admUnit;
 
     @Size(max = 10)
@@ -111,6 +113,15 @@ public class BpmL410ApplyManage implements Serializable {
     private Instant createTime;
 
     // jhipster-needle-entity-add-field - JHipster will add fields here
+
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
 
     public String getSystemApply() {
         return this.systemApply;
@@ -388,50 +399,51 @@ public class BpmL410ApplyManage implements Serializable {
 
     // jhipster-needle-entity-add-getters-setters - JHipster will add getters and setters here
 
+
+
+    // prettier-ignore
+
+
     @Override
     public boolean equals(Object o) {
-        if (this == o) {
-            return true;
-        }
-        if (!(o instanceof BpmL410ApplyManage)) {
-            return false;
-        }
-        return systemApply != null && systemApply.equals(((BpmL410ApplyManage) o).systemApply);
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        BpmL410ApplyManage that = (BpmL410ApplyManage) o;
+        return Objects.equals(id, that.id) && Objects.equals(systemApply, that.systemApply) && Objects.equals(systemApplyName, that.systemApplyName) && Objects.equals(checkbox, that.checkbox) && Objects.equals(sys, that.sys) && Objects.equals(systemApplyInput, that.systemApplyInput) && Objects.equals(sysChange, that.sysChange) && Objects.equals(emailApply1, that.emailApply1) && Objects.equals(emailApply2, that.emailApply2) && Objects.equals(isUnitAdm, that.isUnitAdm) && Objects.equals(isUnitDataMgr, that.isUnitDataMgr) && Objects.equals(isWebSiteOther, that.isWebSiteOther) && Objects.equals(otherReason, that.otherReason) && Objects.equals(admUnit, that.admUnit) && Objects.equals(admStatus, that.admStatus) && Objects.equals(admEnableDate, that.admEnableDate) && Objects.equals(admName, that.admName) && Objects.equals(otherSys, that.otherSys) && Objects.equals(otherSysAccount, that.otherSysAccount) && Objects.equals(isColon, that.isColon) && Objects.equals(applyVersion, that.applyVersion) && Objects.equals(permissionsVersion, that.permissionsVersion) && Objects.equals(createUser, that.createUser) && Objects.equals(createTime, that.createTime);
     }
 
     @Override
     public int hashCode() {
-        // see https://vladmihalcea.com/how-to-implement-equals-and-hashcode-using-the-jpa-entity-identifier/
-        return getClass().hashCode();
+        return Objects.hash(id, systemApply, systemApplyName, checkbox, sys, systemApplyInput, sysChange, emailApply1, emailApply2, isUnitAdm, isUnitDataMgr, isWebSiteOther, otherReason, admUnit, admStatus, admEnableDate, admName, otherSys, otherSysAccount, isColon, applyVersion, permissionsVersion, createUser, createTime);
     }
 
-    // prettier-ignore
     @Override
     public String toString() {
         return "BpmL410ApplyManage{" +
-                "systemApply='" + systemApply + '\'' +
-                ", systemApplyName='" + systemApplyName + '\'' +
-                ", checkbox='" + checkbox + '\'' +
-                ", sys='" + sys + '\'' +
-                ", systemApplyInput='" + systemApplyInput + '\'' +
-                ", sysChange='" + sysChange + '\'' +
-                ", emailApply1='" + emailApply1 + '\'' +
-                ", emailApply2='" + emailApply2 + '\'' +
-                ", isUnitAdm='" + isUnitAdm + '\'' +
-                ", isUnitDataMgr='" + isUnitDataMgr + '\'' +
-                ", isWebSiteOther='" + isWebSiteOther + '\'' +
-                ", otherReason='" + otherReason + '\'' +
-                ", admUnit='" + admUnit + '\'' +
-                ", admStatus='" + admStatus + '\'' +
-                ", admEnableDate=" + admEnableDate +
-                ", admName='" + admName + '\'' +
-                ", otherSys='" + otherSys + '\'' +
-                ", otherSysAccount='" + otherSysAccount + '\'' +
-                ", isColon='" + isColon + '\'' +
-                ", applyVersion='" + applyVersion + '\'' +
-                ", permissionsVersion='" + permissionsVersion + '\'' +
-                ", createUser='" + createUser + '\'' +
-                ", createTime=" + createTime +
-                '}';
+            "id=" + id +
+            ", systemApply='" + systemApply + '\'' +
+            ", systemApplyName='" + systemApplyName + '\'' +
+            ", checkbox='" + checkbox + '\'' +
+            ", sys='" + sys + '\'' +
+            ", systemApplyInput='" + systemApplyInput + '\'' +
+            ", sysChange='" + sysChange + '\'' +
+            ", emailApply1='" + emailApply1 + '\'' +
+            ", emailApply2='" + emailApply2 + '\'' +
+            ", isUnitAdm='" + isUnitAdm + '\'' +
+            ", isUnitDataMgr='" + isUnitDataMgr + '\'' +
+            ", isWebSiteOther='" + isWebSiteOther + '\'' +
+            ", otherReason='" + otherReason + '\'' +
+            ", admUnit='" + admUnit + '\'' +
+            ", admStatus='" + admStatus + '\'' +
+            ", admEnableDate=" + admEnableDate +
+            ", admName='" + admName + '\'' +
+            ", otherSys='" + otherSys + '\'' +
+            ", otherSysAccount='" + otherSysAccount + '\'' +
+            ", isColon='" + isColon + '\'' +
+            ", applyVersion='" + applyVersion + '\'' +
+            ", permissionsVersion='" + permissionsVersion + '\'' +
+            ", createUser='" + createUser + '\'' +
+            ", createTime=" + createTime +
+            '}';
     }
 }

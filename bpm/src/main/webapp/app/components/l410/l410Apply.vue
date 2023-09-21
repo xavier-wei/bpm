@@ -1,8 +1,8 @@
 <template>
   <div>
-<!--    <b-container>-->
-<!--      <section class="container mt-2"></section>-->
-<!--    </b-container>-->
+    <!--    <b-container>-->
+    <!--      <section class="container mt-2"></section>-->
+    <!--    </b-container>-->
 
 
     <b-card-body>
@@ -26,12 +26,12 @@
                                   :item="$v.applyDate">
                 <!--申請日期 : applyDate-->
                 <i-date-picker
-                    placeholder="yyy/MM/dd"
-                    v-model="$v.applyDate.$model"
-                    :state="validateState($v.applyDate)"
-                    lazy
-                    trim
-                    disabled
+                  placeholder="yyy/MM/dd"
+                  v-model="$v.applyDate.$model"
+                  :state="validateState($v.applyDate)"
+                  lazy
+                  trim
+                  disabled
                 ></i-date-picker>
               </i-form-group-check>
 
@@ -106,11 +106,12 @@
                 <b-form-input v-model="$v.appEngName.$model"/>
               </i-form-group-check>
 
-              <i-form-group-check label-star class="col-sm-5" label-cols="5" content-cols="7" :label="`科別 ：`"
-                                  :item="$v.appUnit2">
-                <!--科別 : -->
-                <b-form-input v-model="$v.appUnit2.$model"/>
+              <i-form-group-check label-star class="col-sm-5" label-cols="5" content-cols="7" :label="`職稱 ：`"
+                                  :item="$v.position">
+                <!--職稱 : -->
+                <b-form-input v-model="$v.position.$model"/>
               </i-form-group-check>
+
             </b-form-row>
 
             <b-form-row>
@@ -121,19 +122,12 @@
                 <b-form-input v-model="$v.appEmpid.$model"/>
               </i-form-group-check>
 
-              <i-form-group-check label-star class="col-sm-5" label-cols="5" content-cols="7" :label="`職稱 ：`"
-                                  :item="$v.position">
-                <!--職稱 : -->
-                <b-form-input v-model="$v.position.$model"/>
-              </i-form-group-check>
-            </b-form-row>
-
-            <b-form-row>
               <i-form-group-check class="col-sm-5" label-cols="5" content-cols="7" :label="'分機 ：'"
                                   :item="$v.extNum">
                 <!--分機 : -->
                 <b-form-input v-model="$v.extNum.$model"/>
               </i-form-group-check>
+
             </b-form-row>
 
             <b-form-row>
@@ -166,19 +160,25 @@
                 </b-form-checkbox>
                 <!--生效日期 : enableDate-->
                 <i-date-picker
-                    class="col-2"
-                    placeholder="yyy/MM/dd"
-                    v-model="$v.enableDate.$model"
-                    lazy
-                    trim
-                    :disabled="$v.isEnableDate.$model !== '1'"
+                  class="col-2"
+                  placeholder="yyy/MM/dd"
+                  v-model="$v.enableDate.$model"
+                  lazy
+                  trim
+                  :disabled="$v.isEnableDate.$model !== '1'"
                 ></i-date-picker>
+                <div class="text-danger text1 mx-1"
+                     v-if="$v.enableDate.$model === null || $v.isEnableDate.$model === '0'">請輸入值
+                </div>
                 <!--其他 checkbox : isOther-->
                 <b-form-checkbox class="col-2 offset-1" v-model="$v.isOther.$model" value="1" unchecked-value="0">
                   其他 :
                 </b-form-checkbox>
                 <!--其他說明 : otherReason-->
                 <b-form-input class="col-3" v-model="$v.otherReason.$model"/>
+                <div class="text-danger text1 mx-1" v-if="$v.otherReason.$model === '' && $v.isOther.$model === '1'">
+                  請輸入值
+                </div>
               </b-input-group>
             </b-form-row>
 
@@ -191,17 +191,18 @@
 
             <div class="card context">
               <b-table
-                  class="table-sm"
-                  show-empty
-                  responsive
-                  bordered
-                  empty-text="無資料"
-                  :items="table.data"
-                  :fields="table.fields"
+                class="table-sm"
+                show-empty
+                responsive
+                bordered
+                empty-text="無資料"
+                :items="table.data"
+                :fields="table.fields"
               >
 
                 <template #cell(checkbox)="row">
-                  <b-form-checkbox :value="'1'" :unchecked-value="false" v-model="row.item.checkbox"/>
+                  <b-form-checkbox :value="'1'" :unchecked-value="'0'" v-model="row.item.checkbox"
+                                   @change="resetCheckboxValue(row.item)"/>
                 </template>
 
                 <!--申請項目-->
@@ -222,8 +223,8 @@
                     {{ row.item.systemApplyName }}
                     <span v-if=" row.item.isColon === '1'"> : </span>
                     <b-form-input
-                        maxlength="200" v-model="row.item.systemApplyInput"
-                        :disabled="row.item.systemApply === '4'">
+                      maxlength="200" v-model="row.item.systemApplyInput"
+                      :disabled="row.item.systemApply === '4'">
                     </b-form-input>
                     <span v-if="row.item.systemApply === '4'">@mail.pcc.gov.tw</span>
                   </div>
@@ -244,7 +245,7 @@
                 <template #cell(permissions)="row">
 
                   <div v-if="row.item.permissionsVersion == '0'">
-                    <b-form-radio-group v-model="row.item.sys">
+                    <b-form-radio-group v-model="row.item.sys" @change="resetValue(row.item)">
                       <b-form-radio class="col-12" value="1">
                         <div>新增</div>
                       </b-form-radio>
@@ -266,7 +267,7 @@
                   </div>
 
                   <div v-if="row.item.permissionsVersion == '1'">
-                    <b-form-radio-group v-model="row.item.sys">
+                    <b-form-radio-group v-model="row.item.sys" @change="resetValue(row.item)">
                       <b-form-radio class="col-12" value="1">
                         <div>新增</div>
                       </b-form-radio>
@@ -284,7 +285,7 @@
                   </div>
 
                   <div v-if="row.item.permissionsVersion == '2'">
-                    <b-form-radio-group v-model="row.item.sys">
+                    <b-form-radio-group v-model="row.item.sys" @change="resetValue(row.item)">
                       <b-form-radio class="col-12" value="1">
                         <div>新增人員</div>
                       </b-form-radio>
@@ -312,7 +313,7 @@
                   </div>
 
                   <div v-if="row.item.permissionsVersion == '3'">
-                    <b-form-radio-group v-model="row.item.sys">
+                    <b-form-radio-group v-model="row.item.sys" @change="resetValue(row.item)">
                       <b-form-radio class="col-12" value="1">
                         <div>新增</div>
                         <b-input-group>
@@ -344,7 +345,7 @@
                   </div>
 
                   <div v-if="row.item.permissionsVersion == '4'">
-                    <b-form-radio-group v-model="row.item.sys">
+                    <b-form-radio-group v-model="row.item.sys" @change="resetValue(row.item)">
                       <b-form-radio class="col-12" value="1">
                         <div>新增</div>
                       </b-form-radio>
@@ -381,7 +382,7 @@
 
                 <!--管理單位-->
                 <template #cell(managementUnit)="row">
-                  <b-form-select :options="bpmDeptsOptions" v-model="row.item.admUnit">
+                  <b-form-select :options="bpmDeptsOptions" v-model="row.item.admUnit" disabled>
                     <template #first>
                       <b-form-select-option value="null" disabled>請選擇</b-form-select-option>
                     </template>
@@ -390,18 +391,19 @@
 
                 <!--處理情形及生效日期-->
                 <template #cell(lastWork)="row">
-                  <b-form-input maxlength="200" v-model="row.item.admStatus"/>
+                  <b-form-input maxlength="200" v-model="row.item.admStatus" disabled/>
                   <i-date-picker
-                      placeholder="yyy/MM/dd"
-                      lazy
-                      trim
-                      v-model="row.item.admEnableDate"
+                    placeholder="yyy/MM/dd"
+                    lazy
+                    trim
+                    v-model="row.item.admEnableDate"
+                    disabled
                   ></i-date-picker>
                 </template>
 
                 <!--處理人員-->
                 <template #cell(reviewStaffName)="row">
-                  <b-form-input maxlength="200" v-model="row.item.admName"/>
+                  <b-form-input maxlength="200" v-model="row.item.admName" disabled/>
                 </template>
 
               </b-table>
@@ -522,31 +524,30 @@ export default {
     const notificationService = useNotification();
     const formDefault = {
       formId: '',//表單編號
-      applyDate: new Date(new Date().getFullYear(), new Date().getMonth(), new Date().getDate(),new Date().getHours(),new Date().getMinutes(),new Date().getSeconds(),new Date().getMilliseconds()),//	申請日期
+      applyDate: new Date(new Date().getFullYear(), new Date().getMonth(), new Date().getDate(), new Date().getHours(), new Date().getMinutes(), new Date().getSeconds(), new Date().getMilliseconds()),//	申請日期
       filEmpid: userData.empId != null ? userData.empId : '',//	填表人員工編號
       filName: userData.userName != null ? userData.userName : '',//	填表人姓名
-      filUnit: userData.deptId != null ? userData.deptId : '' ,//	填表人單位名稱
+      filUnit: userData.deptId != null ? userData.deptId : '',//	填表人單位名稱
       isSubmit: '',//	是否暫存、送出
-      appName: '', // 中文姓名
-      appEngName: '', // 英文姓名
-      appEmpid: '',//	申請人員工編號
-      extNum: '',//	分機
-      appUnit1: '',//	單位別
-      appUnit2: '',//	科別
-      position: '',//	職稱
+      appName: userData.userName != null ? userData.userName : '', // 中文姓名
+      appEngName: userData.userEName != '' ? userData.userEName : '', // 英文姓名
+      appEmpid: userData.empId != null ? userData.empId : '',//	申請人員工編號
+      extNum: userData.tel2 != null ? userData.tel2 : '',//	分機
+      appUnit1: userData.deptId != null ? userData.deptId : '',//	單位別
+      position: userData.cpape05m.title != null ? userData.cpape05m.title : '',//	職稱
       appReason: '1',//	申請事由 1.新進 2.離職 3.職務異動
-      isEnableDate: '',//	生效日期
+      isEnableDate: '0',//	是否有生效日期
       enableDate: null,//	生效日期
-      isOther: '',//	其他
+      isOther: '0',//	其他
       otherReason: '',//	其他說明
-      isHrSys: '',
+      isHrSys: '0',
       hrSys: '',
       hrSysChange: '',
       hrSysAdmUnit: '',
       hrSysStatus: '',
       hrSysEnableDate: null,
       hrSysAdmName: '',
-      isAdSys: '',
+      isAdSys: '0',
       adAccount: '',
       adSys: '',
       adSysChange: '',
@@ -554,14 +555,14 @@ export default {
       adSysStatus: '',
       adSysEnableDate: null,
       adSysAdmName: '',
-      isMeetingRoom: '',
+      isMeetingRoom: '0',
       meetingRoom: '',
       meetingRoomChange: '',
       meetingRoomAdmUnit: '',
       meetingRoomStatus: '',
       meetingRoomEnableDate: null,
       meetingRoomAdmName: '',
-      isOdSys: '',
+      isOdSys: '0',
       odSysRole: '',
       odSys: '',
       odSysOther: '',
@@ -569,7 +570,7 @@ export default {
       odSysStatus: '',
       odSysEnableDate: null,
       odSysAdmName: '',
-      isEmailSys: '',
+      isEmailSys: '0',
       emailSysAccount: '',
       emailSys: '',
       emailApply1: '',
@@ -579,19 +580,19 @@ export default {
       emailSysStatus: '',
       emailSysEnableDate: null,
       emailSysAdmName: '',
-      isWebSite: '',
-      isPccWww: '', //全球資訊網
-      isPccHome: '',//會內資訊網站
+      isWebSite: '0',
+      isPccWww: '0', //全球資訊網
+      isPccHome: '0',//會內資訊網站
       webSite: '',
-      isUnitAdm: '',
-      isUnitDataMgr: '',
-      isWebSiteOther: '',
+      isUnitAdm: '0',
+      isUnitDataMgr: '0',
+      isWebSiteOther: '0',
       webSiteOther: '',
       webSiteAdmUnit: '',
       webSiteStatus: '',
       webSiteEnableDate: null,
       webSiteAdmName: '',
-      isPccPis: '',
+      isPccPis: '0',
       pccPisAccount: '',
       pccPis: '',
       pccPisChange: '',
@@ -599,7 +600,7 @@ export default {
       pccPisStatus: '',
       pccPisEnableDate: null,
       pccPisAdmName: '',
-      isOtherSys1: '',
+      isOtherSys1: '0',
       otherSys1ServerName: '',
       otherSys1Account: '',
       otherSys1: '',
@@ -608,7 +609,7 @@ export default {
       otherSys1Status: '',
       otherSys1EnableDate: null,
       otherSys1AdmName: '',
-      isOtherSys2: '',
+      isOtherSys2: '0',
       otherSys2ServerName: '',
       otherSys2Account: '',
       otherSys2: '',
@@ -617,7 +618,7 @@ export default {
       otherSys2Status: '',
       otherSys2EnableDate: null,
       otherSys2AdmName: '',
-      isOtherSys3: '',
+      isOtherSys3: '0',
       otherSys3ServerName: '',
       otherSys3Account: '',
       otherSys3: '',
@@ -628,7 +629,7 @@ export default {
       otherSys3AdmName: '',
       applyItem: [],
       webSiteList: [],
-      variables: {},
+      l410Variables: {},
       formName: 'L410',
     };
     const form = reactive(Object.assign({}, formDefault));
@@ -644,7 +645,6 @@ export default {
       appEmpid: {required},
       extNum: {},
       appUnit1: {required},
-      appUnit2: {required},
       position: {required},
       appReason: {required},
       isEnableDate: {},
@@ -718,13 +718,10 @@ export default {
     });
 
     function handleQuery() {
-
       table.data = [];
-
       axios
         .get(`/eip/bpm-l410-apply-manages`)
         .then(({data}) => {
-          console.log('data', data)
           table.data = data
         })
         .catch(notificationErrorHandler(notificationService));
@@ -754,55 +751,78 @@ export default {
       },
     };
 
-    const submitForm = (isSubmit) => {
 
-      console.log('form)))',form)
-
+    async function submitForm(isSubmit) {
       let variables = [];
       form.isSubmit = isSubmit;
-      checkValidity().then((isValid: boolean) => {
-        if (isValid) {
-          $bvModal.msgBoxConfirm('是否確認送出修改內容？').then((isOK: boolean) => {
-            if (isOK) {
+      const isValid = await checkValidity();
 
-              table.data.forEach(data => {
-                checkboxToMapAndForm(data, form, variables)
-              })
+      if (isValid) {
+        const isOK = await $bvModal.msgBoxConfirm('是否確認送出修改內容？');
 
-              form.variables = variables
+        if (isOK) {
+          await Promise.all(table.data.map(data => checkboxToMapAndForm(data, form, variables)));
 
-              let body = {
-                "L410": JSON.stringify(form)
-              }
+          const pccWwwKey = "pccWww";
+          const pccHomeKey = "pccHome";
 
-              const formData = new FormData();
+          let found1 = false;
+          let found2 = false;
 
-              formData.append('form', new Blob([JSON.stringify(body)], {type: 'application/json'}));
-              if (JSON.stringify(appendixData.value) !== '[]') {
-                console.log('安安')
-                for (let i in appendixData.value) {
-                  formData.append('appendixFiles', appendixData.value[i].file[0]);
-                }
-                formData.append('fileDto', new Blob([JSON.stringify(appendixData.value)], {type: 'application/json'}));
-              }
-
-              axios
-                .post(`/process/start/L410`, formData, headers)
-                .then(({data}) => {
-                  // filePathData.filePathName = 'http://localhost:8081/pic?processId=' + data;
-                  console.log('data', data)
-                  $bvModal.msgBoxOk('表單新增完畢');
-                  reset();
-                  navigateByNameAndParams('l410Query', {isReload: false, isNotKeepAlive: true});
-                })
-                .catch(notificationErrorHandler(notificationService));
+          //過濾variables 找出有沒有pccWww、pccHome
+          for (let i = 0; i < variables.length; i++) {
+            if (variables[i].hasOwnProperty(pccWwwKey)) {
+              found1 = true;
             }
-          });
-        } else {
-          $bvModal.msgBoxOk('欄位尚未填寫完畢，請於輸入完畢後再行送出。');
+            if (variables[i].hasOwnProperty(pccHomeKey)) {
+              found2 = true;
+            }
+          }
+
+          //pccWww、pccHome 把沒有的物件塞進variables
+          if (!found1) {
+            let mapData = new Map<string, object>();
+            mapData.set('pccWww', null)
+            let arrData = Array.from(mapData);
+            variables.push(Object.fromEntries(arrData))
+          }
+          if (!found2) {
+            let mapData = new Map<string, object>();
+            mapData.set('pccHome', null)
+            let arrData = Array.from(mapData);
+            variables.push(Object.fromEntries(arrData))
+          }
+
+          form.l410Variables = variables;
+
+          let body = {
+            "L410": JSON.stringify(form)
+          }
+
+          const formData = new FormData();
+
+          formData.append('form', new Blob([JSON.stringify(body)], {type: 'application/json'}));
+          if (JSON.stringify(appendixData.value) !== '[]') {
+            for (let i in appendixData.value) {
+              formData.append('appendixFiles', appendixData.value[i].file[0]);
+            }
+            formData.append('fileDto', new Blob([JSON.stringify(appendixData.value)], {type: 'application/json'}));
+          }
+
+          axios
+            .post(`/process/start/L410`, formData, headers)
+            .then(({data}) => {
+              $bvModal.msgBoxOk('表單新增完畢');
+              reset();
+              navigateByNameAndParams('l410Query', {isReload: false, isNotKeepAlive: true});
+            })
+            .catch(notificationErrorHandler(notificationService));
+
         }
-      });
-    };
+      } else {
+        await $bvModal.msgBoxOk('欄位尚未填寫完畢，請於輸入完畢後再行送出。');
+      }
+    }
 
     const tabIndex = ref(0);
 
@@ -811,15 +831,43 @@ export default {
     };
 
     const activeTab = (index: number) => {
-      if (tabIndex.value === index) {
-        return true;
-      } else {
-        return false;
-      }
+      return tabIndex.value === index;
     };
 
     function toQueryView() {
       handleBack({isReload: false, isNotKeepAlive: true});
+    }
+
+    function resetValue(data) {
+      data.emailApply1 = null;
+      data.emailApply2 = null;
+      data.sysChange = null;
+      data.isUnitAdm = null;
+      data.isUnitDataMgr = null;
+      data.isWebSiteOther = null;
+      data.otherRemark = null;
+    }
+
+    function resetCheckboxValue(data) {
+      if (data.checkbox === '0') {
+        data.otherSys = null;
+        data.otherSysAccount = null;
+        data.systemApplyInput = null;
+        data.sys = null;
+        data.sysChange = null;
+        data.emailApply1 = null;
+        data.emailApply2 = null;
+        data.isUnitAdm = null;
+        data.isUnitDataMgr = null;
+        data.isWebSiteOther = null;
+        data.otherRemark = null;
+        if (data.systemApply === '2') {
+          form.applyItem = [];
+        }
+        if (data.systemApply === '5') {
+          form.webSiteList = [];
+        }
+      }
     }
 
 
@@ -839,7 +887,9 @@ export default {
       formStatusRef,
       reset,
       toQueryView,
-      bpmDeptsOptions
+      bpmDeptsOptions,
+      resetValue,
+      resetCheckboxValue
     }
   }
 }
@@ -880,6 +930,11 @@ export default {
   color: #333333;
   text-align: center;
   line-height: normal;
+}
+
+.text1 {
+  margin-top: 0.25rem;
+  font-size: 80%;
 }
 
 </style>
