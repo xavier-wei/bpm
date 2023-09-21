@@ -23,7 +23,7 @@ public class TpsApiResourceTest {
             "  \"apiVersion\": \"1.0\",\n" +
             "  \"txnSq\": \"%s\",\n" +
             "  \"txnTime\": \"%s\",\n" +
-            "  \"returnCode\": \"%s\",\n" +
+            "  \"retCode\": \"%s\",\n" +
             "  \"retMsg\": \"%s\",\n" +
             "  \"data\": [%s]\n" +
             "}" ;

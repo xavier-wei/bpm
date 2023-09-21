@@ -7,10 +7,12 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 import tw.gov.pcc.domain.BpmIsmsL410;
-import tw.gov.pcc.domain.BpmIsmsL414;
 import tw.gov.pcc.domain.User;
 import tw.gov.pcc.repository.BpmIsmsL410Repository;
-import tw.gov.pcc.service.dto.*;
+import tw.gov.pcc.service.dto.BpmIsmsL410DTO;
+import tw.gov.pcc.service.dto.BpmUploadFileDTO;
+import tw.gov.pcc.service.dto.EndEventDTO;
+import tw.gov.pcc.service.dto.TaskDTO;
 import tw.gov.pcc.service.mapper.BpmIsmsL410Mapper;
 import tw.gov.pcc.service.mapper.BpmUploadFileMapper;
 import tw.gov.pcc.utils.SeqNumber;
@@ -27,18 +29,20 @@ import java.util.UUID;
 @Service("L410Service")
 public class BpmIsmsL410ServiceNew implements BpmIsmsService {
 
+    private final String[] ROLE_IDS = {"BPM_IPT_Operator", "BPM_IPT_Mgr", "BPM_PR_Operator", "BPM_SEC_Operator"};
+
     private final Logger log = LoggerFactory.getLogger(BpmIsmsL410ServiceNew.class);
     public static final HashMap<UUID, BpmIsmsL410DTO> DTO_HOLDER = new HashMap<>();
     private static final HashMap<UUID,Map<String,Object>> VARIABLES_HOLDER = new HashMap<>();
-    private Gson gson = new Gson();
+    private final Gson gson = new Gson();
 
-    private BpmIsmsL410Repository bpmIsmsL410Repository;
+    private final BpmIsmsL410Repository bpmIsmsL410Repository;
 
-    private BpmUploadFileService bpmUploadFileService;
+    private final BpmUploadFileService bpmUploadFileService;
 
-    private BpmUploadFileMapper bpmUploadFileMapper;
+    private final BpmUploadFileMapper bpmUploadFileMapper;
 
-    private  BpmSignStatusService bpmSignStatusService;
+    private final BpmSignStatusService bpmSignStatusService;
 
     private final BpmSignerListService bpmSignerListService;
     private final BpmIsmsL410Mapper bpmIsmsL410Mapper;
@@ -133,9 +137,11 @@ public class BpmIsmsL410ServiceNew implements BpmIsmsService {
         DTO_HOLDER.put(uuid, bpmIsmsL410DTO);
         variables.put("applier", bpmIsmsL410DTO.getAppEmpid());
         variables.put("isSubmit", bpmIsmsL410DTO.getIsSubmit());
-
         // 填入上級
         supervisorService.setSupervisor(variables,bpmIsmsL410DTO.getAppEmpid(),userInfo);
+
+
+
 
         VARIABLES_HOLDER.put(uuid, variables);
         return uuid;
