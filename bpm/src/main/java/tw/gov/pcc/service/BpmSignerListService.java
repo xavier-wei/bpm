@@ -17,8 +17,8 @@ import java.util.stream.Collectors;
 
 @Service
 public class BpmSignerListService {
-    private BpmSignerListRepository bpmSignerListRepository;
-    private UserRepository userRepository;
+    private final BpmSignerListRepository bpmSignerListRepository;
+    private final UserRepository userRepository;
     public BpmSignerListService(BpmSignerListRepository bpmSignerListRepository, UserRepository userRepository) {
         this.bpmSignerListRepository = bpmSignerListRepository;
         this.userRepository = userRepository;
