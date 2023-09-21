@@ -15,7 +15,7 @@ import java.util.stream.IntStream;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.owasp.encoder.Encode;
-import com.itextpdf.text.pdf.BaseFont;
+import com.lowagie.text.pdf.BaseFont;
 
 public class StringUtility {
     private static final org.slf4j.Logger log = org.slf4j.LoggerFactory.getLogger(StringUtility.class);

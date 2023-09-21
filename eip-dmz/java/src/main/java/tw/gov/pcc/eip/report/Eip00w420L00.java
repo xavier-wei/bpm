@@ -1,6 +1,6 @@
 package tw.gov.pcc.eip.report;
 
-import com.itextpdf.text.Paragraph;
+import com.lowagie.text.Paragraph;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.poi.xwpf.usermodel.*;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTTblWidth;

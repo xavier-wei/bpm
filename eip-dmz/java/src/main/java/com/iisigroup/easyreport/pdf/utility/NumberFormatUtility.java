@@ -1,12 +1,13 @@
 package com.iisigroup.easyreport.pdf.utility;
 
+import com.iisigroup.easyreport.pdf.exception.ReportException;
+import com.iisigroup.easyreport.pdf.helper.EnvHelper;
+import org.apache.commons.lang3.StringUtils;
+
 import java.math.BigDecimal;
 import java.text.DecimalFormat;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import org.apache.commons.lang3.StringUtils;
-import com.iisigroup.easyreport.pdf.Helper.EnvHelper;
-import com.iisigroup.easyreport.pdf.exception.ReportException;
 
 /**
  * 數值格式化之相關功能<br>
