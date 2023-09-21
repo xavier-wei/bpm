@@ -2,6 +2,7 @@ const l414Apply =() => import('@/components/l414/l414Apply.vue');
 const l410Apply =() => import('@/components/l410/l410Apply.vue');
 const appendix =() => import('@/components/appendix.vue');
 const flowChart =() => import('@/components/flowChart.vue');
+const signatureBmodel =() => import('@/components/signatureBmodel.vue');
 
 const breadcrumb =() => import('../core/menu/breadcrumb.vue');
 const l414Edit =() => import('@/components/l414/l414Edit.vue');
@@ -68,6 +69,15 @@ export default [
     component: l410Edit,
     meta: {
       functionId: 'l410Edit',
+    },
+    props: true,
+  },
+  {
+    path: '/signatureBmodel',
+    name: 'signatureBmodel',
+    component: signatureBmodel,
+    meta: {
+      functionId: 'signatureBmodel',
     },
     props: true,
   },

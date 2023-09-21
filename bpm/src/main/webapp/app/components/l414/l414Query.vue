@@ -23,6 +23,7 @@
       </b-form-row>
 
       <div class="text-center pt-5">
+        <b-button class="ml-2" style="background-color: #17a2b8" @click="showModel()"> 測試</b-button>
         <b-button class="ml-2" style="background-color: #17a2b8" @click="toL414Apply()"> 新增</b-button>
         <b-button class="ml-2" style="background-color: #17a2b8" @click="toQuery()">查詢</b-button>
         <b-button class="ml-2" style="background-color: #17a2b8" @click="reset()">清除</b-button>
@@ -89,6 +90,8 @@
         </b-row>
       </template>
     </i-table>
+    <signatureBmodel ref="signatureBmodel"> </signatureBmodel>
+
   </div>
 </template>
 
@@ -105,6 +108,8 @@ import {useNotification} from "@/shared/notification";
 import {newformatDate} from '@/shared/date/minguo-calendar-utils';
 import {useGetters} from "@u3u/vue-hooks";
 import {changeDealWithUnit} from "@/shared/word/directions";
+import signatureBmodel from "@/components/signatureBmodel.vue";
+
 
 export default {
   name: 'l414Query',
@@ -112,6 +117,7 @@ export default {
     IDatePicker,
     ITable,
     IFormGroupCheck,
+    signatureBmodel,
   },
   setup() {
     const iTable = ref(null);
@@ -119,6 +125,8 @@ export default {
     const notificationService = useNotification();
     const userData = ref(useGetters(['getUserData']).getUserData).value;
     const bpmDeptsOptions = ref(useGetters(['getBpmDeptsOptions']).getBpmDeptsOptions).value;
+    const signatureBmodel = ref(null);
+
     enum FormStatusEnum {
       CREATE = '新增',
       MODIFY = '編輯',
@@ -255,6 +263,10 @@ export default {
       });
     };
 
+    function showModel() {
+      signatureBmodel.value.isShowDia(true);
+    }
+
     return {
       $v,
       form,
@@ -268,6 +280,8 @@ export default {
       toL414Apply,
       toEdit,
       queryStatus,
+      showModel,
+      signatureBmodel,
     };
   },
 };

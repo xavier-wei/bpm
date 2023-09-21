@@ -57,7 +57,7 @@ public class BpmL410ApplyManageService {
         log.debug("Request to partially update BpmL410ApplyManage : {}", bpmL410ApplyManageDTO);
 
         return bpmL410ApplyManageRepository
-            .findById(bpmL410ApplyManageDTO.getSystemApply())
+            .findById(bpmL410ApplyManageDTO.getId())
             .map(existingBpmL410ApplyManage -> {
                 bpmL410ApplyManageMapper.partialUpdate(existingBpmL410ApplyManage, bpmL410ApplyManageDTO);
 
@@ -89,7 +89,7 @@ public class BpmL410ApplyManageService {
      * @return the entity.
      */
     @Transactional(readOnly = true)
-    public Optional<BpmL410ApplyManageDTO> findOne(String id) {
+    public Optional<BpmL410ApplyManageDTO> findOne(Long id) {
         log.debug("Request to get BpmL410ApplyManage : {}", id);
         return bpmL410ApplyManageRepository.findById(id).map(bpmL410ApplyManageMapper::toDto);
     }
@@ -99,7 +99,7 @@ public class BpmL410ApplyManageService {
      *
      * @param id the id of the entity.
      */
-    public void delete(String id) {
+    public void delete(Long id) {
         log.debug("Request to delete BpmL410ApplyManage : {}", id);
         bpmL410ApplyManageRepository.deleteById(id);
     }

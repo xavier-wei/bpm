@@ -835,8 +835,6 @@ export default {
 
       console.log('changeDirections(userData)', changeDirections(userData));
 
-
-
       let body = {
         signer: userData.userName,
         signerId: userData.userId,
