@@ -182,6 +182,96 @@ export function checkboxToMapAndForm(data: any, form: any, variables: any): any 
   }
 
 
+  if (data.checkbox === '1' && data.systemApplyName === '技師與工程技術顧問公司管理資訊系統') {
+
+    form.isEngAndPrjInfoSys = '1'
+    form.engAndPrjInfoSysAccount = data.otherSysAccount
+    form.engAndPrjInfoSys = data.sys
+    form.engAndPrjInfoSysChange = data.sysChange
+    form.engAndPrjInfoSysAdmUnit = data.admUnit
+    form.engAndPrjInfoSysStatus = data.admStatus
+    form.engAndPrjInfoSysEnableDate = data.admEnableDate
+    form.engAndPrjInfoSysAdmName = data.admName
+
+    let mapData = new Map<string, object>();
+    mapData.set('isEngAndPrjInfoSys', data)
+    let arrData = Array.from(mapData);
+    variables.push(Object.fromEntries(arrData))
+  }else if(data.systemApplyName === '技師與工程技術顧問公司管理資訊系統'){
+    let mapData = new Map<string, object>();
+    mapData.set('isEngAndPrjInfoSys', null)
+    let arrData = Array.from(mapData);
+    variables.push(Object.fromEntries(arrData))
+  }
+
+  if (data.checkbox === '1' && data.systemApplyName === '公共工程案件審議資訊系統') {
+
+    form.isRevSys = '1'
+    form.revSysAccount = data.otherSysAccount
+    form.revSys = data.sys
+    form.revSysChange = data.sysChange
+    form.revSysAdmUnit = data.admUnit
+    form.revSysStatus = data.admStatus
+    form.revSysEnableDate = data.admEnableDate
+    form.revSysAdmName = data.admName
+
+    let mapData = new Map<string, object>();
+    mapData.set('isRevSys', data)
+    let arrData = Array.from(mapData);
+    variables.push(Object.fromEntries(arrData))
+  }else if(data.systemApplyName === '公共工程案件審議資訊系統'){
+    let mapData = new Map<string, object>();
+    mapData.set('isRevSys', null)
+    let arrData = Array.from(mapData);
+    variables.push(Object.fromEntries(arrData))
+  }
+
+
+  if (data.checkbox === '1' && data.systemApplyName === '災後復建工程經費審議及執行資訊系統') {
+
+    form.isRecSys = '1'
+    form.recSysAccount = data.otherSysAccount
+    form.recSys = data.sys
+    form.recSysChange = data.sysChange
+    form.recSysAdmUnit = data.admUnit
+    form.recSysStatus = data.admStatus
+    form.recSysEnableDate = data.admEnableDate
+    form.recSysAdmName = data.admName
+
+    let mapData = new Map<string, object>();
+    mapData.set('isRecSys', data)
+    let arrData = Array.from(mapData);
+    variables.push(Object.fromEntries(arrData))
+  }else if(data.systemApplyName === '災後復建工程經費審議及執行資訊系統'){
+    let mapData = new Map<string, object>();
+    mapData.set('isRecSys', null)
+    let arrData = Array.from(mapData);
+    variables.push(Object.fromEntries(arrData))
+  }
+
+
+  if (data.checkbox === '1' && data.systemApplyName === '公共工程標案管理系統') {
+
+    form.isBidSys = '1'
+    form.bidSysAccount = data.otherSysAccount
+    form.bidSys = data.sys
+    form.bidSysChange = data.sysChange
+    form.bidSysAdmUnit = data.admUnit
+    form.bidSysStatus = data.admStatus
+    form.bidSysEnableDate = data.admEnableDate
+    form.bidSysAdmName = data.admName
+
+    let mapData = new Map<string, object>();
+    mapData.set('isEngAndPrjInfoSys', data)
+    let arrData = Array.from(mapData);
+    variables.push(Object.fromEntries(arrData))
+  }else if(data.systemApplyName === '公共工程標案管理系統'){
+    let mapData = new Map<string, object>();
+    mapData.set('isEngAndPrjInfoSys', null)
+    let arrData = Array.from(mapData);
+    variables.push(Object.fromEntries(arrData))
+  }
+
   if (data.checkbox === '1' && data.systemApplyName === '其他系統1') {
 
     form.isOtherSys1 = '1'

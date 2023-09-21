@@ -483,11 +483,8 @@
                                 @click="reviewStart('0')"
                                 v-show="formStatusRef === FormStatusEnum.VERIFY">不同意
                       </b-button>
-                      <b-button class="ml-2" style="background-color: #17a2b8; color: white"
-                                variant="outline-secondary"
-                                @click="signature"
-                                v-show="formStatusRef === FormStatusEnum.VERIFY && isSignatureRef">加簽
-                      </b-button>
+                      <b-button class="ml-2" style="background-color: #17a2b8" @click="showModel()"
+                                v-show="formStatusRef === FormStatusEnum.VERIFY && isSignatureRef">加簽</b-button>
                       <b-button class="ml-2" style="background-color: #17a2b8; color: white"
                                 variant="outline-secondary"
                                 @click="reviewStart('2')"
@@ -518,6 +515,7 @@
         </div>
       </section>
     </b-container>
+    <signatureBmodel ref="signatureBmodel" :formData="form"> </signatureBmodel>
   </div>
 </template>
 
@@ -538,6 +536,7 @@ import {notificationErrorHandler} from "@/shared/http/http-response-helper";
 import {formatToString, newformatDate} from '@/shared/date/minguo-calendar-utils';
 import {changeDealWithUnit, changeDirections} from "@/shared/word/directions";
 import * as immutable from "immutable";
+import signatureBmodel from "@/components/signatureBmodel.vue";
 
 const appendix = () => import('@/components/appendix.vue');
 const flowChart = () => import('@/components/flowChart.vue');
@@ -575,6 +574,7 @@ export default {
     'i-date-picker': IDatePicker,
     appendix,
     flowChart,
+    signatureBmodel
   },
   setup(props) {
     const userData = ref(useGetters(['getUserData']).getUserData).value;
@@ -589,6 +589,7 @@ export default {
     const dual2 = ref(null);
     const notificationService = useNotification();
     const $bvModal = useBvModal();
+    const signatureBmodel = ref(null);
     const filePathData = reactive({
       filePathName: '',
     });
@@ -907,40 +908,44 @@ export default {
           .catch(notificationErrorHandler(notificationService));
     }
 
-    function signature() {
-
-      let body = {
-        mainFormId: form.formId,
-        mainProcessInstanceId: form.processInstanceId,
-        mainProcessTaskId: form.taskId,
-        requesterId: userData.empId,
-        requester: userData.userName,
-        additionalSignerId: '1510',
-        additionalSigner: '我是主管',
-        additionalSignReason: form.opinion,
-        processInstanceStatus: '0',
-      };
-
-      let body1 = {
-        "Additional": JSON.stringify(body)
-      }
-      console.log('body', body1)
-
-      const formData = new FormData();
-
-      formData.append('form', new Blob([JSON.stringify(body1)], {type: 'application/json'}));
-
-      axios
-          .post(`/process/start/Additional`, formData)
-          .then(({data}) => {
-            $bvModal.msgBoxOk('加簽申請成功');
-            navigateByNameAndParams('pending', {isReload: false, isNotKeepAlive: true});
-          })
-          .catch(notificationErrorHandler(notificationService));
-    }
+    // function signature() {
+    //
+    //   let body = {
+    //     mainFormId: form.formId,
+    //     mainProcessInstanceId: form.processInstanceId,
+    //     mainProcessTaskId: form.taskId,
+    //     requesterId: userData.empId,
+    //     requester: userData.userName,
+    //     additionalSignerId: '1510',
+    //     additionalSigner: '我是主管',
+    //     additionalSignReason: form.opinion,
+    //     processInstanceStatus: '0',
+    //   };
+    //
+    //   let body1 = {
+    //     "Additional": JSON.stringify(body)
+    //   }
+    //   console.log('body', body1)
+    //
+    //   const formData = new FormData();
+    //
+    //   formData.append('form', new Blob([JSON.stringify(body1)], {type: 'application/json'}));
+    //
+    //   axios
+    //       .post(`/process/start/Additional`, formData)
+    //       .then(({data}) => {
+    //         $bvModal.msgBoxOk('加簽申請成功');
+    //         navigateByNameAndParams('pending', {isReload: false, isNotKeepAlive: true});
+    //       })
+    //       .catch(notificationErrorHandler(notificationService));
+    // }
 
     function toQueryView() {
       handleBack({isReload: true, isNotKeepAlive: false});
+    }
+
+    function showModel() {
+      signatureBmodel.value.isShowDia(true);
     }
 
     watch(formIdProp, () => {
@@ -972,8 +977,9 @@ export default {
       bpmDeptsOptions,
       stateStatusRef,
       table,
-      signature,
       isSignatureRef,
+      signatureBmodel,
+      showModel
     }
   }
 }

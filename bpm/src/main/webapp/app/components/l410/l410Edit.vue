@@ -490,9 +490,7 @@
                               @click="reviewStart('0')"
                               v-show="formStatusRef === FormStatusEnum.VERIFY">不同意
                     </b-button>
-                    <b-button class="ml-2" style="background-color: #17a2b8; color: white"
-                              variant="outline-secondary"
-                              @click="signature"
+                    <b-button class="ml-2" style="background-color: #17a2b8" @click="showModel()"
                               v-show="formStatusRef === FormStatusEnum.VERIFY && isSignatureRef">加簽
                     </b-button>
                     <b-button class="ml-2" style="background-color: #17a2b8; color: white"
@@ -526,6 +524,7 @@
         </b-card-body>
       </section>
     </b-container>
+    <signatureBmodel ref="signatureBmodel" :formData="form"> </signatureBmodel>
   </div>
 </template>
 
@@ -548,6 +547,7 @@ import {useGetters} from "@u3u/vue-hooks";
 import {changeDirections} from "@/shared/word/directions";
 import {checkboxToMapAndForm} from "@/shared/word/checkboxToMapAndForm";
 import {mapToCheckbox} from "@/shared/word/mapToCheckbox";
+import signatureBmodel from "@/components/signatureBmodel.vue";
 
 const appendix = () => import('@/components/appendix.vue');
 const flowChart = () => import('@/components/flowChart.vue');
@@ -586,6 +586,7 @@ export default {
     'i-date-picker': IDatePicker,
     appendix,
     flowChart,
+    signatureBmodel,
   },
   setup(props) {
     let appendixData = reactive({});
@@ -599,6 +600,7 @@ export default {
     let iptData = ref(false);
     const $bvModal = useBvModal();
     const notificationService = useNotification();
+    const signatureBmodel = ref(null);
     let fileDataId = reactive({
       fileId: ''
     });
@@ -690,6 +692,38 @@ export default {
       pccPisStatus: '',
       pccPisEnableDate: null,
       pccPisAdmName: '',
+      isEngAndPrjInfoSys: '0',
+      engAndPrjInfoSysAccount: '',
+      engAndPrjInfoSys: '',
+      engAndPrjInfoSysChange: '',
+      engAndPrjInfoSysAdmUnit: '',
+      engAndPrjInfoSysStatus: '',
+      engAndPrjInfoSysEnableDate: null,
+      engAndPrjInfoSysAdmName: '',
+      isRevSys: '0',
+      revSysAccount: '',
+      revSys: '',
+      revSysChange: '',
+      revSysAdmUnit: '',
+      revSysStatus: '',
+      revSysEnableDate: null,
+      revSysAdmName: '',
+      isRecSys: '0',
+      recSysAccount: '',
+      recSys: '',
+      recSysChange: '',
+      recSysAdmUnit: '',
+      recSysStatus: '',
+      recSysEnableDate: null,
+      recSysAdmName: '',
+      isBidSys: '0',
+      bidSysAccount: '',
+      bidSys: '',
+      bidSysChange: '',
+      bidSysAdmUnit: '',
+      bidSysStatus: '',
+      bidSysEnableDate: null,
+      bidSysAdmName: '',
       isOtherSys1: '0',
       otherSys1ServerName: '',
       otherSys1Account: '',
@@ -1073,35 +1107,6 @@ export default {
       }
     };
 
-    function signature() {
-      let body = {
-        mainFormId: form.formId,
-        mainProcessInstanceId: form.processInstanceId,
-        mainProcessTaskId: form.taskId,
-        requesterId: userData.empId,
-        requester: userData.userName,
-        additionalSignerId: '1510',
-        additionalSigner: '我是主管',
-        additionalSignReason: form.opinion,
-        processInstanceStatus: '0',
-      };
-
-      let body1 = {
-        "Additional": JSON.stringify(body)
-      }
-      const formData = new FormData();
-
-      formData.append('form', new Blob([JSON.stringify(body1)], {type: 'application/json'}));
-
-      axios
-        .post(`/process/start/Additional`, formData)
-        .then(({data}) => {
-          $bvModal.msgBoxOk('加簽申請成功');
-          navigateByNameAndParams('pending', {isReload: false, isNotKeepAlive: true});
-        })
-        .catch(notificationErrorHandler(notificationService));
-    }
-
     function toQueryView() {
       handleBack({isReload: true, isNotKeepAlive: true});
     }
@@ -1139,6 +1144,10 @@ export default {
       }
     }
 
+    function showModel() {
+      signatureBmodel.value.isShowDia(true);
+    }
+
     watch(formIdProp, () => {
         handleQuery();
       },
@@ -1166,10 +1175,11 @@ export default {
       reviewStart,
       FormStatusEnum,
       isSignatureRef,
-      signature,
       resetValue,
       resetCheckboxValue,
       userData,
+      signatureBmodel,
+      showModel
     }
   }
 }
