@@ -47,6 +47,7 @@
         </div>
 
         <i-table
+          per-page="10"
           ref="iTable"
           :itemsUndefinedBehavior="'loading'"
           :items="table.data"
@@ -65,7 +66,7 @@
         <b-form-row>
           <i-form-group-check class="col-sm-5" label-cols="5" content-cols="7" :label="'加簽對象 : '"
                               :item="$v.chooseName">
-            <div>{{ $v.chooseName.$model }}</div>
+            <div>{{ $v.chooseName.$model }} ({{ $v.chooseId.$model }})</div>
 
           </i-form-group-check>
           <i-form-group-check class="col-sm-5" label-cols="5" content-cols="7" :label="'單位 : '"
@@ -79,7 +80,6 @@
                               :item="$v.chooseTitle">
             <div>{{ $v.chooseTitle.$model }}</div>
           </i-form-group-check>
-
         </b-form-row>
 
         <b-container class="mt-3">
@@ -94,8 +94,6 @@
             </b-button>
           </b-row>
         </b-container>
-
-
       </b-modal>
     </b-container>
   </div>
@@ -114,6 +112,7 @@ import ITable from "@/shared/i-table/i-table";
 import IFormGroupCheck from "@/shared/form/i-form-group-check";
 import {useGetters} from "@u3u/vue-hooks";
 import {useBvModal} from "@/shared/modal";
+import {navigateByNameAndParams} from "@/router/router";
 
 export default {
   name: "signatureBmodel",
@@ -130,8 +129,7 @@ export default {
   },
   setup(props) {
 
-    // let formDataProp = reactive(props.formData);
-    // console.log(' signatureBmodel.vue - setup - 82: ', JSON.parse(JSON.stringify(formDataProp)))
+    const formDataProp = reactive(props.formData);
     const userData = ref(useGetters(['getUserData']).getUserData).value;
     const bpmDeptsOptions = ref(useGetters(['getBpmDeptsOptions']).getBpmDeptsOptions).value;
     const iTable = ref(null);
@@ -224,7 +222,6 @@ export default {
 
       axios.get(`/eip/signatureOptions?${params.toString()}`)
         .then(({data}) => {
-          console.log(' data++ : ', JSON.parse(JSON.stringify(data)))
           queryStatus.value = true;
           table.data = data
           table.totalItems = data.length;
@@ -238,13 +235,11 @@ export default {
     }
 
     async function isShowDia(isVisible) {
-      console.log('安安')
       await signatureOptions();
       dialogIsVisible.step = isVisible;
     }
 
     function choose(i) {
-      console.log(' signatureBmodel.vue - choose - 163: ', JSON.parse(JSON.stringify(i)))
       form.chooseId = i.pecard
       form.chooseName = i.pename
       form.chooseUnit = i.peunit
@@ -252,14 +247,41 @@ export default {
     }
 
     async function signature() {
-      console.log('form', form)
 
       const isValid = await checkValidity();
 
       if (isValid) {
         const isOK = await $bvModal.msgBoxConfirm('是否送出加簽？');
         if (isOK) {
+          let body = {
+            mainFormId: formDataProp.formId,
+            mainProcessInstanceId: formDataProp.processInstanceId,
+            mainProcessTaskId: formDataProp.taskId,
+            requesterId: userData.empId,
+            requester: userData.userName,
+            additionalSignerId: form.chooseId,
+            additionalSigner: form.chooseName,
+            additionalSignReason: formDataProp.opinion,
+            processInstanceStatus: '0',
+          };
 
+          console.log(' signatureBmodel.vue - signature - 268: ', JSON.parse(JSON.stringify(body)))
+
+          let body1 = {
+            "Additional": JSON.stringify(body)
+          }
+
+          const formData = new FormData();
+
+          formData.append('form', new Blob([JSON.stringify(body1)], {type: 'application/json'}));
+
+          axios
+            .post(`/process/start/Additional`, formData)
+            .then(({data}) => {
+              $bvModal.msgBoxOk('加簽申請成功');
+              navigateByNameAndParams('pending', {isReload: false, isNotKeepAlive: true});
+            })
+            .catch(notificationErrorHandler(notificationService));
 
         }
       }
