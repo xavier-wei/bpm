@@ -120,4 +120,19 @@ public interface BpmIsmsAdditionalRepository extends JpaRepository<BpmIsmsAdditi
         " )  " +
         " order by PENAME     ", nativeQuery = true)
     List<Map<String, Object>> peunitOptions(@Param("pecard") String pecard);
+
+
+    @Query(value = " SELECT * FROM [eip].[dbo].[view_cpape05m] " +
+        " WHERE 1=1 " +
+        " AND [PEORG] = '360000000G' " +
+        " and PELEVDATE = ''  " +
+        " AND PEUNIT != '600037' " +
+        " AND (LEN(COALESCE(:selectName,'')) =0 OR PENAME LIKE N'%' + :selectName + '%')  " +
+        " AND (LEN(COALESCE(:selectUnit,'')) =0 OR PEUNIT = :selectUnit)  " +
+        " AND (LEN(COALESCE(:selectTitle,'')) =0 OR title = :selectTitle) " +
+        " ORDER BY PEUNIT, PETIT  ", nativeQuery = true)
+    List<Map<String, Object>> signatureOptions(
+        @Param("selectName") String selectName,
+        @Param("selectUnit") String selectUnit,
+        @Param("selectTitle") String selectTitle);
 }

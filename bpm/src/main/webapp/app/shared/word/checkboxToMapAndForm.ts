@@ -79,12 +79,12 @@ export function checkboxToMapAndForm(data: any, form: any, variables: any): any 
     form.odSysAdmName = data.admName
 
     let mapData = new Map<string, object>();
-    mapData.set('odAys', data)
+    mapData.set('odSys', data)
     let arrData = Array.from(mapData);
     variables.push(Object.fromEntries(arrData))
   }else if(data.systemApplyName === '公文管理系統角色'){
     let mapData = new Map<string, object>();
-    mapData.set('odAys', null)
+    mapData.set('odSys', null)
     let arrData = Array.from(mapData);
     variables.push(Object.fromEntries(arrData))
   }

@@ -12,7 +12,9 @@ import java.util.Objects;
 public class BpmL410ApplyManageDTO implements Serializable {
 
     @NotNull
-    @Size(max = 50)
+    private Long id;
+    @NotNull
+    @Size(max = 3)
     private String systemApply;
 
     @Size(max = 40)
@@ -74,6 +76,13 @@ public class BpmL410ApplyManageDTO implements Serializable {
     @NotNull
     private Instant createTime;
 
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
 
     public String getSystemApply() {
         return systemApply;
@@ -261,56 +270,50 @@ public class BpmL410ApplyManageDTO implements Serializable {
         this.createTime = createTime;
     }
 
-
-
     @Override
     public boolean equals(Object o) {
-        if (this == o) {
-            return true;
-        }
-        if (!(o instanceof BpmL410ApplyManageDTO)) {
-            return false;
-        }
-
-        BpmL410ApplyManageDTO bpmL410ApplyManageDTO = (BpmL410ApplyManageDTO) o;
-        if (this.systemApply == null) {
-            return false;
-        }
-        return Objects.equals(this.systemApply, bpmL410ApplyManageDTO.systemApply);
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        BpmL410ApplyManageDTO that = (BpmL410ApplyManageDTO) o;
+        return Objects.equals(id, that.id) && Objects.equals(systemApply, that.systemApply) && Objects.equals(systemApplyName, that.systemApplyName) && Objects.equals(checkbox, that.checkbox) && Objects.equals(sys, that.sys) && Objects.equals(systemApplyInput, that.systemApplyInput) && Objects.equals(sysChange, that.sysChange) && Objects.equals(emailApply1, that.emailApply1) && Objects.equals(emailApply2, that.emailApply2) && Objects.equals(isUnitAdm, that.isUnitAdm) && Objects.equals(isUnitDataMgr, that.isUnitDataMgr) && Objects.equals(isWebSiteOther, that.isWebSiteOther) && Objects.equals(otherReason, that.otherReason) && Objects.equals(admUnit, that.admUnit) && Objects.equals(admStatus, that.admStatus) && Objects.equals(admEnableDate, that.admEnableDate) && Objects.equals(admName, that.admName) && Objects.equals(otherSys, that.otherSys) && Objects.equals(otherSysAccount, that.otherSysAccount) && Objects.equals(isColon, that.isColon) && Objects.equals(applyVersion, that.applyVersion) && Objects.equals(permissionsVersion, that.permissionsVersion) && Objects.equals(createUser, that.createUser) && Objects.equals(createTime, that.createTime);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(this.systemApply);
+        return Objects.hash(id, systemApply, systemApplyName, checkbox, sys, systemApplyInput, sysChange, emailApply1, emailApply2, isUnitAdm, isUnitDataMgr, isWebSiteOther, otherReason, admUnit, admStatus, admEnableDate, admName, otherSys, otherSysAccount, isColon, applyVersion, permissionsVersion, createUser, createTime);
     }
 
-    // prettier-ignore
+
+// prettier-ignore
+
+
     @Override
     public String toString() {
         return "BpmL410ApplyManageDTO{" +
-                "systemApply='" + systemApply + '\'' +
-                ", systemApplyName='" + systemApplyName + '\'' +
-                ", checkbox='" + checkbox + '\'' +
-                ", sys='" + sys + '\'' +
-                ", systemApplyInput='" + systemApplyInput + '\'' +
-                ", sysChange='" + sysChange + '\'' +
-                ", emailApply1='" + emailApply1 + '\'' +
-                ", emailApply2='" + emailApply2 + '\'' +
-                ", isUnitAdm='" + isUnitAdm + '\'' +
-                ", isUnitDataMgr='" + isUnitDataMgr + '\'' +
-                ", isWebSiteOther='" + isWebSiteOther + '\'' +
-                ", otherReason='" + otherReason + '\'' +
-                ", admUnit='" + admUnit + '\'' +
-                ", admStatus='" + admStatus + '\'' +
-                ", admEnableDate=" + admEnableDate +
-                ", admName='" + admName + '\'' +
-                ", otherSys='" + otherSys + '\'' +
-                ", otherSysAccount='" + otherSysAccount + '\'' +
-                ", isColon='" + isColon + '\'' +
-                ", applyVersion='" + applyVersion + '\'' +
-                ", permissionsVersion='" + permissionsVersion + '\'' +
-                ", createUser='" + createUser + '\'' +
-                ", createTime=" + createTime +
-                '}';
+            "id=" + id +
+            ", systemApply='" + systemApply + '\'' +
+            ", systemApplyName='" + systemApplyName + '\'' +
+            ", checkbox='" + checkbox + '\'' +
+            ", sys='" + sys + '\'' +
+            ", systemApplyInput='" + systemApplyInput + '\'' +
+            ", sysChange='" + sysChange + '\'' +
+            ", emailApply1='" + emailApply1 + '\'' +
+            ", emailApply2='" + emailApply2 + '\'' +
+            ", isUnitAdm='" + isUnitAdm + '\'' +
+            ", isUnitDataMgr='" + isUnitDataMgr + '\'' +
+            ", isWebSiteOther='" + isWebSiteOther + '\'' +
+            ", otherReason='" + otherReason + '\'' +
+            ", admUnit='" + admUnit + '\'' +
+            ", admStatus='" + admStatus + '\'' +
+            ", admEnableDate=" + admEnableDate +
+            ", admName='" + admName + '\'' +
+            ", otherSys='" + otherSys + '\'' +
+            ", otherSysAccount='" + otherSysAccount + '\'' +
+            ", isColon='" + isColon + '\'' +
+            ", applyVersion='" + applyVersion + '\'' +
+            ", permissionsVersion='" + permissionsVersion + '\'' +
+            ", createUser='" + createUser + '\'' +
+            ", createTime=" + createTime +
+            '}';
     }
 }
