@@ -5,6 +5,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 import tw.gov.pcc.eip.adm.cases.Eip00w070Case;
@@ -134,11 +135,20 @@ public class Eip00w070Controller extends BaseController {
      * @return
      */
     @RequestMapping("/Eip00w070_addCharacter.action")
-    public ModelAndView insertCharacter(@ModelAttribute(CASE_KEY) Eip00w070Case caseData, ModelMap m) {
+    public ModelAndView insertCharacter(@ModelAttribute(CASE_KEY) Eip00w070Case caseData, ModelMap m, BindingResult bindingResult) {
         try {
-            eipadm0w070Service.insertCharacter(caseData);
-            super.setSystemMessage(super.getUpdateSuccessMessage());
-            return enter(caseData);
+        	eipadm0w070Service.insertValid(caseData,bindingResult);
+        	if(bindingResult.hasErrors()) {
+                caseData.setRole_id(null);
+                caseData.setRole_desc(null);
+                List<CursorAcl> da = eipadm0w070Service.findRoleMenu(caseData);
+                return new ModelAndView(ADD_PAGE).addObject("items", DynaTreeBuilder.build(ItemParser.parser(da)));
+        	}else {
+                eipadm0w070Service.insertCharacter(caseData);
+                super.setSystemMessage(super.getUpdateSuccessMessage());
+                return enter(caseData);
+        	}
+        	
         } catch (Exception e) {
             log.error("新增角色失敗 - {}", ExceptionUtility.getStackTrace(e));
             super.setSystemMessage(super.getUpdateFailMessage());

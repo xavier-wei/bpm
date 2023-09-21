@@ -4,6 +4,7 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.BindingResult;
@@ -53,11 +54,23 @@ public class Eip00w010Service {
     	return usersList;
     }
     
+    
+    /**
+     * 驗證刪除系統管理員
+     *
+     */
+    public void deleteValidate(Eip00w010Case caseData, BindingResult bindingResult) {
+    	List<String> selectuserList = caseData.getSelectedUserid();
+    	if(CollectionUtils.isEmpty(selectuserList)) {
+    		bindingResult.reject(null, "請勾選欲刪除之員工");
+    	}
+    }
+    
     /**
      * 刪除系統管理員
      *
      */
-    public void deleteAdmin(Eip00w010Case caseData) {
+    public void deleteAdmin(Eip00w010Case caseData, BindingResult bindingResult) {
     	List<String> selectuserList = caseData.getSelectedUserid();
     	for(String users:selectuserList) {
     		User_roles userroles = new User_roles();
@@ -68,6 +81,7 @@ public class Eip00w010Service {
     		userRolesDao.deleteByKey(userroles);
     	}
     }
+
     
     /**
      * 驗證新增系統管理員

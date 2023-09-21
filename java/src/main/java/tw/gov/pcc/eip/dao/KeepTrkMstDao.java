@@ -97,4 +97,12 @@ public interface KeepTrkMstDao {
      */
     public int deleteByTrkID(String trkID);
 
+
+    /**
+     * 確認編號是否已存在
+     * @param trkID
+     * @return
+     */
+    public Integer findByTrkID(String trkID);
+
     }

@@ -66,6 +66,21 @@ public class Eip00w020Service {
     	return usersDao.selectByKey(eip00w020Case.getUser_id());
     }
     
+    /**
+     * 主頁面查詢管理員清單
+     *
+     */
+    public void settingCase(Eip00w020Case caseData, Users users) {
+		caseData.settingCase(users);
+		caseData.setUserStatus(users.getAcnt_is_valid());
+		caseData.setTitleidList(this.findTitleIdList());//職稱代號下拉式選單datalist
+		caseData.setDeptList(this.findDeptIdList());//部門代號下拉式選單datalist
+		caseData.setUserRolesList(this.findUserRoleList(caseData.getUser_id()));
+		caseData.setRolesList(this.findAddRolesList(caseData));//新增角色rolelist
+		caseData.setEng_user_name(this.findEngName(users.getEmail()));
+		caseData.setDeptString(this.findDeptName(users.getDept_id()));
+    }
+    
     
     /**
      * 查詢可新增角色清單

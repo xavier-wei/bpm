@@ -54,11 +54,17 @@ public class Eip00w010Controller extends BaseController {
      * @return
      */
     @RequestMapping("/Eip00w010_delete.action")
-    public ModelAndView delete(@ModelAttribute(CASE_KEY) Eip00w010Case caseData) {
+    public ModelAndView delete(@ModelAttribute(CASE_KEY) Eip00w010Case caseData, BindingResult bindingResult) {
           
         try {
-        	eipadm0w010Service.deleteAdmin(caseData);
-        	return enter(caseData);
+        	eipadm0w010Service.deleteValidate(caseData,bindingResult);
+        	if(bindingResult.hasErrors()) {
+        		return new ModelAndView(QUERY_PAGE);
+        	}else {
+        		eipadm0w010Service.deleteAdmin(caseData,bindingResult);
+        		return enter(caseData);
+        	}
+        	
 		} catch (Exception e) {
 			log.error("刪除失敗 - {}", ExceptionUtility.getStackTrace(e));
 			return new ModelAndView(QUERY_PAGE);

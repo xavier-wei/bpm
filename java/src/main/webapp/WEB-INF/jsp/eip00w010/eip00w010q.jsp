@@ -15,7 +15,7 @@
 </jsp:attribute>
 
 <jsp:attribute name="contents">
-    <tags:fieldset>
+    <tags:fieldset legend="設定條件">
 		<form:form id="eip00w010Form" name="eip00w010Form" modelAttribute="${caseKey}" method="POST">
 			<tags:form-row>
                  <form:label path="user_id" cssClass="col-form-label">員工編號：</form:label>
@@ -23,7 +23,7 @@
                         <form:input path="user_id" cssClass="form-control eng_num_only" size="20" maxlength="20"/>
                     </div>
             </tags:form-row>
-            <tags:form-row>
+			<tags:form-row>
 				<div class="table-responsive">	           
 					<table class="table" id="listTable">
 						<thead data-orderable="true">
@@ -50,9 +50,10 @@
 						</tbody> 
 					</table>  
 				</div>
-            </tags:form-row>
+		     </tags:form-row>
         </form:form>
     </tags:fieldset>
+
 </jsp:attribute>
 <jsp:attribute name="footers">
 <script>

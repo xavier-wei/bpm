@@ -136,7 +136,9 @@
             $('#eip00w070Form').attr('action', '<c:url value="/Eip00w070_editCharacter.action" />').submit();
         })
         $('#btnDel').click(function () {
-            $('#eip00w070Form').attr('action', '<c:url value="/Eip00w070_delCharacter.action" />').submit();
+            showConfirm('確定要刪除角色？', () => {
+            	$('#eip00w070Form').attr('action', '<c:url value="/Eip00w070_delCharacter.action" />').submit();
+            });
         })
         initTree();
     })

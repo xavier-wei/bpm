@@ -31,6 +31,7 @@ public class Eip06w020Case implements Serializable {
     private String organizerIdName; //申請人
     @RequiredString(groups={Sequence.First.class}, label = "會議日期")
     private String meetingdt; //會議日期
+    private int maxMeetingDays; //會議日期預約天數上限
     @RequiredString(groups={Sequence.First.class}, label = "會議開始時間")
     private String meetingBegin; //會議開始時間
     @RequiredString(groups={Sequence.First.class}, label = "會議結束時間")

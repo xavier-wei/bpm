@@ -141,6 +141,7 @@
                 <form:hidden path="foodId_Qty"/>
                 <form:hidden path="food_Qty"/>
                 <form:hidden path="meetingsNeedCancel"/>
+                <form:hidden path="maxPeriodDays"/>
                  <tags:form-note>
                     <tags:form-note-item><span class="red">＊</span>為必填欄位。</tags:form-note-item>
                 </tags:form-note>
@@ -151,32 +152,31 @@
 <script>
     $(function(){
         //初始化會議畫面
+        //設定會議日期最大值
+        let maxPeriodDays = parseInt($('#maxPeriodDays').val());
+        var maxDate = new Date();
+        maxDate.setDate(maxDate.getDate() + maxPeriodDays)
+        let $dateTW = $(".dateTW");
+        $dateTW.datepicker("setStartDate", new Date());
+        $dateTW.datepicker("setEndDate", maxDate);
 
         $('#repeat, #dateWeekMonth').change(function () {
             // let repeat = $('#repeat').val('true');
             let dateWeekMonth = $('#dateWeekMonth').val();
 
-            // if(repeat === 'false'){
-            //     $('#dateWeekMonth').prop('disabled', true);
-            //     $('#week').prop('disabled', true);
-            //     $('#day').prop('disabled', true);
-            //     $('#periodEnd').prop('disabled', true);
-            // }else {
-            //     $('#dateWeekMonth').prop('disabled', false);
-                if(dateWeekMonth === 'date'){
-                    $('#week').prop('disabled', true);
-                    $('#day').prop('disabled', true);
-                    // $('#periodEnd').prop('disabled', false);
-                }else if(dateWeekMonth === 'week'){
-                    $('#week').prop('disabled', true);
-                    $('#day').prop('disabled', false);
-                    // $('#periodEnd').prop('disabled', false);
-                }else if (dateWeekMonth === 'month'){
-                    $('#week').prop('disabled', false);
-                    $('#day').prop('disabled', false);
-                    // $('#periodEnd').prop('disabled', false);
-                }
-            // }
+            if(dateWeekMonth === 'date'){
+                $('#week').prop('disabled', true);
+                $('#day').prop('disabled', true);
+                // $('#periodEnd').prop('disabled', false);
+            }else if(dateWeekMonth === 'week'){
+                $('#week').prop('disabled', true);
+                $('#day').prop('disabled', false);
+                // $('#periodEnd').prop('disabled', false);
+            }else if (dateWeekMonth === 'month'){
+                $('#week').prop('disabled', false);
+                $('#day').prop('disabled', false);
+                // $('#periodEnd').prop('disabled', false);
+            }
         })
 
         //btnsave

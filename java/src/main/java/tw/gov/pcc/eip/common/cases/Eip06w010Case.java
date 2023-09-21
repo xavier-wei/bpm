@@ -33,6 +33,7 @@ public class Eip06w010Case implements Serializable {
     private List<String> userIdList; //使用者ID list
     @RequiredString(groups={Eip06w010Case.Sequence.First.class}, label = "會議日期")
     private String meetingdt; //會議日期
+    private int maxMeetingDays; //會議日期預約天數上限
     private String meetingdtBegin; //會議日期開始
     private String meetingdtEnd; //會議日期結束
     @RequiredString(groups={Eip06w010Case.Sequence.First.class}, label = "會議開始時間")

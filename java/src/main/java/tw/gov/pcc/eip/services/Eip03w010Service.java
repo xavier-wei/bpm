@@ -8,6 +8,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.ObjectError;
 import tw.gov.pcc.eip.common.cases.Eip03w010Case;
 import tw.gov.pcc.eip.common.cases.Eip03w010MixCase;
 import tw.gov.pcc.eip.common.cases.Eip03w030Case;
@@ -22,6 +24,8 @@ import tw.gov.pcc.eip.util.DateUtility;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.stream.Collectors;
+
+import static org.apache.commons.lang3.StringUtils.isEmpty;
 
 /**
  * 重要列管事項_重要列管事項維護
@@ -130,33 +134,14 @@ public class Eip03w010Service {
      * 新增列管事項
      * @return
      */
-    public void insert(Eip03w010Case caseData, UserBean userData) throws JsonProcessingException {
+    public void insert(Eip03w010Case caseData, UserBean userData, BindingResult result) throws JsonProcessingException {
         KeepTrkMst ktm = new KeepTrkMst();
         KeepTrkDtl ktd;
         ObjectMapper objectMapper = new ObjectMapper();
         Map<String, Map<String, String>> jsonMap = objectMapper.readValue(caseData.getJsonMap(), Map.class);
         List<String> deptIDList = new ArrayList<>();
         if(jsonMap.size() > 1){
-            for(String k : jsonMap.keySet()){
-                if(StringUtils.isNotBlank(k)){
-                    Map<String, String> innerJsonMap = jsonMap.get(k);
-                    String stDt = innerJsonMap.get("stDt").replace("/","");
-                    String endDt = innerJsonMap.get("endDt").replace("/","");;
 
-                    ktd = new KeepTrkDtl();
-                    ktd.setTrkID(caseData.getTrkID());
-                    ktd.setTrkObj(k);
-                    ktd.setPrcSts("1");
-                    ktd.setStDt(DateUtility.changeDateTypeToWestDate(stDt));
-                    ktd.setEndDt(DateUtility.changeDateTypeToWestDate(endDt));
-                    ktd.setRptRate(0);
-                    ktd.setRptAskEnd("N");
-                    ktd.setSupAgree("N");
-                    deptIDList.add(k);
-
-                    keepTrkDtlDao.insert(ktd);
-                }
-            }
             ktm.setTrkID(caseData.getTrkID());
             ktm.setTrkCont(caseData.getTrkCont());
             ktm.setTrkFrom(caseData.getTrkFrom().equals("others")? caseData.getOtherTrkFrom() : eipcodeDao.findByCodeKindCodeNo("TRKFROM", caseData.getTrkFrom()).get().getCodename());   //畫面選擇之交辦來源，存入中文
@@ -166,7 +151,36 @@ public class Eip03w010Service {
             ktm.setCreUser(userData.getUserId());
             ktm.setCreDt(DateUtility.getNowDateTimeAsTimestamp().toLocalDateTime());
 
-            keepTrkMstDao.insert(ktm);
+            //判斷編號是否已存在
+           int num =  keepTrkMstDao.findByTrkID(caseData.getTrkID());
+           if(num > 0){
+               ObjectError error;
+               error = new ObjectError("trkID","列管編號重複，請重新存檔。");
+               result.addError(error);
+               return;
+           }
+           keepTrkMstDao.insert(ktm);
+
+           for(String k : jsonMap.keySet()){
+               if(StringUtils.isNotBlank(k)){
+                   Map<String, String> innerJsonMap = jsonMap.get(k);
+                   String stDt = innerJsonMap.get("stDt").replace("/","");
+                   String endDt = innerJsonMap.get("endDt").replace("/","");;
+
+                   ktd = new KeepTrkDtl();
+                   ktd.setTrkID(caseData.getTrkID());
+                   ktd.setTrkObj(k);
+                   ktd.setPrcSts("1");
+                   ktd.setStDt(DateUtility.changeDateTypeToWestDate(stDt));
+                   ktd.setEndDt(DateUtility.changeDateTypeToWestDate(endDt));
+                   ktd.setRptRate(0);
+                   ktd.setRptAskEnd("N");
+                   ktd.setSupAgree("N");
+                   deptIDList.add(k);
+
+                   keepTrkDtlDao.insert(ktd);
+               }
+           }
         }
         // 使用者點選送出後，寄email通知相關單位
         if(caseData.getTemp().equals("1")){

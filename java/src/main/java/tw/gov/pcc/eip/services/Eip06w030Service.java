@@ -72,6 +72,9 @@ public class Eip06w030Service {
         List<MeetingCode> roomIdList = meetingCodeDao.selectDataByItemType("F");
         caseData.setRoomIdList(roomIdList.stream().map(Eip06w030Case.Eip06w030OptionCase::new).collect(Collectors.toList()));
         caseData.setMeetingTimeCombobox(meetingTimeMap);
+
+        //maxMeetingDays 會議日期預約天數上限
+        caseData.setMaxPeriodDays(meetingCodeDao.findByPK("D01").getQty());
     }
 
 

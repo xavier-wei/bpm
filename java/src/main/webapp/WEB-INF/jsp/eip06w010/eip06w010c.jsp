@@ -105,10 +105,9 @@
                 <form:hidden path="itemIds" />
                 <form:hidden path="foodId_Qty"/>
                 <form:hidden path="food_Qty"/>
-<%--                <form:hidden path="selectedRoomId"/>--%>
+                <form:hidden path="maxMeetingDays"/>
                 <form:hidden path="meetingId"/>
                 <form:hidden path="admin"/>
-
                 <tags:form-note>
                     <tags:form-note-item><span class="red">＊</span>為必填欄位。</tags:form-note-item>
                 </tags:form-note>
@@ -118,19 +117,14 @@
     <jsp:attribute name="footers">
 <script>
     $(function(){
-        //設定會議日期最小值為今天
-        // var today = new Date();
-        // var dd = today.getDate();
-        // var mm = today.getMonth() + 1; //January is 0!
-        // var yyy = today.getFullYear() - 1911;
-        // if (dd < 10) {
-        //     dd = '0' + dd;
-        // }
-        // if (mm < 10) {
-        //     mm = '0' + mm;
-        // }
-        // today = yyy  +  mm  + dd;
-        // $('#meetingdt').attr('min', today);
+        //設定會議日期最大值
+        let meetingdt = (parseInt($('#meetingdt').val().substring(0,3)) + 1911) + "-" + $('#meetingdt').val().substring(3,5) + "-" + $('#meetingdt').val().substring(5)
+        let maxMeetingDays = parseInt($('#maxMeetingDays').val());
+        var maxDate = new Date();
+        maxDate.setDate(maxDate.getDate() + maxMeetingDays)
+        let $dateTW = $(".dateTW");
+        $dateTW.datepicker("setStartDate", new Date() > new Date(meetingdt) ? new Date(meetingdt) : new Date());
+        $dateTW.datepicker("setEndDate", maxDate);
 
         //頁面一進入就先刷新場地下拉選單
         findValidRoom();

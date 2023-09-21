@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<taglib version="2.0" xmlns="http://java.sun.com/xml/ns/j2ee" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://java.sun.com/xml/ns/j2ee http://java.sun.com/xml/ns/j2ee/web-jsptaglibrary_2_0.xsd">
+
+    <description>System Function Tag Library</description>
+    <display-name>System Function Taglib</display-name>
+    <tlib-version>1.0</tlib-version>
+    <short-name>func</short-name>
+    <uri>https://www.pcc.gov.tw/system-func</uri>
+
+    <tag>
+        <description>Get System Message</description>
+        <name>systemMessage</name>
+        <tag-class>tw.gov.pcc.eip.framework.tag.SystemMessageTag</tag-class>
+        <body-content>JSP</body-content>
+    </tag>
+
+    <tag>
+        <description>Get System Alert Message</description>
+        <name>systemAlertMessage</name>
+        <tag-class>tw.gov.pcc.eip.framework.tag.SystemAlertMessageTag</tag-class>
+        <body-content>JSP</body-content>
+    </tag>
+
+    <tag>
+        <description>Get Validation Message</description>
+        <name>validationMessage</name>
+        <tag-class>tw.gov.pcc.eip.framework.tag.ValidationMessageTag</tag-class>
+        <body-content>JSP</body-content>
+    </tag>
+
+    <tag>
+        <description>Get Confirm Message</description>
+        <name>confirmMessage</name>
+        <tag-class>tw.gov.pcc.eip.framework.tag.SystemConfirmMessageTag</tag-class>
+        <body-content>JSP</body-content>
+    </tag>
+
+
+</taglib>

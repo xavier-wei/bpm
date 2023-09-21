@@ -175,11 +175,11 @@
             </c:choose>
         </c:forEach>
         </div>
-        <div id="popModal" class="modal fade" tabindex="-1" role="dialog">
+        <div id="popModalMsg" class="modal fade" tabindex="-1" role="dialog">
             <div class="modal-dialog modal-lg" role="document">
                 <div class="modal-content">
                     <div class="modal-header">
-                        <h5 class="modal-title">公告事項</h5>
+                        <h5 class="modal-title"></h5>
                         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                             <span aria-hidden="true">&times;</span>
                         </button>
@@ -188,8 +188,26 @@
 
                     </div>
                     <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">關閉</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div id="popModalDownload" class="modal fade" tabindex="-1" role="dialog">
+            <div class="modal-dialog modal-lg" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">下載專區</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
                         </button>
+                    </div>
+                    <div class="modal-body">
+
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">關閉</button>
                     </div>
                 </div>
             </div>
@@ -341,7 +359,7 @@
                 data: 'fseq', createdCell: (t, d) => {
                   $(t).data('fseq', d);
                 }, render: (d, t, r, m) => {
-                  return '<button type=\"button\" class=\"btn btn-outline-be btnDetailMsg \"> <span class=\"btn-txt\">明細<\/span> <\/button>';
+                  return '<button type=\"button\" class=\"btn btn-outline-be btnDetailDownload \"> <span class=\"btn-txt\">明細<\/span> <\/button>';
                 }, orderable: false
               }
             ];
@@ -391,8 +409,9 @@
                           'style="margin-left: 80px;" id="zipDownload">下載</button>';
                     }
                     $('#subject').val(data.subject);
-                    $('#popModal .modal-title').html('公告事項－' + data.msgtype);
-                    $('#popModal .modal-body').html(
+                    $('#popModalMsg .modal-title').html('公告事項－' + data.msgtype);
+                    $('#popModalMsg .modal-body').html(
+
                         '主　　題：' + data.subject +
                         '<br>訊息文字：' + data.mcontent +
                         '<br>發布單位：' + data.contactunit +
@@ -400,7 +419,7 @@
                         '<br>更新日期：' + data.upddt +
                         '<br>聯絡人　：' + data.contactperson +
                         '<br>聯絡電話：' + data.contacttel);
-                    $('#popModal').modal('show');
+                    $('#popModalMsg').modal('show');
                   }
                 },
                 error: function (e) {
@@ -408,6 +427,66 @@
                 }
               });
             });
+            
+            //檔案下載-明細
+            $(document).on('click', '.btnDetailDownload', function () {
+                $('#fseq').val($(this).parent('td').data('fseq'));
+                $.ajax({
+                    type: "POST",
+                    url: '<c:url value="/Common_Eip0w040Detail.action" />',
+                    data: {
+                        'fseq': $(this).parent('td').data('fseq')
+                    },
+                    timeout: 100000,
+                    success: function (data) {
+                        if (data == '') {
+                            showAlert('查無資料!');
+                        } else {
+                            var str = '';
+                            var count = Object.keys(data.file).length;
+                            if (count == 1) {
+                                var key = Object.keys(data.file);
+                                str +=
+                                    '附加檔案：<a href="javascript:;" class="alink" id=' +
+                                    key + '>' +
+                                    data.file[key] + '</a>';
+                            } else if (count == 0) {
+                                str += '附加檔案：';
+                            } else {
+                                str +=
+                                    '<div style="display: flex;">' +
+                                    '<div style="flex: none;">附加檔案：</div><div>';
+                                $.each(data.file, function (key, value) {
+                                    str +=
+                                        '<div class="d-inline-flex mr-3">' +
+                                        '<input type="checkbox" id="' +
+                                        key +
+                                        '" name="filelist" checked><a href="javascript:;" class="alink" id=' +
+                                        key + '>' + value + '</a></div>';
+                                });
+                                str +=
+                                    '</div></div>' +
+                                    '<button type="button" class="btn btn-outline-be btn-sm mr-1" ' +
+                                    'style="margin-left: 80px;" id="zipDownload">下載</button>';
+                            }
+                            $('#subject').val(data.subject);
+                            $('#popModalDownload .modal-body').html(
+                                '主　　題：' + data.subject +
+                                '<br>訊息文字：' + data.mcontent +
+                                '<br>發布單位：' + data.contactunit +
+                                '<br>' + str +
+                                '<br>更新日期：' + data.upddt +
+                                '<br>聯絡人　：' + data.contactperson +
+                                '<br>聯絡電話：' + data.contacttel);
+                            $('#popModalDownload').modal('show');
+                        }
+                    },
+                    error: function (e) {
+                        showAlert("取得資料發生錯誤");
+                    }
+                });
+            });
+
 
             // 檔案下載按鈕
             $(document).on('click', '#zipDownload', function (e) {

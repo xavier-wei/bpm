@@ -60,6 +60,7 @@ public class Eip00w020Controller extends BaseController {
     public ModelAndView query(@ModelAttribute(CASE_KEY) Eip00w020Case caseData) {
         log.debug("導向 Eip00w020_enter 使用者資料維護");
         eip00w020Service.findUserList(caseData);
+    
         return new ModelAndView(QUERY_PAGE);
     }
     
@@ -76,14 +77,7 @@ public class Eip00w020Controller extends BaseController {
         try {
         	Users users = eip00w020Service.findUser(caseData);
         	if(users != null) {
-        		caseData.settingCase(users);
-        		caseData.setUserStatus(users.getAcnt_is_valid());
-        		caseData.setTitleidList(eip00w020Service.findTitleIdList());//職稱代號下拉式選單datalist
-        		caseData.setDeptList(eip00w020Service.findDeptIdList());//部門代號下拉式選單datalist
-        		caseData.setUserRolesList(eip00w020Service.findUserRoleList(caseData.getUser_id()));
-        		caseData.setRolesList(eip00w020Service.findAddRolesList(caseData));//新增角色rolelist
-        		caseData.setEng_user_name(eip00w020Service.findEngName(users.getEmail()));
-        		caseData.setDeptString(eip00w020Service.findDeptName(users.getDept_id()));
+        		eip00w020Service.settingCase(caseData, users);
         		return new ModelAndView(EDIT_PAGE);
         	}else {
         		super.setSystemMessage(getQueryEmptyMessage());

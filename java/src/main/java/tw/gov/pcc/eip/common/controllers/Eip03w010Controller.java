@@ -207,7 +207,12 @@ public class Eip03w010Controller extends BaseController {
             if(result.hasErrors()){
                 return INSERT_PAGE;
             }
-            eip03w010Service.insert(caseData, userData);
+            eip03w010Service.insert(caseData, userData, result);
+            if(result.hasErrors()){
+                String today = DateUtility.getNowChineseDate();
+                caseData.setTrkID(keepTrkDtlDao.getNextTrkIDNumber(today));
+                return INSERT_PAGE;
+            }
             setSystemMessage(getSaveSuccessMessage());
         }catch (Exception e){
             log.error(ExceptionUtility.getStackTrace(e));

@@ -45,13 +45,14 @@ public class Eip0aw030Service {
                 Optional.ofNullable(itrUser).ifPresentOrElse(r -> {
                     Users u = (Users) BeanUtility.cloneBean(x);
                     x.setFrom_hr("Y");
-                    x.setDept_id(StringUtils.defaultIfEmpty(x.getDept_id(), r.getPeunit()));
-                    x.setEmail(StringUtils.defaultIfEmpty(x.getEmail(), r.getEmail()));
-                    x.setUser_name(StringUtils.defaultIfEmpty(x.getUser_name(), r.getPename()));
-                    x.setEmp_id(StringUtils.defaultIfEmpty(x.getEmp_id(), r.getPecard()));
-                    x.setTel1(StringUtils.defaultIfEmpty(x.getTel1(), r.getCt_tel()));
-                    x.setTel2(StringUtils.defaultIfEmpty(x.getTel2(), r.getCt_mobile()));
-                    x.setTitle_id(StringUtils.defaultIfEmpty(x.getTitle_id(), r.getPetit()));
+                    x.setOrg_id(r.getPeorg());
+                    x.setDept_id(r.getPeunit());
+                    x.setEmail(r.getEmail());
+                    x.setUser_name(r.getPename());
+                    x.setEmp_id(r.getPecard());
+                    x.setTel1( r.getCt_tel());
+                    x.setTel2(r.getCt_mobile());
+                    x.setTitle_id(r.getPetit());
 
                     assert u != null;
                     if (x.equals(u)) {

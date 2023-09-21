@@ -3,9 +3,11 @@ package tw.gov.pcc.eip.services;
 import java.time.LocalDateTime;
 import java.util.List;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.validation.BindingResult;
 
 import tw.gov.pcc.eip.adm.cases.Eip00w070Case;
 import tw.gov.pcc.eip.dao.*;
@@ -115,6 +117,16 @@ public class Eip00w070Service {
     		}
     	}
 		deleteUnauthorizedTabList();
+    }
+    
+    /*
+     * 新增角色
+     */
+    public void insertValid(Eip00w070Case eipadm0w070Case, BindingResult bindingResult) {
+    	List<Roles> roless = findRolesList(eipadm0w070Case.getRole_id());
+    	if(CollectionUtils.isNotEmpty(roless)) {
+    		bindingResult.reject(null, "已有此角色代號");
+    	}
     }
     
     /*

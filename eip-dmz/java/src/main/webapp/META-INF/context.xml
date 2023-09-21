@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Context>
+    <Resource
+            auth="Container"
+            name="jdbc/eipDS"
+            type="javax.sql.DataSource"
+            driverClassName="com.microsoft.sqlserver.jdbc.SQLServerDriver"
+            username="eip"
+            password="eip"
+            url="jdbc:sqlserver://;servername=192.168.50.10;databaseName=EIP;encrypt=false;"
+            minIdle="2"
+            maxTotal="10"/>
+</Context>
+ 

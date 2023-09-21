@@ -1,0 +1,126 @@
+/* ------------------------------------------------------- */
+/* DataTables                                              */
+/* ------------------------------------------------------- */
+.dataTablesDiv {
+    width: 100%;
+}
+
+.dataTablesDiv td {
+    empty-cells: show !important;
+}
+
+button.dt-button, div.dt-button, a.dt-button {
+    margin-top: 5px !important;
+}
+
+table.dataTable thead .sorting,
+table.dataTable thead .sorting_asc,
+table.dataTable thead .sorting_desc,
+table.dataTable thead .sorting_asc_disabled,
+table.dataTable thead .sorting_desc_disabled {
+    cursor: pointer;
+    *cursor: hand;
+    background-repeat: no-repeat;
+    background-position: center right;
+}
+table.dataTable thead .sorting_asc {
+    background-image: url("../images/sort_asc.png");
+}
+table.dataTable thead .sorting_desc {
+    background-image: url("../images/sort_desc.png");
+}
+table.dataTable thead .sorting_asc_disabled {
+    background-image: url("../images/sort_asc_disabled.png");
+}
+table.dataTable thead .sorting_desc_disabled {
+    background-image: url("../images/sort_desc_disabled.png");
+}
+
+/* ------------------------------------------------------- */
+/* noty.js                                                 */
+/* ------------------------------------------------------- */
+
+#noty_layout__center {
+    width: 40% !important;
+}
+#noty_center_layout_container li {
+    width: 100% !important;
+}
+
+.noty_message {
+    font-size: 16px !important;
+    line-height: 24px !important;
+    text-align: left !important;
+}
+
+.noty_modal { opacity: 0 !important; }
+
+.noty_buttons {
+    background-color: white !important;
+    text-align: right !important;
+}
+
+/*.notyButton {*/
+/*    font-size: 14px !important;*/
+/*    margin-left: 5px;*/
+/*}*/
+
+/* ------------------------------------------------------- */
+/* systemMessage                                           */
+/* ------------------------------------------------------- */
+#systemMessage {
+    color: #FF0000;
+}
+
+/* ------------------------------------------------------- */
+/* FIX                                                  */
+/* ------------------------------------------------------- */
+
+.notyButton {
+    border: 1px solid #a8a8a8;
+    border-radius: 5px;
+    padding: 2px 10px;
+    outline: none;
+    background-color: #fff;
+    margin-left:2px;
+}
+
+.notyButton:hover{
+    background-color: #999;
+    border-radius: 5px;
+    padding: 2px 10px;
+    outline: none;
+}
+
+.form-table .textinput, .textinput {
+    line-height: 1;
+    height: 25px;
+    padding-bottom: 3px;
+    padding-top: 3px;
+    padding-left: 4px;
+    border-radius :.2rem;
+    border: 1px solid #9ea4aa;
+}
+.form-table .textselect, .textselect {
+    line-height: 1;
+    height: 25px;
+    border-radius :.2rem;
+    border: 1px solid #9ea4aa;
+}
+/* ------------------------------------------------------- */
+/* FIX END                                              */
+/* ------------------------------------------------------- */
+
+.form-top-std {
+    padding-top:calc(.375rem + 1px);
+}
+
+.title {
+    line-height: 2em;
+    padding-left: 10px;
+    font-size: 14pt;
+    letter-spacing: 2px;
+    text-align: left;
+    color:brown;
+    font-weight: bold;
+}

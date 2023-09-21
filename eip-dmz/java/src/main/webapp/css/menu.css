@@ -1,0 +1,97 @@
+ /* 左邊欄位 */
+ .web>.wrapper>.content>.sidenav {
+    background-color: #c7e9e6;
+    box-shadow: 5px 0px 10px hsla(240, 30%, 15%, 0.3);
+    display: flex;
+    flex-direction: column;
+    min-width: 240px;
+    /* default show*/
+    /*display: none;*/
+    padding-bottom:20px;
+  }
+
+  .web>.wrapper>.content>.sidenav h3 {
+    margin: 10px;
+    text-align: center;
+    font-weight: 900;
+  }
+
+  .web>.wrapper>.content>.sidenav>.tree {
+    margin: 10px 0px 10px 10px;
+    flex-grow: 1;
+    overflow-y: auto;
+    height: 100%;
+    user-select: none;
+  }
+
+  .web>.wrapper>.content>.sidenav>.tree ul {
+    list-style-type: none;
+    margin: 0;
+    padding-left: 20px;
+  }
+
+  .web>.wrapper>.content>.sidenav>.tree>.root {
+    padding-left: 0;
+  }
+
+  .web>.wrapper>.content>.sidenav>.tree li>ul {
+    cursor: pointer;
+  }
+
+  .web>.wrapper>.content>.sidenav .tree .caret::before {
+    content: "\25B6";
+    color: #095c57;
+    display: inline-block;
+    margin-right: 6px;
+  }
+
+  .web>.wrapper>.content>.sidenav .tree .caret-down::before {
+    -ms-transform: rotate(90deg);
+    -webkit-transform: rotate(90deg);
+    transform: rotate(90deg);
+  }
+
+  .web>.wrapper>.content>.sidenav .tree .nested {
+    display: none;
+  }
+
+  .web>.wrapper>.content>.sidenav .tree .active {
+    display: block;
+  }
+
+  .web>.wrapper>.content>.sidenav-button {
+    min-width: 30px;
+    max-width: 30px;
+    height: 55px;
+    background-color: #095c57;
+    color: #fff;
+    margin: auto;
+    line-height: 53px;
+    text-align: center;
+    font-size: 30px;
+    border-radius: 0 10px 10px 0;
+    cursor: pointer;
+  }
+
+
+ .sidenav.activeBar{
+     margin-left: -240px;
+ }
+
+ .sidenav{
+     margin-left: 0px;
+ }
+
+ .animeTransition{
+     transition: all 0.3s;
+ }
+
+ @media (max-width: 576px) {
+     .sidenav {
+         margin-left: -240px;
+     }
+     .sidenav.activeBar{
+         margin-left: 0px;
+     }
+ }
+

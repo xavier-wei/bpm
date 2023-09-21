@@ -34,6 +34,7 @@ public class Eip06w030Case implements Serializable {
     private int day;  //星期幾 mon tue wed thu fri sat
     private String periodStart; //預定區間起
     private String periodEnd;  //預定區間訖
+    private int maxPeriodDays; //會議日期預約天數上限
     List<Object> itemIds; //選取物品編號
     List<Object> foodId_Qty; //選取餐點編號
     List<Object> food_Qty;; //餐點數量

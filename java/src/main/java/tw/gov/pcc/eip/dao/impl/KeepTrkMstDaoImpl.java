@@ -18,6 +18,7 @@ import tw.gov.pcc.eip.domain.KeepTrkMst;
 
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * 重要列管事項主檔
@@ -296,5 +297,16 @@ public class KeepTrkMstDaoImpl extends BaseDao<KeepTrkMst> implements KeepTrkMst
         SqlParameterSource params =
                 new MapSqlParameterSource("trkID", trkID);
         return getNamedParameterJdbcTemplate().update(sql.toString(), params);
+    }
+
+
+    @Override
+    public Integer findByTrkID(String trkID){
+        StringBuilder sql = new StringBuilder();
+        sql.append(" SELECT COUNT(*) ");
+        sql.append(" FROM " + TABLE_NAME + " T WHERE T.TrkID = :trkID ");
+        Map<String, String> params=new HashMap<>();
+        params.put("trkID", trkID);
+        return getNamedParameterJdbcTemplate().queryForObject(sql.toString(), params, Integer.class);
     }
 }

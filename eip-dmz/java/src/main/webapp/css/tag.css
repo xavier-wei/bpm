@@ -1,0 +1,54 @@
+#tabsJ
+{
+    background: #F9FFDA;
+    float: left;
+    font-family: sans-serif, "微軟正黑體", "新細明體";
+    font-size: 1.2em;
+    font-weight: bold;
+    line-height: normal;
+    width: 100%;
+}
+#tabsJ ul
+{
+    list-style: none;
+    margin: 0;
+    padding: 1em 10px 0 50px;
+}
+#tabsJ li
+{
+    display: inline;
+    margin: 0;
+    padding: 0;
+}
+#tabsJ a
+{
+    background: url(../images/tableftJ.gif) no-repeat left top;
+    float: left;
+    margin: 0;
+    padding: 0 0 0 0.125em;
+    text-decoration: none;
+}
+#tabsJ a span
+{
+    background: url(../images/tabrightJ.gif) no-repeat right top;
+    color: #24618E;
+    display: block;
+    float: left;
+    padding: 0.4em 1em 0.2em 0.475em;
+}
+#tabsJ a span
+{
+    float: none;
+}
+#tabsJ a:hover span
+{
+    color: #FFF;
+}
+#tabsJ a:hover
+{
+    background-position: 0% -42px;
+}
+#tabsJ a:hover span
+{
+    background-position: 100% -42px;
+}

@@ -22,9 +22,8 @@ import tw.gov.pcc.eip.msg.cases.Eip01w030Case;
 import tw.gov.pcc.eip.msg.cases.Eip01w040Case;
 import tw.gov.pcc.eip.msg.cases.Eip01wPopCase;
 import tw.gov.pcc.eip.msg.controllers.Eip01w030Controller;
+import tw.gov.pcc.eip.msg.controllers.Eip01w040Controller;
 import tw.gov.pcc.eip.services.Eip01w040Service;
-import tw.gov.pcc.eip.tableau.cases.TableauDataCase;
-import tw.gov.pcc.eip.tableau.controllers.TableauController;
 import tw.gov.pcc.eip.util.BeanUtility;
 import tw.gov.pcc.eip.util.DateUtility;
 import tw.gov.pcc.eip.util.ExceptionUtility;
@@ -34,7 +33,6 @@ import javax.servlet.http.HttpServletRequest;
 import java.math.BigDecimal;
 import java.util.Comparator;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -60,7 +58,7 @@ public class LoginController extends BaseController {
     private final EipcodeDao eipcodeDao;
     private final MsgdepositdirDao msgdepositdirDao;
     private final Eip01w030Controller eip01w030Controller;
-    private final TableauController tableauController;
+    private final Eip01w040Controller eip01w040Controller;
 
     private static Comparator<Eip01wPopCase> getEip01wPopCaseComparator(DatatableCase<Eip01wPopCase> datatableCase) {
         return (r1, r2) -> {
@@ -160,17 +158,29 @@ public class LoginController extends BaseController {
 
 
     /**
-     * 透過ajax 查詢明細資料
+     * 透過ajax 查詢明細資料 公告事項
      *
      * @param fseq 項次
      * @return
      */
     @RequestMapping("/Common_Eip01w030GetDetail.action")
     @ResponseBody
-    public Eip01wPopCase getDetail(@RequestParam("fseq") String fseq) {
+    public Eip01wPopCase eip01w030GetDetail(@RequestParam("fseq") String fseq) {
         return eip01w030Controller.getDetail(fseq);
     }
 
+
+    /**
+     * 透過ajax 查詢明細資料 下載專區
+     *
+     * @param fseq 項次
+     * @return
+     */
+    @RequestMapping("/Common_Eip0w040Detail.action")
+    @ResponseBody
+    public Eip01wPopCase eip01w040Detail(@RequestParam("fseq") String fseq) {
+        return eip01w040Controller.detail(fseq);
+    }
 
     /**
      * 公告事項 檔案下載
@@ -196,12 +206,13 @@ public class LoginController extends BaseController {
     @ResponseBody
     public DatatableCase<Eip01wPopCase> getDownloaddata(@RequestBody DatatableCase<Eip01wPopCase> datatableCase) throws InterruptedException {
 
-        List<Eip01wPopCase> dataList = msgdepositdirDao.getTree(userData.getDeptId())
-                .stream()
+        String deptId = userData.getDeptId();
+        List<Eip01wPopCase> dataList = msgdepositdirDao.getTree(deptId)
+                .parallelStream()
                 .map(x -> {
                     Eip01w040Case pathCaseData = new Eip01w040Case();
                     pathCaseData.setKey(StringUtils.trimToEmpty(x.getExisthier()));
-                    eip01w040Service.pathQuery(pathCaseData, userData.getDeptId());
+                    eip01w040Service.pathQuery(pathCaseData, deptId);
                     return pathCaseData.getQryList()
                             .stream()
                             .peek(
@@ -213,7 +224,7 @@ public class LoginController extends BaseController {
                 .collect(Collectors.toList());
 
         List<Eip01wPopCase> filterList = dataList.stream()
-                .filter(x -> StringUtils.containsAnyIgnoreCase(x.getSubject() + "@" + x.getMsgtype() + "@" + x.getReleasedt() + "@" + x.getContactunit() + "@" + x.getMcontent(), datatableCase.getSearch()
+                .filter(x -> StringUtils.containsAnyIgnoreCase(x.getUpddt() + "@" + x.getSubject() + "@" + x.getMsgtype() + "@" + x.getReleasedt() + "@" + x.getContactunit() + "@" + x.getMcontent(), datatableCase.getSearch()
                         .getValue()))
                 .sorted(getEip01wPopCaseComparator(datatableCase))
                 .collect(Collectors.toList());
@@ -239,35 +250,5 @@ public class LoginController extends BaseController {
     @ModelAttribute("sys_site")
     public List<Eipcode> getSys_site() {
         return ObjectUtility.normalizeObject(eipcodeDao.findByCodeKindOrderByScodeno("SYS_SITE"));
-    }
-
-
-
-    /**
-     * 取得首頁應顯示的各儀表板資訊
-     */
-    @RequestMapping("/Common_getTableauDataByUser.action")
-    @ResponseBody
-    public List<TableauDataCase> getTableauUserdata( ) {
-        return tableauController.getUserdata();
-    }
-
-    /**
-     * 取得 tableau ticket
-     */
-    @RequestMapping("/Common_getTableauTicket.action")
-    @ResponseBody
-    public Map<String, String> getTableauTicket( ) {
-        return tableauController.getTrustedTicket();
-    }
-
-
-    /**
-     * 取得首頁應顯示的各儀表板資訊
-     */
-    @RequestMapping("/Common_getAllTableauData.action")
-    @ResponseBody
-    public List<TableauDataCase> getAllTableauData( ) {
-        return tableauController.getAllTableauData();
     }
 }

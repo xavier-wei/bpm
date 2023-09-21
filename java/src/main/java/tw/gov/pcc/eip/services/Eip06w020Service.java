@@ -60,6 +60,8 @@ public class Eip06w020Service {
             }
         }
         caseData.setMeetingTimeCombobox(meetingTimeMap);
+        //maxMeetingDays 會議日期預約天數上限
+        caseData.setMaxMeetingDays(meetingCodeDao.findByPK("D01").getQty());
     }
 
     /**

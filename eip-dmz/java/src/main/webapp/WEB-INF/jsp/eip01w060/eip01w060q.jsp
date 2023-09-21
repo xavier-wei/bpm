@@ -1,0 +1,75 @@
+<%@ page language="java" pageEncoding="UTF-8" %>
+<%@ include file="/WEB-INF/jsp/includes/include.jsp" %>
+<spring:eval var="caseKey" expression="T(tw.gov.pcc.eip.msg.controllers.Eip01w060Controller).CASE_KEY" />
+<c:set var="caseData" value="${requestScope[caseKey]}" />
+<tags:layout>
+    <jsp:attribute name="contents">
+        <tags:fieldset legend="單位簡介">
+            <form:form id="eip01w060Form" modelAttribute="${caseKey}">
+                <tags:form-row>
+                    <div class="col-12 col-md">
+                        <form:select path="dept" cssClass="form-control ml-4" style="width:30%;">
+                            <form:options items="${caseData.depts}" />
+                        </form:select>
+                    </div>
+                </tags:form-row>
+                <br>
+                <div class="msg">
+
+                </div>
+            </form:form>
+        </tags:fieldset>
+    </jsp:attribute>
+
+    <jsp:attribute name="footers">
+        <script type="text/javascript">
+            $(function() {
+                // 明細
+                $('#dept').change(function() {
+                    $.ajax({
+                        type: "POST",
+                        url: '<c:url value="/Eip01w060_getDetail.action" />',
+                        data: {
+                            'attr': $('#dept').val()
+                        },
+                        timeout: 100000,
+                        success: function(data) {
+                            if (data == '') {
+                                showAlert('查無資料!');
+                            } else {
+                            	var titile = '';
+                                var msg = '';
+                                var str = '';
+                                title = !$('select[name="dept"] option').length ? '' : $('select[name="dept"] :selected').html();
+                                $.each(data.msgs, function(i, e) { // 串接內容
+                                    msg += '　　' + (i + 1) + '.' + e + '<br>';
+                                });
+                                $.each(data.file, function(i, e) { // 串接檔名
+                                    str +=
+                                        '<a href="javascript:;" class="alink" id=' +
+                                        i + '>' +
+                                        e + '</a>' + '　';
+                                });
+                                $('.msg').html('');
+                                $('.msg').html(title +
+                                    '<br>' + msg +
+                                    '<br>附檔下載：' + str);
+                            }
+                        },
+                        error: function(e) {
+                            showAlert("取得資料發生錯誤");
+                        }
+                    });
+                });
+                $('#dept').trigger('change');
+            });
+            // 檔案下載連結
+            $(document).on('click', '.alink', function(e) {
+                $('#seq').val($(this).attr('id'));
+                $('#filename').val($(this).html());
+                $('#eip01w060Form').attr('action', '<c:url value="/Eip01w060_getFile.action" />')
+                    .submit();
+            });
+        </script>
+    </jsp:attribute>
+</tags:layout>

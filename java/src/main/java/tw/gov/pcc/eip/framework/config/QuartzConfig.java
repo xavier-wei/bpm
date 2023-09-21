@@ -69,7 +69,7 @@ public class QuartzConfig {
 		SchedulerFactoryBean schedulerFactory = new SchedulerFactoryBean();
 		schedulerFactory.setConfigLocation(new ClassPathResource("quartz.properties"));
 		schedulerFactory.setTriggers(spTrigger,resetSequenceTrigger,executeImportUsersJobTrigger,updStatusTrigger, sendMailsJobTrigger);
-//		schedulerFactory.setJobDetails(bebp0w010ReportJobDetail);
+
 		schedulerFactory.setOverwriteExistingJobs(false);
 		return schedulerFactory;
 	}
