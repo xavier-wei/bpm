@@ -37,56 +37,56 @@
     <endEvent id="sid-b5ac06ab-47f0-4cbe-98ba-da60225bed0f"/>
     <sequenceFlow id="sid-b052e9e7-1f67-4600-9795-c336a8beaae2" sourceRef="directorRejectMail" targetRef="sid-b5ac06ab-47f0-4cbe-98ba-da60225bed0f"/>
     <sequenceFlow id="sid-59af63bc-d0b5-45a6-8bce-68856a90cd14" sourceRef="chiefRejectMail" targetRef="sid-b5ac06ab-47f0-4cbe-98ba-da60225bed0f"/>
-    <userTask id="hrSys" name="人事差勤系統" flowable:candidateUsers="${BPM_PR_Operator}"/>
+    <userTask id="hrSys" name="人事差勤系統" flowable:candidateUsers="${HrSysSigner}"/>
     <sequenceFlow id="sid-7ac91be8-1a37-4216-86d1-c1b02ded4d5a" sourceRef="sid-a1383f52-47a0-48a3-8551-67c550ace4d3" targetRef="hrSys">
       <conditionExpression xsi:type="tFormalExpression"><![CDATA[${isHrSys=="1"}]]></conditionExpression>
     </sequenceFlow>
-    <userTask id="ADAccount" name="AD帳號" flowable:candidateUsers="${infoGroup}"/>
+    <userTask id="ADAccount" name="AD帳號" flowable:candidateUsers="${AdSysSigner}"/>
     <sequenceFlow id="sid-d37d7eaa-6bb9-4bb8-986c-a65fc3e4a4ce" sourceRef="sid-a1383f52-47a0-48a3-8551-67c550ace4d3" targetRef="ADAccount">
       <conditionExpression xsi:type="tFormalExpression"><![CDATA[${isAdSys=="1"}]]></conditionExpression>
     </sequenceFlow>
-    <userTask id="odSys" name="公文管理系統" flowable:candidateUsers="${BPM_SEC_Operator}"/>
+    <userTask id="odSys" name="公文管理系統" flowable:candidateUsers="${OdSysSigner}"/>
     <sequenceFlow id="sid-2d63cfda-0118-4bfc-b83a-54c3fbccf392" sourceRef="sid-a1383f52-47a0-48a3-8551-67c550ace4d3" targetRef="odSys">
       <conditionExpression xsi:type="tFormalExpression"><![CDATA[${isOdSys=="1"}]]></conditionExpression>
     </sequenceFlow>
-    <userTask id="meetingRoom" name="會議室管理系統" flowable:candidateUsers="${BPM_SEC_Operator}"/>
+    <userTask id="meetingRoom" name="會議室管理系統" flowable:candidateUsers="${MeetingRoomSigner}"/>
     <sequenceFlow id="sid-b1ea373e-5f21-413f-b4ba-3a8ccac58e32" sourceRef="sid-a1383f52-47a0-48a3-8551-67c550ace4d3" targetRef="meetingRoom">
       <conditionExpression xsi:type="tFormalExpression"><![CDATA[${isMeetingRoom=="1"}]]></conditionExpression>
     </sequenceFlow>
-    <userTask id="emailSys" name="電子郵件帳號" flowable:candidateUsers="${infoGroup}"/>
+    <userTask id="emailSys" name="電子郵件帳號" flowable:candidateUsers="${EmailSysSigner}"/>
     <sequenceFlow id="sid-21594fa3-6ba3-4d01-9e90-a66f03787403" sourceRef="sid-a1383f52-47a0-48a3-8551-67c550ace4d3" targetRef="emailSys">
       <conditionExpression xsi:type="tFormalExpression"><![CDATA[${isEmailSys=="1"}]]></conditionExpression>
     </sequenceFlow>
-    <userTask id="webSite" name="全球資訊網&amp;會內資訊網" flowable:candidateUsers="${infoGroup}"/>
+    <userTask id="webSite" name="全球資訊網&amp;會內資訊網" flowable:candidateUsers="${WebSiteSigner}"/>
     <sequenceFlow id="sid-a3389f0b-f45d-4e29-b086-68a974559d0a" sourceRef="sid-a1383f52-47a0-48a3-8551-67c550ace4d3" targetRef="webSite">
       <conditionExpression xsi:type="tFormalExpression"><![CDATA[${isWebSite=="1"}]]></conditionExpression>
     </sequenceFlow>
-    <userTask id="pccPis" name="政府電子採購網" flowable:candidateUsers="${infoGroup}"/>
+    <userTask id="pccPis" name="政府電子採購網" flowable:candidateUsers="${PccPisSigner}"/>
     <sequenceFlow id="sid-2af9252d-91fc-432a-893a-328cf8129937" sourceRef="sid-a1383f52-47a0-48a3-8551-67c550ace4d3" targetRef="pccPis">
       <conditionExpression xsi:type="tFormalExpression"><![CDATA[${isPccPis=="1"}]]></conditionExpression>
     </sequenceFlow>
-    <userTask id="otherSys1" name="本會其他資通系統1" flowable:candidateUsers="infoGroup"/>
+    <userTask id="otherSys1" name="本會其他資通系統1" flowable:candidateUsers="OtherSys1Signer"/>
     <sequenceFlow id="sid-cb85460f-4624-43e8-9918-0556294321c5" sourceRef="sid-a1383f52-47a0-48a3-8551-67c550ace4d3" targetRef="otherSys1">
       <conditionExpression xsi:type="tFormalExpression"><![CDATA[${isOtherSys1=="1"}]]></conditionExpression>
     </sequenceFlow>
-    <userTask id="engAndPrjInfoSys" name="技師與工程技術顧問公司管理資訊系統" flowable:candidateUsers="${infoGroup}"/>
+    <userTask id="engAndPrjInfoSys" name="技師與工程技術顧問公司管理資訊系統" flowable:candidateUsers="${EngAndPrjInfoSysSigner}"/>
     <sequenceFlow id="sid-049ff67f-519b-40e1-9b38-21a4b31204f6" sourceRef="sid-a1383f52-47a0-48a3-8551-67c550ace4d3" targetRef="engAndPrjInfoSys">
       <conditionExpression xsi:type="tFormalExpression"><![CDATA[${isEngAndPrjInfoSys=="1"}]]></conditionExpression>
     </sequenceFlow>
-    <userTask id="revSys" name="公共工程案件審議資訊系統" flowable:candidateUsers="${infoGroup}"/>
+    <userTask id="revSys" name="公共工程案件審議資訊系統" flowable:candidateUsers="${RevSysSigner}"/>
     <sequenceFlow id="sid-d9b3e3d0-f397-4ff4-96e6-6197edde70e2" sourceRef="sid-a1383f52-47a0-48a3-8551-67c550ace4d3" targetRef="revSys">
       <conditionExpression xsi:type="tFormalExpression"><![CDATA[${isRevSys=="1"}]]></conditionExpression>
     </sequenceFlow>
-    <userTask id="bidSys" name="公共工程標案管理系統" flowable:candidateUsers="${infoGroup}"/>
+    <userTask id="bidSys" name="公共工程標案管理系統" flowable:candidateUsers="${BidSysSigner}"/>
     <sequenceFlow id="sid-8ffa49d8-15c1-4f5d-ae7e-622d845eee3f" sourceRef="sid-a1383f52-47a0-48a3-8551-67c550ace4d3" targetRef="bidSys">
       <conditionExpression xsi:type="tFormalExpression"><![CDATA[${isBidSys=="1"}]]></conditionExpression>
     </sequenceFlow>
-    <userTask id="recSys" name="災後復建工程經費審議及執行資訊系統" flowable:candidateUsers="${infoGroup}"/>
+    <userTask id="recSys" name="災後復建工程經費審議及執行資訊系統" flowable:candidateUsers="${RecSysSigner}"/>
     <sequenceFlow id="sid-4e47f305-8190-4f3d-b507-3631d5255988" sourceRef="sid-a1383f52-47a0-48a3-8551-67c550ace4d3" targetRef="recSys">
       <conditionExpression xsi:type="tFormalExpression"><![CDATA[${isRecSys=="1"}]]></conditionExpression>
     </sequenceFlow>
-    <userTask id="otherSys2" name="本會其他資通系統2" flowable:candidateUsers="${infoGroup}"/>
-    <userTask id="otherSys3" name="本會其他資通系統3" flowable:candidateUsers="${infoGroup}"/>
+    <userTask id="otherSys2" name="本會其他資通系統2" flowable:candidateUsers="${OtherSys2Signer}"/>
+    <userTask id="otherSys3" name="本會其他資通系統3" flowable:candidateUsers="${OtherSys3Signer}"/>
     <sequenceFlow id="sid-ba4c8035-9712-4806-af99-42710e9a493c" sourceRef="sid-a1383f52-47a0-48a3-8551-67c550ace4d3" targetRef="otherSys2">
       <conditionExpression xsi:type="tFormalExpression"><![CDATA[${isOtherSys2=="1"}]]></conditionExpression>
     </sequenceFlow>
