@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.SessionAttributes;
 import org.springframework.web.servlet.ModelAndView;
 import tw.gov.pcc.eip.adm.cases.Eip00w230Case;
+import tw.gov.pcc.eip.framework.domain.UserBean;
 import tw.gov.pcc.eip.framework.spring.controllers.BaseController;
 import tw.gov.pcc.eip.services.Eip00w230Service;
 import tw.gov.pcc.eip.util.ExceptionUtility;
@@ -27,6 +28,9 @@ public class Eip00w230Controller extends BaseController {
 
     @Autowired
     private Eip00w230Service eip00w230Service;
+    
+    @Autowired
+    private UserBean userBean;
 
     @ModelAttribute(CASE_KEY)
     public Eip00w230Case getEip00w230Case() {
@@ -44,7 +48,7 @@ public class Eip00w230Controller extends BaseController {
     public ModelAndView enter(@ModelAttribute(CASE_KEY) Eip00w230Case caseData) {
         try {
             log.debug("導向 Eip00w230_query 設定個人儀表版");
-            eip00w230Service.findCheckedList(caseData);
+            eip00w230Service.findCheckedList(caseData, userBean.getUserId());
         } catch (Exception e) {
             log.error("查詢失敗 - {}", ExceptionUtility.getStackTrace(e));
             setSystemMessage(getQueryFailMessage());

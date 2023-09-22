@@ -90,23 +90,23 @@
                             </a>
                         </div>
                         <div class="col-md-3 top_3 title_status">
-                            <a href="" target="_blank" style="text-decoration:none;"
+                            <a href="${eip0aw010Case.apiResultList[1].click_url}" target="_blank" style="text-decoration:none;"
                                class="title_05">
                                 <img src="./images/top_icon4.png" alt="" class="d-inline-block align-middle">
                                 <div class="d-inline-block align-middle text-center">
                                     <div class="title_01">待處理公文</div>
-                                    <span class="title_02"></span>
+                                    <span class="title_02">${eip0aw010Case.apiResultList[1].cnt}</span>
                                     <span class="title_03">件</span>
                                 </div>
                             </a>
                         </div>
                         <div class="col-md-3 top_3 title_status">
-                            <a href="" target="_blank" style="text-decoration:none;"
+                            <a href="${eip0aw010Case.apiResultList[0].click_url}" target="_blank" style="text-decoration:none;"
                                class="title_05">
                                 <img src="./images/top_icon1.png" alt="" class="d-inline-block align-middle">
                                 <div class="d-inline-block align-middle text-center">
                                     <div class="title_01">待簽核件數</div>
-                                    <span class="title_02"></span>
+                                    <span class="title_02">${eip0aw010Case.apiResultList[0].cnt}</span>
                                     <span class="title_03">件</span>
                                 </div>
                             </a>
@@ -285,15 +285,16 @@
                 }
                 $('input:checkbox:enabled[data-checkall]').on('click', checkall);
 
-                reloadTitleStatus();
+                // reloadTitleStatus();
             });
 
             function reloadTitleStatus() {
                 let interval = 60;
                 $.ajax({
-                    url: '<c:url value="/Common_getSysApi.action"/>',
+                    url: '<c:url value="/Common_getEip0aw010Case.action"/>',
                     type: "POST",
                     dataType: "json",
+                    cache: false,
                     contentType: "application/json",
                     success: function (data) {
                         let $titleStatus = $('#title_status .title_status');
@@ -309,6 +310,9 @@
                         console.log(xhr.status + " " + thrownError);
                     }
                 }).always(function () {
+                    if(!interval || interval < 10){
+                        interval = 10;
+                    }
                     setTimeout(reloadTitleStatus, interval * 1000);
                 });
             }
