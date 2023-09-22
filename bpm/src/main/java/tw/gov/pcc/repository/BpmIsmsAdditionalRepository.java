@@ -47,7 +47,7 @@ public interface BpmIsmsAdditionalRepository extends JpaRepository<BpmIsmsAdditi
         "      select l410.form_id, " +
         "             l410.PROCESS_INSTANCE_ID, " +
         "             l410.PROCESS_INSTANCE_STATUS, " +
-        "             l410.APP_UNIT1 AS APP_UNIT, " +
+        "             l410.APP_UNIT, " +
         "             l410.APPLY_DATE, " +
         "             l410.APP_NAME, " +
         "             l410.FIL_NAME, " +

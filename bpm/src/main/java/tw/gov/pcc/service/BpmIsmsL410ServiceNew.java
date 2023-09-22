@@ -106,7 +106,7 @@ public class BpmIsmsL410ServiceNew implements BpmIsmsService {
                 taskDTO,
                 bpmIsmsL410DTO.getAppEmpid(),
                 bpmIsmsL410DTO.getAppName(),
-                bpmIsmsL410DTO.getAppUnit1()
+                bpmIsmsL410DTO.getAppUnit()
             );
         }
         bpmSignerListService.saveBpmSignerList(VARIABLES_HOLDER.get(uuid), formId);

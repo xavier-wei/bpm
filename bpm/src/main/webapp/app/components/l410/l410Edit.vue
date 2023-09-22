@@ -89,9 +89,9 @@
                   </i-form-group-check>
 
                   <i-form-group-check label-star class="col-sm-5" label-cols="5" content-cols="7" :label="`單位別 ：`"
-                                      :item="$v.appUnit1">
+                                      :item="$v.appUnit">
                     <!--單位別 : -->
-                    <b-form-select v-model="$v.appUnit1.$model" :options="bpmDeptsOptions"
+                    <b-form-select v-model="$v.appUnit.$model" :options="bpmDeptsOptions"
                                    :disabled="userData.userId !== $v.filEmpid.$model || userData.userId !== $v.appEmpid.$model  || formStatusRef === FormStatusEnum.READONLY">
                       <template #first>
                         <b-form-select-option value="null" disabled>請選擇</b-form-select-option>
@@ -625,7 +625,7 @@ export default {
       appEngName: '', // 英文姓名
       appEmpid: '',//	申請人員工編號
       extNum: '',//	分機
-      appUnit1: '',//	單位別
+      appUnit: '',//	單位別
       position: '',//	職稱
       appReason: '1',//	申請事由 1.新進 2.離職 3.職務異動
       isEnableDate: '0',//	是否有生效日期
@@ -771,7 +771,7 @@ export default {
       appEngName: {required},
       appEmpid: {required},
       extNum: {},
-      appUnit1: {required},
+      appUnit: {required},
       position: {required},
       appReason: {required},
       isEnableDate: {},
