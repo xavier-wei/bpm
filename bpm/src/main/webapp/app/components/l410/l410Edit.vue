@@ -244,7 +244,7 @@
                         <b-form-input
                           v-else
                           maxlength="200" v-model="row.item.systemApplyInput"
-                          :disabled="userData.deptId !== row.item.admUnit || row.item.checkbox !== '1' || formStatusRef === FormStatusEnum.READONLY">
+                          :disabled="form.isSubmit === '1' || userData.deptId !== row.item.admUnit || row.item.checkbox !== '1' || formStatusRef === FormStatusEnum.READONLY">
                         </b-form-input>
 
                         <span v-if="row.item.systemApply === '4'">@mail.pcc.gov.tw</span>
@@ -435,7 +435,6 @@
 
                     <!--處理人員-->
                     <template #cell(reviewStaffName)="row">
-                      {{ row.item.checkbox }}
                       <b-form-input maxlength="200" v-model="row.item.admName"
                                     :disabled=" userData.deptId !== row.item.admUnit || row.item.checkbox !== '1'  || formStatusRef === FormStatusEnum.READONLY"/>
                     </template>
@@ -467,6 +466,10 @@
                   </P>
 
                 </div>
+
+                <!--簽核狀態模組-->
+                <signerList :formId="formIdProp" :formStatus="formStatusRef" :opinion="opinion" ></signerList>
+
 
                 <b-container class="mt-3">
                   <b-row class="justify-content-center">
@@ -551,6 +554,8 @@ import signatureBmodel from "@/components/signatureBmodel.vue";
 
 const appendix = () => import('@/components/appendix.vue');
 const flowChart = () => import('@/components/flowChart.vue');
+const signerList = () => import('@/components/signerList.vue');
+
 export default {
   name: "l410Edit",
   methods: {
@@ -587,6 +592,7 @@ export default {
     appendix,
     flowChart,
     signatureBmodel,
+    signerList,
   },
   setup(props) {
     let appendixData = reactive({});
@@ -603,6 +609,10 @@ export default {
     const signatureBmodel = ref(null);
     let fileDataId = reactive({
       fileId: ''
+    });
+
+    let opinion = reactive({
+      opinionData: ''
     });
 
     enum FormStatusEnum {
@@ -990,6 +1000,7 @@ export default {
         variables = Object.fromEntries(arrData)
       }
 
+      form.opinion = opinion.opinionData
       let opinionData = '';
 
       if (form.opinion !== '') {
@@ -1124,7 +1135,9 @@ export default {
       resetCheckboxValue,
       userData,
       signatureBmodel,
-      showModel
+      showModel,
+      formIdProp,
+      opinion,
     }
   }
 }

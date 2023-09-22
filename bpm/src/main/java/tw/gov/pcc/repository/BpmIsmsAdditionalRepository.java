@@ -4,6 +4,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
+import tw.gov.pcc.domain.BpmSignerList;
 import tw.gov.pcc.domain.entity.BpmIsmsAdditional;
 import tw.gov.pcc.repository.custom.BpmIsmsAdditionalRepositoryCustom;
 
@@ -135,4 +136,5 @@ public interface BpmIsmsAdditionalRepository extends JpaRepository<BpmIsmsAdditi
         @Param("selectName") String selectName,
         @Param("selectUnit") String selectUnit,
         @Param("selectTitle") String selectTitle);
+
 }

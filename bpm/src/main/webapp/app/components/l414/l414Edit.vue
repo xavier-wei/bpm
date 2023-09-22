@@ -393,12 +393,12 @@
                     </P>
                   </div>
 
-                  <div class="card m-3" style="background-color: white">
+
 
                     <!--簽核狀態模組-->
                     <signerList :formId="formIdProp" :formStatus="formStatusRef" :opinion="opinion" ></signerList>
 
-                  </div>
+
 
                   <b-container class="mt-3">
                     <b-row class="justify-content-center">
@@ -727,7 +727,7 @@ export default {
         variables = Object.fromEntries(arrData)
       }
       form.opinion = opinion.opinionData
-      console.log('form.opinion',form.opinion)
+
       let opinionData = '';
 
       if (form.opinion !== '') {
