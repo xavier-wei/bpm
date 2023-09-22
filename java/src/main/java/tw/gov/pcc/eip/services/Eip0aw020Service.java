@@ -8,6 +8,7 @@ import org.springframework.beans.BeanWrapperImpl;
 import org.springframework.stereotype.Service;
 import tw.gov.pcc.eip.dao.EipcodeDao;
 import tw.gov.pcc.eip.dao.UsersDao;
+import tw.gov.pcc.eip.domain.Depts;
 import tw.gov.pcc.eip.domain.Eipcode;
 import tw.gov.pcc.eip.domain.Users;
 import tw.gov.pcc.eip.util.ExceptionUtility;
@@ -49,6 +50,7 @@ public class Eip0aw020Service {
                 x.setAcnt_is_valid("Y");
                 x.setCreate_timestamp(LocalDateTime.now());
                 x.setCreate_user_id("SYS");
+                x.setDept_id(Depts.DEFAULT);
                 Optional.ofNullable(usersDao.selectByKey(x.getUser_id())).ifPresentOrElse(r -> {
                     log.debug("使用者{}已存在", ObjectUtility.normalizeObject(r.getUser_id()));
                     passCnt.getAndIncrement();

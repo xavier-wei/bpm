@@ -36,7 +36,7 @@ public class Eip00w230Service {
     private final UserBean userData;
     private final Pwc_tb_tableau_user_infoDao pwc_tb_tableau_user_infoDao;
 
-    public void findCheckedList(Eip00w230Case eip00W230Case) {
+    public void findCheckedList(Eip00w230Case eip00W230Case, String userId) {
         List<Eip00w230Case.TabCase> tabCaseList = new ArrayList<>();
         List<Eip00w230Case.TabCase> pickTabCaseList = new ArrayList<>();
         List<Eip00w230Case.TabCase> fullTabCaseList = new ArrayList<>();
@@ -65,7 +65,7 @@ public class Eip00w230Service {
         //轉換
         fullTabCaseList.addAll(convertMenuItemToTabCase(tabList));
         //取得已選定功能
-        pickTabCaseList.addAll(convertPwcTabToTabCase(fullTabCaseList, pwc_tb_tableau_user_infoDao.findByUserId(userData.getUserId())));
+        pickTabCaseList.addAll(convertPwcTabToTabCase(fullTabCaseList, pwc_tb_tableau_user_infoDao.findByUserId(userId)));
         //minus
         tabCaseList.addAll(CollectionUtils.removeAll(fullTabCaseList, pickTabCaseList));
     }
@@ -90,7 +90,7 @@ public class Eip00w230Service {
     public void deleteAndInsertPwctab(Eip00w230Case eip00W230Case) {
         List<String> pickTabList = Arrays.asList(StringUtils.split(eip00W230Case.getPickTabListString(), ","));
         //清空
-        pwc_tb_tableau_user_infoDao.findByUserId(userData.getUserId()).forEach(pwc_tb_tableau_user_infoDao::deleteByKey);
+        eip00W230Case.getFullTabList().stream().map(x->convertTabCaseToPwcTab(x,new AtomicReference<>(BigDecimal.ZERO))).forEach(pwc_tb_tableau_user_infoDao::deleteByKey);
         //新增
         Map<String, Eip00w230Case.TabCase> tabCaseMap = eip00W230Case.getFullTabList().stream()
                 .collect(Collectors.toMap(Eip00w230Case.TabCase::getDashboard_fig_id, x -> x));
@@ -103,7 +103,7 @@ public class Eip00w230Service {
         pwc_tb_tableau_user_infoDao.insert(pwcTab);
     }
 
-    private Pwc_tb_tableau_user_info convertTabCaseToPwcTab(Eip00w230Case.TabCase x, AtomicReference<BigDecimal> order) {
+    public Pwc_tb_tableau_user_info convertTabCaseToPwcTab(Eip00w230Case.TabCase x, AtomicReference<BigDecimal> order) {
         return Pwc_tb_tableau_user_info.builder()
                 .user_id(userData.getUserId())
                 .create_time(LocalDateTime.now())
