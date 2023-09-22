@@ -167,6 +167,7 @@ public class BpmIsmsL410ServiceNew implements BpmIsmsService {
     // 設定需要申請的Task及各task的Signer
     private static void setSys(HashMap<String, Object> variables, BpmIsmsL410DTO bpmIsmsL410DTO,HashMap<String, String> signerIds ) {
         HashMap<String, Object> sysNameMap = new HashMap<>();
+
         bpmIsmsL410DTO.getL410Variables().forEach(s-> s.keySet().forEach(sysName->sysNameMap.put(sysName,s.get(sysName))));
         sysNameMap.keySet().forEach(sysName->{
             if (sysNameMap.get(sysName)==null) {
@@ -175,6 +176,7 @@ public class BpmIsmsL410ServiceNew implements BpmIsmsService {
                 variables.put(sysName, "1");
             }
         });
+
 //        variables.put("isHrSys", bpmIsmsL410DTO.getL410Variables().g);
 //        variables.put("isAdSys", bpmIsmsL410DTO.getAdSys());
 //        variables.put("isOdSys", bpmIsmsL410DTO.getIsOdSys());
@@ -189,15 +191,19 @@ public class BpmIsmsL410ServiceNew implements BpmIsmsService {
 //        variables.put("isOtherSys1", bpmIsmsL410DTO.getIsOtherSys1());
 //        variables.put("isOtherSys2", bpmIsmsL410DTO.getIsOtherSys2());
 //        variables.put("isOtherSys3", bpmIsmsL410DTO.getIsOtherSys3());
-
+        HashMap<String, String> signerMapTemp = new HashMap<>();
         variables.keySet()
             .stream()
-            .filter(s-> s.startsWith("is"))
+            .filter(s-> s.startsWith("is")&& !"isSubmit".equals(s))
             .filter(s->"1".equals(variables.get(s)))
             .forEach(s->{
+                System.out.println(s);
                 String siner = s.replaceFirst("is", "") + "Signer";
-                variables.put(siner, signerIds.get(SysSignerEnum.getSinerUnitBySigner(siner)));
+                System.out.println(siner);
+                signerMapTemp.put(siner, signerIds.get(SysSignerEnum.getSinerUnitBySigner(siner)));
         });
+        signerMapTemp.keySet().forEach(s -> variables.put(s, signerMapTemp.get(s)));
+        signerMapTemp.clear();
 //        variables.put("HrSysSigner", signerIds.get("BPM_PR_Operator")); // BPM_PR_Operator
 //        variables.put("AdSysSigner", bpmIptOperator); // BPM_IPT_Operator
 //        variables.put("OdSysSigner", signerIds.get("BPM_SEC_Operator")); // BPM_SEC_Operator

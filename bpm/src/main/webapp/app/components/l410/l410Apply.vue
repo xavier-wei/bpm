@@ -815,14 +815,14 @@ export default {
             formData.append('fileDto', new Blob([JSON.stringify(appendixData.value)], {type: 'application/json'}));
           }
 
-          // axios
-          //   .post(`/process/start/L410`, formData, headers)
-          //   .then(({data}) => {
-          //     $bvModal.msgBoxOk('表單新增完畢');
-          //     reset();
-          //     navigateByNameAndParams('l410Query', {isReload: false, isNotKeepAlive: true});
-          //   })
-          //   .catch(notificationErrorHandler(notificationService));
+          axios
+            .post(`/process/start/L410`, formData, headers)
+            .then(({data}) => {
+              $bvModal.msgBoxOk('表單新增完畢');
+              reset();
+              navigateByNameAndParams('l410Query', {isReload: false, isNotKeepAlive: true});
+            })
+            .catch(notificationErrorHandler(notificationService));
 
         }
       } else {
