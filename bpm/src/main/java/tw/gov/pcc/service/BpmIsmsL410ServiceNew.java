@@ -29,7 +29,8 @@ import java.util.UUID;
 @Service("L410Service")
 public class BpmIsmsL410ServiceNew implements BpmIsmsService {
 
-    private final String[] ROLE_IDS = {"BPM_IPT_Operator", "BPM_IPT_Mgr", "BPM_PR_Operator", "BPM_SEC_Operator"};
+    // BPM_IPT_Operator 資推小組承辦人、 BPM_IPT_Operator 簡任技正/科長 、 BPM_PR_Operator
+    private final String[] ROLE_IDS = {"BPM_IPT_Operator", "BPM_IPT_Operator", "BPM_PR_Operator", "BPM_SEC_Operator"};
 
     private final Logger log = LoggerFactory.getLogger(BpmIsmsL410ServiceNew.class);
     public static final HashMap<UUID, BpmIsmsL410DTO> DTO_HOLDER = new HashMap<>();
