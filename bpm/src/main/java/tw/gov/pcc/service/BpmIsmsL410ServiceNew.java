@@ -176,21 +176,6 @@ public class BpmIsmsL410ServiceNew implements BpmIsmsService {
                 variables.put(sysName, "1");
             }
         });
-
-//        variables.put("isHrSys", bpmIsmsL410DTO.getL410Variables().g);
-//        variables.put("isAdSys", bpmIsmsL410DTO.getAdSys());
-//        variables.put("isOdSys", bpmIsmsL410DTO.getIsOdSys());
-//        variables.put("isMeetingRoom", bpmIsmsL410DTO.getIsMeetingRoom());
-//        variables.put("isEmailSys", bpmIsmsL410DTO.getIsEmailSys());
-//        variables.put("isWebSite", bpmIsmsL410DTO.getIsWebSite());
-//        variables.put("isPccPis", bpmIsmsL410DTO.getIsPccPis());
-//        variables.put("isEngAndPrjInfoSys", bpmIsmsL410DTO.getIsEngAndPrjInfoSys());
-//        variables.put("isRevSys", bpmIsmsL410DTO.getIsRevSys());
-//        variables.put("isBidSys", bpmIsmsL410DTO.getIsBidSys());
-//        variables.put("isRecSys", bpmIsmsL410DTO.getIsRecSys());
-//        variables.put("isOtherSys1", bpmIsmsL410DTO.getIsOtherSys1());
-//        variables.put("isOtherSys2", bpmIsmsL410DTO.getIsOtherSys2());
-//        variables.put("isOtherSys3", bpmIsmsL410DTO.getIsOtherSys3());
         HashMap<String, String> signerMapTemp = new HashMap<>();
         variables.keySet()
             .stream()
@@ -204,21 +189,6 @@ public class BpmIsmsL410ServiceNew implements BpmIsmsService {
         });
         signerMapTemp.keySet().forEach(s -> variables.put(s, signerMapTemp.get(s)));
         signerMapTemp.clear();
-//        variables.put("HrSysSigner", signerIds.get("BPM_PR_Operator")); // BPM_PR_Operator
-//        variables.put("AdSysSigner", bpmIptOperator); // BPM_IPT_Operator
-//        variables.put("OdSysSigner", signerIds.get("BPM_SEC_Operator")); // BPM_SEC_Operator
-//        variables.put("MeetingRoomSigner", signerIds.get("BPM_SEC_Operator")); // BPM_SEC_Operator
-//        variables.put("EmailSysSigner", bpmIptOperator); // BPM_IPT_Operator
-//        variables.put("WebSiteSigner", bpmIptOperator); // BPM_IPT_Operator
-//        variables.put("PccPisSigner", bpmIptOperator); // BPM_IPT_Operator
-//        variables.put("EngAndPrjInfoSysSigner", bpmIptOperator);
-//        variables.put("RevSysSigner", bpmIptOperator); // BPM_IPT_Operator
-//        variables.put("BidSysSigner", bpmIptOperator); // BPM_IPT_Operator
-//        variables.put("RecSysSigner", bpmIptOperator); // BPM_IPT_Operator
-//        variables.put("OtherSys1Signer", bpmIptOperator); // BPM_IPT_Operator
-//        variables.put("OtherSys2Signer", bpmIptOperator); // BPM_IPT_Operator
-//        variables.put("OtherSys3Signer", bpmIptOperator); // BPM_IPT_Operator
-//
 
     }
 

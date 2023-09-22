@@ -64,7 +64,7 @@
     <sequenceFlow id="sid-2af9252d-91fc-432a-893a-328cf8129937" sourceRef="sid-a1383f52-47a0-48a3-8551-67c550ace4d3" targetRef="pccPis">
       <conditionExpression xsi:type="tFormalExpression"><![CDATA[${isPccPis=="1"}]]></conditionExpression>
     </sequenceFlow>
-    <userTask id="otherSys1" name="本會其他資通系統1" flowable:candidateUsers="OtherSys1Signer"/>
+    <userTask id="otherSys1" name="本會其他資通系統1" flowable:candidateUsers="${OtherSys1Signer}"/>
     <sequenceFlow id="sid-cb85460f-4624-43e8-9918-0556294321c5" sourceRef="sid-a1383f52-47a0-48a3-8551-67c550ace4d3" targetRef="otherSys1">
       <conditionExpression xsi:type="tFormalExpression"><![CDATA[${isOtherSys1=="1"}]]></conditionExpression>
     </sequenceFlow>
