@@ -446,7 +446,7 @@
                 </b-button>
                 <b-button class="ml-2" style="background-color: #17a2b8; color: white"
                           variant="outline-secondary"
-                          @click="reset()">清除
+                          @click="resetAll()">清除
                 </b-button>
                 <b-button class="ml-2" style="background-color: #17a2b8; color: white"
                           variant="outline-secondary"
@@ -787,7 +787,7 @@ export default {
 
 
     async function submitForm(isSubmit) {
-      let variables = [];
+      let l410Variables = [];
       form.isSubmit = isSubmit;
       const isValid = await checkValidity();
 
@@ -795,39 +795,11 @@ export default {
         const isOK = await $bvModal.msgBoxConfirm('是否確認送出修改內容？');
 
         if (isOK) {
-          await Promise.all(table.data.map(data => checkboxToMapAndForm(data, form, variables)));
+          await Promise.all(table.data.map(data => checkboxToMapAndForm(data, form, l410Variables)));
 
-          const pccWwwKey = "pccWww";
-          const pccHomeKey = "pccHome";
+          form.l410Variables = l410Variables;
 
-          let found1 = false;
-          let found2 = false;
-
-          //過濾variables 找出有沒有pccWww、pccHome
-          for (let i = 0; i < variables.length; i++) {
-            if (variables[i].hasOwnProperty(pccWwwKey)) {
-              found1 = true;
-            }
-            if (variables[i].hasOwnProperty(pccHomeKey)) {
-              found2 = true;
-            }
-          }
-
-          //pccWww、pccHome 把沒有的物件塞進variables
-          if (!found1) {
-            let mapData = new Map<string, object>();
-            mapData.set('pccWww', null)
-            let arrData = Array.from(mapData);
-            variables.push(Object.fromEntries(arrData))
-          }
-          if (!found2) {
-            let mapData = new Map<string, object>();
-            mapData.set('pccHome', null)
-            let arrData = Array.from(mapData);
-            variables.push(Object.fromEntries(arrData))
-          }
-
-          form.l410Variables = variables;
+          console.log(' l410Apply.vue - submitForm - 802: ', JSON.parse(JSON.stringify(form)))
 
           let body = {
             "L410": JSON.stringify(form)
@@ -843,14 +815,14 @@ export default {
             formData.append('fileDto', new Blob([JSON.stringify(appendixData.value)], {type: 'application/json'}));
           }
 
-          axios
-            .post(`/process/start/L410`, formData, headers)
-            .then(({data}) => {
-              $bvModal.msgBoxOk('表單新增完畢');
-              reset();
-              navigateByNameAndParams('l410Query', {isReload: false, isNotKeepAlive: true});
-            })
-            .catch(notificationErrorHandler(notificationService));
+          // axios
+          //   .post(`/process/start/L410`, formData, headers)
+          //   .then(({data}) => {
+          //     $bvModal.msgBoxOk('表單新增完畢');
+          //     reset();
+          //     navigateByNameAndParams('l410Query', {isReload: false, isNotKeepAlive: true});
+          //   })
+          //   .catch(notificationErrorHandler(notificationService));
 
         }
       } else {
@@ -904,6 +876,26 @@ export default {
       }
     }
 
+    function resetAll() {
+      reset();
+      table.data.forEach(data=>{
+        data.checkbox = '0';
+        data.otherSys = null;
+        data.otherSysAccount = null;
+        data.systemApplyInput = null;
+        data.sys = null;
+        data.sysChange = null;
+        data.emailApply1 = null;
+        data.emailApply2 = null;
+        data.isUnitAdm = null;
+        data.isUnitDataMgr = null;
+        data.isWebSiteOther = null;
+        data.otherRemark = null;
+      })
+      form.applyItem = [];
+      form.webSiteList = [];
+    }
+
 
     return {
       $v,
@@ -923,7 +915,8 @@ export default {
       toQueryView,
       bpmDeptsOptions,
       resetValue,
-      resetCheckboxValue
+      resetCheckboxValue,
+      resetAll
     }
   }
 }

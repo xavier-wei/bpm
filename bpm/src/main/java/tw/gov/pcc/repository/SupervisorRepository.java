@@ -16,7 +16,7 @@ public class SupervisorRepository {
                 "     , F2.PECARD F2_ACCOUNT" +
                 "     , F2.PENAME F2_PENAME" +
                 "     , P3.POSNAME F2_POSNAME" +
-                " FROM EIP.DBO.VIEW_CPAPE05M A" +
+                " FROM eip.dbo.VIEW_CPAPE05M A" +
                 "         LEFT JOIN POSITION P1 ON  A.PEIDNO =  P1.ID" +
                 "         LEFT JOIN POSITION P2 ON  P1.FID =  P2.POSID" +
                 "         LEFT JOIN VIEW_CPAPE05M F1 ON F1.PEIDNO = P2.ID" +

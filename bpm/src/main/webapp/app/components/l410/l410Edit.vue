@@ -435,9 +435,9 @@
 
                     <!--處理人員-->
                     <template #cell(reviewStaffName)="row">
-                      {{row.item.checkbox}}
+                      {{ row.item.checkbox }}
                       <b-form-input maxlength="200" v-model="row.item.admName"
-                                    :disabled=" userData.deptId !== row.item.admUnit || row.item.checkbox !== '1'  || formStatusRef === FormStatusEnum.READONLY" />
+                                    :disabled=" userData.deptId !== row.item.admUnit || row.item.checkbox !== '1'  || formStatusRef === FormStatusEnum.READONLY"/>
                     </template>
 
                   </b-table>
@@ -483,7 +483,7 @@
                     <b-button class="ml-2" style="background-color: #17a2b8; color: white"
                               variant="outline-secondary"
                               @click="reviewStart('1')"
-                              v-show="formStatusRef === FormStatusEnum.VERIFY" >同意
+                              v-show="formStatusRef === FormStatusEnum.VERIFY">同意
                     </b-button>
                     <b-button class="ml-2" style="background-color: #17a2b8; color: white"
                               variant="outline-secondary"
@@ -524,7 +524,7 @@
         </b-card-body>
       </section>
     </b-container>
-    <signatureBmodel ref="signatureBmodel" :formData="form"> </signatureBmodel>
+    <signatureBmodel ref="signatureBmodel" :formData="form"></signatureBmodel>
   </div>
 </template>
 
@@ -616,7 +616,7 @@ export default {
 
     const formDefault = {
       formId: '',//表單編號
-      applyDate:'',//	申請日期
+      applyDate: '',//	申請日期
       filEmpid: '',//	填表人員工編號
       filName: '',//	填表人姓名
       filUnit: '',//	填表人單位名稱
@@ -925,37 +925,8 @@ export default {
         const isOK = await $bvModal.msgBoxConfirm('是否確認送出修改內容？');
         if (isOK) {
 
+          //把頁面上iTable內的所有資料逐一轉成form裡的值，並把組出List<HashMap<String, HashMap<String, Object>>>傳給後端
           await Promise.all(table.data.map(data => checkboxToMapAndForm(data, form, l410Variables)));
-
-          const pccWwwKey = "pccWww";
-          const pccHomeKey = "pccHome";
-
-          let found1 = false;
-          let found2 = false;
-
-          //過濾variables 找出有沒有pccWww、pccHome
-          for (let i = 0; i < l410Variables.length; i++) {
-            if (l410Variables[i].hasOwnProperty(pccWwwKey)) {
-              found1 = true;
-            }
-            if (l410Variables[i].hasOwnProperty(pccHomeKey)) {
-              found2 = true;
-            }
-          }
-
-          //pccWww、pccHome 把沒有的物件塞進variables
-          if (!found1) {
-            let mapData = new Map<string, object>();
-            mapData.set('pccWww', null)
-            let arrData = Array.from(mapData);
-            l410Variables.push(Object.fromEntries(arrData))
-          }
-          if (!found2) {
-            let mapData = new Map<string, object>();
-            mapData.set('pccHome', null)
-            let arrData = Array.from(mapData);
-            l410Variables.push(Object.fromEntries(arrData))
-          }
 
           const formData = new FormData();
 
@@ -968,6 +939,8 @@ export default {
           }
 
           formData.append('form', new Blob([JSON.stringify(body)], {type: 'application/json'}));
+
+          //判斷appendix頁面傳過來的file
           if (JSON.stringify(appendixData.value) !== '[]') {
             console.log('安安')
             for (let i in appendixData.value) {
@@ -993,45 +966,17 @@ export default {
       }
     }
 
-   async function reviewStart(item) {
+    async function reviewStart(item) {
       let variables = {};
       let l410Variables = [];
-      console.log('taskDataRef',taskDataRef.value)
+      console.log('taskDataRef', taskDataRef.value)
 
-     await Promise.all(table.data.map(data => checkboxToMapAndForm(data, form, l410Variables)));
+      //把頁面上iTable內的所有資料逐一轉成form裡的值，並把組出List<HashMap<String, HashMap<String, Object>>>傳給後端
+      await Promise.all(table.data.map(data => checkboxToMapAndForm(data, form, l410Variables)));
 
-     const pccWwwKey = "pccWww";
-     const pccHomeKey = "pccHome";
+      form.l410Variables = l410Variables;
 
-     let found1 = false;
-     let found2 = false;
-
-     //過濾variables 找出有沒有pccWww、pccHome
-     for (let i = 0; i < l410Variables.length; i++) {
-       if (l410Variables[i].hasOwnProperty(pccWwwKey)) {
-         found1 = true;
-       }
-       if (l410Variables[i].hasOwnProperty(pccHomeKey)) {
-         found2 = true;
-       }
-     }
-
-     //pccWww、pccHome 把沒有的物件塞進l410Variables
-     if (!found1) {
-       let mapData = new Map<string, object>();
-       mapData.set('pccWww', null)
-       let arrData = Array.from(mapData);
-       l410Variables.push(Object.fromEntries(arrData))
-     }
-     if (!found2) {
-       let mapData = new Map<string, object>();
-       mapData.set('pccHome', null)
-       let arrData = Array.from(mapData);
-       l410Variables.push(Object.fromEntries(arrData))
-     }
-
-     form.l410Variables = l410Variables;
-
+      //判斷頁面審核單位是否跟登入者單位一樣，一致就去後端更新資料
       await Promise.all(table.data.map(data => {
         if (data.admUnit === userData.deptId) {
           return iptData.value = true;
@@ -1057,9 +1002,9 @@ export default {
         signer: userData.userName,
         signerId: userData.userId,
         signUnit: userData.deptId,
-        processInstanceId: taskDataRef.value.additional ? taskDataRef.value.processInstanceId  : form.processInstanceId,
+        processInstanceId: taskDataRef.value.additional ? taskDataRef.value.processInstanceId : form.processInstanceId,
         taskId: taskDataRef.value.taskId !== '' ? taskDataRef.value.taskId : '',
-        taskName:taskDataRef.value.taskName !== '' ? taskDataRef.value.taskName : '',
+        taskName: taskDataRef.value.taskName !== '' ? taskDataRef.value.taskName : '',
         variables,
         form: {"L410": JSON.stringify(form)},
         directions: changeDirections(taskDataRef.value.decisionRole),
