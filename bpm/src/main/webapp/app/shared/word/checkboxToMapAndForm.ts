@@ -174,7 +174,7 @@ export function checkboxToMapAndForm(data: any, form: any, variables: any): any 
   if (data.checkbox === '1' && data.systemApplyName === '技師與工程技術顧問公司管理資訊系統') {
 
     form.isEngAndPrjInfoSys = '1'
-    form.engAndPrjInfoSysAccount = data.otherSysAccount
+    form.engAndPrjInfoSysAccount = data.systemApplyInput
     form.engAndPrjInfoSys = data.sys
     form.engAndPrjInfoSysChange = data.sysChange
     form.engAndPrjInfoSysAdmUnit = data.admUnit
@@ -196,7 +196,7 @@ export function checkboxToMapAndForm(data: any, form: any, variables: any): any 
   if (data.checkbox === '1' && data.systemApplyName === '公共工程案件審議資訊系統') {
 
     form.isRevSys = '1'
-    form.revSysAccount = data.otherSysAccount
+    form.revSysAccount = data.systemApplyInput
     form.revSys = data.sys
     form.revSysChange = data.sysChange
     form.revSysAdmUnit = data.admUnit
@@ -219,7 +219,7 @@ export function checkboxToMapAndForm(data: any, form: any, variables: any): any 
   if (data.checkbox === '1' && data.systemApplyName === '災後復建工程經費審議及執行資訊系統') {
 
     form.isRecSys = '1'
-    form.recSysAccount = data.otherSysAccount
+    form.recSysAccount = data.systemApplyInput
     form.recSys = data.sys
     form.recSysChange = data.sysChange
     form.recSysAdmUnit = data.admUnit
@@ -242,7 +242,7 @@ export function checkboxToMapAndForm(data: any, form: any, variables: any): any 
   if (data.checkbox === '1' && data.systemApplyName === '公共工程標案管理系統') {
 
     form.isBidSys = '1'
-    form.bidSysAccount = data.otherSysAccount
+    form.bidSysAccount = data.systemApplyInput
     form.bidSys = data.sys
     form.bidSysChange = data.sysChange
     form.bidSysAdmUnit = data.admUnit

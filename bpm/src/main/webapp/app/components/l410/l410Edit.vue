@@ -89,9 +89,9 @@
                   </i-form-group-check>
 
                   <i-form-group-check label-star class="col-sm-5" label-cols="5" content-cols="7" :label="`單位別 ：`"
-                                      :item="$v.appUnit1">
+                                      :item="$v.appUnit">
                     <!--單位別 : -->
-                    <b-form-select v-model="$v.appUnit1.$model" :options="bpmDeptsOptions"
+                    <b-form-select v-model="$v.appUnit.$model" :options="bpmDeptsOptions"
                                    :disabled="userData.userId !== $v.filEmpid.$model || userData.userId !== $v.appEmpid.$model  || formStatusRef === FormStatusEnum.READONLY">
                       <template #first>
                         <b-form-select-option value="null" disabled>請選擇</b-form-select-option>
@@ -244,7 +244,7 @@
                         <b-form-input
                           v-else
                           maxlength="200" v-model="row.item.systemApplyInput"
-                          :disabled="userData.deptId !== row.item.admUnit || row.item.checkbox !== '1' || formStatusRef === FormStatusEnum.READONLY">
+                          :disabled="form.isSubmit === '1' || userData.deptId !== row.item.admUnit || row.item.checkbox !== '1' || formStatusRef === FormStatusEnum.READONLY">
                         </b-form-input>
 
                         <span v-if="row.item.systemApply === '4'">@mail.pcc.gov.tw</span>
@@ -435,7 +435,6 @@
 
                     <!--處理人員-->
                     <template #cell(reviewStaffName)="row">
-                      {{ row.item.checkbox }}
                       <b-form-input maxlength="200" v-model="row.item.admName"
                                     :disabled=" userData.deptId !== row.item.admUnit || row.item.checkbox !== '1'  || formStatusRef === FormStatusEnum.READONLY"/>
                     </template>
@@ -467,6 +466,10 @@
                   </P>
 
                 </div>
+
+                <!--簽核狀態模組-->
+                <signerList :formId="formIdProp" :formStatus="formStatusRef" :opinion="opinion" ></signerList>
+
 
                 <b-container class="mt-3">
                   <b-row class="justify-content-center">
@@ -551,6 +554,8 @@ import signatureBmodel from "@/components/signatureBmodel.vue";
 
 const appendix = () => import('@/components/appendix.vue');
 const flowChart = () => import('@/components/flowChart.vue');
+const signerList = () => import('@/components/signerList.vue');
+
 export default {
   name: "l410Edit",
   methods: {
@@ -587,6 +592,7 @@ export default {
     appendix,
     flowChart,
     signatureBmodel,
+    signerList,
   },
   setup(props) {
     let appendixData = reactive({});
@@ -603,6 +609,10 @@ export default {
     const signatureBmodel = ref(null);
     let fileDataId = reactive({
       fileId: ''
+    });
+
+    let opinion = reactive({
+      opinionData: ''
     });
 
     enum FormStatusEnum {
@@ -625,7 +635,7 @@ export default {
       appEngName: '', // 英文姓名
       appEmpid: '',//	申請人員工編號
       extNum: '',//	分機
-      appUnit1: '',//	單位別
+      appUnit: '',//	單位別
       position: '',//	職稱
       appReason: '1',//	申請事由 1.新進 2.離職 3.職務異動
       isEnableDate: '0',//	是否有生效日期
@@ -771,7 +781,7 @@ export default {
       appEngName: {required},
       appEmpid: {required},
       extNum: {},
-      appUnit1: {required},
+      appUnit: {required},
       position: {required},
       appReason: {required},
       isEnableDate: {},
@@ -990,6 +1000,7 @@ export default {
         variables = Object.fromEntries(arrData)
       }
 
+      form.opinion = opinion.opinionData
       let opinionData = '';
 
       if (form.opinion !== '') {
@@ -1124,7 +1135,9 @@ export default {
       resetCheckboxValue,
       userData,
       signatureBmodel,
-      showModel
+      showModel,
+      formIdProp,
+      opinion,
     }
   }
 }

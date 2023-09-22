@@ -8,7 +8,9 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 import tw.gov.pcc.domain.BpmIsmsL410;
 import tw.gov.pcc.domain.User;
+import tw.gov.pcc.domain.UserRole;
 import tw.gov.pcc.repository.BpmIsmsL410Repository;
+import tw.gov.pcc.repository.UserRoleRepository;
 import tw.gov.pcc.service.dto.BpmIsmsL410DTO;
 import tw.gov.pcc.service.dto.BpmUploadFileDTO;
 import tw.gov.pcc.service.dto.EndEventDTO;
@@ -21,16 +23,14 @@ import java.io.IOException;
 import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Service("L410Service")
 public class BpmIsmsL410ServiceNew implements BpmIsmsService {
 
-    // BPM_IPT_Operator 資推小組承辦人、 BPM_IPT_Operator 簡任技正/科長 、 BPM_PR_Operator
-    private final String[] ROLE_IDS = {"BPM_IPT_Operator", "BPM_IPT_Operator", "BPM_PR_Operator", "BPM_SEC_Operator"};
+    // BPM_IPT_Operator 資推小組承辦人、 BPM_IPT_Mgr 簡任技正/科長 、 BPM_PR_Operator 人事室、BPM_SEC_Operator 秘書處
+    private final String[] ROLE_IDS = {"BPM_IPT_Operator", "BPM_IPT_Mgr", "BPM_PR_Operator", "BPM_SEC_Operator"};
 
     private final Logger log = LoggerFactory.getLogger(BpmIsmsL410ServiceNew.class);
     public static final HashMap<UUID, BpmIsmsL410DTO> DTO_HOLDER = new HashMap<>();
@@ -48,8 +48,10 @@ public class BpmIsmsL410ServiceNew implements BpmIsmsService {
     private final BpmSignerListService bpmSignerListService;
     private final BpmIsmsL410Mapper bpmIsmsL410Mapper;
     private final SupervisorService supervisorService;
+    private final UserRoleRepository userRoleRepository;
 
-    public BpmIsmsL410ServiceNew(BpmIsmsL410Repository bpmIsmsL410Repository, BpmUploadFileService bpmUploadFileService, BpmUploadFileMapper bpmUploadFileMapper, BpmSignStatusService bpmSignStatusService, BpmSignerListService bpmSignerListService, BpmIsmsL410Mapper bpmIsmsL410Mapper, SupervisorService supervisorService) {
+
+    public BpmIsmsL410ServiceNew(BpmIsmsL410Repository bpmIsmsL410Repository, BpmUploadFileService bpmUploadFileService, BpmUploadFileMapper bpmUploadFileMapper, BpmSignStatusService bpmSignStatusService, BpmSignerListService bpmSignerListService, BpmIsmsL410Mapper bpmIsmsL410Mapper, SupervisorService supervisorService, UserRoleRepository userRoleRepository) {
         this.bpmIsmsL410Repository = bpmIsmsL410Repository;
         this.bpmUploadFileService = bpmUploadFileService;
         this.bpmUploadFileMapper = bpmUploadFileMapper;
@@ -57,6 +59,7 @@ public class BpmIsmsL410ServiceNew implements BpmIsmsService {
         this.bpmSignerListService = bpmSignerListService;
         this.bpmIsmsL410Mapper = bpmIsmsL410Mapper;
         this.supervisorService = supervisorService;
+        this.userRoleRepository = userRoleRepository;
     }
 
     @Override
@@ -103,7 +106,7 @@ public class BpmIsmsL410ServiceNew implements BpmIsmsService {
                 taskDTO,
                 bpmIsmsL410DTO.getAppEmpid(),
                 bpmIsmsL410DTO.getAppName(),
-                bpmIsmsL410DTO.getAppUnit1()
+                bpmIsmsL410DTO.getAppUnit()
             );
         }
         bpmSignerListService.saveBpmSignerList(VARIABLES_HOLDER.get(uuid), formId);
@@ -139,13 +142,54 @@ public class BpmIsmsL410ServiceNew implements BpmIsmsService {
         variables.put("applier", bpmIsmsL410DTO.getAppEmpid());
         variables.put("isSubmit", bpmIsmsL410DTO.getIsSubmit());
         // 填入上級
+        List<UserRole> userRoles = userRoleRepository.findByRoleIdIn(List.of(ROLE_IDS));
+        // 設定需要申請的Task有哪些
+
+
         supervisorService.setSupervisor(variables,bpmIsmsL410DTO.getAppEmpid(),userInfo);
+        HashMap<String, String> signerIds = new HashMap<>();
 
-
+        Arrays.stream(ROLE_IDS).forEach(s -> {
+            List<String> userIds = userRoles.stream().filter(userRole -> userRole.getRoleId().equals(s)).map(UserRole::getUserId).collect(Collectors.toList());
+            signerIds.put(s, String.join(",", userIds));
+        });
+        variables.put("infoGroup", signerIds.get("BPM_IPT_Operator"));
+        variables.put("seniorTechSpecialist", signerIds.get("BPM_IPT_Mgr"));
+        setSys(variables, bpmIsmsL410DTO,signerIds);
 
 
         VARIABLES_HOLDER.put(uuid, variables);
+        DTO_HOLDER.put(uuid, bpmIsmsL410DTO);
         return uuid;
+    }
+
+
+    // 設定需要申請的Task及各task的Signer
+    private static void setSys(HashMap<String, Object> variables, BpmIsmsL410DTO bpmIsmsL410DTO,HashMap<String, String> signerIds ) {
+        HashMap<String, Object> sysNameMap = new HashMap<>();
+
+        bpmIsmsL410DTO.getL410Variables().forEach(s-> s.keySet().forEach(sysName->sysNameMap.put(sysName,s.get(sysName))));
+        sysNameMap.keySet().forEach(sysName->{
+            if (sysNameMap.get(sysName)==null) {
+                variables.put(sysName, "0");
+            }else {
+                variables.put(sysName, "1");
+            }
+        });
+        HashMap<String, String> signerMapTemp = new HashMap<>();
+        variables.keySet()
+            .stream()
+            .filter(s-> s.startsWith("is")&& !"isSubmit".equals(s))
+            .filter(s->"1".equals(variables.get(s)))
+            .forEach(s->{
+                System.out.println(s);
+                String siner = s.replaceFirst("is", "") + "Signer";
+                System.out.println(siner);
+                signerMapTemp.put(siner, signerIds.get(SysSignerEnum.getSinerUnitBySigner(siner)));
+        });
+        signerMapTemp.keySet().forEach(s -> variables.put(s, signerMapTemp.get(s)));
+        signerMapTemp.clear();
+
     }
 
     @Override
@@ -179,4 +223,42 @@ public class BpmIsmsL410ServiceNew implements BpmIsmsService {
             }
         }
     }
+}
+
+enum SysSignerEnum {
+
+    HrSys("HrSysSigner", "BPM_PR_Operator"),
+    AdSys("AdSysSigner", "BPM_IPT_Operator"),
+    OdSys("OdSysSigner", "BPM_SEC_Operator"),
+    MeetingRoom("MeetingRoomSigner", "BPM_SEC_Operator"),
+    EmailSys("EmailSysSigner","BPM_IPT_Operator"),
+    WebSite("WebSiteSigner","BPM_IPT_Operator"),
+    PccPis("PccPisSigner","BPM_IPT_Operator"),
+    EngAndPrjInfoSys("EngAndPrjInfoSysSigner","BPM_IPT_Operator"),
+    RevSys("RevSysSigner","BPM_IPT_Operator"),
+    BidSys("BidSysSigner","BPM_IPT_Operator"),
+    RecSys("RecSysSigner","BPM_IPT_Operator"),
+    OtherSys1("OtherSys1Signer","BPM_IPT_Operator"),
+    OtherSys2("OtherSys2Signer","BPM_IPT_Operator"),
+    OtherSys3("OtherSys3Signer","BPM_IPT_Operator");
+
+    private final String signer;
+    private final String sinerUnit;
+
+
+    SysSignerEnum(String signer, String sinerUnit) {
+        this.signer = signer;
+        this.sinerUnit = sinerUnit;
+    }
+
+    public static String getSinerUnitBySigner(String signer) {
+        for (SysSignerEnum sysSignerEnum : SysSignerEnum.values()) {
+            if (sysSignerEnum.signer.equals(signer)) {
+                return sysSignerEnum.sinerUnit;
+            }
+        }
+        return null;
+    }
+
+
 }

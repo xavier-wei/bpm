@@ -165,7 +165,7 @@ export default defineComponent({
           tdClass: 'text-center align-middle',
         },
         {
-          key: 'appUnit1',
+          key: 'appUnit',
           label: '申請單位',
           sortable: false,
           thStyle: 'width:10%',

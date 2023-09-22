@@ -1,20 +1,19 @@
 -- auto-generated definition
 create table BPM_ISMS_L410
 (
-    FORM_ID                          varchar(50)                                       not null
+    FORM_ID                          varchar(50) not null
         constraint BPM_ISMS_L410_pk
             primary key,
-    PROCESS_INSTANCE_ID              varchar(50)                                       not null,
-    APPLY_DATE                       datetime                                          not null,
-    FIL_EMPID                        nvarchar(20) collate Chinese_Taiwan_Stroke_CS_AS  not null,
-    FIL_NAME                         nvarchar(20) collate Chinese_Taiwan_Stroke_CS_AS  not null,
+    PROCESS_INSTANCE_ID              varchar(50) not null,
+    APPLY_DATE                       datetime    not null,
+    FIL_EMPID                        nvarchar(20) collate Chinese_Taiwan_Stroke_CS_AS not null,
+    FIL_NAME                         nvarchar(20) collate Chinese_Taiwan_Stroke_CS_AS not null,
     FIL_UNIT                         nvarchar(100) collate Chinese_Taiwan_Stroke_CS_AS not null,
-    APP_EMPID                        nvarchar(20) collate Chinese_Taiwan_Stroke_CS_AS  not null,
-    APP_NAME                         nvarchar(20) collate Chinese_Taiwan_Stroke_CS_AS  not null,
-    APP_ENG_NAME                     nvarchar(20) collate Chinese_Taiwan_Stroke_CS_AS  not null,
-    APP_UNIT1                        nvarchar(30) collate Chinese_Taiwan_Stroke_CS_AS  not null,
-    APP_UNIT2                        nvarchar(30) collate Chinese_Taiwan_Stroke_CS_AS  not null,
-    POSITION                         nvarchar(20) collate Chinese_Taiwan_Stroke_CS_AS  not null,
+    APP_EMPID                        nvarchar(20) collate Chinese_Taiwan_Stroke_CS_AS not null,
+    APP_NAME                         nvarchar(20) collate Chinese_Taiwan_Stroke_CS_AS not null,
+    APP_ENG_NAME                     nvarchar(20) collate Chinese_Taiwan_Stroke_CS_AS not null,
+    APP_UNIT                         nvarchar(30) collate Chinese_Taiwan_Stroke_CS_AS not null,
+    POSITION                         nvarchar(20) collate Chinese_Taiwan_Stroke_CS_AS not null,
     EXT_NUM                          nvarchar(20) collate Chinese_Taiwan_Stroke_CS_AS,
     IS_SUBMIT                        nvarchar default '0' collate Chinese_Taiwan_Stroke_CS_AS,
     APP_REASON                       nvarchar collate Chinese_Taiwan_Stroke_CS_AS,
@@ -144,10 +143,9 @@ create table BPM_ISMS_L410
     PROCESS_INSTANCE_STATUS          nvarchar default '0' collate Chinese_Taiwan_Stroke_CS_AS,
     UPDATE_USER                      nvarchar(20) collate Chinese_Taiwan_Stroke_CS_AS,
     UPDATE_TIME                      datetime,
-    CREATE_USER                      nvarchar(20) collate Chinese_Taiwan_Stroke_CS_AS  not null,
-    CREATE_TIME                      datetime                                          not null
-)
-    go
+    CREATE_USER                      nvarchar(20) collate Chinese_Taiwan_Stroke_CS_AS not null,
+    CREATE_TIME                      datetime    not null
+) go
 
 exec sp_addextendedproperty 'MS_Description', N'L410-共用系統使用者帳號申請單', 'SCHEMA', 'dbo', 'TABLE',
      'BPM_ISMS_L410'
@@ -190,11 +188,7 @@ exec sp_addextendedproperty 'MS_Description', N'申請人英文姓名', 'SCHEMA'
 go
 
 exec sp_addextendedproperty 'MS_Description', N'申請人單位別', 'SCHEMA', 'dbo', 'TABLE', 'BPM_ISMS_L410', 'COLUMN',
-     'APP_UNIT1'
-go
-
-exec sp_addextendedproperty 'MS_Description', N'申請人科別', 'SCHEMA', 'dbo', 'TABLE', 'BPM_ISMS_L410', 'COLUMN',
-     'APP_UNIT2'
+     'APP_UNIT'
 go
 
 exec sp_addextendedproperty 'MS_Description', N'職稱', 'SCHEMA', 'dbo', 'TABLE', 'BPM_ISMS_L410', 'COLUMN', 'POSITION'

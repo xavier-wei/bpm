@@ -88,9 +88,9 @@
               </i-form-group-check>
 
               <i-form-group-check label-star class="col-sm-5" label-cols="5" content-cols="7" :label="`單位別 ：`"
-                                  :item="$v.appUnit1">
+                                  :item="$v.appUnit">
                 <!--單位別 : -->
-                <b-form-select v-model="$v.appUnit1.$model" :options="bpmDeptsOptions">
+                <b-form-select v-model="$v.appUnit.$model" :options="bpmDeptsOptions">
                   <template #first>
                     <b-form-select-option value="null" disabled>請選擇</b-form-select-option>
                   </template>
@@ -533,7 +533,7 @@ export default {
       appEngName: userData.userEName != '' ? userData.userEName : '', // 英文姓名
       appEmpid: userData.empId != null ? userData.empId : '',//	申請人員工編號
       extNum: userData.tel2 != null ? userData.tel2 : '',//	分機
-      appUnit1: userData.deptId != null ? userData.deptId : '',//	單位別
+      appUnit: userData.deptId != null ? userData.deptId : '',//	單位別
       position: userData.cpape05m.title != null ? userData.cpape05m.title : '',//	職稱
       appReason: '1',//	申請事由 1.新進 2.離職 3.職務異動
       isEnableDate: '0',//	是否有生效日期
@@ -678,7 +678,7 @@ export default {
       appEngName: {required},
       appEmpid: {required},
       extNum: {},
-      appUnit1: {required},
+      appUnit: {required},
       position: {required},
       appReason: {required},
       isEnableDate: {},
@@ -815,14 +815,14 @@ export default {
             formData.append('fileDto', new Blob([JSON.stringify(appendixData.value)], {type: 'application/json'}));
           }
 
-          // axios
-          //   .post(`/process/start/L410`, formData, headers)
-          //   .then(({data}) => {
-          //     $bvModal.msgBoxOk('表單新增完畢');
-          //     reset();
-          //     navigateByNameAndParams('l410Query', {isReload: false, isNotKeepAlive: true});
-          //   })
-          //   .catch(notificationErrorHandler(notificationService));
+          axios
+            .post(`/process/start/L410`, formData, headers)
+            .then(({data}) => {
+              $bvModal.msgBoxOk('表單新增完畢');
+              reset();
+              navigateByNameAndParams('l410Query', {isReload: false, isNotKeepAlive: true});
+            })
+            .catch(notificationErrorHandler(notificationService));
 
         }
       } else {

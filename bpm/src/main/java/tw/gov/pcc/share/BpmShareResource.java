@@ -5,16 +5,20 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+import tw.gov.pcc.domain.BpmSignerList;
 import tw.gov.pcc.domain.Depts;
 import tw.gov.pcc.domain.Eipcode;
 import tw.gov.pcc.eip.dao.DeptsDao;
 import tw.gov.pcc.eip.dao.EipcodeDao;
 import tw.gov.pcc.repository.BpmIsmsAdditionalRepository;
+import tw.gov.pcc.repository.BpmSignerListRepository;
+import tw.gov.pcc.service.dto.BpmSignStatusDTO;
 import tw.gov.pcc.utils.MapUtils;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/eip")
@@ -30,6 +34,10 @@ public class BpmShareResource {
 
     @Autowired
     private BpmIsmsAdditionalRepository bpmIsmsAdditionalRepository;
+
+
+    @Autowired
+    private BpmSignerListRepository bpmSignerListRepository;
 
     @GetMapping("/bpmUnitOptions")
     public List<Eipcode> unitOptions() {
@@ -80,6 +88,13 @@ public class BpmShareResource {
         });
 
         return signatureOptionsConvert;
+    }
+
+    @GetMapping("/getBpmSignerList/{id}")
+    public List<BpmSignerList> findByBpmSignerList(
+        @PathVariable String id
+    ) {
+        return bpmSignerListRepository.findByFormId(id);
     }
 
 }

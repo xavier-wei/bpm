@@ -393,73 +393,12 @@
                     </P>
                   </div>
 
-                  <div class="card m-3" style="background-color: white">
-
-                    <div class="m-4">
-                      <P> 簽核流程資訊： </P>
-                      <b-input-group>
-                        <p class="col-4">申請人所屬之科長：</p>
-                        <p class="col-3">員工編號：2456</p>
-                        <p class="col-3">姓名：張科長</p>
-                      </b-input-group>
-                      <b-input-group>
-                        <p class="col-4">申請人所屬之單位主管：</p>
-                        <p class="col-3">員工編號：2543</p>
-                        <p class="col-3"> 姓名：王處長</p>
-                      </b-input-group>
-                      <b-input-group>
-                        <p class="col-4">資訊小組承辦人：</p>
-                        <p class="col-3">員工編號：2256</p>
-                        <p class="col-3">姓名：楊資安</p>
-                      </b-input-group>
-                      <b-input-group>
-                        <p class="col-4">資訊小組簡任技正/科長：</p>
-                        <p class="col-3">員工編號：2273</p>
-                        <p class="col-3">姓名：蔡簡任</p>
-                      </b-input-group>
-                      <b-input-group>
-                        <p class="col-4">機房操作人員：</p>
-                        <p class="col-3">員工編號：2145</p>
-                        <p class="col-3">姓名：王操作</p>
-                      </b-input-group>
-                      <b-input-group>
-                        <p class="col-4">複核人員：</p>
-                        <p class="col-3">員工編號：2369</p>
-                        <p class="col-3">姓名：李複核</p>
-                      </b-input-group>
-                      <b-input-group>
-                        <p class="col-4">機房管理人員：</p>
-                        <p class="col-3">員工編號：2038</p>
-                        <p class="col-3">姓名：張管理</p>
-                      </b-input-group>
-                    </div>
 
 
-                    <div class="m-2">
-                      <b-table sticky-header :items="table.data" :fields="table.fields" bordered responsive="sm">
+                    <!--簽核狀態模組-->
+                    <signerList :formId="formIdProp" :formStatus="formStatusRef" :opinion="opinion" ></signerList>
 
-                        <template #cell(situation)="row">
-                          <div v-if="row.item.taskName === '申請人確認'">
-                            申請
-                          </div>
-                          <div v-else-if="row.item.taskName === '結束'" style="color: red">
-                            結束
-                          </div>
-                          <div v-else>
-                            處理
-                          </div>
-                        </template>
 
-                      </b-table>
-
-                      <div class="m-1" v-show="formStatusRef === FormStatusEnum.VERIFY">
-                        <P> 填寫意見： </P>
-                      </div>
-
-                      <b-form-textarea v-model="$v.opinion.$model" rows="1" maxlength="2000" trim lazy
-                                       v-show="formStatusRef === FormStatusEnum.VERIFY"/>
-                    </div>
-                  </div>
 
                   <b-container class="mt-3">
                     <b-row class="justify-content-center">
@@ -523,7 +462,7 @@
 
 
 import IDualDatePicker from '@/shared/i-date-picker/i-dual-date-picker.vue';
-import {onActivated, onMounted, reactive, Ref, ref, toRef, toRefs, watch} from '@vue/composition-api';
+import { reactive,  ref, toRef, watch} from '@vue/composition-api';
 import {useValidation, validateState} from '@/shared/form';
 import IFormGroupCheck from '@/shared/form/i-form-group-check.vue';
 import IDatePicker from '@/shared/i-date-picker/i-date-picker.vue';
@@ -533,13 +472,12 @@ import {useGetters} from '@u3u/vue-hooks';
 import {handleBack, navigateByNameAndParams} from '@/router/router';
 import axios from "axios";
 import {notificationErrorHandler} from "@/shared/http/http-response-helper";
-import {formatToString, newformatDate} from '@/shared/date/minguo-calendar-utils';
-import {changeDealWithUnit, changeDirections} from "@/shared/word/directions";
-import * as immutable from "immutable";
+import { changeDirections} from "@/shared/word/directions";
 import signatureBmodel from "@/components/signatureBmodel.vue";
 
 const appendix = () => import('@/components/appendix.vue');
 const flowChart = () => import('@/components/flowChart.vue');
+const signerList = () => import('@/components/signerList.vue');
 
 export default {
   name: 'l414Edit',
@@ -574,7 +512,8 @@ export default {
     'i-date-picker': IDatePicker,
     appendix,
     flowChart,
-    signatureBmodel
+    signatureBmodel,
+    signerList
   },
   setup(props) {
     const userData = ref(useGetters(['getUserData']).getUserData).value;
@@ -604,6 +543,10 @@ export default {
     let appendixData = reactive({});
     let fileDataId = reactive({
       fileId: ''
+    });
+
+    let opinion = reactive({
+      opinionData: ''
     });
 
     const formDefault = {
@@ -684,49 +627,7 @@ export default {
     };
     const {$v, checkValidity, reset} = useValidation(rules, form, formDefault);
 
-    const table = reactive({
-      fields: [
-        {
-          key: 'situation',
-          label: '狀況',
-          sortable: false,
-          thClass: 'text-center',
-          tdClass: 'text-center align-middle ',
-        },
-        {
-          key: 'directions',
-          label: '說明',
-          sortable: false,
-          thClass: 'text-center',
-          tdClass: 'text-center align-middle ',
-        },
-        {
-          key: 'signUnit',
-          label: '單位/姓名',
-          sortable: false,
-          thClass: 'text-center',
-          tdClass: 'text-center align-middle ',
-          formatter: value => (value == undefined ? '' : changeDealWithUnit(value, bpmDeptsOptions)),
-        },
-        {
-          key: 'signingDatetime',
-          label: '處理日期時間',
-          sortable: false,
-          thClass: 'text-center',
-          tdClass: 'text-center align-middle ',
-          formatter: value => (value == undefined ? '' : newformatDate(new Date(value), '/')),
-        },
-        {
-          key: 'opinion',
-          label: '意見',
-          sortable: false,
-          thClass: 'text-center',
-          tdClass: 'text-center align-middle ',
-        },
-      ],
-      data: undefined,
-      totalItems: undefined,
-    });
+
 
 
     // onMounted(() => {
@@ -753,8 +654,8 @@ export default {
             data.scheduleDate = data.scheduleDate != null ? new Date(data.scheduleDate) : null
             data.finishDatetime = data.finishDatetime != null ? new Date(data.finishDatetime) : null
 
-            //取得現在表單的處理狀況
-            getBpmSignStatus(data.formId);
+            // //取得現在表單的處理狀況
+            // getBpmSignStatus(data.formId);
 
             //用現在表單編號直接給file模組去自動取值
             fileDataId.fileId = data.formId;
@@ -825,6 +726,7 @@ export default {
         let arrData = Array.from(mapData);
         variables = Object.fromEntries(arrData)
       }
+      form.opinion = opinion.opinionData
 
       let opinionData = '';
 
@@ -852,19 +754,19 @@ export default {
 
       console.log('body', body)
 
-      axios
-          .post(`/process/completeTask/${form.formId}`, body)
-          .then(({data}) => {
-            if (item === '1') {
-              $bvModal.msgBoxOk('表單儲存完畢');
-              navigateByNameAndParams('pending', {isReload: false, isNotKeepAlive: true});
-            } else {
-              $bvModal.msgBoxOk('表單審核完畢');
-              navigateByNameAndParams('pending', {isReload: false, isNotKeepAlive: true});
-            }
-
-          })
-          .catch(notificationErrorHandler(notificationService));
+      // axios
+      //     .post(`/process/completeTask/${form.formId}`, body)
+      //     .then(({data}) => {
+      //       if (item === '1') {
+      //         $bvModal.msgBoxOk('表單儲存完畢');
+      //         navigateByNameAndParams('pending', {isReload: false, isNotKeepAlive: true});
+      //       } else {
+      //         $bvModal.msgBoxOk('表單審核完畢');
+      //         navigateByNameAndParams('pending', {isReload: false, isNotKeepAlive: true});
+      //       }
+      //
+      //     })
+      //     .catch(notificationErrorHandler(notificationService));
     }
 
     const changeTabIndex = (index: number) => {
@@ -888,25 +790,7 @@ export default {
       }
     };
 
-    function getBpmSignStatus(id) {
-      console.log('id', id)
-      axios
-          .get(`/eip/getBpmSignStatus/${id}`)
-          .then(({data}) => {
-            console.log('/getBpmSignStatus:: ', data)
-            if (data.length === 0) return;
-            table.data = data;
 
-            data.forEach(i => {
-              if (i.taskName === '機房管理人員') {
-                table.data.push({
-                  taskName: '結束',
-                });
-              }
-            })
-          })
-          .catch(notificationErrorHandler(notificationService));
-    }
 
     // function signature() {
     //
@@ -976,10 +860,12 @@ export default {
       reviewStart,
       bpmDeptsOptions,
       stateStatusRef,
-      table,
       isSignatureRef,
       signatureBmodel,
-      showModel
+      showModel,
+      formIdProp,
+      opinion
+
     }
   }
 }
