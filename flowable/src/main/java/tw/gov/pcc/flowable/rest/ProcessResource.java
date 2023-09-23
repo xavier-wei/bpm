@@ -74,7 +74,6 @@ public class ProcessResource {
     public String deleteProcess(@RequestBody HashMap<String, String> deleteRequest) {
         if (TOKEN.equals(deleteRequest.get("token"))) {
             String processInstanceId = deleteRequest.get("processInstanceId");
-            System.out.println(processInstanceId);
             TaskDTO taskDTO = service.querySingleTask(processInstanceId);
             EndEventDTO endEventDTO = new EndEventDTO(processInstanceId, TOKEN, taskDTO.getFormName(), "2");
             service.deleteProcessInstance(processInstanceId);

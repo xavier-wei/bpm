@@ -45,7 +45,7 @@ public class IsmsProcessResource {
     private final Gson gson = new Gson();
     private final String FLOWABLE_PROCESS_URL = "http://localhost:9973/process";
     private final RestTemplate restTemplate = new RestTemplate();
-    private HttpSession httpSession;
+    private final HttpSession httpSession;
     private final BpmSignStatusService bpmSignStatusService;
     private final BpmSignStatusMapper bpmSignStatusMapper;
     private final BpmIsmsAdditionalRepository bpmIsmsAdditionalRepository;
@@ -290,7 +290,6 @@ public class IsmsProcessResource {
         log.info("ProcessL414Resource.java - deleteProcessInstance - 206 :: " + processInstanceId);
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
-
         HashMap<String, String> deleteRequest = new HashMap<>();
         deleteRequest.put("processInstanceId", processInstanceId);
         deleteRequest.put("token", TOKEN);
