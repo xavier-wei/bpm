@@ -73,6 +73,10 @@ export default {
       type: Object,
       required: false,
     },
+    formData: {
+      required: false,
+      type: Object,
+    },
   },
   setup(props) {
 
@@ -80,12 +84,9 @@ export default {
 
     const formIdProp = toRef(props, 'formId');
     const formStatusRef = toRef(props, 'formStatus');
+    const formDataProp = reactive(props.formData);
     const opinionProp = reactive(props.opinion);
-
     const signerList = ref([]);
-
-    console.log('formIdProp', formIdProp)
-    console.log('formStatusRef', formStatusRef)
 
     const notificationService = useNotification();
 
@@ -142,21 +143,24 @@ export default {
 
 
     function getBpmSignStatus(id) {
-      console.log('id', id)
       axios
         .get(`/eip/getBpmSignStatus/${id}`)
         .then(({data}) => {
-          console.log('/getBpmSignStatus:: ', data)
           if (data.length === 0) return;
           signStatusTable.data = data;
 
-          data.forEach(i => {
-            if (i.taskName === '機房管理人員') {
-              signStatusTable.data.push({
-                taskName: '結束',
-              });
-            }
-          })
+
+          //判斷每張表單狀態
+          if (formDataProp.processInstanceStatus === '1') {
+            signStatusTable.data.push({
+              taskName: '結束',
+            });
+          } else if (formDataProp.processInstanceStatus === '2') {
+            signStatusTable.data.push({
+              taskName: '撤銷',
+            });
+          }
+
         })
         .catch(notificationErrorHandler(notificationService));
     }
@@ -178,14 +182,14 @@ export default {
             signer.empNames = i.empNames.split(',')
             signerList.value.push(signer)
           })
-
-          console.log(' signerList.vue -  - 213: ', JSON.parse(JSON.stringify(signerList)))
         })
         .catch(notificationErrorHandler(notificationService));
     }
 
 
     watch(formIdProp, (value) => {
+
+
         getBpmSignStatus(value);
         getFindByBpmSignerList(value);
       },
