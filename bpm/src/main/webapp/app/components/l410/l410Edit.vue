@@ -468,7 +468,7 @@
                 </div>
 
                 <!--簽核狀態模組-->
-                <signerList :formId="formIdProp" :formStatus="formStatusRef" :opinion="opinion" ></signerList>
+                <signerList :formId="formIdProp" :formStatus="formStatusRef" :opinion="opinion" :formData="form"></signerList>
 
 
                 <b-container class="mt-3">
@@ -527,7 +527,7 @@
         </b-card-body>
       </section>
     </b-container>
-    <signatureBmodel ref="signatureBmodel" :formData="form"></signatureBmodel>
+    <signatureBmodel ref="signatureBmodel" :formData="form" :taskData="taskDataRef"></signatureBmodel>
   </div>
 </template>
 
@@ -551,10 +551,10 @@ import {changeDirections} from "@/shared/word/directions";
 import {checkboxToMapAndForm} from "@/shared/word/checkboxToMapAndForm";
 import {mapToCheckbox} from "@/shared/word/mapToCheckbox";
 import signatureBmodel from "@/components/signatureBmodel.vue";
+import signerList from "@/components/signerList.vue";
 
 const appendix = () => import('@/components/appendix.vue');
 const flowChart = () => import('@/components/flowChart.vue');
-const signerList = () => import('@/components/signerList.vue');
 
 export default {
   name: "l410Edit",
@@ -903,7 +903,6 @@ export default {
           fileDataId.fileId = formData.formId;
           Object.assign(formDefault, formData);
           Object.assign(form, formDefault)
-          console.log(' form ++ : ', JSON.parse(JSON.stringify(form)))
           reset();
         })
         .catch(notificationErrorHandler(notificationService));
@@ -999,6 +998,8 @@ export default {
         let arrData = Array.from(mapData);
         variables = Object.fromEntries(arrData)
       }
+
+      console.log(' l410Edit.vue - reviewStart - 1003: ', JSON.parse(JSON.stringify(variables)))
 
       form.opinion = opinion.opinionData
       let opinionData = '';
@@ -1138,6 +1139,8 @@ export default {
       showModel,
       formIdProp,
       opinion,
+      l410Data,
+      taskDataRef
     }
   }
 }
