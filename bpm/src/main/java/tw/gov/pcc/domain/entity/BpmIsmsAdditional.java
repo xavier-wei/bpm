@@ -49,17 +49,21 @@ public class BpmIsmsAdditional implements Serializable {
     @Column(name = "CREATE_TIME")
     private Timestamp createTime;
 
+    @Column(name = "TASK_NAME")
+    private String taskName;
+
     @Override
     public boolean equals(Object o) {
+
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         BpmIsmsAdditional that = (BpmIsmsAdditional) o;
-        return Objects.equals(formId, that.formId) && Objects.equals(processInstanceId, that.processInstanceId) && Objects.equals(mainFormId, that.mainFormId) && Objects.equals(mainProcessInstanceId, that.mainProcessInstanceId) && Objects.equals(mainProcessTaskId, that.mainProcessTaskId) && Objects.equals(requesterId, that.requesterId) && Objects.equals(requester, that.requester) && Objects.equals(additionalSignerId, that.additionalSignerId) && Objects.equals(additionalSigner, that.additionalSigner) && Objects.equals(processInstanceStatus, that.processInstanceStatus) && Objects.equals(additionalSignReason, that.additionalSignReason) && Objects.equals(createTime, that.createTime);
+        return Objects.equals(formId, that.formId) && Objects.equals(processInstanceId, that.processInstanceId) && Objects.equals(mainFormId, that.mainFormId) && Objects.equals(mainProcessInstanceId, that.mainProcessInstanceId) && Objects.equals(mainProcessTaskId, that.mainProcessTaskId) && Objects.equals(requesterId, that.requesterId) && Objects.equals(requester, that.requester) && Objects.equals(additionalSignerId, that.additionalSignerId) && Objects.equals(additionalSigner, that.additionalSigner) && Objects.equals(processInstanceStatus, that.processInstanceStatus) && Objects.equals(additionalSignReason, that.additionalSignReason) && Objects.equals(createTime, that.createTime) && Objects.equals(taskName, that.taskName);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(formId, processInstanceId, mainFormId, mainProcessInstanceId, mainProcessTaskId, requesterId, requester, additionalSignerId, additionalSigner, processInstanceStatus, additionalSignReason, createTime);
+        return Objects.hash(formId, processInstanceId, mainFormId, mainProcessInstanceId, mainProcessTaskId, requesterId, requester, additionalSignerId, additionalSigner, processInstanceStatus, additionalSignReason, createTime, taskName);
     }
 
     public String getFormId() {
@@ -156,5 +160,13 @@ public class BpmIsmsAdditional implements Serializable {
 
     public void setCreateTime(Timestamp createTime) {
         this.createTime = createTime;
+    }
+
+    public String getTaskName() {
+        return taskName;
+    }
+
+    public void setTaskName(String taskName) {
+        this.taskName = taskName;
     }
 }
