@@ -117,7 +117,8 @@ public class Eip04w030Service extends OnlineRegService {
         contentCase.setAllowappway(StringUtils.substring(allowappwaySb.toString(), 0, allowappwaySb.length()-2));
         contentCase.setIsmeals(orformdata.getIsmeals());
         String filedir = eipcodeDao.findByCodeKindCodeNo("FILEDIR", "1").get().getCodename();
-        String dir = filedir + "\\線上報名\\" + orformdata.getOrformno();
+        String fileSeparator = File.separator;
+        String dir = filedir + fileSeparator + "orfiles" + fileSeparator + orformdata.getOrformno();
         File directory = new File(dir);
         if (directory.exists() && directory.isDirectory()) {
             List<String> fileList = new ArrayList<>();

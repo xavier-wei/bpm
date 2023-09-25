@@ -744,8 +744,7 @@ public class Eip01w010Service {
      * @param fileList
      */
     private void uploadFiles(String fseq, int cnt, List<MultipartFile> fileList) {
-        String dir = eipCodeDao.findByCodeKindCodeNo("FILEDIR", "1").get().getCodename() + "\\"; // 檔案所在資料夾
-
+        String[] dir = StringUtils.split(eipCodeDao.findByCodeKindCodeNo("FILEDIR", "1").get().getCodename(), "\\"); // 檔案所在資料夾
         Comparator<Msgdeposit> customComparator = new Comparator<Msgdeposit>() {
             @Override
             public int compare(Msgdeposit o1, Msgdeposit o2) {
@@ -774,7 +773,8 @@ public class Eip01w010Service {
                 m.setRealfilename(formatFileName); // 格式化檔名
                 msgdepositDao.insert(m);
                 try {
-                    File file = new File(dir + formatFileName);
+                    File file = new File(dir[0] + File.separator + dir[1] + File.separator + dir[2] + File.separator
+                            + formatFileName);
                     f.transferTo(file);
                 } catch (Exception e) {
                     log.error(dir + formatFileName + "檔案上傳失敗", ExceptionUtility.getStackTrace(e));
@@ -792,8 +792,8 @@ public class Eip01w010Service {
      */
     public void deleteFile(String fseq, String seq) {
         Msgdeposit origin = msgdepositDao.findbyPk(fseq, seq);
-        String dir = eipCodeDao.findByCodeKindCodeNo("FILEDIR", "1").get().getCodename() + "\\"; // 檔案所在資料夾
-        File file = new File(dir + origin.getRealfilename());
+        String[] dir = StringUtils.split(eipCodeDao.findByCodeKindCodeNo("FILEDIR", "1").get().getCodename(), "\\"); // 檔案所在資料夾
+        File file = new File(dir[0] + File.separator + dir[1] + File.separator + dir[2] + File.separator + origin.getRealfilename());
         file.delete();
 
         Msgdeposit m = new Msgdeposit();
