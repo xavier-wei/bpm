@@ -143,9 +143,7 @@ public class BpmIsmsL410ServiceNew implements BpmIsmsService {
         variables.put("isSubmit", bpmIsmsL410DTO.getIsSubmit());
         // 填入上級
         List<UserRole> userRoles = userRoleRepository.findByRoleIdIn(List.of(ROLE_IDS));
-        // 設定需要申請的Task有哪些
-
-
+        // 設定需要申請的Task有哪些及各task的Signer
         supervisorService.setSupervisor(variables,bpmIsmsL410DTO.getAppEmpid(),userInfo);
         HashMap<String, String> signerIds = new HashMap<>();
 
@@ -156,10 +154,9 @@ public class BpmIsmsL410ServiceNew implements BpmIsmsService {
         variables.put("infoGroup", signerIds.get("BPM_IPT_Operator"));
         variables.put("seniorTechSpecialist", signerIds.get("BPM_IPT_Mgr"));
         setSys(variables, bpmIsmsL410DTO,signerIds);
-
-
         VARIABLES_HOLDER.put(uuid, variables);
         DTO_HOLDER.put(uuid, bpmIsmsL410DTO);
+
         return uuid;
     }
 
@@ -182,9 +179,7 @@ public class BpmIsmsL410ServiceNew implements BpmIsmsService {
             .filter(s-> s.startsWith("is")&& !"isSubmit".equals(s))
             .filter(s->"1".equals(variables.get(s)))
             .forEach(s->{
-                System.out.println(s);
                 String siner = s.replaceFirst("is", "") + "Signer";
-                System.out.println(siner);
                 signerMapTemp.put(siner, signerIds.get(SysSignerEnum.getSinerUnitBySigner(siner)));
         });
         signerMapTemp.keySet().forEach(s -> variables.put(s, signerMapTemp.get(s)));
