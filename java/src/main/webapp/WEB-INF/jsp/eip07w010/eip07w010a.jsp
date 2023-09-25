@@ -82,7 +82,7 @@
 					<form:input id="startworkDate"  name="startworkDate"  path="eip07w010QueryDataList[0].startworkDate" cssClass="form-control num_only dateTW" size="9" maxlength="7"/>
 			</div>
 			<div class="col-md d-flex">
-				<form:label cssClass="col-form-label star" id="endworkDate" path="endworkDate">離職日期：</form:label>
+				<form:label cssClass="col-form-label star" id="endworkDateLable" path="endworkDate">離職日期：</form:label>
 				<form:input id="endworkDate"  name="endworkDate"  path="eip07w010QueryDataList[0].endworkDate" cssClass="form-control num_only dateTW" size="9" maxlength="7"/>
 			</div>
 		</tags:form-row>
@@ -123,6 +123,7 @@
 				 </div>
 		</tags:form-row>
 					<form:hidden id="workTy" path="workTy" />
+			<form:hidden id="endworkDate" path="endworkDate" />
         </form:form>
 </tags:fieldset>
 </jsp:attribute>
@@ -173,9 +174,9 @@
 			function controlChangMk() {
 				var stillWork =$("#stillWork option:selected").val();
 				if (stillWork=='Y'){
-					$("#endworkDate").removeClass("star");
+					$("#endworkDateLable").removeClass("star");
 				}else {
-					$("#endworkDate").addClass("star");
+					$("#endworkDateLable").addClass("star");
 				}
 			}
 

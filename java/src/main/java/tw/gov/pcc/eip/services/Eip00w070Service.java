@@ -1,9 +1,11 @@
 package tw.gov.pcc.eip.services;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
+import java.util.stream.Collector;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -69,6 +71,20 @@ public class Eip00w070Service {
      */
     public List<CursorAcl> findRoleMenu(Eip00w070Case eipadm0w070Case){
     	return portalMenuAclDao.findRoleAcl(SYS_ID, eipadm0w070Case.getRole_id());
+    }
+    
+    /**
+     * 設置角色功能代號list
+     *
+     */
+    public void settingMenuList(Eip00w070Case eipadm0w070Case,List<CursorAcl> cursorAclList){
+    	List<String> itemidList = new ArrayList<String>();
+    	for(CursorAcl c:cursorAclList) {
+    		if("Y".equals(c.getIsChecked()) ) {
+    			itemidList.add(c.getItemId());
+    		}
+    	}
+    	eipadm0w070Case.setSelectedIdlist(itemidList);
     }
     
     public void findMember(Eip00w070Case eipadm0w070Case){

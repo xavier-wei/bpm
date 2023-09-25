@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 import tw.gov.pcc.eip.common.cases.Eip03w040Case;
 import tw.gov.pcc.eip.common.controllers.Eip03w040Controller;
 import tw.gov.pcc.eip.common.report.Eip03w040l00xls;
+import tw.gov.pcc.eip.dao.DeptsDao;
 import tw.gov.pcc.eip.dao.EipcodeDao;
 import tw.gov.pcc.eip.dao.KeepTrkDtlDao;
 import tw.gov.pcc.eip.domain.Eipcode;
@@ -30,6 +31,8 @@ public class Eip03w040Service {
     private KeepTrkDtlDao keepTrkDtlDao;
     @Autowired
     private EipcodeDao eipcodeDao;
+    @Autowired
+    private DeptsDao deptsDao;
     @Autowired
     private UserBean userData;
 
@@ -105,6 +108,7 @@ public class Eip03w040Service {
                 Eip03w040l00xls eip03w040l00xls = new Eip03w040l00xls();
                 String status = caseData.getStatus().equals("closed")? "已結案" : "未結案";
                 eip03w040l00xls.createXls(status, resultList);
+                caseData.setTrkObj(deptsDao.findByPk(caseData.getTrkObj()).getDept_name());
                 return eip03w040l00xls.getOutputStream();
             }catch (Exception e){
                 log.error(ExceptionUtility.getStackTrace(e));

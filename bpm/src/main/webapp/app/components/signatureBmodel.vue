@@ -121,6 +121,10 @@ export default {
       required: false,
       type: Object,
     },
+    taskData: {
+      required: false,
+      type: Object,
+    },
   },
   components: {
     IDatePicker,
@@ -130,6 +134,7 @@ export default {
   setup(props) {
 
     const formDataProp = reactive(props.formData);
+    const taskDataProp = reactive(props.taskData);
     const userData = ref(useGetters(['getUserData']).getUserData).value;
     const bpmDeptsOptions = ref(useGetters(['getBpmDeptsOptions']).getBpmDeptsOptions).value;
     const iTable = ref(null);
@@ -263,6 +268,7 @@ export default {
             additionalSigner: form.chooseName,
             additionalSignReason: formDataProp.opinion,
             processInstanceStatus: '0',
+            taskName:taskDataProp.taskName,
           };
 
           console.log(' signatureBmodel.vue - signature - 268: ', JSON.parse(JSON.stringify(body)))

@@ -295,6 +295,7 @@
                     type: "POST",
                     dataType: "json",
                     cache: false,
+                    data: {'p':new Date().getTime()},
                     contentType: "application/json",
                     success: function (data) {
                         let $titleStatus = $('#title_status .title_status');
@@ -308,12 +309,13 @@
                     },
                     error: function (xhr, ajaxOptions, thrownError) {
                         console.log(xhr.status + " " + thrownError);
+                    },
+                    complete: function(xhr, sts){
+                        if(!interval || interval < 10){
+                            interval = 10;
+                        }
+                        setTimeout(reloadTitleStatus, interval * 1000);
                     }
-                }).always(function () {
-                    if(!interval || interval < 10){
-                        interval = 10;
-                    }
-                    setTimeout(reloadTitleStatus, interval * 1000);
                 });
             }
 

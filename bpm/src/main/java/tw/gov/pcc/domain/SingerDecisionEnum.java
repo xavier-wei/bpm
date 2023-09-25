@@ -8,8 +8,21 @@ public enum SingerDecisionEnum {
     SENIOR_SPECIALIST("簡任技正/科長簽核","seniorTechSpecialistSign"),
     SERVER_ROOM_OPERATOR("機房操作人員","serverRoomOperatorSetting"),
     REVIEW_STAFF("複核人員", "reviewStaff"),
-    SERVER_ROOM_MANAGER("機房管理人員", "serverRoomManager");
-
+    SERVER_ROOM_MANAGER("機房管理人員", "serverRoomManager"),
+    HR_SYS("人事差勤系統", "HrSysSigner"),
+    AD_SYS("AD帳號", "AdSysSigner"),
+    OD_SYS("公文管理系統", "OdSysSigner"),
+    MEETING_ROOM("會議室管理系統", "MeetingRoomSigner"),
+    EMAIL_SYS("電子郵件帳號", "EmailSysSigner"),
+    WEB_SITE("全球資訊網&會內資訊網", "WebSiteSigner"),
+    PCC_PIS("政府電子採購網", "PccPisSigner"),
+    ENG_AND_PRJ_INFO_SYS("技師與工程技術顧問公司管理資訊系統", "EngAndPrjInfoSysSigner"),
+    REV_SYS("公共工程案件審議資訊系統", "RevSysSigner"),
+    BID_SYS("公共工程標案管理系統", "BidSysSigner"),
+    REC_SYS("災後復建工程經費審議及執行資訊系統", "RecSysSigner"),
+    OTHER_SYS1("本會其他資通系統1", "OtherSys1Signer"),
+    OTHER_SYS2("本會其他資通系統2", "OtherSys2Signer"),
+    OTHER_SYS3("本會其他資通系統3", "OtherSys3Signer");
     private final String name;
     private final String decision;
     SingerDecisionEnum(String name, String decision) {

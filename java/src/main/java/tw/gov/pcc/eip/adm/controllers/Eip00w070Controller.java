@@ -104,6 +104,7 @@ public class Eip00w070Controller extends BaseController {
     public ModelAndView editMenu(@ModelAttribute(CASE_KEY) Eip00w070Case caseData, ModelMap m) {
         try {
             List<CursorAcl> da = eipadm0w070Service.findRoleMenu(caseData);
+            eipadm0w070Service.settingMenuList(caseData, da);
             return new ModelAndView(EDITMENU_PAGE).addObject("items", DynaTreeBuilder.build(ItemParser.parser(da)));
         } catch (Exception e) {
             log.error("查詢失敗 - {}", ExceptionUtility.getStackTrace(e));
