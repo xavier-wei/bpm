@@ -260,7 +260,7 @@ export default {
           let body = {
             mainFormId: formDataProp.formId,
             mainProcessInstanceId: formDataProp.processInstanceId,
-            mainProcessTaskId: formDataProp.taskId,
+            mainProcessTaskId: taskDataProp.taskId,
             requesterId: userData.empId,
             requester: userData.userName,
             additionalSignerId: form.chooseId,
