@@ -21,6 +21,7 @@ import tw.gov.pcc.flowable.service.dto.TaskDTO;
 
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/process")
@@ -32,7 +33,7 @@ public class ProcessResource {
     }
 
     @Value("${bpm.token}")
-    private String TOKEN;
+    private String token;
 
     @RequestMapping("/startProcess")
     public TaskDTO startProcess(@RequestBody ProcessReqDTO processReqDTO) {
@@ -71,11 +72,11 @@ public class ProcessResource {
     }
 
     @RequestMapping("/deleteProcess")
-    public String deleteProcess(@RequestBody HashMap<String, String> deleteRequest) {
-        if (TOKEN.equals(deleteRequest.get("token"))) {
+    public String deleteProcess(@RequestBody Map<String, String> deleteRequest) {
+        if (token.equals(deleteRequest.get("token"))) {
             String processInstanceId = deleteRequest.get("processInstanceId");
             TaskDTO taskDTO = service.querySingleTask(processInstanceId);
-            EndEventDTO endEventDTO = new EndEventDTO(processInstanceId, TOKEN, taskDTO.getFormName(), "2");
+            EndEventDTO endEventDTO = new EndEventDTO(processInstanceId, token, taskDTO.getFormName(), "2");
             service.deleteProcessInstance(processInstanceId);
             HttpHeaders headers = new HttpHeaders();
             headers.setContentType(MediaType.APPLICATION_JSON);

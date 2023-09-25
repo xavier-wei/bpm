@@ -245,11 +245,6 @@ enum SysSignerEnum {
     private final String signer;
     private final String sinerUnit;
 
-    SysSignerEnum() {
-
-        sinerUnit = null;
-        signer = null;
-    }
     SysSignerEnum(String signer, String sinerUnit) {
         this.signer = signer;
         this.sinerUnit = sinerUnit;

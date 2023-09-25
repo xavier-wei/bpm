@@ -29,7 +29,7 @@ import java.util.UUID;
 public class BpmIsmsAdditionalService implements BpmIsmsService{
 
     private final Logger log = LoggerFactory.getLogger(BpmIsmsAdditionalService.class);
-    public static final HashMap<UUID, BpmIsmsAdditionalDTO> DTO_HOLDER = new HashMap<>();
+    private static final Map<UUID, BpmIsmsAdditionalDTO> DTO_HOLDER = new HashMap<>();
 
     private final BpmIsmsAdditionalMapper bpmIsmsAdditionalMapper;
     private final BpmSignStatusMapper bpmSignStatusMapper;
@@ -80,7 +80,7 @@ public class BpmIsmsAdditionalService implements BpmIsmsService{
         variables.put("additionalSigner", bpmIsmsAdditionalDTO.getAdditionalSignerId());
 //        variables.put("additionalSigner", "DirectorTester");
         variables.put("mainProcessInstanceId", bpmIsmsAdditionalDTO.getMainProcessInstanceId());
-
+        variables.put("mainProcessTaskId", bpmIsmsAdditionalDTO.getMainProcessTaskId());
         return uuid;
     }
 

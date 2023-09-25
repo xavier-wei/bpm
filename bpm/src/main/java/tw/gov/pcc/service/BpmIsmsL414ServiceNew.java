@@ -26,7 +26,8 @@ import java.util.stream.Collectors;
 
 @Service("L414Service")
 public class BpmIsmsL414ServiceNew implements BpmIsmsService {
-    private final String[] ROLE_IDS = {"BPM_IPT_Operator", "BPM_IPT_Mgr", "BPM_CR_Operator", "BPM_CR_Reviewer", "BPM_CR_Reviewer"};
+    private static final String REVIEWER = "BPM_CR_Reviewer";
+    private final String[] ROLE_IDS = {"BPM_IPT_Operator", "BPM_IPT_Mgr", "BPM_CR_Operator", REVIEWER};
     private final Logger log = LoggerFactory.getLogger(BpmIsmsL414ServiceNew.class);
     private static final HashMap<UUID, BpmIsmsL414DTO> DTO_HOLDER = new HashMap<>();
     private static final HashMap<UUID, Map<String, Object>> VARIABLES_HOLDER = new HashMap<>();
@@ -133,8 +134,8 @@ public class BpmIsmsL414ServiceNew implements BpmIsmsService {
         variables.put("infoGroup", signerIds.get("BPM_IPT_Operator"));
         variables.put("seniorTechSpecialist", signerIds.get("BPM_IPT_Mgr"));
         variables.put("serverRoomOperator", signerIds.get("BPM_CR_Operator"));
-        variables.put("reviewStaff", signerIds.get("BPM_CR_Reviewer"));
-        variables.put("serverRoomManager", signerIds.get("BPM_CR_Reviewer"));
+        variables.put("reviewStaff", signerIds.get(REVIEWER));
+        variables.put("serverRoomManager", signerIds.get(REVIEWER));
 
         VARIABLES_HOLDER.put(uuid, variables);
         return uuid;
@@ -147,7 +148,7 @@ public class BpmIsmsL414ServiceNew implements BpmIsmsService {
 
         if (!bpmIsmsL414.isEmpty()) return bpmIsmsL414Repository.findByFormId(formId).get(0);
 
-        return null;
+        return Map.of();
     }
 
 
