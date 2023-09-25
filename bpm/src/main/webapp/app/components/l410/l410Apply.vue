@@ -797,8 +797,11 @@ export default {
         if (isOK) {
           await Promise.all(table.data.map(data => checkboxToMapAndForm(data, form, l410Variables)));
 
+          console.log(' l410Apply.vue - submitForm - 800: ', JSON.parse(JSON.stringify(table.data)))
+
           form.l410Variables = l410Variables;
 
+          console.log('form.l410Variables',form.l410Variables)
           console.log(' l410Apply.vue - submitForm - 802: ', JSON.parse(JSON.stringify(form)))
 
           let body = {

@@ -733,8 +733,6 @@ export default {
         opinionData = '(' + getItem(item) + ')' + form.opinion;
       }
 
-      console.log('changeDirections(userData)', changeDirections(userData));
-
       let body = {
         signer: userData.userName,
         signerId: userData.userId,
@@ -748,8 +746,6 @@ export default {
         opinion: opinionData,
         ipt: userData.cpape05m.unitName === '資訊推動小組'
       };
-
-      console.log('body', body)
 
       axios
         .post(`/process/completeTask/${form.formId}`, body)
@@ -786,39 +782,6 @@ export default {
           return '';
       }
     };
-
-
-    // function signature() {
-    //
-    //   let body = {
-    //     mainFormId: form.formId,
-    //     mainProcessInstanceId: form.processInstanceId,
-    //     mainProcessTaskId: form.taskId,
-    //     requesterId: userData.empId,
-    //     requester: userData.userName,
-    //     additionalSignerId: '1510',
-    //     additionalSigner: '我是主管',
-    //     additionalSignReason: form.opinion,
-    //     processInstanceStatus: '0',
-    //   };
-    //
-    //   let body1 = {
-    //     "Additional": JSON.stringify(body)
-    //   }
-    //   console.log('body', body1)
-    //
-    //   const formData = new FormData();
-    //
-    //   formData.append('form', new Blob([JSON.stringify(body1)], {type: 'application/json'}));
-    //
-    //   axios
-    //       .post(`/process/start/Additional`, formData)
-    //       .then(({data}) => {
-    //         $bvModal.msgBoxOk('加簽申請成功');
-    //         navigateByNameAndParams('pending', {isReload: false, isNotKeepAlive: true});
-    //       })
-    //       .catch(notificationErrorHandler(notificationService));
-    // }
 
     function toQueryView() {
       handleBack({isReload: true, isNotKeepAlive: false});

@@ -7,6 +7,6 @@ import tw.gov.pcc.domain.BpmSignerListPrimaryKey;
 import java.util.List;
 
 public interface BpmSignerListRepository extends JpaRepository<BpmSignerList, BpmSignerListPrimaryKey> {
-    List<BpmSignerList> findByFormId(String id);
+    List<BpmSignerList> findByFormIdOrderBySortAsc(String id);
 
 }

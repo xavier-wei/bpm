@@ -254,7 +254,6 @@ export default {
     async function signature() {
 
       const isValid = await checkValidity();
-
       if (isValid) {
         const isOK = await $bvModal.msgBoxConfirm('是否送出加簽？');
         if (isOK) {
@@ -271,7 +270,8 @@ export default {
             taskName:taskDataProp.taskName,
           };
 
-          console.log(' signatureBmodel.vue - signature - 268: ', JSON.parse(JSON.stringify(body)))
+
+          //todo:l410加簽流程需要把畫面選擇的單位更新回表單內
 
           let body1 = {
             "Additional": JSON.stringify(body)
