@@ -10,16 +10,19 @@ import org.springframework.http.*;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.multipart.MultipartFile;
+import tw.gov.pcc.domain.BpmIsmsL410;
 import tw.gov.pcc.domain.BpmIsmsServiceBeanNameEnum;
 import tw.gov.pcc.domain.SingerDecisionEnum;
 import tw.gov.pcc.domain.User;
 import tw.gov.pcc.domain.entity.BpmIsmsAdditional;
 import tw.gov.pcc.domain.entity.BpmSignStatus;
 import tw.gov.pcc.repository.BpmIsmsAdditionalRepository;
+import tw.gov.pcc.repository.BpmIsmsL410Repository;
 import tw.gov.pcc.service.BpmIsmsService;
 import tw.gov.pcc.service.BpmSignStatusService;
 import tw.gov.pcc.service.BpmSignerListService;
 import tw.gov.pcc.service.dto.*;
+import tw.gov.pcc.service.mapper.BpmIsmsL410Mapper;
 import tw.gov.pcc.service.mapper.BpmSignStatusMapper;
 import tw.gov.pcc.utils.MapUtils;
 
@@ -51,13 +54,18 @@ public class IsmsProcessResource {
     private final BpmIsmsAdditionalRepository bpmIsmsAdditionalRepository;
     private final BpmSignerListService bpmSignerListService;
 
-    public IsmsProcessResource(ApplicationContext applicationContext, HttpSession httpSession, BpmSignStatusService bpmSignStatusService, BpmSignStatusMapper bpmSignStatusMapper, BpmIsmsAdditionalRepository bpmIsmsAdditionalRepository, BpmSignerListService bpmSignerListService) {
+    private final BpmIsmsL410Mapper bpmIsmsL410Mapper;
+    private final BpmIsmsL410Repository bpmIsmsL410Repository;
+
+    public IsmsProcessResource(ApplicationContext applicationContext, HttpSession httpSession, BpmSignStatusService bpmSignStatusService, BpmSignStatusMapper bpmSignStatusMapper, BpmIsmsAdditionalRepository bpmIsmsAdditionalRepository, BpmSignerListService bpmSignerListService, BpmIsmsL410Mapper bpmIsmsL410Mapper, BpmIsmsL410Repository bpmIsmsL410Repository) {
         this.applicationContext = applicationContext;
         this.httpSession = httpSession;
         this.bpmSignStatusService = bpmSignStatusService;
         this.bpmSignStatusMapper = bpmSignStatusMapper;
         this.bpmIsmsAdditionalRepository = bpmIsmsAdditionalRepository;
         this.bpmSignerListService = bpmSignerListService;
+        this.bpmIsmsL410Mapper = bpmIsmsL410Mapper;
+        this.bpmIsmsL410Repository = bpmIsmsL410Repository;
     }
 
     @PostMapping(path = "/start/{key}", consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
@@ -67,11 +75,15 @@ public class IsmsProcessResource {
         @Valid @RequestPart(name = "fileDto", required = false) List<BpmUploadFileDTO> dto,
         @RequestPart(name = "appendixFiles", required = false) List<MultipartFile> appendixFiles,
         @RequestPart(name = "bpmIsmsL410", required = false) BpmIsmsL410DTO bpmIsmsL410DTO) throws IOException {
-        log.info("IsmsProcessResource.java - start - 70 :: " + bpmIsmsL410DTO );
+        log.info("IsmsProcessResource.java - start - 70 :: " + bpmIsmsL410DTO);
+        log.info("IsmsProcessResource.java - start - 71 :: " + form);
+        log.info("IsmsProcessResource.java - start - 72 :: " + key);
+        log.info("IsmsProcessResource.java - start - 73 :: " + dto);
+        log.info("IsmsProcessResource.java - start - 74 :: " + appendixFiles);
         // 取得存在HttpSession的user資訊
         User userInfo = getUserInfo();
 
-        // 產生要送給流程引擎的request dto
+//        // 產生要送給流程引擎的request dto
         ProcessReqDTO processReqDTO = new ProcessReqDTO();
         HashMap<String, Object> variables = new HashMap<>();
         BpmIsmsService service = (BpmIsmsService) applicationContext.getBean(Objects.requireNonNull(BpmIsmsServiceBeanNameEnum.getServiceBeanNameByKey(key)));
@@ -92,6 +104,12 @@ public class IsmsProcessResource {
         }
 
         try {
+
+            if (!Objects.equals(bpmIsmsL410DTO, null)) {
+                log.info("IsmsProcessResource.java - start - 102 :: " + " 安安我來了");
+                BpmIsmsL410 bpmIsmsL410 = bpmIsmsL410Mapper.toEntity(bpmIsmsL410DTO);
+                bpmIsmsL410Repository.save(bpmIsmsL410);
+            }
             service.saveBpm(uuid, processInstanceId, taskDTO, dto, appendixFiles);
 
         } catch (Exception e) {
