@@ -480,22 +480,18 @@
                 <b-container class="mt-3">
                   <b-row class="justify-content-center">
                     <b-button class="ml-2" style="background-color: #17a2b8; color: white"
-                              variant="outline-secondary"
                               @click="submitForm('0')"
                               v-show="formStatusRef === FormStatusEnum.MODIFY">暫存
                     </b-button>
                     <b-button class="ml-2" style="background-color: #17a2b8; color: white"
-                              variant="outline-secondary"
                               @click="submitForm('1')"
                               v-show="formStatusRef === FormStatusEnum.MODIFY">送出
                     </b-button>
                     <b-button class="ml-2" style="background-color: #17a2b8; color: white"
-                              variant="outline-secondary"
                               @click="reviewStart('1')"
                               v-show="formStatusRef === FormStatusEnum.VERIFY">同意
                     </b-button>
                     <b-button class="ml-2" style="background-color: #17a2b8; color: white"
-                              variant="outline-secondary"
                               @click="reviewStart('0')"
                               v-show="formStatusRef === FormStatusEnum.VERIFY">不同意
                     </b-button>
@@ -503,12 +499,10 @@
                               v-show="formStatusRef === FormStatusEnum.VERIFY && isSignatureRef">加簽
                     </b-button>
                     <b-button class="ml-2" style="background-color: #17a2b8; color: white"
-                              variant="outline-secondary"
                               @click="reviewStart('2')"
-                              v-show="formStatusRef === FormStatusEnum.VERIFY">補件
+                              v-show="userData.cpape05m.title === '科長' && userData.cpape05m.title === '處長' && formStatusRef === FormStatusEnum.VERIFY">補件
                     </b-button>
                     <b-button class="ml-2" style="background-color: #17a2b8; color: white"
-                              variant="outline-secondary"
                               @click="toQueryView">返回
                     </b-button>
                   </b-row>
