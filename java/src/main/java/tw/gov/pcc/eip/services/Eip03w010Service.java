@@ -557,4 +557,53 @@ public class Eip03w010Service {
             }
         }
     }
+
+
+    /**
+     * 恢復原TABLE內容
+     * @param caseData
+     */
+    public void restoreOnError(Eip03w010Case caseData) throws JsonProcessingException {
+        ObjectMapper objectMapper = new ObjectMapper();
+        Map<String, Map<String, String>> jsonMap = objectMapper.readValue(caseData.getJsonMap(), Map.class);
+        KeepTrkDtl newKeepTrkDtl;
+        List<KeepTrkDtl> newKeepTrkDtlList = new ArrayList<>();
+        if(jsonMap.size() > 1){
+            for(String k : jsonMap.keySet()){
+                if(StringUtils.isNotBlank(k)){
+                    Map<String, String> innerJsonMap = jsonMap.get(k);
+                    String stDt = innerJsonMap.get("stDt").replace("/","");
+                    String endDt = innerJsonMap.get("endDt").replace("/","");;
+
+                    newKeepTrkDtl = new KeepTrkDtl();
+                    newKeepTrkDtl.setTrkID(caseData.getTrkID());
+                    newKeepTrkDtl.setTrkObj(k);
+                    newKeepTrkDtl.setPrcSts(innerJsonMap.get("prcSts"));
+                    newKeepTrkDtl.setStDt(DateUtility.changeDateTypeToWestDate(stDt));
+                    newKeepTrkDtl.setEndDt(DateUtility.changeDateTypeToWestDate(endDt));
+
+                    newKeepTrkDtlList.add(newKeepTrkDtl);
+                }
+            }
+        }
+        Map<String, String> trkObjMap = getAllTrkObj();
+        // 獲取所有匹配的 trkObj 值
+        List<String> matchedTrkObjList = newKeepTrkDtlList.stream()
+                .map(KeepTrkDtl::getTrkObj)
+                .collect(Collectors.toList());
+        // 删除匹配的键值对
+        trkObjMap.keySet().removeIf(matchedTrkObjList::contains);
+
+        caseData.setTrkObjCombobox(trkObjMap);
+
+        newKeepTrkDtlList.forEach(a -> {
+            a.setTrkObj(a.getTrkObj() + "-" + deptsDao.findByPk(a.getTrkObj()).getDept_name());
+            a.setStDt(DateUtility.changeDateTypeToChineseDate(a.getStDt()));
+            a.setEndDt(a.getEndDt().equals("")? " " : DateUtility.changeDateTypeToChineseDate(a.getEndDt()));
+        });
+
+        caseData.setStDt("");
+        caseData.setEndDt("");
+        caseData.setKeepTrkDtlList(newKeepTrkDtlList);
+    }
 }

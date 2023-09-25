@@ -327,7 +327,7 @@ public class Eip04w020Service extends OnlineRegService {
         MultipartFile[] files = Arrays.stream(modifyCaseData.getFiles()).filter(f->StringUtils.isNotBlank(f.getOriginalFilename())).toArray(MultipartFile[]::new);
         String filedir = eipcodeDao.findByCodeKindCodeNo("FILEDIR", "1").get().getCodename();
         String fileSeparator = File.separator;
-        String saveDirectory = filedir + fileSeparator + "線上報名" + fileSeparator + ("U".equals(mode) ? modifyCaseData.getOrformno() : orformdata.getOrformno());
+        String saveDirectory = filedir + fileSeparator + "orfiles" + fileSeparator + ("U".equals(mode) ? modifyCaseData.getOrformno() : orformdata.getOrformno());
 //        String apDirectory = System.getProperty("user.dir");
 //        String serverDrive = apDirectory.substring(0, apDirectory.indexOf(File.separator));
         File savePath = new File(saveDirectory);
@@ -669,7 +669,7 @@ public class Eip04w020Service extends OnlineRegService {
         orresult.setRegisaddres(StringUtils.defaultIfEmpty(caseData.getRegisaddres(), null));
         orresult.setMealstatus(caseData.getMealstatus());
         orresult.setCredt(LocalDateTime.now());
-        orresult.setCreuser("99999");
+        orresult.setCreuser(userData.getUserId());
         orresult.setRegisdt(orresult.getCredt());
         orresultDao.insertData(orresult);
         return "";

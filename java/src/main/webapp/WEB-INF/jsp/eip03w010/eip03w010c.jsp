@@ -101,8 +101,6 @@
                                     <td class="text-left" id="itemContentTxt" ><c:out value="${data.trkObj.split('-')[1]}"/></td>
                                     <td id="itemContent" style="display: none"><c:out value="${data.trkObj.split('-')[0]}"/></td>
                                     <td ><c:out value="${data.prcSts}"/></td>
-<%--                                    <td ><form:input path="stDt" class="form-control num_only ml-5 stDt" size="7" maxlength="7" value="${data.stDt}"/></td>--%>
-<%--                                    <td ><form:input path="endDt" class="form-control num_only ml-5 endDt" size="7" maxlength="7" value="${data.endDt}"/></td>--%>
                                     <td ><form:input path="stDt" class="form-control num_only ml-5 stDt dateTW" size="9" maxlength="9" value="${data.stDt}"/></td>
                                     <td ><form:input path="endDt" class="form-control num_only ml-5 endDt dateTW" size="9" maxlength="9" value="${data.endDt}"/></td>
                                     <td ><button class="btn btn-sm btn-outline-be" name="delete-item" type="button" onclick="deleteItem(${status.index})">刪除</button></td>
@@ -141,7 +139,6 @@
                 var prcSts = $(this).find('td').eq(3).text();
                 var stDt = $(this).find('.stDt').val();
                 var endDt = $(this).find('.endDt').val();
-                // alert(itemIds + rowText  + stDt + allStDtEnd);
                 var row = {
                     "rowText" : rowText,
                     "prcSts" : prcSts,
@@ -224,8 +221,6 @@
                 '<td id="itemContentTxt" class="text-left">' +  selectedText + '</td>'+
                 '<td id="itemContent" style="display: none;">' +  selectedID + '</td>'+
                 '<td >' +  "待處理" + '</td>'+
-                // '<td >' +  '<input id="stDt' + (rowCount) + '"  name="stDt' + (rowCount) + '" class="form-control num_only ml-5 stDt " size="7" maxlength="7" value="' + (allStDt > sysdate? allStDt : sysdate) + '" type="hidden"/>' + '</td>'+
-                // '<td >' +  '<input id="endDt' + (rowCount) + '" name="endDt' + (rowCount) + '" class="form-control num_only ml-5 endDt dateTW" size="7" maxlength="7"/>' + '</td>'+
                 '<td >' + '<input id="stDt' + (rowCount) + '"  name="stDt' + (rowCount) + '" class="form-control num_only ml-5 stDt dateTW" size="9" maxlength="9" value="' + (allStDt > sysdate? allStDt : sysdate) + '"/>' + '</td>'+
                 '<td >' + '<input id="endDt' + (rowCount) + '" name="endDt' + (rowCount) + '" class="form-control num_only ml-5 endDt dateTW" size="9" maxlength="9" />' + '</td>'+
                 '<td>' + buildDeleteItemButton(rowCount).prop('outerHTML') + '</td>'+
@@ -251,8 +246,6 @@
                 '<td id="itemContentTxt" class="text-left">' +  selectedText + '</td>'+
                 '<td id="itemContent" style="display: none;">' +  selectedID + '</td>'+
                 '<td>' + ( prcSts != null? prcSts : '待處理' ) + '</td>'+
-                // '<td>' +  '<input path="stDt" class="form-control num_only ml-5 stDt" size="7" maxlength="7" value="' + stDt + '"/>' + '</td>'+
-                // '<td>' +  '<input path="endDt" class="form-control num_only ml-5 endDt" size="7" maxlength="7" value="' + endDt + '"/>' + '</td>'+
                 '<td>' +  '<input id="stDt' + (rowCount) + '"  name="stDt' + (rowCount) + '" class="form-control num_only ml-5 stDt dateTW" size="9" maxlength="9" value="' + stDt + '" />' + '</td>'+
                 '<td>' +  '<input id="endDt' + (rowCount) + '" name="endDt' + (rowCount) + '" class="form-control num_only ml-5 endDt dateTW" size="9" maxlength="9" value="' + endDt + '" />' + '</td>'+
                 '<td>' + buildDeleteItemButton(rowCount).prop('outerHTML') + '</td>'+
@@ -285,7 +278,7 @@
             let selectedId = $(row).find('td').eq(2).text();
             let prcSts = $(row).find('td').eq(3).text();
             let stDt = $(row).find('input').eq(0).val();
-            let endDt = $(row).find('input').eq(1).val();
+            let endDt = $(row).find('.endDt').val();
             insertExistItem(selectedText, selectedId, prcSts, stDt, endDt);
         })
         var optionCount = $('select[name="trkObj"] option').length;

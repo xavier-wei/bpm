@@ -1,39 +1,26 @@
 package tw.gov.pcc.eip.common.controllers;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.SessionAttribute;
 import org.springframework.web.bind.annotation.SessionAttributes;
 import org.springframework.web.bind.support.SessionStatus;
-import tw.gov.pcc.eip.adm.controllers.Eip00w040Controller;
 import tw.gov.pcc.eip.common.cases.Eip03w010Case;
 import tw.gov.pcc.eip.common.cases.Eip03w010MixCase;
-import tw.gov.pcc.eip.common.cases.Eip03w030Case;
-import tw.gov.pcc.eip.common.cases.Eip03w030MixCase;
-import tw.gov.pcc.eip.dao.DeptsDao;
-import tw.gov.pcc.eip.dao.KeepTrkDtlDao;
-import tw.gov.pcc.eip.dao.KeepTrkMstDao;
-import tw.gov.pcc.eip.dao.UsersDao;
+import tw.gov.pcc.eip.dao.*;
 import tw.gov.pcc.eip.framework.domain.UserBean;
 import tw.gov.pcc.eip.framework.spring.annotation.SkipCSRFVerify;
 import tw.gov.pcc.eip.framework.spring.controllers.BaseController;
 import tw.gov.pcc.eip.services.Eip03w010Service;
-import tw.gov.pcc.eip.services.Eip03w030Service;
 import tw.gov.pcc.eip.util.DateUtility;
 import tw.gov.pcc.eip.util.ExceptionUtility;
 import tw.gov.pcc.eip.util.ObjectUtility;
-
-import javax.servlet.http.HttpSession;
-import java.util.Map;
 
 /**
  * 重要列管事項_重要列管事項維護
@@ -61,6 +48,8 @@ public class Eip03w010Controller extends BaseController {
     private UsersDao usersDao;
     @Autowired
     private KeepTrkDtlDao keepTrkDtlDao;
+    @Autowired
+    private EipcodeDao eipcodeDao;
 
     @ModelAttribute(CASE_KEY)
     public Eip03w010Case getEip03w010Case(){
@@ -205,6 +194,7 @@ public class Eip03w010Controller extends BaseController {
     public String insert(@Validated @ModelAttribute(CASE_KEY) Eip03w010Case caseData, BindingResult result) throws JsonProcessingException {
         try {
             if(result.hasErrors()){
+                eip03w010Service.restoreOnError(caseData);
                 return INSERT_PAGE;
             }
             eip03w010Service.insert(caseData, userData, result);
@@ -231,6 +221,7 @@ public class Eip03w010Controller extends BaseController {
     public String update(@Validated @ModelAttribute(CASE_KEY) Eip03w010Case caseData, BindingResult result, SessionStatus status) throws JsonProcessingException {
         try {
             if(result.hasErrors()){
+                eip03w010Service.restoreOnError(caseData);
                 return MODIFY_PAGE;
             }
             eip03w010Service.update(caseData, userData);

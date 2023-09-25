@@ -187,7 +187,7 @@ public class Eip04w030Service extends OnlineRegService {
      */
     public ByteArrayOutputStream downloadFile(Eip04w030Case caseData) throws IOException {
         String fileSeparator = File.separator;
-        String dir = eipcodeDao.findByCodeKindCodeNo("FILEDIR", "1").get().getCodename() + fileSeparator + "線上報名" + fileSeparator + caseData.getOrformno() + fileSeparator;
+        String dir = eipcodeDao.findByCodeKindCodeNo("FILEDIR", "1").get().getCodename() + fileSeparator + "orfiles" + fileSeparator + caseData.getOrformno() + fileSeparator;
         String filePath = dir + caseData.getFilename();
         File file = new File(filePath);
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();

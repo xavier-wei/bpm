@@ -58,7 +58,7 @@ public class Eip01w040Service {
         for (int i = 0; i < tree.size(); i++) { // 前提:無重複路徑且已排序
             String current = StringUtils.trim(tree.get(i).getExisthier());
             if (i == tree.size() - 1) { // 最後一層 與上層比對
-                String prev = StringUtils.trim(tree.get(i - 1).getExisthier());
+                String prev = StringUtils.trim(tree.get(i - (tree.size() == 1 ? 0 : 1)).getExisthier());
                 if (current.length() > prev.length() && StringUtils.contains(current, prev)) { // 子層
                     treeStr.add("<li id=\"" + current + "\" class=\"folder\">" + tree.get(i).getFilename());
                     treeStr.add("<ul>");
