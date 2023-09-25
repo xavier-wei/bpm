@@ -65,7 +65,9 @@ public class IsmsProcessResource {
         @Valid @RequestPart("form") HashMap<String, String> form,
         @PathVariable String key,
         @Valid @RequestPart(name = "fileDto", required = false) List<BpmUploadFileDTO> dto,
-        @RequestPart(name = "appendixFiles", required = false) List<MultipartFile> appendixFiles) throws IOException {
+        @RequestPart(name = "appendixFiles", required = false) List<MultipartFile> appendixFiles,
+        @RequestPart(name = "bpmIsmsL410", required = false) BpmIsmsL410DTO bpmIsmsL410DTO) throws IOException {
+        log.info("IsmsProcessResource.java - start - 70 :: " + bpmIsmsL410DTO );
         // 取得存在HttpSession的user資訊
         User userInfo = getUserInfo();
 
@@ -100,6 +102,7 @@ public class IsmsProcessResource {
         }
 
         return processInstanceId;
+//        return "";
 
     }
 

@@ -35,6 +35,18 @@
             </div>
           </template>
 
+          <template #cell(signUnit)="row">
+            <b-input-group>
+              <div v-if="!!row.item.signUnit">
+                {{ changeDealWithUnit(row.item.signUnit, bpmDeptsOptions) }}
+              </div>
+              <div v-if="!!row.item.signUnit">/</div>
+              <div v-if="!!row.item.signer">
+                {{ row.item.signer }}
+              </div>
+            </b-input-group>
+          </template>
+
         </b-table>
 
         <div class="m-1" v-show="formStatusRef === FormStatusEnum.VERIFY">
@@ -50,7 +62,7 @@
 </template>
 
 <script lang="ts">
-import {onActivated, onMounted, reactive, Ref, ref, toRef, toRefs, watch} from '@vue/composition-api';
+import {computed, onActivated, onMounted, reactive, Ref, ref, toRef, toRefs, watch} from '@vue/composition-api';
 import {changeDealWithUnit} from "@/shared/word/directions";
 import {newformatDate} from '@/shared/date/minguo-calendar-utils';
 import {useGetters} from "@u3u/vue-hooks";
@@ -81,7 +93,6 @@ export default {
   setup(props) {
 
     const bpmDeptsOptions = ref(useGetters(['getBpmDeptsOptions']).getBpmDeptsOptions).value;
-
     const formIdProp = toRef(props, 'formId');
     const formStatusRef = toRef(props, 'formStatus');
     const formDataProp = reactive(props.formData);
@@ -119,7 +130,6 @@ export default {
           sortable: false,
           thClass: 'text-center',
           tdClass: 'text-center align-middle ',
-          formatter: value => (value === undefined ? '' : changeDealWithUnit(value, bpmDeptsOptions)),
         },
         {
           key: 'signingDatetime',
@@ -127,7 +137,7 @@ export default {
           sortable: false,
           thClass: 'text-center',
           tdClass: 'text-center align-middle ',
-          formatter: value => (value === undefined ? '' : newformatDate(new Date(value), '/')),
+          formatter: value => (value !== '' ? newformatDate(new Date(value), '/') : ''),
         },
         {
           key: 'opinion',
@@ -147,20 +157,9 @@ export default {
         .get(`/eip/getBpmSignStatus/${id}`)
         .then(({data}) => {
           if (data.length === 0) return;
+          console.log('data', data)
+
           signStatusTable.data = data;
-
-
-          //判斷每張表單狀態
-          if (formDataProp.processInstanceStatus === '1') {
-            signStatusTable.data.push({
-              taskName: '結束',
-            });
-          } else if (formDataProp.processInstanceStatus === '2') {
-            signStatusTable.data.push({
-              taskName: '撤銷',
-            });
-          }
-
         })
         .catch(notificationErrorHandler(notificationService));
     }
@@ -188,10 +187,29 @@ export default {
 
 
     watch(formIdProp, (value) => {
-
-
         getBpmSignStatus(value);
         getFindByBpmSignerList(value);
+      },
+      {immediate: true}
+    )
+
+
+    //多寫一個watch用來處理formDataProp資料會不同步問題,讓資料有值時在去變更signStatusTable.data
+    watch(formDataProp, (value) => {
+        if (value.processInstanceStatus !== undefined) {
+          //判斷每張表單狀態
+          if (formDataProp.processInstanceStatus === '1') {
+            signStatusTable.data.push({
+              taskName: '結束',
+              signingDatetime: ''
+            });
+          } else if (formDataProp.processInstanceStatus === '2') {
+            signStatusTable.data.push({
+              taskName: '撤銷',
+              signingDatetime: ''
+            });
+          }
+        }
       },
       {immediate: true}
     )
@@ -203,6 +221,8 @@ export default {
       formStatusRef,
       opinionProp,
       signerList,
+      changeDealWithUnit,
+      bpmDeptsOptions,
     }
   }
 }

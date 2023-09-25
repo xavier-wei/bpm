@@ -237,14 +237,14 @@
                         <span v-if=" row.item.isColon === '1'"> : </span>
 
                         <b-form-input
-                          v-if="row.item.systemApply === '1' || row.item.systemApply === '6'"
+                          v-if="row.item.systemApply === '1' ||  row.item.systemApply === '6'"
                           maxlength="200" v-model="row.item.systemApplyInput"
                           :disabled="form.isSubmit === '1' || formStatusRef === FormStatusEnum.READONLY">
                         </b-form-input>
                         <b-form-input
                           v-else
                           maxlength="200" v-model="row.item.systemApplyInput"
-                          :disabled="form.isSubmit === '1' || userData.deptId !== row.item.admUnit || row.item.checkbox !== '1' || formStatusRef === FormStatusEnum.READONLY">
+                          :disabled="userData.deptId !== row.item.admUnit || taskDataRef.taskName !== row.item.systemApplyName || row.item.checkbox !== '1' || formStatusRef === FormStatusEnum.READONLY">
                         </b-form-input>
 
                         <span v-if="row.item.systemApply === '4'">@mail.pcc.gov.tw</span>
@@ -411,32 +411,37 @@
                     <!--管理單位-->
                     <template #cell(managementUnit)="row">
 
-                      <b-form-select :options="bpmDeptsOptions" v-model="row.item.admUnit"
-                                     :disabled="userData.deptId !== row.item.admUnit || row.item.checkbox !== '1'  || formStatusRef === FormStatusEnum.READONLY">
+<!--                      <b-form-select :options="bpmDeptsOptions" v-model="row.item.admUnit"-->
+<!--                                     :disabled="userData.deptId !== row.item.admUnit ||taskDataRef.taskName !== row.item.systemApplyName || row.item.checkbox !== '1'  || formStatusRef === FormStatusEnum.READONLY">-->
 
-                        <template #first>
-                          <b-form-select-option value="null" disabled>請選擇</b-form-select-option>
-                        </template>
-                      </b-form-select>
+<!--                        <template #first>-->
+<!--                          <b-form-select-option value="null" disabled>請選擇</b-form-select-option>-->
+<!--                        </template>-->
+<!--                      </b-form-select>-->
+
+                      <div v-if="!!row.item.admUnit" v-model="row.item.admUnit">
+                        {{ changeDealWithUnit(row.item.admUnit, bpmDeptsOptions) }}
+                      </div>
+
                     </template>
 
                     <!--處理情形及生效日期-->
                     <template #cell(lastWork)="row">
                       <b-form-input maxlength="200" v-model="row.item.admStatus"
-                                    :disabled="userData.deptId !== row.item.admUnit || row.item.checkbox !== '1'  || formStatusRef === FormStatusEnum.READONLY"/>
+                                    :disabled="userData.deptId !== row.item.admUnit || taskDataRef.taskName !== row.item.systemApplyName || row.item.checkbox !== '1'  || formStatusRef === FormStatusEnum.READONLY"/>
                       <i-date-picker
                         placeholder="yyy/MM/dd"
                         lazy
                         trim
                         v-model="row.item.admEnableDate"
-                        :disabled="userData.deptId !== row.item.admUnit || row.item.checkbox !== '1'  || formStatusRef === FormStatusEnum.READONLY"
+                        :disabled="userData.deptId !== row.item.admUnit || taskDataRef.taskName !== row.item.systemApplyName || row.item.checkbox !== '1'  || formStatusRef === FormStatusEnum.READONLY"
                       ></i-date-picker>
                     </template>
 
                     <!--處理人員-->
                     <template #cell(reviewStaffName)="row">
                       <b-form-input maxlength="200" v-model="row.item.admName"
-                                    :disabled=" userData.deptId !== row.item.admUnit || row.item.checkbox !== '1'  || formStatusRef === FormStatusEnum.READONLY"/>
+                                    :disabled=" userData.deptId !== row.item.admUnit ||taskDataRef.taskName !== row.item.systemApplyName || row.item.checkbox !== '1'  || formStatusRef === FormStatusEnum.READONLY"/>
                     </template>
 
                   </b-table>
@@ -468,7 +473,8 @@
                 </div>
 
                 <!--簽核狀態模組-->
-                <signerList :formId="formIdProp" :formStatus="formStatusRef" :opinion="opinion" :formData="form"></signerList>
+                <signerList :formId="formIdProp" :formStatus="formStatusRef" :opinion="opinion"
+                            :formData="form"></signerList>
 
 
                 <b-container class="mt-3">
@@ -552,7 +558,7 @@ import {checkboxToMapAndForm} from "@/shared/word/checkboxToMapAndForm";
 import {mapToCheckbox} from "@/shared/word/mapToCheckbox";
 import signatureBmodel from "@/components/signatureBmodel.vue";
 import signerList from "@/components/signerList.vue";
-
+import {changeDealWithUnit} from "@/shared/word/directions";
 const appendix = () => import('@/components/appendix.vue');
 const flowChart = () => import('@/components/flowChart.vue');
 
@@ -614,6 +620,8 @@ export default {
     let opinion = reactive({
       opinionData: ''
     });
+
+    let formData = reactive({});
 
     enum FormStatusEnum {
       CREATE = '新增',
@@ -875,10 +883,10 @@ export default {
       },
     };
 
-    async function templateQuery(formData) {
+    function templateQuery(formData) {
       table.data = [];
 
-      await axios
+      axios
         .get(`/eip/bpm-l410-apply-manages`)
         .then(({data}) => {
 
@@ -908,9 +916,9 @@ export default {
         .catch(notificationErrorHandler(notificationService));
     }
 
-    async function handleQuery() {
+    function handleQuery() {
       console.log('formIdProp.value', formIdProp.value)
-      await axios
+      axios
         .post(`/process/getIsms/L410/${formIdProp.value}`)
         .then(({data}) => {
 
@@ -937,12 +945,10 @@ export default {
           //把頁面上iTable內的所有資料逐一轉成form裡的值，並把組出List<HashMap<String, HashMap<String, Object>>>傳給後端
           await Promise.all(table.data.map(data => checkboxToMapAndForm(data, form, l410Variables)));
 
+
           const formData = new FormData();
 
           form.l410Variables = l410Variables;
-
-          console.log('l410Variables', l410Variables)
-
           let body = {
             "L410": JSON.stringify(form)
           }
@@ -978,11 +984,12 @@ export default {
     async function reviewStart(item) {
       let variables = {};
       let l410Variables = [];
-      console.log('taskDataRef', taskDataRef.value)
 
       //把頁面上iTable內的所有資料逐一轉成form裡的值，並把組出List<HashMap<String, HashMap<String, Object>>>傳給後端
       await Promise.all(table.data.map(data => checkboxToMapAndForm(data, form, l410Variables)));
 
+
+      console.log(' l410Edit.vue - reviewStart - 986: ', JSON.parse(JSON.stringify(l410Variables)))
       form.l410Variables = l410Variables;
 
       //判斷頁面審核單位是否跟登入者單位一樣，一致就去後端更新資料
@@ -1140,7 +1147,8 @@ export default {
       formIdProp,
       opinion,
       l410Data,
-      taskDataRef
+      taskDataRef,
+      changeDealWithUnit
     }
   }
 }
