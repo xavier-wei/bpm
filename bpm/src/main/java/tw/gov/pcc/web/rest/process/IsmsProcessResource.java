@@ -18,6 +18,7 @@ import tw.gov.pcc.domain.entity.BpmSignStatus;
 import tw.gov.pcc.repository.BpmIsmsAdditionalRepository;
 import tw.gov.pcc.service.BpmIsmsService;
 import tw.gov.pcc.service.BpmSignStatusService;
+import tw.gov.pcc.service.BpmSignerListService;
 import tw.gov.pcc.service.dto.*;
 import tw.gov.pcc.service.mapper.BpmSignStatusMapper;
 import tw.gov.pcc.utils.MapUtils;
@@ -38,33 +39,35 @@ public class IsmsProcessResource {
     private static final Logger log = LoggerFactory.getLogger(IsmsProcessResource.class);
 
     @Value("${bpm.token}")
-    private String token;
+    private String TOKEN;
 
-    @Value("${flowable.path}")
-    private  String flowableProcessUrl;
     private final ApplicationContext applicationContext;
     private final Gson gson = new Gson();
-
+    private final String FLOWABLE_PROCESS_URL = "http://localhost:9973/process";
     private final RestTemplate restTemplate = new RestTemplate();
     private final HttpSession httpSession;
     private final BpmSignStatusService bpmSignStatusService;
     private final BpmSignStatusMapper bpmSignStatusMapper;
     private final BpmIsmsAdditionalRepository bpmIsmsAdditionalRepository;
+    private final BpmSignerListService bpmSignerListService;
 
-    public IsmsProcessResource(ApplicationContext applicationContext, HttpSession httpSession, BpmSignStatusService bpmSignStatusService, BpmSignStatusMapper bpmSignStatusMapper, BpmIsmsAdditionalRepository bpmIsmsAdditionalRepository) {
+    public IsmsProcessResource(ApplicationContext applicationContext, HttpSession httpSession, BpmSignStatusService bpmSignStatusService, BpmSignStatusMapper bpmSignStatusMapper, BpmIsmsAdditionalRepository bpmIsmsAdditionalRepository, BpmSignerListService bpmSignerListService) {
         this.applicationContext = applicationContext;
         this.httpSession = httpSession;
         this.bpmSignStatusService = bpmSignStatusService;
         this.bpmSignStatusMapper = bpmSignStatusMapper;
         this.bpmIsmsAdditionalRepository = bpmIsmsAdditionalRepository;
+        this.bpmSignerListService = bpmSignerListService;
     }
 
     @PostMapping(path = "/start/{key}", consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
     public String start(
-        @Valid @RequestPart("form") Map<String, String> form,
+        @Valid @RequestPart("form") HashMap<String, String> form,
         @PathVariable String key,
         @Valid @RequestPart(name = "fileDto", required = false) List<BpmUploadFileDTO> dto,
-        @RequestPart(name = "appendixFiles", required = false) List<MultipartFile> appendixFiles){
+        @RequestPart(name = "appendixFiles", required = false) List<MultipartFile> appendixFiles,
+        @RequestPart(name = "bpmIsmsL410", required = false) BpmIsmsL410DTO bpmIsmsL410DTO) throws IOException {
+        log.info("IsmsProcessResource.java - start - 70 :: " + bpmIsmsL410DTO );
         // 取得存在HttpSession的user資訊
         User userInfo = getUserInfo();
 
@@ -78,7 +81,7 @@ public class IsmsProcessResource {
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
         HttpEntity<String> requestEntity = new HttpEntity<>(gson.toJson(processReqDTO), headers);
-        ResponseEntity<String> exchange = restTemplate.exchange(flowableProcessUrl + "/startProcess", HttpMethod.POST, requestEntity, String.class);
+        ResponseEntity<String> exchange = restTemplate.exchange(FLOWABLE_PROCESS_URL + "/startProcess", HttpMethod.POST, requestEntity, String.class);
         String processInstanceId;
         TaskDTO taskDTO;
         if (exchange.getStatusCodeValue() == 200) {
@@ -99,6 +102,7 @@ public class IsmsProcessResource {
         }
 
         return processInstanceId;
+//        return "";
 
     }
 
@@ -128,7 +132,7 @@ public class IsmsProcessResource {
             service.saveBpmByPatch(completeReqDTO.getForm().get(key));
 
         }
-        ResponseEntity<String> exchange = restTemplate.exchange(flowableProcessUrl + "/completeTask", HttpMethod.POST, requestEntity, String.class);
+        ResponseEntity<String> exchange = restTemplate.exchange(FLOWABLE_PROCESS_URL + "/completeTask", HttpMethod.POST, requestEntity, String.class);
         if (exchange.getStatusCodeValue() == 200) {
             BpmSignStatusDTO bpmSignStatusDTO = getBpmSignStatusDTO(completeReqDTO, formId);
             BpmSignStatus bpmSignStatus = bpmSignStatusMapper.toEntity(bpmSignStatusDTO);
@@ -141,7 +145,7 @@ public class IsmsProcessResource {
     @PutMapping("/receiveEndEvent")
     public void receiveEndEvent(@RequestBody EndEventDTO endEventDTO) {
         log.info("ProcessL414Resource.java - receiveEndEvent - 196 :: " + endEventDTO.getProcessInstanceId());
-        if (token.equals(endEventDTO.getToken())) {
+        if (TOKEN.equals(endEventDTO.getToken())) {
             BpmIsmsService service = (BpmIsmsService) applicationContext.getBean(Objects.requireNonNull(BpmIsmsServiceBeanNameEnum.getServiceBeanNameByKey(endEventDTO.getFormName())));
             service.endForm(endEventDTO);
 
@@ -188,9 +192,9 @@ public class IsmsProcessResource {
 
         HashMap<String, String> deleteRequest = new HashMap<>();
         deleteRequest.put("processInstanceId", processInstanceId);
-        deleteRequest.put("token", token);
+        deleteRequest.put("token", TOKEN);
         HttpEntity<String> requestEntity = new HttpEntity<>(gson.toJson(deleteRequest), headers);
-        ResponseEntity<String> exchange = restTemplate.exchange(flowableProcessUrl + "/deleteProcess", HttpMethod.POST, requestEntity, String.class);
+        ResponseEntity<String> exchange = restTemplate.exchange(FLOWABLE_PROCESS_URL + "/deleteProcess", HttpMethod.POST, requestEntity, String.class);
 
     }
 
@@ -215,7 +219,7 @@ public class IsmsProcessResource {
         headers.setContentType(MediaType.APPLICATION_JSON);
         HttpEntity<String> requestEntity = new HttpEntity<>(userInfo.getUserId(), headers);
 
-        ResponseEntity<String> exchange = restTemplate.exchange(flowableProcessUrl + "/queryProcessingTask", HttpMethod.POST, requestEntity, String.class);
+        ResponseEntity<String> exchange = restTemplate.exchange(FLOWABLE_PROCESS_URL + "/queryProcessingTask", HttpMethod.POST, requestEntity, String.class);
 
         if (exchange.getStatusCodeValue() == 200) {
             String body = exchange.getBody();
@@ -291,9 +295,9 @@ public class IsmsProcessResource {
         headers.setContentType(MediaType.APPLICATION_JSON);
         HashMap<String, String> deleteRequest = new HashMap<>();
         deleteRequest.put("processInstanceId", processInstanceId);
-        deleteRequest.put("token", token);
+        deleteRequest.put("token", TOKEN);
         HttpEntity<String> requestEntity = new HttpEntity<>(gson.toJson(deleteRequest), headers);
-        ResponseEntity<String> exchange = restTemplate.exchange(flowableProcessUrl + "/deleteProcess", HttpMethod.POST, requestEntity, String.class);
+        ResponseEntity<String> exchange = restTemplate.exchange(FLOWABLE_PROCESS_URL + "/deleteProcess", HttpMethod.POST, requestEntity, String.class);
 
     }
 
@@ -308,7 +312,7 @@ public class IsmsProcessResource {
         headers.setContentType(MediaType.APPLICATION_JSON);
         HttpEntity<String> requestEntity = new HttpEntity<>(userInfo.getUserId(), headers);
 
-        ResponseEntity<String> exchange = restTemplate.exchange(flowableProcessUrl + "/getAllTask", HttpMethod.POST, requestEntity, String.class);
+        ResponseEntity<String> exchange = restTemplate.exchange(FLOWABLE_PROCESS_URL + "/getAllTask", HttpMethod.POST, requestEntity, String.class);
 
         if (exchange.getStatusCodeValue() == 200) {
             String body = exchange.getBody();

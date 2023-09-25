@@ -114,7 +114,7 @@ export function checkboxToMapAndForm(data: any, form: any, variables: any): any 
     variables.push(Object.fromEntries(arrData))
   }
 
-  if (data.checkbox === '1' && data.systemApplyName === '網站帳號') {
+  if (data.checkbox === '1' && data.systemApplyName === '全球資訊網&會內資訊網') {
     if (form.webSiteList.length >= 1) {
 
       form.webSiteList.forEach(i => {
@@ -141,7 +141,7 @@ export function checkboxToMapAndForm(data: any, form: any, variables: any): any 
       variables.push(Object.fromEntries(arrData))
     }
 
-  } else if (data.systemApplyName === '網站帳號') {
+  } else if (data.systemApplyName === '全球資訊網&會內資訊網') {
     let mapData = new Map<string, object>();
     mapData.set('isWebSite', null)
     let arrData = Array.from(mapData);
@@ -261,7 +261,7 @@ export function checkboxToMapAndForm(data: any, form: any, variables: any): any 
     variables.push(Object.fromEntries(arrData))
   }
 
-  if (data.checkbox === '1' && data.systemApplyName === '其他系統1') {
+  if (data.checkbox === '1' && data.systemApplyName === '本會其他資通系統1') {
 
     form.isOtherSys1 = '1'
     form.otherSys1ServerName = data.otherSys
@@ -277,7 +277,7 @@ export function checkboxToMapAndForm(data: any, form: any, variables: any): any 
     mapData.set('isOtherSys1', data)
     let arrData = Array.from(mapData);
     variables.push(Object.fromEntries(arrData))
-  } else if (data.systemApplyName === '其他系統1') {
+  } else if (data.systemApplyName === '本會其他資通系統1') {
     let mapData = new Map<string, object>();
     mapData.set('isOtherSys1', null)
     let arrData = Array.from(mapData);
@@ -285,7 +285,7 @@ export function checkboxToMapAndForm(data: any, form: any, variables: any): any 
   }
 
 
-  if (data.checkbox === '1' && data.systemApplyName === '其他系統2') {
+  if (data.checkbox === '1' && data.systemApplyName === '本會其他資通系統2') {
 
     form.isOtherSys2 = '1'
     form.otherSys2ServerName = data.otherSys
@@ -301,14 +301,14 @@ export function checkboxToMapAndForm(data: any, form: any, variables: any): any 
     mapData.set('isOtherSys2', data)
     let arrData = Array.from(mapData);
     variables.push(Object.fromEntries(arrData))
-  } else if (data.systemApplyName === '其他系統2') {
+  } else if (data.systemApplyName === '本會其他資通系統2') {
     let mapData = new Map<string, object>();
     mapData.set('isOtherSys2', null)
     let arrData = Array.from(mapData);
     variables.push(Object.fromEntries(arrData))
   }
 
-  if (data.checkbox === '1' && data.systemApplyName === '其他系統3') {
+  if (data.checkbox === '1' && data.systemApplyName === '本會其他資通系統3') {
 
     form.isOtherSys3 = '1'
     form.otherSys3ServerName = data.otherSys
@@ -324,7 +324,7 @@ export function checkboxToMapAndForm(data: any, form: any, variables: any): any 
     mapData.set('isOtherSys3', data)
     let arrData = Array.from(mapData);
     variables.push(Object.fromEntries(arrData))
-  } else if (data.systemApplyName === '其他系統3') {
+  } else if (data.systemApplyName === '本會其他資通系統3') {
     let mapData = new Map<string, object>();
     mapData.set('isOtherSys3', null)
     let arrData = Array.from(mapData);

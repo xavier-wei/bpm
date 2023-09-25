@@ -94,7 +94,7 @@ public class BpmShareResource {
     public List<BpmSignerList> findByBpmSignerList(
         @PathVariable String id
     ) {
-        return bpmSignerListRepository.findByFormId(id);
+        return bpmSignerListRepository.findByFormIdOrderBySortAsc(id);
     }
 
 }
