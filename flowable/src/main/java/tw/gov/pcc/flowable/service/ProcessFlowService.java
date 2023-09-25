@@ -3,12 +3,10 @@ package tw.gov.pcc.flowable.service;
 import org.flowable.engine.HistoryService;
 import org.flowable.engine.RuntimeService;
 import org.flowable.engine.TaskService;
-import org.flowable.engine.history.HistoricProcessInstance;
 import org.flowable.engine.runtime.ProcessInstance;
 import org.flowable.task.api.Task;
 import org.flowable.task.api.history.HistoricTaskInstance;
 import org.springframework.stereotype.Service;
-import tw.gov.pcc.flowable.domain.ProcessEnum;
 import tw.gov.pcc.flowable.domain.ProcessRes;
 import tw.gov.pcc.flowable.domain.SupervisorSignerEnum;
 import tw.gov.pcc.flowable.service.dto.TaskDTO;
@@ -21,8 +19,8 @@ import java.util.stream.Collectors;
 
 @Service
 public class ProcessFlowService {
-    private final Integer[] SIGNATURE_STATUS = {1, 0};
-    public final String[] MESSAGE = {"完成", "無此簽核任務"};
+    private static final Integer[] SIGNATURE_STATUS = {1, 0};
+    private static final String[] MESSAGE = {"完成", "無此簽核任務"};
     private final RuntimeService runtimeService;
 
     private final TaskService taskService;
@@ -90,13 +88,16 @@ public class ProcessFlowService {
 
         // 查出所有加簽任務
         List<ProcessInstance> additionalProcesses = runtimeService.createProcessInstanceQuery().processDefinitionKey("AdditionalProcess").list();
-        List<String> mainProcessInstanceIds = additionalProcesses
+        List<String> mainProcessTaskIds = additionalProcesses
                 .stream()
                 .map(additionalProcess ->
                         (String) runtimeService
                                 .getVariables(additionalProcess.getProcessInstanceId())
-                                .get("mainProcessInstanceId"))
+                                .get("mainProcessTaskId"))
                 .collect(Collectors.toList());
+
+
+
 
         return taskService.createTaskQuery()
                 .taskCandidateOrAssigned(id)
@@ -105,7 +106,7 @@ public class ProcessFlowService {
                 .list()
                 .stream()
                 .map(TaskDTO::new)
-                .filter(taskDTO -> "Additional".equals(taskDTO.getFormName()) || !mainProcessInstanceIds.contains(taskDTO.getProcessInstanceId())
+                .filter(taskDTO -> "Additional".equals(taskDTO.getFormName()) || !mainProcessTaskIds.contains(taskDTO.getTaskId())
                 ).collect(Collectors.toList());
     }
 
@@ -133,24 +134,24 @@ public class ProcessFlowService {
         return new TaskDTO(task);
     }
 
-    public boolean isProcessComplete(String processInstanceId) {
-        HistoricProcessInstance historicProcessInstance = historyService
-                .createHistoricProcessInstanceQuery()
-                .processInstanceId(processInstanceId)
-                .singleResult();
-        return (historicProcessInstance != null && historicProcessInstance.getEndTime() != null);
-    }
-
-    // query processInstance is complete return true
-
-    public boolean isProcessComplete(String processInstanceId, String formName) {
-        HistoricProcessInstance historicProcessInstance = historyService
-                .createHistoricProcessInstanceQuery()
-                .processInstanceId(processInstanceId)
-                .processDefinitionKey(ProcessEnum.getProcessKeyByKey(formName))
-                .singleResult();
-        return (historicProcessInstance != null && historicProcessInstance.getEndTime() != null);
-    }
+//    public boolean isProcessComplete(String processInstanceId) {
+//        HistoricProcessInstance historicProcessInstance = historyService
+//                .createHistoricProcessInstanceQuery()
+//                .processInstanceId(processInstanceId)
+//                .singleResult();
+//        return (historicProcessInstance != null && historicProcessInstance.getEndTime() != null);
+//    }
+//
+//    // query processInstance is complete return true
+//
+//    public boolean isProcessComplete(String processInstanceId, String formName) {
+//        HistoricProcessInstance historicProcessInstance = historyService
+//                .createHistoricProcessInstanceQuery()
+//                .processInstanceId(processInstanceId)
+//                .processDefinitionKey(ProcessEnum.getProcessKeyByKey(formName))
+//                .singleResult();
+//        return (historicProcessInstance != null && historicProcessInstance.getEndTime() != null);
+//    }
 
     private void jumpIfSupervisor(String processKey, Map<String, Object> variables, String processInstanceId) {
         String[] supervisors = SupervisorSignerEnum.getSupervisors(processKey);

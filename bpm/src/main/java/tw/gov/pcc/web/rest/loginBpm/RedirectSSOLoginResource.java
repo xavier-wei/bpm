@@ -9,7 +9,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 import tw.gov.pcc.domain.User;
-import tw.gov.pcc.repository.SupervisorRepository;
 import tw.gov.pcc.service.UserService;
 
 import javax.servlet.http.HttpSession;
@@ -19,11 +18,9 @@ public class RedirectSSOLoginResource {
     private final Logger log = LoggerFactory.getLogger(RedirectSSOLoginResource.class);
 
     private final HttpSession session;
-    private final SupervisorRepository supervisorRepository;
     private final UserService userService;
-    public RedirectSSOLoginResource(HttpSession session, SupervisorRepository supervisorRepository, UserService userService) {
+    public RedirectSSOLoginResource(HttpSession session, UserService userService) {
         this.session = session;
-        this.supervisorRepository = supervisorRepository;
         this.userService = userService;
     }
 

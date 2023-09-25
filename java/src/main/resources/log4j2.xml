@@ -11,7 +11,7 @@
     </Appenders>
     <Loggers>
         <!-- 由於工程會端要求修改，這裡不分區，移除所有PROFILE，分區由工程會端處理 -->
-        <Root level="DEBUG"> 
+        <Root level="DEBUG">
             <AppenderRef ref="A2"/>
         </Root>
         <logger name="org.apache.commons" level="ERROR"/>

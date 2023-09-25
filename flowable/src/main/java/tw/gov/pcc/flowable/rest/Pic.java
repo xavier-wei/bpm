@@ -20,15 +20,12 @@ public class Pic {
 
     private final RuntimeService runtimeService;
 
-    private final TaskService taskService;
-
     private final RepositoryService repositoryService;
 
     private final ProcessEngine processEngine;
 
-    public Pic(RuntimeService runtimeService, TaskService taskService, RepositoryService repositoryService, ProcessEngine processEngine) {
+    public Pic(RuntimeService runtimeService, RepositoryService repositoryService, ProcessEngine processEngine) {
         this.runtimeService = runtimeService;
-        this.taskService = taskService;
         this.repositoryService = repositoryService;
         this.processEngine = processEngine;
     }
