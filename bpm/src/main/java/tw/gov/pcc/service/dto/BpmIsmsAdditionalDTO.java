@@ -9,6 +9,7 @@ public class BpmIsmsAdditionalDTO {
     private String mainFormId; //發起加簽的流程FormId
     private String mainProcessInstanceId; // 發起加簽的流程id
     private String mainProcessTaskId; // 發起加簽的TASKID
+    private String taskName; // 發起加簽的taskName
     private String requesterId;//ChiefTester
     private String requester;//ChiefTester
     private String additionalSignerId;//AdditionalSignerTester
@@ -111,5 +112,13 @@ public class BpmIsmsAdditionalDTO {
 
     public void setCreateTime(Timestamp createTime) {
         this.createTime = createTime;
+    }
+
+    public String getTaskName() {
+        return taskName;
+    }
+
+    public void setTaskName(String taskName) {
+        this.taskName = taskName;
     }
 }

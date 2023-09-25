@@ -88,9 +88,9 @@
               </i-form-group-check>
 
               <i-form-group-check label-star class="col-sm-5" label-cols="5" content-cols="7" :label="`單位別 ：`"
-                                  :item="$v.appUnit1">
+                                  :item="$v.appUnit">
                 <!--單位別 : -->
-                <b-form-select v-model="$v.appUnit1.$model" :options="bpmDeptsOptions">
+                <b-form-select v-model="$v.appUnit.$model" :options="bpmDeptsOptions">
                   <template #first>
                     <b-form-select-option value="null" disabled>請選擇</b-form-select-option>
                   </template>
@@ -446,7 +446,7 @@
                 </b-button>
                 <b-button class="ml-2" style="background-color: #17a2b8; color: white"
                           variant="outline-secondary"
-                          @click="reset()">清除
+                          @click="resetAll()">清除
                 </b-button>
                 <b-button class="ml-2" style="background-color: #17a2b8; color: white"
                           variant="outline-secondary"
@@ -533,7 +533,7 @@ export default {
       appEngName: userData.userEName != '' ? userData.userEName : '', // 英文姓名
       appEmpid: userData.empId != null ? userData.empId : '',//	申請人員工編號
       extNum: userData.tel2 != null ? userData.tel2 : '',//	分機
-      appUnit1: userData.deptId != null ? userData.deptId : '',//	單位別
+      appUnit: userData.deptId != null ? userData.deptId : '',//	單位別
       position: userData.cpape05m.title != null ? userData.cpape05m.title : '',//	職稱
       appReason: '1',//	申請事由 1.新進 2.離職 3.職務異動
       isEnableDate: '0',//	是否有生效日期
@@ -600,6 +600,38 @@ export default {
       pccPisStatus: '',
       pccPisEnableDate: null,
       pccPisAdmName: '',
+      isEngAndPrjInfoSys: '0',
+      engAndPrjInfoSysAccount: '',
+      engAndPrjInfoSys: '',
+      engAndPrjInfoSysChange: '',
+      engAndPrjInfoSysAdmUnit: '',
+      engAndPrjInfoSysStatus: '',
+      engAndPrjInfoSysEnableDate: null,
+      engAndPrjInfoSysAdmName: '',
+      isRevSys: '0',
+      revSysAccount: '',
+      revSys: '',
+      revSysChange: '',
+      revSysAdmUnit: '',
+      revSysStatus: '',
+      revSysEnableDate: null,
+      revSysAdmName: '',
+      isRecSys: '0',
+      recSysAccount: '',
+      recSys: '',
+      recSysChange: '',
+      recSysAdmUnit: '',
+      recSysStatus: '',
+      recSysEnableDate: null,
+      recSysAdmName: '',
+      isBidSys: '0',
+      bidSysAccount: '',
+      bidSys: '',
+      bidSysChange: '',
+      bidSysAdmUnit: '',
+      bidSysStatus: '',
+      bidSysEnableDate: null,
+      bidSysAdmName: '',
       isOtherSys1: '0',
       otherSys1ServerName: '',
       otherSys1Account: '',
@@ -609,6 +641,8 @@ export default {
       otherSys1Status: '',
       otherSys1EnableDate: null,
       otherSys1AdmName: '',
+
+
       isOtherSys2: '0',
       otherSys2ServerName: '',
       otherSys2Account: '',
@@ -644,7 +678,7 @@ export default {
       appEngName: {required},
       appEmpid: {required},
       extNum: {},
-      appUnit1: {required},
+      appUnit: {required},
       position: {required},
       appReason: {required},
       isEnableDate: {},
@@ -753,7 +787,7 @@ export default {
 
 
     async function submitForm(isSubmit) {
-      let variables = [];
+      let l410Variables = [];
       form.isSubmit = isSubmit;
       const isValid = await checkValidity();
 
@@ -761,39 +795,11 @@ export default {
         const isOK = await $bvModal.msgBoxConfirm('是否確認送出修改內容？');
 
         if (isOK) {
-          await Promise.all(table.data.map(data => checkboxToMapAndForm(data, form, variables)));
+          await Promise.all(table.data.map(data => checkboxToMapAndForm(data, form, l410Variables)));
 
-          const pccWwwKey = "pccWww";
-          const pccHomeKey = "pccHome";
+          form.l410Variables = l410Variables;
 
-          let found1 = false;
-          let found2 = false;
-
-          //過濾variables 找出有沒有pccWww、pccHome
-          for (let i = 0; i < variables.length; i++) {
-            if (variables[i].hasOwnProperty(pccWwwKey)) {
-              found1 = true;
-            }
-            if (variables[i].hasOwnProperty(pccHomeKey)) {
-              found2 = true;
-            }
-          }
-
-          //pccWww、pccHome 把沒有的物件塞進variables
-          if (!found1) {
-            let mapData = new Map<string, object>();
-            mapData.set('pccWww', null)
-            let arrData = Array.from(mapData);
-            variables.push(Object.fromEntries(arrData))
-          }
-          if (!found2) {
-            let mapData = new Map<string, object>();
-            mapData.set('pccHome', null)
-            let arrData = Array.from(mapData);
-            variables.push(Object.fromEntries(arrData))
-          }
-
-          form.l410Variables = variables;
+          console.log(' l410Apply.vue - submitForm - 802: ', JSON.parse(JSON.stringify(form)))
 
           let body = {
             "L410": JSON.stringify(form)
@@ -870,6 +876,26 @@ export default {
       }
     }
 
+    function resetAll() {
+      reset();
+      table.data.forEach(data=>{
+        data.checkbox = '0';
+        data.otherSys = null;
+        data.otherSysAccount = null;
+        data.systemApplyInput = null;
+        data.sys = null;
+        data.sysChange = null;
+        data.emailApply1 = null;
+        data.emailApply2 = null;
+        data.isUnitAdm = null;
+        data.isUnitDataMgr = null;
+        data.isWebSiteOther = null;
+        data.otherRemark = null;
+      })
+      form.applyItem = [];
+      form.webSiteList = [];
+    }
+
 
     return {
       $v,
@@ -889,7 +915,8 @@ export default {
       toQueryView,
       bpmDeptsOptions,
       resetValue,
-      resetCheckboxValue
+      resetCheckboxValue,
+      resetAll
     }
   }
 }

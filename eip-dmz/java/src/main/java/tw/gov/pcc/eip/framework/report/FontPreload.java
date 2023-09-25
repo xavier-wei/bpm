@@ -1,7 +1,7 @@
 package tw.gov.pcc.eip.framework.report;
 
-import com.iisigroup.easyreport.pdf.Helper.EnvHelper;
-import com.iisigroup.easyreport.pdf.Helper.PropertiesHelper;
+
+import com.iisigroup.easyreport.pdf.helper.PropertiesHelper;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
@@ -35,7 +35,7 @@ public class FontPreload implements InitializingBean {
         try {
             Resource[] resources = resolver.getResources("classpath:/fonts/**/*.ttf");
             String destDirectory = Objects.requireNonNull(PropertiesHelper.getProperties(PropertiesHelper.USER_CONFIG))
-                    .getProperty(EnvHelper.FONT_PATH_KY);
+                    .getProperty("default.pdf.font.path");
             Path destDirPath = Paths.get(destDirectory);
             Files.createDirectories(destDirPath);
 
@@ -62,7 +62,7 @@ public class FontPreload implements InitializingBean {
                 Path destPath = destDirPath.resolve(Paths.get(Objects.requireNonNull(resource.getFilename()))
                         .getFileName());
                 OutputStream os = Files.newOutputStream(destPath);
-                try (InputStream rs = resource.getInputStream(); ) {
+                try (InputStream rs = resource.getInputStream()) {
                     IOUtils.copy(rs, os);
                 }
             }

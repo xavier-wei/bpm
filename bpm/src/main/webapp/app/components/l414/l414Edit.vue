@@ -21,12 +21,12 @@
                                           :item="$v.applyDate">
                         <!--申請日期 : applyDate-->
                         <i-date-picker
-                            placeholder="yyy/MM/dd"
-                            v-model="$v.applyDate.$model"
-                            :state="validateState($v.applyDate)"
-                            lazy
-                            trim
-                            disabled
+                          placeholder="yyy/MM/dd"
+                          v-model="$v.applyDate.$model"
+                          :state="validateState($v.applyDate)"
+                          lazy
+                          trim
+                          disabled
                         ></i-date-picker>
                       </i-form-group-check>
 
@@ -44,11 +44,11 @@
 
                     <b-form-row>
                       <i-form-group-check
-                          class="col-sm-5"
-                          label-cols="5"
-                          content-cols="7"
-                          :label="'填表人：員工編號：'"
-                          :item="$v.filEmpid"
+                        class="col-sm-5"
+                        label-cols="5"
+                        content-cols="7"
+                        :label="'填表人：員工編號：'"
+                        :item="$v.filEmpid"
                       >
                         <!--填表人員工編號 : filEmpid-->
                         <b-form-input v-model="$v.filEmpid.$model"
@@ -76,11 +76,11 @@
 
                     <b-form-row>
                       <i-form-group-check
-                          class="col-sm-5"
-                          label-cols="5"
-                          content-cols="7"
-                          :label="'申請人：員工編號：'"
-                          :item="$v.appEmpid"
+                        class="col-sm-5"
+                        label-cols="5"
+                        content-cols="7"
+                        :label="'申請人：員工編號：'"
+                        :item="$v.appEmpid"
                       >
                         <!--申請人員工編號 : appEmpid-->
                         <b-form-input v-model="$v.appEmpid.$model"
@@ -114,12 +114,12 @@
                                             :item="$v.isEnable">
                           <!--規則 : isEnable-->
                           <b-form-radio-group
-                              v-model="$v.isEnable.$model"
-                              :options="[
+                            v-model="$v.isEnable.$model"
+                            :options="[
                               { value: '1', text: '啟用' },
                               { value: '0', text: '停用' },
                             ]"
-                              :disabled="formStatusRef === FormStatusEnum.READONLY || userData.userName !== $v.appName.$model"
+                            :disabled="formStatusRef === FormStatusEnum.READONLY || userData.userName !== $v.appName.$model"
                           />
                         </i-form-group-check>
 
@@ -136,27 +136,27 @@
                               <div style="height: 34px">每周一至周五 :</div>
                               <!--每周一至周五使用時段內容 : specifyEnableTime-->
                               <b-form-input
-                                  :disabled="$v.enableTime.$model !== '2' && formStatusRef === FormStatusEnum.READONLY || userData.userName !== $v.appName.$model"
-                                  v-model="$v.specifyEnableTime.$model"/>
+                                :disabled="$v.enableTime.$model !== '2' && formStatusRef === FormStatusEnum.READONLY || userData.userName !== $v.appName.$model"
+                                v-model="$v.specifyEnableTime.$model"/>
                             </b-form-radio>
 
                             <b-form-radio value="3">
                               <div style="height: 34px">特殊時段 :</div>
                               <!--使用特殊時段內容 : otherEnableTime-->
                               <b-form-input
-                                  :disabled="$v.enableTime.$model !== '3' && formStatusRef === FormStatusEnum.READONLY || userData.userName !== $v.appName.$model"
-                                  v-model="$v.otherEnableTime.$model"/>
+                                :disabled="$v.enableTime.$model !== '3' && formStatusRef === FormStatusEnum.READONLY || userData.userName !== $v.appName.$model"
+                                v-model="$v.otherEnableTime.$model"/>
                             </b-form-radio>
                           </b-form-radio-group>
                         </i-form-group-check>
                       </b-col>
                       <b-col>
                         <i-form-group-check
-                            class="col-sm-12"
-                            label-cols="2"
-                            content-cols="10"
-                            :label="`啟用期間：`"
-                            :item="$v.selecteEdateType"
+                          class="col-sm-12"
+                          label-cols="2"
+                          content-cols="10"
+                          :label="`啟用期間：`"
+                          :item="$v.selecteEdateType"
                         >
                           <!--啟用期間類別 : selecteEdateType-->
                           <b-form-radio-group v-model="$v.selecteEdateType.$model"
@@ -164,9 +164,9 @@
                             <b-form-radio value="1">
                               <!--啟用期間開始時間 : sDate 、啟用期間結束時間 : eDate-->
                               <i-dual-date-picker
-                                  :disabled="$v.selecteEdateType.$model !== '1'"
-                                  :dual1.sync="$v.sDate.$model"
-                                  :dual2.sync="$v.eDate.$model"
+                                :disabled="$v.selecteEdateType.$model !== '1'"
+                                :dual1.sync="$v.sDate.$model"
+                                :dual2.sync="$v.eDate.$model"
                               />
                             </b-form-radio>
                             <b-form-radio value="2">
@@ -182,11 +182,11 @@
                         </i-form-group-check>
 
                         <i-form-group-check
-                            class="col-sm-12"
-                            label-cols="2"
-                            content-cols="10"
-                            :label="`停用期間：`"
-                            :item="$v.selecteEdateType"
+                          class="col-sm-12"
+                          label-cols="2"
+                          content-cols="10"
+                          :label="`停用期間：`"
+                          :item="$v.selecteEdateType"
                         >
                           <!--啟用期間類別 : selecteEdateType-->
                           <b-form-radio-group v-model="$v.selecteEdateType.$model"
@@ -195,12 +195,12 @@
                               <!--刪除規則時間 : delEnableDate-->
                               <b-input-group>
                                 <i-date-picker
-                                    :disabled="$v.selecteEdateType.$model !== '4' && formStatusRef === FormStatusEnum.READONLY || userData.userName !== $v.appName.$model"
-                                    placeholder="yyy/MM/dd"
-                                    v-model="$v.delEnableDate.$model"
-                                    :state="validateState($v.delEnableDate)"
-                                    lazy
-                                    trim
+                                  :disabled="$v.selecteEdateType.$model !== '4' && formStatusRef === FormStatusEnum.READONLY || userData.userName !== $v.appName.$model"
+                                  placeholder="yyy/MM/dd"
+                                  v-model="$v.delEnableDate.$model"
+                                  :state="validateState($v.delEnableDate)"
+                                  lazy
+                                  trim
                                 ></i-date-picker>
                                 <span class="m-2">刪除規則</span>
                               </b-input-group>
@@ -253,12 +253,12 @@
 
                     <b-form-row>
                       <i-form-group-check
-                          class="col-sm-12"
-                          label-cols="2"
-                          content-cols="8"
-                          :label="'用途說明 ：'"
-                          :item="$v.instructions"
-                          style="margin-left: 7px"
+                        class="col-sm-12"
+                        label-cols="2"
+                        content-cols="8"
+                        :label="'用途說明 ：'"
+                        :item="$v.instructions"
+                        style="margin-left: 7px"
                       >
                         <!--用途說明 : instructions-->
                         <b-form-textarea v-model="$v.instructions.$model" rows="3" maxlength="2000" trim lazy
@@ -284,12 +284,12 @@
                             <b-input-group>
                               <div>同意設定 : 預定完成日期 : 　</div>
                               <i-date-picker
-                                  :disabled="$v.agreeType.$model !== '1' || stateStatusRef || formStatusRef === FormStatusEnum.READONLY"
-                                  placeholder="yyy/MM/dd"
-                                  v-model="$v.scheduleDate.$model"
-                                  :state="validateState($v.scheduleDate)"
-                                  lazy
-                                  trim
+                                :disabled="$v.agreeType.$model !== '1' || stateStatusRef || formStatusRef === FormStatusEnum.READONLY"
+                                placeholder="yyy/MM/dd"
+                                v-model="$v.scheduleDate.$model"
+                                :state="validateState($v.scheduleDate)"
+                                lazy
+                                trim
                               ></i-date-picker>
                             </b-input-group>
                           </b-form-radio>
@@ -299,12 +299,12 @@
                             <b-input-group>
                               <div>部分同意設定 : 原因 :　　 　</div>
                               <b-form-textarea
-                                  :disabled="$v.agreeType.$model !== '2' || stateStatusRef || formStatusRef === FormStatusEnum.READONLY "
-                                  v-model="$v.partialAgreeReason.$model"
-                                  rows="1"
-                                  maxlength="2000"
-                                  trim
-                                  lazy
+                                :disabled="$v.agreeType.$model !== '2' || stateStatusRef || formStatusRef === FormStatusEnum.READONLY "
+                                v-model="$v.partialAgreeReason.$model"
+                                rows="1"
+                                maxlength="2000"
+                                trim
+                                lazy
                               />
                             </b-input-group>
                           </b-form-radio>
@@ -314,12 +314,12 @@
                             <b-input-group>
                               <div>不同意設定 : 原因 :　　　 　</div>
                               <b-form-textarea
-                                  :disabled="$v.agreeType.$model !== '3' || stateStatusRef || formStatusRef === FormStatusEnum.READONLY"
-                                  v-model="$v.notAgreeReason.$model"
-                                  rows="1"
-                                  maxlength="2000"
-                                  trim
-                                  lazy
+                                :disabled="$v.agreeType.$model !== '3' || stateStatusRef || formStatusRef === FormStatusEnum.READONLY"
+                                v-model="$v.notAgreeReason.$model"
+                                rows="1"
+                                maxlength="2000"
+                                trim
+                                lazy
                               />
                             </b-input-group>
                           </b-form-radio>
@@ -348,12 +348,12 @@
 
                     <b-form-row>
                       <i-form-group-check
-                          class="col-sm-12"
-                          label-cols="2"
-                          content-cols="8"
-                          :label="'設定內容 ：'"
-                          :item="$v.firewallContent"
-                          style="margin-left: 7px"
+                        class="col-sm-12"
+                        label-cols="2"
+                        content-cols="8"
+                        :label="'設定內容 ：'"
+                        :item="$v.firewallContent"
+                        style="margin-left: 7px"
                       >
                         <!--設定內容 : firewallContent-->
                         <b-form-textarea v-model="$v.firewallContent.$model" rows="1" maxlength="2000" trim lazy
@@ -363,22 +363,22 @@
 
                     <b-form-row>
                       <i-form-group-check
-                          class="col-sm-12"
-                          label-cols="2"
-                          content-cols="8"
-                          :label="'實際完成日期 : '"
-                          :item="$v.finishDatetime"
+                        class="col-sm-12"
+                        label-cols="2"
+                        content-cols="8"
+                        :label="'實際完成日期 : '"
+                        :item="$v.finishDatetime"
                       >
                         <!--實際完成日期 : finishDatetime-->
                         <b-input-group>
                           <i-date-picker
-                              class="col-3"
-                              placeholder="yyy/MM/dd"
-                              v-model="$v.finishDatetime.$model"
-                              :state="validateState($v.finishDatetime)"
-                              lazy
-                              trim
-                              :disabled="stateStatusRef || formStatusRef === FormStatusEnum.READONLY"
+                            class="col-3"
+                            placeholder="yyy/MM/dd"
+                            v-model="$v.finishDatetime.$model"
+                            :state="validateState($v.finishDatetime)"
+                            lazy
+                            trim
+                            :disabled="stateStatusRef || formStatusRef === FormStatusEnum.READONLY"
                           ></i-date-picker>
                           <span class="m-1">，並以電話通知申請單位。</span>
                         </b-input-group>
@@ -393,73 +393,10 @@
                     </P>
                   </div>
 
-                  <div class="card m-3" style="background-color: white">
 
-                    <div class="m-4">
-                      <P> 簽核流程資訊： </P>
-                      <b-input-group>
-                        <p class="col-4">申請人所屬之科長：</p>
-                        <p class="col-3">員工編號：2456</p>
-                        <p class="col-3">姓名：張科長</p>
-                      </b-input-group>
-                      <b-input-group>
-                        <p class="col-4">申請人所屬之單位主管：</p>
-                        <p class="col-3">員工編號：2543</p>
-                        <p class="col-3"> 姓名：王處長</p>
-                      </b-input-group>
-                      <b-input-group>
-                        <p class="col-4">資訊小組承辦人：</p>
-                        <p class="col-3">員工編號：2256</p>
-                        <p class="col-3">姓名：楊資安</p>
-                      </b-input-group>
-                      <b-input-group>
-                        <p class="col-4">資訊小組簡任技正/科長：</p>
-                        <p class="col-3">員工編號：2273</p>
-                        <p class="col-3">姓名：蔡簡任</p>
-                      </b-input-group>
-                      <b-input-group>
-                        <p class="col-4">機房操作人員：</p>
-                        <p class="col-3">員工編號：2145</p>
-                        <p class="col-3">姓名：王操作</p>
-                      </b-input-group>
-                      <b-input-group>
-                        <p class="col-4">複核人員：</p>
-                        <p class="col-3">員工編號：2369</p>
-                        <p class="col-3">姓名：李複核</p>
-                      </b-input-group>
-                      <b-input-group>
-                        <p class="col-4">機房管理人員：</p>
-                        <p class="col-3">員工編號：2038</p>
-                        <p class="col-3">姓名：張管理</p>
-                      </b-input-group>
-                    </div>
+                  <!--簽核狀態模組-->
+                  <signerList :formId="formIdProp" :formStatus="formStatusRef" :opinion="opinion" :formData="form"></signerList>
 
-
-                    <div class="m-2">
-                      <b-table sticky-header :items="table.data" :fields="table.fields" bordered responsive="sm">
-
-                        <template #cell(situation)="row">
-                          <div v-if="row.item.taskName === '申請人確認'">
-                            申請
-                          </div>
-                          <div v-else-if="row.item.taskName === '結束'" style="color: red">
-                            結束
-                          </div>
-                          <div v-else>
-                            處理
-                          </div>
-                        </template>
-
-                      </b-table>
-
-                      <div class="m-1" v-show="formStatusRef === FormStatusEnum.VERIFY">
-                        <P> 填寫意見： </P>
-                      </div>
-
-                      <b-form-textarea v-model="$v.opinion.$model" rows="1" maxlength="2000" trim lazy
-                                       v-show="formStatusRef === FormStatusEnum.VERIFY"/>
-                    </div>
-                  </div>
 
                   <b-container class="mt-3">
                     <b-row class="justify-content-center">
@@ -483,9 +420,7 @@
                                 @click="reviewStart('0')"
                                 v-show="formStatusRef === FormStatusEnum.VERIFY">不同意
                       </b-button>
-                      <b-button class="ml-2" style="background-color: #17a2b8; color: white"
-                                variant="outline-secondary"
-                                @click="signature"
+                      <b-button class="ml-2" style="background-color: #17a2b8" @click="showModel()"
                                 v-show="formStatusRef === FormStatusEnum.VERIFY && isSignatureRef">加簽
                       </b-button>
                       <b-button class="ml-2" style="background-color: #17a2b8; color: white"
@@ -518,6 +453,7 @@
         </div>
       </section>
     </b-container>
+    <signatureBmodel ref="signatureBmodel" :formData="form"></signatureBmodel>
   </div>
 </template>
 
@@ -525,7 +461,7 @@
 
 
 import IDualDatePicker from '@/shared/i-date-picker/i-dual-date-picker.vue';
-import {onActivated, onMounted, reactive, Ref, ref, toRef, toRefs, watch} from '@vue/composition-api';
+import {reactive, ref, toRef, watch} from '@vue/composition-api';
 import {useValidation, validateState} from '@/shared/form';
 import IFormGroupCheck from '@/shared/form/i-form-group-check.vue';
 import IDatePicker from '@/shared/i-date-picker/i-date-picker.vue';
@@ -535,12 +471,12 @@ import {useGetters} from '@u3u/vue-hooks';
 import {handleBack, navigateByNameAndParams} from '@/router/router';
 import axios from "axios";
 import {notificationErrorHandler} from "@/shared/http/http-response-helper";
-import {formatToString, newformatDate} from '@/shared/date/minguo-calendar-utils';
-import {changeDealWithUnit, changeDirections} from "@/shared/word/directions";
-import * as immutable from "immutable";
+import {changeDirections} from "@/shared/word/directions";
+import signatureBmodel from "@/components/signatureBmodel.vue";
 
 const appendix = () => import('@/components/appendix.vue');
 const flowChart = () => import('@/components/flowChart.vue');
+const signerList = () => import('@/components/signerList.vue');
 
 export default {
   name: 'l414Edit',
@@ -575,6 +511,8 @@ export default {
     'i-date-picker': IDatePicker,
     appendix,
     flowChart,
+    signatureBmodel,
+    signerList
   },
   setup(props) {
     const userData = ref(useGetters(['getUserData']).getUserData).value;
@@ -589,6 +527,7 @@ export default {
     const dual2 = ref(null);
     const notificationService = useNotification();
     const $bvModal = useBvModal();
+    const signatureBmodel = ref(null);
     const filePathData = reactive({
       filePathName: '',
     });
@@ -603,6 +542,10 @@ export default {
     let appendixData = reactive({});
     let fileDataId = reactive({
       fileId: ''
+    });
+
+    let opinion = reactive({
+      opinionData: ''
     });
 
     const formDefault = {
@@ -683,50 +626,6 @@ export default {
     };
     const {$v, checkValidity, reset} = useValidation(rules, form, formDefault);
 
-    const table = reactive({
-      fields: [
-        {
-          key: 'situation',
-          label: '狀況',
-          sortable: false,
-          thClass: 'text-center',
-          tdClass: 'text-center align-middle ',
-        },
-        {
-          key: 'directions',
-          label: '說明',
-          sortable: false,
-          thClass: 'text-center',
-          tdClass: 'text-center align-middle ',
-        },
-        {
-          key: 'signUnit',
-          label: '單位/姓名',
-          sortable: false,
-          thClass: 'text-center',
-          tdClass: 'text-center align-middle ',
-          formatter: value => (value == undefined ? '' : changeDealWithUnit(value, bpmDeptsOptions)),
-        },
-        {
-          key: 'signingDatetime',
-          label: '處理日期時間',
-          sortable: false,
-          thClass: 'text-center',
-          tdClass: 'text-center align-middle ',
-          formatter: value => (value == undefined ? '' : newformatDate(new Date(value), '/')),
-        },
-        {
-          key: 'opinion',
-          label: '意見',
-          sortable: false,
-          thClass: 'text-center',
-          tdClass: 'text-center align-middle ',
-        },
-      ],
-      data: undefined,
-      totalItems: undefined,
-    });
-
 
     // onMounted(() => {
     //   handleQuery();
@@ -734,35 +633,35 @@ export default {
 
     function handleQuery() {
       axios
-          .post(`/process/getIsms/L414/${formIdProp.value}`)
-          .then(({data}) => {
-            console.log('data++', data)
+        .post(`/process/getIsms/L414/${formIdProp.value}`)
+        .then(({data}) => {
+          console.log('data++', data)
 
 
-            if (!data) return;
+          if (!data) return;
 
-            if (data.processInstanceId !== null && data.processInstanceId !== undefined) {
-              filePathData.filePathName = 'http://localhost:9973/pic?processId=' + data.processInstanceId;
-            }
+          if (data.processInstanceId !== null && data.processInstanceId !== undefined) {
+            filePathData.filePathName = 'http://localhost:9973/pic?processId=' + data.processInstanceId;
+          }
 
-            data.applyDate = data.applyDate != null ? new Date(data.applyDate) : null
-            data.sDate = data.sDate != null ? new Date(data.sDate) : null
-            data.eDate = data.eDate != null ? new Date(data.eDate) : null
-            data.delEnableDate = data.delEnableDate != null ? new Date(data.delEnableDate) : null
-            data.scheduleDate = data.scheduleDate != null ? new Date(data.scheduleDate) : null
-            data.finishDatetime = data.finishDatetime != null ? new Date(data.finishDatetime) : null
+          data.applyDate = data.applyDate != null ? new Date(data.applyDate) : null
+          data.sDate = data.sDate != null ? new Date(data.sDate) : null
+          data.eDate = data.eDate != null ? new Date(data.eDate) : null
+          data.delEnableDate = data.delEnableDate != null ? new Date(data.delEnableDate) : null
+          data.scheduleDate = data.scheduleDate != null ? new Date(data.scheduleDate) : null
+          data.finishDatetime = data.finishDatetime != null ? new Date(data.finishDatetime) : null
 
-            //取得現在表單的處理狀況
-            getBpmSignStatus(data.formId);
+          // //取得現在表單的處理狀況
+          // getBpmSignStatus(data.formId);
 
-            //用現在表單編號直接給file模組去自動取值
-            fileDataId.fileId = data.formId;
+          //用現在表單編號直接給file模組去自動取值
+          fileDataId.fileId = data.formId;
 
-            Object.assign(formDefault, data);
-            Object.assign(form, formDefault)
-            reset();
-          })
-          .catch(notificationErrorHandler(notificationService));
+          Object.assign(formDefault, data);
+          Object.assign(form, formDefault)
+          reset();
+        })
+        .catch(notificationErrorHandler(notificationService));
 
     }
 
@@ -797,17 +696,17 @@ export default {
           }
 
           axios
-              .patch(`/process/patch/L414`, formData, headers)
-              .then(({data}) => {
-                if (isSubmit === '1') {
-                  reviewStart(isSubmit);
-                } else {
-                  $bvModal.msgBoxOk('表單更新完畢');
-                  navigateByNameAndParams('pending', {});
-                }
+            .patch(`/process/patch/L414`, formData, headers)
+            .then(({data}) => {
+              if (isSubmit === '1') {
+                reviewStart(isSubmit);
+              } else {
+                $bvModal.msgBoxOk('表單更新完畢');
+                navigateByNameAndParams('pending', {});
+              }
 
-              })
-              .catch(notificationErrorHandler(notificationService));
+            })
+            .catch(notificationErrorHandler(notificationService));
 
         }
       });
@@ -816,7 +715,7 @@ export default {
     function reviewStart(item) {
 
       let variables = {};
-      console.log('taskDataRef',taskDataRef.value)
+      console.log('taskDataRef', taskDataRef.value)
 
       if (taskDataRef.value.decisionRole !== null) {
         let mapData = new Map<string, object>();
@@ -824,6 +723,7 @@ export default {
         let arrData = Array.from(mapData);
         variables = Object.fromEntries(arrData)
       }
+      form.opinion = opinion.opinionData
 
       let opinionData = '';
 
@@ -839,9 +739,9 @@ export default {
         signer: userData.userName,
         signerId: userData.userId,
         signUnit: userData.deptId,
-        processInstanceId: taskDataRef.value.additional ? taskDataRef.value.processInstanceId  : form.processInstanceId,
+        processInstanceId: taskDataRef.value.additional ? taskDataRef.value.processInstanceId : form.processInstanceId,
         taskId: taskDataRef.value.taskId !== '' ? taskDataRef.value.taskId : '',
-        taskName:taskDataRef.value.taskName !== '' ? taskDataRef.value.taskName : '',
+        taskName: taskDataRef.value.taskName !== '' ? taskDataRef.value.taskName : '',
         variables,
         form: {"L414": JSON.stringify(form)},
         directions: changeDirections(taskDataRef.value.decisionRole),
@@ -852,18 +752,18 @@ export default {
       console.log('body', body)
 
       axios
-          .post(`/process/completeTask/${form.formId}`, body)
-          .then(({data}) => {
-            if (item === '1') {
-              $bvModal.msgBoxOk('表單儲存完畢');
-              navigateByNameAndParams('pending', {isReload: false, isNotKeepAlive: true});
-            } else {
-              $bvModal.msgBoxOk('表單審核完畢');
-              navigateByNameAndParams('pending', {isReload: false, isNotKeepAlive: true});
-            }
+        .post(`/process/completeTask/${form.formId}`, body)
+        .then(({data}) => {
+          if (item === '1') {
+            $bvModal.msgBoxOk('表單儲存完畢');
+            navigateByNameAndParams('pending', {isReload: false, isNotKeepAlive: true});
+          } else {
+            $bvModal.msgBoxOk('表單審核完畢');
+            navigateByNameAndParams('pending', {isReload: false, isNotKeepAlive: true});
+          }
 
-          })
-          .catch(notificationErrorHandler(notificationService));
+        })
+        .catch(notificationErrorHandler(notificationService));
     }
 
     const changeTabIndex = (index: number) => {
@@ -887,66 +787,51 @@ export default {
       }
     };
 
-    function getBpmSignStatus(id) {
-      console.log('id', id)
-      axios
-          .get(`/eip/getBpmSignStatus/${id}`)
-          .then(({data}) => {
-            console.log('/getBpmSignStatus:: ', data)
-            if (data.length === 0) return;
-            table.data = data;
 
-            data.forEach(i => {
-              if (i.taskName === '機房管理人員') {
-                table.data.push({
-                  taskName: '結束',
-                });
-              }
-            })
-          })
-          .catch(notificationErrorHandler(notificationService));
-    }
-
-    function signature() {
-
-      let body = {
-        mainFormId: form.formId,
-        mainProcessInstanceId: form.processInstanceId,
-        mainProcessTaskId: form.taskId,
-        requesterId: userData.empId,
-        requester: userData.userName,
-        additionalSignerId: '1510',
-        additionalSigner: '我是主管',
-        additionalSignReason: form.opinion,
-        processInstanceStatus: '0',
-      };
-
-      let body1 = {
-        "Additional": JSON.stringify(body)
-      }
-      console.log('body', body1)
-
-      const formData = new FormData();
-
-      formData.append('form', new Blob([JSON.stringify(body1)], {type: 'application/json'}));
-
-      axios
-          .post(`/process/start/Additional`, formData)
-          .then(({data}) => {
-            $bvModal.msgBoxOk('加簽申請成功');
-            navigateByNameAndParams('pending', {isReload: false, isNotKeepAlive: true});
-          })
-          .catch(notificationErrorHandler(notificationService));
-    }
+    // function signature() {
+    //
+    //   let body = {
+    //     mainFormId: form.formId,
+    //     mainProcessInstanceId: form.processInstanceId,
+    //     mainProcessTaskId: form.taskId,
+    //     requesterId: userData.empId,
+    //     requester: userData.userName,
+    //     additionalSignerId: '1510',
+    //     additionalSigner: '我是主管',
+    //     additionalSignReason: form.opinion,
+    //     processInstanceStatus: '0',
+    //   };
+    //
+    //   let body1 = {
+    //     "Additional": JSON.stringify(body)
+    //   }
+    //   console.log('body', body1)
+    //
+    //   const formData = new FormData();
+    //
+    //   formData.append('form', new Blob([JSON.stringify(body1)], {type: 'application/json'}));
+    //
+    //   axios
+    //       .post(`/process/start/Additional`, formData)
+    //       .then(({data}) => {
+    //         $bvModal.msgBoxOk('加簽申請成功');
+    //         navigateByNameAndParams('pending', {isReload: false, isNotKeepAlive: true});
+    //       })
+    //       .catch(notificationErrorHandler(notificationService));
+    // }
 
     function toQueryView() {
       handleBack({isReload: true, isNotKeepAlive: false});
     }
 
+    function showModel() {
+      signatureBmodel.value.isShowDia(true);
+    }
+
     watch(formIdProp, () => {
-          handleQuery();
-        },
-        {immediate: true}
+        handleQuery();
+      },
+      {immediate: true}
     )
 
 
@@ -971,9 +856,12 @@ export default {
       reviewStart,
       bpmDeptsOptions,
       stateStatusRef,
-      table,
-      signature,
       isSignatureRef,
+      signatureBmodel,
+      showModel,
+      formIdProp,
+      opinion
+
     }
   }
 }

@@ -8,6 +8,7 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.io.Serializable;
 import java.sql.Timestamp;
+import java.util.Objects;
 
 
 /**
@@ -66,12 +67,8 @@ public class BpmIsmsL410 implements Serializable {
 
     @NotNull
     @Size(max = 30)
-    @Column(name = "app_unit1", length = 30, nullable = false)
-    private String appUnit1;
-
-    @Size(max = 30)
-    @Column(name = "app_unit2", length = 30)
-    private String appUnit2;
+    @Column(name = "app_unit", length = 30, nullable = false)
+    private String appUnit;
 
     @NotNull
     @Size(max = 20)
@@ -341,10 +338,6 @@ public class BpmIsmsL410 implements Serializable {
     private String isEngAndPrjInfoSys; //
 
     @Size(max = 20)
-    @Column(name = "eng_and_prj_info_sys_server_name")
-    private String engAndPrjInfoSysServerName;
-
-    @Size(max = 20)
     @Column(name = "eng_and_prj_info_sys_account")
     private String engAndPrjInfoSysAccount;
 
@@ -375,10 +368,6 @@ public class BpmIsmsL410 implements Serializable {
     private String isRevSys; // 其他系統1
 
     @Size(max = 20)
-    @Column(name = "rev_sys_server_name")
-    private String revSysServerName;
-
-    @Size(max = 20)
     @Column(name = "rev_sys_account")
     private String revSysAccount;
 
@@ -406,12 +395,39 @@ public class BpmIsmsL410 implements Serializable {
     private String revSysAdmName;
 
     @Size(max = 1)
-    @Column(name = "is_bid_sys")
-    private String isBidSys; //
+    @Column(name = "is_rec_sys")
+    private String isRecSys; // 其他系統1
 
     @Size(max = 20)
-    @Column(name = "bid_sys_server_name")
-    private String bidSysServerName;
+    @Column(name = "rec_sys_account")
+    private String recSysAccount;
+
+    @Size(max = 1)
+    @Column(name = "rec_sys")
+    private String recSys;
+
+    @Size(max = 20)
+    @Column(name = "rec_sys_change")
+    private String recSysChange;
+
+    @Size(max = 20)
+    @Column(name = "rec_sys_adm_unit")
+    private String recSysAdmUnit;
+
+    @Size(max = 20)
+    @Column(name = "rec_sys_status")
+    private String recSysStatus;
+
+    @Column(name = "rec_sys_enable_date")
+    private Timestamp recSysEnableDate;
+
+    @Size(max = 20)
+    @Column(name = "rec_sys_adm_name")
+    private String recSysAdmName;
+
+    @Size(max = 1)
+    @Column(name = "is_bid_sys")
+    private String isBidSys; //
 
     @Size(max = 20)
     @Column(name = "bid_sys_account")
@@ -440,40 +456,7 @@ public class BpmIsmsL410 implements Serializable {
     @Column(name = "bid_sys_adm_name")
     private String bidSysAdmName;
 
-    @Size(max = 1)
-    @Column(name = "is_rec_sys")
-    private String isRecSys; // 其他系統1
 
-    @Size(max = 20)
-    @Column(name = "rec_sys_server_name")
-    private String recSysServerName;
-
-    @Size(max = 20)
-    @Column(name = "rec_sys_account")
-    private String recSysAccount;
-
-    @Size(max = 1)
-    @Column(name = "rec_sys")
-    private String recSys;
-
-    @Size(max = 20)
-    @Column(name = "rec_sys_change")
-    private String recSysChange;
-
-    @Size(max = 20)
-    @Column(name = "rec_sys_adm_unit")
-    private String recSysAdmUnit;
-
-    @Size(max = 20)
-    @Column(name = "rec_sys_status")
-    private String recSysStatus;
-
-    @Column(name = "rec_sys_enable_date")
-    private Timestamp recSysEnableDate;
-
-    @Size(max = 20)
-    @Column(name = "rec_sys_adm_name")
-    private String recSysAdmName;
     @Size(max = 1)
     @Column(name = "is_other_sys1", length = 1)
     private String isOtherSys1;
@@ -673,20 +656,12 @@ public class BpmIsmsL410 implements Serializable {
         this.appEngName = appEngName;
     }
 
-    public String getAppUnit1() {
-        return appUnit1;
+    public String getAppUnit() {
+        return appUnit;
     }
 
-    public void setAppUnit1(String appUnit1) {
-        this.appUnit1 = appUnit1;
-    }
-
-    public String getAppUnit2() {
-        return appUnit2;
-    }
-
-    public void setAppUnit2(String appUnit2) {
-        this.appUnit2 = appUnit2;
+    public void setAppUnit(String appUnit) {
+        this.appUnit = appUnit;
     }
 
     public String getPosition() {
@@ -1241,14 +1216,6 @@ public class BpmIsmsL410 implements Serializable {
         this.isEngAndPrjInfoSys = isEngAndPrjInfoSys;
     }
 
-    public String getEngAndPrjInfoSysServerName() {
-        return engAndPrjInfoSysServerName;
-    }
-
-    public void setEngAndPrjInfoSysServerName(String engAndPrjInfoSysServerName) {
-        this.engAndPrjInfoSysServerName = engAndPrjInfoSysServerName;
-    }
-
     public String getEngAndPrjInfoSysAccount() {
         return engAndPrjInfoSysAccount;
     }
@@ -1311,14 +1278,6 @@ public class BpmIsmsL410 implements Serializable {
 
     public void setIsRevSys(String isRevSys) {
         this.isRevSys = isRevSys;
-    }
-
-    public String getRevSysServerName() {
-        return revSysServerName;
-    }
-
-    public void setRevSysServerName(String revSysServerName) {
-        this.revSysServerName = revSysServerName;
     }
 
     public String getRevSysAccount() {
@@ -1385,14 +1344,6 @@ public class BpmIsmsL410 implements Serializable {
         this.isBidSys = isBidSys;
     }
 
-    public String getBidSysServerName() {
-        return bidSysServerName;
-    }
-
-    public void setBidSysServerName(String bidSysServerName) {
-        this.bidSysServerName = bidSysServerName;
-    }
-
     public String getBidSysAccount() {
         return bidSysAccount;
     }
@@ -1455,14 +1406,6 @@ public class BpmIsmsL410 implements Serializable {
 
     public void setIsRecSys(String isRecSys) {
         this.isRecSys = isRecSys;
-    }
-
-    public String getRecSysServerName() {
-        return recSysServerName;
-    }
-
-    public void setRecSysServerName(String recSysServerName) {
-        this.recSysServerName = recSysServerName;
     }
 
     public String getRecSysAccount() {
@@ -1777,27 +1720,18 @@ public class BpmIsmsL410 implements Serializable {
         this.createTime = createTime;
     }
 
-
-    // jhipster-needle-entity-add-getters-setters - JHipster will add getters and setters here
-
     @Override
     public boolean equals(Object o) {
-        if (this == o) {
-            return true;
-        }
-        if (!(o instanceof BpmIsmsL410)) {
-            return false;
-        }
-        return formId != null && formId.equals(((BpmIsmsL410) o).formId);
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        BpmIsmsL410 that = (BpmIsmsL410) o;
+        return Objects.equals(formId, that.formId) && Objects.equals(processInstanceId, that.processInstanceId) && Objects.equals(applyDate, that.applyDate) && Objects.equals(filEmpid, that.filEmpid) && Objects.equals(filName, that.filName) && Objects.equals(filUnit, that.filUnit) && Objects.equals(appEmpid, that.appEmpid) && Objects.equals(appName, that.appName) && Objects.equals(appEngName, that.appEngName) && Objects.equals(appUnit, that.appUnit) && Objects.equals(position, that.position) && Objects.equals(extNum, that.extNum) && Objects.equals(isSubmit, that.isSubmit) && Objects.equals(appReason, that.appReason) && Objects.equals(isEnableDate, that.isEnableDate) && Objects.equals(enableDate, that.enableDate) && Objects.equals(isOther, that.isOther) && Objects.equals(otherReason, that.otherReason) && Objects.equals(isHrSys, that.isHrSys) && Objects.equals(hrSys, that.hrSys) && Objects.equals(hrSysChange, that.hrSysChange) && Objects.equals(hrSysAdmUnit, that.hrSysAdmUnit) && Objects.equals(hrSysStatus, that.hrSysStatus) && Objects.equals(hrSysEnableDate, that.hrSysEnableDate) && Objects.equals(hrSysAdmName, that.hrSysAdmName) && Objects.equals(isAdSys, that.isAdSys) && Objects.equals(adAccount, that.adAccount) && Objects.equals(adSys, that.adSys) && Objects.equals(adSysChange, that.adSysChange) && Objects.equals(adSysAdmUnit, that.adSysAdmUnit) && Objects.equals(adSysStatus, that.adSysStatus) && Objects.equals(adSysEnableDate, that.adSysEnableDate) && Objects.equals(adSysAdmName, that.adSysAdmName) && Objects.equals(isMeetingRoom, that.isMeetingRoom) && Objects.equals(meetingRoom, that.meetingRoom) && Objects.equals(meetingEoomChange, that.meetingEoomChange) && Objects.equals(meetingRoomAdmUnit, that.meetingRoomAdmUnit) && Objects.equals(meetingRoomStatus, that.meetingRoomStatus) && Objects.equals(meetingRoomEnableDate, that.meetingRoomEnableDate) && Objects.equals(meetingRoomAdmName, that.meetingRoomAdmName) && Objects.equals(isOdSys, that.isOdSys) && Objects.equals(odSysRole, that.odSysRole) && Objects.equals(odSys, that.odSys) && Objects.equals(odSysOther, that.odSysOther) && Objects.equals(odSysAdmUnit, that.odSysAdmUnit) && Objects.equals(odSysStatus, that.odSysStatus) && Objects.equals(odSysEnableDate, that.odSysEnableDate) && Objects.equals(odSysAdmName, that.odSysAdmName) && Objects.equals(isEmailSys, that.isEmailSys) && Objects.equals(emailSysAccount, that.emailSysAccount) && Objects.equals(emailSys, that.emailSys) && Objects.equals(emailApply1, that.emailApply1) && Objects.equals(emailApply2, that.emailApply2) && Objects.equals(emailSysChange, that.emailSysChange) && Objects.equals(emailSysAdmUnit, that.emailSysAdmUnit) && Objects.equals(emailSysStatus, that.emailSysStatus) && Objects.equals(emailSysEnableDate, that.emailSysEnableDate) && Objects.equals(emailSysAdmName, that.emailSysAdmName) && Objects.equals(isWebSite, that.isWebSite) && Objects.equals(isPccWww, that.isPccWww) && Objects.equals(isPccHome, that.isPccHome) && Objects.equals(webSite, that.webSite) && Objects.equals(isUnitAdm, that.isUnitAdm) && Objects.equals(isUnitDataMgr, that.isUnitDataMgr) && Objects.equals(isWebSiteOther, that.isWebSiteOther) && Objects.equals(webSiteOther, that.webSiteOther) && Objects.equals(webSiteAdmUnit, that.webSiteAdmUnit) && Objects.equals(webSiteStatus, that.webSiteStatus) && Objects.equals(webSiteEnableDate, that.webSiteEnableDate) && Objects.equals(webSiteAdmName, that.webSiteAdmName) && Objects.equals(isPccPis, that.isPccPis) && Objects.equals(pccPisAccount, that.pccPisAccount) && Objects.equals(pccPis, that.pccPis) && Objects.equals(pccPisChange, that.pccPisChange) && Objects.equals(pccPisAdmUnit, that.pccPisAdmUnit) && Objects.equals(pccPisStatus, that.pccPisStatus) && Objects.equals(pccPisEnableDate, that.pccPisEnableDate) && Objects.equals(pccPisAdmName, that.pccPisAdmName) && Objects.equals(isEngAndPrjInfoSys, that.isEngAndPrjInfoSys) && Objects.equals(engAndPrjInfoSysAccount, that.engAndPrjInfoSysAccount) && Objects.equals(engAndPrjInfoSys, that.engAndPrjInfoSys) && Objects.equals(engAndPrjInfoSysChange, that.engAndPrjInfoSysChange) && Objects.equals(engAndPrjInfoSysAdmUnit, that.engAndPrjInfoSysAdmUnit) && Objects.equals(engAndPrjInfoSysStatus, that.engAndPrjInfoSysStatus) && Objects.equals(engAndPrjInfoSysEnableDate, that.engAndPrjInfoSysEnableDate) && Objects.equals(engAndPrjInfoSysAdmName, that.engAndPrjInfoSysAdmName) && Objects.equals(isRevSys, that.isRevSys) && Objects.equals(revSysAccount, that.revSysAccount) && Objects.equals(revSys, that.revSys) && Objects.equals(revSysChange, that.revSysChange) && Objects.equals(revSysAdmUnit, that.revSysAdmUnit) && Objects.equals(revSysStatus, that.revSysStatus) && Objects.equals(revSysEnableDate, that.revSysEnableDate) && Objects.equals(revSysAdmName, that.revSysAdmName) && Objects.equals(isRecSys, that.isRecSys) && Objects.equals(recSysAccount, that.recSysAccount) && Objects.equals(recSys, that.recSys) && Objects.equals(recSysChange, that.recSysChange) && Objects.equals(recSysAdmUnit, that.recSysAdmUnit) && Objects.equals(recSysStatus, that.recSysStatus) && Objects.equals(recSysEnableDate, that.recSysEnableDate) && Objects.equals(recSysAdmName, that.recSysAdmName) && Objects.equals(isBidSys, that.isBidSys) && Objects.equals(bidSysAccount, that.bidSysAccount) && Objects.equals(bidSys, that.bidSys) && Objects.equals(bidSysChange, that.bidSysChange) && Objects.equals(bidSysAdmUnit, that.bidSysAdmUnit) && Objects.equals(bidSysStatus, that.bidSysStatus) && Objects.equals(bidSysEnableDate, that.bidSysEnableDate) && Objects.equals(bidSysAdmName, that.bidSysAdmName) && Objects.equals(isOtherSys1, that.isOtherSys1) && Objects.equals(otherSys1ServerName, that.otherSys1ServerName) && Objects.equals(otherSys1Account, that.otherSys1Account) && Objects.equals(otherSys1, that.otherSys1) && Objects.equals(otherSys1Change, that.otherSys1Change) && Objects.equals(otherSys1AdmUnit, that.otherSys1AdmUnit) && Objects.equals(otherSys1Status, that.otherSys1Status) && Objects.equals(otherSys1EnableDate, that.otherSys1EnableDate) && Objects.equals(otherSys1AdmName, that.otherSys1AdmName) && Objects.equals(isOtherSys2, that.isOtherSys2) && Objects.equals(otherSys2ServerName, that.otherSys2ServerName) && Objects.equals(otherSys2Account, that.otherSys2Account) && Objects.equals(otherSys2, that.otherSys2) && Objects.equals(otherSys2Change, that.otherSys2Change) && Objects.equals(otherSys2AdmUnit, that.otherSys2AdmUnit) && Objects.equals(otherSys2Status, that.otherSys2Status) && Objects.equals(otherSys2EnableDate, that.otherSys2EnableDate) && Objects.equals(otherSys2AdmName, that.otherSys2AdmName) && Objects.equals(isOtherSys3, that.isOtherSys3) && Objects.equals(otherSys3ServerName, that.otherSys3ServerName) && Objects.equals(otherSys3Account, that.otherSys3Account) && Objects.equals(otherSys3, that.otherSys3) && Objects.equals(otherSys3Change, that.otherSys3Change) && Objects.equals(otherSys3AdmUnit, that.otherSys3AdmUnit) && Objects.equals(otherSys3Status, that.otherSys3Status) && Objects.equals(otherSys3EnableDate, that.otherSys3EnableDate) && Objects.equals(otherSys3AdmName, that.otherSys3AdmName) && Objects.equals(processInstanceStatus, that.processInstanceStatus) && Objects.equals(updateUser, that.updateUser) && Objects.equals(updateTime, that.updateTime) && Objects.equals(createUser, that.createUser) && Objects.equals(createTime, that.createTime);
     }
 
     @Override
     public int hashCode() {
-        // see https://vladmihalcea.com/how-to-implement-equals-and-hashcode-using-the-jpa-entity-identifier/
-        return getClass().hashCode();
+        return Objects.hash(formId, processInstanceId, applyDate, filEmpid, filName, filUnit, appEmpid, appName, appEngName, appUnit, position, extNum, isSubmit, appReason, isEnableDate, enableDate, isOther, otherReason, isHrSys, hrSys, hrSysChange, hrSysAdmUnit, hrSysStatus, hrSysEnableDate, hrSysAdmName, isAdSys, adAccount, adSys, adSysChange, adSysAdmUnit, adSysStatus, adSysEnableDate, adSysAdmName, isMeetingRoom, meetingRoom, meetingEoomChange, meetingRoomAdmUnit, meetingRoomStatus, meetingRoomEnableDate, meetingRoomAdmName, isOdSys, odSysRole, odSys, odSysOther, odSysAdmUnit, odSysStatus, odSysEnableDate, odSysAdmName, isEmailSys, emailSysAccount, emailSys, emailApply1, emailApply2, emailSysChange, emailSysAdmUnit, emailSysStatus, emailSysEnableDate, emailSysAdmName, isWebSite, isPccWww, isPccHome, webSite, isUnitAdm, isUnitDataMgr, isWebSiteOther, webSiteOther, webSiteAdmUnit, webSiteStatus, webSiteEnableDate, webSiteAdmName, isPccPis, pccPisAccount, pccPis, pccPisChange, pccPisAdmUnit, pccPisStatus, pccPisEnableDate, pccPisAdmName, isEngAndPrjInfoSys, engAndPrjInfoSysAccount, engAndPrjInfoSys, engAndPrjInfoSysChange, engAndPrjInfoSysAdmUnit, engAndPrjInfoSysStatus, engAndPrjInfoSysEnableDate, engAndPrjInfoSysAdmName, isRevSys, revSysAccount, revSys, revSysChange, revSysAdmUnit, revSysStatus, revSysEnableDate, revSysAdmName, isRecSys, recSysAccount, recSys, recSysChange, recSysAdmUnit, recSysStatus, recSysEnableDate, recSysAdmName, isBidSys, bidSysAccount, bidSys, bidSysChange, bidSysAdmUnit, bidSysStatus, bidSysEnableDate, bidSysAdmName, isOtherSys1, otherSys1ServerName, otherSys1Account, otherSys1, otherSys1Change, otherSys1AdmUnit, otherSys1Status, otherSys1EnableDate, otherSys1AdmName, isOtherSys2, otherSys2ServerName, otherSys2Account, otherSys2, otherSys2Change, otherSys2AdmUnit, otherSys2Status, otherSys2EnableDate, otherSys2AdmName, isOtherSys3, otherSys3ServerName, otherSys3Account, otherSys3, otherSys3Change, otherSys3AdmUnit, otherSys3Status, otherSys3EnableDate, otherSys3AdmName, processInstanceStatus, updateUser, updateTime, createUser, createTime);
     }
-
-    // prettier-ignore
 
     @Override
     public String toString() {
@@ -1811,8 +1745,7 @@ public class BpmIsmsL410 implements Serializable {
             ", appEmpid='" + appEmpid + '\'' +
             ", appName='" + appName + '\'' +
             ", appEngName='" + appEngName + '\'' +
-            ", appUnit1='" + appUnit1 + '\'' +
-            ", appUnit2='" + appUnit2 + '\'' +
+            ", appUnit='" + appUnit + '\'' +
             ", position='" + position + '\'' +
             ", extNum='" + extNum + '\'' +
             ", isSubmit='" + isSubmit + '\'' +
@@ -1882,7 +1815,6 @@ public class BpmIsmsL410 implements Serializable {
             ", pccPisEnableDate=" + pccPisEnableDate +
             ", pccPisAdmName='" + pccPisAdmName + '\'' +
             ", isEngAndPrjInfoSys='" + isEngAndPrjInfoSys + '\'' +
-            ", engAndPrjInfoSysServerName='" + engAndPrjInfoSysServerName + '\'' +
             ", engAndPrjInfoSysAccount='" + engAndPrjInfoSysAccount + '\'' +
             ", engAndPrjInfoSys='" + engAndPrjInfoSys + '\'' +
             ", engAndPrjInfoSysChange='" + engAndPrjInfoSysChange + '\'' +
@@ -1891,7 +1823,6 @@ public class BpmIsmsL410 implements Serializable {
             ", engAndPrjInfoSysEnableDate=" + engAndPrjInfoSysEnableDate +
             ", engAndPrjInfoSysAdmName='" + engAndPrjInfoSysAdmName + '\'' +
             ", isRevSys='" + isRevSys + '\'' +
-            ", revSysServerName='" + revSysServerName + '\'' +
             ", revSysAccount='" + revSysAccount + '\'' +
             ", revSys='" + revSys + '\'' +
             ", revSysChange='" + revSysChange + '\'' +
@@ -1899,17 +1830,7 @@ public class BpmIsmsL410 implements Serializable {
             ", revSysStatus='" + revSysStatus + '\'' +
             ", revSysEnableDate=" + revSysEnableDate +
             ", revSysAdmName='" + revSysAdmName + '\'' +
-            ", isBidSys='" + isBidSys + '\'' +
-            ", bidSysServerName='" + bidSysServerName + '\'' +
-            ", bidSysAccount='" + bidSysAccount + '\'' +
-            ", bidSys='" + bidSys + '\'' +
-            ", bidSysChange='" + bidSysChange + '\'' +
-            ", bidSysAdmUnit='" + bidSysAdmUnit + '\'' +
-            ", bidSysStatus='" + bidSysStatus + '\'' +
-            ", bidSysEnableDate=" + bidSysEnableDate +
-            ", bidSysAdmName='" + bidSysAdmName + '\'' +
             ", isRecSys='" + isRecSys + '\'' +
-            ", recSysServerName='" + recSysServerName + '\'' +
             ", recSysAccount='" + recSysAccount + '\'' +
             ", recSys='" + recSys + '\'' +
             ", recSysChange='" + recSysChange + '\'' +
@@ -1917,6 +1838,14 @@ public class BpmIsmsL410 implements Serializable {
             ", recSysStatus='" + recSysStatus + '\'' +
             ", recSysEnableDate=" + recSysEnableDate +
             ", recSysAdmName='" + recSysAdmName + '\'' +
+            ", isBidSys='" + isBidSys + '\'' +
+            ", bidSysAccount='" + bidSysAccount + '\'' +
+            ", bidSys='" + bidSys + '\'' +
+            ", bidSysChange='" + bidSysChange + '\'' +
+            ", bidSysAdmUnit='" + bidSysAdmUnit + '\'' +
+            ", bidSysStatus='" + bidSysStatus + '\'' +
+            ", bidSysEnableDate=" + bidSysEnableDate +
+            ", bidSysAdmName='" + bidSysAdmName + '\'' +
             ", isOtherSys1='" + isOtherSys1 + '\'' +
             ", otherSys1ServerName='" + otherSys1ServerName + '\'' +
             ", otherSys1Account='" + otherSys1Account + '\'' +

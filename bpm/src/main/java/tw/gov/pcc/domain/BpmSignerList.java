@@ -24,6 +24,8 @@ public class BpmSignerList {
     @Column(name = "EMP_NAMES")
     private String empNames;
 
+    @Column(name = "SORT")
+    private Integer sort;
     @Column(name = "CREATE_TIME")
     private Timestamp createTime;
     public String getFormId() {
@@ -83,5 +85,13 @@ public class BpmSignerList {
 
     public void setCreateTime(Timestamp createTime) {
         this.createTime = createTime;
+    }
+
+    public Integer getSort() {
+        return sort;
+    }
+
+    public void setSort(Integer sort) {
+        this.sort = sort;
     }
 }

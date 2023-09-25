@@ -89,9 +89,9 @@
                   </i-form-group-check>
 
                   <i-form-group-check label-star class="col-sm-5" label-cols="5" content-cols="7" :label="`單位別 ：`"
-                                      :item="$v.appUnit1">
+                                      :item="$v.appUnit">
                     <!--單位別 : -->
-                    <b-form-select v-model="$v.appUnit1.$model" :options="bpmDeptsOptions"
+                    <b-form-select v-model="$v.appUnit.$model" :options="bpmDeptsOptions"
                                    :disabled="userData.userId !== $v.filEmpid.$model || userData.userId !== $v.appEmpid.$model  || formStatusRef === FormStatusEnum.READONLY">
                       <template #first>
                         <b-form-select-option value="null" disabled>請選擇</b-form-select-option>
@@ -244,7 +244,7 @@
                         <b-form-input
                           v-else
                           maxlength="200" v-model="row.item.systemApplyInput"
-                          :disabled="userData.deptId !== row.item.admUnit || row.item.checkbox !== '1' || formStatusRef === FormStatusEnum.READONLY">
+                          :disabled="form.isSubmit === '1' || userData.deptId !== row.item.admUnit || row.item.checkbox !== '1' || formStatusRef === FormStatusEnum.READONLY">
                         </b-form-input>
 
                         <span v-if="row.item.systemApply === '4'">@mail.pcc.gov.tw</span>
@@ -435,9 +435,8 @@
 
                     <!--處理人員-->
                     <template #cell(reviewStaffName)="row">
-                      {{row.item.checkbox}}
                       <b-form-input maxlength="200" v-model="row.item.admName"
-                                    :disabled=" userData.deptId !== row.item.admUnit || row.item.checkbox !== '1'  || formStatusRef === FormStatusEnum.READONLY" />
+                                    :disabled=" userData.deptId !== row.item.admUnit || row.item.checkbox !== '1'  || formStatusRef === FormStatusEnum.READONLY"/>
                     </template>
 
                   </b-table>
@@ -468,6 +467,10 @@
 
                 </div>
 
+                <!--簽核狀態模組-->
+                <signerList :formId="formIdProp" :formStatus="formStatusRef" :opinion="opinion" :formData="form"></signerList>
+
+
                 <b-container class="mt-3">
                   <b-row class="justify-content-center">
                     <b-button class="ml-2" style="background-color: #17a2b8; color: white"
@@ -483,16 +486,14 @@
                     <b-button class="ml-2" style="background-color: #17a2b8; color: white"
                               variant="outline-secondary"
                               @click="reviewStart('1')"
-                              v-show="formStatusRef === FormStatusEnum.VERIFY" >同意
+                              v-show="formStatusRef === FormStatusEnum.VERIFY">同意
                     </b-button>
                     <b-button class="ml-2" style="background-color: #17a2b8; color: white"
                               variant="outline-secondary"
                               @click="reviewStart('0')"
                               v-show="formStatusRef === FormStatusEnum.VERIFY">不同意
                     </b-button>
-                    <b-button class="ml-2" style="background-color: #17a2b8; color: white"
-                              variant="outline-secondary"
-                              @click="signature"
+                    <b-button class="ml-2" style="background-color: #17a2b8" @click="showModel()"
                               v-show="formStatusRef === FormStatusEnum.VERIFY && isSignatureRef">加簽
                     </b-button>
                     <b-button class="ml-2" style="background-color: #17a2b8; color: white"
@@ -526,6 +527,7 @@
         </b-card-body>
       </section>
     </b-container>
+    <signatureBmodel ref="signatureBmodel" :formData="form" :taskData="taskDataRef"></signatureBmodel>
   </div>
 </template>
 
@@ -548,9 +550,12 @@ import {useGetters} from "@u3u/vue-hooks";
 import {changeDirections} from "@/shared/word/directions";
 import {checkboxToMapAndForm} from "@/shared/word/checkboxToMapAndForm";
 import {mapToCheckbox} from "@/shared/word/mapToCheckbox";
+import signatureBmodel from "@/components/signatureBmodel.vue";
+import signerList from "@/components/signerList.vue";
 
 const appendix = () => import('@/components/appendix.vue');
 const flowChart = () => import('@/components/flowChart.vue');
+
 export default {
   name: "l410Edit",
   methods: {
@@ -586,6 +591,8 @@ export default {
     'i-date-picker': IDatePicker,
     appendix,
     flowChart,
+    signatureBmodel,
+    signerList,
   },
   setup(props) {
     let appendixData = reactive({});
@@ -599,8 +606,13 @@ export default {
     let iptData = ref(false);
     const $bvModal = useBvModal();
     const notificationService = useNotification();
+    const signatureBmodel = ref(null);
     let fileDataId = reactive({
       fileId: ''
+    });
+
+    let opinion = reactive({
+      opinionData: ''
     });
 
     enum FormStatusEnum {
@@ -614,7 +626,7 @@ export default {
 
     const formDefault = {
       formId: '',//表單編號
-      applyDate:'',//	申請日期
+      applyDate: '',//	申請日期
       filEmpid: '',//	填表人員工編號
       filName: '',//	填表人姓名
       filUnit: '',//	填表人單位名稱
@@ -623,7 +635,7 @@ export default {
       appEngName: '', // 英文姓名
       appEmpid: '',//	申請人員工編號
       extNum: '',//	分機
-      appUnit1: '',//	單位別
+      appUnit: '',//	單位別
       position: '',//	職稱
       appReason: '1',//	申請事由 1.新進 2.離職 3.職務異動
       isEnableDate: '0',//	是否有生效日期
@@ -690,6 +702,38 @@ export default {
       pccPisStatus: '',
       pccPisEnableDate: null,
       pccPisAdmName: '',
+      isEngAndPrjInfoSys: '0',
+      engAndPrjInfoSysAccount: '',
+      engAndPrjInfoSys: '',
+      engAndPrjInfoSysChange: '',
+      engAndPrjInfoSysAdmUnit: '',
+      engAndPrjInfoSysStatus: '',
+      engAndPrjInfoSysEnableDate: null,
+      engAndPrjInfoSysAdmName: '',
+      isRevSys: '0',
+      revSysAccount: '',
+      revSys: '',
+      revSysChange: '',
+      revSysAdmUnit: '',
+      revSysStatus: '',
+      revSysEnableDate: null,
+      revSysAdmName: '',
+      isRecSys: '0',
+      recSysAccount: '',
+      recSys: '',
+      recSysChange: '',
+      recSysAdmUnit: '',
+      recSysStatus: '',
+      recSysEnableDate: null,
+      recSysAdmName: '',
+      isBidSys: '0',
+      bidSysAccount: '',
+      bidSys: '',
+      bidSysChange: '',
+      bidSysAdmUnit: '',
+      bidSysStatus: '',
+      bidSysEnableDate: null,
+      bidSysAdmName: '',
       isOtherSys1: '0',
       otherSys1ServerName: '',
       otherSys1Account: '',
@@ -737,7 +781,7 @@ export default {
       appEngName: {required},
       appEmpid: {required},
       extNum: {},
-      appUnit1: {required},
+      appUnit: {required},
       position: {required},
       appReason: {required},
       isEnableDate: {},
@@ -859,7 +903,6 @@ export default {
           fileDataId.fileId = formData.formId;
           Object.assign(formDefault, formData);
           Object.assign(form, formDefault)
-          console.log(' form ++ : ', JSON.parse(JSON.stringify(form)))
           reset();
         })
         .catch(notificationErrorHandler(notificationService));
@@ -891,37 +934,8 @@ export default {
         const isOK = await $bvModal.msgBoxConfirm('是否確認送出修改內容？');
         if (isOK) {
 
+          //把頁面上iTable內的所有資料逐一轉成form裡的值，並把組出List<HashMap<String, HashMap<String, Object>>>傳給後端
           await Promise.all(table.data.map(data => checkboxToMapAndForm(data, form, l410Variables)));
-
-          const pccWwwKey = "pccWww";
-          const pccHomeKey = "pccHome";
-
-          let found1 = false;
-          let found2 = false;
-
-          //過濾variables 找出有沒有pccWww、pccHome
-          for (let i = 0; i < l410Variables.length; i++) {
-            if (l410Variables[i].hasOwnProperty(pccWwwKey)) {
-              found1 = true;
-            }
-            if (l410Variables[i].hasOwnProperty(pccHomeKey)) {
-              found2 = true;
-            }
-          }
-
-          //pccWww、pccHome 把沒有的物件塞進variables
-          if (!found1) {
-            let mapData = new Map<string, object>();
-            mapData.set('pccWww', null)
-            let arrData = Array.from(mapData);
-            l410Variables.push(Object.fromEntries(arrData))
-          }
-          if (!found2) {
-            let mapData = new Map<string, object>();
-            mapData.set('pccHome', null)
-            let arrData = Array.from(mapData);
-            l410Variables.push(Object.fromEntries(arrData))
-          }
 
           const formData = new FormData();
 
@@ -934,6 +948,8 @@ export default {
           }
 
           formData.append('form', new Blob([JSON.stringify(body)], {type: 'application/json'}));
+
+          //判斷appendix頁面傳過來的file
           if (JSON.stringify(appendixData.value) !== '[]') {
             console.log('安安')
             for (let i in appendixData.value) {
@@ -959,45 +975,17 @@ export default {
       }
     }
 
-   async function reviewStart(item) {
+    async function reviewStart(item) {
       let variables = {};
       let l410Variables = [];
-      console.log('taskDataRef',taskDataRef.value)
+      console.log('taskDataRef', taskDataRef.value)
 
-     await Promise.all(table.data.map(data => checkboxToMapAndForm(data, form, l410Variables)));
+      //把頁面上iTable內的所有資料逐一轉成form裡的值，並把組出List<HashMap<String, HashMap<String, Object>>>傳給後端
+      await Promise.all(table.data.map(data => checkboxToMapAndForm(data, form, l410Variables)));
 
-     const pccWwwKey = "pccWww";
-     const pccHomeKey = "pccHome";
+      form.l410Variables = l410Variables;
 
-     let found1 = false;
-     let found2 = false;
-
-     //過濾variables 找出有沒有pccWww、pccHome
-     for (let i = 0; i < l410Variables.length; i++) {
-       if (l410Variables[i].hasOwnProperty(pccWwwKey)) {
-         found1 = true;
-       }
-       if (l410Variables[i].hasOwnProperty(pccHomeKey)) {
-         found2 = true;
-       }
-     }
-
-     //pccWww、pccHome 把沒有的物件塞進l410Variables
-     if (!found1) {
-       let mapData = new Map<string, object>();
-       mapData.set('pccWww', null)
-       let arrData = Array.from(mapData);
-       l410Variables.push(Object.fromEntries(arrData))
-     }
-     if (!found2) {
-       let mapData = new Map<string, object>();
-       mapData.set('pccHome', null)
-       let arrData = Array.from(mapData);
-       l410Variables.push(Object.fromEntries(arrData))
-     }
-
-     form.l410Variables = l410Variables;
-
+      //判斷頁面審核單位是否跟登入者單位一樣，一致就去後端更新資料
       await Promise.all(table.data.map(data => {
         if (data.admUnit === userData.deptId) {
           return iptData.value = true;
@@ -1011,6 +999,9 @@ export default {
         variables = Object.fromEntries(arrData)
       }
 
+      console.log(' l410Edit.vue - reviewStart - 1003: ', JSON.parse(JSON.stringify(variables)))
+
+      form.opinion = opinion.opinionData
       let opinionData = '';
 
       if (form.opinion !== '') {
@@ -1023,9 +1014,9 @@ export default {
         signer: userData.userName,
         signerId: userData.userId,
         signUnit: userData.deptId,
-        processInstanceId: taskDataRef.value.additional ? taskDataRef.value.processInstanceId  : form.processInstanceId,
+        processInstanceId: taskDataRef.value.additional ? taskDataRef.value.processInstanceId : form.processInstanceId,
         taskId: taskDataRef.value.taskId !== '' ? taskDataRef.value.taskId : '',
-        taskName:taskDataRef.value.taskName !== '' ? taskDataRef.value.taskName : '',
+        taskName: taskDataRef.value.taskName !== '' ? taskDataRef.value.taskName : '',
         variables,
         form: {"L410": JSON.stringify(form)},
         directions: changeDirections(taskDataRef.value.decisionRole),
@@ -1073,35 +1064,6 @@ export default {
       }
     };
 
-    function signature() {
-      let body = {
-        mainFormId: form.formId,
-        mainProcessInstanceId: form.processInstanceId,
-        mainProcessTaskId: form.taskId,
-        requesterId: userData.empId,
-        requester: userData.userName,
-        additionalSignerId: '1510',
-        additionalSigner: '我是主管',
-        additionalSignReason: form.opinion,
-        processInstanceStatus: '0',
-      };
-
-      let body1 = {
-        "Additional": JSON.stringify(body)
-      }
-      const formData = new FormData();
-
-      formData.append('form', new Blob([JSON.stringify(body1)], {type: 'application/json'}));
-
-      axios
-        .post(`/process/start/Additional`, formData)
-        .then(({data}) => {
-          $bvModal.msgBoxOk('加簽申請成功');
-          navigateByNameAndParams('pending', {isReload: false, isNotKeepAlive: true});
-        })
-        .catch(notificationErrorHandler(notificationService));
-    }
-
     function toQueryView() {
       handleBack({isReload: true, isNotKeepAlive: true});
     }
@@ -1139,6 +1101,10 @@ export default {
       }
     }
 
+    function showModel() {
+      signatureBmodel.value.isShowDia(true);
+    }
+
     watch(formIdProp, () => {
         handleQuery();
       },
@@ -1166,10 +1132,15 @@ export default {
       reviewStart,
       FormStatusEnum,
       isSignatureRef,
-      signature,
       resetValue,
       resetCheckboxValue,
       userData,
+      signatureBmodel,
+      showModel,
+      formIdProp,
+      opinion,
+      l410Data,
+      taskDataRef
     }
   }
 }
