@@ -14,8 +14,8 @@ import java.util.List;
 @Service
 public class BpmSignStatusService {
 
-   private BpmSignStatusRepository bpmSignStatusRepository;
-    private BpmSignStatusMapper bpmSignStatusMapper;
+   private final BpmSignStatusRepository bpmSignStatusRepository;
+    private final BpmSignStatusMapper bpmSignStatusMapper;
     public BpmSignStatusService(BpmSignStatusRepository bpmSignStatusRepository, BpmSignStatusMapper bpmSignStatusMapper) {
         this.bpmSignStatusRepository = bpmSignStatusRepository;
         this.bpmSignStatusMapper = bpmSignStatusMapper;

@@ -51,7 +51,7 @@ public class Bpm01w010Controller {
         }
 
         log.info("BPM表單管理:: 導向{}頁面","Bpm01w010 表單申請-l414");
-        return new ModelAndView("/bpm/Bpm01w010").addAllObjects(Map.of("bpmPath", referer + "/bpm/l414Query"));
+        return new ModelAndView(MAIN_PAGE).addAllObjects(Map.of("bpmPath", referer + "/bpm/l414Query"));
     }
 
     @RequestMapping("/Bpm_L410Query.action")
@@ -86,7 +86,7 @@ public class Bpm01w010Controller {
             referer = "http://localhost:9000";
         }
         log.info("BPM表單管理:: 導向{}頁面","Bpm01w010 表單申請-l410");
-        return new ModelAndView("/bpm/Bpm01w010").addAllObjects(Map.of("bpmPath", referer + "/bpm/l410Query"));
+        return new ModelAndView(MAIN_PAGE).addAllObjects(Map.of("bpmPath", referer + "/bpm/l410Query"));
     }
 
     @RequestMapping("/Bpm_PENDING.action")
@@ -113,6 +113,7 @@ public class Bpm01w010Controller {
             return new ModelAndView("redirect:"+path);
         }
 
+
         // 有bpmLogin資訊情況
         String referer=RefererTemp.refererMap.get("referer");
 
@@ -122,7 +123,7 @@ public class Bpm01w010Controller {
         }
 
         log.info("BPM表單管理:: 導向{}頁面","Bpm01w010 待處理表單");
-        return new ModelAndView("/bpm/Bpm01w010").addAllObjects(Map.of("bpmPath", referer + "/bpm/pending"));
+        return new ModelAndView(MAIN_PAGE).addAllObjects(Map.of("bpmPath", referer + "/bpm/pending"));
     }
 
     @RequestMapping("/Bpm_NOTIFY.action")
@@ -157,7 +158,8 @@ public class Bpm01w010Controller {
             referer = "http://localhost:9000";
         }
 
+
         log.info("BPM表單管理:: 導向{}頁面","Bpm01w010 表單查詢");
-        return new ModelAndView("/bpm/Bpm01w010").addAllObjects(Map.of("bpmPath", referer + "/bpm/notify"));
+        return new ModelAndView(MAIN_PAGE).addAllObjects(Map.of("bpmPath", referer + "/bpm/notify"));
     }
 }

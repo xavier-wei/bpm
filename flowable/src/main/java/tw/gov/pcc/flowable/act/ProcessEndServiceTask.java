@@ -20,7 +20,6 @@ public class ProcessEndServiceTask implements JavaDelegate {
         // get processDefinitionKey
         String processDefinitionKey = execution.getProcessDefinitionId().split(":")[0];
 
-        execution.getVariables().get("");
         EndEventDTO endEventDTO = new EndEventDTO(execution.getProcessInstanceId(), TokenUtil.TOKEN, ProcessEnum.getFormNameByProcessKey(processDefinitionKey),"1");
 
         HttpHeaders headers = new HttpHeaders();

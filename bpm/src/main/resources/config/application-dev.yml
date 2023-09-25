@@ -110,3 +110,5 @@ jhipster:
 # application:
 bpm:
   token: QAZWSXEDCRffvYTHnujkljkfyffd14651456uhweuhuijwdijoichchuhqiheciqhoieh
+flowable:
+  path: http://localhost:9973/process
