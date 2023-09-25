@@ -20,6 +20,7 @@ import tw.gov.pcc.eip.dao.DeptsDao;
 public class Depts implements Serializable {
 
     private static final long serialVersionUID = 1L;
+    public static final String DEFAULT = "000000";
 
 
     /**

@@ -1,7 +1,11 @@
 package tw.gov.pcc.eip.services;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
+import java.util.stream.Collector;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -10,12 +14,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.validation.BindingResult;
 
 import tw.gov.pcc.eip.adm.cases.Eip00w070Case;
+import tw.gov.pcc.eip.adm.cases.Eip00w230Case;
 import tw.gov.pcc.eip.dao.*;
-import tw.gov.pcc.eip.domain.CursorAcl;
-import tw.gov.pcc.eip.domain.Role_acl;
-import tw.gov.pcc.eip.domain.Roles;
-import tw.gov.pcc.eip.domain.User_roles;
-import tw.gov.pcc.eip.domain.Users;
+import tw.gov.pcc.eip.domain.*;
 import tw.gov.pcc.eip.framework.domain.UserBean;
 
 /**
@@ -43,6 +44,8 @@ public class Eip00w070Service {
     Role_aclDao role_aclDao;
 	@Autowired
 	Pwc_tb_tableau_user_infoDao pwc_tb_tableau_user_infoDao;
+	@Autowired
+	Eip00w230Service eip00w230Service;
     
     private final String SYS_ID = "EI";
     
@@ -70,6 +73,20 @@ public class Eip00w070Service {
     	return portalMenuAclDao.findRoleAcl(SYS_ID, eipadm0w070Case.getRole_id());
     }
     
+    /**
+     * 設置角色功能代號list
+     *
+     */
+    public void settingMenuList(Eip00w070Case eipadm0w070Case,List<CursorAcl> cursorAclList){
+    	List<String> itemidList = new ArrayList<String>();
+    	for(CursorAcl c:cursorAclList) {
+    		if("Y".equals(c.getIsChecked()) ) {
+    			itemidList.add(c.getItemId());
+    		}
+    	}
+    	eipadm0w070Case.setSelectedIdlist(itemidList);
+    }
+    
     public void findMember(Eip00w070Case eipadm0w070Case){
     	
     	List<User_roles> rsList = user_rolesDao.selectDataByRoleId(eipadm0w070Case.getRole_id());
@@ -90,17 +107,18 @@ public class Eip00w070Service {
     	List<Users> usersList = eipadm0w070Case.getUsersList();
     	String roleId = eipadm0w070Case.getRole_id();
     	LocalDateTime nowldt = LocalDateTime.now();
-    	
+		List<Users> orgUsersList = getUsersByRole(roleId);
+		
     	for(Users users:usersList) {
     		//如果user有被勾選擇加入群組
     		if(users.isCheckbox()) {
     			
     			//如果userRoles沒有,則進行新增
-    			if(!exsistUserRoles(users.getUser_id(),SYS_ID,users.getDept_id(),roleId)) {
+    			if(!exsistUserRoles(users.getUser_id(),SYS_ID,StringUtils.defaultIfBlank(users.getDept_id(), Depts.DEFAULT),roleId)) {
         			User_roles addUserRoles = new User_roles();
         			addUserRoles.setUser_id(users.getUser_id());
         			addUserRoles.setSys_id(SYS_ID);
-        			addUserRoles.setDept_id(users.getDept_id());
+        			addUserRoles.setDept_id(StringUtils.defaultIfBlank(users.getDept_id(), Depts.DEFAULT));
         			addUserRoles.setRole_id(roleId);
         			addUserRoles.setCreate_user_id(userData.getUserId());
         			addUserRoles.setCreate_timestamp(nowldt);
@@ -111,12 +129,12 @@ public class Eip00w070Service {
     			User_roles delUserRoles = new User_roles();
     			delUserRoles.setUser_id(users.getUser_id());
     			delUserRoles.setSys_id(SYS_ID);
-    			delUserRoles.setDept_id(users.getDept_id());
+    			delUserRoles.setDept_id(StringUtils.defaultIfBlank(users.getDept_id(), Depts.DEFAULT));
     			delUserRoles.setRole_id(roleId);
     			user_rolesDao.deleteByKey(delUserRoles);
     		}
     	}
-		deleteUnauthorizedTabList();
+		orgUsersList.forEach(x -> deleteUnauthorizedTabListByUserId(x.getUser_id()));
     }
     
     /*
@@ -145,15 +163,28 @@ public class Eip00w070Service {
      */
     public void editCharacter(Eip00w070Case eipadm0w070Case) {
     	LocalDateTime nowldt = LocalDateTime.now();
+		List<Users> orgUsersList = getUsersByRole(eipadm0w070Case.getRole_id());
+		
     	//刪除舊的role_acl
     	this.deleteRoleAclByRoleid(eipadm0w070Case.getRole_id());
     	//新增新的role_acl
     	this.insertRoleAcl(eipadm0w070Case.getSelectedIdlist(), SYS_ID, eipadm0w070Case.getRole_id(), userData.getDeptId(), userData.getUserId(), nowldt);
-		this.deleteUnauthorizedTabList();
-    }
 
-	private void deleteUnauthorizedTabList() {
-		pwc_tb_tableau_user_infoDao.findUnauthoriedList().forEach(pwc_tb_tableau_user_infoDao::deleteByKey);
+		orgUsersList.forEach(x -> deleteUnauthorizedTabListByUserId(x.getUser_id()));
+    }
+	
+	private List<Users> getUsersByRole(String roleId) {
+		Eip00w070Case resultCase = new Eip00w070Case();
+		resultCase.setRole_id(roleId);
+		this.findMember(resultCase);
+		return resultCase.getUsersList().stream().filter(Users::isCheckbox).collect(Collectors.toList());
+	}
+
+	private void deleteUnauthorizedTabListByUserId(String userId) {
+		Eip00w230Case resultCase = new Eip00w230Case();
+		eip00w230Service.findCheckedList(resultCase, userId);
+		Set<String> allIds = resultCase.getFullTabList().stream().map(Eip00w230Case.TabCase::getDashboard_fig_id).collect(Collectors.toSet());
+		pwc_tb_tableau_user_infoDao.findUnauthoriedList().stream().filter(x -> allIds.contains(x.getDashboard_fig_id()) && StringUtils.equalsIgnoreCase(x.getUser_id(), userId)).forEach(pwc_tb_tableau_user_infoDao::deleteByKey);
 	}
 
 	/*
@@ -162,7 +193,7 @@ public class Eip00w070Service {
     public void deleteCharacter(Eip00w070Case eipadm0w070Case) {
     	this.deleteRolesByRoleid(eipadm0w070Case.getRole_id());
     	this.deleteRoleAclByRoleid(eipadm0w070Case.getRole_id());
-		this.deleteUnauthorizedTabList();
+		this.deleteUnauthorizedTabListByUserId(eipadm0w070Case.getRole_id());
     }
     	
     private void insertRoles(String sys_id, String dept_id, String role_id, String role_desc, String create_id, LocalDateTime nowldt) {

@@ -326,7 +326,8 @@ public class Eip04w020Service extends OnlineRegService {
         // 處理檔案上傳，不存在直接exception
         MultipartFile[] files = Arrays.stream(modifyCaseData.getFiles()).filter(f->StringUtils.isNotBlank(f.getOriginalFilename())).toArray(MultipartFile[]::new);
         String filedir = eipcodeDao.findByCodeKindCodeNo("FILEDIR", "1").get().getCodename();
-        String saveDirectory = filedir + "\\線上報名\\" + ("U".equals(mode) ? modifyCaseData.getOrformno() : orformdata.getOrformno());
+        String fileSeparator = File.separator;
+        String saveDirectory = filedir + fileSeparator + "線上報名" + fileSeparator + ("U".equals(mode) ? modifyCaseData.getOrformno() : orformdata.getOrformno());
 //        String apDirectory = System.getProperty("user.dir");
 //        String serverDrive = apDirectory.substring(0, apDirectory.indexOf(File.separator));
         File savePath = new File(saveDirectory);
@@ -668,7 +669,7 @@ public class Eip04w020Service extends OnlineRegService {
         orresult.setRegisaddres(StringUtils.defaultIfEmpty(caseData.getRegisaddres(), null));
         orresult.setMealstatus(caseData.getMealstatus());
         orresult.setCredt(LocalDateTime.now());
-        orresult.setCreuser(userData.getUserId());
+        orresult.setCreuser("99999");
         orresult.setRegisdt(orresult.getCredt());
         orresultDao.insertData(orresult);
         return "";
@@ -894,7 +895,7 @@ public class Eip04w020Service extends OnlineRegService {
         Orformdata orformdata = orformdataDao.findByPk(orformno);
         List<Orresult>resultList = orresultDao.getDataByOrformno(orformno,"D");
         // 批次報名資料已暫時新增至result檔，故+0
-        return resultList.size() + (isBatch ? 0 : 1) > orformdata.getAllowappnum();
+        return resultList.size() + (isBatch ? 0 : 1) > orformdata.getAcceptappnum();
     }
 
     /**

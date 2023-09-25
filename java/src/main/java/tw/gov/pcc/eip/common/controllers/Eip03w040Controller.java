@@ -77,7 +77,7 @@ public class Eip03w040Controller extends BaseController {
                 return new ModelAndView(QUERY_PAGE);
             }
 
-            String filename = (caseData.getStatus().equals("closed")? "已結案" : "未結案") + "件數統計報表_" + DateUtility.getNowChineseDate() + ".xls";
+            String filename = (caseData.getStatus().equals("closed")? "已結案" : "未結案") + "件數統計報表_" + DateUtility.getNowChineseDate() + "_" + caseData.getTrkObj() + ".xls";
             return new ModelAndView(new FileOutputView(baos, filename, FileOutputView.EXCEL_FILE));
         } catch (Exception e) {
             log.error("件數統計報表 - 下載 - " + ExceptionUtility.getStackTrace(e));
