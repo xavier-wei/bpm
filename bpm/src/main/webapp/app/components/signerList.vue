@@ -159,6 +159,7 @@ export default {
       axios
         .get(`/eip/getBpmSignStatus/${id}`)
         .then(({data}) => {
+          console.log(' signerList.vue -  - 162: ', JSON.parse(JSON.stringify(data)))
           if (data.length === 0) return;
           signStatusTable.data = data;
         })

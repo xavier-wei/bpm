@@ -82,6 +82,15 @@
           </i-form-group-check>
         </b-form-row>
 
+        <b-form-row>
+          <i-form-group-check class="col-sm-5" label-cols="5" content-cols="7" :label="'加簽理由 : '"
+                              :item="$v.reason">
+            <b-form-textarea v-model="$v.reason.$model" rows="1" maxlength="100" trim lazy/>
+          </i-form-group-check>
+        </b-form-row>
+
+
+
         <b-container class="mt-3">
           <b-row class="justify-content-center">
 
@@ -157,6 +166,7 @@ export default {
       selectName: '', //查詢加簽的user名稱
       selectUnit: '', //查詢加簽的user單位
       selectTitle: '', //查詢加簽的user職稱
+      reason:'',
     };
 
     const form = reactive(Object.assign({}, formDefault));
@@ -170,6 +180,7 @@ export default {
       selectName: {},
       selectUnit: {},
       selectTitle: {},
+      reason: {},
     });
 
     const {$v, checkValidity, reset} = useValidation(rules, form, formDefault);
@@ -271,7 +282,7 @@ export default {
             requester: userData.userName,
             additionalSignerId: form.chooseId,
             additionalSigner: form.chooseName,
-            additionalSignReason: formDataProp.opinion,
+            additionalSignReason: form.reason,
             processInstanceStatus: '0',
             taskName: taskDataProp.taskName,
           };

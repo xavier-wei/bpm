@@ -488,18 +488,18 @@
                               v-show="formStatusRef === FormStatusEnum.MODIFY">送出
                     </b-button>
                     <b-button class="ml-2" style="background-color: #17a2b8; color: white"
-                              @click="reviewStart('同意')"
+                              @click="reviewStart('同意',true)"
                               v-show="formStatusRef === FormStatusEnum.VERIFY">同意
                     </b-button>
                     <b-button class="ml-2" style="background-color: #17a2b8; color: white"
-                              @click="reviewStart('不同意')"
+                              @click="reviewStart('不同意',true)"
                               v-show="formStatusRef === FormStatusEnum.VERIFY">不同意
                     </b-button>
                     <b-button class="ml-2" style="background-color: #17a2b8" @click="showModel()"
                               v-show="formStatusRef === FormStatusEnum.VERIFY && isSignatureRef">加簽
                     </b-button>
                     <b-button class="ml-2" style="background-color: #17a2b8; color: white"
-                              @click="reviewStart('補件')"
+                              @click="reviewStart('補件',true)"
                               v-show="userData.cpape05m.title === '科長' ||
                               userData.cpape05m.title === '處長' &&
                               formStatusRef === FormStatusEnum.VERIFY">補件
@@ -965,7 +965,7 @@ export default {
             .patch(`/process/patch/L410`, formData, headers)
             .then(({data}) => {
               if (isSubmit === '1') {
-                reviewStart(isSubmit);
+                reviewStart(isSubmit, false);
               } else {
                 $bvModal.msgBoxOk('表單更新完畢');
                 navigateByNameAndParams('pending', {});
@@ -978,73 +978,79 @@ export default {
       }
     }
 
-    async function reviewStart(item) {
+    async function reviewStart(item, i) {
       let variables = {};
       let l410Variables = [];
 
-      //把頁面上iTable內的所有資料逐一轉成form裡的值，並把組出List<HashMap<String, HashMap<String, Object>>>傳給後端
-      await Promise.all(table.data.map(data => checkboxToMapAndForm(data, form, l410Variables)));
+      let isOK = true;
 
-
-      console.log(' l410Edit.vue - reviewStart - 986: ', JSON.parse(JSON.stringify(l410Variables)))
-      form.l410Variables = l410Variables;
-
-      //判斷頁面審核單位是否跟登入者單位一樣，一致就去後端更新資料
-      await Promise.all(table.data.map(data => {
-        if (data.admUnit === userData.deptId) {
-          return iptData.value = true;
-        }
-      }));
-
-      if (taskDataRef.value.decisionRole !== null) {
-        let mapData = new Map<string, string>();
-        mapData.set(taskDataRef.value.decisionRole, getItem(item))
-        let arrData = Array.from(mapData);
-        variables = Object.fromEntries(arrData)
+      if (i === true) {
+        isOK = await $bvModal.msgBoxConfirm('是否送出' + item + '？');
       }
 
-      console.log(' l410Edit.vue - reviewStart - 1003: ', JSON.parse(JSON.stringify(variables)))
+      if (isOK) {
 
-      form.opinion = opinion.opinionData
-      let opinionData = '';
+        //把頁面上iTable內的所有資料逐一轉成form裡的值，並把組出List<HashMap<String, HashMap<String, Object>>>傳給後端
+        await Promise.all(table.data.map(data => checkboxToMapAndForm(data, form, l410Variables)));
 
-      if (form.opinion !== '') {
-        opinionData = '(意見)' + form.opinion;
-      } else {
-        if (item !== '1') {
-          opinionData = '(' + item + ')';
-        }
-      }
+        console.log(' l410Edit.vue - reviewStart - 986: ', JSON.parse(JSON.stringify(l410Variables)))
+        form.l410Variables = l410Variables;
 
-      let body = {
-        signer: userData.userName,
-        signerId: userData.userId,
-        signUnit: userData.deptId,
-        processInstanceId: taskDataRef.value.additional ? taskDataRef.value.processInstanceId : form.processInstanceId,
-        taskId: taskDataRef.value.taskId !== '' ? taskDataRef.value.taskId : '',
-        taskName: taskDataRef.value.taskName !== '' ? taskDataRef.value.taskName : '',
-        variables,
-        form: {"L410": JSON.stringify(form)},
-        directions: changeDirections(taskDataRef.value.decisionRole),
-        opinion: opinionData,
-        ipt: iptData.value
-      };
-
-      console.log(' body : ', JSON.parse(JSON.stringify(body)))
-
-      axios
-        .post(`/process/completeTask/${form.formId}`, body)
-        .then(({data}) => {
-          if (item === '1') {
-            $bvModal.msgBoxOk('表單儲存完畢');
-            navigateByNameAndParams('pending', {isReload: false, isNotKeepAlive: true});
-          } else {
-            $bvModal.msgBoxOk('表單審核完畢');
-            navigateByNameAndParams('pending', {isReload: false, isNotKeepAlive: true});
+        //判斷頁面審核單位是否跟登入者單位一樣，一致就去後端更新資料
+        await Promise.all(table.data.map(data => {
+          if (data.admUnit === userData.deptId) {
+            return iptData.value = true;
           }
+        }));
 
-        })
-        .catch(notificationErrorHandler(notificationService));
+        if (taskDataRef.value.decisionRole !== null) {
+          let mapData = new Map<string, string>();
+          mapData.set(taskDataRef.value.decisionRole, getItem(item))
+          let arrData = Array.from(mapData);
+          variables = Object.fromEntries(arrData)
+        }
+
+        form.opinion = opinion.opinionData
+        let opinionData = '';
+
+        if (form.opinion !== '') {
+          opinionData = '(意見)' + form.opinion;
+        } else {
+          if (item !== '1') {
+            opinionData = '(' + item + ')';
+          }
+        }
+
+        let body = {
+          signer: userData.userName,
+          signerId: userData.userId,
+          signUnit: userData.deptId,
+          processInstanceId: taskDataRef.value.additional ? taskDataRef.value.processInstanceId : form.processInstanceId,
+          taskId: taskDataRef.value.taskId !== '' ? taskDataRef.value.taskId : '',
+          taskName: taskDataRef.value.taskName !== '' ? taskDataRef.value.taskName : '',
+          variables,
+          form: {"L410": JSON.stringify(form)},
+          directions: changeDirections(taskDataRef.value.decisionRole),
+          opinion: opinionData,
+          ipt: iptData.value
+        };
+
+        console.log(' body : ', JSON.parse(JSON.stringify(body)))
+
+        axios
+          .post(`/process/completeTask/${form.formId}`, body)
+          .then(({data}) => {
+            if (item === '1') {
+              $bvModal.msgBoxOk('表單儲存完畢');
+              navigateByNameAndParams('pending', {isReload: false, isNotKeepAlive: true});
+            } else {
+              $bvModal.msgBoxOk('表單審核完畢');
+              navigateByNameAndParams('pending', {isReload: false, isNotKeepAlive: true});
+            }
+
+          })
+          .catch(notificationErrorHandler(notificationService));
+      }
     }
 
     const tabIndex = ref(0);
@@ -1062,7 +1068,7 @@ export default {
       handleBack({isReload: true, isNotKeepAlive: true});
     }
 
-    const getItem = (item : string) => {
+    const getItem = (item: string) => {
       switch (item) {
         case '不同意':
           return '0';
