@@ -274,6 +274,7 @@ export default {
       if (isValid) {
         const isOK = await $bvModal.msgBoxConfirm('是否送出加簽？');
         if (isOK) {
+          console.log('taskDataProp.taskName',taskDataProp.taskName)
           let body = {
             mainFormId: formDataProp.formId,
             mainProcessInstanceId: formDataProp.processInstanceId,
@@ -286,7 +287,6 @@ export default {
             processInstanceStatus: '0',
             taskName: taskDataProp.taskName,
           };
-
 
           let body1 = {
             "Additional": JSON.stringify(body)

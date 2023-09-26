@@ -12,7 +12,7 @@ public enum SingerDecisionEnum {
     SERVER_ROOM_MANAGER("機房管理人員", "serverRoomManager"),
     HR_SYS("人事差勤系統", "HrSysSigner"),
     AD_SYS("AD帳號", "AdSysSigner"),
-    OD_SYS("公文管理系統", "OdSysSigner"),
+    OD_SYS("公文管理系統角色", "OdSysSigner"),
     MEETING_ROOM("會議室管理系統", "MeetingRoomSigner"),
     EMAIL_SYS("電子郵件帳號", "EmailSysSigner"),
     WEB_SITE("全球資訊網&會內資訊網", "WebSiteSigner"),

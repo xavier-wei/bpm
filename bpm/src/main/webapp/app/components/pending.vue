@@ -81,7 +81,7 @@
 
           <template #cell(subject)="row">
             <div>
-              {{ changeSubject(row.item) }}
+              {{ changeSubject(row.item,true) }}
             </div>
           </template>
 
@@ -267,7 +267,7 @@ export default defineComponent({
           formStatus: FormStatusEnum.VERIFY,
           isNotKeepAlive: false,
           stateStatus: userData.cpape05m.unitName !== '資訊推動小組',
-          isSignature : item.taskName !== '加簽'
+          isSignature : item.taskName.substring(0,2) !== '加簽'
         });
       }
     }

@@ -44,7 +44,7 @@
     <sequenceFlow id="sid-d37d7eaa-6bb9-4bb8-986c-a65fc3e4a4ce" sourceRef="sid-a1383f52-47a0-48a3-8551-67c550ace4d3" targetRef="ADAccount">
       <conditionExpression xsi:type="tFormalExpression"><![CDATA[${isAdSys=="1"}]]></conditionExpression>
     </sequenceFlow>
-    <userTask id="odSys" name="公文管理系統" flowable:candidateUsers="${OdSysSigner}"/>
+    <userTask id="odSys" name="公文管理系統角色" flowable:candidateUsers="${OdSysSigner}"/>
     <sequenceFlow id="sid-2d63cfda-0118-4bfc-b83a-54c3fbccf392" sourceRef="sid-a1383f52-47a0-48a3-8551-67c550ace4d3" targetRef="odSys">
       <conditionExpression xsi:type="tFormalExpression"><![CDATA[${isOdSys=="1"}]]></conditionExpression>
     </sequenceFlow>

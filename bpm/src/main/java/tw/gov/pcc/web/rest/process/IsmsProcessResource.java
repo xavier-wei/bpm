@@ -264,7 +264,7 @@ public class IsmsProcessResource {
                                 Map<String, Object> map = new HashMap<>(new MapUtils().getNewMap(mapList.get(0)));
                                 map.put("processInstanceId", taskDTO.getProcessInstanceId());
                                 map.put("taskId", taskDTO.getTaskId());
-                                map.put("taskName", taskDTO.getTaskName());
+                                map.put("taskName", "加簽-" + bpmIsmsAdditional.getTaskName());
                                 String decisionByName = SingerDecisionEnum.getDecisionByName(taskDTO.getTaskName());
                                 map.put("decisionRole", decisionByName);
                                 map.put("additional", true);

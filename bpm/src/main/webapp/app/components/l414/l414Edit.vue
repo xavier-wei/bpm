@@ -676,7 +676,7 @@ export default {
 
     async function submitForm(isSubmit) {
 
-      $bvModal.msgBoxConfirm('是否確認送出修改內容？').then((isOK: boolean) => {
+      $bvModal.msgBoxConfirm('是否確認送出修改內容?').then((isOK: boolean) => {
         if (isOK) {
           const formData = new FormData();
 
@@ -717,7 +717,7 @@ export default {
       let isOK = true;
 
       if (i === true) {
-        isOK = await $bvModal.msgBoxConfirm('是否送出' + item + '？');
+        isOK = await $bvModal.msgBoxConfirm('是否送出' + item + '?');
       }
 
       if (isOK) {
