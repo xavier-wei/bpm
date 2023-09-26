@@ -82,6 +82,15 @@
           </i-form-group-check>
         </b-form-row>
 
+        <b-form-row>
+          <i-form-group-check class="col-sm-5" label-cols="5" content-cols="7" :label="'加簽理由 : '"
+                              :item="$v.reason">
+            <b-form-textarea v-model="$v.reason.$model" rows="1" maxlength="100" trim lazy/>
+          </i-form-group-check>
+        </b-form-row>
+
+
+
         <b-container class="mt-3">
           <b-row class="justify-content-center">
 
@@ -157,6 +166,7 @@ export default {
       selectName: '', //查詢加簽的user名稱
       selectUnit: '', //查詢加簽的user單位
       selectTitle: '', //查詢加簽的user職稱
+      reason:'',
     };
 
     const form = reactive(Object.assign({}, formDefault));
@@ -170,6 +180,7 @@ export default {
       selectName: {},
       selectUnit: {},
       selectTitle: {},
+      reason: {},
     });
 
     const {$v, checkValidity, reset} = useValidation(rules, form, formDefault);
@@ -263,6 +274,7 @@ export default {
       if (isValid) {
         const isOK = await $bvModal.msgBoxConfirm('是否送出加簽？');
         if (isOK) {
+          console.log('taskDataProp.taskName',taskDataProp.taskName)
           let body = {
             mainFormId: formDataProp.formId,
             mainProcessInstanceId: formDataProp.processInstanceId,
@@ -271,13 +283,10 @@ export default {
             requester: userData.userName,
             additionalSignerId: form.chooseId,
             additionalSigner: form.chooseName,
-            additionalSignReason: formDataProp.opinion,
+            additionalSignReason: form.reason,
             processInstanceStatus: '0',
             taskName: taskDataProp.taskName,
           };
-
-
-          //todo:l410加簽流程需要把畫面選擇的單位更新回表單內
 
           let body1 = {
             "Additional": JSON.stringify(body)
@@ -290,15 +299,12 @@ export default {
           //只有在加簽l410時會進來這裡面，L410需要再加簽的時候去更新表單，讓畫面的單位跟著變更
           if (l410Form.value !== null) {
             if (formDataProp.formId !== undefined) {
-              console.log('taskDataProp.taskName', taskDataProp.taskName);
-              console.log('formDataProp.formId.substring(0, 3)', formDataProp.formId.substring(0, 4));
               if (formDataProp.formId.substring(0, 4) === 'L410') {
                 formDataProp.l410Variables = []
                 formData.append('bpmIsmsL410', new Blob([JSON.stringify(formDataProp)], {type: 'application/json'}));
               }
             }
           }
-
 
           axios
             .post(`/process/start/Additional`, formData)

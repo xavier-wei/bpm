@@ -8,7 +8,7 @@ export function changeDirections(user: any): string {
         case 'directorDecision':
             return '申請人所屬之單位主管';
         case 'infoGroupDecision':
-            return '資訊小組資安承辦人';
+            return '資推小組承辦人員';
         case 'seniorTechSpecialistSign':
             return '資訊小組簡任技正/科長';
         case 'serverRoomOperatorSetting':
@@ -45,6 +45,8 @@ export function changeDirections(user: any): string {
             return '本會其他資通系統2';
         case 'OtherSys3Signer':
             return '本會其他資通系統3';
+        case 'AdditionalSigner':
+            return '加簽';
         default:
             return '';
     }

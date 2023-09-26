@@ -91,6 +91,7 @@ import {formatToString, newformatDate} from "@/shared/date/minguo-calendar-utils
 import {notificationErrorHandler} from "@/shared/http/http-response-helper";
 import {useNotification} from "@/shared/notification";
 import {changeProject} from "@/shared/word/project-conversion";
+import {changeDealWithUnit} from "@/shared/word/directions";
 
 export default defineComponent({
   name: 'l410Query',
@@ -106,7 +107,7 @@ export default defineComponent({
     const queryStatus = ref(false);
     const notificationService = useNotification();
     const userData = ref(useGetters(['getUserData']).getUserData).value;
-
+    const bpmDeptsOptions = ref(useGetters(['getBpmDeptsOptions']).getBpmDeptsOptions).value;
     enum FormStatusEnum {
       CREATE = '新增',
       MODIFY = '編輯',
@@ -171,6 +172,7 @@ export default defineComponent({
           thStyle: 'width:10%',
           thClass: 'text-center',
           tdClass: 'text-center align-middle',
+          formatter: value => (value == undefined ? '' : changeDealWithUnit(value,bpmDeptsOptions)),
         },
         {
           key: 'applicationReason',

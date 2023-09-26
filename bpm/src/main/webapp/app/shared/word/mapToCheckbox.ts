@@ -6,7 +6,7 @@ export function mapToCheckbox(data: any, form: any): any {
     data.checkbox = form.isHrSys
     data.sys = form.hrSys
     data.sysChange = form.hrSysChange
-    data.admUnit = form.hrSysAdmUnit
+    data.admUnit = form.hrSysAdmUnit !== '' ? form.hrSysAdmUnit : data.admUnit
     data.admStatus = form.hrSysStatus
     data.admEnableDate = form.hrSysEnableDate != null ? new Date(form.hrSysEnableDate) : null
     data.admName = form.hrSysAdmName
@@ -17,7 +17,7 @@ export function mapToCheckbox(data: any, form: any): any {
     data.systemApplyInput = form.adAccount
     data.sys = form.adSys
     data.sysChange = form.adSysChange
-    data.admUnit = form.adSysAdmUnit
+    data.admUnit = form.adSysAdmUnit !== '' ? form.adSysAdmUnit : data.admUnit
     data.admStatus = form.adSysStatus
     data.admEnableDate = form.adSysEnableDate != null ? new Date(form.adSysEnableDate) : null
     data.admName = form.adSysAdmName
@@ -27,7 +27,7 @@ export function mapToCheckbox(data: any, form: any): any {
     data.checkbox = form.isMeetingRoom
     data.sys = form.meetingRoom
     data.sysChange = form.meetingRoomChange
-    data.admUnit = form.meetingRoomAdmUnit
+    data.admUnit = form.meetingRoomAdmUnit !== '' ? form.meetingRoomAdmUnit : data.admUnit
     data.admStatus = form.meetingRoomStatus
     data.admEnableDate = form.meetingRoomEnableDate != null ? new Date(form.meetingRoomEnableDate) : null
     data.admName = form.meetingRoomAdmName
@@ -40,7 +40,7 @@ export function mapToCheckbox(data: any, form: any): any {
     data.checkbox = form.isOdSys
     data.sys = form.odSys
     data.sysChange = form.odSysOther
-    data.admUnit = form.odSysAdmUnit
+    data.admUnit = form.odSysAdmUnit !== '' ? form.odSysAdmUnit : data.admUnit
     data.admStatus = form.odSysStatus
     data.admEnableDate = form.odSysEnableDate != null ? new Date(form.odSysEnableDate) : null
     data.admName = form.odSysAdmName
@@ -54,13 +54,13 @@ export function mapToCheckbox(data: any, form: any): any {
     data.emailApply1 = form.emailApply1
     data.emailApply2 = form.emailApply2
     data.sysChange = form.emailSysChange
-    data.admUnit = form.emailSysAdmUnit
+    data.admUnit = form.emailSysAdmUnit !== '' ? form.emailSysAdmUnit : data.admUnit
     data.admStatus = form.emailSysStatus
     data.admEnableDate = form.emailSysEnableDate != null ? new Date(form.emailSysEnableDate) : null
     data.admName = form.emailSysAdmName
   }
 
-  if (data.systemApplyName === '網站帳號') {
+  if (data.systemApplyName === '全球資訊網&會內資訊網') {
 
     if (form.isWebSite === '1') {
       data.checkbox = form.isWebSite
@@ -80,7 +80,7 @@ export function mapToCheckbox(data: any, form: any): any {
       data.isUnitDataMgr = form.isUnitDataMgr
       data.isWebSiteOther = form.isWebSiteOther
       data.otherRemark = form.webSiteOther
-      data.admUnit = form.webSiteAdmUnit
+      data.admUnit = form.webSiteAdmUnit !== '' ? form.webSiteAdmUnit : data.admUnit
       data.admStatus = form.webSiteStatus
       data.admEnableDate = form.webSiteEnableDate != null ? new Date(form.webSiteEnableDate) : null
       data.admName = form.webSiteAdmName
@@ -94,7 +94,7 @@ export function mapToCheckbox(data: any, form: any): any {
     data.systemApplyInput = form.pccPisAccount
     data.sys = form.pccPis
     data.sysChange = form.pccPisChange
-    data.admUnit = form.pccPisAdmUnit
+    data.admUnit = form.pccPisAdmUnit !== '' ? form.pccPisAdmUnit : data.admUnit
     data.admStatus = form.pccPisStatus
     data.admEnableDate = form.pccPisEnableDate != null ? new Date(form.pccPisEnableDate) : null
     data.admName = form.pccPisAdmName
@@ -107,7 +107,7 @@ export function mapToCheckbox(data: any, form: any): any {
     data.systemApplyInput = form.engAndPrjInfoSysAccount
     data.sys = form.engAndPrjInfoSys
     data.sysChange = form.engAndPrjInfoSysChange
-    data.admUnit = form.engAndPrjInfoSysAdmUnit
+    data.admUnit = form.engAndPrjInfoSysAdmUnit !== '' ? form.engAndPrjInfoSysAdmUnit : data.admUnit
     data.admStatus = form.engAndPrjInfoSysStatus
     data.admEnableDate = form.engAndPrjInfoSysEnableDate != null ? new Date(form.engAndPrjInfoSysEnableDate) : null
     data.admName = form.engAndPrjInfoSysAdmName
@@ -119,7 +119,7 @@ export function mapToCheckbox(data: any, form: any): any {
     data.systemApplyInput = form.revSysAccount
     data.sys = form.revSys
     data.sysChange = form.revSysChange
-    data.admUnit = form.revSysAdmUnit
+    data.admUnit = form.revSysAdmUnit !== '' ? form.revSysAdmUnit : data.admUnit
     data.admStatus = form.revSysStatus
     data.admEnableDate = form.revSysEnableDate != null ? new Date(form.revSysEnableDate) : null
     data.admName = form.revSysAdmName
@@ -131,7 +131,7 @@ export function mapToCheckbox(data: any, form: any): any {
     data.systemApplyInput = form.recSysAccount
     data.sys = form.recSys
     data.sysChange = form.recSysChange
-    data.admUnit = form.recSysAdmUnit
+    data.admUnit = form.recSysAdmUnit !== '' ? form.recSysAdmUnit : data.admUnit
     data.admStatus = form.recSysStatus
     data.admEnableDate = form.recSysEnableDate != null ? new Date(form.recSysEnableDate) : null
     data.admName = form.recSysAdmName
@@ -143,47 +143,47 @@ export function mapToCheckbox(data: any, form: any): any {
     data.systemApplyInput = form.bidSysAccount
     data.sys = form.bidSys
     data.sysChange = form.bidSysChange
-    data.admUnit = form.bidSysAdmUnit
+    data.admUnit = form.bidSysAdmUnit !== '' ? form.bidSysAdmUnit : data.admUnit
     data.admStatus = form.bidSysStatus
     data.admEnableDate = form.bidSysEnableDate != null ? new Date(form.bidSysEnableDate) : null
     data.admName = form.bidSysAdmName
   }
 
-  if (data.systemApplyName === '其他系統1') {
+  if (data.systemApplyName === '本會其他資通系統1') {
 
     data.checkbox = form.isOtherSys1
     data.otherSys = form.otherSys1ServerName
     data.otherSysAccount = form.otherSys1Account
     data.sys = form.otherSys1
     data.sysChange = form.otherSys1Change
-    data.admUnit = form.otherSys1AdmUnit
+    data.admUnit = form.otherSys1AdmUnit !== '' ? form.otherSys1AdmUnit : data.admUnit
     data.admStatus = form.otherSys1Status
     data.admEnableDate = form.otherSys1EnableDate != null ? new Date(form.otherSys1EnableDate) : null
     data.admName = form.otherSys1AdmName
 
   }
 
-  if (data.systemApplyName === '其他系統2') {
+  if (data.systemApplyName === '本會其他資通系統2') {
 
     data.checkbox = form.isOtherSys2
     data.otherSys = form.otherSys2ServerName
     data.otherSysAccount = form.otherSys2Account
     data.sys = form.otherSys2
     data.sysChange = form.otherSys2Change
-    data.admUnit = form.otherSys2AdmUnit
+    data.admUnit = form.otherSys2AdmUnit !== '' ? form.otherSys2AdmUnit : data.admUnit
     data.admStatus = form.otherSys2Status
     data.admEnableDate = form.otherSys2EnableDate != null ? new Date(form.otherSys2EnableDate) : null
     data.admName = form.otherSys2AdmName
   }
 
-  if (data.systemApplyName === '其他系統3') {
+  if (data.systemApplyName === '本會其他資通系統3') {
 
     data.checkbox = form.isOtherSys3
     data.otherSys = form.otherSys3ServerName
     data.otherSysAccount = form.otherSys3Account
     data.sys = form.otherSys3
     data.sysChange = form.otherSys3Change
-    data.admUnit = form.otherSys3AdmUnit
+    data.admUnit = form.otherSys3AdmUnit !== '' ? form.otherSys3AdmUnit : data.admUnit
     data.admStatus = form.otherSys3Status
     data.admEnableDate = form.otherSys3EnableDate != null ? new Date(form.otherSys3EnableDate) : null
     data.admName = form.otherSys3AdmName

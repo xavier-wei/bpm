@@ -106,7 +106,7 @@
 
       <template #cell(subject)="row">
         <div>
-          {{ changeSubject(row.item) }}
+          {{ changeSubject(row.item,false) }}
         </div>
       </template>
 
@@ -290,7 +290,6 @@ export default defineComponent({
     });
 
     const toQuery = () => {
-      console.log('form', form)
       table.data = [];
       const params = new FormData();
       params.append('bpmFormQueryDto', new Blob([JSON.stringify(form)], {type: 'application/json'}));
@@ -306,14 +305,21 @@ export default defineComponent({
         });
 
         table.totalItems = data.length;
-        console.log(' table.data : ', JSON.parse(JSON.stringify(table.data)))
       }).catch(notificationErrorHandler(notificationService));
     };
 
     function toEdit(item) {
+      let taskData ={
+        processInstanceId:item.processInstanceId,
+        taskId: item.taskId,
+        taskName: item.taskName,
+        decisionRole: item.decisionRole,
+        additional:item.additional,
+      }
       let prefix = item.formId.substring(0, 4).toLowerCase()
       navigateByNameAndParams(prefix + 'Edit', {
         formId: item.formId,
+        taskData:taskData,
         formStatus: FormStatusEnum.READONLY,
         isNotKeepAlive: false,
         stateStatus: userData.cpape05m.unitName !== '資訊推動小組'
@@ -323,7 +329,6 @@ export default defineComponent({
     function peunitOptions() {
       axios.get(`/eip/peunitOptions/${userData.empId}`)
         .then(({data}) => {
-          console.log(' data++ : ', JSON.parse(JSON.stringify(data)))
           queryOptions.peunitOptions = data.map(item => {
             return {value: item.pename, text: item.pename};
           })
