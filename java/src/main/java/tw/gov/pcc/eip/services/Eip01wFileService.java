@@ -42,7 +42,7 @@ public class Eip01wFileService {
      * @return
      */
     public ByteArrayOutputStream getFile(Eip01wFileCase caseData) {
-        String[] dir = StringUtils.split(eipcodeDao.findByCodeKindCodeNo("FILEDIR", "1").get().getCodename(), "\\"); // 檔案所在資料夾
+        String dir = eipcodeDao.findByCodeKindCodeNo("FILEDIR", "1").get().getCodename() + File.separator; // 檔案所在資料夾
         String seq = caseData.getSeq();
         if (StringUtils.contains(seq, ",")) { // 多檔
             ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
@@ -51,7 +51,7 @@ public class Eip01wFileService {
             int emptyCnt = 0;
             try (outputStream; zipStream) {
                 for (Msgdeposit origin : files) {
-                    File file = new File(dir[0] + File.separator + dir[1] + File.separator + dir[2] + File.separator + origin.getRealfilename());
+                    File file = new File(dir + origin.getRealfilename());
                     if (!file.exists()) {
                         emptyCnt++;
                         continue;
@@ -87,7 +87,7 @@ public class Eip01wFileService {
             if (origin == null) {
                 return null;
             }
-            File file = new File(dir[0] + File.separator + dir[1] + File.separator + dir[2] + File.separator + origin.getRealfilename()); // 格式化檔名
+            File file = new File(dir + origin.getRealfilename()); // 格式化檔名
             if (!file.exists()) {
                 return null;
             }
