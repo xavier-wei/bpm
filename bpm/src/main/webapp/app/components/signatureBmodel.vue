@@ -264,7 +264,6 @@ export default {
       form.chooseTitle = i.title;
       if (formDataProp.formId.substring(0, 4) === 'L410') {
         l410Form.value = l410NameToFormUnit(taskDataProp.taskName, formDataProp, i.peunit);
-        console.log('l410Form', l410Form.value)
       }
     }
 
@@ -274,7 +273,6 @@ export default {
       if (isValid) {
         const isOK = await $bvModal.msgBoxConfirm('是否送出加簽？');
         if (isOK) {
-          console.log('taskDataProp.taskName',taskDataProp.taskName)
           let body = {
             mainFormId: formDataProp.formId,
             mainProcessInstanceId: formDataProp.processInstanceId,

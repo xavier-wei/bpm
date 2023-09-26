@@ -221,13 +221,11 @@ export default defineComponent({
     });
 
     const toQuery = () => {
-      console.log('登入者資訊',userData)
       table.data = [];
       const params = new FormData();
       params.append('bpmFormQueryDto', new Blob([JSON.stringify(form)], {type: 'application/json'}));
       params.append('isNotify', new Blob([JSON.stringify(false)], {type: 'application/json'}));
       axios.post(`/process/queryTask`, params).then(({data}) => {
-        console.log('data+++', data);
         queryStatus.value = true;
         if (data.length <= 0) return;
         table.data = data.slice(0, data.length);
@@ -248,8 +246,6 @@ export default defineComponent({
         decisionRole: item.decisionRole,
         additional:item.additional,
       }
-
-      console.log('taskData',taskData)
 
       if (i === '0') {
         navigateByNameAndParams(prefix + 'Edit', {

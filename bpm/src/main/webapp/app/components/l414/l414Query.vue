@@ -233,7 +233,6 @@ export default {
             queryStatus.value = true
             if (iTable.value) iTable.value.state.pagination.currentPage = 1;
             if (data) {
-              console.log('l414Query - data :: ', data)
               table.data = data
             }
           })

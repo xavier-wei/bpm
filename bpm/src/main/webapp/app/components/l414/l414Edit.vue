@@ -396,7 +396,7 @@
 
                   <!--簽核狀態模組-->
                   <signerList :formId="formIdProp" :formStatus="formStatusRef" :opinion="opinion"
-                              :formData="form"></signerList>
+                              :processInstanceStatus="processInstanceStatusRef"></signerList>
 
                   <b-container class="mt-3">
                     <b-row class="justify-content-center">
@@ -506,6 +506,10 @@ export default {
       type: Boolean,
       default: true,
     },
+    processInstanceStatus: {
+      required: false,
+      type: String,
+    },
   },
   components: {
     'i-form-group-check': IFormGroupCheck,
@@ -524,6 +528,7 @@ export default {
     const stateStatusRef = toRef(props, 'stateStatus');
     const taskDataRef = toRef(props, 'taskData');
     const isSignatureRef = toRef(props, 'isSignature');
+    const processInstanceStatusRef = toRef(props, 'processInstanceStatus');
     const tabIndex = ref(0);
     const dual1 = ref(null);
     const dual2 = ref(null);
@@ -637,9 +642,6 @@ export default {
       axios
         .post(`/process/getIsms/L414/${formIdProp.value}`)
         .then(({data}) => {
-          console.log('data++', data)
-
-
           if (!data) return;
 
           if (data.processInstanceId !== null && data.processInstanceId !== undefined) {
@@ -839,12 +841,15 @@ export default {
       formIdProp,
       opinion,
       taskDataRef,
+      processInstanceStatusRef,
     }
   }
 }
 </script>
 
 <style scoped>
+
+
 </style>
 
 

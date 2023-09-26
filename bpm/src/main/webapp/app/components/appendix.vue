@@ -348,7 +348,6 @@ export default {
     }
 
     async function deleteFile(id) {
-      console.log('刪除id', id)
       const isOK = await $bvModal.msgBoxConfirm('是否刪除檔案？');
       if (isOK) {
         axios
