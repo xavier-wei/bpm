@@ -997,8 +997,8 @@ export default {
       }));
 
       if (taskDataRef.value.decisionRole !== null) {
-        let mapData = new Map<string, object>();
-        mapData.set(taskDataRef.value.decisionRole, item)
+        let mapData = new Map<string, string>();
+        mapData.set(taskDataRef.value.decisionRole, getItem(item))
         let arrData = Array.from(mapData);
         variables = Object.fromEntries(arrData)
       }
@@ -1062,6 +1062,18 @@ export default {
       handleBack({isReload: true, isNotKeepAlive: true});
     }
 
+    const getItem = (item : string) => {
+      switch (item) {
+        case '不同意':
+          return '0';
+        case '同意':
+          return '1';
+        case '補件':
+          return '2';
+        default:
+          return '';
+      }
+    };
 
     function resetValue(data) {
       data.emailApply1 = null;
