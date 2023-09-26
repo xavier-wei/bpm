@@ -113,6 +113,7 @@ import IFormGroupCheck from "@/shared/form/i-form-group-check";
 import {useGetters} from "@u3u/vue-hooks";
 import {useBvModal} from "@/shared/modal";
 import {navigateByNameAndParams} from "@/router/router";
+import {l410NameToFormUnit} from "@/shared/word/l410NameToFormUnit";
 
 export default {
   name: "signatureBmodel",
@@ -139,6 +140,7 @@ export default {
     const bpmDeptsOptions = ref(useGetters(['getBpmDeptsOptions']).getBpmDeptsOptions).value;
     const iTable = ref(null);
     const queryStatus = ref(false);
+    const l410Form = ref({});
     const $bvModal = useBvModal();
     const notificationService = useNotification();
     // 區塊是否顯示
@@ -245,10 +247,14 @@ export default {
     }
 
     function choose(i) {
-      form.chooseId = i.pecard
-      form.chooseName = i.pename
-      form.chooseUnit = i.peunit
-      form.chooseTitle = i.title
+      form.chooseId = i.pecard;
+      form.chooseName = i.pename;
+      form.chooseUnit = i.peunit;
+      form.chooseTitle = i.title;
+      if (formDataProp.formId.substring(0, 4) === 'L410') {
+        l410Form.value = l410NameToFormUnit(taskDataProp.taskName, formDataProp, i.peunit);
+        console.log('l410Form', l410Form.value)
+      }
     }
 
     async function signature() {
@@ -260,14 +266,14 @@ export default {
           let body = {
             mainFormId: formDataProp.formId,
             mainProcessInstanceId: formDataProp.processInstanceId,
-            mainProcessTaskId: formDataProp.taskId,
+            mainProcessTaskId: taskDataProp.taskId,
             requesterId: userData.empId,
             requester: userData.userName,
             additionalSignerId: form.chooseId,
             additionalSigner: form.chooseName,
             additionalSignReason: formDataProp.opinion,
             processInstanceStatus: '0',
-            taskName:taskDataProp.taskName,
+            taskName: taskDataProp.taskName,
           };
 
 
@@ -280,6 +286,19 @@ export default {
           const formData = new FormData();
 
           formData.append('form', new Blob([JSON.stringify(body1)], {type: 'application/json'}));
+
+          //只有在加簽l410時會進來這裡面，L410需要再加簽的時候去更新表單，讓畫面的單位跟著變更
+          if (l410Form.value !== null) {
+            if (formDataProp.formId !== undefined) {
+              console.log('taskDataProp.taskName', taskDataProp.taskName);
+              console.log('formDataProp.formId.substring(0, 3)', formDataProp.formId.substring(0, 4));
+              if (formDataProp.formId.substring(0, 4) === 'L410') {
+                formDataProp.l410Variables = []
+                formData.append('bpmIsmsL410', new Blob([JSON.stringify(formDataProp)], {type: 'application/json'}));
+              }
+            }
+          }
+
 
           axios
             .post(`/process/start/Additional`, formData)

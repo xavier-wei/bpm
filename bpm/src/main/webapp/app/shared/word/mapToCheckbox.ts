@@ -6,6 +6,7 @@ export function mapToCheckbox(data: any, form: any): any {
     data.checkbox = form.isHrSys
     data.sys = form.hrSys
     data.sysChange = form.hrSysChange
+    data.admUnit = form.hrSysAdmUnit
     data.admStatus = form.hrSysStatus
     data.admEnableDate = form.hrSysEnableDate != null ? new Date(form.hrSysEnableDate) : null
     data.admName = form.hrSysAdmName
@@ -16,6 +17,7 @@ export function mapToCheckbox(data: any, form: any): any {
     data.systemApplyInput = form.adAccount
     data.sys = form.adSys
     data.sysChange = form.adSysChange
+    data.admUnit = form.adSysAdmUnit
     data.admStatus = form.adSysStatus
     data.admEnableDate = form.adSysEnableDate != null ? new Date(form.adSysEnableDate) : null
     data.admName = form.adSysAdmName
@@ -25,6 +27,7 @@ export function mapToCheckbox(data: any, form: any): any {
     data.checkbox = form.isMeetingRoom
     data.sys = form.meetingRoom
     data.sysChange = form.meetingRoomChange
+    data.admUnit = form.meetingRoomAdmUnit
     data.admStatus = form.meetingRoomStatus
     data.admEnableDate = form.meetingRoomEnableDate != null ? new Date(form.meetingRoomEnableDate) : null
     data.admName = form.meetingRoomAdmName
@@ -37,6 +40,7 @@ export function mapToCheckbox(data: any, form: any): any {
     data.checkbox = form.isOdSys
     data.sys = form.odSys
     data.sysChange = form.odSysOther
+    data.admUnit = form.odSysAdmUnit
     data.admStatus = form.odSysStatus
     data.admEnableDate = form.odSysEnableDate != null ? new Date(form.odSysEnableDate) : null
     data.admName = form.odSysAdmName
@@ -50,6 +54,7 @@ export function mapToCheckbox(data: any, form: any): any {
     data.emailApply1 = form.emailApply1
     data.emailApply2 = form.emailApply2
     data.sysChange = form.emailSysChange
+    data.admUnit = form.emailSysAdmUnit
     data.admStatus = form.emailSysStatus
     data.admEnableDate = form.emailSysEnableDate != null ? new Date(form.emailSysEnableDate) : null
     data.admName = form.emailSysAdmName
@@ -75,6 +80,7 @@ export function mapToCheckbox(data: any, form: any): any {
       data.isUnitDataMgr = form.isUnitDataMgr
       data.isWebSiteOther = form.isWebSiteOther
       data.otherRemark = form.webSiteOther
+      data.admUnit = form.webSiteAdmUnit
       data.admStatus = form.webSiteStatus
       data.admEnableDate = form.webSiteEnableDate != null ? new Date(form.webSiteEnableDate) : null
       data.admName = form.webSiteAdmName
@@ -88,6 +94,7 @@ export function mapToCheckbox(data: any, form: any): any {
     data.systemApplyInput = form.pccPisAccount
     data.sys = form.pccPis
     data.sysChange = form.pccPisChange
+    data.admUnit = form.pccPisAdmUnit
     data.admStatus = form.pccPisStatus
     data.admEnableDate = form.pccPisEnableDate != null ? new Date(form.pccPisEnableDate) : null
     data.admName = form.pccPisAdmName
@@ -100,6 +107,7 @@ export function mapToCheckbox(data: any, form: any): any {
     data.systemApplyInput = form.engAndPrjInfoSysAccount
     data.sys = form.engAndPrjInfoSys
     data.sysChange = form.engAndPrjInfoSysChange
+    data.admUnit = form.engAndPrjInfoSysAdmUnit
     data.admStatus = form.engAndPrjInfoSysStatus
     data.admEnableDate = form.engAndPrjInfoSysEnableDate != null ? new Date(form.engAndPrjInfoSysEnableDate) : null
     data.admName = form.engAndPrjInfoSysAdmName
@@ -111,6 +119,7 @@ export function mapToCheckbox(data: any, form: any): any {
     data.systemApplyInput = form.revSysAccount
     data.sys = form.revSys
     data.sysChange = form.revSysChange
+    data.admUnit = form.revSysAdmUnit
     data.admStatus = form.revSysStatus
     data.admEnableDate = form.revSysEnableDate != null ? new Date(form.revSysEnableDate) : null
     data.admName = form.revSysAdmName
@@ -122,7 +131,8 @@ export function mapToCheckbox(data: any, form: any): any {
     data.systemApplyInput = form.recSysAccount
     data.sys = form.recSys
     data.sysChange = form.recSysChange
-    data.admStatus = form.recSysAdmUnit
+    data.admUnit = form.recSysAdmUnit
+    data.admStatus = form.recSysStatus
     data.admEnableDate = form.recSysEnableDate != null ? new Date(form.recSysEnableDate) : null
     data.admName = form.recSysAdmName
   }
@@ -133,6 +143,7 @@ export function mapToCheckbox(data: any, form: any): any {
     data.systemApplyInput = form.bidSysAccount
     data.sys = form.bidSys
     data.sysChange = form.bidSysChange
+    data.admUnit = form.bidSysAdmUnit
     data.admStatus = form.bidSysStatus
     data.admEnableDate = form.bidSysEnableDate != null ? new Date(form.bidSysEnableDate) : null
     data.admName = form.bidSysAdmName
@@ -145,6 +156,7 @@ export function mapToCheckbox(data: any, form: any): any {
     data.otherSysAccount = form.otherSys1Account
     data.sys = form.otherSys1
     data.sysChange = form.otherSys1Change
+    data.admUnit = form.otherSys1AdmUnit
     data.admStatus = form.otherSys1Status
     data.admEnableDate = form.otherSys1EnableDate != null ? new Date(form.otherSys1EnableDate) : null
     data.admName = form.otherSys1AdmName
@@ -158,6 +170,7 @@ export function mapToCheckbox(data: any, form: any): any {
     data.otherSysAccount = form.otherSys2Account
     data.sys = form.otherSys2
     data.sysChange = form.otherSys2Change
+    data.admUnit = form.otherSys2AdmUnit
     data.admStatus = form.otherSys2Status
     data.admEnableDate = form.otherSys2EnableDate != null ? new Date(form.otherSys2EnableDate) : null
     data.admName = form.otherSys2AdmName
@@ -170,6 +183,7 @@ export function mapToCheckbox(data: any, form: any): any {
     data.otherSysAccount = form.otherSys3Account
     data.sys = form.otherSys3
     data.sysChange = form.otherSys3Change
+    data.admUnit = form.otherSys3AdmUnit
     data.admStatus = form.otherSys3Status
     data.admEnableDate = form.otherSys3EnableDate != null ? new Date(form.otherSys3EnableDate) : null
     data.admName = form.otherSys3AdmName

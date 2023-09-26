@@ -374,19 +374,15 @@
                   <b-container class="mt-3">
                     <b-row class="justify-content-center">
                       <b-button class="ml-2" style="background-color: #17a2b8; color: white"
-                                variant="outline-secondary"
                                 @click="submitForm('0')">暫存
                       </b-button>
                       <b-button class="ml-2" style="background-color: #17a2b8; color: white"
-                                variant="outline-secondary"
                                 @click="submitForm('1')">申請
                       </b-button>
                       <b-button class="ml-2" style="background-color: #17a2b8; color: white"
-                                variant="outline-secondary"
                                 @click="reset()">清除
                       </b-button>
                       <b-button class="ml-2" style="background-color: #17a2b8; color: white"
-                                variant="outline-secondary"
                                 @click="toQueryView">返回
                       </b-button>
 
