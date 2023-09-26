@@ -65,7 +65,7 @@ public class BpmSignStatusService {
         bpmSignStatusDTO.setSigner(bpmIsmsAdditionalDTO.getRequester());
         bpmSignStatusDTO.setSignUnit(user.getDeptId());
         bpmSignStatusDTO.setSignResult("3");
-        bpmSignStatusDTO.setOpinion("(加簽)");
+        bpmSignStatusDTO.setOpinion("(加簽)" + bpmIsmsAdditionalDTO.getAdditionalSignReason());
         bpmSignStatusDTO.setDirections(bpmIsmsAdditionalDTO.getTaskName());
         bpmSignStatusDTO.setSigningDatetime(Timestamp.from(Instant.now()));
         BpmSignStatus bpmSignStatus = bpmSignStatusMapper.toEntity(bpmSignStatusDTO);
