@@ -49,6 +49,7 @@ public class BpmSignStatusService {
         bpmSignStatusDTO.setSignUnit(signUnit);
         bpmSignStatusDTO.setSignResult("1");
         bpmSignStatusDTO.setDirections("申請者");
+        bpmSignStatusDTO.setOpinion("(申請)");
         bpmSignStatusDTO.setSigningDatetime(Timestamp.from(Instant.now()));
         BpmSignStatus bpmSignStatus = bpmSignStatusMapper.toEntity(bpmSignStatusDTO);
         bpmSignStatusRepository.save(bpmSignStatus);
