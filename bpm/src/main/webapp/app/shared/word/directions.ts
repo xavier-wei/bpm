@@ -45,6 +45,8 @@ export function changeDirections(user: any): string {
             return '本會其他資通系統2';
         case 'OtherSys3Signer':
             return '本會其他資通系統3';
+        case 'AdditionalSigner':
+            return '加簽';
         default:
             return '';
     }
