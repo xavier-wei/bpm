@@ -1,5 +1,6 @@
 package tw.gov.pcc.domain;
 
+// 排序用
 public enum SinerTaskEnum {
     APPLIER("申請人確認", "applier"),
     CHIEF("科長簽核", "sectionChief"),

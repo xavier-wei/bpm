@@ -277,8 +277,6 @@ export default {
           };
 
 
-          //todo:l410加簽流程需要把畫面選擇的單位更新回表單內
-
           let body1 = {
             "Additional": JSON.stringify(body)
           }
@@ -290,15 +288,12 @@ export default {
           //只有在加簽l410時會進來這裡面，L410需要再加簽的時候去更新表單，讓畫面的單位跟著變更
           if (l410Form.value !== null) {
             if (formDataProp.formId !== undefined) {
-              console.log('taskDataProp.taskName', taskDataProp.taskName);
-              console.log('formDataProp.formId.substring(0, 3)', formDataProp.formId.substring(0, 4));
               if (formDataProp.formId.substring(0, 4) === 'L410') {
                 formDataProp.l410Variables = []
                 formData.append('bpmIsmsL410', new Blob([JSON.stringify(formDataProp)], {type: 'application/json'}));
               }
             }
           }
-
 
           axios
             .post(`/process/start/Additional`, formData)

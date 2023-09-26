@@ -175,7 +175,7 @@ public class BpmUploadFileResource {
      * @param id the id of the bpmUploadFileDTO to delete.
      * @return the {@link ResponseEntity} with status {@code 204 (NO_CONTENT)}.
      */
-    @DeleteMapping("/bpm-upload-files/{id}")
+    @DeleteMapping("/eip/delete/bpmUploadFiles/{id}")
     public ResponseEntity<Void> deleteBpmUploadFile(@PathVariable Long id) {
         log.debug("REST request to delete BpmUploadFile : {}", id);
         bpmUploadFileService.delete(id);

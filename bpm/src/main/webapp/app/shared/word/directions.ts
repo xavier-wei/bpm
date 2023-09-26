@@ -8,7 +8,7 @@ export function changeDirections(user: any): string {
         case 'directorDecision':
             return '申請人所屬之單位主管';
         case 'infoGroupDecision':
-            return '資訊小組資安承辦人';
+            return '資推小組承辦人員';
         case 'seniorTechSpecialistSign':
             return '資訊小組簡任技正/科長';
         case 'serverRoomOperatorSetting':

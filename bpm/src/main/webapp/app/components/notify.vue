@@ -290,7 +290,6 @@ export default defineComponent({
     });
 
     const toQuery = () => {
-      console.log('form', form)
       table.data = [];
       const params = new FormData();
       params.append('bpmFormQueryDto', new Blob([JSON.stringify(form)], {type: 'application/json'}));
@@ -306,7 +305,6 @@ export default defineComponent({
         });
 
         table.totalItems = data.length;
-        console.log(' table.data : ', JSON.parse(JSON.stringify(table.data)))
       }).catch(notificationErrorHandler(notificationService));
     };
 
@@ -323,7 +321,6 @@ export default defineComponent({
     function peunitOptions() {
       axios.get(`/eip/peunitOptions/${userData.empId}`)
         .then(({data}) => {
-          console.log(' data++ : ', JSON.parse(JSON.stringify(data)))
           queryOptions.peunitOptions = data.map(item => {
             return {value: item.pename, text: item.pename};
           })

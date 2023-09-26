@@ -153,18 +153,22 @@ export default {
 
 
     function getBpmSignStatus(id) {
+
+      signStatusTable.data = [];
+
       axios
         .get(`/eip/getBpmSignStatus/${id}`)
         .then(({data}) => {
           if (data.length === 0) return;
-          console.log('data', data)
-
           signStatusTable.data = data;
         })
         .catch(notificationErrorHandler(notificationService));
     }
 
     function getFindByBpmSignerList(id) {
+
+      signerList.value =[];
+
       axios
         .get(`/eip/getBpmSignerList/${id}`)
         .then(({data}) => {

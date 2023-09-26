@@ -142,9 +142,17 @@ public class ProcessFlowService {
 
     public List<TaskDTO> queryList(String id) {
         List<TaskDTO> taskDTOS = new ArrayList<>();
-        List<HistoricTaskInstance> historicTaskInstances = historyService.createHistoricTaskInstanceQuery().taskAssignee(id).list();
+        List<HistoricTaskInstance> historicTaskInstances = historyService.createHistoricTaskInstanceQuery().taskCandidateUser(id).list();
+        List<HistoricTaskInstance> historicTaskInstances2 = historyService.createHistoricTaskInstanceQuery().taskAssignee(id).list();
+//        List<HistoricTaskInstance>
         List<String> processInstanceIds = new ArrayList<>();
         historicTaskInstances.forEach(historicTaskInstance -> {
+            if (!processInstanceIds.contains(historicTaskInstance.getProcessInstanceId())) {
+                processInstanceIds.add(historicTaskInstance.getProcessInstanceId());
+                taskDTOS.add(new TaskDTO(historicTaskInstance));
+            }
+        });
+        historicTaskInstances2.forEach(historicTaskInstance -> {
             if (!processInstanceIds.contains(historicTaskInstance.getProcessInstanceId())) {
                 processInstanceIds.add(historicTaskInstance.getProcessInstanceId());
                 taskDTOS.add(new TaskDTO(historicTaskInstance));
