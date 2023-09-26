@@ -238,19 +238,6 @@ public class Eip06w010Controller extends BaseController {
                 .distinct() // 過濾出不重複的RoomId
                 .forEach(roomId -> meetingRoomMap.put(roomId, roomId + '-' + meetingCodeDao.selectDataByItemId(roomId).get(0).getItemName()));
 
-//        for (MeetingCode mc: roomList) {
-//            if(StringUtils.equals(mt.getRoomId(), mc.getItemId())){
-//                meetingRoomMap.put(mc.getItemId(), mc.getItemId()+'-'+mc.getItemName());
-//                roomList.remove(mc);
-//                break;
-//            }
-//        }
-//        if(roomList.size() > 0){
-//            roomList.forEach(a->{
-//                meetingRoomMap.put(a.getItemId(), a.getItemId()+'-'+a.getItemName());
-//            });
-//        }
-
         caseData.setMeetingRoomCombobox(meetingRoomMap);
         return caseData;
     }
@@ -264,6 +251,7 @@ public class Eip06w010Controller extends BaseController {
     public String update(@Validated(Eip06w010Case.Sequence.class) @ModelAttribute(CASE_KEY) Eip06w010Case caseData, BindingResult result) {
         try {
             if(result.hasErrors()){
+                eip06w010Service.restoreSelectionList(caseData);
                 return UPDATE_PAGE;
             }
             eip06w010Service.updateMeeting(caseData);

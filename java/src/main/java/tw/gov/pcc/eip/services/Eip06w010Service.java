@@ -407,4 +407,30 @@ public class Eip06w010Service {
         msdep.setAvailabledep("0");
         msgavaildepDao.insert(msdep);
     }
+
+    /**
+     * 恢復下拉選單
+     * @param caseData
+     * @return
+     */
+    public void restoreSelectionList(Eip06w010Case caseData){
+        //初始化已選項目
+        List<MeetingItemAndMeetingCode> selectItemList = meetingItemDao.selectDataByMeetingId(caseData.getMeetingId(),"B");
+        List<MeetingItemAndMeetingCode> selectFoodList = meetingItemDao.selectDataByMeetingId(caseData.getMeetingId(),"A");
+
+        //初始化下拉選單
+        List<MeetingCode> itemIdList = meetingCodeDao.selectDataByItemType("B");
+        //排除已選項目
+        itemIdList = itemIdList.stream()
+                .filter(item -> selectItemList.stream().noneMatch(selectItem -> selectItem.getItemId().equals(item.getItemId())))
+                .collect(Collectors.toList());
+
+        caseData.setItemIdList(itemIdList.stream().map(Eip06w010Case.Eip06w010OptionCase::new).collect(Collectors.toList()));
+        List<MeetingCode> foodIdList = meetingCodeDao.selectDataByItemType("A");
+        //排除已選項目
+        foodIdList = foodIdList.stream()
+                .filter(food -> selectFoodList.stream().noneMatch(selectFood -> selectFood.getItemId().equals(food.getItemId())))
+                .collect(Collectors.toList());
+        caseData.setFoodIdList(foodIdList.stream().map(Eip06w010Case.Eip06w010OptionCase::new).collect(Collectors.toList()));
+    }
 }
