@@ -161,7 +161,25 @@ export default {
         .then(({data}) => {
           console.log(' signerList.vue -  - 162: ', JSON.parse(JSON.stringify(data)))
           if (data.length === 0) return;
+
+          console.log('formDataProp',formDataProp)
+
           signStatusTable.data = data;
+          if (formDataProp.processInstanceStatus !== undefined) {
+            //判斷每張表單狀態
+            if (formDataProp.processInstanceStatus === '1') {
+              console.log('有阿')
+              signStatusTable.data.push({
+                taskName: '結束',
+                signingDatetime: ''
+              });
+            } else if (formDataProp.processInstanceStatus === '2') {
+              signStatusTable.data.push({
+                taskName: '撤銷',
+                signingDatetime: ''
+              });
+            }
+          }
         })
         .catch(notificationErrorHandler(notificationService));
     }
@@ -194,27 +212,6 @@ export default {
     watch(formIdProp, (value) => {
         getBpmSignStatus(value);
         getFindByBpmSignerList(value);
-      },
-      {immediate: true}
-    )
-
-
-    //多寫一個watch用來處理formDataProp資料會不同步問題,讓資料有值時在去變更signStatusTable.data
-    watch(formDataProp, (value) => {
-        if (value.processInstanceStatus !== undefined) {
-          //判斷每張表單狀態
-          if (formDataProp.processInstanceStatus === '1') {
-            signStatusTable.data.push({
-              taskName: '結束',
-              signingDatetime: ''
-            });
-          } else if (formDataProp.processInstanceStatus === '2') {
-            signStatusTable.data.push({
-              taskName: '撤銷',
-              signingDatetime: ''
-            });
-          }
-        }
       },
       {immediate: true}
     )

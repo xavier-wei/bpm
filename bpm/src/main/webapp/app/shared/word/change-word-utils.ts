@@ -1,19 +1,25 @@
 import {newformatDate} from "@/shared/date/minguo-calendar-utils";
 
-export function changeSubject(subject: any): string {
+export function changeSubject(subject: any, show: any): string {
 
 
-    if (!subject) return '';
+  if (!subject) return '';
 
-    let formName = subject.formId.substring(0, 4);
+  let formName = subject.formId.substring(0, 4);
 
-    if (formName === 'L410') {
-        return subject.formId.substring(0, 4) + '-共用系統使用者帳號申請單( ' + subject.formId+ ', ' + newformatDate(new Date(subject.applyDate), '/') + ',' +subject.taskName + ')';
-    } else if (formName === 'L414') {
-        return subject.formId.substring(0, 4) + '-網路服務連結申請單( ' + subject.formId + ', ' + newformatDate(new Date(subject.applyDate), '/') + ',' +subject.taskName + ')';
-    }
+  let showTaskName = '';
 
-    return '';
+  if (show) {
+    showTaskName = ',' + subject.taskName
+  }
+
+  if (formName === 'L410') {
+    return subject.formId.substring(0, 4) + '-共用系統使用者帳號申請單( ' + subject.formId + ', ' + newformatDate(new Date(subject.applyDate), '/') + showTaskName + ')';
+  } else if (formName === 'L414') {
+    return subject.formId.substring(0, 4) + '-網路服務連結申請單( ' + subject.formId + ', ' + newformatDate(new Date(subject.applyDate), '/') + showTaskName + ')';
+  }
+
+  return '';
 }
 
 export function changeFormId(formId: any): string {
@@ -24,7 +30,7 @@ export function changeFormId(formId: any): string {
   let formName = formId.substring(0, 4);
 
   if (formName === 'L410') {
-    return formId.substring(0, 4) + '-共用系統使用者帳號申請單' ;
+    return formId.substring(0, 4) + '-共用系統使用者帳號申請單';
   } else if (formName === 'L414') {
     return formId.substring(0, 4) + '-網路服務連結申請單';
   }

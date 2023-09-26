@@ -428,20 +428,23 @@
                     <!--處理情形及生效日期-->
                     <template #cell(lastWork)="row">
                       <b-form-input maxlength="200" v-model="row.item.admStatus"
-                                    :disabled="userData.deptId !== row.item.admUnit || taskDataRef.taskName !== row.item.systemApplyName || row.item.checkbox !== '1'  || formStatusRef === FormStatusEnum.READONLY"/>
+                                    :disabled="userData.deptId !== row.item.admUnit || taskDataRef.taskName.replace('加簽-', '') !== row.item.systemApplyName || row.item.checkbox !== '1'  || formStatusRef === FormStatusEnum.READONLY"/>
                       <i-date-picker
                         placeholder="yyy/MM/dd"
                         lazy
                         trim
                         v-model="row.item.admEnableDate"
-                        :disabled="userData.deptId !== row.item.admUnit || taskDataRef.taskName !== row.item.systemApplyName || row.item.checkbox !== '1'  || formStatusRef === FormStatusEnum.READONLY"
+                        :disabled="userData.deptId !== row.item.admUnit || taskDataRef.taskName.replace('加簽-', '') !== row.item.systemApplyName || row.item.checkbox !== '1'  || formStatusRef === FormStatusEnum.READONLY"
                       ></i-date-picker>
                     </template>
 
                     <!--處理人員-->
                     <template #cell(reviewStaffName)="row">
+
+                      taskName: {{ taskDataRef.taskName }}
+                      systemApplyName : {{ row.item.systemApplyName }}
                       <b-form-input maxlength="200" v-model="row.item.admName"
-                                    :disabled=" userData.deptId !== row.item.admUnit ||taskDataRef.taskName !== row.item.systemApplyName || row.item.checkbox !== '1'  || formStatusRef === FormStatusEnum.READONLY"/>
+                                    :disabled=" userData.deptId !== row.item.admUnit ||taskDataRef.taskName.replace('加簽-', '') !== row.item.systemApplyName || row.item.checkbox !== '1'  || formStatusRef === FormStatusEnum.READONLY"/>
                     </template>
 
                   </b-table>
@@ -936,7 +939,7 @@ export default {
 
       if (isValid) {
 
-        const isOK = await $bvModal.msgBoxConfirm('是否確認送出修改內容？');
+        const isOK = await $bvModal.msgBoxConfirm('是否確認送出修改內容?');
         if (isOK) {
 
           //把頁面上iTable內的所有資料逐一轉成form裡的值，並把組出List<HashMap<String, HashMap<String, Object>>>傳給後端
@@ -974,7 +977,7 @@ export default {
             .catch(notificationErrorHandler(notificationService));
         }
       } else {
-        $bvModal.msgBoxOk('欄位尚未填寫完畢，請於輸入完畢後再行送出。');
+        await $bvModal.msgBoxOk('欄位尚未填寫完畢，請於輸入完畢後再行送出。');
       }
     }
 
@@ -985,7 +988,7 @@ export default {
       let isOK = true;
 
       if (i === true) {
-        isOK = await $bvModal.msgBoxConfirm('是否送出' + item + '？');
+        isOK = await $bvModal.msgBoxConfirm('是否送出' + item + '?');
       }
 
       if (isOK) {
@@ -1089,6 +1092,10 @@ export default {
       data.isUnitDataMgr = null;
       data.isWebSiteOther = null;
       data.otherRemark = null;
+    }
+
+    function aaaa(data) {
+      return data.replace('加簽-', '');
     }
 
     function resetCheckboxValue(data) {
