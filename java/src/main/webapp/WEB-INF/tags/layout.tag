@@ -76,7 +76,6 @@
     </head>
 
     <body>
-    <form:hidden path="eip0aw010Case.interval" disabled="true"/>
         <div class="web frameDiv">
             <div class="nav bg">
                 <a href="<c:url value='/LoginForward.action' />" class="clickDiv" title="返回首頁"></a>
@@ -91,23 +90,23 @@
                             </a>
                         </div>
                         <div class="col-md-3 top_3 title_status">
-                            <a href="${eip0aw010Case.apiResultList[1].click_url}" target="_blank" style="text-decoration:none;"
+                            <a href="" target="_blank" style="text-decoration:none;"
                                class="title_05">
                                 <img src="./images/top_icon4.png" alt="" class="d-inline-block align-middle">
                                 <div class="d-inline-block align-middle text-center">
                                     <div class="title_01">待處理公文</div>
-                                    <span class="title_02">${eip0aw010Case.apiResultList[1].cnt}</span>
+                                    <span class="title_02"></span>
                                     <span class="title_03">件</span>
                                 </div>
                             </a>
                         </div>
                         <div class="col-md-3 top_3 title_status">
-                            <a href="${eip0aw010Case.apiResultList[0].click_url}" target="_blank" style="text-decoration:none;"
+                            <a href="" target="_blank" style="text-decoration:none;"
                                class="title_05">
                                 <img src="./images/top_icon1.png" alt="" class="d-inline-block align-middle">
                                 <div class="d-inline-block align-middle text-center">
                                     <div class="title_01">待簽核件數</div>
-                                    <span class="title_02">${eip0aw010Case.apiResultList[0].cnt}</span>
+                                    <span class="title_02"></span>
                                     <span class="title_03">件</span>
                                 </div>
                             </a>
@@ -287,11 +286,7 @@
                 $('input:checkbox:enabled[data-checkall]').on('click', checkall);
 
                 
-                let interval = $('#interval').val();
-                if(!$.isNumeric(interval) || interval < 10){
-                    interval = 10;
-                }
-                setTimeout(reloadTitleStatus, interval * 1000);
+                reloadTitleStatus();
             });
 
             function reloadTitleStatus() {
