@@ -411,13 +411,13 @@
                     <!--管理單位-->
                     <template #cell(managementUnit)="row">
 
-<!--                      <b-form-select :options="bpmDeptsOptions" v-model="row.item.admUnit"-->
-<!--                                     :disabled="userData.deptId !== row.item.admUnit ||taskDataRef.taskName !== row.item.systemApplyName || row.item.checkbox !== '1'  || formStatusRef === FormStatusEnum.READONLY">-->
+                      <!--                      <b-form-select :options="bpmDeptsOptions" v-model="row.item.admUnit"-->
+                      <!--                                     :disabled="userData.deptId !== row.item.admUnit ||taskDataRef.taskName !== row.item.systemApplyName || row.item.checkbox !== '1'  || formStatusRef === FormStatusEnum.READONLY">-->
 
-<!--                        <template #first>-->
-<!--                          <b-form-select-option value="null" disabled>請選擇</b-form-select-option>-->
-<!--                        </template>-->
-<!--                      </b-form-select>-->
+                      <!--                        <template #first>-->
+                      <!--                          <b-form-select-option value="null" disabled>請選擇</b-form-select-option>-->
+                      <!--                        </template>-->
+                      <!--                      </b-form-select>-->
 
                       <div v-if="!!row.item.admUnit" v-model="row.item.admUnit">
                         {{ changeDealWithUnit(row.item.admUnit, bpmDeptsOptions) }}
@@ -488,19 +488,21 @@
                               v-show="formStatusRef === FormStatusEnum.MODIFY">送出
                     </b-button>
                     <b-button class="ml-2" style="background-color: #17a2b8; color: white"
-                              @click="reviewStart('1')"
+                              @click="reviewStart('同意')"
                               v-show="formStatusRef === FormStatusEnum.VERIFY">同意
                     </b-button>
                     <b-button class="ml-2" style="background-color: #17a2b8; color: white"
-                              @click="reviewStart('0')"
+                              @click="reviewStart('不同意')"
                               v-show="formStatusRef === FormStatusEnum.VERIFY">不同意
                     </b-button>
                     <b-button class="ml-2" style="background-color: #17a2b8" @click="showModel()"
                               v-show="formStatusRef === FormStatusEnum.VERIFY && isSignatureRef">加簽
                     </b-button>
                     <b-button class="ml-2" style="background-color: #17a2b8; color: white"
-                              @click="reviewStart('2')"
-                              v-show="userData.cpape05m.title === '科長' && userData.cpape05m.title === '處長' && formStatusRef === FormStatusEnum.VERIFY">補件
+                              @click="reviewStart('補件')"
+                              v-show="userData.cpape05m.title === '科長' ||
+                              userData.cpape05m.title === '處長' &&
+                              formStatusRef === FormStatusEnum.VERIFY">補件
                     </b-button>
                     <b-button class="ml-2" style="background-color: #17a2b8; color: white"
                               @click="toQueryView">返回
@@ -553,6 +555,7 @@ import {mapToCheckbox} from "@/shared/word/mapToCheckbox";
 import signatureBmodel from "@/components/signatureBmodel.vue";
 import signerList from "@/components/signerList.vue";
 import {changeDealWithUnit} from "@/shared/word/directions";
+
 const appendix = () => import('@/components/appendix.vue');
 const flowChart = () => import('@/components/flowChart.vue');
 
@@ -1008,7 +1011,9 @@ export default {
       if (form.opinion !== '') {
         opinionData = '(意見)' + form.opinion;
       } else {
-        opinionData = '(' + getItem(item) + ')' + form.opinion;
+        if (item !== '1') {
+          opinionData = '(' + item + ')';
+        }
       }
 
       let body = {
@@ -1052,18 +1057,6 @@ export default {
       return tabIndex.value === index;
     };
 
-    const getItem = (item) => {
-      switch (item) {
-        case '0':
-          return '不同意';
-        case '1':
-          return '同意';
-        case '2':
-          return '補件';
-        default:
-          return '';
-      }
-    };
 
     function toQueryView() {
       handleBack({isReload: true, isNotKeepAlive: true});

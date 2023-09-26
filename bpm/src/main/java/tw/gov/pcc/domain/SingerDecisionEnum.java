@@ -1,5 +1,6 @@
 package tw.gov.pcc.domain;
 
+// taskName用
 public enum SingerDecisionEnum {
     APPLIER("申請人確認","applierConfirm"),
     CHIEF("科長簽核","sectionChiefDecision"), // 0、1、2
@@ -22,7 +23,8 @@ public enum SingerDecisionEnum {
     REC_SYS("災後復建工程經費審議及執行資訊系統", "RecSysSigner"),
     OTHER_SYS1("本會其他資通系統1", "OtherSys1Signer"),
     OTHER_SYS2("本會其他資通系統2", "OtherSys2Signer"),
-    OTHER_SYS3("本會其他資通系統3", "OtherSys3Signer");
+    OTHER_SYS3("本會其他資通系統3", "OtherSys3Signer"),
+    ADDITIONAL("加簽","AdditionalSigner");
     private final String name;
     private final String decision;
     SingerDecisionEnum(String name, String decision) {

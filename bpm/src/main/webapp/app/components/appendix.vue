@@ -7,23 +7,23 @@
           <!-- 新增附件 -->
           <div class="card context" style="background-color: #d3ede8">
             <b-table
-                class="table-sm"
-                show-empty
-                responsive
-                bordered
-                empty-text="無資料"
-                :items="appendixData.appendix"
-                :fields="appendixData.fields"
+              class="table-sm"
+              show-empty
+              responsive
+              bordered
+              empty-text="無資料"
+              :items="appendixData.appendix"
+              :fields="appendixData.fields"
             >
 
               <template #cell(file)="row">
 
                 <b-form-file
-                    v-model="row.item.file"
-                    trim
-                    multiple
-                    browse-text="選擇檔案"
-                    @change="upload($event,row.index,row.item)"
+                  v-model="row.item.file"
+                  trim
+                  multiple
+                  browse-text="選擇檔案"
+                  @change="upload($event,row.index,row.item)"
                 ></b-form-file>
               </template>
 
@@ -82,8 +82,8 @@
               <b-button class="ml-2" style="background-color: #17a2b8; color: white"
                         variant="outline-secondary"
                         :disabled="formStatusRef !== FormStatusEnum.MODIFY"
+                        @click="deleteFile(row.item.id)"
               >刪除
-                <!--                        @click="submitDelete(row.item.id)"-->
               </b-button>
             </template>
 
@@ -109,6 +109,7 @@ import {notificationErrorHandler} from "@/shared/http/http-response-helper";
 import {useNotification} from "@/shared/notification";
 import {downloadFile} from "@/shared/formatter/common";
 import IPdfViewer from "@/shared/report/i-pdf-viewer.vue";
+import {useBvModal} from "@/shared/modal";
 
 export default {
   name: "appendix",
@@ -141,7 +142,7 @@ export default {
     const pdfViewer = ref(null);
     const applyAppendix = ref(false);
     const readAppendix = ref(false);
-
+    const $bvModal = useBvModal();
 
     enum FormStatusEnum {
       CREATE = '新增',
@@ -281,13 +282,13 @@ export default {
 
       if (fileDataIdProp.fileId !== '') {
         axios
-            .get(`/eip/bpm-upload-files/formId/${fileDataIdProp.fileId}`)
-            .then(({data}) => {
-              if (data) {
-                table.data.splice(0, table.data.length, ...data);
-              }
-            })
-            .catch(notificationErrorHandler(notificationService));
+          .get(`/eip/bpm-upload-files/formId/${fileDataIdProp.fileId}`)
+          .then(({data}) => {
+            if (data) {
+              table.data.splice(0, table.data.length, ...data);
+            }
+          })
+          .catch(notificationErrorHandler(notificationService));
       }
     }
 
@@ -322,68 +323,81 @@ export default {
 
     function downloadBpmFile(item) {
       axios
-          .get('/eip/bpm-upload-files/downloadFile/' + item.id, {responseType: 'blob'})
-          .then(res => {
-            const content = String(res.headers['content-disposition']);
-            const fileName = decodeURI(
-                content
-                    .substring(content.lastIndexOf('filename*=') + 17)
-                    .replace(/"/g, '')
-                    .replace(/\+/g, '')
-            );
-            const extName = fileName.substring(fileName.lastIndexOf('.'));
+        .get('/eip/bpm-upload-files/downloadFile/' + item.id, {responseType: 'blob'})
+        .then(res => {
+          const content = String(res.headers['content-disposition']);
+          const fileName = decodeURI(
+            content
+              .substring(content.lastIndexOf('filename*=') + 17)
+              .replace(/"/g, '')
+              .replace(/\+/g, '')
+          );
+          const extName = fileName.substring(fileName.lastIndexOf('.'));
 
-            // 檔案是pdf跳出預覽視窗，不是pdf則直接下載
-            if (extName === '.pdf') {
-              let blob = new Blob([res.data], {type: 'application/pdf'});
-              let url = window.URL.createObjectURL(blob);
-              pdfViewer.value.pdfSrc = url;
-              pdfViewer.value.isShowDia(url, true);
-            } else {
-              downloadFile(res);
-            }
+          // 檔案是pdf跳出預覽視窗，不是pdf則直接下載
+          if (extName === '.pdf') {
+            let blob = new Blob([res.data], {type: 'application/pdf'});
+            let url = window.URL.createObjectURL(blob);
+            pdfViewer.value.pdfSrc = url;
+            pdfViewer.value.isShowDia(url, true);
+          } else {
+            downloadFile(res);
+          }
+        })
+        .catch(notificationErrorHandler(notificationService));
+    }
+
+    async function deleteFile(id) {
+      console.log('刪除id', id)
+      const isOK = await $bvModal.msgBoxConfirm('是否刪除檔案？');
+      if (isOK) {
+        axios
+          .delete(`/eip/delete/bpmUploadFiles/${id}`)
+          .then(({data}) => {
+            doReadonly();
           })
           .catch(notificationErrorHandler(notificationService));
+      }
     }
 
     watch(appendixData, () => {
 
-          appendixDataList.value = []
-          appendixData.appendix.forEach(i => {
-            if (i.file !== undefined) {
-              if (i.file.length > 0) {
-                appendixDataList.value.push(i)
-              }
+        appendixDataList.value = []
+        appendixData.appendix.forEach(i => {
+          if (i.file !== undefined) {
+            if (i.file.length > 0) {
+              appendixDataList.value.push(i)
             }
-          })
-        },
-        {immediate: true}
+          }
+        })
+      },
+      {immediate: true}
     )
 
     watch(appendixDataList, () => {
-          Object.assign(filePathNameProp, appendixDataList)
-        },
-        {immediate: true}
+        Object.assign(filePathNameProp, appendixDataList)
+      },
+      {immediate: true}
     )
 
     watch(props, newValue => {
-          if (formStatusRef.value === FormStatusEnum.CREATE) {
-            applyAppendix.value = true;
-            doQuery();
-          } else if (formStatusRef.value === FormStatusEnum.READONLY) {
-            doReadonly();
-            readAppendix.value = true;
-          } else if (formStatusRef.value === FormStatusEnum.MODIFY) {
-            applyAppendix.value = true;
-            readAppendix.value = true;
-            doQuery();
-            doReadonly();
-          } else if (formStatusRef.value === FormStatusEnum.VERIFY) {
-            doReadonly();
-            readAppendix.value = true;
-          }
-        },
-        {immediate: true}
+        if (formStatusRef.value === FormStatusEnum.CREATE) {
+          applyAppendix.value = true;
+          doQuery();
+        } else if (formStatusRef.value === FormStatusEnum.READONLY) {
+          doReadonly();
+          readAppendix.value = true;
+        } else if (formStatusRef.value === FormStatusEnum.MODIFY) {
+          applyAppendix.value = true;
+          readAppendix.value = true;
+          doQuery();
+          doReadonly();
+        } else if (formStatusRef.value === FormStatusEnum.VERIFY) {
+          doReadonly();
+          readAppendix.value = true;
+        }
+      },
+      {immediate: true}
     );
 
     return {
@@ -399,7 +413,8 @@ export default {
       downloadBpmFile,
       pdfViewer,
       applyAppendix,
-      readAppendix
+      readAppendix,
+      deleteFile
     };
   }
 }

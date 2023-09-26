@@ -55,19 +55,19 @@
               <i-form-group-check class="col-sm-5" label-cols="5" content-cols="7" :label="'填表人：員工編號：'"
                                   :item="$v.filEmpid">
                 <!--填表人員工編號 : filEmpid-->
-                <b-form-input v-model="$v.filEmpid.$model"/>
+                <b-form-input v-model="$v.filEmpid.$model" disabled/>
               </i-form-group-check>
 
               <i-form-group-check class="col-sm-3" label-cols="5" content-cols="7" :label="`姓名：`"
                                   :item="$v.filName">
                 <!--填表人姓名 :　filName-->
-                <b-form-input v-model="$v.filName.$model"/>
+                <b-form-input v-model="$v.filName.$model" disabled/>
               </i-form-group-check>
 
               <i-form-group-check class="col-sm-4" label-cols="5" content-cols="7" :label="`單位：`"
                                   :item="$v.filUnit">
                 <!--填表人單位名稱　: filUnit-->
-                <b-form-select v-model="$v.filUnit.$model" :options="bpmDeptsOptions">
+                <b-form-select v-model="$v.filUnit.$model" :options="bpmDeptsOptions" disabled>
                   <template #first>
                     <b-form-select-option value="null" disabled>請選擇</b-form-select-option>
                   </template>

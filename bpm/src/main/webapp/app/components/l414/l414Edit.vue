@@ -395,8 +395,8 @@
 
 
                   <!--簽核狀態模組-->
-                  <signerList :formId="formIdProp" :formStatus="formStatusRef" :opinion="opinion" :formData="form"></signerList>
-
+                  <signerList :formId="formIdProp" :formStatus="formStatusRef" :opinion="opinion"
+                              :formData="form"></signerList>
 
                   <b-container class="mt-3">
                     <b-row class="justify-content-center">
@@ -412,12 +412,12 @@
                       </b-button>
                       <b-button class="ml-2" style="background-color: #17a2b8; color: white"
                                 variant="outline-secondary"
-                                @click="reviewStart('1')"
+                                @click="reviewStart('同意',true)"
                                 v-show="formStatusRef === FormStatusEnum.VERIFY">同意
                       </b-button>
                       <b-button class="ml-2" style="background-color: #17a2b8; color: white"
                                 variant="outline-secondary"
-                                @click="reviewStart('0')"
+                                @click="reviewStart('不同意',true)"
                                 v-show="formStatusRef === FormStatusEnum.VERIFY">不同意
                       </b-button>
                       <b-button class="ml-2" style="background-color: #17a2b8" @click="showModel()"
@@ -425,8 +425,10 @@
                       </b-button>
                       <b-button class="ml-2" style="background-color: #17a2b8; color: white"
                                 variant="outline-secondary"
-                                @click="reviewStart('2')"
-                                v-show="userData.cpape05m.title === '科長' && userData.cpape05m.title === '處長' && formStatusRef === FormStatusEnum.VERIFY">補件
+                                @click="reviewStart('補件',true)"
+                                v-show="userData.cpape05m.title === '科長' ||
+                                userData.cpape05m.title === '處長' &&
+                                formStatusRef === FormStatusEnum.VERIFY">補件
                       </b-button>
                       <b-button class="ml-2" style="background-color: #17a2b8; color: white"
                                 variant="outline-secondary"
@@ -453,7 +455,7 @@
         </div>
       </section>
     </b-container>
-    <signatureBmodel ref="signatureBmodel" :formData="form"></signatureBmodel>
+    <signatureBmodel ref="signatureBmodel" :formData="form" :taskData="taskDataRef"></signatureBmodel>
   </div>
 </template>
 
@@ -674,8 +676,6 @@ export default {
 
     async function submitForm(isSubmit) {
 
-      console.log('安安')
-
       $bvModal.msgBoxConfirm('是否確認送出修改內容？').then((isOK: boolean) => {
         if (isOK) {
           const formData = new FormData();
@@ -699,7 +699,7 @@ export default {
             .patch(`/process/patch/L414`, formData, headers)
             .then(({data}) => {
               if (isSubmit === '1') {
-                reviewStart(isSubmit);
+                reviewStart(isSubmit, false);
               } else {
                 $bvModal.msgBoxOk('表單更新完畢');
                 navigateByNameAndParams('pending', {});
@@ -712,54 +712,68 @@ export default {
       });
     }
 
-    function reviewStart(item) {
+    async function reviewStart(item, i) {
 
-      let variables = {};
-      console.log('taskDataRef', taskDataRef.value)
+      let isOK = true;
 
-      if (taskDataRef.value.decisionRole !== null) {
-        let mapData = new Map<string, object>();
-        mapData.set(taskDataRef.value.decisionRole, item)
-        let arrData = Array.from(mapData);
-        variables = Object.fromEntries(arrData)
-      }
-      form.opinion = opinion.opinionData
-
-      let opinionData = '';
-
-      if (form.opinion !== '') {
-        opinionData = '(意見)' + form.opinion;
-      } else {
-        opinionData = '(' + getItem(item) + ')' + form.opinion;
+      if (i === true) {
+        isOK = await $bvModal.msgBoxConfirm('是否送出' + item + '？');
       }
 
-      let body = {
-        signer: userData.userName,
-        signerId: userData.userId,
-        signUnit: userData.deptId,
-        processInstanceId: taskDataRef.value.additional ? taskDataRef.value.processInstanceId : form.processInstanceId,
-        taskId: taskDataRef.value.taskId !== '' ? taskDataRef.value.taskId : '',
-        taskName: taskDataRef.value.taskName !== '' ? taskDataRef.value.taskName : '',
-        variables,
-        form: {"L414": JSON.stringify(form)},
-        directions: changeDirections(taskDataRef.value.decisionRole),
-        opinion: opinionData,
-        ipt: userData.cpape05m.unitName === '資訊推動小組'
-      };
+      if (isOK) {
+        let variables = {};
 
-      axios
-        .post(`/process/completeTask/${form.formId}`, body)
-        .then(({data}) => {
-          if (item === '1') {
-            $bvModal.msgBoxOk('表單儲存完畢');
-            navigateByNameAndParams('pending', {isReload: false, isNotKeepAlive: true});
-          } else {
-            $bvModal.msgBoxOk('表單審核完畢');
-            navigateByNameAndParams('pending', {isReload: false, isNotKeepAlive: true});
+        if (taskDataRef.value.decisionRole !== null) {
+          let mapData = new Map<string, object>();
+          mapData.set(taskDataRef.value.decisionRole, item)
+          let arrData = Array.from(mapData);
+          variables = Object.fromEntries(arrData)
+        }
+
+        form.opinion = opinion.opinionData
+
+        let opinionData = '';
+
+        if (form.opinion !== '') {
+          opinionData = '(意見)' + form.opinion;
+        } else {
+          if (item !== '1') {
+            opinionData = '(' + item + ')';
           }
+        }
 
-        })
-        .catch(notificationErrorHandler(notificationService));
+        let body = {
+          signer: userData.userName,
+          signerId: userData.userId,
+          signUnit: userData.deptId,
+          processInstanceId: taskDataRef.value.additional ? taskDataRef.value.processInstanceId : form.processInstanceId,
+          taskId: taskDataRef.value.taskId !== '' ? taskDataRef.value.taskId : '',
+          taskName: taskDataRef.value.taskName !== '' ? taskDataRef.value.taskName : '',
+          variables,
+          form: {"L414": JSON.stringify(form)},
+          directions: changeDirections(taskDataRef.value.decisionRole),
+          opinion: opinionData,
+          ipt: userData.cpape05m.unitName === '資訊推動小組'
+        };
+
+        axios
+          .post(`/process/completeTask/${form.formId}`, body)
+          .then(({data}) => {
+            if (item === '1') {
+              $bvModal.msgBoxOk('表單儲存完畢');
+              navigateByNameAndParams('pending', {isReload: false, isNotKeepAlive: true});
+            } else {
+              $bvModal.msgBoxOk('表單審核完畢');
+              navigateByNameAndParams('pending', {isReload: false, isNotKeepAlive: true});
+            }
+
+          })
+          .catch(notificationErrorHandler(notificationService));
+
+
+      }
+
+
     }
 
     const changeTabIndex = (index: number) => {
@@ -768,19 +782,6 @@ export default {
 
     const activeTab = (index: number) => {
       return tabIndex.value === index;
-    };
-
-    const getItem = (item) => {
-      switch (item) {
-        case '0':
-          return '不同意';
-        case '1':
-          return '同意';
-        case '2':
-          return '補件';
-        default:
-          return '';
-      }
     };
 
     function toQueryView() {
@@ -823,8 +824,8 @@ export default {
       signatureBmodel,
       showModel,
       formIdProp,
-      opinion
-
+      opinion,
+      taskDataRef,
     }
   }
 }
