@@ -22,6 +22,7 @@ public class BpmSignerListService {
     private final BpmSignerListRepository bpmSignerListRepository;
     private final UserRepository userRepository;
     private final BpmIsmsSignerOrderRepository bpmIsmsSignerOrderRepository;
+
     public BpmSignerListService(BpmSignerListRepository bpmSignerListRepository, UserRepository userRepository, BpmIsmsSignerOrderRepository bpmIsmsSignerOrderRepository) {
         this.bpmSignerListRepository = bpmSignerListRepository;
         this.userRepository = userRepository;

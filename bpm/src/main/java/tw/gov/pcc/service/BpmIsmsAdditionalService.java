@@ -35,7 +35,10 @@ public class BpmIsmsAdditionalService implements BpmIsmsService{
     private final BpmSignStatusMapper bpmSignStatusMapper;
     private final BpmSignStatusService bpmSignStatusService;
     private final BpmIsmsAdditionalRepository bpmIsmsAdditionalRepository;
+
+
     private final Gson gson = new Gson();
+
 
     public BpmIsmsAdditionalService(BpmIsmsAdditionalMapper bpmIsmsAdditionalMapper, BpmSignStatusMapper bpmSignStatusMapper, BpmSignStatusService bpmSignStatusService, BpmIsmsAdditionalRepository bpmIsmsAdditionalRepository) {
         this.bpmIsmsAdditionalMapper = bpmIsmsAdditionalMapper;
@@ -60,12 +63,14 @@ public class BpmIsmsAdditionalService implements BpmIsmsService{
         // 儲存表單
         bpmIsmsAdditionalRepository.save(bpmIsmsAdditionalMapper.toEntity(bpmIsmsAdditionalDTO));
 
+        // 儲存簽核狀態
+        bpmSignStatusService.saveBpmSignStatus(bpmIsmsAdditionalDTO);
+
         DTO_HOLDER.remove(uuid);
     }
 
     @Override
     public void saveBpmByPatch(String form) {
-
     }
 
     @Override
