@@ -55,7 +55,17 @@ public class Eip00w020Service {
      *
      */
     public void findUserList(Eip00w020Case eip00w020Case) {
-    	eip00w020Case.setUserList(usersDao.selectDataByUserIdAndDeptId(eip00w020Case.getUser_id(),eip00w020Case.getDept_id()));
+    	 List<Users> usersList = usersDao.selectDataByUserIdAndDeptId(eip00w020Case.getUser_id(),eip00w020Case.getDept_id());
+    	 
+    	 //查詢部門中文名稱
+    	 for(Users u:usersList) {
+    		 List<Depts> deptsList = deptsDao.findByDeptid(u.getDept_id());
+    		 if(CollectionUtils.isNotEmpty(deptsList)) {
+    			 u.setDept_cname(deptsList.get(0).getDept_name());
+    		 }
+    	 }
+    			 
+         eip00w020Case.setUserList(usersList);
     }
     
     /**

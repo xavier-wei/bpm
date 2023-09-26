@@ -76,6 +76,7 @@
     </head>
 
     <body>
+    <form:hidden path="eip0aw010Case.interval" disabled="true"/>
         <div class="web frameDiv">
             <div class="nav bg">
                 <a href="<c:url value='/LoginForward.action' />" class="clickDiv" title="返回首頁"></a>
@@ -285,7 +286,12 @@
                 }
                 $('input:checkbox:enabled[data-checkall]').on('click', checkall);
 
-                // reloadTitleStatus();
+                
+                let interval = $('#interval').val();
+                if(!$.isNumeric(interval) || interval < 10){
+                    interval = 10;
+                }
+                setTimeout(reloadTitleStatus, interval * 1000);
             });
 
             function reloadTitleStatus() {
@@ -311,7 +317,7 @@
                         console.log(xhr.status + " " + thrownError);
                     },
                     complete: function(xhr, sts){
-                        if(!interval || interval < 10){
+                        if(!$.isNumeric(interval) || interval < 10){
                             interval = 10;
                         }
                         setTimeout(reloadTitleStatus, interval * 1000);
