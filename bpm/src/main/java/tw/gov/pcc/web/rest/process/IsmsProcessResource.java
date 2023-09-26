@@ -46,7 +46,9 @@ public class IsmsProcessResource {
 
     private final ApplicationContext applicationContext;
     private final Gson gson = new Gson();
-    private final String FLOWABLE_PROCESS_URL = "http://localhost:9973/process";
+
+    @Value("${flowable.url}")
+    private String flowableProcessUrl;
     private final RestTemplate restTemplate = new RestTemplate();
     private final HttpSession httpSession;
     private final BpmSignStatusService bpmSignStatusService;
@@ -93,7 +95,7 @@ public class IsmsProcessResource {
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
         HttpEntity<String> requestEntity = new HttpEntity<>(gson.toJson(processReqDTO), headers);
-        ResponseEntity<String> exchange = restTemplate.exchange(FLOWABLE_PROCESS_URL + "/startProcess", HttpMethod.POST, requestEntity, String.class);
+        ResponseEntity<String> exchange = restTemplate.exchange(flowableProcessUrl + "/startProcess", HttpMethod.POST, requestEntity, String.class);
         String processInstanceId;
         TaskDTO taskDTO;
         if (exchange.getStatusCodeValue() == 200) {
@@ -150,7 +152,7 @@ public class IsmsProcessResource {
             service.saveBpmByPatch(completeReqDTO.getForm().get(key));
 
         }
-        ResponseEntity<String> exchange = restTemplate.exchange(FLOWABLE_PROCESS_URL + "/completeTask", HttpMethod.POST, requestEntity, String.class);
+        ResponseEntity<String> exchange = restTemplate.exchange(flowableProcessUrl + "/completeTask", HttpMethod.POST, requestEntity, String.class);
         if (exchange.getStatusCodeValue() == 200) {
             BpmSignStatusDTO bpmSignStatusDTO = getBpmSignStatusDTO(completeReqDTO, formId);
             BpmSignStatus bpmSignStatus = bpmSignStatusMapper.toEntity(bpmSignStatusDTO);
@@ -212,7 +214,7 @@ public class IsmsProcessResource {
         deleteRequest.put("processInstanceId", processInstanceId);
         deleteRequest.put("token", TOKEN);
         HttpEntity<String> requestEntity = new HttpEntity<>(gson.toJson(deleteRequest), headers);
-        ResponseEntity<String> exchange = restTemplate.exchange(FLOWABLE_PROCESS_URL + "/deleteProcess", HttpMethod.POST, requestEntity, String.class);
+        ResponseEntity<String> exchange = restTemplate.exchange(flowableProcessUrl + "/deleteProcess", HttpMethod.POST, requestEntity, String.class);
 
     }
 
@@ -237,7 +239,7 @@ public class IsmsProcessResource {
         headers.setContentType(MediaType.APPLICATION_JSON);
         HttpEntity<String> requestEntity = new HttpEntity<>(userInfo.getUserId(), headers);
 
-        ResponseEntity<String> exchange = restTemplate.exchange(FLOWABLE_PROCESS_URL + "/queryProcessingTask", HttpMethod.POST, requestEntity, String.class);
+        ResponseEntity<String> exchange = restTemplate.exchange(flowableProcessUrl + "/queryProcessingTask", HttpMethod.POST, requestEntity, String.class);
 
         if (exchange.getStatusCodeValue() == 200) {
             String body = exchange.getBody();
@@ -315,7 +317,7 @@ public class IsmsProcessResource {
         deleteRequest.put("processInstanceId", processInstanceId);
         deleteRequest.put("token", TOKEN);
         HttpEntity<String> requestEntity = new HttpEntity<>(gson.toJson(deleteRequest), headers);
-        ResponseEntity<String> exchange = restTemplate.exchange(FLOWABLE_PROCESS_URL + "/deleteProcess", HttpMethod.POST, requestEntity, String.class);
+        ResponseEntity<String> exchange = restTemplate.exchange(flowableProcessUrl + "/deleteProcess", HttpMethod.POST, requestEntity, String.class);
 
     }
 
@@ -330,7 +332,7 @@ public class IsmsProcessResource {
         headers.setContentType(MediaType.APPLICATION_JSON);
         HttpEntity<String> requestEntity = new HttpEntity<>(userInfo.getUserId(), headers);
 
-        ResponseEntity<String> exchange = restTemplate.exchange(FLOWABLE_PROCESS_URL + "/getAllTask", HttpMethod.POST, requestEntity, String.class);
+        ResponseEntity<String> exchange = restTemplate.exchange(flowableProcessUrl + "/getAllTask", HttpMethod.POST, requestEntity, String.class);
 
         if (exchange.getStatusCodeValue() == 200) {
             String body = exchange.getBody();
