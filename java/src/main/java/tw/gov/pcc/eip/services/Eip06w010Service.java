@@ -361,7 +361,7 @@ public class Eip06w010Service {
                              meeting.getMeetingdt().substring(4,6) + "月" +
                              meeting.getMeetingdt().substring(6) + "日";
 
-        LocalDate endAnnounceLocalDt = LocalDate.parse(meeting.getMeetingdt().substring(0,4) + "-" + meeting.getMeetingdt().substring(4,6) + "-" + meeting.getMeetingdt().substring(6)).plusDays(1);
+        LocalDate endAnnounceLocalDt = LocalDate.parse(meeting.getMeetingdt().substring(0,4) + "-" + meeting.getMeetingdt().substring(4,6) + "-" + meeting.getMeetingdt().substring(6));
         DateTimeFormatter fmt = DateTimeFormatter.ofPattern("yyyy-MM-dd");
         String endAnnounceDt = DateUtility.changeDateTypeToChineseDate(endAnnounceLocalDt.format(fmt).replaceAll("-",""));
 
@@ -382,9 +382,9 @@ public class Eip06w010Service {
         /** 下架時間 */
         ms.setOfftime(endAnnounceLocalDt.format(fmt).replaceAll("-",""));
         /** 連絡單位 */
-        ms.setContactunit(deptsDao.findByPk(usersDao.selectByKey(meeting.getOrganizerId()).getDept_id()).getDept_name());
+        ms.setContactunit(usersDao.selectByKey(meeting.getOrganizerId()).getDept_id());
         /** 聯絡人 */
-        ms.setContactperson(usersDao.selectByKey(meeting.getOrganizerId()).getUser_name());
+        ms.setContactperson(meeting.getOrganizerId());
         /** 連絡電話 */
 //        ms.setContacttel();
         /** 備註 */
@@ -399,12 +399,13 @@ public class Eip06w010Service {
 //        ms.setUpdid();
         /** 更新時間 */
 //        ms.setUpddt();
+        ms.setIsfront("1");
 
         msgdataDao.insert(ms);
 
         Msgavaildep msdep = new Msgavaildep();
         msdep.setFseq(newFseq);
-        msdep.setAvailabledep("0");
+        msdep.setAvailabledep("00");
         msgavaildepDao.insert(msdep);
     }
 
