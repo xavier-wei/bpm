@@ -217,7 +217,6 @@ export default defineComponent({
           queryStatus.value = true
           if (iTable.value) iTable.value.state.pagination.currentPage = 1;
           if (data) {
-            console.log('l410Query - data :: ', data)
             table.data = data
           }
         })

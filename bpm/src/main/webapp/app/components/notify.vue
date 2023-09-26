@@ -62,9 +62,9 @@
                            :disabled-date="notAfterPublicDateEnd"></i-date-picker>
             <b-input-group-text>至</b-input-group-text>
             <i-date-picker
-                v-model="$v.dateEnd.$model"
-                placeholder="yyy/MM/dd"
-                :disabled-date="notBeforePublicDateStart"
+              v-model="$v.dateEnd.$model"
+              placeholder="yyy/MM/dd"
+              :disabled-date="notBeforePublicDateStart"
             ></i-date-picker>
           </b-input-group>
         </i-form-group-check>
@@ -77,13 +77,13 @@
     </div>
 
     <i-table
-        ref="iTable"
-        :itemsUndefinedBehavior="'loading'"
-        :items="table.data"
-        :fields="table.fields"
-        :totalItems="table.totalItems"
-        :is-server-side-paging="false"
-        v-show="queryStatus"
+      ref="iTable"
+      :itemsUndefinedBehavior="'loading'"
+      :items="table.data"
+      :fields="table.fields"
+      :totalItems="table.totalItems"
+      :is-server-side-paging="false"
+      v-show="queryStatus"
     >
 
       <template #cell(filAndApp)="row">
@@ -106,7 +106,7 @@
 
       <template #cell(subject)="row">
         <div>
-          {{ changeSubject(row.item,false) }}
+          {{ changeSubject(row.item, false) }}
         </div>
       </template>
 
@@ -142,7 +142,6 @@ import IDatePicker from '../shared/i-date-picker/i-date-picker.vue';
 import ITable from '../shared/i-table/i-table.vue';
 import IFormGroupCheck from '../shared/form/i-form-group-check.vue';
 import {useValidation, validateState} from '@/shared/form';
-import {required, requiredIf} from '@/shared/validators';
 import {useGetters} from '@u3u/vue-hooks';
 import {notificationErrorHandler} from "@/shared/http/http-response-helper";
 import {useNotification} from "@/shared/notification";
@@ -296,7 +295,6 @@ export default defineComponent({
       axios.post(`/process/notify/queryTask`, params).then(({data}) => {
         queryStatus.value = true;
         if (data.length <= 0) return;
-
         // 最新的日期到最舊的日期排序
         table.data = data.sort((a, b) => {
           const dateA: any = new Date(a.signingDatetime);
@@ -309,20 +307,21 @@ export default defineComponent({
     };
 
     function toEdit(item) {
-      let taskData ={
-        processInstanceId:item.processInstanceId,
+      let taskData = {
+        processInstanceId: item.processInstanceId,
         taskId: item.taskId,
         taskName: item.taskName,
         decisionRole: item.decisionRole,
-        additional:item.additional,
+        additional: item.additional,
       }
       let prefix = item.formId.substring(0, 4).toLowerCase()
       navigateByNameAndParams(prefix + 'Edit', {
         formId: item.formId,
-        taskData:taskData,
+        taskData: taskData,
         formStatus: FormStatusEnum.READONLY,
         isNotKeepAlive: false,
-        stateStatus: userData.cpape05m.unitName !== '資訊推動小組'
+        stateStatus: userData.cpape05m.unitName !== '資訊推動小組',
+        processInstanceStatus: item.processInstanceStatus,
       });
     }
 
@@ -335,7 +334,6 @@ export default defineComponent({
         })
         .catch(notificationErrorHandler(notificationService))
     }
-
 
 
     return {

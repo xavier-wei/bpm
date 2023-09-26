@@ -3,8 +3,8 @@
     <b-container>
       <section class="container mt-2">
           <b-card-body>
-            <b-tabs>
-              <b-tab title="表單" :active="activeTab(0)" @click="changeTabIndex(0)">
+            <b-tabs class="nav nav-tabs">
+              <b-tab  title="表單" :active="activeTab(0)" @click="changeTabIndex(0)">
                 <div style="background-color: #b0ded4; padding-top: 10px">
                   <b-row class="d-flex">
                     <p class="ml-4" style="color: white">L414-網路服務連結申請單</p>
