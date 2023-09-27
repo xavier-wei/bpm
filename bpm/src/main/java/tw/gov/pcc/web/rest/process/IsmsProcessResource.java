@@ -25,6 +25,7 @@ import tw.gov.pcc.service.mapper.BpmIsmsL410Mapper;
 import tw.gov.pcc.service.mapper.BpmSignStatusMapper;
 import tw.gov.pcc.utils.MapUtils;
 
+import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
 import java.io.IOException;
@@ -198,6 +199,15 @@ public class IsmsProcessResource {
         BpmIsmsService service = (BpmIsmsService) applicationContext.getBean(Objects.requireNonNull(BpmIsmsServiceBeanNameEnum.getServiceBeanNameByKey(key)));
 
         return new MapUtils().getNewMap(service.getBpm(formId));
+    }
+
+    @GetMapping("/flowImage/{processInstanceId}")
+    public String getImage(@PathVariable String processInstanceId, HttpServletResponse response) {
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+        HttpEntity<String> requestEntity = new HttpEntity<>(gson.toJson(processInstanceId), headers);
+        ResponseEntity<String> exchange = restTemplate.exchange(flowableProcessUrl + "/pic?processId="+processInstanceId, HttpMethod.GET, requestEntity, String.class);
+        return  exchange.getBody();
     }
 
     @RequestMapping("/queryTask")
