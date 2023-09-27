@@ -9,9 +9,9 @@
           <b-input-group>
             <p class="col-3">{{ signer.taskName }}</p>
 
-            <template v-for="(ddd, index) in signer.empIds">
+            <template v-for="(staffList, index) in signer.empIds">
               <p class="col-4">
-                員工編號: {{ ddd }}
+                員工編號: {{ staffList }}
                 <span v-if="signer.empNames && signer.empNames[index]"> 姓名: {{ signer.empNames[index] }}</span>
               </p>
             </template>

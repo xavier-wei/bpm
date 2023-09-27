@@ -440,9 +440,6 @@
 
                     <!--處理人員-->
                     <template #cell(reviewStaffName)="row">
-
-                      taskName: {{ taskDataRef.taskName }}
-                      systemApplyName : {{ row.item.systemApplyName }}
                       <b-form-input maxlength="200" v-model="row.item.admName"
                                     :disabled=" userData.deptId !== row.item.admUnit ||taskDataRef.taskName.replace('加簽-', '') !== row.item.systemApplyName || row.item.checkbox !== '1'  || formStatusRef === FormStatusEnum.READONLY"/>
                     </template>
