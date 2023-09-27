@@ -20,7 +20,6 @@ import tw.gov.pcc.repository.BpmIsmsAdditionalRepository;
 import tw.gov.pcc.repository.BpmIsmsL410Repository;
 import tw.gov.pcc.service.BpmIsmsService;
 import tw.gov.pcc.service.BpmSignStatusService;
-import tw.gov.pcc.service.BpmSignerListService;
 import tw.gov.pcc.service.dto.*;
 import tw.gov.pcc.service.mapper.BpmIsmsL410Mapper;
 import tw.gov.pcc.service.mapper.BpmSignStatusMapper;
@@ -42,7 +41,7 @@ public class IsmsProcessResource {
     private static final Logger log = LoggerFactory.getLogger(IsmsProcessResource.class);
 
     @Value("${bpm.token}")
-    private String TOKEN;
+    private String token;
 
     private final ApplicationContext applicationContext;
     private final Gson gson = new Gson();
@@ -54,25 +53,23 @@ public class IsmsProcessResource {
     private final BpmSignStatusService bpmSignStatusService;
     private final BpmSignStatusMapper bpmSignStatusMapper;
     private final BpmIsmsAdditionalRepository bpmIsmsAdditionalRepository;
-    private final BpmSignerListService bpmSignerListService;
 
     private final BpmIsmsL410Mapper bpmIsmsL410Mapper;
     private final BpmIsmsL410Repository bpmIsmsL410Repository;
 
-    public IsmsProcessResource(ApplicationContext applicationContext, HttpSession httpSession, BpmSignStatusService bpmSignStatusService, BpmSignStatusMapper bpmSignStatusMapper, BpmIsmsAdditionalRepository bpmIsmsAdditionalRepository, BpmSignerListService bpmSignerListService, BpmIsmsL410Mapper bpmIsmsL410Mapper, BpmIsmsL410Repository bpmIsmsL410Repository) {
+    public IsmsProcessResource(ApplicationContext applicationContext, HttpSession httpSession, BpmSignStatusService bpmSignStatusService, BpmSignStatusMapper bpmSignStatusMapper, BpmIsmsAdditionalRepository bpmIsmsAdditionalRepository, BpmIsmsL410Mapper bpmIsmsL410Mapper, BpmIsmsL410Repository bpmIsmsL410Repository) {
         this.applicationContext = applicationContext;
         this.httpSession = httpSession;
         this.bpmSignStatusService = bpmSignStatusService;
         this.bpmSignStatusMapper = bpmSignStatusMapper;
         this.bpmIsmsAdditionalRepository = bpmIsmsAdditionalRepository;
-        this.bpmSignerListService = bpmSignerListService;
         this.bpmIsmsL410Mapper = bpmIsmsL410Mapper;
         this.bpmIsmsL410Repository = bpmIsmsL410Repository;
     }
 
     @PostMapping(path = "/start/{key}", consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
     public String start(
-        @Valid @RequestPart("form") HashMap<String, String> form,
+        @Valid @RequestPart("form") Map<String, String> form,
         @PathVariable String key,
         @Valid @RequestPart(name = "fileDto", required = false) List<BpmUploadFileDTO> dto,
         @RequestPart(name = "appendixFiles", required = false) List<MultipartFile> appendixFiles,
@@ -102,13 +99,13 @@ public class IsmsProcessResource {
             taskDTO = gson.fromJson(exchange.getBody(), TaskDTO.class);
             processInstanceId = taskDTO.getProcessInstanceId();
         } else {
+            log.error("flowableProcess - startProcess - 90 :: {} ", "flowableConnectionError");
             return "流程引擎忙碌中，請稍候再試";
         }
 
         try {
 
             if (!Objects.equals(bpmIsmsL410DTO, null)) {
-                log.info("IsmsProcessResource.java - start - 102 :: " + " 安安我來了");
                 BpmIsmsL410 bpmIsmsL410 = bpmIsmsL410Mapper.toEntity(bpmIsmsL410DTO);
                 bpmIsmsL410Repository.save(bpmIsmsL410);
             }
@@ -116,13 +113,13 @@ public class IsmsProcessResource {
 
         } catch (Exception e) {
             e.printStackTrace();
+            log.error("BpmSaveError - startProcess - 90 :: {} ", "BpmSaveError");
             // 如果BPM寫入失敗，通知flowable原流程撤銷
             deleteProcessWhenSaveBpmFailed(processInstanceId);
             return "BPM寫入失敗，請聯絡管理員";
         }
-
+        log.info("IsmsProcessResource.java - start - 102 :: " + processInstanceId);
         return processInstanceId;
-//        return "";
 
     }
 
@@ -165,38 +162,13 @@ public class IsmsProcessResource {
     @PutMapping("/receiveEndEvent")
     public void receiveEndEvent(@RequestBody EndEventDTO endEventDTO) {
         log.info("ProcessL414Resource.java - receiveEndEvent - 196 :: " + endEventDTO.getProcessInstanceId());
-        if (TOKEN.equals(endEventDTO.getToken())) {
+        if (token.equals(endEventDTO.getToken())) {
             BpmIsmsService service = (BpmIsmsService) applicationContext.getBean(Objects.requireNonNull(BpmIsmsServiceBeanNameEnum.getServiceBeanNameByKey(endEventDTO.getFormName())));
             service.endForm(endEventDTO);
 
             return;
         }
         log.warn("ProcessL414Resource.java - receiveEndEvent - 203 ::{} ", "流程發生意外終止");
-    }
-
-    private static BpmSignStatusDTO getBpmSignStatusDTO(CompleteReqDTO completeReqDTO, String formId) {
-        BpmSignStatusDTO bpmSignStatusDTO = new BpmSignStatusDTO();
-        bpmSignStatusDTO.setFormId(formId);
-        bpmSignStatusDTO.setProcessInstanceId(completeReqDTO.getProcessInstanceId());
-        bpmSignStatusDTO.setTaskId(completeReqDTO.getTaskId());
-        bpmSignStatusDTO.setTaskName(completeReqDTO.getTaskName());
-        bpmSignStatusDTO.setSignerId(completeReqDTO.getSignerId());
-        bpmSignStatusDTO.setSigner(completeReqDTO.getSigner());
-        bpmSignStatusDTO.setSignUnit(completeReqDTO.getSignUnit());
-        bpmSignStatusDTO.setSigningDatetime(Timestamp.valueOf(LocalDateTime.now()));
-        bpmSignStatusDTO.setOpinion(completeReqDTO.getOpinion());
-        bpmSignStatusDTO.setDirections(completeReqDTO.getDirections());
-        if (completeReqDTO.getVariables().isEmpty()) {
-            bpmSignStatusDTO.setSignResult("1");
-        } else {
-            Set<String> strings = completeReqDTO.getVariables().keySet();
-            Iterator<String> iterator = strings.iterator();
-            if (iterator.hasNext()) {
-                bpmSignStatusDTO.setSignResult((String) completeReqDTO.getVariables().get(iterator.next()));
-            }
-        }
-
-        return bpmSignStatusDTO;
     }
 
 
@@ -212,7 +184,7 @@ public class IsmsProcessResource {
 
         HashMap<String, String> deleteRequest = new HashMap<>();
         deleteRequest.put("processInstanceId", processInstanceId);
-        deleteRequest.put("token", TOKEN);
+        deleteRequest.put("token", token);
         HttpEntity<String> requestEntity = new HttpEntity<>(gson.toJson(deleteRequest), headers);
         ResponseEntity<String> exchange = restTemplate.exchange(flowableProcessUrl + "/deleteProcess", HttpMethod.POST, requestEntity, String.class);
 
@@ -315,15 +287,12 @@ public class IsmsProcessResource {
         headers.setContentType(MediaType.APPLICATION_JSON);
         HashMap<String, String> deleteRequest = new HashMap<>();
         deleteRequest.put("processInstanceId", processInstanceId);
-        deleteRequest.put("token", TOKEN);
+        deleteRequest.put("token", token);
         HttpEntity<String> requestEntity = new HttpEntity<>(gson.toJson(deleteRequest), headers);
-        ResponseEntity<String> exchange = restTemplate.exchange(flowableProcessUrl + "/deleteProcess", HttpMethod.POST, requestEntity, String.class);
+        restTemplate.exchange(flowableProcessUrl + "/deleteProcess", HttpMethod.POST, requestEntity, String.class);
 
     }
 
-    private User getUserInfo() {
-        return (User) httpSession.getAttribute("userInfo");
-    }
 
     @RequestMapping("/notify/queryTask")
     public List<Map<String, Object>> notifyQueryTask(@Valid @RequestPart(required = false) BpmFormQueryDto bpmFormQueryDto) {
@@ -368,8 +337,36 @@ public class IsmsProcessResource {
                     .collect(Collectors.toList());
         }
 
-        return null;
+        return Collections.emptyList();
     }
 
+    private static BpmSignStatusDTO getBpmSignStatusDTO(CompleteReqDTO completeReqDTO, String formId) {
+        BpmSignStatusDTO bpmSignStatusDTO = new BpmSignStatusDTO();
+        bpmSignStatusDTO.setFormId(formId);
+        bpmSignStatusDTO.setProcessInstanceId(completeReqDTO.getProcessInstanceId());
+        bpmSignStatusDTO.setTaskId(completeReqDTO.getTaskId());
+        bpmSignStatusDTO.setTaskName(completeReqDTO.getTaskName());
+        bpmSignStatusDTO.setSignerId(completeReqDTO.getSignerId());
+        bpmSignStatusDTO.setSigner(completeReqDTO.getSigner());
+        bpmSignStatusDTO.setSignUnit(completeReqDTO.getSignUnit());
+        bpmSignStatusDTO.setSigningDatetime(Timestamp.valueOf(LocalDateTime.now()));
+        bpmSignStatusDTO.setOpinion(completeReqDTO.getOpinion());
+        bpmSignStatusDTO.setDirections(completeReqDTO.getDirections());
+        if (completeReqDTO.getVariables().isEmpty()) {
+            bpmSignStatusDTO.setSignResult("1");
+        } else {
+            Set<String> strings = completeReqDTO.getVariables().keySet();
+            Iterator<String> iterator = strings.iterator();
+            if (iterator.hasNext()) {
+                bpmSignStatusDTO.setSignResult((String) completeReqDTO.getVariables().get(iterator.next()));
+            }
+        }
+
+        return bpmSignStatusDTO;
+    }
+
+    private User getUserInfo() {
+        return (User) httpSession.getAttribute("userInfo");
+    }
 
 }
