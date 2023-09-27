@@ -393,7 +393,7 @@
               </b-tab>
               <b-tab title="附件" :active="activeTab(1)" @click="changeTabIndex(1)">
 
-                <appendix :vData="appendixData" :formStatus="formStatusRef">
+                <appendix :vData="appendixData" :fileDataId="fileDataId" :formStatus="formStatusRef">
 
                 </appendix>
 
@@ -458,7 +458,9 @@ export default {
     });
 
     let appendixData = reactive({});
-
+    let fileDataId = reactive({
+      fileId: ''
+    });
     const formDefault = {
       formId: '', //表單編號
       applyDate: new Date(new Date().getFullYear(), new Date().getMonth(), new Date().getDate(),new Date().getHours(),new Date().getMinutes(),new Date().getSeconds(),new Date().getMilliseconds()), //	申請日期
@@ -607,7 +609,8 @@ export default {
       toQueryView,
       reset,
       formStatusRef,
-      bpmDeptsOptions
+      bpmDeptsOptions,
+      fileDataId
     }
   }
 }
