@@ -87,7 +87,7 @@
     >
 
       <template #cell(filAndApp)="row">
-        <div v-if="row.item.appEmpid === row.item.filEmpid">
+        <div v-if="row.item.appEmpid === row.item.filEmpid ">
           {{ row.item.appName }}
         </div>
         <div v-else>
@@ -112,11 +112,13 @@
 
 
       <template #cell(signUnit)="row">
-        <div v-if="!!row.item.signer">
-          {{ row.item.signer }}
-        </div>
-        <div v-if="!!row.item.directions">
-          ({{ row.item.directions }})
+        <div v-if="row.item.processInstanceStatus !== '1'">
+          <div v-if="!!row.item.signer">
+            {{ row.item.signer }}
+          </div>
+          <div v-if="!!row.item.signUnit">
+            ({{ changeDealWithUnit(row.item.signUnit, bpmDeptsOptions) }})
+          </div>
         </div>
       </template>
 
@@ -293,6 +295,7 @@ export default defineComponent({
       const params = new FormData();
       params.append('bpmFormQueryDto', new Blob([JSON.stringify(form)], {type: 'application/json'}));
       axios.post(`/process/notify/queryTask`, params).then(({data}) => {
+        console.log(' notify.vue -  - 298: ', JSON.parse(JSON.stringify(data)))
         queryStatus.value = true;
         if (data.length <= 0) return;
         // 最新的日期到最舊的日期排序

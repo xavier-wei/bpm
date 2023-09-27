@@ -463,7 +463,7 @@
 
 
 import IDualDatePicker from '@/shared/i-date-picker/i-dual-date-picker.vue';
-import {reactive, ref, toRef, watch} from '@vue/composition-api';
+import {reactive, ref, toRef, watch,onActivated} from '@vue/composition-api';
 import {useValidation, validateState} from '@/shared/form';
 import IFormGroupCheck from '@/shared/form/i-form-group-check.vue';
 import IDatePicker from '@/shared/i-date-picker/i-date-picker.vue';
@@ -633,11 +633,6 @@ export default {
     };
     const {$v, checkValidity, reset} = useValidation(rules, form, formDefault);
 
-
-    // onMounted(() => {
-    //   handleQuery();
-    // });
-
     function handleQuery() {
       axios
         .post(`/process/getIsms/L414/${formIdProp.value}`)
@@ -645,7 +640,8 @@ export default {
           if (!data) return;
 
           if (data.processInstanceId !== null && data.processInstanceId !== undefined) {
-            filePathData.filePathName = 'http://localhost:9973/pic?processId=' + data.processInstanceId;
+            // filePathData.filePathName = 'http://localhost:9973/pic?processId=' + data.processInstanceId;
+            handleQueryFlowChart(data.processInstanceId);
           }
 
           data.applyDate = data.applyDate != null ? new Date(data.applyDate) : null
@@ -654,9 +650,6 @@ export default {
           data.delEnableDate = data.delEnableDate != null ? new Date(data.delEnableDate) : null
           data.scheduleDate = data.scheduleDate != null ? new Date(data.scheduleDate) : null
           data.finishDatetime = data.finishDatetime != null ? new Date(data.finishDatetime) : null
-
-          // //取得現在表單的處理狀況
-          // getBpmSignStatus(data.formId);
 
           //用現在表單編號直接給file模組去自動取值
           fileDataId.fileId = data.formId;
@@ -669,6 +662,14 @@ export default {
 
     }
 
+    function handleQueryFlowChart(processInstanceId) {
+      axios
+        .get(`/process/flowImage/${processInstanceId}`)
+        .then(({data}) => {
+          filePathData.filePathName = data;
+        })
+        .catch(notificationErrorHandler(notificationService));
+    }
 
     const headers = {
       headers: {

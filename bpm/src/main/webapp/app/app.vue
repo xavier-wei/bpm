@@ -134,9 +134,6 @@ export default {
 
     });
 
-
-
-
     return {
       isContentAlive,
       ...useGetters(['routeData', 'isLoading', 'keepAlivePage']),
@@ -145,7 +142,7 @@ export default {
   },
 };
 </script>
-<style scoped lang="scss">
+<style lang="scss">
 .app {
   background-color: white;
 }
@@ -169,4 +166,5 @@ export default {
   background: #1aa4b7;
   text-align: center;
 }
+
 </style>

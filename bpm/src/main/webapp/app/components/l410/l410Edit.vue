@@ -537,7 +537,7 @@
 
 
 import IDualDatePicker from '@/shared/i-date-picker/i-dual-date-picker.vue';
-import {onMounted, reactive, ref, Ref, toRef, watch} from '@vue/composition-api';
+import {onActivated, reactive, ref, Ref, toRef, watch} from '@vue/composition-api';
 import {useValidation, validateState} from '@/shared/form';
 import IFormGroupCheck from '@/shared/form/i-form-group-check.vue';
 import {required} from '@/shared/validators';
@@ -904,19 +904,27 @@ export default {
           })
           table.data = data
           if (formData.processInstanceId !== null && formData.processInstanceId !== undefined) {
-            filePathData.filePathName = 'http://localhost:9973/pic?processId=' + formData.processInstanceId;
+            // filePathData.filePathName = 'http://localhost:9973/pic?processId=' + formData.processInstanceId;
+            handleQueryFlowChart(formData.processInstanceId);
           }
 
           formData.applyDate = formData.applyDate != null ? new Date(formData.applyDate) : null
           formData.enableDate = formData.enableDate != null ? new Date(formData.enableDate) : null
 
-          //取得現在表單的處理狀況
-          // getBpmSignStatus(formData.formId);
           //用現在表單編號直接給file模組去自動取值
           fileDataId.fileId = formData.formId;
           Object.assign(formDefault, formData);
           Object.assign(form, formDefault);
           reset();
+        })
+        .catch(notificationErrorHandler(notificationService));
+    }
+
+    function handleQueryFlowChart(processInstanceId) {
+      axios
+        .get(`/process/flowImage/${processInstanceId}`)
+        .then(({data}) => {
+          filePathData.filePathName = data;
         })
         .catch(notificationErrorHandler(notificationService));
     }
