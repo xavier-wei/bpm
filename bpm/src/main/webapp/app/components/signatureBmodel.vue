@@ -111,14 +111,13 @@
 <script lang="ts">
 import {reactive, ref} from "@vue/composition-api";
 import {useValidation} from "@/shared/form";
-import {newformatDate} from "@/shared/date/minguo-calendar-utils";
 import {changeDealWithUnit} from "@/shared/word/directions";
 import axios from "axios";
 import {notificationErrorHandler} from "@/shared/http/http-response-helper";
 import {useNotification} from "@/shared/notification";
 import IDatePicker from "@/shared/i-date-picker/i-date-picker";
-import ITable from "@/shared/i-table/i-table";
-import IFormGroupCheck from "@/shared/form/i-form-group-check";
+import ITable from '@/shared/i-table/i-table';
+import IFormGroupCheck from '@/shared/form/i-form-group-check';
 import {useGetters} from "@u3u/vue-hooks";
 import {useBvModal} from "@/shared/modal";
 import {navigateByNameAndParams} from "@/router/router";
@@ -198,7 +197,6 @@ export default {
           key: 'orgName',
           label: '機關名稱',
           sortable: false,
-          // thStyle: 'width:20%',
           thClass: 'text-center',
           tdClass: 'text-center align-middle',
         },
@@ -206,7 +204,6 @@ export default {
           key: 'unitName',
           label: '單位名稱',
           sortable: false,
-          // thStyle: 'width:10%',
           thClass: 'text-center',
           tdClass: 'text-center align-middle',
         },
@@ -214,7 +211,6 @@ export default {
           key: 'pename',
           label: '姓名',
           sortable: false,
-          // thStyle: 'width:10%',
           thClass: 'text-center',
           tdClass: 'text-center align-middle',
         },
@@ -222,7 +218,6 @@ export default {
           key: 'title',
           label: '職稱',
           sortable: false,
-          // thStyle: 'width:10%',
           thClass: 'text-center',
           tdClass: 'text-center align-middle',
         },

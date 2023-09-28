@@ -161,10 +161,5 @@ export default {
   background-color: white;
 }
 
-.btn-link {
-  border-radius: 10rem;
-  background: #1aa4b7;
-  text-align: center;
-}
 
 </style>

@@ -231,7 +231,6 @@ export default {
           sortable: false,
           thClass: 'text-center',
           tdClass: 'text-center align-middle ',
-          // formatter: (value: string) => formatToString(value, '/', '-'),
         },
         {
           key: 'fileName',
