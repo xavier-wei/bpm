@@ -47,13 +47,14 @@ public class KeycloakOIDCFilter  implements Filter {
         this((KeycloakConfigResolver)null);
     }
 
+    @Override
     public void init(FilterConfig filterConfig) throws ServletException {
-        String skipPatternDefinition = filterConfig.getInitParameter("keycloak.config.skipPattern");
+        String skipPatternDefinition = filterConfig.getInitParameter(SKIP_PATTERN_PARAM);
         if (skipPatternDefinition != null) {
             this.skipPattern = Pattern.compile(skipPatternDefinition, Pattern.DOTALL);
         }
 
-        String idMapperClassName = filterConfig.getInitParameter("keycloak.config.idMapper");
+        String idMapperClassName = filterConfig.getInitParameter(ID_MAPPER_PARAM);
         Object is;
         if (idMapperClassName != null) {
             try {
@@ -61,7 +62,7 @@ public class KeycloakOIDCFilter  implements Filter {
                 Constructor<?> idMapperConstructor = idMapperClass.getDeclaredConstructor();
                 is = null;
                 if (idMapperConstructor.getModifiers() == Modifier.PRIVATE) {
-                    is = idMapperClass.getMethod("getInstance").invoke((Object)null);
+                    is = idMapperClass.getMethod("getInstance").invoke(null);
                 } else {
                     is = idMapperConstructor.newInstance();
                 }
@@ -80,7 +81,7 @@ public class KeycloakOIDCFilter  implements Filter {
             this.deploymentContext = new AdapterDeploymentContext(this.definedconfigResolver);
             log.log(Level.INFO, "Using {0} to resolve Keycloak configuration on a per-request basis.", this.definedconfigResolver.getClass());
         } else {
-            String configResolverClass = filterConfig.getInitParameter("keycloak.config.resolver");
+            String configResolverClass = filterConfig.getInitParameter(CONFIG_RESOLVER_PARAM);
             if (configResolverClass != null) {
                 try {
                     KeycloakConfigResolver configResolver = (KeycloakConfigResolver)this.getClass().getClassLoader().loadClass(configResolverClass).newInstance();
@@ -91,7 +92,7 @@ public class KeycloakOIDCFilter  implements Filter {
                     this.deploymentContext = new AdapterDeploymentContext(new KeycloakDeployment());
                 }
             } else {
-                String fp = filterConfig.getInitParameter("keycloak.config.file");
+                String fp = filterConfig.getInitParameter(CONFIG_FILE_PARAM);
                 is = null;
                 if (fp != null) {
                     try {
@@ -101,7 +102,7 @@ public class KeycloakOIDCFilter  implements Filter {
                     }
                 } else {
                     String path = "/WEB-INF/keycloak.json";
-                    String pathParam = filterConfig.getInitParameter("keycloak.config.path");
+                    String pathParam = filterConfig.getInitParameter(CONFIG_PATH_PARAM);
                     if (pathParam != null) {
                         path = pathParam;
                     }
@@ -132,14 +133,7 @@ public class KeycloakOIDCFilter  implements Filter {
         log.fine("Keycloak OIDC Filter");
         HttpServletRequest request = (HttpServletRequest)req;
         HttpServletResponse response = (HttpServletResponse)res;
-
-//        String referer = request.getHeader("referer");
         String flowableToken = request.getHeader("flowableToken");
-//        if (referer == null ||referer.isEmpty()) {
-//            response.setContentType("text/html; charset=utf-8");
-//            response.getWriter().println("請由EIP首頁進入");
-//            return;
-//        }
         if (this.shouldSkip(request)|| TokenUtil.TOKEN.equals(flowableToken)) {
             chain.doFilter(req, res);
         } else {
@@ -189,6 +183,7 @@ public class KeycloakOIDCFilter  implements Filter {
         }
     }
 
+    @Override
     public void destroy() {
     }
 

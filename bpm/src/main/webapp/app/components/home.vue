@@ -54,32 +54,32 @@ export default {
 };
 </script>
 
-<style lang="scss" scoped>
-.app {
-  display: flex;
-}
-
-.sidebar {
-  width: 200px;
-  background-color: #f0f0f0;
-}
-
-.sidebar ul {
-  list-style: none;
-  padding: 0;
-  margin: 0;
-}
-
-.sidebar li {
-  padding: 10px;
-}
-
-.sidebar li a {
-  text-decoration: none;
-  color: #333;
-}
-
-.sidebar li a:hover {
-  color: #000;
-}
+<style lang="scss">
+//.app {
+//  display: flex;
+//}
+//
+//.sidebar {
+//  width: 200px;
+//  background-color: #f0f0f0;
+//}
+//
+//.sidebar ul {
+//  list-style: none;
+//  padding: 0;
+//  margin: 0;
+//}
+//
+//.sidebar li {
+//  padding: 10px;
+//}
+//
+//.sidebar li a {
+//  text-decoration: none;
+//  color: #333;
+//}
+//
+//.sidebar li a:hover {
+//  color: #000;
+//}
 </style>

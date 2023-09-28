@@ -199,7 +199,11 @@
     </servlet-mapping>
 
     <session-config>
-        <session-timeout>30</session-timeout>
+        <session-timeout>600</session-timeout>
+        <cookie-config>
+            <name>EIP_JSESSIONID</name>
+            <http-only>true</http-only>
+        </cookie-config>
         <tracking-mode>COOKIE</tracking-mode>
     </session-config>
 

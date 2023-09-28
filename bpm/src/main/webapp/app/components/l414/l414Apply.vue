@@ -4,7 +4,7 @@
       <section class="container mt-2">
           <b-card-body>
             <b-tabs>
-              <b-tab title="表單" :active="activeTab(0)" @click="changeTabIndex(0)">
+              <b-tab title="表單"  :active="activeTab(0)" @click="changeTabIndex(0)">
                 <div style="background-color: #b0ded4; padding-top: 10px">
                   <b-row class="d-flex">
                     <p class="ml-4" style="color: white">L414-網路服務連結申請單</p>
@@ -393,7 +393,7 @@
               </b-tab>
               <b-tab title="附件" :active="activeTab(1)" @click="changeTabIndex(1)">
 
-                <appendix :vData="appendixData" :formStatus="formStatusRef">
+                <appendix :vData="appendixData" :fileDataId="fileDataId" :formStatus="formStatusRef">
 
                 </appendix>
 
@@ -458,6 +458,9 @@ export default {
     });
 
     let appendixData = reactive({});
+    let fileDataId = reactive({
+      fileId: ''
+    });
 
     const formDefault = {
       formId: '', //表單編號
@@ -607,13 +610,16 @@ export default {
       toQueryView,
       reset,
       formStatusRef,
-      bpmDeptsOptions
+      bpmDeptsOptions,
+      fileDataId,
     }
   }
 }
 </script>
 
-<style scoped>
+<style>
+
+
 </style>
 
 

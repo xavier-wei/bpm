@@ -67,6 +67,7 @@ public class Eip0aw010Service {
         try {
             result.add(getIrtSql());
         } catch (Exception e) {
+            result.add(new Eip0aw010Case.ApiResult());
             log.error("取得差勤資料錯誤{}。", ExceptionUtility.getStackTrace(e));
         }
 

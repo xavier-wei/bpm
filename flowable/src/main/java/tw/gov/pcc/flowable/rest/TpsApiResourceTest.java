@@ -21,7 +21,7 @@ public class TpsApiResourceTest {
 
     private final String RESPONSE_JSON = "{\n" +
             "  \"apiVersion\": \"1.0\",\n" +
-            "  \"txnSq\": \"%s\",\n" +
+            "  \"txnSq\": %d,\n" +
             "  \"txnTime\": \"%s\",\n" +
             "  \"retCode\": \"%s\",\n" +
             "  \"retMsg\": \"%s\",\n" +
@@ -33,7 +33,7 @@ public class TpsApiResourceTest {
             "      \"tenderCaseNo\": \"112-RCFR-04-4-033\",\n" +
             "      \"tenderName\": \"來義鄉南和部落社區農路及排水改善工程\",\n" +
             "      \"tenderSq\": \"01\",\n" +
-            "      \"uniqueKey\": \"70355049\",\n" +
+            "      \"uniqueKey\": 70355049,\n" +
             "      \"tenderWay\": \"公開招標\",\n" +
             "      \"awardWay\": \"最低標\",\n" +
             "      \"tenderProcCate\": \"工程類\",\n" +
@@ -45,8 +45,8 @@ public class TpsApiResourceTest {
             "          \"stServiceTypeOther\": \"\",\n" +
             "          \"stSiniorityCode\": \"90000001\",\n" +
             "          \"stSiniority\": \"3年以上未滿5年\",\n" +
-            "          \"stPersonMonths\": \"13\",\n" +
-            "          \"stSalary\": \"35000\"\n" +
+            "          \"stPersonMonths\": 13,\n" +
+            "          \"stSalary\": 35000\n" +
             "        },\n" +
             "        {\n" +
             "          \"stServiceTypeCode\": \"10000002\",\n" +
@@ -54,8 +54,8 @@ public class TpsApiResourceTest {
             "          \"stServiceTypeOther\": \"\",\n" +
             "          \"stSiniorityCode\": \"90000002\",\n" +
             "          \"stSiniority\": \"15年以上未滿20年\",\n" +
-            "          \"stPersonMonths\": \"7\",\n" +
-            "          \"stSalary\": \"56000\"\n" +
+            "          \"stPersonMonths\": 7,\n" +
+            "          \"stSalary\": 56000\n" +
             "        }\n" +
             "      ],\n" +
             "      \"dig\": \"M2ZjMzIwMzZkYzFl\"\n" +
@@ -105,7 +105,7 @@ class TpsAgenciesDTO implements Serializable {
     @NotNull
     private String apiVersion;
     @NotNull
-    private String txnSq;
+    private int txnSq;
     @NotNull
     private Date txnTime;
     @NotNull

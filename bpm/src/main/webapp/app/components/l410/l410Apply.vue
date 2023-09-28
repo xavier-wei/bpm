@@ -456,7 +456,7 @@
         </b-tab>
         <b-tab title="附件" :active="activeTab(1)" @click="changeTabIndex(1)">
 
-          <appendix :vData="appendixData" :formStatus="formStatusRef">
+          <appendix :vData="appendixData" :fileDataId="fileDataId" :formStatus="formStatusRef">
 
           </appendix>
 
@@ -513,6 +513,9 @@ export default {
   },
   setup(props) {
     let appendixData = reactive({});
+    let fileDataId = reactive({
+      fileId: ''
+    });
     const userData = ref(useGetters(['getUserData']).getUserData).value
     const formStatusRef = toRef(props, 'formStatus');
     const bpmDeptsOptions = ref(useGetters(['getBpmDeptsOptions']).getBpmDeptsOptions).value;
@@ -637,8 +640,6 @@ export default {
       otherSys1Status: '',
       otherSys1EnableDate: null,
       otherSys1AdmName: '',
-
-
       isOtherSys2: '0',
       otherSys2ServerName: '',
       otherSys2Account: '',
@@ -792,14 +793,7 @@ export default {
 
         if (isOK) {
           await Promise.all(table.data.map(data => checkboxToMapAndForm(data, form, l410Variables)));
-
-          console.log(' l410Apply.vue - submitForm - 800: ', JSON.parse(JSON.stringify(table.data)))
-
           form.l410Variables = l410Variables;
-
-          console.log('form.l410Variables',form.l410Variables)
-          console.log(' l410Apply.vue - submitForm - 802: ', JSON.parse(JSON.stringify(form)))
-
           let body = {
             "L410": JSON.stringify(form)
           }
@@ -915,7 +909,8 @@ export default {
       bpmDeptsOptions,
       resetValue,
       resetCheckboxValue,
-      resetAll
+      resetAll,
+      fileDataId
     }
   }
 }

@@ -35,7 +35,7 @@ export default {
     // 處理滑鼠滾輪
     const handleWheel = (event) => {
       if (event.ctrlKey) { // 检查是否按下了Ctrl键
-        const newScale = currentScale.data + (event.deltaY > 0 ? -0.1 : 0.1); // 根据滚轮方向调整缩放比例
+        const newScale = currentScale.data + (event.deltaY > 0 ? -0.1 : 0.1); // 根據滾輪方向調整縮放比例
         currentScale.data = Math.max(0.1, Math.min(2, newScale)); // 限制缩放比例在0.1到2之间
       }
     };

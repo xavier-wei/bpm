@@ -137,6 +137,7 @@ public class Users implements Serializable {
     private String org_id;
     
     private boolean checkbox;
+    private String dept_cname;//部門中文名稱
     
     
 

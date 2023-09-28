@@ -39,6 +39,7 @@
 								<th class="text-center">電子信箱</th>
 								<th class="text-center">分機</th>
 								<th class="text-center">部門代號</th>
+								<th class="text-center">部門名稱</th>
 								<th class="text-center"></th>
 							</tr>
 						</thead>
@@ -50,6 +51,7 @@
 						        	<td class="text-left"><c:out value="${data.email}"/></td>
 						            <td class="text-left"><c:out value="${data.tel2}"/></td>
 						            <td class="text-left"><c:out value="${data.dept_id}"/></td>
+						            <td class="text-left"><c:out value="${data.dept_cname}"/></td>
 						            <td class="text-center">
 							            <tags:button cssClass="btnEdit"
 	                                             onclick="doEdit('${data.user_id}','${data.dept_id}')">修改</i></tags:button>

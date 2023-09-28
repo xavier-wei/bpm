@@ -9,9 +9,9 @@
           <b-input-group>
             <p class="col-3">{{ signer.taskName }}</p>
 
-            <template v-for="(ddd, index) in signer.empIds">
+            <template v-for="(staffList, index) in signer.empIds">
               <p class="col-4">
-                員工編號: {{ ddd }}
+                員工編號: {{ staffList }}
                 <span v-if="signer.empNames && signer.empNames[index]"> 姓名: {{ signer.empNames[index] }}</span>
               </p>
             </template>
@@ -62,7 +62,7 @@
 </template>
 
 <script lang="ts">
-import {computed, onActivated, onMounted, reactive, Ref, ref, toRef, toRefs, watch} from '@vue/composition-api';
+import {reactive, ref, toRef, watch} from '@vue/composition-api';
 import {changeDealWithUnit} from "@/shared/word/directions";
 import {newformatDate} from '@/shared/date/minguo-calendar-utils';
 import {useGetters} from "@u3u/vue-hooks";
@@ -85,9 +85,9 @@ export default {
       type: Object,
       required: false,
     },
-    formData: {
+    processInstanceStatus: {
       required: false,
-      type: Object,
+      type: String,
     },
   },
   setup(props) {
@@ -95,7 +95,7 @@ export default {
     const bpmDeptsOptions = ref(useGetters(['getBpmDeptsOptions']).getBpmDeptsOptions).value;
     const formIdProp = toRef(props, 'formId');
     const formStatusRef = toRef(props, 'formStatus');
-    const formDataProp = reactive(props.formData);
+    const processInstanceStatusRef = toRef(props, 'processInstanceStatus');
     const opinionProp = reactive(props.opinion);
     const signerList = ref([]);
 
@@ -159,26 +159,20 @@ export default {
       axios
         .get(`/eip/getBpmSignStatus/${id}`)
         .then(({data}) => {
-          console.log(' signerList.vue -  - 162: ', JSON.parse(JSON.stringify(data)))
           if (data.length === 0) return;
 
-          console.log('formDataProp',formDataProp)
-
           signStatusTable.data = data;
-          if (formDataProp.processInstanceStatus !== undefined) {
-            //判斷每張表單狀態
-            if (formDataProp.processInstanceStatus === '1') {
-              console.log('有阿')
-              signStatusTable.data.push({
-                taskName: '結束',
-                signingDatetime: ''
-              });
-            } else if (formDataProp.processInstanceStatus === '2') {
-              signStatusTable.data.push({
-                taskName: '撤銷',
-                signingDatetime: ''
-              });
-            }
+          //判斷每張表單狀態
+          if (processInstanceStatusRef.value === '1') {
+            signStatusTable.data.push({
+              taskName: '結束',
+              signingDatetime: ''
+            });
+          } else if (processInstanceStatusRef.value === '2') {
+            signStatusTable.data.push({
+              taskName: '撤銷',
+              signingDatetime: ''
+            });
           }
         })
         .catch(notificationErrorHandler(notificationService));
@@ -186,7 +180,7 @@ export default {
 
     function getFindByBpmSignerList(id) {
 
-      signerList.value =[];
+      signerList.value = [];
 
       axios
         .get(`/eip/getBpmSignerList/${id}`)

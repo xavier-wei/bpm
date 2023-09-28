@@ -440,9 +440,6 @@
 
                     <!--處理人員-->
                     <template #cell(reviewStaffName)="row">
-
-                      taskName: {{ taskDataRef.taskName }}
-                      systemApplyName : {{ row.item.systemApplyName }}
                       <b-form-input maxlength="200" v-model="row.item.admName"
                                     :disabled=" userData.deptId !== row.item.admUnit ||taskDataRef.taskName.replace('加簽-', '') !== row.item.systemApplyName || row.item.checkbox !== '1'  || formStatusRef === FormStatusEnum.READONLY"/>
                     </template>
@@ -477,7 +474,7 @@
 
                 <!--簽核狀態模組-->
                 <signerList :formId="formIdProp" :formStatus="formStatusRef" :opinion="opinion"
-                            :formData="form"></signerList>
+                            :processInstanceStatus="processInstanceStatusRef"></signerList>
 
 
                 <b-container class="mt-3">
@@ -540,7 +537,7 @@
 
 
 import IDualDatePicker from '@/shared/i-date-picker/i-dual-date-picker.vue';
-import {onMounted, reactive, ref, Ref, toRef, watch} from '@vue/composition-api';
+import {onActivated, reactive, ref, Ref, toRef, watch} from '@vue/composition-api';
 import {useValidation, validateState} from '@/shared/form';
 import IFormGroupCheck from '@/shared/form/i-form-group-check.vue';
 import {required} from '@/shared/validators';
@@ -590,6 +587,10 @@ export default {
       type: Boolean,
       default: true,
     },
+    processInstanceStatus: {
+      required: false,
+      type: String,
+    },
   },
   components: {
     'i-form-group-check': IFormGroupCheck,
@@ -607,6 +608,7 @@ export default {
     const formIdProp = toRef(props, 'formId');
     const taskDataRef = toRef(props, 'taskData');
     const isSignatureRef = toRef(props, 'isSignature');
+    const processInstanceStatusRef = toRef(props, 'processInstanceStatus');
     const bpmDeptsOptions = ref(useGetters(['getBpmDeptsOptions']).getBpmDeptsOptions).value;
     const userData = ref(useGetters(['getUserData']).getUserData).value;
     let iptData = ref(false);
@@ -621,16 +623,12 @@ export default {
       opinionData: ''
     });
 
-    let formData = reactive({});
-
     enum FormStatusEnum {
       CREATE = '新增',
       MODIFY = '編輯',
       READONLY = '檢視',
       VERIFY = '簽核'
     }
-
-    console.log('formStatusRef === FormStatusEnum.READONLY', formStatusRef.value == FormStatusEnum.READONLY)
 
     const formDefault = {
       formId: '',//表單編號
@@ -877,6 +875,18 @@ export default {
       ],
     });
 
+    function handleQuery() {
+      l410Data.value = {};
+      axios
+        .post(`/process/getIsms/L410/${formIdProp.value}`)
+        .then(({data}) => {
+          if (!data) return;
+          l410Data.value = data
+          templateQuery(l410Data.value);
+        })
+        .catch(notificationErrorHandler(notificationService));
+    }
+
     const headers = {
       headers: {
         'Content-Type': 'multipart/form-data',
@@ -889,46 +899,36 @@ export default {
       axios
         .get(`/eip/bpm-l410-apply-manages`)
         .then(({data}) => {
-
-          console.log('data', data)
-
           data.forEach(i => {
             mapToCheckbox(i, formData)
           })
-
           table.data = data
-
           if (formData.processInstanceId !== null && formData.processInstanceId !== undefined) {
-            filePathData.filePathName = 'http://localhost:9973/pic?processId=' + formData.processInstanceId;
+            // filePathData.filePathName = 'http://localhost:9973/pic?processId=' + formData.processInstanceId;
+            handleQueryFlowChart(formData.processInstanceId);
           }
 
           formData.applyDate = formData.applyDate != null ? new Date(formData.applyDate) : null
           formData.enableDate = formData.enableDate != null ? new Date(formData.enableDate) : null
 
-          //取得現在表單的處理狀況
-          // getBpmSignStatus(formData.formId);
           //用現在表單編號直接給file模組去自動取值
           fileDataId.fileId = formData.formId;
           Object.assign(formDefault, formData);
-          Object.assign(form, formDefault)
+          Object.assign(form, formDefault);
           reset();
         })
         .catch(notificationErrorHandler(notificationService));
     }
 
-    function handleQuery() {
-      console.log('formIdProp.value', formIdProp.value)
+    function handleQueryFlowChart(processInstanceId) {
       axios
-        .post(`/process/getIsms/L410/${formIdProp.value}`)
+        .get(`/process/flowImage/${processInstanceId}`)
         .then(({data}) => {
-
-          if (!data) return;
-
-          l410Data.value = data
-          templateQuery(l410Data.value);
+          filePathData.filePathName = data;
         })
         .catch(notificationErrorHandler(notificationService));
     }
+
 
     async function submitForm(isSubmit) {
 
@@ -957,7 +957,6 @@ export default {
 
           //判斷appendix頁面傳過來的file
           if (JSON.stringify(appendixData.value) !== '[]') {
-            console.log('安安')
             for (let i in appendixData.value) {
               formData.append('appendixFiles', appendixData.value[i].file[0]);
             }
@@ -996,7 +995,6 @@ export default {
         //把頁面上iTable內的所有資料逐一轉成form裡的值，並把組出List<HashMap<String, HashMap<String, Object>>>傳給後端
         await Promise.all(table.data.map(data => checkboxToMapAndForm(data, form, l410Variables)));
 
-        console.log(' l410Edit.vue - reviewStart - 986: ', JSON.parse(JSON.stringify(l410Variables)))
         form.l410Variables = l410Variables;
 
         //判斷頁面審核單位是否跟登入者單位一樣，一致就去後端更新資料
@@ -1038,8 +1036,6 @@ export default {
           ipt: iptData.value
         };
 
-        console.log(' body : ', JSON.parse(JSON.stringify(body)))
-
         axios
           .post(`/process/completeTask/${form.formId}`, body)
           .then(({data}) => {
@@ -1066,7 +1062,6 @@ export default {
       return tabIndex.value === index;
     };
 
-
     function toQueryView() {
       handleBack({isReload: true, isNotKeepAlive: true});
     }
@@ -1092,10 +1087,6 @@ export default {
       data.isUnitDataMgr = null;
       data.isWebSiteOther = null;
       data.otherRemark = null;
-    }
-
-    function aaaa(data) {
-      return data.replace('加簽-', '');
     }
 
     function resetCheckboxValue(data) {
@@ -1160,7 +1151,8 @@ export default {
       opinion,
       l410Data,
       taskDataRef,
-      changeDealWithUnit
+      changeDealWithUnit,
+      processInstanceStatusRef
     }
   }
 }
