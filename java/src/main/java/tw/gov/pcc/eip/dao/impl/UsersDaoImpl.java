@@ -171,14 +171,15 @@ public class UsersDaoImpl extends BaseDao<Users> implements UsersDao {
         StringBuilder sql = new StringBuilder();
         sql.append(" SELECT A.USER_ID, "); // 員工編號
         sql.append("        A.USER_NAME, "); // 姓名
-        sql.append("        SUBSTRING(A.EMAIL, 1, CHARINDEX('@', A.EMAIL) -1) ENAME, "); // 英文名
+        sql.append("        CASE WHEN A.EMAIL IS NULL OR (CHARINDEX('@', A.EMAIL) = 0) THEN '' ");
+        sql.append("        ELSE SUBSTRING(A.EMAIL, 1, CHARINDEX('@', A.EMAIL) -1) END ENAME, "); // 英文名
         sql.append("        A.DEPT_ID, "); // 部門代號
         sql.append("        B.DEPT_NAME, "); // 部門
         sql.append("        D.CODENAME AS ORGNAME, "); // 機關名稱
         sql.append("        C.CODENAME AS TITLENAME, "); // 職稱
-        sql.append("        A.EMAIL, "); // 電子郵件信箱
-        sql.append("        A.TEL1, "); // 聯絡電話
-        sql.append("        A.TEL2 "); // 分機
+        sql.append("        ISNULL(A.EMAIL, '') EMAIL, "); // 電子郵件信箱
+        sql.append("        ISNULL(A.TEL1, '') TEL1, "); // 聯絡電話
+        sql.append("        ISNULL(A.TEL2,' ') TEL2 "); // 分機
         sql.append("   FROM USERS A, ");
         sql.append("        DEPTS B, ");
         sql.append("        (SELECT CODENO,CODENAME FROM EIPCODE WHERE CODEKIND ='TITLE') C, ");

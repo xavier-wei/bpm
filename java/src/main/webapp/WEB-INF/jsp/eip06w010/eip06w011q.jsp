@@ -29,9 +29,9 @@
                 <tags:form-row>
                     <div class="col-md-4 d-flex">
                         <form:label cssClass="col-form-label" path="meetingdtBegin">會議日期：</form:label>
-                        <form:input path="meetingdtBegin" cssClass="form-control num_only" size="13" placeholder="開始日期(民國年)" maxlength="7"/>
+                        <form:input path="meetingdtBegin" cssClass="form-control d-inline-block dateTW cdate" size="13" placeholder="開始日期(民國年)" maxlength="7"/>
                         <span class="input-group-text px-1">~</span>
-                        <form:input path="meetingdtEnd" cssClass="form-control num_only" size="13" placeholder="結束日期(民國年)" maxlength="7"/>
+                        <form:input path="meetingdtEnd" cssClass="form-control d-inline-block dateTW cdate" size="13" placeholder="結束日期(民國年)" maxlength="7"/>
                     </div>
                     <div class="col-md-4 d-flex">
                         <form:label cssClass="col-form-label" path="meetingBegin">會議時間：</form:label>
