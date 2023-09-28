@@ -296,7 +296,6 @@ export default defineComponent({
       const params = new FormData();
       params.append('bpmFormQueryDto', new Blob([JSON.stringify(form)], {type: 'application/json'}));
       axios.post(`/process/notify/queryTask`, params).then(({data}) => {
-        console.log(' notify.vue -  - 298: ', JSON.parse(JSON.stringify(data)))
         queryStatus.value = true;
         if (data.length <= 0) return;
         // 最新的日期到最舊的日期排序
