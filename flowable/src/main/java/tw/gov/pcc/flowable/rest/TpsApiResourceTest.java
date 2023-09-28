@@ -107,7 +107,7 @@ class TpsAgenciesDTO implements Serializable {
     @NotNull
     private int txnSq;
     @NotNull
-    private Date txnTime;
+    private String txnTime;
     @NotNull
     private String awardNoticeDateFrom;
     @NotNull
