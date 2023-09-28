@@ -106,7 +106,7 @@ import {useNotification} from "@/shared/notification";
 import {newformatDate} from '@/shared/date/minguo-calendar-utils';
 import {useGetters} from "@u3u/vue-hooks";
 import {changeDealWithUnit} from "@/shared/word/directions";
-import { configRole } from '@/shared/word/configRole';
+import { configRoleToBpmIpt } from '@/shared/word/configRole';
 
 export default {
   name: 'l414Query',
@@ -260,7 +260,6 @@ export default {
         taskData: taskData,
         formStatus: FormStatusEnum.READONLY,
         isNotKeepAlive: false,
-        stateStatus: configRole(userData.userRole),
         isSignature: false,
         processInstanceStatus: item.processInstanceStatus,
       });

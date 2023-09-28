@@ -109,14 +109,14 @@ import {notificationErrorHandler} from "@/shared/http/http-response-helper";
 import {useNotification} from "@/shared/notification";
 import {newformatDate} from "@/shared/date/minguo-calendar-utils";
 import {changeSubject} from "@/shared/word/change-word-utils";
-import {configRole} from "@/shared/word/configRole";
+import {configRoleToBpmIpt} from "@/shared/word/configRole";
 import {useGetters} from "@u3u/vue-hooks";
 import {navigateByNameAndParams} from "@/router/router";
 
 
 export default defineComponent({
   name: 'pending',
-  methods: {changeSubject,configRole},
+  methods: {changeSubject,configRoleToBpmIpt},
   components: {
     IDatePicker,
     ITable,
@@ -223,7 +223,6 @@ export default defineComponent({
     });
 
     const toQuery = () => {
-      console.log('安安安安',configRole(userData.userRole))
       table.data = [];
       const params = new FormData();
       params.append('bpmFormQueryDto', new Blob([JSON.stringify(form)], {type: 'application/json'}));
@@ -240,7 +239,6 @@ export default defineComponent({
     function toEdit(item, i) {
 
       let prefix = item.formId.substring(0, 4).toLowerCase()
-      // let prefix = 'l410'
 
       let taskData = {
         processInstanceId: item.processInstanceId,
@@ -256,7 +254,6 @@ export default defineComponent({
           taskData: taskData,
           formStatus: FormStatusEnum.MODIFY,
           isNotKeepAlive: false,
-          stateStatus: !configRole(userData.userRole),
           isSignature: false
         });
       } else {
@@ -265,7 +262,6 @@ export default defineComponent({
           taskData: taskData,
           formStatus: FormStatusEnum.VERIFY,
           isNotKeepAlive: false,
-          stateStatus: !configRole(userData.userRole),
           isSignature: item.taskName.substring(0, 2) !== '加簽'
         });
       }

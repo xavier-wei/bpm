@@ -92,7 +92,7 @@ import {notificationErrorHandler} from "@/shared/http/http-response-helper";
 import {useNotification} from "@/shared/notification";
 import {changeProject} from "@/shared/word/project-conversion";
 import {changeDealWithUnit} from "@/shared/word/directions";
-import { configRole } from '@/shared/word/configRole';
+import { configRoleToBpmIpt } from '@/shared/word/configRole';
 
 export default defineComponent({
   name: 'l410Query',
@@ -238,7 +238,6 @@ export default defineComponent({
         taskData: taskData,
         formStatus: FormStatusEnum.READONLY,
         isNotKeepAlive: false,
-        stateStatus: configRole(userData.userRole),
         isSignature: false,
         processInstanceStatus: item.processInstanceStatus,
       });
@@ -272,5 +271,5 @@ export default defineComponent({
 });
 </script>
 
-<style scoped>
+<style>
 </style>
