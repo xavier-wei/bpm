@@ -55,7 +55,7 @@ public class TpsApiResourceTest {
             "          \"stSiniorityCode\": \"90000002\",\n" +
             "          \"stSiniority\": \"15年以上未滿20年\",\n" +
             "          \"stPersonMonths\": 7,\n" +
-            "          \"stSalary\": \"56000\"\n" +
+            "          \"stSalary\": 56000\n" +
             "        }\n" +
             "      ],\n" +
             "      \"dig\": \"M2ZjMzIwMzZkYzFl\"\n" +
@@ -69,7 +69,7 @@ public class TpsApiResourceTest {
         }
 
         if (timeComaprison(tpsAgenciesDTO.getAwardNoticeDateFrom(), tpsAgenciesDTO.getAwardNoticeDateTo())) {
-            return ResponseEntity.ok().body(String.format(RESPONSE_JSON,tpsAgenciesDTO.getTxnSq(),tpsAgenciesDTO.getTxnTime(), 0000, "成功", DATA));
+            return ResponseEntity.ok().body(String.format(RESPONSE_JSON,tpsAgenciesDTO.getTxnSq(),tpsAgenciesDTO.getTxnTime(), "0000", "成功", DATA));
         } else {
             return ResponseEntity.badRequest().body(String.format(RESPONSE_JSON,tpsAgenciesDTO.getTxnSq(),tpsAgenciesDTO.getTxnTime(), "E002", "參數錯誤或查詢起迄日期超過允許區間", ""));
 
