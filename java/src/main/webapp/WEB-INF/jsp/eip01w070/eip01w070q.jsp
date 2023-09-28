@@ -71,7 +71,7 @@
                                         'style="margin-left: 80px;" id="zipDownload">下載</button>';
                                 }
                                 $.each(data.msgs, function(i, e) { // 串接內容
-                                    msg += e + '<br>';
+                                    msg += (e == null) ? '' : e + '<br>';
                                 });
                                 $('.msg').html('');
                                 $('.msg').html(title +
