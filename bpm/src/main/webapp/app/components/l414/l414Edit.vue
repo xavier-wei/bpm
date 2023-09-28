@@ -426,8 +426,8 @@
                       <b-button class="ml-2" style="background-color: #17a2b8; color: white"
                                 variant="outline-secondary"
                                 @click="reviewStart('補件',true)"
-                                v-show="userData.cpape05m.title === '科長' ||
-                                userData.cpape05m.title === '處長' &&
+                                v-show="userData.cpape05m === null ? false: userData.cpape05m.title==='科長' ||
+                                userData.cpape05m === null ? false: userData.cpape05m.title==='處長' &&
                                 formStatusRef === FormStatusEnum.VERIFY">補件
                       </b-button>
                       <b-button class="ml-2" style="background-color: #17a2b8; color: white"
@@ -756,7 +756,8 @@ export default {
           form: {"L414": JSON.stringify(form)},
           directions: changeDirections(taskDataRef.value.decisionRole),
           opinion: opinionData,
-          ipt: userData.cpape05m.unitName === '資訊推動小組'
+          ipt: userData.cpape05m === null ? false: userData.cpape05m.unitName==='資訊推動小組',
+
         };
 
         axios

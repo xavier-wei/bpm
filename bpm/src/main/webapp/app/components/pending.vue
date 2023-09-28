@@ -253,7 +253,7 @@ export default defineComponent({
           taskData:taskData,
           formStatus: FormStatusEnum.MODIFY,
           isNotKeepAlive: false,
-          stateStatus: userData.cpape05m.unitName !== '資訊推動小組',
+          stateStatus: userData.cpape05m === null ? false: userData.cpape05m.unitName==='資訊推動小組',
           isSignature : false
         });
       } else {
@@ -262,7 +262,7 @@ export default defineComponent({
           taskData:taskData,
           formStatus: FormStatusEnum.VERIFY,
           isNotKeepAlive: false,
-          stateStatus: userData.cpape05m.unitName !== '資訊推動小組',
+          stateStatus: userData.cpape05m === null ? false: userData.cpape05m.unitName==='資訊推動小組',
           isSignature : item.taskName.substring(0,2) !== '加簽'
         });
       }
