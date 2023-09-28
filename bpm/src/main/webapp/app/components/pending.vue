@@ -1,99 +1,99 @@
 <template>
   <div>
-        <div class="card-header py-1 text-left" style="background-color: #b0ded4">
-          <div class="row align-items-center">
-            <div class="col-sm-11 p-0">
-              <h5 class="m-0">
-                <font-awesome-icon icon="search"/>
-                查詢條件
-              </h5>
-            </div>
-          </div>
+    <div class="card-header py-1 text-left" style="background-color: #b0ded4">
+      <div class="row align-items-center">
+        <div class="col-sm-11 p-0">
+          <h5 class="m-0">
+            <font-awesome-icon icon="search"/>
+            查詢條件
+          </h5>
         </div>
-        <div class="card-body clo-12" style="background-color: #d3ede8">
-          <b-form-row>
-            <i-form-group-check class="col-4" label-cols="4" content-cols="8" label="表單：" :item="$v.formId">
-              <b-form-select v-model="$v.formId.$model" :options="queryOptions.formCase">
-                <template #first>
-                  <option value="" disabled>請選擇</option>
-                </template>
-              </b-form-select
-              >
-            </i-form-group-check>
-            <i-form-group-check class="col-4" label-cols="4" content-cols="8" label="處理狀況：">
-              <b-form-select v-model="$v.processInstanceStatus.$model" :options="queryOptions.status">
-                <template #first>
-                  <option value="" disabled>請選擇</option>
-                </template>
-              </b-form-select
-              >
-            </i-form-group-check>
-            <i-form-group-check class="col-4" label-cols="4" content-cols="8" label="表單分類：">
-              <b-form-select v-model="$v.formType.$model" :options="queryOptions.formTypeList">
-                <template #first>
-                  <option value="" disabled>請選擇</option>
-                </template>
-              </b-form-select
-              >
-            </i-form-group-check>
-          </b-form-row>
-          <!-- 填表日期 -->
-          <b-form-row>
-            <i-form-group-check :label="'期間：'" class="col-8" label-cols="2" content-cols="6" :dual1="$v.dateStart"
-                                :dual2="$v.dateEnd">
-              <b-input-group>
-                <i-date-picker v-model="$v.dateStart.$model" placeholder="yyy/MM/dd"
-                               :disabled-date="notAfterPublicDateEnd"></i-date-picker>
-                <b-input-group-text>至</b-input-group-text>
-                <i-date-picker
-                    v-model="$v.dateEnd.$model"
-                    placeholder="yyy/MM/dd"
-                    :disabled-date="notBeforePublicDateStart"
-                ></i-date-picker>
-              </b-input-group>
-            </i-form-group-check>
-          </b-form-row>
+      </div>
+    </div>
+    <div class="card-body clo-12" style="background-color: #d3ede8">
+      <b-form-row>
+        <i-form-group-check class="col-4" label-cols="4" content-cols="8" label="表單：" :item="$v.formId">
+          <b-form-select v-model="$v.formId.$model" :options="queryOptions.formCase">
+            <template #first>
+              <option value="" disabled>請選擇</option>
+            </template>
+          </b-form-select
+          >
+        </i-form-group-check>
+        <i-form-group-check class="col-4" label-cols="4" content-cols="8" label="處理狀況：">
+          <b-form-select v-model="$v.processInstanceStatus.$model" :options="queryOptions.status">
+            <template #first>
+              <option value="" disabled>請選擇</option>
+            </template>
+          </b-form-select
+          >
+        </i-form-group-check>
+        <i-form-group-check class="col-4" label-cols="4" content-cols="8" label="表單分類：">
+          <b-form-select v-model="$v.formType.$model" :options="queryOptions.formTypeList">
+            <template #first>
+              <option value="" disabled>請選擇</option>
+            </template>
+          </b-form-select
+          >
+        </i-form-group-check>
+      </b-form-row>
+      <!-- 填表日期 -->
+      <b-form-row>
+        <i-form-group-check :label="'期間：'" class="col-8" label-cols="2" content-cols="6" :dual1="$v.dateStart"
+                            :dual2="$v.dateEnd">
+          <b-input-group>
+            <i-date-picker v-model="$v.dateStart.$model" placeholder="yyy/MM/dd"
+                           :disabled-date="notAfterPublicDateEnd"></i-date-picker>
+            <b-input-group-text>至</b-input-group-text>
+            <i-date-picker
+              v-model="$v.dateEnd.$model"
+              placeholder="yyy/MM/dd"
+              :disabled-date="notBeforePublicDateStart"
+            ></i-date-picker>
+          </b-input-group>
+        </i-form-group-check>
+      </b-form-row>
 
-          <div class="text-center pt-5">
-            <b-button class="ml-2" style="background-color: #17a2b8" @click="toQuery()">查詢</b-button>
-            <b-button class="ml-2" style="background-color: #17a2b8" @click="reset()">清除</b-button>
-          </div>
+      <div class="text-center pt-5">
+        <b-button class="ml-2" style="background-color: #17a2b8" @click="toQuery()">查詢</b-button>
+        <b-button class="ml-2" style="background-color: #17a2b8" @click="reset()">清除</b-button>
+      </div>
+    </div>
+
+    <i-table
+      ref="iTable"
+      :itemsUndefinedBehavior="'loading'"
+      :items="table.data"
+      :fields="table.fields"
+      :totalItems="table.totalItems"
+      :is-server-side-paging="false"
+      v-show="queryStatus"
+    >
+
+      <template #cell(filAndApp)="row">
+        <div v-if="row.item.appEmpid === row.item.filEmpid">
+          {{ row.item.appName }}
         </div>
+        <div v-else>
+          {{ row.item.appName }} / {{ row.item.filName }}
+        </div>
+      </template>
 
-        <i-table
-            ref="iTable"
-            :itemsUndefinedBehavior="'loading'"
-            :items="table.data"
-            :fields="table.fields"
-            :totalItems="table.totalItems"
-            :is-server-side-paging="false"
-            v-show="queryStatus"
-        >
+      <template #cell(subject)="row">
+        <div>
+          {{ changeSubject(row.item, true) }}
+        </div>
+      </template>
 
-          <template #cell(filAndApp)="row">
-            <div v-if="row.item.appEmpid === row.item.filEmpid">
-              {{ row.item.appName }}
-            </div>
-            <div v-else>
-              {{ row.item.appName }} / {{ row.item.filName }}
-            </div>
-          </template>
-
-          <template #cell(subject)="row">
-            <div>
-              {{ changeSubject(row.item,true) }}
-            </div>
-          </template>
-
-          <template #cell(action)="row">
-            <b-button class="ml-1" v-if="userData.userName === row.item.appName" style="background-color: #17a2b8"
-                      @click="toEdit(row.item,'0')">編輯
-            </b-button>
-            <b-button class="ml-1" v-else style="background-color: #17a2b8"
-                      @click="toEdit(row.item,'1')">處理
-            </b-button>
-          </template>
-        </i-table>
+      <template #cell(action)="row">
+        <b-button class="ml-1" v-if="userData.userName === row.item.appName" style="background-color: #17a2b8"
+                  @click="toEdit(row.item,'0')">編輯
+        </b-button>
+        <b-button class="ml-1" v-else style="background-color: #17a2b8"
+                  @click="toEdit(row.item,'1')">處理
+        </b-button>
+      </template>
+    </i-table>
   </div>
 </template>
 
@@ -109,12 +109,14 @@ import {notificationErrorHandler} from "@/shared/http/http-response-helper";
 import {useNotification} from "@/shared/notification";
 import {newformatDate} from "@/shared/date/minguo-calendar-utils";
 import {changeSubject} from "@/shared/word/change-word-utils";
+import {configRole} from "@/shared/word/configRole";
 import {useGetters} from "@u3u/vue-hooks";
 import {navigateByNameAndParams} from "@/router/router";
 
+
 export default defineComponent({
   name: 'pending',
-  methods: {changeSubject},
+  methods: {changeSubject,configRole},
   components: {
     IDatePicker,
     ITable,
@@ -221,6 +223,7 @@ export default defineComponent({
     });
 
     const toQuery = () => {
+      console.log('安安安安',configRole(userData.userRole))
       table.data = [];
       const params = new FormData();
       params.append('bpmFormQueryDto', new Blob([JSON.stringify(form)], {type: 'application/json'}));
@@ -231,7 +234,7 @@ export default defineComponent({
         table.data = data.slice(0, data.length);
         table.totalItems = data.length;
       })
-          .catch(notificationErrorHandler(notificationService));
+        .catch(notificationErrorHandler(notificationService));
     };
 
     function toEdit(item, i) {
@@ -239,31 +242,31 @@ export default defineComponent({
       let prefix = item.formId.substring(0, 4).toLowerCase()
       // let prefix = 'l410'
 
-      let taskData ={
-        processInstanceId:item.processInstanceId,
+      let taskData = {
+        processInstanceId: item.processInstanceId,
         taskId: item.taskId,
         taskName: item.taskName,
         decisionRole: item.decisionRole,
-        additional:item.additional,
+        additional: item.additional,
       }
 
       if (i === '0') {
         navigateByNameAndParams(prefix + 'Edit', {
           formId: item.formId,
-          taskData:taskData,
+          taskData: taskData,
           formStatus: FormStatusEnum.MODIFY,
           isNotKeepAlive: false,
-          stateStatus: userData.cpape05m === null ? false: userData.cpape05m.unitName==='資訊推動小組',
-          isSignature : false
+          stateStatus: !configRole(userData.userRole),
+          isSignature: false
         });
       } else {
         navigateByNameAndParams(prefix + 'Edit', {
           formId: item.formId,
-          taskData:taskData,
+          taskData: taskData,
           formStatus: FormStatusEnum.VERIFY,
           isNotKeepAlive: false,
-          stateStatus: userData.cpape05m === null ? false: userData.cpape05m.unitName==='資訊推動小組',
-          isSignature : item.taskName.substring(0,2) !== '加簽'
+          stateStatus: !configRole(userData.userRole),
+          isSignature: item.taskName.substring(0, 2) !== '加簽'
         });
       }
     }

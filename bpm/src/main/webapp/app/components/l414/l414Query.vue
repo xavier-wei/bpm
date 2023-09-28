@@ -31,14 +31,14 @@
     </div>
 
     <i-table
-        ref="iTable"
-        :itemsUndefinedBehavior="'loading'"
-        :items="table.data"
-        :fields="table.fields"
-        :totalItems="table.totalItems"
-        :is-server-side-paging="false"
-        :hideNo="true"
-        v-show="queryStatus"
+      ref="iTable"
+      :itemsUndefinedBehavior="'loading'"
+      :items="table.data"
+      :fields="table.fields"
+      :totalItems="table.totalItems"
+      :is-server-side-paging="false"
+      :hideNo="true"
+      v-show="queryStatus"
     >
       <template #cell(formId)="row">
         <b-button variant="link" style="color: blue" @click="toEdit(row.item)">
@@ -106,6 +106,7 @@ import {useNotification} from "@/shared/notification";
 import {newformatDate} from '@/shared/date/minguo-calendar-utils';
 import {useGetters} from "@u3u/vue-hooks";
 import {changeDealWithUnit} from "@/shared/word/directions";
+import { configRole } from '@/shared/word/configRole';
 
 export default {
   name: 'l414Query',
@@ -171,7 +172,7 @@ export default {
           tdClass: 'text-center align-middle',
         },
         {
-          key: 'filEmpid',
+          key: 'filName',
           label: '填表人',
           sortable: false,
           thStyle: 'width:10%',
@@ -229,14 +230,14 @@ export default {
       params.append('processInstanceStatus', '1')
 
       axios.get(`/eip/eip-bpm-isms-l414/findByWord?${params.toString()}`)
-          .then(({data}) => {
-            queryStatus.value = true
-            if (iTable.value) iTable.value.state.pagination.currentPage = 1;
-            if (data) {
-              table.data = data
-            }
-          })
-          .catch(notificationErrorHandler(notificationService))
+        .then(({data}) => {
+          queryStatus.value = true
+          if (iTable.value) iTable.value.state.pagination.currentPage = 1;
+          if (data) {
+            table.data = data
+          }
+        })
+        .catch(notificationErrorHandler(notificationService))
     };
 
     const toL414Apply = () => {
@@ -247,12 +248,21 @@ export default {
     };
 
     const toEdit = (item) => {
+      let taskData = {
+        processInstanceId: '',
+        taskId: '',
+        taskName: '',
+        decisionRole:'',
+        additional: '',
+      }
       navigateByNameAndParams('l414Edit', {
         formId: item.formId,
+        taskData: taskData,
         formStatus: FormStatusEnum.READONLY,
         isNotKeepAlive: false,
-        stateStatus: userData.cpape05m.unitName !== '資訊推動小組',
-        isSignature : false
+        stateStatus: configRole(userData.userRole),
+        isSignature: false,
+        processInstanceStatus: item.processInstanceStatus,
       });
     };
 

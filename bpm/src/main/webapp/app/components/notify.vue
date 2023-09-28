@@ -151,6 +151,7 @@ import {newformatDate} from "@/shared/date/minguo-calendar-utils";
 import {changeFormId, changeSubject} from "@/shared/word/change-word-utils";
 import {changeDealWithUnit} from "@/shared/word/directions";
 import {navigateByNameAndParams} from "@/router/router";
+import { configRole } from '@/shared/word/configRole';
 
 export default defineComponent({
   name: 'notify',
@@ -323,7 +324,7 @@ export default defineComponent({
         taskData: taskData,
         formStatus: FormStatusEnum.READONLY,
         isNotKeepAlive: false,
-        stateStatus: userData.cpape05m.unitName !== '資訊推動小組',
+        stateStatus: !configRole(userData.userRole),
         processInstanceStatus: item.processInstanceStatus,
       });
     }

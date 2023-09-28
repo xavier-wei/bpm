@@ -40,7 +40,6 @@ public class UserService {
             List<String> roles= userRoles.stream().map(UserRole::getRoleId).collect(Collectors.toList());
             user.setUserRole(String.join(",",roles));
         }
-        log.info("user 幹拎老ㄙ  {}",user);
         return user;
     }
 

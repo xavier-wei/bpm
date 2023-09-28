@@ -533,7 +533,7 @@ export default {
       appEmpid: userData.empId != null ? userData.empId : '',//	申請人員工編號
       extNum: userData.tel2 != null ? userData.tel2 : '',//	分機
       appUnit: userData.deptId != null ? userData.deptId : '',//	單位別
-      position: userData.cpape05m.title != null ? userData.cpape05m.title : '',//	職稱
+      position: userData.titleName != null ? userData.titleName : '',//	職稱
       appReason: '1',//	申請事由 1.新進 2.離職 3.職務異動
       isEnableDate: '0',//	是否有生效日期
       enableDate: null,//	生效日期

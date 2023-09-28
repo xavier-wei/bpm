@@ -308,7 +308,7 @@
 
                   <div class="card m-3" style="background-color: white">
                     <b-form-row>
-                      <i-form-group-check class="col-sm-5" label-cols="5" content-cols="7" :label="`變更設備 ：`">
+                      <i-form-group-check class="col-sm-12" label-cols="2" content-cols="8" :label="`變更設備 ： `">
                         <b-input-group>
                           <!--是否為外部防火牆 : isExternalFirewall-->
                           <b-form-checkbox v-model="$v.isExternalFirewall.$model" value="Y" unchecked-value="N"
@@ -316,7 +316,7 @@
                             外部防火牆
                           </b-form-checkbox>
                           <!--變更設備：是否為內部防火牆 : isInternalFirewall-->
-                          <b-form-checkbox v-model="$v.isInternalFirewall.$model" value="Y" unchecked-value="N"
+                          <b-form-checkbox class="mx-3" v-model="$v.isInternalFirewall.$model" value="Y" unchecked-value="N"
                                            disabled>
                             外部防火牆
                           </b-form-checkbox>
@@ -329,9 +329,8 @@
                         class="col-sm-12"
                         label-cols="2"
                         content-cols="8"
-                        :label="'設定內容 ：'"
+                        :label="'設定內容 ： '"
                         :item="$v.firewallContent"
-                        style="margin-left: 7px"
                       >
                         <!--設定內容 : firewallContent-->
                         <b-form-textarea v-model="$v.firewallContent.$model" rows="1" maxlength="2000" trim lazy

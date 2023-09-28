@@ -330,7 +330,7 @@
 
                   <div class="card m-3" style="background-color: white">
                     <b-form-row>
-                      <i-form-group-check class="col-sm-5" label-cols="5" content-cols="7" :label="`變更設備 ：`">
+                      <i-form-group-check class="col-sm-12" label-cols="2" content-cols="8" :label="`變更設備 ：`">
                         <b-input-group>
                           <!--是否為外部防火牆 : isExternalFirewall-->
                           <b-form-checkbox v-model="$v.isExternalFirewall.$model" value="Y" unchecked-value="N"
@@ -338,7 +338,7 @@
                             外部防火牆
                           </b-form-checkbox>
                           <!--變更設備：是否為內部防火牆 : isInternalFirewall-->
-                          <b-form-checkbox v-model="$v.isInternalFirewall.$model" value="Y" unchecked-value="N"
+                          <b-form-checkbox class="mx-3" v-model="$v.isInternalFirewall.$model" value="Y" unchecked-value="N"
                                            :disabled="stateStatusRef || formStatusRef === FormStatusEnum.READONLY">
                             外部防火牆
                           </b-form-checkbox>
@@ -353,7 +353,6 @@
                         content-cols="8"
                         :label="'設定內容 ：'"
                         :item="$v.firewallContent"
-                        style="margin-left: 7px"
                       >
                         <!--設定內容 : firewallContent-->
                         <b-form-textarea v-model="$v.firewallContent.$model" rows="1" maxlength="2000" trim lazy
@@ -426,8 +425,8 @@
                       <b-button class="ml-2" style="background-color: #17a2b8; color: white"
                                 variant="outline-secondary"
                                 @click="reviewStart('補件',true)"
-                                v-show="userData.cpape05m === null ? false: userData.cpape05m.title==='科長' ||
-                                userData.cpape05m === null ? false: userData.cpape05m.title==='處長' &&
+                                v-show="userData.titleName === null ? false: userData.titleName ==='科長' ||
+                                userData.titleName === null ? false: userData.titleName ==='處長' &&
                                 formStatusRef === FormStatusEnum.VERIFY">補件
                       </b-button>
                       <b-button class="ml-2" style="background-color: #17a2b8; color: white"
@@ -463,7 +462,7 @@
 
 
 import IDualDatePicker from '@/shared/i-date-picker/i-dual-date-picker.vue';
-import {reactive, ref, toRef, watch,onActivated} from '@vue/composition-api';
+import {reactive, ref, toRef, watch, onActivated} from '@vue/composition-api';
 import {useValidation, validateState} from '@/shared/form';
 import IFormGroupCheck from '@/shared/form/i-form-group-check.vue';
 import IDatePicker from '@/shared/i-date-picker/i-date-picker.vue';
@@ -475,6 +474,7 @@ import axios from "axios";
 import {notificationErrorHandler} from "@/shared/http/http-response-helper";
 import {changeDirections} from "@/shared/word/directions";
 import signatureBmodel from "@/components/signatureBmodel.vue";
+import { configRole } from '@/shared/word/configRole';
 
 const appendix = () => import('@/components/appendix.vue');
 const flowChart = () => import('@/components/flowChart.vue');
@@ -756,8 +756,7 @@ export default {
           form: {"L414": JSON.stringify(form)},
           directions: changeDirections(taskDataRef.value.decisionRole),
           opinion: opinionData,
-          ipt: userData.cpape05m === null ? false: userData.cpape05m.unitName==='資訊推動小組',
-
+          ipt: configRole(userData.userRole),
         };
 
         axios
@@ -784,7 +783,7 @@ export default {
       tabIndex.value = index;
     };
 
-    const getItem = (item : string) => {
+    const getItem = (item: string) => {
       switch (item) {
         case '不同意':
           return '0';

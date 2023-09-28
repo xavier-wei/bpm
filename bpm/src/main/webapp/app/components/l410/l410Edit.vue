@@ -500,8 +500,8 @@
                     </b-button>
                     <b-button class="ml-2" style="background-color: #17a2b8; color: white"
                               @click="reviewStart('補件',true)"
-                              v-show="userData.cpape05m.title === '科長' ||
-                              userData.cpape05m.title === '處長' &&
+                              v-show="userData.titleName === '科長' ||
+                              userData.titleName === '處長' &&
                               formStatusRef === FormStatusEnum.VERIFY">補件
                     </b-button>
                     <b-button class="ml-2" style="background-color: #17a2b8; color: white"

@@ -1,5 +1,6 @@
 package tw.gov.pcc.web.rest.loginBpm;
 
+import com.google.gson.Gson;
 import org.keycloak.KeycloakSecurityContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -40,13 +41,13 @@ public class RedirectSSOLoginResource {
 
     @RequestMapping("/api/loginBpmDev")
     @ResponseBody
-    public User redirectSSOLogin() {
-
+    public String redirectSSOLogin() {
+        Gson gson = new Gson();
         KeycloakSecurityContext keycloakSecurityContext = (KeycloakSecurityContext)session.getAttribute(KeycloakSecurityContext.class.getName());
         User userInfo = userService.getUserInfo(keycloakSecurityContext.getToken().getPreferredUsername());
         session.setAttribute("userInfo", userInfo);
         log.info("{} 登入成功",userInfo.getUserId());
-        return userInfo;
+        return gson.toJson(userInfo);
 
     }
 
