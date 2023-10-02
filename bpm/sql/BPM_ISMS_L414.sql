@@ -14,6 +14,7 @@ create table dbo.BPM_ISMS_L414
     IS_SUBMIT               NVARCHAR(1) default '0' not null,
     IS_ENABLE               NVARCHAR(1) default '0' not null,
     ENABLE_TIME             NVARCHAR(1) default '1' not null,
+    WORKING_TIME            NVARCHAR(100) collate Chinese_Taiwan_Stroke_CS_AS,
     OTHER_ENABLE_TIME       NVARCHAR(100) collate Chinese_Taiwan_Stroke_CS_AS,
     SELECTE_EDATE_TYPE      NVARCHAR(1) default '1' not null,
     SDATE                   DATETIME,
@@ -89,6 +90,10 @@ go
 
 exec sp_addextendedproperty 'MS_Description', N'使用時段', 'SCHEMA', 'dbo', 'TABLE', 'BPM_ISMS_L414', 'COLUMN',
      'ENABLE_TIME'
+go
+
+exec sp_addextendedproperty 'MS_Description', N'每週一至週五使用內容', 'SCHEMA', 'dbo', 'TABLE', 'BPM_ISMS_L414',
+     'COLUMN', 'WORKING_TIME'
 go
 
 exec sp_addextendedproperty 'MS_Description', N'使用特殊時段內容', 'SCHEMA', 'dbo', 'TABLE', 'BPM_ISMS_L414',

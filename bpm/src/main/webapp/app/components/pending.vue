@@ -62,6 +62,9 @@
 
     <i-table
       ref="iTable"
+      stacked="sm"
+      striped
+      class="test-table table-sm table-hover"
       :itemsUndefinedBehavior="'loading'"
       :items="table.data"
       :fields="table.fields"

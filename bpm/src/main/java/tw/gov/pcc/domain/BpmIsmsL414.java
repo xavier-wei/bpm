@@ -83,6 +83,10 @@ public class BpmIsmsL414 implements Serializable {
     private String enableTime;
 
     @Size(max = 100)
+    @Column(name = "working_time", length = 100)
+    private String workingTime;
+
+    @Size(max = 100)
     @Column(name = "other_enable_time", length = 100)
     private String otherEnableTime;
 
@@ -487,6 +491,14 @@ public class BpmIsmsL414 implements Serializable {
         this.createTime = createTime;
     }
 
+    public String getWorkingTime() {
+        return workingTime;
+    }
+
+    public void setWorkingTime(String workingTime) {
+        this.workingTime = workingTime;
+    }
+
     @Override
     public String toString() {
         return "BpmIsmsL414{" +
@@ -505,6 +517,7 @@ public class BpmIsmsL414 implements Serializable {
             ", isSubmit='" + isSubmit + '\'' +
             ", isEnable='" + isEnable + '\'' +
             ", enableTime='" + enableTime + '\'' +
+            ", workingTime='" + workingTime + '\'' +
             ", otherEnableTime='" + otherEnableTime + '\'' +
             ", selecteEdateType='" + selecteEdateType + '\'' +
             ", sdate=" + sdate +

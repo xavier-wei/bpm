@@ -133,10 +133,10 @@
 
                         <b-form-radio value="2">
                           <div style="height: 34px">每周一至周五 :</div>
-                          <!--每周一至周五使用時段內容 : specifyEnableTime-->
+                          <!--每周一至周五使用時段內容 : workingTime-->
                           <b-form-input
                             :disabled="$v.enableTime.$model !== '2' && formStatusRef === FormStatusEnum.READONLY || userData.userName !== $v.appName.$model"
-                            v-model="$v.specifyEnableTime.$model"/>
+                            v-model="$v.workingTime.$model"/>
                         </b-form-radio>
 
                         <b-form-radio value="3">
@@ -161,11 +161,11 @@
                       <b-form-radio-group v-model="$v.selecteEdateType.$model"
                                           :disabled="formStatusRef === FormStatusEnum.READONLY || userData.userName !== $v.appName.$model">
                         <b-form-radio value="1">
-                          <!--啟用期間開始時間 : sDate 、啟用期間結束時間 : eDate-->
+                          <!--啟用期間開始時間 : sdate 、啟用期間結束時間 : edate-->
                           <i-dual-date-picker
                             :disabled="$v.selecteEdateType.$model !== '1'"
-                            :dual1.sync="$v.sDate.$model"
-                            :dual2.sync="$v.eDate.$model"
+                            :dual1.sync="$v.sdate.$model"
+                            :dual2.sync="$v.edate.$model"
                           />
                         </b-form-radio>
                         <b-form-radio value="2">
@@ -559,11 +559,11 @@ export default {
       isSubmit: '', //	是否暫存、送出
       isEnable: '1', //	規則
       enableTime: '', //使用時段
-      specifyEnableTime: '', //每周一至周五使用時段內容
+      workingTime: '', //每周一至周五使用時段內容
       otherEnableTime: '', //使用特殊時段內容
       selecteEdateType: '', //	啟用期間類別
-      sDate: null, //啟用期間開始時間
-      eDate: null, //啟用期間結束時間
+      sdate: null, //啟用期間開始時間
+      edate: null, //啟用期間結束時間
       othereEdate: '', //職務異動止說明
       delEnableDate: '', //刪除規則時間
       sourceIp: '', //來源 ip
@@ -600,11 +600,11 @@ export default {
       isSubmit: {},
       isEnable: {},
       enableTime: {},
-      specifyEnableTime: {},
+      workingTime: {},
       otherEnableTime: {},
       selecteEdateType: {},
-      sDate: {},
-      eDate: {},
+      sdate: {},
+      edate: {},
       othereEdate: {},
       delEnableDate: {},
       sourceIp: {},
@@ -632,14 +632,15 @@ export default {
         .then(({data}) => {
           if (!data) return;
 
+          console.log('data+++',data)
           if (data.processInstanceId !== null && data.processInstanceId !== undefined) {
             // filePathData.filePathName = 'http://localhost:9973/pic?processId=' + data.processInstanceId;
             handleQueryFlowChart(data.processInstanceId);
           }
 
           data.applyDate = data.applyDate != null ? new Date(data.applyDate) : null
-          data.sDate = data.sDate != null ? new Date(data.sDate) : null
-          data.eDate = data.eDate != null ? new Date(data.eDate) : null
+          data.sdate = data.sdate != null ? new Date(data.sdate) : null
+          data.edate = data.edate != null ? new Date(data.edate) : null
           data.delEnableDate = data.delEnableDate != null ? new Date(data.delEnableDate) : null
           data.scheduleDate = data.scheduleDate != null ? new Date(data.scheduleDate) : null
           data.finishDatetime = data.finishDatetime != null ? new Date(data.finishDatetime) : null

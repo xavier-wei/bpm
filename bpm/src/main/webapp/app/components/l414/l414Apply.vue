@@ -118,18 +118,20 @@
                                       :item="$v.enableTime">
                     <!--使用時段 : enableTime-->
                     <b-form-radio-group v-model="$v.enableTime.$model">
-                      <b-form-radio value="1">
+
+                      <b-form-radio class="col-12" value="1">
                         <div style="height: 34px">每日24小時</div>
                       </b-form-radio>
 
-                      <b-form-radio value="2">
+
+                      <b-form-radio class="col-12" value="2">
                         <div style="height: 34px">每周一至周五 :</div>
-                        <!--每周一至周五使用時段內容 : specifyEnableTime-->
+                        <!--每周一至周五使用時段內容 : workingTime-->
                         <b-form-input :disabled="$v.enableTime.$model !== '2'"
-                                      v-model="$v.specifyEnableTime.$model"/>
+                                      v-model="$v.workingTime.$model"/>
                       </b-form-radio>
 
-                      <b-form-radio value="3">
+                      <b-form-radio class="col-12" value="3">
                         <div style="height: 34px">特殊時段 :</div>
                         <!--使用特殊時段內容 : otherEnableTime-->
                         <b-form-input :disabled="$v.enableTime.$model !== '3'"
@@ -149,11 +151,11 @@
                     <!--啟用期間類別 : selecteEdateType-->
                     <b-form-radio-group v-model="$v.selecteEdateType.$model">
                       <b-form-radio value="1">
-                        <!--啟用期間開始時間 : sDate 、啟用期間結束時間 : eDate-->
+                        <!--啟用期間開始時間 : sdate 、啟用期間結束時間 : edate-->
                         <i-dual-date-picker
                           :disabled="$v.selecteEdateType.$model !== '1'"
-                          :dual1.sync="$v.sDate.$model"
-                          :dual2.sync="$v.eDate.$model"
+                          :dual1.sync="$v.sdate.$model"
+                          :dual2.sync="$v.edate.$model"
                         />
                       </b-form-radio>
                       <b-form-radio value="2">
@@ -471,10 +473,10 @@ export default {
       isSubmit: '', //	是否暫存、送出
       isEnable: '1', //	規則
       enableTime: '', //使用時段
-      specifyEnableTime: '', //每周一至周五使用時段內容
+      workingTime: '', //每周一至周五使用時段內容
       otherEnableTime: '', //使用特殊時段內容
       selecteEdateType: '', //	啟用期間類別
-      sDate: null, //啟用期間開始時間
+      sdate: null, //啟用期間開始時間
       eDate: null, //啟用期間結束時間
       othereEdate: '', //職務異動止說明
       delEnableDate: null, //刪除規則時間
@@ -507,11 +509,11 @@ export default {
       isSubmit: {},
       isEnable: {required},
       enableTime: {required},
-      specifyEnableTime: {},
+      workingTime: {},
       otherEnableTime: {},
       selecteEdateType: {required},
-      sDate: {},
-      eDate: {},
+      sdate: {},
+      edate: {},
       othereEdate: {},
       delEnableDate: {},
       sourceIp: {},
