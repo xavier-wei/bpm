@@ -18,7 +18,7 @@ public class Bpm01w010Controller {
     public static final String CASE_KEY = "_bpm01w010Controller_caseData";
     private static final String MAIN_PAGE = "/bpm/Bpm01w010";//主頁
 
-    @RequestMapping("/Bpm_L414QUERY.action")
+    @RequestMapping("/Bpm_L414Query.action")
     public ModelAndView l414(HttpServletRequest request) {
 
         // 確認是否有無bpmLogin資訊
