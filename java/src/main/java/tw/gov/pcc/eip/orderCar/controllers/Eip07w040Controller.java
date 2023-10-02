@@ -1,16 +1,20 @@
 package tw.gov.pcc.eip.orderCar.controllers;
 
 import java.io.ByteArrayOutputStream;
+import java.util.Map;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.util.CollectionUtils;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.SessionAttributes;
 import org.springframework.web.servlet.ModelAndView;
 
@@ -96,6 +100,7 @@ public class Eip07w040Controller extends BaseController {
 			caseData.setUsing("");
 			caseData.setStatus("");
 			eip07w040Service.getDetailData(caseData,"eip07w040x");
+			eip07w040Service.getTimeList(caseData);
 		} catch (Exception e) {
 			log.error("Eip07w040Controller查詢失敗" + ExceptionUtility.getStackTrace(e));
 			setSystemMessage("查詢失敗");
@@ -239,5 +244,19 @@ public class Eip07w040Controller extends BaseController {
 		}
 		setSystemMessage("臨時取消成功");
 		return new ModelAndView(QUERY_PAGE);
+	}
+	
+	/**
+	 * AJAX以時間取得核定時間區間
+	 * 
+	 * @param caseData
+	 * @return integer
+	 */
+	@RequestMapping(path = "/Eip07w040_getTime.action", produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
+	@ResponseBody
+	public Map<String, String> getTime(@RequestBody Eip07w040Case caseData) {
+		log.debug("AJAX以時間取得核定時間區間");
+		Map<String, String> map = eip07w040Service.ajaxGetTime(caseData);
+		return map;
 	}
 }

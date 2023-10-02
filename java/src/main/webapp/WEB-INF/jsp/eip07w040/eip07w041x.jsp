@@ -64,7 +64,7 @@
             </tags:form-row>
             <tags:form-row>
             	<div class="col-4 col-md-4">
-            	<tags:text-item label="用車日期">
+            	<tags:text-item label="申請用車日期">
 	            	<func:minguo value="${caseData.carBookingDetailData.using_date}"/>
             	</tags:text-item>
             	</div>
@@ -78,6 +78,19 @@
             	</div>
             	<div class="col-4 col-md-4">
             		<tags:text-item label="用車區間">
+		            	<c:out value="${caseData.carBookingDetailData.usingStr}"/>
+            		</tags:text-item>
+            	</div>
+            </tags:form-row>
+            <tags:form-row>
+            	<div class="col-4 col-md-4">
+            		<tags:text-item label="核定用車時間">
+		            	<func:timeconvert value="${caseData.carBookingDetailData.approve_using_time_s}"/>~
+		            	<func:timeconvert value="${caseData.carBookingDetailData.approve_using_time_e}"/>
+            		</tags:text-item>
+            	</div>
+            	<div class="col-4 col-md-4">
+            		<tags:text-item label="核定用車區間">
 		            	<c:out value="${caseData.carBookingDetailData.usingStr}"/>
             		</tags:text-item>
             	</div>

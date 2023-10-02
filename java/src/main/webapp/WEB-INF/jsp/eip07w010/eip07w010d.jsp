@@ -252,7 +252,7 @@
 							<tr>
 								<th style="vertical-align:middle;">序號</th>
 								<th style="vertical-align:middle;">用車日期</th>
-								<th style="vertical-align:middle;">用車時間起迄</th>
+								<th style="vertical-align:middle;">開車時間起迄</th>
 								<th style="vertical-align:middle;">出場里程數</th>
 								<th style="vertical-align:middle;">回場里程數</th>
 								<th style="vertical-align:middle;">行駛公里數</th>
@@ -265,16 +265,16 @@
 								        <tr>
 											<td class="text-center"><c:out value="${status.count }"/></td>
 											<td class="text-center">
-												<func:minguo value="${data.useDate}"/>
+												<func:minguo value="${data.use_date}"/>
 											</td>
 											<td class="text-center">
-												<c:out value="${fn:substring(data.useTimeS, 0,2)}"/>:<c:out value="${fn:substring(data.useTimeS, 2,-1)}"/>
-												-<c:out value="${fn:substring(data.useTimeE, 0,2)}"/>:<c:out value="${fn:substring(data.useTimeE, 2,-1)}"/>
+												<c:out value="${fn:substring(data.driver_time_s, 0,2)}"/>:<c:out value="${fn:substring(data.driver_time_s, 2,-1)}"/>
+												-<c:out value="${fn:substring(data.driver_time_e, 0,2)}"/>:<c:out value="${fn:substring(data.driver_time_e, 2,-1)}"/>
 											</td>
-											<td class="text-right"><c:out value="${data.milageStart }"/></td>
-											<td class="text-right"><c:out value="${data.milageEnd }"/></td>
+											<td class="text-right"><c:out value="${data.milage_start }"/></td>
+											<td class="text-right"><c:out value="${data.milage_end }"/></td>
 											<td class="text-right"><c:out value="${data.milage }"/></td>
-											<td class="text-right"><c:out value="${data.gasUsed }"/></td>
+											<td class="text-right"><c:out value="${data.gas_used }"/></td>
 										</tr>
 						        </c:forEach>
 							</tbody>

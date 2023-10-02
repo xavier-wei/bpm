@@ -13,11 +13,13 @@ public class TimeConvertTag extends TagSupport {
     private Object value;
 
     public int doStartTag() {
-    	if (value == null && value.toString().length()<4) {
-    		return SKIP_BODY;
-    	}
 
-    	try {  		
+
+    	try {
+        	if (value == null || value.toString().length()<4) {
+        		pageContext.getOut().write(HtmlUtils.htmlEscape(""));
+        	}
+        	
         	String str = value.toString().substring(0,2)+":"+value.toString().substring(2,4);
     		pageContext.getOut().write(HtmlUtils.htmlEscape(str));
 

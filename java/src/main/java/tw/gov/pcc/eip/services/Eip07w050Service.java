@@ -50,8 +50,8 @@ public class Eip07w050Service {
 				data.setApply_dept(car.getApply_dept());
 				data.setApply_dept(car.getApply_dept());
 				data.setUsing_date(car.getUsing_date());
-				data.setUsing_time_s(car.getUsing_time_s());
-				data.setUsing_time_e(car.getUsing_time_e());
+				data.setUsing_time_s(car.getApprove_using_time_s());
+				data.setUsing_time_e(car.getApprove_using_time_e());
 				data.setApply_memo(car.getApply_memo());
 				Eipcode eipcode = new Eipcode();
 				eipcode.setCodekind("CARPROCESSSTATUS");

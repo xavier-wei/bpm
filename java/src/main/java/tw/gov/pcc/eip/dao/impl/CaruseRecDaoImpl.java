@@ -70,7 +70,7 @@ public class CaruseRecDaoImpl extends BaseDao<CaruseRec> implements CaruseRecDao
      * @param
      */
     @Override
-    public List<Eip07w010Case> quaryCaruseRec(Eip07w010Case caseData) {
+    public List<CaruseRec> quaryCaruseRec(Eip07w010Case caseData) {
         StringBuilder sql = new StringBuilder();
         sql.append(" select   *  from CARUSE_REC ");
             sql.append(" WHERE carno1  = :carno1 ");
@@ -78,7 +78,7 @@ public class CaruseRecDaoImpl extends BaseDao<CaruseRec> implements CaruseRecDao
             sql.append(" Order by use_date, applyid ");
         SqlParameterSource params = new MapSqlParameterSource("carno1",caseData.getCarno1())
                 .addValue("carno2", caseData.getCarno2());
-        return getNamedParameterJdbcTemplate().query(sql.toString(),params, BeanPropertyRowMapper.newInstance(Eip07w010Case.class));
+        return getNamedParameterJdbcTemplate().query(sql.toString(),params, BeanPropertyRowMapper.newInstance(CaruseRec.class));
     }
     
     /**

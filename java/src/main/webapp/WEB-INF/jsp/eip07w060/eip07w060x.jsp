@@ -136,16 +136,16 @@
             <tags:form-row>
             	<c:if test = "${caseData.carType == 'N'}">
 					<div class="col-12 col-md-2">
-						<form:label path="carbooking.apply_memo" cssClass="col-form-label">用車時間起：</form:label>
-	                    <c:out value="${caseData.carbooking.using_time_s}"/>
+						<form:label path="carbooking.apply_memo" cssClass="col-form-label">核定用車時間起：</form:label>
+						<c:out value='${fn:substring(caseData.carbooking.approve_using_time_s, 0,2)}'/>:<c:out value='${fn:substring(caseData.carbooking.approve_using_time_s, 2,-1)}'/>
 	            	</div>
 					<div class="col-12 col-md-2">
 	                    <form:label path="carbooking.apply_memo" cssClass="col-form-label">~迄：</form:label>
-	                    <c:out value="${caseData.carbooking.using_time_e}"/>
+						<c:out value='${fn:substring(caseData.carbooking.approve_using_time_e, 0,2)}'/>:<c:out value='${fn:substring(caseData.carbooking.approve_using_time_e, 2,-1)}'/>
 	            	</div>
             	</c:if>
             	<c:if test = "${caseData.carType == 'Y' && caseData.btmk == 'Y'}">
-            		<form:label path="usehms" cssClass="col-form-label star">用車時間起：</form:label>
+            		<form:label path="usehms" cssClass="col-form-label star">核定用車時間起：</form:label>
 	            	<div class="col-12 col-md-6 form-inline">
 					   <form:select  path="startuseH" cssClass="form-control">
 	                   	<form:option value=""></form:option>
@@ -273,8 +273,8 @@
 							<thead data-orderable="true">
 								<tr>
 									<th class="text-center" width=10%>用車日期</th>
-									<th class="text-center" width=25%>用車時間起</th>
-									<th class="text-center" width=25%>用車時間迄</th>
+									<th class="text-center" width=25%>開車時間起</th>
+									<th class="text-center" width=25%>開車時間迄</th>
 									<th class="text-center" width=10%>出場公里數</th>
 									<th class="text-center" width=10%>回場公里數</th>
 									<th class="text-center" width=10%>行駛公里數</th>

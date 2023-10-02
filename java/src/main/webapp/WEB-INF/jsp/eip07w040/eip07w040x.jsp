@@ -74,25 +74,73 @@
             </tags:form-row>
             <tags:form-row>
             	<div class="col-4 col-md-4">
-            		<tags:text-item label="用車時間">
+            		<tags:text-item label="申請用車時間">
 	            		<func:timeconvert value="${caseData.carBookingDetailData.using_time_s}"/>~
 	            		<func:timeconvert value="${caseData.carBookingDetailData.using_time_e}"/>
             		</tags:text-item>
             	</div>
             	<div class="col-4 col-md-4">
-            		<tags:text-item label="用車區間">
+            		<tags:text-item label="申請用車區間">
 		            	<c:out value="${caseData.carBookingDetailData.usingStr}"/>
             		</tags:text-item>
             	</div>
             </tags:form-row>
+
+		    <tags:form-row>
+		    <div class="d-flex align-items-center col-4 col-md-4">
+		    	  <form:label path="starH" cssClass="col-form-label star">核定用車時間：</form:label>
+				  <form:select id="starH"  path="starH" cssClass="form-control timeselect">
+                  	<form:option value=""></form:option>
+                      <c:forEach var="hour" items="${caseData.hourList}" varStatus="status">
+                          <form:option value="${hour}"><c:out value="${hour}"/></form:option>
+                      </c:forEach>
+                  </form:select>
+                  ：
+                  <form:select id="starM"   path="starM" cssClass="form-control timeselect">
+                  	<form:option value=""></form:option>
+                      <c:forEach var="minute" items="${caseData.minuteList}" varStatus="status">
+                          <form:option value="${minute}"><c:out value="${minute}"/></form:option>
+                      </c:forEach>
+                  </form:select>
+                  ~
+                  <form:select   path="endH" cssClass="form-control timeselect">
+                  	<form:option value=""></form:option>
+                      <c:forEach var="hour" items="${caseData.hourList}" varStatus="status">
+                          <form:option value="${hour}"><c:out value="${hour}"/></form:option>
+                      </c:forEach>
+                  </form:select>
+                  ：
+                  <form:select id="endM"   path="endM" cssClass="form-control timeselect">
+                  	<form:option value=""></form:option>
+                      <c:forEach var="minute" items="${caseData.minuteList}" varStatus="status">
+                          <form:option value="${minute}"><c:out value="${minute}"/></form:option>
+                      </c:forEach>
+                  </form:select>
+		    </div>
+		    <div class="col-4 col-md-4">
+            		<tags:text-item label="核定用車區間">
+		            	                   	<div class="approve_using_time_s"></div>
+					<form:hidden path="approve_using_time_s" cssClass="form-control" maxlength="4" readOnly="true" size="3"/>
+		            <form:hidden path="approve_using_time_e" cssClass="form-control" maxlength="4" readOnly="true" size="3"/>
+            		</tags:text-item>
+            		</div>
+
+       
+
+            </tags:form-row> 
+
+            
             <tags:form-row>
+            <div class="col-4 col-md-4 d-flex  align-items-center">
             <form:label path="carno" cssClass="col-form-label star">派車車號：</form:label>
+            
             <form:select path="carno" cssClass="form-control add">
             <form:option value=""></form:option>
             <c:forEach items="${caseData.carnoList}" var="item" varStatus="status">
                   <form:option value="${item.carno1}-${item.carno2}">${item.carno1}-${item.carno2}</form:option>
             </c:forEach>
             </form:select>
+            </div>
             <c:if test="${empty caseData.carBookingList && caseData.showEmptyStr}">
             	<div class="pt-2 text-danger pl-2">本車該用車時間尚未有人預約使用</div>
             </c:if>
@@ -111,7 +159,9 @@
             <form:hidden path="timeMK" value="${caseData.timeMK}"/>
             <c:if test="${not empty caseData.carBookingList}">
             
-            <tags:text-item label="今日該車輛用車明細"></tags:text-item>
+			<div class="d-flex no-gutters">
+			    <div class="col-label "><func:minguo value="${caseData.carBookingDetailData.using_date}"/>該車輛用車明細</div>
+			</div>
                 <table  class="table table-hover mb-4">
             		<thead>
             		<tr>
@@ -140,7 +190,9 @@
 		            </c:forEach>
             		</tbody>
             	</table>
-            <tags:text-item label="今日該車輛用車時間一覽"></tags:text-item>
+            <div class="d-flex no-gutters">
+			    <div class="col-label "><func:minguo value="${caseData.carBookingDetailData.using_date}"/>該車輛用車時間一覽</div>
+			</div>
 		    <table class="table table-bordered">
 		    	<thead>
 		        <tr>
@@ -281,6 +333,11 @@
         	
         	$('#carno').change(function(e){
         		e.preventDefault();
+        		if($("#approve_using_time_s").val()==''){
+        			showAlert('核定用車時間未選取');
+        			return;
+        		}
+        		
         		if($('#carno').val()!==''){
         			$('#eip07w040Form').attr('action', '<c:url value="/Eip07w040_getUsingData.action" />').submit();
         		}
@@ -331,6 +388,51 @@
             });
             
          });
+        
+        $(".timeselect").change(function(e){
+			if($("#starH").val()!=='' && $("#starM").val()!=='' && $("#endH").val()!=='' && $("#endM").val()!==''){
+				var start = $("#starH").val()+$("#starM").val();
+				var end = $("#endH").val()+$("#endM").val();
+				if(parseInt(end)<parseInt(start)){
+					showAlert('核定時間迄不得大於起');
+					return;
+				}
+				
+	        	var data = {};
+				data["starH"] = $("#starH").val();
+				data["starM"] = $("#starM").val();
+				data["endH"] = $("#endH").val();
+				data["endM"] = $("#endM").val();
+				
+				console.log("1."+$("#starH").val());
+				console.log("2."+$("#starM").val());
+				console.log("3."+$("#endH").val());
+				console.log("4."+$("#endM").val());
+				
+				var url = '<c:url value='/Eip07w040_getTime.action' />';
+				$.ajax({
+					type : "POST",
+					contentType : "application/json",
+					url : url,
+					data : JSON.stringify(data),
+					dataType : 'json',
+					timeout : 100000,
+					success : function(data) {
+						var str = data.starTime.substring(0,2)+":"+
+						data.starTime.substring(2,4)+"~"+
+						data.endTime.substring(0,2)+":"+
+						data.endTime.substring(2,4);
+						$(".approve_using_time_s").text(str);
+
+						$("#approve_using_time_s").val(data.starTime);
+						$("#approve_using_time_e").val(data.endTime);
+					},
+					error : function(e) {
+						showAlert("取得核定區間失敗");
+					}
+	        	});
+       		 }
+        });
 
 </script>
 </jsp:attribute>
