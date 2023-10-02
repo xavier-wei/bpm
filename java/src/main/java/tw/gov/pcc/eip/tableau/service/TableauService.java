@@ -16,10 +16,8 @@ import java.net.URLEncoder;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Collectors;
 
 /**
@@ -46,6 +44,9 @@ public class TableauService {
 
     @Autowired
     private TableauDashboardInfoDao tableauDashboardInfoDao;
+
+    @Autowired
+    private EipcodeDao eipcodeDao;
 
 
     public List<TableauDataCase> findTableauDataByUser(String userId) throws IOException {
@@ -88,7 +89,11 @@ public class TableauService {
             tableauFolderPathPrefix = "D:/";
         } else {
             log.info("環境為==prod==");
-            tableauFolderPathPrefix = "/mnt/stsdat/eip/";
+            //取得儀錶板截圖資料夾位置
+            Optional<Eipcode> opt = eipcodeDao.findByCodeKindCodeNo("TABLEAU", "folder");
+            if (opt.isPresent()) {
+                tableauFolderPathPrefix = opt.get().getCodename();
+            }
         }
         log.info("tableauFolderPathPrefix:{}", tableauFolderPathPrefix);
         for (TableauDashboardInfo dashboard : dashboardList) {
@@ -132,17 +137,31 @@ public class TableauService {
 
 
     public Map<String, String> getTrustedTicket() {
+        //取得儀錶板連線ip、username
+        List<Eipcode> opt = eipcodeDao.findByCodeKind("TABLEAU");
+        AtomicReference<String> wgserver = new AtomicReference<>("");
+        AtomicReference<String> username = new AtomicReference<>("");
+        opt.forEach(Eipcode->{
+            if(Eipcode.getCodeno().equals("ip")){
+                wgserver.set(Eipcode.getCodename());
+            }
+            else if(Eipcode.getCodeno().equals("username")){
+                username.set(Eipcode.getCodename());
+            }
+        });
+        log.info("tableau 連線資訊, wgserver: {}",wgserver);
+        log.info("username 連線資訊, username: {}",username);
         Map<String, String> resultMap = new HashMap<>();
         OutputStreamWriter out = null;
         BufferedReader in = null;
         try {
             // TODO: 2023/8/2  wgserver要改成定義在properties檔?
-            String wgserver = "http://223.200.84.115";
+//            String wgserver = "http://223.200.84.115";
             StringBuilder reqUrl = new StringBuilder();
             reqUrl.append(URLEncoder.encode("username", "UTF-8"));
             reqUrl.append("=");
             // TODO: 2023/8/2  username: admin要改成定義在properties檔?
-            reqUrl.append(URLEncoder.encode("admin", "UTF-8"));
+            reqUrl.append(URLEncoder.encode(String.valueOf(username), "UTF-8"));
             URL url = new URL(wgserver + "/trusted");
             URLConnection conn = url.openConnection();
             conn.setDoOutput(true);

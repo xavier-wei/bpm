@@ -80,7 +80,7 @@
 				</tags:form-row>
 				<tags:form-row>
 					<div c class="col-md-4 d-flex">
-						<form:label cssClass="col-form-label" path="lable">車輛總類：</form:label>
+						<form:label cssClass="col-form-label" path="lable">車輛種類：</form:label>
 						<form:select id="b_apply_car_type"  name="b_apply_car_type"  path="detailsList[0].b_apply_car_type" cssClass="form-control" disabled="true">
 							<form:option value="1">4人座</form:option>
 							<c:forEach var="item" items="${caseData.carTyList}" varStatus="status">
@@ -152,7 +152,7 @@
 			</tags:form-row>
 				<tags:form-row>
 					<div c class="col-md-4 d-flex">
-						<form:label cssClass="col-form-label" path="lable">車輛總類：</form:label>
+						<form:label cssClass="col-form-label" path="lable">車輛種類：</form:label>
 						<form:select id="apply_car_type"  name="apply_car_type"  path="detailsList[0].apply_car_type" cssClass="form-control">
 <%--	                    	<form:option value="1">4人座</form:option>--%>
 	                        <c:forEach var="item" items="${caseData.carTyList}" varStatus="status">
@@ -212,6 +212,17 @@
 							<form:label cssClass="col-form-label star" path="lable">表單狀態：</form:label>
 							<form:input id="codeName" name="codeName" path="detailsList[0].codeName" cssClass="form-control"    disabled="true"/>
 						</div>
+					</tags:form-row>
+					<tags:form-row>
+							<div   class="col-md-4 d-flex" >
+								<form:label cssClass="col-form-label " path="lable">核定用車時間：</form:label>
+								<c:if test="${not empty caseData.detailsList[0].approve_using_time_s}">
+									<label class="col-form-label text-left col-3" >
+										<c:out value='${fn:substring(caseData.detailsList[0].approve_using_time_s, 0,2)}'/>:<c:out value='${fn:substring(caseData.detailsList[0].approve_using_time_s, 2,-1)}'/>
+										-<c:out value='${fn:substring(caseData.detailsList[0].approve_using_time_e, 0,2)}'/>:<c:out value='${fn:substring(caseData.detailsList[0].approve_using_time_e, 2,-1)}'/>
+									</label>
+								</c:if>
+							</div>
 					</tags:form-row>
 					<tags:form-row>
 						<form:label id="status_5" cssClass="col-form-label " path="lable">[車輛相關資料]：公務車已滿請改其他大眾運輸工具。</form:label>
@@ -314,7 +325,7 @@
 
 				<tags:form-row>
 						<div  class="col-md-4 d-flex">
-							<form:label cssClass="col-form-label" path="lable">車輛總類：</form:label>
+							<form:label cssClass="col-form-label" path="lable">車輛種類：</form:label>
 							<form:select id="mkCartype"  name="mkCartype"  path="changeMkList[0].apply_car_type" cssClass="form-control" disabled="true">
 							<form:option value="1">4人座</form:option>
 							<c:forEach var="item" items="${caseData.carTyList}" varStatus="status">

@@ -241,6 +241,8 @@ public class LoginService {
         if (!map.isEmpty()) {
             menuItemList.add(map.get(previousLevel2Id));
         }
+        // 加上系統登出項目
+        menuItemList.add(new MenuItem("2", "登出系統", "/Logout.action"));
         menu.setMenuItemList(menuItemList);
         return menu;
     }

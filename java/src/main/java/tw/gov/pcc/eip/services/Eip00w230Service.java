@@ -31,8 +31,8 @@ import java.util.stream.Collectors;
 @AllArgsConstructor
 public class Eip00w230Service {
 
+    public static final String TABLEAU_ENTER_ACTION = "/tableau_enter.action/"; //抓取儀錶版功能前綴
     private static final String THIS_ENTER_ACTION = "/Eip00w230_enter.action"; //大數據儀表板設定功能
-    private static final String TABLEAU_ENTER_ACTION = "/tableau_enter.action/"; //抓取儀錶版功能前綴
     private final UserBean userData;
     private final Pwc_tb_tableau_user_infoDao pwc_tb_tableau_user_infoDao;
 
@@ -71,7 +71,7 @@ public class Eip00w230Service {
     }
 
     private List<Eip00w230Case.TabCase> convertPwcTabToTabCase(List<Eip00w230Case.TabCase> tabCaseList, List<Pwc_tb_tableau_user_info> tabList) {
-        Map<String, String> tabMap = tabCaseList.stream().collect(Collectors.toMap(Eip00w230Case.TabCase::getDashboard_fig_id, Eip00w230Case.TabCase::getItem_name));
+        Map<String, String> tabMap = tabCaseList.stream().collect(Collectors.toMap(Eip00w230Case.TabCase::getDashboard_fig_id, Eip00w230Case.TabCase::getItem_name, (oldOne, newOne) -> oldOne));
         return tabList.stream().filter(x -> tabMap.containsKey(x.getDashboard_fig_id()))
                 .map(x -> Eip00w230Case.TabCase.builder().item_name(tabMap.get(x.getDashboard_fig_id())).dashboard_fig_id(x.getDashboard_fig_id()).build())
                 .collect(Collectors.toList());
@@ -80,7 +80,7 @@ public class Eip00w230Service {
     private List<Eip00w230Case.TabCase> convertMenuItemToTabCase(List<MenuItem> tabList) {
         //20230915 大數據功能修改樣式，導致抓取錯誤。
         //TABLEAU_ENTER_ACTION/xxxx => TABLEAU_ENTER_ACTION/xxxx.action
-        return tabList.stream().map(x -> Eip00w230Case.TabCase.builder().item_name(x.getFunctionName()).dashboard_fig_id(StringUtils.substringBefore(StringUtils.substringAfterLast(x.getUrl(), "/"),".")).build()).collect(Collectors.toList());
+        return tabList.stream().map(x -> Eip00w230Case.TabCase.builder().item_name(x.getFunctionName()).dashboard_fig_id(StringUtils.substringBefore(StringUtils.substringAfterLast(x.getUrl(), "/"), ".")).build()).collect(Collectors.toList());
     }
 
     private List<MenuItem> deepFind(MenuItem menuItem) {
@@ -90,7 +90,7 @@ public class Eip00w230Service {
     public void deleteAndInsertPwctab(Eip00w230Case eip00W230Case) {
         List<String> pickTabList = Arrays.asList(StringUtils.split(eip00W230Case.getPickTabListString(), ","));
         //清空
-        eip00W230Case.getFullTabList().stream().map(x->convertTabCaseToPwcTab(x,new AtomicReference<>(BigDecimal.ZERO))).forEach(pwc_tb_tableau_user_infoDao::deleteByKey);
+        eip00W230Case.getFullTabList().stream().map(x -> convertTabCaseToPwcTab(x, new AtomicReference<>(BigDecimal.ZERO))).forEach(pwc_tb_tableau_user_infoDao::deleteByKey);
         //新增
         Map<String, Eip00w230Case.TabCase> tabCaseMap = eip00W230Case.getFullTabList().stream()
                 .collect(Collectors.toMap(Eip00w230Case.TabCase::getDashboard_fig_id, x -> x));

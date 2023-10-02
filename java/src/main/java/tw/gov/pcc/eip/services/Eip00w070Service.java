@@ -184,6 +184,10 @@ public class Eip00w070Service {
 		Eip00w230Case resultCase = new Eip00w230Case();
 		eip00w230Service.findCheckedList(resultCase, userId);
 		Set<String> allIds = resultCase.getFullTabList().stream().map(Eip00w230Case.TabCase::getDashboard_fig_id).collect(Collectors.toSet());
+		//系統管理者不動
+		if (user_rolesDao.selectByKey(userId, User_rolesDao.SYSTEM_ADMIN_SYS_ID, User_rolesDao.SYSTEM_ADMIN_DEPT_ID, User_rolesDao.SYSTEM_ADMIN_ROLE_ID) != null) {
+			return;
+		}
 		pwc_tb_tableau_user_infoDao.findUnauthoriedList().stream().filter(x -> allIds.contains(x.getDashboard_fig_id()) && StringUtils.equalsIgnoreCase(x.getUser_id(), userId)).forEach(pwc_tb_tableau_user_infoDao::deleteByKey);
 	}
 

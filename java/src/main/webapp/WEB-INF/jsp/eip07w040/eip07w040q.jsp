@@ -58,8 +58,8 @@
 	                            <th style="width: 5%">序號</th>
 	                            <th style="width: 10%">申請人</th>
 	                            <th style="width: 15%">申請單位</th>
-	                            <th style="width: 10%">用車日期</th>
-	                            <th style="width: 10%">用車時間起迄</th>
+	                            <th style="width: 10%">申請用車日期</th>
+	                            <th style="width: 10%">申請用車時間起迄</th>
 	                            <th style="width: 30%">用車事由</th>
 	                            <th style="width: 10%">表單狀態</th>
 	                            <th style="width: 10%">明細</th>
@@ -119,7 +119,7 @@
                             <th class="align-middle" style="width: 10%">申請人</th>
                             <th class="align-middle" style="width: 10%">申請單位</th>
                             <th class="align-middle" style="width: 7%">用車日期</th>
-                            <th class="align-middle" style="width: 8%">用車時間起迄</th>
+                            <th class="align-middle" style="width: 8%">核定用車時間起迄</th>
                             <th class="align-middle" style="width: 18%">用車事由</th>
                             <th class="align-middle" style="width: 7%">已列印派車單註記</th>
                             <th class="align-middle" style="width: 8%">車號</th>
@@ -144,7 +144,7 @@
                       	</td>
                       	<td><func:minguo value="${item.using_date}"/></td>
                       	<td>
-                       		<func:timeconvert value="${item.using_time_s}"/>~<func:timeconvert value="${item.using_time_e}"/>
+                       		<func:timeconvert value="${item.approve_using_time_s}"/>~<func:timeconvert value="${item.approve_using_time_e}"/>
                       	</td>
                       	<td class="text-left">
 					<span class="ellipsisStr">
@@ -180,7 +180,7 @@
 			<form:hidden path="reprintApplyid"/>
 
             <fieldset>
-            <legend>秘書處長官核派案件，用車日期：
+            <legend>秘書處長官核派案件，核定用車日期：
             <func:minguo value="${caseData.using_time_sStrForTable3}"/> ~ <func:minguo value="${caseData.using_time_eStrForTable3}"/></legend>
             <tags:form-row>
             <div class="table-responsive">	 
@@ -191,7 +191,7 @@
                             <th style="width:10%" class="align-middle">申請人</th>
                             <th style="width:10%" class="align-middle">申請單位</th>
                             <th style="width:10%" class="align-middle">用車日期</th>
-                            <th style="width:10%" class="align-middle">用車時間起迄</th>
+                            <th style="width:10%" class="align-middle">核定用車時間起迄</th>
                             <th style="width:35%" class="align-middle">用車事由</th>
                             <th style="width:20%" class="align-middle">核派狀態</th>
                         </tr>
@@ -208,7 +208,9 @@
                       	</td>
                       	<td><func:minguo value="${item.using_date}"/></td>
                       	<td>
-                       	<func:timeconvert value="${item.using_time_s}"/>~<func:timeconvert value="${item.using_time_e}"/>
+                      	<c:if test="${not empty item.approve_using_time_s and not empty item.approve_using_time_e}">
+                       		<func:timeconvert value="${item.approve_using_time_s}"/>~<func:timeconvert value="${item.approve_using_time_e}"/>
+                      	</c:if>
                       	</td>
                         <td class="text-left">
 							<span class="ellipsisStr">

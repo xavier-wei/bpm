@@ -12,6 +12,7 @@ import com.lowagie.text.DocumentException;
 import com.lowagie.text.PageSize;
 import com.lowagie.text.pdf.PdfPTable;
 
+import tw.gov.pcc.eip.Global;
 import tw.gov.pcc.eip.framework.report.PdfReportBase;
 import tw.gov.pcc.eip.orderCar.cases.Eip07w040Case;
 import tw.gov.pcc.eip.report.vo.Eip07w040L_Vo;
@@ -35,6 +36,11 @@ public class Eip07w040l00 extends PdfReportBase {
         // 參數說明: Document(頁面大小, 左邊空白, 右邊空白, 上面空白, 下面空白)
         return new Document(PageSize.A4, 20, 20, 20, 20);
     }
+    
+    @Override
+	protected void initFont() throws ReportException {
+		initFont(Global.CNS11643_KAI_FILENAME); // 自訂 BaseFont
+	}
         
     public PdfPTable addData(Eip07w040L_Vo vo) throws DocumentException {
 		document.newPage();
@@ -44,24 +50,33 @@ public class Eip07w040l00 extends PdfReportBase {
         addCell(table, 100, 1, "派車預約單" , titleFontSize, 0, CENTER);
         addCell(table, 100, 4, EMPTY_FIELD , titleFontSize, 0, CENTER);
         
+        addCell(table, 100, 4, "程式代號：EIP07W040L" , subTitleFontSizeMid, 0, LEFT);
         addCell(table, 30, 4, "申請人："+vo.getApply_user() , subTitleFontSizeMid, 0, LEFT);
         addCell(table, 40, 4, "申請單位："+vo.getApply_dept() , subTitleFontSizeMid, 0, LEFT);
         addCell(table, 30, 4, "申請日期："+vo.getApply_date(), subTitleFontSizeMid, 0, LEFT);
+        addCell(table, 100, 4, EMPTY_FIELD , titleFontSize, 0, CENTER);
         
+        addCell(table, 100, 1, "[申請相關資料]：" , subTitleFontSizeMid, 0, LEFT);
         addCell(table, 100, 4, "用車事由："+vo.getApply_memo() , subTitleFontSizeMid, 0, LEFT);
         addCell(table, 100, 4, "目的地："+vo.getDestination() , subTitleFontSizeMid, 0, LEFT);
         
         addCell(table, 100, 4, "人數："+vo.getNum_of_people() , subTitleFontSizeMid, 0, LEFT);
         
         addCell(table, 100, 4, "用車日期："+vo.getUsing_date(), subTitleFontSizeMid, 0, LEFT);
-        addCell(table, 100, 4, "用車時間："+vo.getUsing_time_s() + "~" + vo.getUsing_time_e(), subTitleFontSizeMid, 0, LEFT);
+        addCell(table, 100, 4, "申請用車時間："+vo.getUsing_time_s() + "~" + vo.getUsing_time_e(), subTitleFontSizeMid, 0, LEFT);
         
+        addCell(table, 100, 4, "核定用車時間："+
+        vo.getApprove_using_time_s().substring(0,2)+":"+vo.getApprove_using_time_s().substring(2,4) + "~" + vo.getApprove_using_time_e().substring(0,2)+":"+vo.getApprove_using_time_e().substring(2,4), subTitleFontSizeMid, 0, LEFT);
+        addCell(table, 100, 4, "表單狀態："+vo.getCarprocess_status(), subTitleFontSizeMid, 0, LEFT);
+        
+        addCell(table, 100, 4, EMPTY_FIELD , titleFontSize, 0, CENTER);
         if("Y".equals(vo.getCombine_mk())) {
             addCell(table, 50, 4, "併單註記："+vo.getCombine_mk() , subTitleFontSizeMid, 0, LEFT);
             addCell(table, 50, 4, "併單派車單號："+vo.getCombine_applyid() , subTitleFontSizeMid, 0, LEFT);
             addCell(table, 100, 4, "併單原因："+vo.getCombine_reason(), subTitleFontSizeMid, 0, LEFT);
         }
-
+        
+        addCell(table, 100, 4, "[車輛相關資料]：", subTitleFontSizeMid, 0, LEFT);
         addCell(table, 100, 4, "派車單號："+vo.getApplyid() , subTitleFontSizeMid, 0, LEFT);
         addCell(table, 50, 4, "駕駛人姓名："+vo.getName() , subTitleFontSizeMid, 0, LEFT);
         addCell(table, 50, 4, "手機號碼："+vo.getCellphone() , subTitleFontSizeMid, 0, LEFT);
