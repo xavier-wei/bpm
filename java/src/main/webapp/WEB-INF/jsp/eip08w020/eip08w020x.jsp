@@ -69,10 +69,10 @@
 			                    <form:hidden path="allData[${numstatus.index}].keepitemno" class="keepitemno"/>
 	                        	</td>
 	                        	<td>
-	                        	<form:input path="allData[${numstatus.index}].book_cnt" cssClass="book_cnt form-control num_only" readOnly="true"/>
+	                        	<form:input type="number" path="allData[${numstatus.index}].book_cnt" cssClass="book_cnt form-control num_only" readOnly="true"/>
 	                        	<form:hidden path="allData[${numstatus.index}].withhold_cnt" class="withhold_cnt"/>
 	                        	</td>
-	                        	<td><form:input path="allData[${numstatus.index}].apply_cnt" cssClass="apply_cnt form-control num_only"/></td>
+	                        	<td><form:input type="number" path="allData[${numstatus.index}].apply_cnt" cssClass="apply_cnt form-control num_only"/></td>
 	                        	<td><form:input path="allData[${numstatus.index}].unit"  cssClass="unit form-control" maxlength="4"/></td>
 	                        </tr>
                         </tbody>
@@ -118,11 +118,12 @@
                 			eachStr += '數量未填寫';
                 		}
                 		
-                		if($(".apply_cnt").eq(index).val()!=='' && 
-                				$(".book_cnt").eq(index).val()!==''&&  
-                				$(".apply_cnt").eq(index).val()>$(".book_cnt").eq(index).val()	
-                		){
-                			eachStr +='申請數量不得大於庫存數量';
+                		if($(".apply_cnt").eq(index).val()!=='' && $(".book_cnt").eq(index).val()!==''){
+                			var applycnt = $(".apply_cnt").eq(index).val();
+                			var bookcnt = $(".book_cnt").eq(index).val();
+                			if(parseInt(applycnt)>parseInt(bookcnt)){                				
+                				eachStr +='申請數量不得大於庫存數量';
+                			}
                 		}
             		}
             		

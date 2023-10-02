@@ -21,8 +21,7 @@ public class Eip06w050Case implements Serializable {
     private String  itemTyp; //物件類別  A：餐點  B：物品  D：預約天數  F：會議室  FX：會議室(禁用)
     private Map<String, String> itemTypMap; //物件類別下拉式選單內容
 
-    @RequiredString(label = "編號")
-    private String itemId;
+    private String itemId; //因會議室編號命名原則(2碼樓層+2碼編號)，其他自訂，故於Service檢查
     @RequiredString(label = "名稱")
     private String itemName;
     private Integer qty;

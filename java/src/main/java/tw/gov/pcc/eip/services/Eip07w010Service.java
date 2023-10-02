@@ -6,10 +6,7 @@ import org.springframework.stereotype.Service;
 import tw.gov.pcc.common.util.DateUtil;
 import tw.gov.pcc.eip.adm.cases.Eip00w010Case;
 import tw.gov.pcc.eip.dao.*;
-import tw.gov.pcc.eip.domain.CarBase;
-import tw.gov.pcc.eip.domain.Eipcode;
-import tw.gov.pcc.eip.domain.GasRec;
-import tw.gov.pcc.eip.domain.User_roles;
+import tw.gov.pcc.eip.domain.*;
 import tw.gov.pcc.eip.framework.domain.UserBean;
 import tw.gov.pcc.eip.orderCar.cases.Eip07w010Case;
 import tw.gov.pcc.eip.util.DateUtility;
@@ -217,7 +214,7 @@ public class Eip07w010Service {
      */
     public void getCarDetails(Eip07w010Case caseData)throws Exception {
         List<Eip07w010Case> oilList= new ArrayList<>();
-        List<Eip07w010Case> mileageList= new ArrayList<>();
+        List<CaruseRec> mileageList= new ArrayList<>();
         mileageList=caruseRecDao.quaryCaruseRec(caseData.getEip07w010QueryDataList().get(0));
         oilList= gasRecDao.quaryGasRec(caseData.getEip07w010QueryDataList().get(0));
         if (mileageList.isEmpty()&&oilList.isEmpty()){

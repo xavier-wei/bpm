@@ -2,7 +2,9 @@ package tw.gov.pcc.eip.services;
 
 import java.io.ByteArrayOutputStream;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 import org.apache.commons.collections.CollectionUtils;
@@ -137,13 +139,18 @@ public class Eip07w040Service {
 		eipcode.setCodeno(carBookingDetailData.getApply_car_type());
 		Eipcode code = eipcodeDao.selectDataByPrimaryKey(eipcode);
 		carBookingDetailData.setApply_car_type(code.getCodename());
-	
-		String[] usingTime = timeConversionService.timeStringToBeginEndTime(carBookingDetailData.getUsing());
-		carBookingDetailData.setUsingStr(usingTime[0].substring(0,2)+":"+usingTime[0].substring(2,4) + "~"+usingTime[1].substring(0,2)+":"+usingTime[1].substring(2,4));
+		
+		if(StringUtils.isNotEmpty(carBookingDetailData.getUsing())){
+			String[] usingTime = timeConversionService.timeStringToBeginEndTime(carBookingDetailData.getUsing());
+			carBookingDetailData.setUsingStr(usingTime[0].substring(0,2)+":"+usingTime[0].substring(2,4) + "~"+usingTime[1].substring(0,2)+":"+usingTime[1].substring(2,4));
+		}
 		carBookingDetailData.setApply_user(carBookingDetailData.getApply_user());
 		
 
 		caseData.setCarBookingDetailData(carBookingDetailData);//案件明細資料		
+		
+		caseData.setStarH(carBookingDetailData.getUsing_time_s().substring(0,2));
+		caseData.setStarM(carBookingDetailData.getUsing_time_s().substring(2,4));
 		
 		if("eip07w040x".equals(enterpage)) {
 			List<CarBase> carList = carBaseDao.getAllData();//取得所有非首長&&carstatus=1的車輛
@@ -168,24 +175,27 @@ public class Eip07w040Service {
 		cb.setCarno2("");
 		cb.setUsing_date(caseData.getUsing_date());
 		List<CarBooking> list = carBookingDao.getDataByCarnoAndUsing_date(cb);
+		
+        String approveUsing= timeConversionService.to48binary(conversionTime(caseData.getStarH(), caseData.getStarM(),"S"),conversionTime(caseData.getEndH(), caseData.getEndM(),"M"));
+        if ("2330".equals(caseData.getApprove_using_time_e())){
+        	approveUsing=StringUtils.substring(approveUsing,0,47)+"0";
+        }
+        caseData.setApprove_using(approveUsing);
 		if(CollectionUtils.isNotEmpty(list)) {
 			caseData.setCarBookingList(list);
 			for(CarBooking carbooking : list) {//caseData.getUsing()：本案件的用車時間，逐一比對當日是否有人同時要用車
-				CarBooking check = carBookingDao.checkTime(caseData.getUsing(),carbooking.getUsing_rec());
+				
+				
+				CarBooking check = carBookingDao.checkTime(caseData.getApprove_using(),carbooking.getUsing_rec());
 				if("Y".equals(check.getUsing())) {
 					caseData.setTimeMK("Y");//顯示該用車時間已有人預約
 				} else {
 					caseData.setTimeMK("N");
 				}
-
-//				carbooking.setApply_user(getUserName(carbooking.getApply_user()));
-				
-//				Depts deptName = deptsDao.findByPk(carbooking.getApply_dept());
-//				carbooking.setApply_dept(deptName.getDept_name());
 				
 				String[] usingTime = timeConversionService.timeStringToBeginEndTime(carbooking.getUsing_rec());
 				carbooking.setUsing_time_s(usingTime[0]);
-				carbooking.setUsing_time_e(usingTime[1].trim());
+				carbooking.setUsing_time_e(usingTime[1].trim());;
 				
 				String using = carbooking.getUsing_rec();
 				
@@ -249,6 +259,14 @@ public class Eip07w040Service {
 		carBooking.setUpd_user(userData.getUserId());
 		carBooking.setUpd_datetime(dateTime);
 		
+        String approveUsing= timeConversionService.to48binary(conversionTime(caseData.getStarH(), caseData.getStarM(),"S"),conversionTime(caseData.getEndH(), caseData.getEndM(),"M"));
+        if ("2330".equals(caseData.getApprove_using_time_e())){
+        	approveUsing=StringUtils.substring(approveUsing,0,47)+"0";
+        }
+        carBooking.setApprove_using(approveUsing);
+        carBooking.setApprove_using_time_s(caseData.getStarH()+caseData.getStarM());
+        carBooking.setApprove_using_time_e(caseData.getEndH()+caseData.getEndM());
+        
 //		@派車結果選項:若為3，則表單狀態=3派全程
 //	              若為4，則表單狀態=4派單程
 //		若為5，則表單狀態=5已派滿
@@ -266,7 +284,7 @@ public class Eip07w040Service {
 			rec.setCarno1(carno[0]);
 			rec.setCarno2(carno[1]);
 			rec.setUsing_date(carBooking.getUsing_date());
-			rec.setUsing_rec(carBooking.getUsing());
+			rec.setUsing_rec(approveUsing);
 			rec.setCombine_mk(caseData.getMerge());
 			rec.setCombine_reason(StringUtils.isNotEmpty(caseData.getMergeReason()) ? caseData.getMergeReason() : "");
 			if("Y".equals(caseData.getMerge()) && CollectionUtils.isNotEmpty(caseData.getCarBookingList())) {
@@ -277,6 +295,7 @@ public class Eip07w040Service {
 			rec.setCre_datetime(dateTime);
 			rec.setUpd_user(userData.getUserId());
 			rec.setUpd_datetime(dateTime);
+
 			
 			car_booking_recDao.insert(rec);
 		}
@@ -316,10 +335,20 @@ public class Eip07w040Service {
 			Eipcode code = eipcodeDao.selectDataByPrimaryKey(eipcode);
 			vo.setApply_car_type(code.getCodename());//車輛種類
 			vo.setNum_of_people(data.getNum_of_people());//人數
+			
 			vo.setUsing_date(DateUtility.formatChineseDateString(data.getUsing_date(),false));//用車日期
 			vo.setUsing_time_s(data.getUsing_time_s().substring(0,2)+":"+data.getUsing_time_s().substring(2,4));//用車時間起
 			vo.setUsing_time_e(data.getUsing_time_e().substring(0,2)+":"+data.getUsing_time_e().substring(2,4));//用車時間迄
-			vo.setCombine_mk(data.getCombine_mk());//並單註記
+			vo.setApprove_using_time_s(data.getApprove_using_time_s());
+			vo.setApprove_using_time_e(data.getApprove_using_time_e());
+			
+			Eipcode eipcode2 = new  Eipcode();
+			eipcode2.setCodekind("CARPROCESSSTATUS");
+			eipcode2.setCodeno(data.getCarprocess_status());;
+			Eipcode CARPROCESS_STATUS = eipcodeDao.selectDataByPrimaryKey(eipcode2);
+			vo.setCarprocess_status(data.getCarprocess_status()+"-"+CARPROCESS_STATUS.getCodename());		
+			
+			vo.setCombine_mk(data.getCombine_mk());//併單註記
 			vo.setCombine_applyid(data.getCombine_applyid());//併單派車單號
 			vo.setCombine_reason(data.getCombine_reason());//併單原因
 			vo.setName(data.getName());//駕駛人姓名
@@ -392,4 +421,69 @@ public class Eip07w040Service {
 		return "";
 	}
 	
+    /**
+     * 時1~23
+     * 分1~59
+     *
+     * @param caseData
+     */
+    public void getTimeList(Eip07w040Case caseData) {
+        List<String> hour=new ArrayList<>();
+        List<String> minute=new ArrayList<>();
+        for (int h=0;h<=59;h++){
+            minute.add( String.format("%2s", h).replace(' ', '0'));
+        }
+        for (int m=0;m<=23;m++){
+            hour.add( String.format("%2s", m).replace(' ', '0'));
+        }
+        caseData.setHourList(hour);
+        caseData.setMinuteList(minute);
+    }
+   
+    public Map<String,String>ajaxGetTime(Eip07w040Case caseData){
+        String starTime= conversionTime(caseData.getStarH(), caseData.getStarM(),"S");
+        String endTime =conversionTime(caseData.getEndH(), caseData.getEndM(),"E");
+        Map<String,String> timeMap = new HashMap<>();
+        timeMap.put("starTime", starTime);
+        timeMap.put("endTime", endTime);
+        
+        return timeMap;
+    }
+    
+    /**
+     * hour 時
+     * minute
+     * type:S 9:20->0900   9:45->0930
+     *      E  9:20->0930   9:45->1000
+     * type:S-開始 E-結束
+     * @param
+     */
+    public  String conversionTime(String hour ,String minute ,String type) {
+//        Integer.parseInt(
+        int H= Integer.parseInt(hour);
+        int M= Integer.parseInt(minute);
+        String time;
+        String time1 = String.format("%2s", H).replace(' ', '0') + "00";
+        String time2 = String.format("%2s", H).replace(' ', '0') + "30";
+        if ("S".equals(type)){
+            if (M>=30){
+                time= time2;
+            }else {
+                time= time1;
+            }
+            return time;
+        }else {
+            if (M>30){
+                time= String.format("%2s",H+1).replace(' ', '0')+"00";
+            }else if (M==0){//如果等於0
+                time= time1;
+            }
+
+            else {
+                time= time2;
+            }
+
+            return time;
+        }
+    }
 }

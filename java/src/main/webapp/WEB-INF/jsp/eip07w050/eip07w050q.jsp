@@ -48,7 +48,7 @@
                             <th style="width: 10%">申請單位</th>
                             <th style="width: 5%">申請日期</th>
                             <th style="width: 5%">用車日期</th>
-                            <th style="width: 10%">用車時間起迄</th>
+                            <th style="width: 10%">核定用車時間起迄</th>
                             <th style="width: 35%">用車事由</th>
                             <th style="width: 10%">表單狀態</th>
                         </thead>

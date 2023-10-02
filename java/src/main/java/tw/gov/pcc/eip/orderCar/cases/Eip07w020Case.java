@@ -42,7 +42,7 @@ public class Eip07w020Case implements Serializable {
     private List<CarBooking> changeMkList;
 
 	/**
-	 * 車輛總類下拉選單
+	 * 車輛種類下拉選單
 	 */
 	private List<Eipcode> carTyList;
 
@@ -136,7 +136,7 @@ public class Eip07w020Case implements Serializable {
 	private String destination;
 
 	/**
-	 *車輛總類
+	 *車輛種類
 	 */
 	private String carTy;
 

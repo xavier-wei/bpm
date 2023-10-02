@@ -59,7 +59,8 @@ public class Eip08w030Controller extends BaseController {
 		log.debug("導向 Eip08w030_enter 領物單申請作業");
 		Eip08w030Case newCase = new Eip08w030Case();
 		BeanUtility.copyProperties(caseData, newCase);// 進來時清除caseData
-		caseData.setApplydateStart(DateUtility.getNowChineseDate());
+		caseData.setApplydateStart(DateUtility.calDay(DateUtility.getNowChineseDate(),-7));
+		caseData.setApplydateEnd(DateUtility.getNowChineseDate());
 		return new ModelAndView(QUERY_PAGE);
 	}
 

@@ -61,7 +61,7 @@ public interface CarBookingDao {
     
     public CarBooking selectCarDriveDataBycarno(String carno1,String carno2);
     
-    public List<CarBooking> getEip07w070ReportData(CarBooking carBooking);
+    public List<CarBooking> getEip07w070ReportData(CarBooking carBooking,String OrderCondition);
 
     public CarBooking selectByApplyidAndStatusIn3467F(String applyid);
 

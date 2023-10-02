@@ -51,7 +51,7 @@
 			</tags:form-row>
 			<tags:form-row>
 					<div class="col-md-4 d-flex">
-					   <form:label cssClass="col-form-label" path="carTy">車輛總類：</form:label>
+					   <form:label cssClass="col-form-label" path="carTy">車輛種類：</form:label>
 					   <form:select id="carTy"  name="carTy"  path="insterList[0].carTy" cssClass="form-control">
 	                    	<form:option value="1">4人座</form:option>
 	                        <c:forEach var="item" items="${caseData.carTyList}" varStatus="status">
@@ -72,6 +72,7 @@
 									maxlength="7" />
 					</div>
 			</tags:form-row>
+			<tags:form-row>
 					 <div  class="col-md d-flex text-left" style="margin: 0; padding: 0;">
 						 <form:label cssClass="col-form-label star" path="starH">用車時間：</form:label>
 						 <form:select id="starH"  name="starH"  path="insterList[0].starH" cssClass="form-control">
@@ -101,12 +102,7 @@
 	                            <form:option value="${minute}"><c:out value="${minute}"/></form:option>
 	                        </c:forEach>
 	                    </form:select>
-
 					 </div>
-
-
-			<tags:form-row>
-
 			</tags:form-row>
 	  </form:form>
     </tags:fieldset>

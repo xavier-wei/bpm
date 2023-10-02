@@ -96,6 +96,15 @@ public class Pwc_tb_tableau_user_infoDaoImpl extends BaseDao<Pwc_tb_tableau_user
         return getNamedParameterJdbcTemplate().query(sql, params, BeanPropertyRowMapper.newInstance(Pwc_tb_tableau_user_info.class));
     }
 
+    @Override
+    public List<Pwc_tb_tableau_user_info> findByDashboard_fig_id(String dashboard_fig_id) {
+        String sql = "SELECT * " +
+                "FROM PWC_TB_TABLEAU_USER_INFO p " +
+                "WHERE dashboard_fig_id = :dashboard_fig_id ORDER BY SORT_ORDER";
+        SqlParameterSource params = new MapSqlParameterSource("dashboard_fig_id", dashboard_fig_id);
+        return getNamedParameterJdbcTemplate().query(sql, params, BeanPropertyRowMapper.newInstance(Pwc_tb_tableau_user_info.class));
+    }
+
     /**
      * 根據key更新資料
      *

@@ -45,6 +45,7 @@
         }
 
         $(".dateTW").each((i, e) => {
+            $(e).prop('autocomplete','off');
             let clone = $(e).clone();
             clone.removeClass('dateTW').attr('type', 'hidden').insertAfter($(e));
             $(e).data('real',$(e).prop('id')).prop('name', $(e).prop('name') + '_OUTSIDE').prop('id', $(e).prop('id') + '_OUTSIDE');

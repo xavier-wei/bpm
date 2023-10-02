@@ -23,6 +23,8 @@ public interface Pwc_tb_tableau_user_infoDao {
 
     List<Pwc_tb_tableau_user_info> findByUserId(String userId);
 
+    List<Pwc_tb_tableau_user_info> findByDashboard_fig_id(String dashboard_fig_id);
+
     int updateByKey(Pwc_tb_tableau_user_info pwc_tb_tableau_user_info);
 
     int deleteByKey(Pwc_tb_tableau_user_info pwc_tb_tableau_user_info);

@@ -157,4 +157,44 @@ public class Eip07w040Case implements Serializable {
 	private List<CarBooking>Reconfime_mk2List;
 	private String usingTimeList; 
 	private Car_booking_rec recData;
+
+	/**
+	 * 時
+	 */
+	private List<String> hourList;
+
+	/**
+	 * 分
+	 */
+	private List<String> minuteList;
+	
+	/**
+	 *用車起:時
+	 */
+	private String starH;
+
+	/**
+	 *用車起:分
+	 */
+	private String starM;
+
+	/**
+	 *用車(迄):時
+	 */
+	private String endH;
+
+	/**
+	 *用車(迄):分
+	 */
+	private String endM;
+	
+	/**
+	 * 新增資料
+	 */
+	private List<Eip07w040Case> insterList;
+	
+	private String approve_using;
+	
+	private String approve_using_time_s;
+	private String approve_using_time_e;
 }
