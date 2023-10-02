@@ -13,7 +13,13 @@
           ref="fieldsPickerComponent"
           label-for="float-right"
         />
-        <font-awesome-icon v-if="exportExcelProp" class="ml-2 cursor-pointer" icon="file-excel" size="lg"></font-awesome-icon>
+        <font-awesome-icon
+          v-if="exportExcelProp"
+          class="ml-2 cursor-pointer"
+          icon="file-excel"
+          size="lg"
+          @click.stop="onExportExcelClick"
+        ></font-awesome-icon>
       </h5>
       <div style="margin-left: -20px" v-else label-for="22">
         <b-form-group
@@ -54,7 +60,13 @@
             ref="fieldsPickerComponent"
           />
         </h5>
-        <font-awesome-icon v-if="exportExcelProp" class="ml-2 cursor-pointer" icon="file-excel" size="lg"></font-awesome-icon>
+        <font-awesome-icon
+          v-if="exportExcelProp"
+          class="ml-2 cursor-pointer"
+          icon="file-excel"
+          size="lg"
+          @click.stop="onExportExcelClick"
+        ></font-awesome-icon>
       </div>
     </b-card-header>
     <b-card-body class="m-0 p-0">
@@ -71,6 +83,8 @@
         :fields="state.pickedFields"
         :per-page="state.pagination.perPage"
         :current-page="isServerSidePaging ? 1 : state.pagination.currentPage"
+        :sort-by="pagination.sortBy[0]"
+        :sort-desc="pagination.sortDirection.toUpperCase() === 'DESC'"
         :empty-text="state.emptyText"
         :empty-filtered-text="state.emptyFilterText"
         :no-sort-reset="isServerSidePaging"
@@ -109,7 +123,7 @@
               id="perpage"
               v-model="state.pagination.perPage"
               :options="state.pagination.perPageOptions"
-              @input="handlePageChanged"
+              @input="handlePageChanged()"
             ></b-form-select>
           </b-input-group>
         </b-col>
@@ -119,11 +133,11 @@
               class="my-0"
               align="fill"
               :size="size"
-              v-model="state.pagination.currentPage"
+              :value="state.pagination.currentPage"
               :total-rows="state.pagination.totalRows"
               :per-page="state.pagination.perPage"
               :limit="3"
-              @input="handlePageChanged"
+              @change="handlePageChanged($event)"
             />
           </div>
         </b-col>
@@ -171,9 +185,9 @@
 </template>
 
 <script lang="ts">
-import { formatDate, formatToString } from '../date/minguo-calendar-utils';
-import { commaFormatter, formOptionsFormatter } from '../formatter/common';
-import TableFieldsPicker from '../table-fields-picker/table-fields-picker.vue';
+import { formatDate, formatToString } from '@/shared/date/minguo-calendar-utils';
+import { commaFormatter, formOptionsFormatter } from '@/shared/formatter/common';
+import TableFieldsPicker from '@/shared/table-fields-picker/table-fields-picker.vue';
 import { computed, onMounted, reactive, ref, watch } from '@vue/composition-api';
 import {
   BButton,
@@ -197,6 +211,7 @@ import {
   BTh,
   BTr,
 } from 'bootstrap-vue';
+import ExcelJs from 'exceljs';
 import {
   assign as _assign,
   cloneDeep as _cloneDeep,
@@ -211,7 +226,7 @@ import {
   isNumber as _isNumber,
   size as _size,
 } from 'lodash';
-import { Pagination } from '../pagination.model';
+import { Pagination } from '../model/pagination.model';
 import { useGetters } from '@u3u/vue-hooks';
 
 export default {
@@ -328,11 +343,21 @@ export default {
       required: false,
       default: () => [],
     },
+    sortBy: {
+      type: Array,
+      required: false,
+      default: () => [],
+    },
+    sortDirection: {
+      type: String,
+      required: false,
+      default: 'ASC',
+    },
   },
   setup(props, context) {
     const mobileDevice = computed(() => useGetters(['mobileDevice']).mobileDevice.value);
     const padDevice = computed(() => useGetters(['padDevice']).padDevice.value);
-    // const deskTopDevice = computed(() => useGetters(['deskTopDevice']).deskTopDevice.value);
+    const deskTopDevice = computed(() => useGetters(['deskTopDevice']).deskTopDevice.value);
 
     const modalVisible = ref(false);
     const modalData = ref([]);
@@ -345,7 +370,7 @@ export default {
         key: 'tableNo',
         label: '序號',
         sortable: false,
-        thStyle: 'width:1%',
+        thStyle: 'width:3%',
         thClass: 'text-center align-middle',
         tdClass: 'text-center align-middle',
         mobileShow: true,
@@ -360,7 +385,7 @@ export default {
       filterIgnoredFieldsProp.push('tableNo');
     }
 
-    const pagination = new Pagination(0, 20, [], 'ASC');
+    const pagination = new Pagination(0, 20, <string[]>props.sortBy, <string>props.sortDirection);
 
     const state = reactive({
       itemsUndefinedBehaviorComputed: computed(() => {
@@ -396,8 +421,8 @@ export default {
             ? props.isServerSidePaging
               ? props.totalItems
               : context.attrs.items instanceof Array
-              ? context.attrs.items.length
-              : 0
+                ? context.attrs.items.length
+                : 0
             : state.pagination.filterRows
         ),
         // 篩選結果筆數
@@ -435,13 +460,14 @@ export default {
     const handleSortChanged = ctx => {
       if (ctx.sortBy) {
         pagination.sortBy = [ctx.sortBy];
-        state.pagination.sortDirection = ctx.sortDesc ? 'DESC' : 'ASC';
+        // state.pagination.sortDirection = ctx.sortDesc ? 'DESC' : 'ASC';
         pagination.sortDirection = ctx.sortDesc ? 'DESC' : 'ASC';
         emitPagination();
       }
     };
 
-    const handlePageChanged = () => {
+    const handlePageChanged = (currentPage?: number) => {
+      if (currentPage) state.pagination.currentPage = currentPage;
       if (!_isEqual(pagination.perPage, parseInt(state.pagination.perPage))) {
         pagination.perPage = state.pagination.perPage;
         state.pagination.currentPage = 1;
@@ -449,11 +475,18 @@ export default {
       emitPagination();
     };
 
+    const handleQuery = (sortBy?: string[], sortDirection?: string) => {
+      state.pagination.currentPage = 1;
+      pagination.sortBy = sortBy || <string[]>props.sortBy;
+      pagination.sortDirection = sortDirection || <string>props.sortDirection;
+      emitPagination();
+    };
+
     const emitPagination = (isSearchQueryEqual?) => {
       if (props.isServerSidePaging) {
         if (isSearchQueryEqual !== undefined && !isSearchQueryEqual) state.pagination.currentPage = 1;
         pagination.currentPage = state.pagination.currentPage - 1;
-        if (!!state.pagination.sortDirection) pagination.sortDirection = state.pagination.sortDirection;
+        // if (!!state.pagination.sortDirection) pagination.sortDirection = state.pagination.sortDirection;
         const param = Object.assign({}, pagination);
         context.emit('changePagination', param);
       }
@@ -486,6 +519,7 @@ export default {
       });
       return arr;
     };
+
     const buildTransferData = (item, value) => {
       const method = item.transfer.method;
       if (method === 'formatDate') value = formatDate(new Date(value), '/');
@@ -495,8 +529,26 @@ export default {
       return value;
     };
 
+    const onExportExcelClick = () => {
+      if (!exportExcelProp.value) return;
+      const excel = new ExcelJs.Workbook();
+      const sheet = excel.addWorksheet('工作表1');
+      const columns = buildExcelColumns(context.attrs.fields);
+      const rows = buildExcelRows(columns, context.attrs.items);
+      sheet.addTable({ name: 'test', ref: 'A1', columns: columns, rows: rows });
+      excel.xlsx.writeBuffer().then(content => {
+        const link = document.createElement('a');
+        const blobData = new Blob([content], {
+          type: 'application/vnd.ms-excel;charset=utf-8;',
+        });
+        link.download = '公告事項.xlsx';
+        link.href = URL.createObjectURL(blobData);
+        link.click();
+      });
+    };
+
     const rowClickForMobileModal = item => {
-      // if (deskTopDevice.value) return;
+      if (deskTopDevice.value) return;
       if (
         padDevice.value &&
         !state.pickedFields
@@ -504,7 +556,6 @@ export default {
           .find((field: object) => Object.keys(field).includes('padShow'))
       )
         return;
-      // modalData.value = buildModalData(item, context.attrs.fields);
       modalData.value = setModalData(item, context.attrs.fields);
       toggleModal(true);
     };
@@ -518,30 +569,6 @@ export default {
           label: `${field.label}：`,
           value: field.formatter ? field.formatter(item[field.key], field.key, item) : item[field.key],
         }));
-    };
-
-    const buildModalData = (item, fields) => {
-      let arr = [];
-      _forEach(fields, f => {
-        if (!f.mobileWindowShow && _includes(_keys(f), 'mobileWindowShow')) return;
-        if (f.key === 'tableNo') return;
-        let value = _cloneDeep(item[f.key]);
-        if (_includes(_keys(f), 'transfer')) value = buildTransferData(f, value);
-        if (_isString(value) || _isNumber(value)) {
-          arr.push({ label: f.label, value: value });
-        } else if (_isObject(value)) {
-          if (value[f.objectShow] != null) {
-            arr.push({ label: f.label, value: value[f.objectShow] });
-          } else {
-            if (f.method === 'formatDate') arr.push({ label: f.label, value: formatDate(value, '/') });
-            else if (f.method === 'formatToString') arr.push({ label: f.label, value: formatToString(value, '/', '-') });
-            else {
-              arr.push({ label: f.label, value: value });
-            }
-          }
-        }
-      });
-      return arr;
     };
 
     const toggleModal = toggle => {
@@ -571,8 +598,8 @@ export default {
       // override value: per-page
       // eslint-disable-next-line no-prototype-builtins
       if (context.attrs.hasOwnProperty('per-page') && context.attrs['per-page'] && !isNaN(<any>context.attrs['per-page'])) {
-        state.pagination.perPage = context.attrs['per-page'];
-        pagination.perPage = parseInt(context.attrs['per-page'] as string);
+        state.pagination.perPage = parseInt(<string>context.attrs['per-page']);
+        pagination.perPage = parseInt(<string>context.attrs['per-page']);
       }
       // override value: empty-text
       // eslint-disable-next-line no-prototype-builtins
@@ -612,7 +639,9 @@ export default {
       handleGotoPage,
       handleSortChanged,
       handlePageChanged,
+      handleQuery,
       emitPagination,
+      onExportExcelClick,
       rowClickForMobileModal,
       toggleModal,
       fieldsPickerComponent,
