@@ -4,6 +4,7 @@ import org.flowable.engine.HistoryService;
 import org.flowable.engine.RuntimeService;
 import org.flowable.engine.TaskService;
 import org.flowable.engine.runtime.ProcessInstance;
+import org.flowable.identitylink.api.IdentityLink;
 import org.flowable.task.api.Task;
 import org.flowable.task.api.history.HistoricTaskInstance;
 import org.springframework.stereotype.Service;
@@ -16,6 +17,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @Service
 public class ProcessFlowService {
@@ -141,24 +143,32 @@ public class ProcessFlowService {
     }
 
     public List<TaskDTO> queryList(String id) {
-        List<TaskDTO> taskDTOS = new ArrayList<>();
+
         List<HistoricTaskInstance> historicTaskInstances = historyService.createHistoricTaskInstanceQuery().taskCandidateUser(id).list();
         List<HistoricTaskInstance> historicTaskInstances2 = historyService.createHistoricTaskInstanceQuery().taskAssignee(id).list();
-//        List<HistoricTaskInstance>
         List<String> processInstanceIds = new ArrayList<>();
-        historicTaskInstances.forEach(historicTaskInstance -> {
-            if (!processInstanceIds.contains(historicTaskInstance.getProcessInstanceId())) {
-                processInstanceIds.add(historicTaskInstance.getProcessInstanceId());
-                taskDTOS.add(new TaskDTO(historicTaskInstance));
+        List<TaskDTO> taskDTOS = Stream.concat(
+                        historicTaskInstances.stream(),
+                        historicTaskInstances2.stream()
+                )
+                .filter(taskInstance -> !processInstanceIds.contains(taskInstance.getProcessInstanceId()))
+                .peek(taskInstance -> processInstanceIds.add(taskInstance.getProcessInstanceId()))
+                .map(TaskDTO::new)
+                .collect(Collectors.toList());
+
+        List<Task> tasks = taskService.createTaskQuery().processInstanceIdIn(processInstanceIds).list();
+        tasks.forEach(task -> {
+            if (task.getAssignee()==null) {
+                List<IdentityLink> identityLinksForTask = taskService.getIdentityLinksForTask(task.getId());
+                List<String> collect = identityLinksForTask.stream().map(identityLink -> identityLink.getUserId()).collect(Collectors.toList());
+                task.setAssignee(String.join(",",collect));
             }
         });
-        historicTaskInstances2.forEach(historicTaskInstance -> {
-            if (!processInstanceIds.contains(historicTaskInstance.getProcessInstanceId())) {
-                processInstanceIds.add(historicTaskInstance.getProcessInstanceId());
-                taskDTOS.add(new TaskDTO(historicTaskInstance));
-            }
-        });
-        return taskDTOS;
+        List<TaskDTO> processingTaskDTO = tasks.stream().map(TaskDTO::new).collect(Collectors.toList());
+        List<String> processingTaskDTOProcessInstanceIds = processingTaskDTO.stream().map(TaskDTO::getProcessInstanceId).collect(Collectors.toList());
+        List<TaskDTO> newTaskDTO = taskDTOS.stream().filter(taskDTO -> !processingTaskDTOProcessInstanceIds.contains(taskDTO.getProcessInstanceId())).collect(Collectors.toList());
+        newTaskDTO.addAll(processingTaskDTO);
+        return newTaskDTO;
     }
 
 }

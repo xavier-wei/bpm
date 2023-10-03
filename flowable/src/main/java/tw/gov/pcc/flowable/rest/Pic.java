@@ -1,6 +1,5 @@
 package tw.gov.pcc.flowable.rest;
 
-import com.google.gson.Gson;
 import org.flowable.bpmn.model.BpmnModel;
 import org.flowable.engine.ProcessEngine;
 import org.flowable.engine.ProcessEngineConfiguration;
@@ -30,7 +29,6 @@ public class Pic {
     private final RepositoryService repositoryService;
 
     private final ProcessEngine processEngine;
-    private final Gson gson = new Gson();
 
     public Pic(RuntimeService runtimeService, RepositoryService repositoryService, ProcessEngine processEngine) {
         this.runtimeService = runtimeService;
@@ -65,7 +63,7 @@ public class Pic {
         ProcessDiagramGenerator diagramGenerator = engconf.getProcessDiagramGenerator();
         byte[] buf = new byte[1024];
         int length;
-        String res = null;
+        String res;
 
         try (InputStream in = diagramGenerator.generateDiagram(bpmnModel, "png", activityIds, flows, "宋體", "宋體", "宋體", engconf.getClassLoader(), 1.0, false)) {
             ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();

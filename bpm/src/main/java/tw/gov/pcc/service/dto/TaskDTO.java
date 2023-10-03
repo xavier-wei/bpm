@@ -9,30 +9,8 @@ public class TaskDTO implements Serializable {
     private String taskId; // 任務ID
     private String taskName; // 任務名稱
     private String createdTime; // 任務創建時間
+    private String pendingUserId;
 
-    @Override
-    public String toString() {
-        return "TaskDTO{" +
-            "formName='" + formName + '\'' +
-            ", processInstanceId='" + processInstanceId + '\'' +
-            ", taskId='" + taskId + '\'' +
-            ", taskName='" + taskName + '\'' +
-            ", createdTime='" + createdTime + '\'' +
-            '}';
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        TaskDTO taskDTO = (TaskDTO) o;
-        return Objects.equals(formName, taskDTO.formName) && Objects.equals(processInstanceId, taskDTO.processInstanceId) && Objects.equals(taskId, taskDTO.taskId) && Objects.equals(taskName, taskDTO.taskName) && Objects.equals(createdTime, taskDTO.createdTime);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(formName, processInstanceId, taskId, taskName, createdTime);
-    }
 
     public String getFormName() {
         return formName;
@@ -74,14 +52,43 @@ public class TaskDTO implements Serializable {
         this.createdTime = createdTime;
     }
 
-    public TaskDTO(String formName, String processInstanceId, String taskId, String taskName, String createdTime) {
+
+
+    public TaskDTO(String formName, String processInstanceId, String taskId, String taskName, String createdTime, String pendingUserId) {
         this.formName = formName;
         this.processInstanceId = processInstanceId;
         this.taskId = taskId;
         this.taskName = taskName;
         this.createdTime = createdTime;
+        this.pendingUserId = pendingUserId;
     }
 
     public TaskDTO() {
     }
+
+    @Override
+    public String toString() {
+        return "TaskDTO{" +
+                "formName='" + formName + '\'' +
+                ", processInstanceId='" + processInstanceId + '\'' +
+                ", taskId='" + taskId + '\'' +
+                ", taskName='" + taskName + '\'' +
+                ", createdTime='" + createdTime + '\'' +
+                ", pendingUserId='" + pendingUserId + '\'' +
+                '}';
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        TaskDTO taskDTO = (TaskDTO) o;
+        return Objects.equals(formName, taskDTO.formName) && Objects.equals(processInstanceId, taskDTO.processInstanceId) && Objects.equals(taskId, taskDTO.taskId) && Objects.equals(taskName, taskDTO.taskName) && Objects.equals(createdTime, taskDTO.createdTime);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(formName, processInstanceId, taskId, taskName, createdTime);
+    }
+
 }
