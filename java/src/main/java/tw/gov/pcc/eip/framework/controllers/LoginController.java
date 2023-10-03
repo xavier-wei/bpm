@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.keycloak.KeycloakSecurityContext;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
@@ -24,18 +25,16 @@ import tw.gov.pcc.eip.msg.cases.Eip01wPopCase;
 import tw.gov.pcc.eip.msg.controllers.Eip01w030Controller;
 import tw.gov.pcc.eip.msg.controllers.Eip01w040Controller;
 import tw.gov.pcc.eip.services.Eip01w040Service;
-import tw.gov.pcc.eip.tableau.cases.TableauDataCase;
-import tw.gov.pcc.eip.tableau.controllers.TableauController;
 import tw.gov.pcc.eip.util.BeanUtility;
 import tw.gov.pcc.eip.util.DateUtility;
 import tw.gov.pcc.eip.util.ExceptionUtility;
 import tw.gov.pcc.eip.util.ObjectUtility;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 import java.math.BigDecimal;
 import java.util.Comparator;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -62,7 +61,7 @@ public class LoginController extends BaseController {
     private final MsgdepositdirDao msgdepositdirDao;
     private final Eip01w030Controller eip01w030Controller;
     private final Eip01w040Controller eip01w040Controller;
-    private final TableauController tableauController;
+
 
     private static Comparator<Eip01wPopCase> getEip01wPopCaseComparator(DatatableCase<Eip01wPopCase> datatableCase) {
         return (r1, r2) -> {
@@ -116,12 +115,17 @@ public class LoginController extends BaseController {
     public String loginForward(@ModelAttribute(CASE_KEY) IndexCase indexCase) {
         return INDEX_PAGE;
     }
-
+    
     @RequestMapping("/Logout.action")
-    public String logout(HttpServletRequest request) {
+    public String logout(HttpServletRequest request, HttpSession session) {
         try {
+            KeycloakSecurityContext attribute = (KeycloakSecurityContext) session.getAttribute(KeycloakSecurityContext.class.getName());
+            String keycloakLogoutUrl = attribute
+                    .getIdToken()
+                    .getIssuer() + "/protocol/openid-connect/logout";
+            
             UserSessionHelper.logoutUser(request);
-            return LOGOUT_PAGE;
+            return "redirect:" + keycloakLogoutUrl;
         } catch (Exception e) {
             log.error("使用者登出失敗 - {}", ExceptionUtility.getStackTrace(e));
             return LOGOUT_PAGE;
@@ -254,35 +258,5 @@ public class LoginController extends BaseController {
     @ModelAttribute("sys_site")
     public List<Eipcode> getSys_site() {
         return ObjectUtility.normalizeObject(eipcodeDao.findByCodeKindOrderByScodeno("SYS_SITE"));
-    }
-
-
-
-    /**
-     * 取得首頁應顯示的各儀表板資訊
-     */
-    @RequestMapping("/Common_getTableauDataByUser.action")
-    @ResponseBody
-    public List<TableauDataCase> getTableauUserdata( ) {
-        return tableauController.getUserdata();
-    }
-
-    /**
-     * 取得 tableau ticket
-     */
-    @RequestMapping("/Common_getTableauTicket.action")
-    @ResponseBody
-    public Map<String, String> getTableauTicket( ) {
-        return tableauController.getTrustedTicket();
-    }
-
-
-    /**
-     * 取得首頁應顯示的各儀表板資訊
-     */
-    @RequestMapping("/Common_getAllTableauData.action")
-    @ResponseBody
-    public List<TableauDataCase> getAllTableauData( ) {
-        return tableauController.getAllTableauData();
     }
 }

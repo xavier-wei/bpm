@@ -76,7 +76,7 @@ public class ItemService {
             itemsDao.deleteByKey(item);
             roleAclDao.findByItem(item.getItem_id())
                     .forEach(roleAclDao::deleteByKey);
+            pwc_tb_tableau_user_infoDao.findByDashboard_fig_id(StringUtils.substringBetween(item.getHyperlink(), Eip00w230Service.TABLEAU_ENTER_ACTION, ".action")).forEach(pwc_tb_tableau_user_infoDao::deleteByKey);
         });
-        pwc_tb_tableau_user_infoDao.findUnauthoriedList().forEach(pwc_tb_tableau_user_infoDao::deleteByKey);
     }
 }

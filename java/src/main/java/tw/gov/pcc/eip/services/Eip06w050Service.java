@@ -217,18 +217,27 @@ public class Eip06w050Service extends OnlineRegService {
     public void validate(Eip06w050Case caseData, BindingResult result) {
         ObjectError error;
         String itemTyp = caseData.getItemTyp();
-        if ("B".equals(itemTyp)) {
-            if (caseData.getQty() == null || caseData.getQty() <= 0) {
-                error = new ObjectError("qty", "「數量」需大於0");
+        String mode = caseData.getMode();
+
+        if("A".equals(mode) && ("A".equals(itemTyp) || "B".equals(itemTyp))) {
+            if (caseData.getItemId() == null || caseData.getItemId().length() == 0) {
+                error = new ObjectError("itemId", "「編號」為必填");
                 result.addError(error);
             }
-        } else if ("F".equals(itemTyp) || "FX".equals(itemTyp)) {
+        }
+
+        if ("B".equals(itemTyp) || "F".equals(itemTyp) || "FX".equals(itemTyp)) {
             if (caseData.getQty() == null || caseData.getQty() <= 0) {
-                error = new ObjectError("qty", "「人數」需大於0");
+                error = new ObjectError("qty", "「" + ("B".equals(itemTyp) ? "數量" : "人數") + "」需大於0");
+                result.addError(error);
+            }
+
+            //因會議室編號命名原則(2碼樓層+2碼編號)，其他自訂
+            if ("A".equals(mode) && "F".equals(itemTyp) && caseData.getItemId().length()!= 4){
+                error = new ObjectError("itemId", "「編號」需4碼");
                 result.addError(error);
             }
         }
     }
-
 
 }

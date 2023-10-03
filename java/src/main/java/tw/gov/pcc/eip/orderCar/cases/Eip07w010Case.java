@@ -35,14 +35,14 @@ public class Eip07w010Case implements Serializable {
 
 	private List<Eip07w010Case> oilList;//油料紀錄
 
-	private List<Eip07w010Case> mileageList;//里程紀錄
+	private List<CaruseRec> mileageList;//里程紀錄
 
 	private List<CarBase> carnoList;//里程紀錄
 
 	private GasRec gasRec;//里程紀錄
 
 	/**
-	 * 車輛總類下拉選單
+	 * 車輛種類下拉選單
 	 */
 	private List<Eipcode> carstatusList;
 

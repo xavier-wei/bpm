@@ -32,7 +32,7 @@
            	    <table id="foodTable" class="table table-hover m-2">
 	                <thead>
 	                	<th class="align-middle"  style="width: 10%">用車日期</th>
-	                    <th class="align-middle"  style="width: 10%">用車時間起迄</th>
+	                    <th class="align-middle"  style="width: 10%">核定用車時間起迄</th>
 	                    <th class="align-middle" style="width: 10%">車牌號碼</th>
 	                    <th class="align-middle" style="width: 10%">駕駛人姓名</th>
 	                    <th class="align-middle"  style="width: 25%">用車事由</th>
@@ -43,7 +43,7 @@
 	                <c:forEach items="${caseData.dataList}" var="item" varStatus="status">
 	                 	<tr>
 	                 		<td><func:minguo value="${item.using_date}"/></td>
-	                 		<td><func:timeconvert value="${item.using_time_s}"/>~<func:timeconvert value="${item.using_time_e}"/></td>
+	                 		<td><func:timeconvert value="${item.approve_using_time_s}"/>~<func:timeconvert value="${item.approve_using_time_e}"/></td>
 	                 		<td><c:out value="${item.carno1}"/>-<c:out value="${item.carno2}"/></td>
 	                 		<td><c:out value="${item.name}"/></td>
 	                 		<td class="text-left"><span class="ellipsisStr"><c:out value="${item.apply_memo}"/></span></td>
@@ -61,8 +61,8 @@
 				<tags:form-row>
          	    <table id="foodTable" class="table table-hover m-2">
 	                <thead>
-	                	<th class="align-middle"  style="width: 10%">用車日期</th>
-	                    <th class="align-middle"  style="width: 10%">用車時間起迄</th>
+	                	<th class="align-middle"  style="width: 10%">核定用車日期</th>
+	                    <th class="align-middle"  style="width: 10%">核定用車時間起迄</th>
 	                    <th class="align-middle"  style="width: 10%">車牌號碼</th>
 	                    <th class="align-middle"  style="width: 10%">駕駛人姓名</th>
 	                    <th class="align-middle"  style="width: 25%">用車事由</th>
@@ -73,7 +73,7 @@
 	                <c:forEach items="${caseData.dataList}" var="item" varStatus="status">
 	                 	<tr>
 	                 		<td><func:minguo value="${item.using_date}"/></td>
-	                 		<td><func:timeconvert value="${item.using_time_s}"/>~<func:timeconvert value="${item.using_time_e}"/></td>
+	                 		<td><func:timeconvert value="${item.approve_using_time_s}"/>~<func:timeconvert value="${item.approve_using_time_e}"/></td>
 	                 		<td><c:out value="${item.carno1}"/>-<c:out value="${item.carno2}"/></td>
 	                 		<td><c:out value="${item.name}"/></td>
 	                 		<td class="text-left"><span class="ellipsisStr"><c:out value="${item.apply_memo}"/></span></td>

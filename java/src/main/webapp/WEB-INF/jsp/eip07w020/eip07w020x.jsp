@@ -146,8 +146,8 @@
 
         $(function() {
 
-			var config = getDataTablesConfig();
-
+			var config = getDataTablesConfig(null,null,10);
+			var table = $('#driver').DataTable(config);
 
 			$('#btnClearn').click(function() {
 				$('#eip07w020Form').attr('action', '<c:url value="/Eip07w020_enter.action" />').submit();

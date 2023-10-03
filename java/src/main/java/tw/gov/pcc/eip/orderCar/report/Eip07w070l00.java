@@ -79,8 +79,8 @@ public class Eip07w070l00 extends PdfReportBase {
             addCellAssignVAlignmentAndAllPadding(table, 18, 1, item.getApplyid(), subTitleFontSizeMid, 1, CENTER, MIDDLE, 0, 3);
             addCellAssignVAlignmentAndAllPadding(table, 12, 1, DateUtility.formatChineseDateString(DateUtility.changeDateType(item.getUsing_date()) ,false), subTitleFontSizeMid, 1, CENTER, MIDDLE, 0, 3);
             addCellAssignVAlignmentAndAllPadding(table, 14, 1,
-            		convertTime(item.getUsing_time_s())
-            		+"~"+convertTime(item.getUsing_time_e()), subTitleFontSizeMid, 1, CENTER, MIDDLE, 0, 3);
+            		convertTime(item.getApprove_using_time_s())
+            		+"~"+convertTime(item.getApprove_using_time_e()), subTitleFontSizeMid, 1, CENTER, MIDDLE, 0, 3);
             addCellAssignVAlignmentAndAllPadding(table, 10, 1, item.getCarno1()+"-"+item.getCarno2(), subTitleFontSizeMid, 1, CENTER, MIDDLE, 0, 3);
             addCellAssignVAlignmentAndAllPadding(table, 12, 1, item.getName(), subTitleFontSizeMid, 1, CENTER, MIDDLE, 0, 3);
             addCellAssignVAlignmentAndAllPadding(table, 34, 1, item.getApply_memo(), subTitleFontSizeMid, 1, LEFT, MIDDLE, 0, 3);
@@ -88,8 +88,8 @@ public class Eip07w070l00 extends PdfReportBase {
     	
     	if("2".equals(caseData.getOrderCondition())){
             addCellAssignVAlignmentAndAllPadding(table, 12, 1, DateUtility.formatChineseDateString(DateUtility.changeDateType(item.getUsing_date()) ,false), subTitleFontSizeMid, 1, CENTER, MIDDLE, 0, 3);
-            addCellAssignVAlignmentAndAllPadding(table, 14, 1, convertTime(item.getUsing_time_s())
-            		+"~"+convertTime(item.getUsing_time_e()), subTitleFontSizeMid, 1, CENTER, MIDDLE, 0, 3);
+            addCellAssignVAlignmentAndAllPadding(table, 14, 1, convertTime(item.getApprove_using_time_s())
+            		+"~"+convertTime(item.getApprove_using_time_e()), subTitleFontSizeMid, 1, CENTER, MIDDLE, 0, 3);
             addCellAssignVAlignmentAndAllPadding(table, 28, 1, item.getApply_memo(), subTitleFontSizeMid, 1, LEFT, MIDDLE, 0, 3);
             addCellAssignVAlignmentAndAllPadding(table, 28, 1, item.getDestination(), subTitleFontSizeMid, 1, LEFT, MIDDLE, 0, 3);
             addCellAssignVAlignmentAndAllPadding(table, 18, 1, item.getApplyid(), subTitleFontSizeMid, 1, CENTER, MIDDLE, 0, 3);

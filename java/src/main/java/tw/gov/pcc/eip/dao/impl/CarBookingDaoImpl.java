@@ -187,7 +187,7 @@ public class CarBookingDaoImpl extends BaseDao<CarBooking> implements CarBooking
 				+ " B_DESTINATION = :b_destination, B_APPLY_CAR_TYPE = :b_apply_car_type, B_NUM_OF_PEOPLE = :b_num_of_people, RECONFIRM_MK = :reconfirm_mk, RECONFIRM_USER = :reconfirm_user, "
 				+ " RECONFIRM_DATE = :reconfirm_date, RECONFIRM_MK2 = :reconfirm_mk2, RECONFIRM_USER2 = :reconfirm_user2, RECONFIRM_DATE2 = :reconfirm_date2, COMBINE_MK = :combine_mk, "
 				+ " COMBINE_APPLYID = :combine_applyid, COMBINE_REASON = :combine_reason, PRINT_MK = :print_mk, CRE_USER = :cre_user, CRE_DATETIME = :cre_datetime, "
-				+ " UPD_USER = :upd_user, UPD_DATETIME = :upd_datetime" + " WHERE applyid = :applyid ",
+				+ " UPD_USER = :upd_user, UPD_DATETIME = :upd_datetime , approve_using_time_s=:approve_using_time_s, approve_using_time_e=:approve_using_time_e,approve_using=:approve_using" + " WHERE applyid = :applyid ",
 				new BeanPropertySqlParameterSource(car_booking));
 	}
 
@@ -318,7 +318,7 @@ public class CarBookingDaoImpl extends BaseDao<CarBooking> implements CarBooking
 	}
 
 	@Override
-	public List<CarBooking> getEip07w070ReportData(CarBooking carBooking) {
+	public List<CarBooking> getEip07w070ReportData(CarBooking carBooking,String OrderCondition) {
 		StringBuilder sql = new StringBuilder();
 
 		sql.append("  SELECT * ");
@@ -335,11 +335,11 @@ public class CarBookingDaoImpl extends BaseDao<CarBooking> implements CarBooking
 		}
 		sql.append("   And CARProcess_status in ('3','4','6','7', 'F') ");
 
-		if ("1".equals(carBooking.getOrderCondition())) {
-			sql.append(" ORDER BY USING_DATE ");
+		if ("1".equals(OrderCondition)) {
+			sql.append(" ORDER BY USING_DATE,using_time_s, CARNO1+ CARNO2");
 		}
-		if ("2".equals(carBooking.getOrderCondition())) {
-			sql.append(" ORDER BY CARNO1+ CARNO2 ");
+		if ("2".equals(OrderCondition)) {
+			sql.append(" ORDER BY CARNO1+ CARNO2,USING_DATE,using_time_s ");
 		}
 
 		Map<String, String> map = new HashMap<String, String>();
@@ -457,7 +457,7 @@ public class CarBookingDaoImpl extends BaseDao<CarBooking> implements CarBooking
 				setUsingdate(caseData,map);
 			}
 		}
-		sql.append(" order by print_mk, applyid ");
+		sql.append(" order by Using_date,using ");
 
 		List<CarBooking> list = getNamedParameterJdbcTemplate().query(sql.toString(), map,BeanPropertyRowMapper.newInstance(CarBooking.class));
 		
@@ -526,6 +526,8 @@ public class CarBookingDaoImpl extends BaseDao<CarBooking> implements CarBooking
 			sql.append(" AND  Using_date between :using_date_s and :using_date_e ");
 			setUsingdate(caseData,map);
 		}
+		
+		sql.append(" order by Using_date,using ");
 		
 		List<CarBooking> list = getNamedParameterJdbcTemplate().query(sql.toString(), map,BeanPropertyRowMapper.newInstance(CarBooking.class));
 		return CollectionUtils.isEmpty(list)? null : list;

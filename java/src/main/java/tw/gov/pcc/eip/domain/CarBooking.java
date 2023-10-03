@@ -320,6 +320,22 @@ public class CarBooking implements Serializable {
     private String upd_datetime;
 
     /**
+     *核定時間(起)
+     */
+    @LogField
+    private String approve_using_time_s;
+    /**
+     *核定時間(迄)
+     */
+    @LogField
+    private String approve_using_time_e;
+    /**
+     *核定用車時間
+     */
+    @LogField
+    private String approve_using;
+
+    /**
      *用車起:時
      */
     @LogField

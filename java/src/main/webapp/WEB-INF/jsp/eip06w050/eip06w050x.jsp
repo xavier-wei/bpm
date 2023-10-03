@@ -51,7 +51,7 @@
             </c:when>
         </c:choose>
         <div class="col-md-6">
-            <form:input path="itemId" cssClass="form-control d-inline-block num_only" maxlength="10"/>
+            <form:input path="itemId" cssClass="form-control d-inline-block num_only" maxlength="4" />
         </div>
     </tags:form-row>
     <tags:form-row>
@@ -115,10 +115,16 @@ $(function(){
         //類別新增時A：餐點  B：物品 F：會議室
         if (itemTypValue == 'A') {
             $('#itemIdLabel').text('編號：A-');
+            $('#itemId').attr('placeholder', '');
+            $('#itemName').attr('placeholder', '');
         } else if (itemTypValue == 'B') {
             $('#itemIdLabel').text('編號：B-');
+            $('#itemId').attr('placeholder', '');
+            $('#itemName').attr('placeholder', '');
         } else if (itemTypValue == 'F') {
             $('#itemIdLabel').text('編號：F-');
+            $('#itemId').attr('placeholder', '2碼樓層+2碼編號');
+            $('#itemName').attr('placeholder', '樓層+會議室名稱');
         }
     }
     cheitemTyp();
