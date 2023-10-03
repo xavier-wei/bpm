@@ -14,27 +14,83 @@
 
         <div class="card-body clo-12" style="background-color: #d3ede8">
           <b-form-row>
-            <i-form-group-check class="col-4" label-cols="5" content-cols="7" :label="`姓名：`"
-                                :item="$v.selectName">
-              <!--姓名 :　-->
-              <b-form-input v-model="$v.selectName.$model"/>
-            </i-form-group-check>
 
-            <i-form-group-check class="col-4" label-cols="5" content-cols="7" :label="`單位：`"
-                                :item="$v.selectUnit">
-              <!--單位名稱-->
-              <b-form-select v-model="$v.selectUnit.$model" :options="bpmDeptsOptions">
-                <template #first>
-                  <b-form-select-option value="" disabled>請選擇</b-form-select-option>
-                </template>
-              </b-form-select>
-            </i-form-group-check>
 
-            <i-form-group-check class="col-4" label-cols="5" content-cols="7" :label="`職稱：`"
-                                :item="$v.selectTitle">
-              <!--姓名 :　-->
-              <b-form-input v-model="$v.selectTitle.$model"/>
-            </i-form-group-check>
+            <b-form-group
+              class="col-sm-4 mb-0"
+              label-cols-md="4"
+              content-cols-md="8"
+              :label="`姓名：`"
+              label-align-md="right"
+              label-for="nameData"
+            >
+              <b-input-group>
+                <b-form-input
+                  id="nameData"
+                  v-model.trim="$v.selectName.$model"
+                  placeholder="請輸入關鍵字"
+                  aria-label="請輸入關鍵字"
+                ></b-form-input>
+              </b-input-group>
+            </b-form-group>
+
+            <b-form-group
+              class="col-sm-4 mb-0"
+              label-cols-md="4"
+              content-cols-md="8"
+              :label="`單位：`"
+              label-align-md="right"
+              label-for="unitData"
+            >
+              <b-input-group>
+                <b-form-select v-model="$v.selectUnit.$model" :options="bpmDeptsOptions">
+                  <template #first>
+                    <b-form-select-option value="" disabled>請選擇</b-form-select-option>
+                  </template>
+                </b-form-select>
+              </b-input-group>
+            </b-form-group>
+
+            <b-form-group
+              class="col-sm-4 mb-0"
+              label-cols-md="4"
+              content-cols-md="8"
+              :label="`職稱：`"
+              label-align-md="right"
+              label-for="titleData"
+            >
+              <b-input-group>
+                <b-form-input
+                  id="titleData"
+                  v-model.trim="$v.selectTitle.$model"
+                  placeholder="請輸入關鍵字"
+                  aria-label="請輸入關鍵字"
+                ></b-form-input>
+              </b-input-group>
+            </b-form-group>
+
+
+<!--                        <i-form-group-check class="col-4 mb-0" label-cols="5" content-cols="7" :label="`姓名：`"-->
+<!--                                :item="$v.selectName">-->
+<!--              &lt;!&ndash;姓名 :　&ndash;&gt;-->
+<!--              <b-form-input v-model="$v.selectName.$model"/>-->
+<!--            </i-form-group-check>-->
+
+<!--            <i-form-group-check class="col-4" label-cols="5" content-cols="7" :label="`單位：`"-->
+<!--                                :item="$v.selectUnit">-->
+<!--              &lt;!&ndash;單位名稱&ndash;&gt;-->
+<!--              <b-form-select v-model="$v.selectUnit.$model" :options="bpmDeptsOptions">-->
+<!--                <template #first>-->
+<!--                  <b-form-select-option value="" disabled>請選擇</b-form-select-option>-->
+<!--                </template>-->
+<!--              </b-form-select>-->
+<!--            </i-form-group-check>-->
+
+<!--            <i-form-group-check class="col-4" label-cols="5" content-cols="7" :label="`職稱：`"-->
+<!--                                :item="$v.selectTitle">-->
+<!--              &lt;!&ndash;姓名 :　&ndash;&gt;-->
+<!--              <b-form-input v-model="$v.selectTitle.$model"/>-->
+<!--            </i-form-group-check>-->
 
           </b-form-row>
 
@@ -49,6 +105,9 @@
         <i-table
           per-page="10"
           ref="iTable"
+          stacked="sm"
+          striped
+          class="test-table table-sm table-hover"
           :itemsUndefinedBehavior="'loading'"
           :items="table.data"
           :fields="table.fields"
@@ -111,14 +170,13 @@
 <script lang="ts">
 import {reactive, ref} from "@vue/composition-api";
 import {useValidation} from "@/shared/form";
-import {newformatDate} from "@/shared/date/minguo-calendar-utils";
 import {changeDealWithUnit} from "@/shared/word/directions";
 import axios from "axios";
 import {notificationErrorHandler} from "@/shared/http/http-response-helper";
 import {useNotification} from "@/shared/notification";
 import IDatePicker from "@/shared/i-date-picker/i-date-picker";
-import ITable from "@/shared/i-table/i-table";
-import IFormGroupCheck from "@/shared/form/i-form-group-check";
+import ITable from '@/shared/i-table/i-table';
+import IFormGroupCheck from '@/shared/form/i-form-group-check';
 import {useGetters} from "@u3u/vue-hooks";
 import {useBvModal} from "@/shared/modal";
 import {navigateByNameAndParams} from "@/router/router";
@@ -198,7 +256,6 @@ export default {
           key: 'orgName',
           label: '機關名稱',
           sortable: false,
-          // thStyle: 'width:20%',
           thClass: 'text-center',
           tdClass: 'text-center align-middle',
         },
@@ -206,7 +263,6 @@ export default {
           key: 'unitName',
           label: '單位名稱',
           sortable: false,
-          // thStyle: 'width:10%',
           thClass: 'text-center',
           tdClass: 'text-center align-middle',
         },
@@ -214,7 +270,6 @@ export default {
           key: 'pename',
           label: '姓名',
           sortable: false,
-          // thStyle: 'width:10%',
           thClass: 'text-center',
           tdClass: 'text-center align-middle',
         },
@@ -222,7 +277,6 @@ export default {
           key: 'title',
           label: '職稱',
           sortable: false,
-          // thStyle: 'width:10%',
           thClass: 'text-center',
           tdClass: 'text-center align-middle',
         },

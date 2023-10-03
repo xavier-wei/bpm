@@ -78,6 +78,9 @@
 
     <i-table
       ref="iTable"
+      stacked="sm"
+      striped
+      class="test-table table-sm table-hover"
       :itemsUndefinedBehavior="'loading'"
       :items="table.data"
       :fields="table.fields"
@@ -151,6 +154,7 @@ import {newformatDate} from "@/shared/date/minguo-calendar-utils";
 import {changeFormId, changeSubject} from "@/shared/word/change-word-utils";
 import {changeDealWithUnit} from "@/shared/word/directions";
 import {navigateByNameAndParams} from "@/router/router";
+import { configRoleToBpmIpt } from '@/shared/word/configRole';
 
 export default defineComponent({
   name: 'notify',
@@ -295,7 +299,6 @@ export default defineComponent({
       const params = new FormData();
       params.append('bpmFormQueryDto', new Blob([JSON.stringify(form)], {type: 'application/json'}));
       axios.post(`/process/notify/queryTask`, params).then(({data}) => {
-        console.log(' notify.vue -  - 298: ', JSON.parse(JSON.stringify(data)))
         queryStatus.value = true;
         if (data.length <= 0) return;
         // 最新的日期到最舊的日期排序
@@ -323,7 +326,6 @@ export default defineComponent({
         taskData: taskData,
         formStatus: FormStatusEnum.READONLY,
         isNotKeepAlive: false,
-        stateStatus: userData.cpape05m.unitName !== '資訊推動小組',
         processInstanceStatus: item.processInstanceStatus,
       });
     }

@@ -67,6 +67,8 @@ public class BpmIsmsL414DTO implements Serializable {
     private String enableTime;
 
     @Size(max = 100)
+    private String workingTime;
+    @Size(max = 100)
     private String otherEnableTime;
 
     @NotNull
@@ -471,6 +473,14 @@ public class BpmIsmsL414DTO implements Serializable {
         this.signer = signer;
     }
 
+    public String getWorkingTime() {
+        return workingTime;
+    }
+
+    public void setWorkingTime(String workingTime) {
+        this.workingTime = workingTime;
+    }
+
     @Override
     public String toString() {
         return "BpmIsmsL414DTO{" +
@@ -489,6 +499,7 @@ public class BpmIsmsL414DTO implements Serializable {
             ", isSubmit='" + isSubmit + '\'' +
             ", isEnable='" + isEnable + '\'' +
             ", enableTime='" + enableTime + '\'' +
+            ", workingTime='" + workingTime + '\'' +
             ", otherEnableTime='" + otherEnableTime + '\'' +
             ", selecteEdateType='" + selecteEdateType + '\'' +
             ", sdate=" + sdate +
@@ -513,7 +524,7 @@ public class BpmIsmsL414DTO implements Serializable {
             ", updateTime=" + updateTime +
             ", createUser='" + createUser + '\'' +
             ", createTime=" + createTime +
-            ", FormName='" + formName + '\'' +
+            ", formName='" + formName + '\'' +
             ", signUnit='" + signUnit + '\'' +
             ", signer='" + signer + '\'' +
             '}';

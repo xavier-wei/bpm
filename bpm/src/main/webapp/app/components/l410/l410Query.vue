@@ -11,68 +11,71 @@
       </b-row>
     </div>
 
-        <div class="card-body clo-12" style="background-color: #d3ede8">
-          <b-form-row>
-            <i-form-group-check class="col-4" label-cols="4" content-cols="8" :label="'關鍵字：'" :item="$v.word">
-              <b-form-input v-model="$v.word.$model"></b-form-input>
-            </i-form-group-check>
+    <div class="card-body clo-12" style="background-color: #d3ede8">
+      <b-form-row>
+        <i-form-group-check class="col-4" label-cols="4" content-cols="8" :label="'關鍵字：'" :item="$v.word">
+          <b-form-input v-model="$v.word.$model"></b-form-input>
+        </i-form-group-check>
 
-            <!--            <i-form-group-check class="col-4" label-cols="4" content-cols="8" :label="`版號：`" :item="$v.number">-->
-            <!--              <b-form-select v-model="$v.number.$model" :options="queryOptions.number">-->
-            <!--                <template #first>-->
-            <!--                  <option value="">請選擇</option>-->
-            <!--                </template>-->
-            <!--              </b-form-select>-->
-            <!--            </i-form-group-check>-->
-          </b-form-row>
+        <!--            <i-form-group-check class="col-4" label-cols="4" content-cols="8" :label="`版號：`" :item="$v.number">-->
+        <!--              <b-form-select v-model="$v.number.$model" :options="queryOptions.number">-->
+        <!--                <template #first>-->
+        <!--                  <option value="">請選擇</option>-->
+        <!--                </template>-->
+        <!--              </b-form-select>-->
+        <!--            </i-form-group-check>-->
+      </b-form-row>
 
-          <div class="text-center pt-5">
-            <b-button class="ml-2" style="background-color: #17a2b8" @click="toL410Apply()"> 新增</b-button>
-            <b-button class="ml-2" style="background-color: #17a2b8" @click="toQuery()">查詢</b-button>
-            <b-button class="ml-2" style="background-color: #17a2b8" @click="reset()">清除</b-button>
-          </div>
-        </div>
+      <div class="text-center pt-5">
+        <b-button class="ml-2" style="background-color: #17a2b8" @click="toL410Apply()"> 新增</b-button>
+        <b-button class="ml-2" style="background-color: #17a2b8" @click="toQuery()">查詢</b-button>
+        <b-button class="ml-2" style="background-color: #17a2b8" @click="reset()">清除</b-button>
+      </div>
+    </div>
 
-        <i-table
-          ref="iTable"
-          :itemsUndefinedBehavior="'loading'"
-          :items="table.data"
-          :fields="table.fields"
-          :totalItems="table.totalItems"
-          :is-server-side-paging="false"
-          :hideNo="true"
-          v-show="queryStatus"
+    <i-table
+      ref="iTable"
+      stacked="sm"
+      striped
+      class="test-table table-sm table-hover"
+      :itemsUndefinedBehavior="'loading'"
+      :items="table.data"
+      :fields="table.fields"
+      :totalItems="table.totalItems"
+      :is-server-side-paging="false"
+      :hideNo="true"
+      v-show="queryStatus"
+    >
+      <template #cell(formId)="row">
+        <!-- <b-button variant="link" class="ml-2" style="background-color: #17a2b8" @click="toEdit(row)">{{ roq.item.number }}</b-button> -->
+        <b-button variant="link" style="color: blue" @click="toEdit(row.item)"
+        ><u>{{ row.item.formId }}</u></b-button
         >
-          <template #cell(formId)="row">
-            <!-- <b-button variant="link" class="ml-2" style="background-color: #17a2b8" @click="toEdit(row)">{{ roq.item.number }}</b-button> -->
-            <b-button variant="link" style="color: blue" @click="toEdit(row.item)"
-            ><u>{{ row.item.formId }}</u></b-button
-            >
-          </template>
+      </template>
 
-          <template #cell(appName)="row">
-            <div v-if="!!row.item.appName"> {{ row.item.appName }}</div>
-            <div v-if="!!row.item.appEmpid"> ({{ row.item.appEmpid }})</div>
-          </template>
+      <template #cell(appName)="row">
+        <div v-if="!!row.item.appName"> {{ row.item.appName }}</div>
+        <div v-if="!!row.item.appEmpid"> ({{ row.item.appEmpid }})</div>
+      </template>
 
-          <template #cell(filName)="row">
-            <div v-if="!!row.item.filName"> {{ row.item.filName }}</div>
-            <div v-if="!!row.item.filEmpid"> ({{ row.item.filEmpid }})</div>
-          </template>
+      <template #cell(filName)="row">
+        <div v-if="!!row.item.filName"> {{ row.item.filName }}</div>
+        <div v-if="!!row.item.filEmpid"> ({{ row.item.filEmpid }})</div>
+      </template>
 
-          <template #cell(applicationReason)="row">
-            <div v-if="row.item.appReason ==='1'"> 新進 , </div>
-            <div v-else-if="row.item.appReason ==='2'"> 新進 , </div>
-            <div v-else-if="row.item.appReason ==='3'"> 職務異動 , </div>
-            <div v-if="row.item.isEnableDate ==='1'"> 生效日期： {{ formatToString(new Date(row.item.enableDate),'/')}}</div>
-            <div v-if="row.item.isOther ==='1'"> 其他理由： {{ row.item.otherReason }}</div>
-          </template>
+      <template #cell(applicationReason)="row">
+        <div v-if="row.item.appReason ==='1'"> 新進 ,</div>
+        <div v-else-if="row.item.appReason ==='2'"> 新進 ,</div>
+        <div v-else-if="row.item.appReason ==='3'"> 職務異動 ,</div>
+        <div v-if="row.item.isEnableDate ==='1'"> 生效日期： {{ formatToString(new Date(row.item.enableDate), '/') }}</div>
+        <div v-if="row.item.isOther ==='1'"> 其他理由： {{ row.item.otherReason }}</div>
+      </template>
 
-          <template #cell(systemItem)="row">
-            <div> {{changeProject(row.item)}} </div>
-          </template>
+      <template #cell(systemItem)="row">
+        <div> {{ changeProject(row.item) }}</div>
+      </template>
 
-        </i-table>
+    </i-table>
   </div>
 </template>
 
@@ -92,10 +95,11 @@ import {notificationErrorHandler} from "@/shared/http/http-response-helper";
 import {useNotification} from "@/shared/notification";
 import {changeProject} from "@/shared/word/project-conversion";
 import {changeDealWithUnit} from "@/shared/word/directions";
+import { configRoleToBpmIpt } from '@/shared/word/configRole';
 
 export default defineComponent({
   name: 'l410Query',
-  methods:{changeProject},
+  methods: {changeProject},
   components: {
     IDatePicker,
     ITable,
@@ -108,11 +112,12 @@ export default defineComponent({
     const notificationService = useNotification();
     const userData = ref(useGetters(['getUserData']).getUserData).value;
     const bpmDeptsOptions = ref(useGetters(['getBpmDeptsOptions']).getBpmDeptsOptions).value;
+
     enum FormStatusEnum {
       CREATE = '新增',
       MODIFY = '編輯',
       READONLY = '檢視',
-      VERIFY ='簽核'
+      VERIFY = '簽核'
     }
 
     const formDefault = {
@@ -172,7 +177,7 @@ export default defineComponent({
           thStyle: 'width:10%',
           thClass: 'text-center',
           tdClass: 'text-center align-middle',
-          formatter: value => (value == undefined ? '' : changeDealWithUnit(value,bpmDeptsOptions)),
+          formatter: value => (value == undefined ? '' : changeDealWithUnit(value, bpmDeptsOptions)),
         },
         {
           key: 'applicationReason',
@@ -224,12 +229,20 @@ export default defineComponent({
     };
 
     function toEdit(item) {
+      let taskData = {
+        processInstanceId: '',
+        taskId: '',
+        taskName: '',
+        decisionRole:'',
+        additional: '',
+      }
       navigateByNameAndParams('l410Edit', {
         formId: item.formId,
+        taskData: taskData,
         formStatus: FormStatusEnum.READONLY,
         isNotKeepAlive: false,
-        stateStatus : userData.cpape05m.unitName !== '資訊推動小組',
-        isSignature : false
+        isSignature: false,
+        processInstanceStatus: item.processInstanceStatus,
       });
 
     }
@@ -261,5 +274,5 @@ export default defineComponent({
 });
 </script>
 
-<style scoped>
+<style>
 </style>

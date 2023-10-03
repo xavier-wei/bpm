@@ -12,14 +12,13 @@ import java.util.Map;
 
 @Controller
 @Slf4j
-// @Profiles("dev")
-public class Bpm01w010Controller {
+public class Bpm01w030Controller {
 
-    public static final String CASE_KEY = "_bpm01w010Controller_caseData";
+    public static final String CASE_KEY = "_bpm01w030Controller_caseData";
     private static final String MAIN_PAGE = "/bpm/Bpm01w010";//主頁
 
-    @RequestMapping("/Bpm01w010_enter.action")
-    public ModelAndView l414(HttpServletRequest request) {
+    @RequestMapping("/Bpm01w030_enter.action")
+    public ModelAndView pending(HttpServletRequest request) {
 
         // 確認是否有無bpmLogin資訊
         HttpSession session = request.getSession();
@@ -35,12 +34,13 @@ public class Bpm01w010Controller {
             referer = referer.replace(referer.substring(index, referer.length()), "");
             RefererTemp.refererMap.put("referer", referer);
             StringBuilder path = new StringBuilder(referer)
-                                    .append("/bpm/api/loginBpm")
-                                    .append("?referer=")
-                                    .append(referer)
-                                    .append("&path=/Bpm01w010_enter.action");
+                    .append("/bpm/api/loginBpm")
+                    .append("?referer=")
+                    .append(referer)
+                    .append("&path=/Bpm01w030_enter.action");
             return new ModelAndView("redirect:"+path);
         }
+
 
         // 有bpmLogin資訊情況
         String referer=RefererTemp.refererMap.get("referer");
@@ -50,12 +50,8 @@ public class Bpm01w010Controller {
             referer = "http://localhost:9000";
         }
 
-        log.info("BPM表單管理:: 導向{}頁面","Bpm01w010 表單申請-l414");
-        return new ModelAndView(MAIN_PAGE).addAllObjects(Map.of("bpmPath", referer + "/bpm/l414Query"));
+        log.info("BPM表單管理:: 導向{}頁面","Bpm01w010 待處理表單");
+        return new ModelAndView(MAIN_PAGE).addAllObjects(Map.of("bpmPath", referer + "/bpm/pending"));
     }
-
-
-
-
 
 }

@@ -10,5 +10,5 @@ public interface UserRoleRepository extends JpaRepository<UserRole, UserRolesPri
 
     List<UserRole> findByRoleIdIn(List<String> roleIds);
 
-
+    List<UserRole> findAllByUserId(String userId);
 }

@@ -1,10 +1,5 @@
 <template>
   <div>
-    <!--    <b-container>-->
-    <!--      <section class="container mt-2"></section>-->
-    <!--    </b-container>-->
-
-
     <b-card-body>
       <b-tabs>
         <b-tab title="表單" :active="activeTab(0)" @click="changeTabIndex(0)">
@@ -533,7 +528,7 @@ export default {
       appEmpid: userData.empId != null ? userData.empId : '',//	申請人員工編號
       extNum: userData.tel2 != null ? userData.tel2 : '',//	分機
       appUnit: userData.deptId != null ? userData.deptId : '',//	單位別
-      position: userData.cpape05m.title != null ? userData.cpape05m.title : '',//	職稱
+      position: userData.titleName != null ? userData.titleName : '',//	職稱
       appReason: '1',//	申請事由 1.新進 2.離職 3.職務異動
       isEnableDate: '0',//	是否有生效日期
       enableDate: null,//	生效日期
@@ -871,7 +866,7 @@ export default {
 
     function resetAll() {
       reset();
-      table.data.forEach(data=>{
+      table.data.forEach(data => {
         data.checkbox = '0';
         data.otherSys = null;
         data.otherSysAccount = null;
@@ -916,7 +911,7 @@ export default {
 }
 </script>
 
-<style scoped>
+<style>
 
 .test1 {
   font-family: 'Arial Negreta', 'Arial';
@@ -926,37 +921,26 @@ export default {
   margin-left: 20px;
 }
 
-.input-checkbox {
-  height: 15px;
-  width: 15px;
-}
-
-.hr {
-  margin-top: 1rem;
-  margin-bottom: 1rem;
-  border: 0;
-  border-top: 1px solid rgba(0, 0, 0, 0.1);
-}
-
-#u68 {
-  position: absolute;
-  left: 10px;
-  top: 425px;
-  width: 680px;
-  height: 10px;
-}
-
-.ax {
-  font-size: 13px;
-  color: #333333;
-  text-align: center;
-  line-height: normal;
-}
-
 .text1 {
   margin-top: 0.25rem;
   font-size: 80%;
 }
+
+.nav-tabs .nav-link.active, .nav-tabs .nav-item.show .nav-link {
+  color: black;
+  background-color: #d3ede8;
+  border-color: #dee2e6 #dee2e6 #e4e5e6;
+}
+
+.nav-tabs .nav-link {
+  text-align: center;
+  width: 150px;
+  margin-bottom: -1px;
+  border: 1px solid transparent;
+  border-top-left-radius: 10px;
+  border-top-right-radius: 10px;
+}
+
 
 </style>
 
