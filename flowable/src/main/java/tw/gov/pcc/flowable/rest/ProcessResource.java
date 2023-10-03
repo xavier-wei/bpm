@@ -19,6 +19,7 @@ import tw.gov.pcc.flowable.service.dto.EndEventDTO;
 import tw.gov.pcc.flowable.service.dto.ProcessReqDTO;
 import tw.gov.pcc.flowable.service.dto.TaskDTO;
 
+import javax.validation.Valid;
 import java.util.List;
 import java.util.Map;
 
@@ -35,26 +36,27 @@ public class ProcessResource {
     private String token;
 
     @RequestMapping("/startProcess")
-    public TaskDTO startProcess(@RequestBody ProcessReqDTO processReqDTO) {
+    public ResponseEntity<TaskDTO> startProcess(@Valid @RequestBody ProcessReqDTO processReqDTO) {
 
         ProcessReq processReq = new ProcessReq(processReqDTO);
         if (processReq.getProcessKey() != null) {
-            return service.startProcess(processReq.getProcessKey(), processReq.getVariables());
+            TaskDTO taskDTO = service.startProcess(processReq.getProcessKey(), processReq.getVariables());
+
+            return ResponseEntity.ok(taskDTO);
         }
 
-        return null;
+        return ResponseEntity.badRequest().body(null);
     }
 
-
     @RequestMapping("/queryProcessingTask")
-    public List<TaskDTO> queryProcessingTask(@RequestBody String id) {
+    public ResponseEntity<List<TaskDTO>> queryProcessingTask(@RequestBody String id) {
 
-        return service.queryProcessingTask(id);
+        return ResponseEntity.ok().body(service.queryProcessingTask(id));
     }
 
     @RequestMapping("/queryProcessingAllTask")
-    public List<TaskDTO> queryProcessingAllTask(@RequestBody String id) {
-        return service.queryProcessingAllTask(id);
+    public ResponseEntity<List<TaskDTO>> queryProcessingAllTask(@RequestBody String id) {
+        return ResponseEntity.ok().body(service.queryProcessingAllTask(id));
     }
 
     @RequestMapping("/getAllTask")
@@ -82,7 +84,7 @@ public class ProcessResource {
             Gson gson = new Gson();
             HttpEntity<String> requestEntity = new HttpEntity<>(gson.toJson(endEventDTO), headers);
             RestTemplate restTemplate = new RestTemplate();
-            ResponseEntity<String> exchange = restTemplate.exchange(BpmSetting.url+"/bpm/api/process/receiveEndEvent", HttpMethod.POST, requestEntity, String.class);
+            ResponseEntity<String> exchange = restTemplate.exchange(BpmSetting.url + "/bpm/api/process/receiveEndEvent", HttpMethod.POST, requestEntity, String.class);
             return "Delete process instance: " + exchange.getStatusCodeValue();
         } else {
             return "Bad request";
