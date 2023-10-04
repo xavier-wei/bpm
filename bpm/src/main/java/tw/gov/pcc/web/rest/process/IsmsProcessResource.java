@@ -43,7 +43,8 @@ public class IsmsProcessResource {
 
     @Value("${bpm.token}")
     private String token;
-
+    private static final String PROCESS_INSTANCE_ID = "processInstanceId";
+    private static final String TASK_ID = "taskId";
     private final ApplicationContext applicationContext;
     private final Gson gson = new Gson();
 
@@ -69,7 +70,7 @@ public class IsmsProcessResource {
     }
 
     @PostMapping(path = "/start/{key}", consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
-    public String start(
+    public ResponseEntity<String> start(
         @Valid @RequestPart("form") Map<String, String> form,
         @PathVariable String key,
         @Valid @RequestPart(name = "fileDto", required = false) List<BpmUploadFileDTO> dto,
@@ -101,7 +102,7 @@ public class IsmsProcessResource {
             processInstanceId = taskDTO.getProcessInstanceId();
         } else {
             log.error("flowableProcess - startProcess - 90 :: {} ", "flowableConnectionError");
-            return "流程引擎忙碌中，請稍候再試";
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("流程引擎連線異常，請聯絡管理員");
         }
 
         try {
@@ -113,14 +114,13 @@ public class IsmsProcessResource {
             service.saveBpm(uuid, processInstanceId, taskDTO, dto, appendixFiles);
 
         } catch (Exception e) {
-            e.printStackTrace();
             log.error("BpmSaveError - startProcess - 90 :: {} ", "BpmSaveError");
             // 如果BPM寫入失敗，通知flowable原流程撤銷
             deleteProcessWhenSaveBpmFailed(processInstanceId);
-            return "BPM寫入失敗，請聯絡管理員";
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("表單寫入失敗，流程已取消，請稍候再試");
         }
         log.info("IsmsProcessResource.java - start - 102 :: " + processInstanceId);
-        return processInstanceId;
+        return ResponseEntity.ok(processInstanceId);
 
     }
 
@@ -137,8 +137,8 @@ public class IsmsProcessResource {
         return service.saveBpmByPatch(form.get(key), dto, appendixFiles);
     }
 
-    @RequestMapping("/completeTask/{formId}")
-    public String completeTask(@RequestBody CompleteReqDTO completeReqDTO, @PathVariable String formId) {
+    @PostMapping("/completeTask/{formId}")
+    public ResponseEntity<String> completeTask(@RequestBody CompleteReqDTO completeReqDTO, @PathVariable String formId) {
         log.info("ProcessL414Resource.java - completeTask - 183 :: " + completeReqDTO);
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
@@ -155,9 +155,10 @@ public class IsmsProcessResource {
             BpmSignStatusDTO bpmSignStatusDTO = getBpmSignStatusDTO(completeReqDTO, formId);
             BpmSignStatus bpmSignStatus = bpmSignStatusMapper.toEntity(bpmSignStatusDTO);
             bpmSignStatusService.saveBpmSignStatus(bpmSignStatus);
-            return exchange.getBody();
+            return ResponseEntity.ok(exchange.getBody());
         }
-        return "伺服器忙碌中或查無任務，請稍候再試";
+        log.error("flowableProcess - startProcess - 90 :: {} ", "flowableConnectionError");
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("流程引擎連線異常，請聯絡管理員");
     }
 
     @PutMapping("/receiveEndEvent")
@@ -184,10 +185,10 @@ public class IsmsProcessResource {
         headers.setContentType(MediaType.APPLICATION_JSON);
 
         HashMap<String, String> deleteRequest = new HashMap<>();
-        deleteRequest.put("processInstanceId", processInstanceId);
+        deleteRequest.put(PROCESS_INSTANCE_ID, processInstanceId);
         deleteRequest.put("token", token);
         HttpEntity<String> requestEntity = new HttpEntity<>(gson.toJson(deleteRequest), headers);
-        ResponseEntity<String> exchange = restTemplate.exchange(flowableProcessUrl + "/deleteProcess", HttpMethod.POST, requestEntity, String.class);
+        restTemplate.exchange(flowableProcessUrl + "/deleteProcess", HttpMethod.POST, requestEntity, String.class);
 
     }
 
@@ -206,8 +207,8 @@ public class IsmsProcessResource {
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
         HttpEntity<String> requestEntity = new HttpEntity<>(gson.toJson(processInstanceId), headers);
-        ResponseEntity<String> exchange = restTemplate.exchange(flowableProcessUrl + "/pic?processId="+processInstanceId, HttpMethod.GET, requestEntity, String.class);
-        return  exchange.getBody();
+        ResponseEntity<String> exchange = restTemplate.exchange(flowableProcessUrl + "/pic?processId=" + processInstanceId, HttpMethod.GET, requestEntity, String.class);
+        return exchange.getBody();
     }
 
     @RequestMapping("/queryTask")
@@ -216,7 +217,6 @@ public class IsmsProcessResource {
         log.info("ProcessL414Resource.java - queryTask - 193 :: " + userInfo.getUserId());
         log.info("ProcessL414Resource.java - queryTask - 194 :: " + bpmFormQueryDto);
 
-//        String id="ApplyTester";
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
         HttpEntity<String> requestEntity = new HttpEntity<>(userInfo.getUserId(), headers);
@@ -246,8 +246,8 @@ public class IsmsProcessResource {
 
                             if (!mapList.isEmpty()) {
                                 Map<String, Object> map = new HashMap<>(new MapUtils().getNewMap(mapList.get(0)));
-                                map.put("processInstanceId", taskDTO.getProcessInstanceId());
-                                map.put("taskId", taskDTO.getTaskId());
+                                map.put(PROCESS_INSTANCE_ID, taskDTO.getProcessInstanceId());
+                                map.put(TASK_ID, taskDTO.getTaskId());
                                 map.put("taskName", "加簽-" + bpmIsmsAdditional.getTaskName());
                                 String decisionByName = SingerDecisionEnum.getDecisionByName(taskDTO.getTaskName());
                                 map.put("decisionRole", decisionByName);
@@ -257,8 +257,6 @@ public class IsmsProcessResource {
                                 return null;
                             }
                         } else {
-                            //                        BpmIsmsL414DTO dto = bpmIsmsL414Mapper.toDto(bpmIsmsL414Repository.findFirstByProcessInstanceId(taskDTO.getProcessInstanceId()));
-//                            BpmIsmsL414DTO dto = bpmIsmsL414Repository.findByBpmIsmsL414(bpmFormQueryDto, taskDTO.getProcessInstanceId());
                             List<Map<String, Object>> mapList = bpmIsmsAdditionalRepository.findAllByProcessInstanceId(
                                 taskDTO.getProcessInstanceId(),
                                 bpmFormQueryDto.getFormId(),
@@ -271,7 +269,7 @@ public class IsmsProcessResource {
 
                             if (!mapList.isEmpty()) {
                                 Map<String, Object> map = new HashMap<>(new MapUtils().getNewMap(mapList.get(0)));
-                                map.put("taskId", taskDTO.getTaskId());
+                                map.put(TASK_ID, taskDTO.getTaskId());
                                 map.put("taskName", taskDTO.getTaskName());
                                 String decisionByName = SingerDecisionEnum.getDecisionByName(taskDTO.getTaskName());
                                 map.put("decisionRole", decisionByName);
@@ -287,7 +285,7 @@ public class IsmsProcessResource {
                     .collect(Collectors.toList());
         }
 
-        return null;
+        return Collections.emptyList();
     }
 
     @RequestMapping("/deleteProcessInstance/{processInstanceId}")
@@ -296,7 +294,7 @@ public class IsmsProcessResource {
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
         HashMap<String, String> deleteRequest = new HashMap<>();
-        deleteRequest.put("processInstanceId", processInstanceId);
+        deleteRequest.put(PROCESS_INSTANCE_ID, processInstanceId);
         deleteRequest.put("token", token);
         HttpEntity<String> requestEntity = new HttpEntity<>(gson.toJson(deleteRequest), headers);
         restTemplate.exchange(flowableProcessUrl + "/deleteProcess", HttpMethod.POST, requestEntity, String.class);
@@ -334,7 +332,7 @@ public class IsmsProcessResource {
                         );
                         if (!mapList.isEmpty()) {
                             Map<String, Object> map = new HashMap<>(new MapUtils().getNewMap(mapList.get(0)));
-                            map.put("taskId", taskDTO.getTaskId());
+                            map.put(TASK_ID, taskDTO.getTaskId());
                             map.put("taskName", taskDTO.getTaskName());
                             map.put("decisionRole", SingerDecisionEnum.getDecisionByName(taskDTO.getTaskName()));
                             map.put("additional", false);

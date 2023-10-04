@@ -4,9 +4,8 @@ import org.flowable.engine.HistoryService;
 import org.flowable.engine.RuntimeService;
 import org.flowable.engine.TaskService;
 import org.flowable.engine.runtime.ProcessInstance;
-import org.flowable.identitylink.api.IdentityLink;
+import org.flowable.identitylink.api.IdentityLinkInfo;
 import org.flowable.task.api.Task;
-import org.flowable.task.api.history.HistoricTaskInstance;
 import org.springframework.stereotype.Service;
 import tw.gov.pcc.flowable.domain.ProcessRes;
 import tw.gov.pcc.flowable.domain.SupervisorSignerEnum;
@@ -144,31 +143,47 @@ public class ProcessFlowService {
 
     public List<TaskDTO> queryList(String id) {
 
-        List<HistoricTaskInstance> historicTaskInstances = historyService.createHistoricTaskInstanceQuery().taskCandidateUser(id).list();
-        List<HistoricTaskInstance> historicTaskInstances2 = historyService.createHistoricTaskInstanceQuery().taskAssignee(id).list();
-        List<String> processInstanceIds = new ArrayList<>();
-        List<TaskDTO> taskDTOS = Stream.concat(
-                        historicTaskInstances.stream(),
-                        historicTaskInstances2.stream()
-                )
-                .filter(taskInstance -> !processInstanceIds.contains(taskInstance.getProcessInstanceId()))
-                .peek(taskInstance -> processInstanceIds.add(taskInstance.getProcessInstanceId()))
-                .map(TaskDTO::new)
-                .collect(Collectors.toList());
+        List<String> historicInstanceIds = new ArrayList<>();
+        // 取得已處理過的任務實體，並將其Id放入processInstanceIds
+        List<TaskDTO> histoicTaskDTO = getHistoricTaskDTO(id, historicInstanceIds);
 
-        List<Task> tasks = taskService.createTaskQuery().processInstanceIdIn(processInstanceIds).list();
-        tasks.forEach(task -> {
-            if (task.getAssignee()==null) {
-                List<IdentityLink> identityLinksForTask = taskService.getIdentityLinksForTask(task.getId());
-                List<String> collect = identityLinksForTask.stream().map(identityLink -> identityLink.getUserId()).collect(Collectors.toList());
-                task.setAssignee(String.join(",",collect));
-            }
-        });
-        List<TaskDTO> processingTaskDTO = tasks.stream().map(TaskDTO::new).collect(Collectors.toList());
-        List<String> processingTaskDTOProcessInstanceIds = processingTaskDTO.stream().map(TaskDTO::getProcessInstanceId).collect(Collectors.toList());
-        List<TaskDTO> newTaskDTO = taskDTOS.stream().filter(taskDTO -> !processingTaskDTOProcessInstanceIds.contains(taskDTO.getProcessInstanceId())).collect(Collectors.toList());
+        // 藉由已處理過任務實體ID找出自己已處理但是還未完成之任務
+        List<Task> tasks = taskService.createTaskQuery().processInstanceIdIn(historicInstanceIds).list();
+        List<String> processingInstanceIds = new ArrayList<>();
+        // 因為複數處理人無法使用getAssignee直接取得，所以必須先至IdentityLink table取得後放入，再轉成taskDTO (處理中)
+        List<TaskDTO> processingTaskDTO = tasks
+                .stream()
+                .map(task -> {
+                    if (task.getAssignee() == null) {
+                        List<String> candidateUsers = taskService.getIdentityLinksForTask(task.getId()).stream().map(IdentityLinkInfo::getUserId).collect(Collectors.toList());
+                        task.setAssignee(String.join(",", candidateUsers));
+                    }
+                    processingInstanceIds.add(task.getProcessInstanceId());
+                    return new TaskDTO(task);
+                })
+                .collect(Collectors.toList());
+        // 如果任務仍未完成則把歷史任務中重複的過濾掉
+        List<TaskDTO> newTaskDTO = histoicTaskDTO.stream().filter(taskDTO -> !processingInstanceIds.contains(taskDTO.getProcessInstanceId())).collect(Collectors.toList());
         newTaskDTO.addAll(processingTaskDTO);
         return newTaskDTO;
     }
 
+    private List<TaskDTO> getHistoricTaskDTO(String id, List<String> historicInstanceIds) {
+
+        // createHistoricTaskInstanceQuery 為查出自己已處理過之任務，並非整個流程實體已完成
+        return Stream
+                .concat(
+                        historyService.createHistoricTaskInstanceQuery().taskCandidateUser(id).list().stream(),
+                        historyService.createHistoricTaskInstanceQuery().taskAssignee(id).list().stream()
+                )
+                .filter(taskInstance -> {
+                    if (!historicInstanceIds.contains(taskInstance.getProcessInstanceId())) {
+                        historicInstanceIds.add(taskInstance.getProcessInstanceId());
+                        return true;
+                    }
+                    return false;
+                })
+                .map(TaskDTO::new)
+                .collect(Collectors.toList());
+    }
 }

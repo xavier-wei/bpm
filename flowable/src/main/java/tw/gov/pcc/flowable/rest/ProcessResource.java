@@ -91,13 +91,10 @@ public class ProcessResource {
         }
     }
 
-    // todo 測試完成用api，上線需刪除
+    // 測試時期快速完成用API
     @RequestMapping("/completeTaskTest/{pId}/{tId}")
     public String completeTest(@PathVariable String pId, @PathVariable String tId) {
-
-
         service.completeTask(pId, tId);
-
         return "成功";
     }
 
