@@ -8,10 +8,12 @@ import org.springframework.web.bind.annotation.*;
 import tw.gov.pcc.domain.BpmSignerList;
 import tw.gov.pcc.domain.Depts;
 import tw.gov.pcc.domain.Eipcode;
+import tw.gov.pcc.domain.User;
 import tw.gov.pcc.eip.dao.DeptsDao;
 import tw.gov.pcc.eip.dao.EipcodeDao;
 import tw.gov.pcc.repository.BpmIsmsAdditionalRepository;
 import tw.gov.pcc.repository.BpmSignerListRepository;
+import tw.gov.pcc.repository.UserRepository;
 import tw.gov.pcc.service.dto.BpmSignStatusDTO;
 import tw.gov.pcc.utils.MapUtils;
 
@@ -35,7 +37,8 @@ public class BpmShareResource {
     @Autowired
     private BpmIsmsAdditionalRepository bpmIsmsAdditionalRepository;
 
-
+    @Autowired
+    private UserRepository userRepository;
     @Autowired
     private BpmSignerListRepository bpmSignerListRepository;
 
@@ -66,7 +69,7 @@ public class BpmShareResource {
 
         List<Map<String, Object>> peunitOptionsConvert = new ArrayList<>();
 
-        peunitOptions.forEach(data ->{
+        peunitOptions.forEach(data -> {
             peunitOptionsConvert.add(new MapUtils().getNewMap(data));
         });
 
@@ -79,11 +82,11 @@ public class BpmShareResource {
         @RequestParam(required = false) String selectUnit,
         @RequestParam(required = false) String selectTitle) {
 
-        List<Map<String, Object>> signatureOptions = bpmIsmsAdditionalRepository.signatureOptions(selectName,selectUnit,selectTitle);
+        List<Map<String, Object>> signatureOptions = bpmIsmsAdditionalRepository.signatureOptions(selectName, selectUnit, selectTitle);
 
         List<Map<String, Object>> signatureOptionsConvert = new ArrayList<>();
 
-        signatureOptions.forEach(data ->{
+        signatureOptions.forEach(data -> {
             signatureOptionsConvert.add(new MapUtils().getNewMap(data));
         });
 
@@ -95,6 +98,11 @@ public class BpmShareResource {
         @PathVariable String id
     ) {
         return bpmSignerListRepository.findByFormIdOrderBySortAsc(id);
+    }
+
+    @GetMapping("/getUsers")
+    public List<User> findByUsers() {
+        return userRepository.findByAcntIsValid("Y");
     }
 
 }

@@ -12,7 +12,14 @@
     </div>
     <div class="card-body clo-12" style="background-color: #d3ede8">
       <b-form-row>
-        <i-form-group-check class="col-4" label-cols="4" content-cols="8" label="表單：" :item="$v.formId">
+        <i-form-group-check
+          class="col-sm-4 mb-0"
+          label-cols-md="4"
+          content-cols-md="8"
+          label-align-md="right"
+          label="表單："
+          :item="$v.formId"
+        >
           <b-form-select v-model="$v.formId.$model" :options="queryOptions.formCase">
             <template #first>
               <option value="" disabled>請選擇</option>
@@ -20,7 +27,13 @@
           </b-form-select
           >
         </i-form-group-check>
-        <i-form-group-check class="col-4" label-cols="4" content-cols="8" label="處理狀況：">
+        <i-form-group-check
+          class="col-sm-4 mb-0"
+          label-cols-md="4"
+          content-cols-md="8"
+          label-align-md="right"
+          label="處理狀況："
+        >
           <b-form-select v-model="$v.processInstanceStatus.$model" :options="queryOptions.status">
             <template #first>
               <option value="" disabled>請選擇</option>
@@ -28,7 +41,13 @@
           </b-form-select
           >
         </i-form-group-check>
-        <i-form-group-check class="col-4" label-cols="4" content-cols="8" label="表單分類：">
+        <i-form-group-check
+          class="col-sm-4 mb-0"
+          label-cols-md="4"
+          content-cols-md="8"
+          label-align-md="right"
+          label="表單分類："
+        >
           <b-form-select v-model="$v.formType.$model" :options="queryOptions.formTypeList">
             <template #first>
               <option value="" disabled>請選擇</option>
@@ -39,8 +58,15 @@
       </b-form-row>
       <!-- 填表日期 -->
       <b-form-row>
-        <i-form-group-check :label="'期間：'" class="col-8" label-cols="2" content-cols="6" :dual1="$v.dateStart"
-                            :dual2="$v.dateEnd">
+        <i-form-group-check
+          :label="'期間：'"
+          class="col-sm-4 mb-0"
+          label-cols-md="4"
+          content-cols-md="8"
+          label-align-md="right"
+          :dual1="$v.dateStart"
+          :dual2="$v.dateEnd"
+        >
           <b-input-group>
             <i-date-picker v-model="$v.dateStart.$model" placeholder="yyy/MM/dd"
                            :disabled-date="notAfterPublicDateEnd"></i-date-picker>
@@ -73,21 +99,6 @@
       v-show="queryStatus"
     >
 
-      <template #cell(filAndApp)="row">
-        <div v-if="row.item.appEmpid === row.item.filEmpid">
-          {{ row.item.appName }}
-        </div>
-        <div v-else>
-          {{ row.item.appName }} / {{ row.item.filName }}
-        </div>
-      </template>
-
-      <template #cell(subject)="row">
-        <div>
-          {{ changeSubject(row.item, true) }}
-        </div>
-      </template>
-
       <template #cell(action)="row">
         <b-button class="ml-1" v-if="userData.userName === row.item.appName" style="background-color: #17a2b8"
                   @click="toEdit(row.item,'0')">編輯
@@ -119,7 +130,7 @@ import {navigateByNameAndParams} from "@/router/router";
 
 export default defineComponent({
   name: 'pending',
-  methods: {changeSubject,configRoleToBpmIpt},
+  methods: {changeSubject, configRoleToBpmIpt},
   components: {
     IDatePicker,
     ITable,
@@ -233,7 +244,16 @@ export default defineComponent({
       axios.post(`/process/queryTask`, params).then(({data}) => {
         queryStatus.value = true;
         if (data.length <= 0) return;
+
+
         table.data = data.slice(0, data.length);
+
+        //過濾table.data所有物件 要把畫面要顯示的值都先塞進table.data內 不然iTable內的b-modal會沒有值
+        table.data.forEach(i => {
+          i.subject = changeSubject(i, true)
+          i.filAndApp = (i.appEmpid === i.filEmpid) ? i.appName : i.appName + '/' + i.filName
+        });
+
         table.totalItems = data.length;
       })
         .catch(notificationErrorHandler(notificationService));

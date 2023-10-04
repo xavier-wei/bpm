@@ -336,6 +336,7 @@ public class IsmsProcessResource {
                             map.put("taskName", taskDTO.getTaskName());
                             map.put("decisionRole", SingerDecisionEnum.getDecisionByName(taskDTO.getTaskName()));
                             map.put("additional", false);
+                            map.put("pendingUserId", taskDTO.getPendingUserId());
                             return map;
                         } else {
                             return null;

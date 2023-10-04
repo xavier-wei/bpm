@@ -52,7 +52,13 @@ public class TaskDTO implements Serializable {
         this.createdTime = createdTime;
     }
 
+    public String getPendingUserId() {
+        return pendingUserId;
+    }
 
+    public void setPendingUserId(String pendingUserId) {
+        this.pendingUserId = pendingUserId;
+    }
 
     public TaskDTO(String formName, String processInstanceId, String taskId, String taskName, String createdTime, String pendingUserId) {
         this.formName = formName;
@@ -83,12 +89,11 @@ public class TaskDTO implements Serializable {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         TaskDTO taskDTO = (TaskDTO) o;
-        return Objects.equals(formName, taskDTO.formName) && Objects.equals(processInstanceId, taskDTO.processInstanceId) && Objects.equals(taskId, taskDTO.taskId) && Objects.equals(taskName, taskDTO.taskName) && Objects.equals(createdTime, taskDTO.createdTime);
+        return Objects.equals(formName, taskDTO.formName) && Objects.equals(processInstanceId, taskDTO.processInstanceId) && Objects.equals(taskId, taskDTO.taskId) && Objects.equals(taskName, taskDTO.taskName) && Objects.equals(createdTime, taskDTO.createdTime) && Objects.equals(pendingUserId, taskDTO.pendingUserId);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(formName, processInstanceId, taskId, taskName, createdTime);
+        return Objects.hash(formName, processInstanceId, taskId, taskName, createdTime, pendingUserId);
     }
-
 }

@@ -1,6 +1,6 @@
-export function mapToCheckbox(data: any, form: any): any {
 
-  //所有單位下拉選都直接從BPM_L410_APPLY_MANAGE裡面給admUnit
+//把l410的form去轉成畫面checkbox內的值
+export function formToCheckbox(data: any, form: any): any {
 
   if (data.systemApplyName === '人事差勤系統') {
     data.checkbox = form.isHrSys

@@ -1,7 +1,7 @@
 import {Cpape05mModel} from "@/shared/model/bpm/cpape05mModel";
 
 export interface IUserModel {
-  acntIsValid: boolean;
+  acntIsValid: string | null;
   createTimestamp?: string | null;
   createUserId?: string | null;
   deptId?: string | null;
@@ -28,7 +28,7 @@ export interface IUserModel {
 
 export class UserModel implements IUserModel {
   constructor(
-    public acntIsValid: boolean,
+    public acntIsValid: string | null,
     public createTimestamp ?: string | null,
     public createUserId?: string | null,
     public deptId ?: string | null,
