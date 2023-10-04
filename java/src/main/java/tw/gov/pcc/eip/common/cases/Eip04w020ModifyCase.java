@@ -32,7 +32,7 @@ public class Eip04w020ModifyCase implements Serializable {
 
     private String classcode;
 
-    @RequiredString(label = "課程類別代碼")
+    @RequiredString(label = "期別")
     private String period;
 
     @RequiredString(label = "名稱")

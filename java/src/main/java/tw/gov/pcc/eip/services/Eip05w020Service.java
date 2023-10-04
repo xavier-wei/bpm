@@ -200,6 +200,10 @@ public class Eip05w020Service extends OpinionSurveyService{
      * @param themeCase
      */
     public void getInsertFormData(Eip05w020ThemeCase themeCase) {
+        //初始化表單
+        themeCase.setOsformno(null);
+        themeCase.setTopicname(null);
+        //取得預設資料
         Map<String,String>map = getMail();
         themeCase.setMailsubject(map.get("4"));
         themeCase.setMailmsg(map.get("5"));

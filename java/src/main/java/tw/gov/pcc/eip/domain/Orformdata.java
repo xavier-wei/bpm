@@ -35,7 +35,7 @@ public class Orformdata {
   @LogField("topicname")
   private String topicname;//主題名稱
   @LogField("topicdesc")
-  private String topicdesc;//內容說盟
+  private String topicdesc;//內容說明
   @LogField("status")
   private String status;//狀態
   @LogField("organizer")

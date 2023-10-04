@@ -228,4 +228,20 @@ public class OrformdataDaoImpl extends BaseDao<Orformdata> implements Orformdata
         params.put("curdttime", LocalDateTime.now());
         return getNamedParameterJdbcTemplate().update(sql, params);
     }
+
+    @Override
+    public List<Orformdata> getListByCourseclacode(Long courseclacode, String orformno) {
+        StringBuilder sql = new StringBuilder();
+        sql.append(" SELECT ");
+        sql.append(ALL_COLUMNS_SQL);
+        sql.append(" FROM " + TABLE_NAME);
+        sql.append(" WHERE courseclacode = :courseclacode ");
+        sql.append("   AND orformno <> :orformno ");
+        Map<String, Object> params = new HashMap<>();
+        params.put("courseclacode", courseclacode);
+        params.put("orformno", orformno);
+        List<Orformdata> list = getNamedParameterJdbcTemplate().query(sql.toString(),params,
+                BeanPropertyRowMapper.newInstance(Orformdata.class));
+        return CollectionUtils.isEmpty(list) ? new ArrayList<>() : list;
+    }
 }
