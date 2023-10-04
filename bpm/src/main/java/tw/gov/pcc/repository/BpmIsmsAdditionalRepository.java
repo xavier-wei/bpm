@@ -30,6 +30,8 @@ public interface BpmIsmsAdditionalRepository extends JpaRepository<BpmIsmsAdditi
         "             l414.APPLY_DATE, " +
         "             l414.APP_NAME, " +
         "             l414.FIL_NAME, " +
+        "             l414.FIL_EMPID, " +
+        "             l414.APP_EMPID, " +
         "             bss.SIGNING_DATETIME, " +
         "             bss.SIGN_UNIT ,       " +
         "             bss.signer, " +
@@ -52,6 +54,8 @@ public interface BpmIsmsAdditionalRepository extends JpaRepository<BpmIsmsAdditi
         "             l410.APPLY_DATE, " +
         "             l410.APP_NAME, " +
         "             l410.FIL_NAME, " +
+        "             l410.FIL_EMPID, " +
+        "             l410.APP_EMPID, " +
         "             bss.SIGNING_DATETIME," +
         "             bss.SIGN_UNIT,   " +
         "             bss.signer, " +

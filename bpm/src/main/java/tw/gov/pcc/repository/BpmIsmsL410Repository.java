@@ -19,7 +19,7 @@ public interface BpmIsmsL410Repository extends JpaRepository<BpmIsmsL410, String
     @Query(value = " select top 1 * from BPM_ISMS_L410 order by CREATE_TIME desc  ",nativeQuery = true)
     List<BpmIsmsL410> getMaxFormId();
     @Query("SELECT l410 FROM BpmIsmsL410 l410 " +
-        "WHERE (LENGTH(COALESCE(:word,'')) = 0 OR l410.formId = :word) " +
+        "WHERE (LENGTH(COALESCE(:word,'')) = 0 OR l410.formId LIKE CONCAT('%', :word, '%') ) " +
         "AND (LENGTH(COALESCE(:appEmpid,'')) = 0 OR l410.appEmpid = :appEmpid)" +
         "AND (LENGTH(COALESCE(:processInstanceStatus,'')) = 0 OR l410.processInstanceStatus = :processInstanceStatus)" +
         "ORDER BY l410.updateTime DESC ")

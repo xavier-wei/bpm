@@ -13,7 +13,7 @@ public class User implements Serializable {
     private String userId;
 
     @Column(name = "ACNT_IS_VALID")
-    private Boolean acntIsValid;
+    private String acntIsValid;
 
     @Column(name = "CREATE_TIMESTAMP")
     private Timestamp createTimestamp;
@@ -81,11 +81,11 @@ public class User implements Serializable {
         this.userId = userId;
     }
 
-    public Boolean getAcntIsValid() {
+    public String getAcntIsValid() {
         return acntIsValid;
     }
 
-    public void setAcntIsValid(Boolean acntIsValid) {
+    public void setAcntIsValid(String acntIsValid) {
         this.acntIsValid = acntIsValid;
     }
 

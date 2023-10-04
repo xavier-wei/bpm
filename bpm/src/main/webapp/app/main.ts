@@ -34,7 +34,7 @@ import {trim as _trim, size as _size, keys as _keys, cloneDeep as _cloneDeep, cl
 
 import '../content/scss/global.scss';
 import '../content/scss/vendor.scss';
-import BpmUnitOptionsService from "@/shared/config/service/bpm-unit-options.service";
+// import BpmUnitOptionsService from "@/shared/config/service/bpm-unit-options.service";
 import BpmDeptsOptionsService from "@/shared/config/service/bpm-depts-options.service";
 
 import {notificationErrorHandler} from "@/shared/http/http-response-helper";
@@ -66,7 +66,7 @@ const store = config.initVueXStore(Vue);
 axios.defaults.baseURL = '/bpm/api';
 const loginService = new LoginService();
 const accountService = new AccountService(store, router);
-new BpmUnitOptionsService(store);
+// new BpmUnitOptionsService(store);
 new BpmDeptsOptionsService(store);
 new BpmUserDataService(store);
 const serviceUrlList: string[] = ['/login', '/service/', '/home'];

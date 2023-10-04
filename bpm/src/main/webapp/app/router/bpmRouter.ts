@@ -4,6 +4,7 @@ const appendix =() => import('@/components/appendix.vue');
 const flowChart =() => import('@/components/flowChart.vue');
 const signatureBmodel =() => import('@/components/signatureBmodel.vue');
 const signerList =() => import('@/components/signerList.vue');
+const userSys =() => import('@/components/userSys.vue');
 
 const breadcrumb =() => import('../core/menu/breadcrumb.vue');
 const l414Edit =() => import('@/components/l414/l414Edit.vue');
@@ -88,6 +89,15 @@ export default [
     component: signerList,
     meta: {
       functionId: 'signerList',
+    },
+    props: true,
+  },
+  {
+    path: '/userSys',
+    name: 'userSys',
+    component: userSys,
+    meta: {
+      functionId: 'userSys',
     },
     props: true,
   },

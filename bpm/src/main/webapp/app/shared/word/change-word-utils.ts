@@ -1,7 +1,8 @@
 import {newformatDate} from "@/shared/date/minguo-calendar-utils";
 
-export function changeSubject(subject: any, show: any): string {
 
+//切換(待處理表單、表單查詢)畫面上[主旨]欄位用
+export function changeSubject(subject: any, show: any): string {
 
   if (!subject) return '';
 
@@ -22,9 +23,9 @@ export function changeSubject(subject: any, show: any): string {
   return '';
 }
 
+
+//切換(表單查詢)畫面上[主旨]欄位用
 export function changeFormId(formId: any): string {
-
-
   if (!formId) return '';
 
   let formName = formId.substring(0, 4);
