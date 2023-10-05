@@ -136,8 +136,6 @@ export function needNarrativeUnit(data) {
     inputText = needNarrative;
   }
 
-  console.log('inputText', inputText)
-
   return inputText;
 }
 

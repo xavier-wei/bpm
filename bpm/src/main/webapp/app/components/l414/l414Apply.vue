@@ -14,7 +14,7 @@
 
           <div class="card" style="background-color: #d3ede8">
             <div style="background-color: #d3ede8">
-              <b-form-row :class="{'flex-column': isSmallScreen}">
+              <b-form-row>
                 <i-form-group-check class="col-sm-5" label-cols="5" content-cols="7" :label="'申請日期:'"
                                     :item="$v.applyDate">
                   <!--申請日期 : applyDate-->
@@ -40,7 +40,7 @@
                 </i-form-group-check>
               </b-form-row>
 
-              <b-form-row :class="{'flex-column': isSmallScreen}">
+              <b-form-row>
                 <i-form-group-check
                   class="col-sm-5"
                   label-cols="5"
@@ -69,7 +69,7 @@
                 </i-form-group-check>
               </b-form-row>
 
-              <b-form-row :class="{'flex-column': isSmallScreen}">
+              <b-form-row>
                 <i-form-group-check
                   class="col-sm-5"
                   label-cols="5"
@@ -100,10 +100,10 @@
             </div>
 
             <div class="card m-3" style="background-color: white">
-              <b-form-row :class="{'flex-column': isSmallScreen}">
+              <b-form-row>
 
                 <b-col class="col-sm-5">
-                  <i-form-group-check class="col-12" label-cols="5" content-cols="7" :label="`規則：`"
+                  <i-form-group-check class="col-12" label-cols="3" content-cols="7" :label="`規則：`"
                                       :item="$v.isEnable">
                     <!--規則 : isEnable-->
                     <b-form-radio-group
@@ -115,7 +115,7 @@
                     />
                   </i-form-group-check>
 
-                  <i-form-group-check class="col-12" label-cols="5" content-cols="7" :label="`使用時段：`"
+                  <i-form-group-check class="col-12" label-cols="3" content-cols="7" :label="`使用時段：`"
                                       :item="$v.enableTime">
                     <!--使用時段 : enableTime-->
                     <b-form-radio-group v-model="$v.enableTime.$model">
@@ -144,8 +144,8 @@
                 <b-col>
                   <i-form-group-check
                     class="col-sm-12"
-                    label-cols="2"
-                    content-cols="10"
+                    label-cols="3"
+                    content-cols="7"
                     :label="`啟用期間：`"
                     :item="$v.selecteEdateType"
                   >
@@ -173,8 +173,8 @@
 
                   <i-form-group-check
                     class="col-sm-12"
-                    label-cols="2"
-                    content-cols="10"
+                    label-cols="3"
+                    content-cols="7"
                     :label="`停用期間：`"
                     :item="$v.selecteEdateType"
                   >
@@ -200,28 +200,28 @@
                 </b-col>
               </b-form-row>
 
-              <b-form-row :class="{'flex-column': isSmallScreen}">
-                <i-form-group-check class="col-sm-5" label-cols="5" content-cols="7" :label="'來源IP：'"
+              <b-form-row>
+                <i-form-group-check class="col-sm-5" label-cols="3" content-cols="7" :label="'來源IP ：'"
                                     :item="$v.sourceIp">
                   <!--來源IP : sourceIp-->
                   <b-form-input v-model="$v.sourceIp.$model"/>
                 </i-form-group-check>
 
-                <i-form-group-check class="col-sm-5" label-cols="5" content-cols="7" :label="`目的IP：`"
+                <i-form-group-check class="col-sm-7" label-cols="3" content-cols="7" :label="`目的IP ：`"
                                     :item="$v.targetIp">
                   <!--目的IP : targetIp-->
                   <b-form-input v-model="$v.targetIp.$model"/>
                 </i-form-group-check>
               </b-form-row>
 
-              <b-form-row :class="{'flex-column': isSmallScreen}">
-                <i-form-group-check class="col-sm-5" label-cols="5" content-cols="7" :label="'使用協定(port)：'"
+              <b-form-row>
+                <i-form-group-check class="col-sm-5" label-cols="3" content-cols="7" :label="'使用協定(port) ：'"
                                     :item="$v.port">
                   <!--使用協定(port) : port-->
                   <b-form-input v-model="$v.port.$model"/>
                 </i-form-group-check>
 
-                <i-form-group-check class="col-sm-5" label-cols="5" content-cols="7" :label="`傳輸模式 ：`">
+                <i-form-group-check class="col-sm-7" label-cols="3" content-cols="7" :label="`傳輸模式 ：`">
                   <b-input-group>
                     <!--傳輸模式是否為tcp: isTcp-->
                     <b-form-checkbox class="col-6" v-model="$v.isTcp.$model" value="Y" unchecked-value="N"> TCP
@@ -233,16 +233,15 @@
                 </i-form-group-check>
               </b-form-row>
 
-              <b-form-row :class="{'flex-column': isSmallScreen}">
+              <b-form-row>
                 <i-form-group-check
-                  class="col-sm-12"
-                  label-cols="2"
-                  content-cols="8"
+                  class="col-sm-5"
+                  label-cols="3"
+                  content-cols="7"
                   :label="'用途說明 ：'"
                   :item="$v.instructions"
-                  style="margin-left: 7px"
                 >
-                  <!--用途說明 : instructions-->
+                  <!--                用途說明 : instructions-->
                   <b-form-textarea v-model="$v.instructions.$model" rows="3" maxlength="2000" trim lazy/>
                 </i-form-group-check>
               </b-form-row>
@@ -255,9 +254,9 @@
             </b-form-row>
 
             <div class="card m-3" style="background-color: white">
-              <b-form-row :class="{'flex-column': isSmallScreen}">
+              <b-form-row>
                 <!--處理意見 : agreeType-->
-                <i-form-group-check class="col-sm-12" label-cols="2" content-cols="10" :label="'處理意見：'">
+                <i-form-group-check class="col-sm-5" label-cols="3" content-cols="9" :label="'處理意見：'">
                   <b-form-radio-group v-model="$v.agreeType.$model" disabled>
                     <!--預定完成日期 : scheduleDate-->
                     <b-form-radio class="col-12" value="1">
@@ -309,8 +308,8 @@
             </div>
 
             <div class="card m-3" style="background-color: white">
-              <b-form-row :class="{'flex-column': isSmallScreen}">
-                <i-form-group-check class="col-sm-12" label-cols="2" content-cols="8" :label="`變更設備 ： `">
+              <b-form-row>
+                <i-form-group-check class="col-sm-5" label-cols="3" content-cols="9" :label="`變更設備 ： `">
                   <b-input-group>
                     <!--是否為外部防火牆 : isExternalFirewall-->
                     <b-form-checkbox v-model="$v.isExternalFirewall.$model" value="Y" unchecked-value="N"
@@ -326,11 +325,11 @@
                 </i-form-group-check>
               </b-form-row>
 
-              <b-form-row :class="{'flex-column': isSmallScreen}">
+              <b-form-row>
                 <i-form-group-check
-                  class="col-sm-12"
-                  label-cols="2"
-                  content-cols="8"
+                  class="col-sm-5"
+                  label-cols="3"
+                  content-cols="9"
                   :label="'設定內容 ： '"
                   :item="$v.firewallContent"
                 >
@@ -340,11 +339,11 @@
                 </i-form-group-check>
               </b-form-row>
 
-              <b-form-row :class="{'flex-column': isSmallScreen}">
+              <b-form-row>
                 <i-form-group-check
-                  class="col-sm-12"
-                  label-cols="2"
-                  content-cols="8"
+                  class="col-sm-5"
+                  label-cols="3"
+                  content-cols="9"
                   :label="'實際完成日期 : '"
                   :item="$v.finishDatetime"
                 >
@@ -593,22 +592,6 @@ export default {
       handleBack({isReload: false, isNotKeepAlive: true});
     }
 
-    onMounted(() => {
-      checkScreenSize(); // 在组件挂载时检查屏幕大小
-      window.addEventListener('resize', checkScreenSize); // 监听窗口大小变化
-    });
-
-    const isSmallScreen = ref(false); // 用于跟踪屏幕尺寸是否较小
-
-    const checkScreenSize = () => {
-      isSmallScreen.value = window.innerWidth <= 1000; // 适合你的屏幕宽度条件
-    };
-// 在窗口大小变化时重新检查屏幕大小
-    watch(isSmallScreen, () => {
-      console.log('isSmallScreen', isSmallScreen)
-      checkScreenSize();
-    });
-
     return {
       $v,
       form,
@@ -627,7 +610,6 @@ export default {
       formStatusRef,
       bpmDeptsOptions,
       fileDataId,
-      isSmallScreen,
     }
   }
 }
@@ -652,6 +634,7 @@ export default {
 .flex-column {
   display: flex;
   flex-direction: column;
+  align-items: flex-start;
 }
 
 </style>

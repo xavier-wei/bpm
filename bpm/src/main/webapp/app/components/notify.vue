@@ -165,7 +165,6 @@ export default defineComponent({
   },
   setup() {
     const userAllData = ref(useGetters(['getUserAllData']).getUserAllData)
-    console.log('userAllData', userAllData.value)
     const bpmDeptsOptions = ref(useGetters(['getBpmDeptsOptions']).getBpmDeptsOptions).value;
     const iTable = ref(null);
     const stepVisible = ref(true);
@@ -317,7 +316,6 @@ export default defineComponent({
       const params = new FormData();
       params.append('bpmFormQueryDto', new Blob([JSON.stringify(form)], {type: 'application/json'}));
       axios.post(`/process/notify/queryTask`, params).then(({data}) => {
-        console.log(' notify.vue -  - 302: ', JSON.parse(JSON.stringify(data)))
         queryStatus.value = true;
         if (data.length <= 0) return;
 
@@ -334,8 +332,6 @@ export default defineComponent({
           i.subject = changeSubject(i, true)
           i.filAndApp = (i.appEmpid === i.filEmpid) ? i.appName : i.appName + '/' + i.filName
         });
-
-        console.log('table.data', table.data)
         table.totalItems = data.length;
       }).catch(notificationErrorHandler(notificationService));
     };
