@@ -1,11 +1,17 @@
 <template>
   <div>
-    <section class="container">
-      <div style="display: flex; justify-content: center; align-items: center; ">
-        <img :src=filePathNameProp.filePathName alt=""/>
-      </div>
-    </section>
-
+    <div class="card" style="display: flex; justify-content: center; align-items: center; ">
+      <img
+        :src="filePathNameProp.filePathName"
+        :style="{ transform: `scale(${scale}) translate(${translateX}px, ${translateY}px)` }"
+        @wheel="handleWheel"
+        @mousedown="startDrag($event)"
+        @mousemove="handleDrag"
+        @mouseup="stopDrag"
+        @mouseleave="stopDrag"
+        alt=""
+      />
+    </div>
   </div>
 </template>
 
@@ -13,7 +19,7 @@
 import IFormGroupCheck from "@/shared/form/i-form-group-check.vue";
 import IDualDatePicker from "@/shared/i-date-picker/i-dual-date-picker.vue";
 import IDatePicker from "@/shared/i-date-picker/i-date-picker.vue";
-import {onMounted, reactive, ref, onUnmounted, watch} from "@vue/composition-api";
+import {onMounted, reactive, ref, onUnmounted} from "@vue/composition-api";
 
 export default {
   name: "flowChart",
@@ -30,28 +36,59 @@ export default {
   },
   setup(props) {
     const filePathNameProp = reactive(props.filePathName);
-    const currentScale = reactive({data: 1});
+    const scale = ref(1); // 初始化縮放比例
+    const drag = ref(false);
+    const startX = ref(0);
+    const startY = ref(0);
+    const translateX = ref(0);
+    const translateY = ref(0);
 
-    // 處理滑鼠滾輪
     const handleWheel = (event) => {
-      if (event.ctrlKey) { // 检查是否按下了Ctrl键
-        const newScale = currentScale.data + (event.deltaY > 0 ? -0.1 : 0.1); // 根據滾輪方向調整縮放比例
-        currentScale.data = Math.max(0.1, Math.min(2, newScale)); // 限制缩放比例在0.1到2之间
+      if (event.ctrlKey) {
+        event.preventDefault(); //阻止頁面整體縮放
+        const delta = event.deltaY > 0 ? -0.1 : 0.1; //根據滑鼠滾輪計算縮放
+        scale.value = Math.min(Math.max(0.1, scale.value + delta), 2); //限制圖片縮放比例在在0.1到2之間
       }
     };
 
+    const startDrag = (event) => {
+      if (event.button === 0) {
+        event.preventDefault(); //阻止瀏覽器默認行為 舉例:不加這個 瀏覽器預設是點下左鍵 要先移動一段距離 才會觸發
+        drag.value = true;
+        startX.value = event.clientX - translateX.value;
+        startY.value = event.clientY - translateY.value;
+      }
+    };
 
-    // 在組件掛載後，加上滑鼠滾輪監聽
+    const handleDrag = (event) => {
+      if (drag.value) {
+        translateX.value = event.clientX - startX.value;
+        translateY.value = event.clientY - startY.value;
+      }
+    };
+
+    const stopDrag = () => {
+      drag.value = false;
+    };
+
     onMounted(() => {
-      window.addEventListener('wheel', handleWheel);
+      window.addEventListener("wheel", handleWheel, { passive: false });
     });
 
     onUnmounted(() => {
-      window.removeEventListener('wheel', handleWheel);
+      window.removeEventListener("wheel", handleWheel);
     });
 
+
     return {
-      filePathNameProp
+      scale,
+      filePathNameProp,
+      startDrag,
+      handleDrag,
+      stopDrag,
+      translateX,
+      translateY,
+      handleWheel,
     }
 
   }

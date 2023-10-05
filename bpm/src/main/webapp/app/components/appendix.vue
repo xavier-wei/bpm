@@ -1,97 +1,115 @@
 <template>
   <div>
-    <section class="container mt-2" v-show="applyAppendix">
-      <div class="card" style="background-color: #d3ede8">
-        <div class="card-body">
 
-          <!-- 新增附件 -->
-          <div class="card context" style="background-color: #d3ede8">
-            <b-table
-              class="table-sm"
-              show-empty
-              responsive
-              bordered
-              empty-text="無資料"
-              :items="appendixData.appendix"
-              :fields="appendixData.fields"
-            >
+    <div class="card" style="background-color: #d3ede8" v-show="applyAppendix">
 
-              <template #cell(file)="row">
+      <!-- 新增附件 -->
+      <div class="card context" style="background-color: #d3ede8">
 
-                <b-form-file
-                  v-model="row.item.file"
-                  trim
-                  multiple
-                  browse-text="選擇檔案"
-                  @change="upload($event,row.index,row.item)"
-                ></b-form-file>
-              </template>
+        <i-table
+          ref="iTable"
+          stacked="sm"
+          striped
+          class="test-table table-sm table-hover"
+          :itemsUndefinedBehavior="'loading'"
+          :items="appendixData.appendix"
+          :fields="appendixData.fields"
+          :totalItems="appendixData.totalItems"
+          :is-server-side-paging="false"
+          :hideNo="true"
+          :hideCardHeader="true"
+          :hideCardFooter="true"
+        >
 
-              <template #cell(fileSize)="row">
-                <b-form-input v-model="row.item.fileSize" maxlength="200" disabled></b-form-input>
-              </template>
-              <template #cell(upDataTime)="row">
-                <div v-model="row.item.upDataTime">{{ formatToString(row.item.updateTime, '/') }}</div>
-              </template>
+          <template #cell(file)="row">
 
-              <template #cell(authorName)="row">
-                <b-form-input v-model="row.item.authorName" maxlength="200" disabled></b-form-input>
-              </template>
-              <template #cell(fileDescription)="row">
-                <b-form-input v-model="row.item.fileDescription" maxlength="200"
-                              :disabled="row.item.file === undefined"></b-form-input>
-              </template>
+            <b-form-file
+              v-model="row.item.file"
+              trim
+              multiple
+              browse-text="選擇檔案"
+              @change="upload($event,row.index,row.item)"
+            ></b-form-file>
+          </template>
 
-              <template #cell(action)="row">
+          <template #cell(fileSize)="row">
+            <b-form-input v-model="row.item.fileSize" maxlength="200" disabled></b-form-input>
+          </template>
+          <template #cell(upDataTime)="row">
+            <div v-model="row.item.upDataTime">{{ formatToString(row.item.updateTime, '/') }}</div>
+          </template>
 
-                <b-button class="submitFormBon" @click="removeAnnouncement(row.index)"
-                          v-if="appendixData.appendix.length > 1">刪除
-                </b-button>
-                <b-button class="submitFormBon" @click="addAnnouncement"
-                          v-if="row.index == appendixData.appendix.length - 1"
-                          :disabled="row.item.file === undefined">新增
-                </b-button>
+          <template #cell(authorName)="row">
+            <b-form-input v-model="row.item.authorName" maxlength="200" disabled></b-form-input>
+          </template>
+          <template #cell(fileDescription)="row">
+            <b-form-input v-model="row.item.fileDescription" maxlength="200"
+                          :disabled="row.item.file === undefined"></b-form-input>
+          </template>
 
-              </template>
-            </b-table>
-          </div>
+          <template #cell(action)="row">
 
-          <b-container class="mt-3">
-            <b-row class="justify-content-center">
-              <b-button class="ml-2" style="background-color: #17a2b8" @click="reset()">清除</b-button>
-            </b-row>
-          </b-container>
+            <b-button class="submitFormBon" @click="removeAnnouncement(row.index)"
+                      v-if="appendixData.appendix.length > 1">刪除
+            </b-button>
+            <b-button class="submitFormBon" @click="addAnnouncement"
+                      v-if="row.index == appendixData.appendix.length - 1"
+                      :disabled="row.item.file === undefined">新增
+            </b-button>
 
-        </div>
+          </template>
+
+        </i-table>
+
       </div>
-    </section>
 
-    <section class="container mt-2" v-show="readAppendix">
-      <div class="card" style="background-color: #d3ede8">
-        <div class="card-body">
+      <b-container class="mt-3">
+        <b-row class="justify-content-center">
+          <b-button class="ml-2" style="background-color: #17a2b8" @click="reset()">清除</b-button>
+        </b-row>
+      </b-container>
 
-          <b-table sticky-header :items="table.data" :fields="table.fields" bordered responsive="sm">
 
-            <template #cell(fileName)="row">
-              <button class="btn_login" @click="downloadBpmFile(row.item)">
-                {{ row.item.fileName }}
-              </button>
-            </template>
+    </div>
 
-            <template #cell(action)="row">
-              <b-button class="ml-2" style="background-color: #17a2b8; color: white"
-                        variant="outline-secondary"
-                        :disabled="formStatusRef !== FormStatusEnum.MODIFY"
-                        @click="deleteFile(row.item.id)"
-              >刪除
-              </b-button>
-            </template>
 
-          </b-table>
 
-        </div>
+    <div class="card" style="background-color: #d3ede8" v-show="readAppendix">
+      <div class="card-body">
+
+        <i-table
+          ref="iTable"
+          stacked="sm"
+          striped
+          class="test-table table-sm table-hover"
+          :itemsUndefinedBehavior="'loading'"
+          :items="table.data"
+          :fields="table.fields"
+          :totalItems="table.totalItems"
+          :is-server-side-paging="false"
+          :hideNo="true"
+          :hideCardHeader="true"
+          :hideCardFooter="true"
+        >
+          <template #cell(fileName)="row">
+            <button class="btn_login" @click="downloadBpmFile(row.item)">
+              {{ row.item.fileName }}
+            </button>
+          </template>
+
+          <template #cell(action)="row">
+            <b-button class="ml-2" style="background-color: #17a2b8; color: white"
+                      variant="outline-secondary"
+                      :disabled="formStatusRef !== FormStatusEnum.MODIFY"
+                      @click="deleteFile(row.item.id)"
+            >刪除
+            </b-button>
+          </template>
+        </i-table>
+
       </div>
-    </section>
+    </div>
+
     <i-pdf-viewer ref="pdfViewer"/>
   </div>
 </template>
@@ -110,12 +128,15 @@ import {useNotification} from "@/shared/notification";
 import {downloadFile} from "@/shared/formatter/common";
 import IPdfViewer from "@/shared/report/i-pdf-viewer.vue";
 import {useBvModal} from "@/shared/modal";
+import ITable from "@/shared/i-table/i-table.vue";
+
 
 export default {
   name: "appendix",
   components: {
     IButton,
     IPdfViewer,
+    ITable,
   },
   props: {
     vData: {
@@ -132,7 +153,7 @@ export default {
     },
   },
   setup(props) {
-
+    const iTable = ref(null);
     let filePathNameProp = reactive(props.vData);
     let fileDataIdProp = reactive(props.fileDataId);
     const formStatusRef = toRef(props, 'formStatus');
@@ -169,8 +190,9 @@ export default {
       }
     });
 
-    const appendixData: { appendix: FileModel[], fields: any } = reactive({
+    const appendixData: { appendix: FileModel[], fields: any ,totalItems: any} = reactive({
       appendix: [],
+      totalItems: 0,
       fields: [
         {
           key: 'file',
@@ -398,6 +420,30 @@ export default {
       {immediate: true}
     );
 
+    // const currentScale = reactive({data: 1});
+// const imgStyle = ref({
+//   transform: `scale(${currentScale.data})`,
+//   transition: "transform 0.2s ease", // 添加过渡效果，使缩放更平滑
+// });
+// // 處理滑鼠滾輪
+// const handleWheel = (event) => {
+//   if (event.ctrlKey) { // 检查是否按下了Ctrl键
+//     const newScale = currentScale.data + (event.deltaY > 0 ? -0.1 : 0.1); // 根據滾輪方向調整縮放比例
+//     currentScale.data = Math.max(0.1, Math.min(2, newScale)); // 限制缩放比例在0.1到2之间
+//     imgStyle.value.transform = `scale(${currentScale.data})`;
+//   }
+// };
+//
+//
+// // 在組件掛載後，加上滑鼠滾輪監聽
+// onMounted(() => {
+//   window.addEventListener('wheel', handleWheel);
+// });
+//
+// onUnmounted(() => {
+//   window.removeEventListener('wheel', handleWheel);
+// });
+
     return {
       appendixData,
       removeAnnouncement,
@@ -412,7 +458,8 @@ export default {
       pdfViewer,
       applyAppendix,
       readAppendix,
-      deleteFile
+      deleteFile,
+      iTable
     };
   }
 }
@@ -451,6 +498,23 @@ export default {
   background-color: transparent;
   border-style: none;
   color: blue;
+}
+
+.card {
+  position: relative;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-orient: vertical;
+  -webkit-box-direction: normal;
+  -ms-flex-direction: column;
+  flex-direction: column;
+  min-width: 0;
+  word-wrap: break-word;
+  background-color: #d3ede8;
+  background-clip: border-box;
+  border: 1px solid rgba(0, 0, 0, 0.125);
+  border-radius: 0.15rem;
 }
 
 </style>

@@ -11,13 +11,13 @@ import {useNotification} from "@/shared/notification";
 
 export default {
   name: "userSys",
-  setup(){
+  setup() {
     const userAllData = ref(useGetters(['getUserAllData']).getUserAllData).value
     const notificationService = useNotification();
 
-    const toQuery = () => {
+    async function toQuery() {
 
-      axios.get('/eip/getUsers')
+      await axios.get('/eip/getUsers')
         .then(({data}) => {
           useStore().value.commit('setUserAllData', data);
         })
@@ -33,7 +33,7 @@ export default {
     )
 
 
-    return{
+    return {
       userAllData,
     }
 

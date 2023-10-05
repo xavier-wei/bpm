@@ -219,6 +219,7 @@ export default {
       axios.get(`/eip/eip-bpm-isms-l414/findByWord?${params.toString()}`)
         .then(({data}) => {
           queryStatus.value = true
+
           if (iTable.value) iTable.value.state.pagination.currentPage = 1;
           if (data) {
             table.data = data;
