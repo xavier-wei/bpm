@@ -15,7 +15,7 @@ import java.util.Map;
 public class Bpm01w030Controller {
 
     public static final String CASE_KEY = "_bpm01w030Controller_caseData";
-    private static final String MAIN_PAGE = "/bpm/Bpm01w010";//主頁
+    private static final String MAIN_PAGE = "/bpm/Bpm01w030";//主頁
 
     @RequestMapping("/Bpm01w030_enter.action")
     public ModelAndView pending(HttpServletRequest request) {

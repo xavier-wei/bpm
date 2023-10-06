@@ -100,9 +100,10 @@
             </div>
 
             <div class="card m-3" style="background-color: white">
-              <b-row>
+              <b-form-row>
+
                 <b-col class="col-sm-5">
-                  <i-form-group-check class="col-12" label-cols="5" content-cols="7" :label="`規則：`"
+                  <i-form-group-check class="col-12" label-cols="3" content-cols="7" :label="`規則：`"
                                       :item="$v.isEnable">
                     <!--規則 : isEnable-->
                     <b-form-radio-group
@@ -114,7 +115,7 @@
                     />
                   </i-form-group-check>
 
-                  <i-form-group-check class="col-12" label-cols="5" content-cols="7" :label="`使用時段：`"
+                  <i-form-group-check class="col-12" label-cols="3" content-cols="7" :label="`使用時段：`"
                                       :item="$v.enableTime">
                     <!--使用時段 : enableTime-->
                     <b-form-radio-group v-model="$v.enableTime.$model">
@@ -143,8 +144,8 @@
                 <b-col>
                   <i-form-group-check
                     class="col-sm-12"
-                    label-cols="2"
-                    content-cols="10"
+                    label-cols="3"
+                    content-cols="7"
                     :label="`啟用期間：`"
                     :item="$v.selecteEdateType"
                   >
@@ -172,8 +173,8 @@
 
                   <i-form-group-check
                     class="col-sm-12"
-                    label-cols="2"
-                    content-cols="10"
+                    label-cols="3"
+                    content-cols="7"
                     :label="`停用期間：`"
                     :item="$v.selecteEdateType"
                   >
@@ -197,16 +198,16 @@
                     </b-form-radio-group>
                   </i-form-group-check>
                 </b-col>
-              </b-row>
+              </b-form-row>
 
               <b-form-row>
-                <i-form-group-check class="col-sm-5" label-cols="5" content-cols="7" :label="'來源IP：'"
+                <i-form-group-check class="col-sm-5" label-cols="3" content-cols="7" :label="'來源IP ：'"
                                     :item="$v.sourceIp">
                   <!--來源IP : sourceIp-->
                   <b-form-input v-model="$v.sourceIp.$model"/>
                 </i-form-group-check>
 
-                <i-form-group-check class="col-sm-5" label-cols="5" content-cols="7" :label="`目的IP：`"
+                <i-form-group-check class="col-sm-7" label-cols="3" content-cols="7" :label="`目的IP ：`"
                                     :item="$v.targetIp">
                   <!--目的IP : targetIp-->
                   <b-form-input v-model="$v.targetIp.$model"/>
@@ -214,13 +215,13 @@
               </b-form-row>
 
               <b-form-row>
-                <i-form-group-check class="col-sm-5" label-cols="5" content-cols="7" :label="'使用協定(port)：'"
+                <i-form-group-check class="col-sm-5" label-cols="3" content-cols="7" :label="'使用協定(port) ：'"
                                     :item="$v.port">
                   <!--使用協定(port) : port-->
                   <b-form-input v-model="$v.port.$model"/>
                 </i-form-group-check>
 
-                <i-form-group-check class="col-sm-5" label-cols="5" content-cols="7" :label="`傳輸模式 ：`">
+                <i-form-group-check class="col-sm-7" label-cols="3" content-cols="7" :label="`傳輸模式 ：`">
                   <b-input-group>
                     <!--傳輸模式是否為tcp: isTcp-->
                     <b-form-checkbox class="col-6" v-model="$v.isTcp.$model" value="Y" unchecked-value="N"> TCP
@@ -234,14 +235,13 @@
 
               <b-form-row>
                 <i-form-group-check
-                  class="col-sm-12"
-                  label-cols="2"
-                  content-cols="8"
+                  class="col-sm-5"
+                  label-cols="3"
+                  content-cols="7"
                   :label="'用途說明 ：'"
                   :item="$v.instructions"
-                  style="margin-left: 7px"
                 >
-                  <!--用途說明 : instructions-->
+                  <!--                用途說明 : instructions-->
                   <b-form-textarea v-model="$v.instructions.$model" rows="3" maxlength="2000" trim lazy/>
                 </i-form-group-check>
               </b-form-row>
@@ -256,7 +256,7 @@
             <div class="card m-3" style="background-color: white">
               <b-form-row>
                 <!--處理意見 : agreeType-->
-                <i-form-group-check class="col-sm-12" label-cols="2" content-cols="10" :label="'處理意見：'">
+                <i-form-group-check class="col-sm-5" label-cols="3" content-cols="9" :label="'處理意見：'">
                   <b-form-radio-group v-model="$v.agreeType.$model" disabled>
                     <!--預定完成日期 : scheduleDate-->
                     <b-form-radio class="col-12" value="1">
@@ -309,7 +309,7 @@
 
             <div class="card m-3" style="background-color: white">
               <b-form-row>
-                <i-form-group-check class="col-sm-12" label-cols="2" content-cols="8" :label="`變更設備 ： `">
+                <i-form-group-check class="col-sm-5" label-cols="3" content-cols="9" :label="`變更設備 ： `">
                   <b-input-group>
                     <!--是否為外部防火牆 : isExternalFirewall-->
                     <b-form-checkbox v-model="$v.isExternalFirewall.$model" value="Y" unchecked-value="N"
@@ -327,9 +327,9 @@
 
               <b-form-row>
                 <i-form-group-check
-                  class="col-sm-12"
-                  label-cols="2"
-                  content-cols="8"
+                  class="col-sm-5"
+                  label-cols="3"
+                  content-cols="9"
                   :label="'設定內容 ： '"
                   :item="$v.firewallContent"
                 >
@@ -341,9 +341,9 @@
 
               <b-form-row>
                 <i-form-group-check
-                  class="col-sm-12"
-                  label-cols="2"
-                  content-cols="8"
+                  class="col-sm-5"
+                  label-cols="3"
+                  content-cols="9"
                   :label="'實際完成日期 : '"
                   :item="$v.finishDatetime"
                 >
@@ -412,7 +412,7 @@
 
 
 import IDualDatePicker from '@/shared/i-date-picker/i-dual-date-picker.vue';
-import {reactive, ref, toRef, watch} from '@vue/composition-api';
+import {reactive, ref, toRef, watch, onMounted} from '@vue/composition-api';
 import {useValidation, validateState} from '@/shared/form';
 import IFormGroupCheck from '@/shared/form/i-form-group-check.vue';
 import {required} from '@/shared/validators';
@@ -592,7 +592,6 @@ export default {
       handleBack({isReload: false, isNotKeepAlive: true});
     }
 
-
     return {
       $v,
       form,
@@ -630,6 +629,12 @@ export default {
   border: 1px solid transparent;
   border-top-left-radius: 10px;
   border-top-right-radius: 10px;
+}
+
+.flex-column {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
 }
 
 </style>

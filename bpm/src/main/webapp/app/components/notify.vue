@@ -1,6 +1,6 @@
 <template>
   <div>
-
+    <user-sys></user-sys>
     <div class="card-header py-1 text-left" style="background-color: #b0ded4">
       <div class="row align-items-center">
         <div class="col-sm-11 p-0">
@@ -13,7 +13,14 @@
     </div>
     <div class="card-body clo-12" style="background-color: #d3ede8">
       <b-form-row>
-        <i-form-group-check class="col-4" label-cols="4" content-cols="8" :label="'部門：'" :item="$v.unit">
+        <i-form-group-check
+          class="col-sm-4 mb-0"
+          label-cols-md="4"
+          content-cols-md="8"
+          label-align-md="right"
+          :label="'部門：'"
+          :item="$v.unit"
+        >
           <b-form-select v-model="$v.unit.$model" :options="bpmDeptsOptions">
             <template #first>
               <option value="">請選擇</option>
@@ -21,7 +28,13 @@
           </b-form-select>
         </i-form-group-check>
 
-        <i-form-group-check class="col-4" label-cols="4" content-cols="8" :label="`申請者：`" :item="$v.appName">
+        <i-form-group-check
+          class="col-sm-4 mb-0"
+          label-cols-md="4"
+          content-cols-md="8"
+          label-align-md="right"
+          :label="`申請者：`" :item="$v.appName"
+        >
           <b-form-select v-model="$v.appName.$model" :options="queryOptions.peunitOptions">
             <template #first>
               <option value="">請選擇</option>
@@ -30,22 +43,40 @@
         </i-form-group-check>
       </b-form-row>
       <b-form-row>
-        <i-form-group-check class="col-4" label-cols="4" content-cols="8" label="表單：" :item="$v.formId">
+        <i-form-group-check
+          class="col-sm-4 mb-0"
+          label-cols-md="4"
+          content-cols-md="8"
+          label-align-md="right"
+          label="表單："
+          :item="$v.formId"
+        >
           <b-form-select v-model="$v.formId.$model" :options="queryOptions.formCase">
             <template #first>
               <option value="">請選擇</option>
             </template>
           </b-form-select>
         </i-form-group-check>
-        <i-form-group-check class="col-4" label-cols="4" content-cols="8" label="處理狀況："
-                            :item="$v.processInstanceStatus">
+        <i-form-group-check
+          class="col-sm-4 mb-0"
+          label-cols-md="4"
+          content-cols-md="8"
+          label-align-md="right"
+          label="處理狀況："
+          :item="$v.processInstanceStatus"
+        >
           <b-form-select v-model="$v.processInstanceStatus.$model" :options="queryOptions.status">
             <template #first>
               <option value="">請選擇</option>
             </template>
           </b-form-select>
         </i-form-group-check>
-        <i-form-group-check class="col-4" label-cols="4" content-cols="8" label="表單分類：" :item="$v.formType">
+        <i-form-group-check
+          class="col-sm-4 mb-0"
+          label-cols-md="4"
+          content-cols-md="8"
+          label-align-md="right" label="表單分類：" :item="$v.formType"
+        >
           <b-form-select v-model="$v.formType.$model" :options="queryOptions.formTypeList">
             <template #first>
               <option value="">請選擇</option>
@@ -55,8 +86,15 @@
       </b-form-row>
       <!-- 填表日期 -->
       <b-form-row>
-        <i-form-group-check :label="'期間：'" class="col-8" label-cols="2" content-cols="6" :dual1="$v.dateStart"
-                            :dual2="$v.dateEnd">
+        <i-form-group-check
+          :label="'期間：'"
+          class="col-sm-4 mb-0"
+          label-cols-md="4"
+          content-cols-md="8"
+          label-align-md="right"
+          :dual1="$v.dateStart"
+          :dual2="$v.dateEnd"
+        >
           <b-input-group>
             <i-date-picker v-model="$v.dateStart.$model" placeholder="yyy/MM/dd"
                            :disabled-date="notAfterPublicDateEnd"></i-date-picker>
@@ -89,48 +127,6 @@
       v-show="queryStatus"
     >
 
-      <template #cell(filAndApp)="row">
-        <div v-if="row.item.appEmpid === row.item.filEmpid ">
-          {{ row.item.appName }}
-        </div>
-        <div v-else>
-          {{ row.item.appName }} / {{ row.item.filName }}
-        </div>
-      </template>
-
-      <template #cell(processInstanceStatus)="row">
-        <div v-if="row.item.processInstanceStatus === '1'">
-          已處理完畢
-        </div>
-        <div v-else>
-          處理中
-        </div>
-      </template>
-
-      <template #cell(subject)="row">
-        <div>
-          {{ changeSubject(row.item, false) }}
-        </div>
-      </template>
-
-
-      <template #cell(signUnit)="row">
-        <div v-if="row.item.processInstanceStatus !== '1'">
-          <div v-if="!!row.item.signer">
-            {{ row.item.signer }}
-          </div>
-          <div v-if="!!row.item.signUnit">
-            ({{ changeDealWithUnit(row.item.signUnit, bpmDeptsOptions) }})
-          </div>
-        </div>
-      </template>
-
-
-      <template #cell(formId)="row">
-        <div>
-          {{ changeFormId(row.item.formId) }}
-        </div>
-      </template>
 
       <template #cell(action)="row">
         <b-button class="ml-2" style="background-color: #17a2b8" @click="toEdit(row.item)">檢視</b-button>
@@ -153,8 +149,10 @@ import {useNotification} from "@/shared/notification";
 import {newformatDate} from "@/shared/date/minguo-calendar-utils";
 import {changeFormId, changeSubject} from "@/shared/word/change-word-utils";
 import {changeDealWithUnit} from "@/shared/word/directions";
+import {currentProcessingUnit} from "@/shared/word/iTable-convert-unit";
 import {navigateByNameAndParams} from "@/router/router";
-import { configRoleToBpmIpt } from '@/shared/word/configRole';
+import userSys from "@/components/userSys.vue";
+
 
 export default defineComponent({
   name: 'notify',
@@ -163,8 +161,10 @@ export default defineComponent({
     IDatePicker,
     ITable,
     IFormGroupCheck,
+    'user-sys': userSys
   },
   setup() {
+    const userAllData = ref(useGetters(['getUserAllData']).getUserAllData)
     const bpmDeptsOptions = ref(useGetters(['getBpmDeptsOptions']).getBpmDeptsOptions).value;
     const iTable = ref(null);
     const stepVisible = ref(true);
@@ -238,6 +238,7 @@ export default defineComponent({
           sortable: false,
           thClass: 'text-center',
           tdClass: 'text-center align-middle',
+          formatter: value => (value == undefined ? '' : changeFormId(value)),
         },
         {
           key: 'applyDate',
@@ -249,12 +250,12 @@ export default defineComponent({
 
         },
         {
-          key: 'signUnit',
+          key: 'pendingUserId',
           label: '目前處理單位',
           sortable: false,
           thClass: 'text-center',
           tdClass: 'text-center align-middle',
-          // formatter: value => (value == undefined ? '' : changeDealWithUnit(value, bpmDeptsOptions)),
+          formatter: value => (value == undefined ? '' : currentProcessingUnit(value, bpmDeptsOptions, userAllData.value)),
         },
         {
           key: 'processInstanceStatus',
@@ -262,6 +263,22 @@ export default defineComponent({
           sortable: false,
           thClass: 'text-center',
           tdClass: 'text-center align-middle',
+          formatter: value => {
+            if (value !== undefined) {
+              switch (value) {
+                case '0':
+                  return '處理中';
+                case '1':
+                  return '已處理完畢';
+                case '2':
+                  return '退件';
+                default:
+                  return '';
+              }
+            } else {
+              return '';
+            }
+          }
         },
         {
           key: 'subject',
@@ -301,6 +318,8 @@ export default defineComponent({
       axios.post(`/process/notify/queryTask`, params).then(({data}) => {
         queryStatus.value = true;
         if (data.length <= 0) return;
+
+
         // 最新的日期到最舊的日期排序
         table.data = data.sort((a, b) => {
           const dateA: any = new Date(a.signingDatetime);
@@ -308,6 +327,11 @@ export default defineComponent({
           return dateB - dateA;
         });
 
+        //過濾table.data所有物件 要把畫面要顯示的值都先塞進table.data內 不然iTable內的b-modal會沒有值
+        table.data.forEach(i => {
+          i.subject = changeSubject(i, true)
+          i.filAndApp = (i.appEmpid === i.filEmpid) ? i.appName : i.appName + '/' + i.filName
+        });
         table.totalItems = data.length;
       }).catch(notificationErrorHandler(notificationService));
     };

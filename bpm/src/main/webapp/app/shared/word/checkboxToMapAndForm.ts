@@ -1,3 +1,5 @@
+
+//把l410畫面有打勾的checkbox 轉成後端需要的Map跟Form
 export function checkboxToMapAndForm(data: any, form: any, variables: any): any {
 
   if (data.checkbox === '1' && data.systemApplyName === '人事差勤系統') {

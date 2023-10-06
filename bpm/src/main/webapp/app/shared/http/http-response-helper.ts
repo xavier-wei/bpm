@@ -72,10 +72,10 @@ function resolveMessage(problem: Problem): ErrorStatus {
       level: 'ERROR',
     };
   } else {
-    if (problem.path) {
+    if (problem.path&&problem.message==='400 BAD_REQUEST') {
       message = `與伺服器 (${problem.path}) 溝通時發生錯誤 (${problem.status})，請稍後再試。如果問題一直無法改善，請洽系統管理人員。`;
     } else {
-      message = `與伺服器溝通時發生錯誤 (${problem.status})，請稍後再試。如果問題一直無法改善，請洽系統管理人員。`;
+      message = `與伺服器溝通時發生錯誤 (${problem.status})，${problem.message}，請洽系統管理人員。`;
     }
     return {
       message: message,
@@ -89,7 +89,7 @@ function resolveMessageDetail(problem: Problem): string {
   switch (problem.status) {
     case 400:
       if (problem.title === 'Bad Request') {
-        returnMessage = `與伺服器請求時發生錯誤，請確認輸入內容無誤。如果問題一直無法改善，請洽系統管理人員。`;
+        returnMessage = `與伺服器請求時發生錯誤，請洽系統管理人員確認申請人員是否於差勤系統建檔。`;
       } else {
         returnMessage = problem.title;
         if (problem.detail) {

@@ -9,17 +9,16 @@
     </div>
     <div class="card-body clo-12" style="background-color: #d3ede8">
       <b-form-row>
-        <i-form-group-check class="col-4" label-cols="4" content-cols="8" :label="'關鍵字：'" :item="$v.word">
+        <i-form-group-check
+          class="col-sm-4 mb-0"
+          label-cols-md="4"
+          content-cols-md="8"
+          label-align-md="right"
+          :label="'關鍵字：'"
+          :item="$v.word"
+        >
           <b-form-input v-model="$v.word.$model"></b-form-input>
         </i-form-group-check>
-
-        <!--            <i-form-group-check class="col-4" label-cols="4" content-cols="8" :label="`版號：`" :item="$v.number">-->
-        <!--              <b-form-select v-model="$v.number.$model" :options="queryOptions.number">-->
-        <!--                <template #first>-->
-        <!--                  <option value="">請選擇</option>-->
-        <!--                </template>-->
-        <!--              </b-form-select>-->
-        <!--            </i-form-group-check>-->
       </b-form-row>
 
       <div class="text-center pt-5">
@@ -49,49 +48,18 @@
         </b-button>
       </template>
 
-      <template #cell(isEnable)="row">
-        <div v-if="row.item.isEnable === '0'">
-          停用
-        </div>
-        <div v-if="row.item.isEnable === '1'">
-          啟用
-        </div>
+      <template v-slot:cell(appName)="row">
+        <span v-html="formatDescription(row.item.appName)"></span>
       </template>
 
-      <template #cell(needNarrative)="row">
-        <b-row>
-          <b-col class="col-12">
-            <div>
-              來源IP：{{ row.item.sourceIp }},
-            </div>
-          </b-col>
-          <b-col class="col-12">
-            <div>
-              目的IP：{{ row.item.sourceIp }},
-            </div>
-          </b-col>
-          <b-col class="col-12">
-            <div>
-              使用協定(Port)：{{ row.item.port }},
-            </div>
-          </b-col>
-          <b-col class="col-12">
-            <div>
-              <b-input-group>
-                <div>傳輸模式：</div>
-                <div class="mx-1" v-if="row.item.isTcp ==='Y'">TCP</div>
-                <div class="mx-1" v-if="row.item.isUdp ==='Y'">UDP</div>
-                <div>,</div>
-              </b-input-group>
-            </div>
-          </b-col>
-          <b-col class="col-12">
-            <div>
-              用途說明：{{ row.item.instructions }}
-            </div>
-          </b-col>
-        </b-row>
+      <template v-slot:cell(filName)="row">
+        <span v-html="formatDescription(row.item.filName)"></span>
       </template>
+
+      <template v-slot:cell(needNarrative)="row">
+        <span v-html="formatDescription(row.item.needNarrative)"></span>
+      </template>
+
     </i-table>
   </div>
 </template>
@@ -109,7 +77,9 @@ import {useNotification} from "@/shared/notification";
 import {newformatDate} from '@/shared/date/minguo-calendar-utils';
 import {useGetters} from "@u3u/vue-hooks";
 import {changeDealWithUnit} from "@/shared/word/directions";
-import { configRoleToBpmIpt } from '@/shared/word/configRole';
+import {configRoleToBpmIpt} from '@/shared/word/configRole';
+import {applicationReasonUnit, appNameUnit, filNameUnit, needNarrativeUnit} from "@/shared/word/iTable-convert-unit";
+import {changeProject} from "@/shared/word/project-conversion";
 
 export default {
   name: 'l414Query',
@@ -198,6 +168,20 @@ export default {
           thStyle: 'width:10%',
           thClass: 'text-center',
           tdClass: 'text-center align-middle',
+          formatter: value => {
+            if (value !== undefined) {
+              switch (value) {
+                case '0':
+                  return '停用';
+                case '1':
+                  return '啟用';
+                default:
+                  return '';
+              }
+            } else {
+              return '';
+            }
+          }
         },
         {
           key: 'needNarrative',
@@ -235,9 +219,16 @@ export default {
       axios.get(`/eip/eip-bpm-isms-l414/findByWord?${params.toString()}`)
         .then(({data}) => {
           queryStatus.value = true
+
           if (iTable.value) iTable.value.state.pagination.currentPage = 1;
           if (data) {
-            table.data = data
+            table.data = data;
+            //過濾table.data所有物件 要把畫面要顯示的值都先塞進table.data內 不然iTable內的b-modal會沒有值
+            table.data.forEach(i => {
+              i.appName = appNameUnit(i)
+              i.filName = filNameUnit(i)
+              i.needNarrative = needNarrativeUnit(i)
+            });
           }
         })
         .catch(notificationErrorHandler(notificationService))
@@ -255,7 +246,7 @@ export default {
         processInstanceId: '',
         taskId: '',
         taskName: '',
-        decisionRole:'',
+        decisionRole: '',
         additional: '',
       }
       navigateByNameAndParams('l414Edit', {
@@ -267,6 +258,10 @@ export default {
         processInstanceStatus: item.processInstanceStatus,
       });
     };
+
+    function formatDescription(description) {
+      return description.replace(/\n/g, '<br>');
+    }
 
     return {
       $v,
@@ -281,6 +276,7 @@ export default {
       toL414Apply,
       toEdit,
       queryStatus,
+      formatDescription,
     };
   },
 };

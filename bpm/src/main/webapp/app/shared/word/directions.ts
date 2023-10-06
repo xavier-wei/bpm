@@ -51,6 +51,8 @@ export function changeDirections(user: any): string {
             return '';
     }
 }
+
+//單位代號轉換成中文
 export function changeDealWithUnit(unit: any, unitList: any): string {
     if (unit == null) return '';
     let unitName = '';

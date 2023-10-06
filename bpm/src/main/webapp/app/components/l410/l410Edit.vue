@@ -139,54 +139,83 @@
             </b-form-row>
 
             <b-form-row>
-              <!--申請事由-->
-              <b-form-radio-group class="offset-1" v-model="$v.appReason.$model"
-                                  :disabled="userData.userId !== $v.filEmpid.$model || userData.userId !== $v.appEmpid.$model  || formStatusRef === FormStatusEnum.READONLY">
-                <b-form-radio value="1">
-                  <div style="height: 34px;">新進</div>
-                </b-form-radio>
 
-                <b-form-radio value="2">
-                  <div style="height: 34px;">離職</div>
-                </b-form-radio>
+              <b-input-group>
+                <b-form-group
+                  class="col-sm-6 mb-0"
+                  label-cols-md="4"
+                  content-cols-md="8"
+                  label-align-md="right"
+                >
 
-                <b-form-radio value="3">
-                  <div style="height: 34px;">職務異動</div>
-                </b-form-radio>
-              </b-form-radio-group>
+                  <!--申請事由-->
+                  <b-form-radio-group  v-model="$v.appReason.$model"
+                                      :disabled="userData.userId !== $v.filEmpid.$model || userData.userId !== $v.appEmpid.$model  || formStatusRef === FormStatusEnum.READONLY">
+                    <b-form-radio value="1">
+                      <div style="height: 34px;">新進</div>
+                    </b-form-radio>
+
+                    <b-form-radio value="2">
+                      <div style="height: 34px;">離職</div>
+                    </b-form-radio>
+
+                    <b-form-radio value="3">
+                      <div style="height: 34px;">職務異動</div>
+                    </b-form-radio>
+                  </b-form-radio-group>
+
+                </b-form-group>
+              </b-input-group>
 
             </b-form-row>
 
             <b-form-row>
-              <b-input-group class="offset-1 mb-3">
-                <!--生效日期checkbox : isEnableDate-->
-                <b-form-checkbox class="col-2" v-model="$v.isEnableDate.$model" value="1" unchecked-value="0"
-                                 :disabled="userData.userId !== $v.filEmpid.$model || userData.userId !== $v.appEmpid.$model  || formStatusRef === FormStatusEnum.READONLY">
-                  生效日期 :
-                </b-form-checkbox>
-                <!--生效日期 : enableDate-->
-                <i-date-picker
-                  class="col-2"
-                  placeholder="yyy/MM/dd"
-                  v-model="$v.enableDate.$model"
-                  :disabled="$v.isEnableDate.$model !== '1' || userData.userId !== $v.filEmpid.$model || userData.userId !== $v.appEmpid.$model  ||  formStatusRef === FormStatusEnum.READONLY"
-                  lazy
-                  trim
-                ></i-date-picker>
-                <div class="text-danger text1"
-                     v-if="$v.enableDate.$model === null && $v.isEnableDate.$model === '1'">請輸入值
-                </div>
-                <!--其他 checkbox : isOther-->
-                <b-form-checkbox class="col-2 offset-1" v-model="$v.isOther.$model" value="1" unchecked-value="0"
-                                 :disabled="userData.userId !== $v.filEmpid.$model || userData.userId !== $v.appEmpid.$model  || formStatusRef === FormStatusEnum.READONLY">
-                  其他 :
-                </b-form-checkbox>
-                <!--其他說明 : otherReason-->
-                <b-form-input class="col-3" v-model="$v.otherReason.$model"
-                              :disabled="userData.userId !== $v.filEmpid.$model || userData.userId !== $v.appEmpid.$model  || formStatusRef === FormStatusEnum.READONLY"/>
-                <div class="text-danger text1" v-if="$v.otherReason.$model === '' && $v.isOther.$model === '1'">
-                  請輸入值
-                </div>
+
+              <b-input-group>
+                <b-form-group
+                  class="col-sm-6 mb-0"
+                  label-cols-md="4"
+                  content-cols-md="8"
+                  label-align-md="right"
+                >
+
+                    <!--生效日期checkbox : isEnableDate-->
+                    <b-form-checkbox v-model="$v.isEnableDate.$model" value="1" unchecked-value="0"
+                                     :disabled="userData.userId !== $v.filEmpid.$model || userData.userId !== $v.appEmpid.$model  || formStatusRef === FormStatusEnum.READONLY">
+                      生效日期 :
+                    </b-form-checkbox>
+                    <!--生效日期 : enableDate-->
+                    <i-date-picker
+                      placeholder="yyy/MM/dd"
+                      v-model="$v.enableDate.$model"
+                      :disabled="$v.isEnableDate.$model !== '1' || userData.userId !== $v.filEmpid.$model || userData.userId !== $v.appEmpid.$model  ||  formStatusRef === FormStatusEnum.READONLY"
+                      lazy
+                      trim
+                    ></i-date-picker>
+                    <div class="text-danger text1"
+                         v-if="$v.enableDate.$model === null && $v.isEnableDate.$model === '1'">請輸入值
+                    </div>
+
+                </b-form-group>
+                <b-form-group
+                  class="col-sm-6 mb-0"
+                  label-cols-md="4"
+                  content-cols-md="8"
+                  label-align-md="right"
+                >
+                  <!--其他 checkbox : isOther-->
+                  <b-form-checkbox v-model="$v.isOther.$model" value="1" unchecked-value="0"
+                                   :disabled="userData.userId !== $v.filEmpid.$model || userData.userId !== $v.appEmpid.$model  || formStatusRef === FormStatusEnum.READONLY">
+                    其他 :
+                  </b-form-checkbox>
+                  <!--其他說明 : otherReason-->
+                  <b-form-input v-model="$v.otherReason.$model"
+                                :disabled="userData.userId !== $v.filEmpid.$model || userData.userId !== $v.appEmpid.$model  || formStatusRef === FormStatusEnum.READONLY"/>
+                  <div class="text-danger text1" v-if="$v.otherReason.$model === '' && $v.isOther.$model === '1'">
+                    請輸入值
+                  </div>
+                </b-form-group>
+
               </b-input-group>
             </b-form-row>
 
@@ -534,7 +563,7 @@
 
 
 import IDualDatePicker from '@/shared/i-date-picker/i-dual-date-picker.vue';
-import {onActivated, reactive, ref, Ref, toRef, watch} from '@vue/composition-api';
+import {reactive, ref, toRef, watch} from '@vue/composition-api';
 import {useValidation, validateState} from '@/shared/form';
 import IFormGroupCheck from '@/shared/form/i-form-group-check.vue';
 import {required} from '@/shared/validators';
@@ -548,7 +577,7 @@ import {useNotification} from "@/shared/notification";
 import {useGetters} from "@u3u/vue-hooks";
 import {changeDirections} from "@/shared/word/directions";
 import {checkboxToMapAndForm} from "@/shared/word/checkboxToMapAndForm";
-import {mapToCheckbox} from "@/shared/word/mapToCheckbox";
+import {formToCheckbox} from "@/shared/word/formToCheckbox";
 import signatureBmodel from "@/components/signatureBmodel.vue";
 import signerList from "@/components/signerList.vue";
 import {changeDealWithUnit} from "@/shared/word/directions";
@@ -892,7 +921,7 @@ export default {
         .get(`/eip/bpm-l410-apply-manages`)
         .then(({data}) => {
           data.forEach(i => {
-            mapToCheckbox(i, formData)
+            formToCheckbox(i, formData)
           })
           table.data = data
           if (formData.processInstanceId !== null && formData.processInstanceId !== undefined) {

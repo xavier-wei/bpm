@@ -7,8 +7,8 @@ export default class BpmUserDataService {
     this.getUser();
   }
 
-  private getUser() {
-    axios
+  private async getUser() {
+    await axios
       .get('/loginBpmDev')
       .then(res => {
 

@@ -176,8 +176,8 @@
     >
       <b-table-simple class="i-table">
         <b-tr v-for="modalItem in modalData" :key="modalItem.key">
-          <b-th>{{ modalItem.label }}</b-th>
-          <b-td>{{ modalItem.value }}</b-td>
+          <b-th v-if="modalItem.key !== 'action'">{{ modalItem.label }}</b-th>
+          <b-td v-if="modalItem.key !== 'action'">{{ modalItem.value }}</b-td>
         </b-tr>
       </b-table-simple>
     </b-modal>

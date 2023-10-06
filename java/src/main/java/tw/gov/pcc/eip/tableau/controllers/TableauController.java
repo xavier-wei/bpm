@@ -3,7 +3,6 @@ package tw.gov.pcc.eip.tableau.controllers;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 import tw.gov.pcc.eip.framework.domain.UserBean;
@@ -46,7 +45,6 @@ public class TableauController extends BaseController {
             resultList = tableauService.findTableauDataByUser(userData.getUserId());
         } catch (Exception e) {
             log.error("tableau儀錶板查詢失敗 - " + ExceptionUtility.getStackTrace(e));
-            setSystemMessage(getQueryFailMessage());
             return ObjectUtility.normalizeObject(resultList);
         }
         return ObjectUtility.normalizeObject(resultList);
@@ -64,7 +62,6 @@ public class TableauController extends BaseController {
             map = tableauService.getTrustedTicket();
         } catch (Exception e) {
             log.error("tableau ticket error - " + ExceptionUtility.getStackTrace(e));
-            setSystemMessage(getQueryFailMessage());
             map.put("ticket","no");
             return ObjectUtility.normalizeObject(map);
         }
@@ -83,7 +80,6 @@ public class TableauController extends BaseController {
             resultList = tableauService.findTableauData();
         } catch (Exception e) {
             log.error("tableau儀錶板查詢失敗 - " + ExceptionUtility.getStackTrace(e));
-            setSystemMessage(getQueryFailMessage());
         }
         return ObjectUtility.normalizeObject(resultList);
 

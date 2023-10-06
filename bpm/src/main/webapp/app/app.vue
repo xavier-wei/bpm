@@ -85,7 +85,6 @@ export default {
     const menuService = inject<() => MenuService>('menuService')();
     const notificationService = new NotificationService(context.root);
     const isContentAlive = ref(true);
-
     const dynamicSizeForDev = () => {
       window.addEventListener('resize', e => {
         useStore().value.commit('setCurrentWidth', window.innerWidth);

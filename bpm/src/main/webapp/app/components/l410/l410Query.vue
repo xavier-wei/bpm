@@ -13,17 +13,16 @@
 
     <div class="card-body clo-12" style="background-color: #d3ede8">
       <b-form-row>
-        <i-form-group-check class="col-4" label-cols="4" content-cols="8" :label="'關鍵字：'" :item="$v.word">
-          <b-form-input v-model="$v.word.$model"></b-form-input>
+        <i-form-group-check
+          class="col-sm-4 mb-0"
+          label-cols-md="4"
+          content-cols-md="8"
+          :label="'關鍵字：'"
+          :item="$v.word"
+          label-align-md="right"
+        >
+          <b-form-input  v-model="$v.word.$model"></b-form-input>
         </i-form-group-check>
-
-        <!--            <i-form-group-check class="col-4" label-cols="4" content-cols="8" :label="`版號：`" :item="$v.number">-->
-        <!--              <b-form-select v-model="$v.number.$model" :options="queryOptions.number">-->
-        <!--                <template #first>-->
-        <!--                  <option value="">請選擇</option>-->
-        <!--                </template>-->
-        <!--              </b-form-select>-->
-        <!--            </i-form-group-check>-->
       </b-form-row>
 
       <div class="text-center pt-5">
@@ -53,26 +52,20 @@
         >
       </template>
 
-      <template #cell(appName)="row">
-        <div v-if="!!row.item.appName"> {{ row.item.appName }}</div>
-        <div v-if="!!row.item.appEmpid"> ({{ row.item.appEmpid }})</div>
+      <template v-slot:cell(appName)="row">
+        <span v-html="formatDescription(row.item.appName)"></span>
       </template>
 
-      <template #cell(filName)="row">
-        <div v-if="!!row.item.filName"> {{ row.item.filName }}</div>
-        <div v-if="!!row.item.filEmpid"> ({{ row.item.filEmpid }})</div>
+      <template v-slot:cell(filName)="row">
+        <span v-html="formatDescription(row.item.filName)"></span>
       </template>
 
-      <template #cell(applicationReason)="row">
-        <div v-if="row.item.appReason ==='1'"> 新進 ,</div>
-        <div v-else-if="row.item.appReason ==='2'"> 新進 ,</div>
-        <div v-else-if="row.item.appReason ==='3'"> 職務異動 ,</div>
-        <div v-if="row.item.isEnableDate ==='1'"> 生效日期： {{ formatToString(new Date(row.item.enableDate), '/') }}</div>
-        <div v-if="row.item.isOther ==='1'"> 其他理由： {{ row.item.otherReason }}</div>
+      <template v-slot:cell(applicationReason)="row">
+        <span v-html="formatDescription(row.item.applicationReason)"></span>
       </template>
 
-      <template #cell(systemItem)="row">
-        <div> {{ changeProject(row.item) }}</div>
+      <template v-slot:cell(systemItem)="row">
+        <span v-html="formatDescription(row.item.systemItem)"></span>
       </template>
 
     </i-table>
@@ -81,21 +74,20 @@
 
 <script lang="ts">
 import axios from 'axios';
-import {ref, reactive, computed, toRefs, defineComponent} from '@vue/composition-api';
+import {ref, reactive, defineComponent} from '@vue/composition-api';
 import IDatePicker from '../../shared/i-date-picker/i-date-picker.vue';
 import ITable from '../../shared/i-table/i-table.vue';
 import IFormGroupCheck from '../../shared/form/i-form-group-check.vue';
 import {useValidation, validateState} from '@/shared/form';
 import {useBvModal} from '@/shared/modal';
 import {navigateByNameAndParams} from '@/router/router';
-import {useGetters, useStore} from '@u3u/vue-hooks';
-import {Pagination} from '@/shared/pagination.model';
+import {useGetters} from '@u3u/vue-hooks';
 import {formatToString, newformatDate} from "@/shared/date/minguo-calendar-utils";
 import {notificationErrorHandler} from "@/shared/http/http-response-helper";
 import {useNotification} from "@/shared/notification";
 import {changeProject} from "@/shared/word/project-conversion";
 import {changeDealWithUnit} from "@/shared/word/directions";
-import { configRoleToBpmIpt } from '@/shared/word/configRole';
+import {applicationReasonUnit,appNameUnit,filNameUnit} from "@/shared/word/iTable-convert-unit";
 
 export default defineComponent({
   name: 'l410Query',
@@ -222,7 +214,15 @@ export default defineComponent({
           queryStatus.value = true
           if (iTable.value) iTable.value.state.pagination.currentPage = 1;
           if (data) {
-            table.data = data
+            table.data = data;
+
+            //過濾table.data所有物件 要把畫面要顯示的值都先塞進table.data內 不然iTable內的b-modal會沒有值
+            table.data.forEach(i => {
+              i.applicationReason = applicationReasonUnit(i)
+              i.systemItem = changeProject(i)
+              i.appName = appNameUnit(i)
+              i.filName = filNameUnit(i)
+            });
           }
         })
         .catch(notificationErrorHandler(notificationService))
@@ -254,6 +254,9 @@ export default defineComponent({
       });
     };
 
+    function  formatDescription(description) {
+      return description.replace(/\n/g, '<br>');
+    }
 
     return {
       $v,
@@ -268,7 +271,8 @@ export default defineComponent({
       toEdit,
       toL410Apply,
       formatToString,
-      queryStatus
+      queryStatus,
+      formatDescription
     };
   },
 });
