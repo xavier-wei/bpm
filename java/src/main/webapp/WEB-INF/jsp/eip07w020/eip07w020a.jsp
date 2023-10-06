@@ -104,6 +104,9 @@
 	                    </form:select>
 					 </div>
 			</tags:form-row>
+			<tags:form-note>
+                實際用車時間依核定時間為主
+            </tags:form-note>
 	  </form:form>
     </tags:fieldset>
 </jsp:attribute>

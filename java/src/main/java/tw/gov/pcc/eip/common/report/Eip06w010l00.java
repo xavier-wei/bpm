@@ -35,7 +35,7 @@ public class Eip06w010l00 {
         //申請日期
         String printDt = DateUtility.getNowChineseDate();
         printDt = printDt.substring(0,3) +"年" + printDt.substring(3,5) + "月" + printDt.substring(5) + "日";
-        runs.get(4).setText(printDt);
+        runs.get(1).setText(printDt);
         //獲取文檔所有表格
         List<XWPFTable> tables = doc.getTables();
         for(XWPFTable table : tables){

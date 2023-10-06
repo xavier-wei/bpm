@@ -15,7 +15,6 @@ import tw.gov.pcc.common.annotation.DaoTable;
 import tw.gov.pcc.common.framework.dao.BaseDao;
 import tw.gov.pcc.eip.common.cases.Eip02w010Case.addressBook;
 import tw.gov.pcc.eip.dao.UsersDao;
-import tw.gov.pcc.eip.domain.Eipcode;
 import tw.gov.pcc.eip.domain.Users;
 
 /**
@@ -150,7 +149,7 @@ public class UsersDaoImpl extends BaseDao<Users> implements UsersDao {
     }
 
     /**
-     * 讀取全部users demo用
+     * 讀取全部users
      *
      * @return
      */
@@ -300,6 +299,40 @@ public class UsersDaoImpl extends BaseDao<Users> implements UsersDao {
 
         return getNamedParameterJdbcTemplate()
                 .query(sql.toString(), new MapSqlParameterSource("codeNameList", codeNameList),BeanPropertyRowMapper.newInstance(Users.class));
+    }
+    
+    /**
+     * (like user_id or like user_name) and dept_id in (deptlist)
+     *
+     * @param user_id 條件
+     * @return
+     */
+    @Override
+    public List<Users> selectDataByLikeUserIdOrLikeNameAndEqualDeptid(String user_id, String user_name, List<String> deptidList) {
+        String sql = "SELECT " +
+                ALL_COLUMNS_SQL +
+                " FROM " + TABLE_NAME + " t " +
+                " WHERE (t.USER_ID like '%' + ISNULL(:user_id, t.USER_ID) + '%' " +
+                " OR t.USER_NAME like '%' + ISNULL(:user_name, t.USER_NAME) + '%') ";
+    	
+    	if (StringUtils.isBlank(user_id)) {
+        	user_id = null;
+        }
+        if (StringUtils.isBlank(user_name)) {
+        	user_name = null;
+        }
+        if(!CollectionUtils.isEmpty(deptidList)) {
+        	sql = sql + " AND t.DEPT_ID in (:deptidList)";
+        }
+
+
+        Map<String, Object> params = new HashMap<>();
+        params.put("user_id", user_id);
+        params.put("user_name", user_name);
+        params.put("deptidList", deptidList);
+
+        return getNamedParameterJdbcTemplate().query(sql.toString(), params,
+                BeanPropertyRowMapper.newInstance(Users.class));
     }
 
 }

@@ -27,6 +27,8 @@ public class Eip00w020Case implements Serializable {
 	private List<Roles> userRolesList;
 	private List<Roles> rolesList;
 	
+	private String search_id;//使用者姓名或代號搜尋用欄位
+	private String dept_name;//部門名稱
 	private String user_id;//使用者代號
 	private String dept_id;//部門代號
 	private String email;//電子信箱

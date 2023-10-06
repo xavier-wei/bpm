@@ -144,7 +144,17 @@
                       	</td>
                       	<td><func:minguo value="${item.using_date}"/></td>
                       	<td>
-                       		<func:timeconvert value="${item.approve_using_time_s}"/>~<func:timeconvert value="${item.approve_using_time_e}"/>
+                    	    <c:choose>
+                      		<c:when test="${ item.using ne item.approve_using}">
+                      			<font color="red">
+                      			<func:timeconvert value="${item.approve_using_time_s}"/>~
+                       		<func:timeconvert value="${item.approve_using_time_e}"/></font>
+	                       	</c:when>
+	                       	<c:otherwise>
+	                        	<func:timeconvert value="${item.approve_using_time_s}"/>~
+	                        	<func:timeconvert value="${item.approve_using_time_e}"/>
+	                       	</c:otherwise>
+	                       	</c:choose>                      	
                       	</td>
                       	<td class="text-left">
 					<span class="ellipsisStr">

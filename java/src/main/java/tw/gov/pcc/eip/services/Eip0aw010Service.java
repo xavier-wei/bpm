@@ -64,12 +64,7 @@ public class Eip0aw010Service {
         }
         List<Eip0aw010Case.ApiResult> result = new ArrayList<>();
         //第一個一定是差勤
-        try {
-            result.add(getIrtSql());
-        } catch (Exception e) {
-            result.add(new Eip0aw010Case.ApiResult());
-            log.error("取得差勤資料錯誤{}。", ExceptionUtility.getStackTrace(e));
-        }
+        result.add(getIrtSql());
 
         result.add(doApi(getSys_api(String.valueOf(2))));
 
@@ -82,10 +77,16 @@ public class Eip0aw010Service {
     }
 
     private Eip0aw010Case.ApiResult getIrtSql() {
-        String url = eipcodeDao.findByCodeKindCodeNo("SYS_API", "1_CLICK_URL").map(Eipcode::getCodename).orElse(StringUtils.EMPTY);
-        return Eip0aw010Case.ApiResult.builder()
-                .click_url(url)
-                .cnt(viewFlowDao.selectCountByNext_card_id(View_flow.builder().next_card_id(userData.getUserId()).build()).toString()).build();
+        String url = StringUtils.EMPTY;
+        try {
+            url = eipcodeDao.findByCodeKindCodeNo("SYS_API", "1_CLICK_URL").map(Eipcode::getCodename).orElse(StringUtils.EMPTY);
+            return Eip0aw010Case.ApiResult.builder()
+                    .click_url(url)
+                    .cnt(viewFlowDao.selectCountByNext_card_id(View_flow.builder().next_card_id(userData.getUserId()).build()).toString()).build();
+        } catch (Exception e) {
+            log.error("取得差勤資料錯誤{}。", ExceptionUtility.getStackTrace(e));
+        }
+        return Eip0aw010Case.ApiResult.builder().cnt("0").click_url(url).build();
     }
 
     private Eip0aw010Case.ApiParams getSys_api(String apiNumber) {
@@ -112,7 +113,8 @@ public class Eip0aw010Service {
 
     private Eip0aw010Case.ApiResult doApi(Eip0aw010Case.ApiParams apiParams) {
         Eip0aw010Case.ApiResult apiResult = new Eip0aw010Case.ApiResult();
-        if(Optional.ofNullable(apiParams).isEmpty()){
+        ResponseEntity<Map<String, Object>> response = null;
+        if (Optional.ofNullable(apiParams).isEmpty()) {
             return apiResult;
         }
         try {
@@ -136,13 +138,13 @@ public class Eip0aw010Service {
                 requestEntity = new HttpEntity<>(apiParams.getReq(), headers);
             }
 
-            ResponseEntity<Map<String, Object>> response = restTemplate.exchange(apiParams.getUrl(), HttpMethod.POST, requestEntity, responseType);
+            response = restTemplate.exchange(apiParams.getUrl(), HttpMethod.POST, requestEntity, responseType);
             log.debug(response.toString());
-            apiResult.setCnt(Objects.requireNonNull(response.getBody())
-                    .get(apiParams.getRes())
-                    .toString());
+            apiResult.setCnt(Objects.toString((Objects.requireNonNull(response.getBody())
+                    .get(apiParams.getRes())), "0"));
         } catch (Exception e) {
-            log.error("SYS_API 呼叫{} 錯誤 {}", ObjectUtility.normalizeObject(apiParams), ExceptionUtility.getStackTrace(e));
+            apiResult.setCnt("0");
+            log.error("SYS_API 呼叫{} 傳回{} 錯誤 {}", ObjectUtility.normalizeObject(apiParams), Objects.toString(response, StringUtils.EMPTY), ExceptionUtility.getStackTrace(e));
         }
         return apiResult;
     }

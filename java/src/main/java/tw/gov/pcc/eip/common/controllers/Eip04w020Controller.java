@@ -118,6 +118,7 @@ public class Eip04w020Controller extends BaseController {
             log.debug("新增或修改線上報名表單");
             String msg = "A".equals(caseData.getMode()) ? getSaveSuccessMessage() : getUpdateSuccessMessage();
             eip04w020Service.initCombobox(caseData);
+            eip04w020Service.advancedValidate(modifyCaseData, result);
             if (result.hasErrors()) {
                 return MODIFY_PAGE;
             }

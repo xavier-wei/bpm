@@ -57,4 +57,6 @@ public interface DeptsDao {
 	 */
 	public List<Depts> findNameByMultiID(List<String> deptIDs);
 
+	public List<Depts> findByLikeDeptname(String dept_name);
+
 }

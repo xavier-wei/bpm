@@ -66,7 +66,7 @@ public class Eip07w040l00 extends PdfReportBase {
         addCell(table, 100, 4, "申請用車時間："+vo.getUsing_time_s() + "~" + vo.getUsing_time_e(), subTitleFontSizeMid, 0, LEFT);
         
         addCell(table, 100, 4, "核定用車時間："+
-        vo.getApprove_using_time_s().substring(0,2)+":"+vo.getApprove_using_time_s().substring(2,4) + "~" + vo.getApprove_using_time_e().substring(0,2)+":"+vo.getApprove_using_time_e().substring(2,4), subTitleFontSizeMid, 0, LEFT);
+        vo.getApprove_using_time_s().substring(0,2)+":"+vo.getApprove_using_time_s().substring(2,4) + "~" + vo.getApprove_using_time_e().substring(0,2)+":"+vo.getApprove_using_time_e().substring(2,4) +"(實際用車時間以核定時間為主)", subTitleFontSizeMid, 0, LEFT);
         addCell(table, 100, 4, "表單狀態："+vo.getCarprocess_status(), subTitleFontSizeMid, 0, LEFT);
         
         addCell(table, 100, 4, EMPTY_FIELD , titleFontSize, 0, CENTER);

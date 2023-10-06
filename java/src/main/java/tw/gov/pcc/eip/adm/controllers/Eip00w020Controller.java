@@ -46,7 +46,7 @@ public class Eip00w020Controller extends BaseController {
     public ModelAndView enter(@ModelAttribute(CASE_KEY) Eip00w020Case caseData) {
         log.debug("導向 Eip00w020_enter 使用者資料維護");
         eip00w020Service.init(caseData);
-        eip00w020Service.findUserList(caseData);
+        eip00w020Service.findAllUserList(caseData);
         return new ModelAndView(QUERY_PAGE);
     }
     

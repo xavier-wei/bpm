@@ -122,6 +122,7 @@ public class Eip00w070Controller extends BaseController {
     public ModelAndView editMember(@ModelAttribute(CASE_KEY) Eip00w070Case caseData, ModelMap m) {
         try {
             eipadm0w070Service.findMember(caseData);
+            eipadm0w070Service.findDeptList(caseData);
             return new ModelAndView(EDITMEMBER_PAGE);
         } catch (Exception e) {
             log.error("查詢失敗 - {}", ExceptionUtility.getStackTrace(e));

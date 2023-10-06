@@ -178,4 +178,14 @@ public class DeptsDaoImpl extends BaseDao<Depts> implements DeptsDao {
         return getNamedParameterJdbcTemplate().query(sql.toString(), params,
                 BeanPropertyRowMapper.newInstance(Depts.class));
     }
+    
+    @Override
+    public List<Depts> findByLikeDeptname(String dept_name) {
+        String sql = "SELECT " + ALL_COLUMNS_SQL + " FROM " + TABLE_NAME 
+        		      + " t WHERE t.DEPT_NAME like  '%' + ISNULL(:dept_name, T.DEPT_NAME) + '%' ";
+        SqlParameterSource params = new MapSqlParameterSource("dept_name", StringUtils.isNotBlank(dept_name)?dept_name:null);
+        List<Depts> list = getNamedParameterJdbcTemplate().query(sql, params,
+                BeanPropertyRowMapper.newInstance(Depts.class));
+        return list;
+    }
 }

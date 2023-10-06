@@ -7,9 +7,11 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanWrapperImpl;
 import org.springframework.stereotype.Service;
 import tw.gov.pcc.eip.dao.EipcodeDao;
+import tw.gov.pcc.eip.dao.User_rolesDao;
 import tw.gov.pcc.eip.dao.UsersDao;
 import tw.gov.pcc.eip.domain.Depts;
 import tw.gov.pcc.eip.domain.Eipcode;
+import tw.gov.pcc.eip.domain.User_roles;
 import tw.gov.pcc.eip.domain.Users;
 import tw.gov.pcc.eip.util.ExceptionUtility;
 import tw.gov.pcc.eip.util.ObjectUtility;
@@ -35,6 +37,7 @@ public class Eip0aw020Service {
 
     private final EipcodeDao eipcodeDao;
     private final UsersDao usersDao;
+    private final User_rolesDao userRolesDao;
 
     public void insertUsersFromLdap() {
         List<Users> list = transLdapToUsers();
@@ -57,6 +60,8 @@ public class Eip0aw020Service {
                 }, () -> {
                     usersDao.insert(x);
                     log.debug("寫入使用者{}資料", ObjectUtility.normalizeObject(x.getUser_id()));
+                    //20231004 UAT要求預設新增Users role
+                    insertUsersRole(x);
                     insertCnt.getAndIncrement();
                 });
             } catch (Exception e) {
@@ -65,6 +70,22 @@ public class Eip0aw020Service {
             }
         });
         log.info("LDAP匯入帳號結束，新增{}筆，已存在{}筆，失敗{}筆。", insertCnt.get(), passCnt.get(), errCnt.get());
+    }
+
+    private void insertUsersRole(Users users) {
+        User_roles addUserRoles = new User_roles();
+        addUserRoles.setUser_id(users.getUser_id());
+        addUserRoles.setSys_id(User_rolesDao.SYSTEM_ADMIN_SYS_ID);
+        addUserRoles.setDept_id(StringUtils.defaultIfBlank(users.getDept_id(), Depts.DEFAULT));
+        addUserRoles.setRole_id(User_rolesDao.DEFAULT_ROLE);
+        addUserRoles.setCreate_user_id(users.getCreate_user_id());
+        addUserRoles.setCreate_timestamp(users.getCreate_timestamp());
+        Optional.ofNullable(userRolesDao.selectByKey(addUserRoles.getUser_id(), addUserRoles.getSys_id(), addUserRoles.getDept_id(), addUserRoles.getRole_id()))
+                .ifPresentOrElse(userRoles -> log.debug("使用者{}已存在預設角色{}", addUserRoles.getUser_id(), addUserRoles.getRole_id()),
+                        () -> {
+                            log.debug("使用者{}新增預設角色{}", addUserRoles.getUser_id(), addUserRoles.getRole_id());
+                            userRolesDao.insert(addUserRoles);
+                        });
     }
 
     public List<Users> transLdapToUsers() {

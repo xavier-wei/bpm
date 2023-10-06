@@ -22,6 +22,7 @@ import tw.gov.pcc.eip.domain.Roles;
 import tw.gov.pcc.eip.domain.User_roles;
 import tw.gov.pcc.eip.domain.Users;
 import tw.gov.pcc.eip.framework.domain.UserBean;
+import tw.gov.pcc.eip.util.CollectionUtility;
 
 /**
  * 
@@ -46,17 +47,16 @@ public class Eip00w020Service {
     private DeptsDao deptsDao;
     
     public void init(Eip00w020Case eip00w020Case) {
-    	eip00w020Case.setUser_id(null);
+    	eip00w020Case.setSearch_id(null);
     	eip00w020Case.setDept_id(null);
     }
     
     /**
-     * 主頁面查詢管理員清單
+     * 主頁面初始查詢管理員清單
      *
      */
-    public void findUserList(Eip00w020Case eip00w020Case) {
-    	 List<Users> usersList = usersDao.selectDataByUserIdAndDeptId(eip00w020Case.getUser_id(),eip00w020Case.getDept_id());
-    	 
+    public void findAllUserList(Eip00w020Case eip00w020Case) {
+    	 List<Users> usersList = usersDao.selectAll();
     	 //查詢部門中文名稱
     	 for(Users u:usersList) {
     		 List<Depts> deptsList = deptsDao.findByDeptid(u.getDept_id());
@@ -64,8 +64,32 @@ public class Eip00w020Service {
     			 u.setDept_cname(deptsList.get(0).getDept_name());
     		 }
     	 }
-    			 
          eip00w020Case.setUserList(usersList);
+    }
+    
+    /**
+     * 主頁面查詢管理員清單
+     *
+     */
+    public void findUserList(Eip00w020Case eip00w020Case) {
+    	List<String> searchDeptList = new ArrayList<String>();
+    	if(StringUtils.isNotBlank(eip00w020Case.getDept_name())) {
+    		List<Depts> deptlist = deptsDao.findByLikeDeptname(eip00w020Case.getDept_name());
+    		if(CollectionUtils.isNotEmpty(deptlist)) {
+    			deptlist.stream().forEach(a -> searchDeptList.add(a.getDept_id()));
+    		}
+    	}
+    	
+    	 
+    	List<Users> usersList = usersDao.selectDataByLikeUserIdOrLikeNameAndEqualDeptid(eip00w020Case.getSearch_id(),eip00w020Case.getSearch_id(),searchDeptList);
+    	//查詢部門中文名稱
+    	for(Users u:usersList) {
+    		List<Depts> deptsList = deptsDao.findByDeptid(u.getDept_id());
+    		if(CollectionUtils.isNotEmpty(deptsList)) {
+    			u.setDept_cname(deptsList.get(0).getDept_name());
+    		}
+    	} 
+        eip00w020Case.setUserList(usersList);
     }
     
     /**

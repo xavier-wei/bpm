@@ -6,6 +6,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.hibernate.validator.internal.constraintvalidators.bv.EmailValidator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.multipart.MultipartFile;
 import tw.gov.pcc.common.util.DateUtil;
 import tw.gov.pcc.eip.common.cases.*;
@@ -100,16 +101,19 @@ public class Eip04w020Service extends OnlineRegService {
             Eip04w020Case.OrCase orCase = new Eip04w020Case.OrCase();
             List<Orresult>resultList = orresultDao.getDataByOrformno(t.getOrformno(),"D");
             List<Orresult>resultPassList = orresultDao.getDataByMultiCondition(t.getOrformno(),"","Y");
-            // 該活動開放的報名資格(職稱)
-            List<String> regisqualList =
-                    eipcodeDao.findByCodeKindAndList("TITLE",Arrays.asList(StringUtils.split(t.getRegisqual(),",")));
+            // 該活動開放的報名資格(部門)
+            List<String> regisqualList = new ArrayList<>();
             // 找出部門代號(D開頭)
             List<String>regisqulForDept = Arrays.stream(StringUtils.split(t.getRegisqual(),",")).filter(s->StringUtils.startsWith(s,"D")).map(r->StringUtils.substring(r, 1)).collect(Collectors.toList());
-            // 該活動開放的報名資格(部門)
-            List<String> deptList = new ArrayList<>();
+            // 該活動開放的報名資格(職稱)
+            List<String> titleList = new ArrayList<>();
+            titleList = eipcodeDao.findByCodeKindAndList("TITLE",Arrays.asList(StringUtils.split(t.getRegisqual(),",")));
             if (CollectionUtils.isNotEmpty(regisqulForDept)) {
-                deptList = deptsDao.findNameByMultiID(regisqulForDept).stream().map(Depts::getDept_name).collect(Collectors.toList());
-                regisqualList.addAll(deptList);
+                regisqualList = deptsDao.findNameByMultiID(regisqulForDept).stream().map(Depts::getDept_name).collect(Collectors.toList());
+            }
+            // 將部門與職稱合併，職稱在後
+            if (CollectionUtils.isNotEmpty(titleList)) {
+                regisqualList.addAll(titleList);
             }
             Map<String, Integer> actualappnumMap = new LinkedHashMap<>();
             Map<String, Integer> passnumMap = new LinkedHashMap<>();
@@ -136,16 +140,18 @@ public class Eip04w020Service extends OnlineRegService {
                     }
                 }
             });
-            //loop有勾選的報名資格
-            for (String str : regisqualList) {
-                if (actualappnumMap.containsKey(str)) {
-                    actualsb.append(str+":"+actualappnumMap.get(str)+"人");
+            // 組成已報名人數abbr
+            for (int i = 1; i <= regisqualList.size(); i++) {
+                if (actualappnumMap.containsKey(regisqualList.get(i-1))) {
+                    actualsb.append(regisqualList.get(i-1)+":"+actualappnumMap.get(regisqualList.get(i-1))+"人、");
                 } else {
-                    actualsb.append(str+":0人");
+                    actualsb.append(regisqualList.get(i-1)+":0人、");
                 }
-                actualsb.append("&#10;");
+                if (i % 2 == 0) {
+                    actualsb.append("&#10;");
+                }
             }
-            orCase.setActualappnumAbbr(actualsb.toString());
+            orCase.setActualappnumAbbr(getAbbr(actualsb));
             orCase.setActualappnum(t.getActualappnum());// 讀結果檔的報名人數
             resultPassList.forEach(r->{
                 if (deptMap.containsKey(r.getDept())) {
@@ -164,15 +170,18 @@ public class Eip04w020Service extends OnlineRegService {
                     }
                 }
             });
-            for (String str : regisqualList) {
-                if (ObjectUtils.isNotEmpty(passnumMap.get(str))) {
-                    passsb.append(str+":"+passnumMap.get(str)+"人");
+            // 組成審核通過人數abbr
+            for (int i = 1; i <= regisqualList.size(); i++) {
+                if (passnumMap.containsKey(regisqualList.get(i-1))) {
+                    passsb.append(regisqualList.get(i-1)+":"+passnumMap.get(regisqualList.get(i-1))+"人、");
                 } else {
-                    passsb.append(str+":0人");
+                    passsb.append(regisqualList.get(i-1)+":0人、");
                 }
-                passsb.append("&#10;");
+                if (i % 2 == 0) {
+                    passsb.append("&#10;");
+                }
             }
-            orCase.setPassnumAbbr(passsb.toString());
+            orCase.setPassnumAbbr(getAbbr(passsb));
             orCase.setPassnum(t.getPassnum());// 讀結果檔的審核通過人數
             orCase.setRegisfmdt(t.getRegisfmdt().format(minguoformatter));
             orCase.setRegisendt(t.getRegisendt().format(minguoformatter));
@@ -184,10 +193,27 @@ public class Eip04w020Service extends OnlineRegService {
     }
 
     /**
+     * 取得正確的abbr
+     * @param sb
+     * @return
+     */
+    public String getAbbr(StringBuilder sb) {
+        if (StringUtils.endsWith(sb.toString(),"、")) {
+            return StringUtils.substring(sb.toString(), 0, sb.toString().length()-1);
+        } else {
+            return StringUtils.substring(sb.toString(), 0, sb.toString().length()-6);
+        }
+    }
+
+    /**
      * 取得要新增的表單資料
      * @param modifyCase
      */
     public void getInsertFormData(Eip04w020ModifyCase modifyCase) {
+        //初始化
+        modifyCase.setOrformno(null);
+        modifyCase.setTopicname(null);
+        //取得預設資料
         Map<String,String>map = getMail();
         modifyCase.setSubject(map.get("1"));
         modifyCase.setPassmsg(map.get("2"));
@@ -669,7 +695,7 @@ public class Eip04w020Service extends OnlineRegService {
         orresult.setRegisaddres(StringUtils.defaultIfEmpty(caseData.getRegisaddres(), null));
         orresult.setMealstatus(caseData.getMealstatus());
         orresult.setCredt(LocalDateTime.now());
-        orresult.setCreuser(userData.getUserId());
+        orresult.setCreuser("99999");
         orresult.setRegisdt(orresult.getCredt());
         orresultDao.insertData(orresult);
         return "";
@@ -716,7 +742,7 @@ public class Eip04w020Service extends OnlineRegService {
                 orresult.setDegreen(6);
                 orresult.setMealstatus(checkAndConvertCsvData(rowData.get(14),"mealstatus", index));
                 orresult.setCredt(LocalDateTime.now());
-                orresult.setCreuser(userData.getUserId());
+                orresult.setCreuser("99999");
                 orresult.setRegisdt(orresult.getCredt());
                 orresultDao.insertData(orresult);
                 index++;
@@ -896,6 +922,22 @@ public class Eip04w020Service extends OnlineRegService {
         List<Orresult>resultList = orresultDao.getDataByOrformno(orformno,"D");
         // 批次報名資料已暫時新增至result檔，故+0
         return resultList.size() + (isBatch ? 0 : 1) > orformdata.getAcceptappnum();
+    }
+
+    /**
+     * 處理vaildation無法驗證的欄位
+     * @param modifyCaseData
+     * @param result
+     */
+    public void advancedValidate(Eip04w020ModifyCase modifyCaseData, BindingResult result) {
+        // 課程類別代碼
+        {
+            if (StringUtils.isNotBlank(modifyCaseData.getCourseclacode())) {
+                if (!orformdataDao.getListByCourseclacode(Long.valueOf(modifyCaseData.getCourseclacode()), modifyCaseData.getOrformno()).isEmpty()) {
+                    result.rejectValue("courseclacode", "", "「課程類別代碼」不可與其他課程相同");
+                }
+            }
+        }
     }
 
     /**

@@ -17,6 +17,7 @@ public interface User_rolesDao {
     String SYSTEM_ADMIN_SYS_ID = "EI";
     String SYSTEM_ADMIN_DEPT_ID = "ADMIN";
     String SYSTEM_ADMIN_ROLE_ID = "SYSADMIN";
+    String DEFAULT_ROLE = "Users"; // LDAP匯入帳號預設角色
 
     User_roles selectByKey(String user_id, String sys_id, String dept_id, String role_id);
 

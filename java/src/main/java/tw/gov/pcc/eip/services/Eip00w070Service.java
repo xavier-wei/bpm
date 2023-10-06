@@ -45,6 +45,8 @@ public class Eip00w070Service {
 	@Autowired
 	Pwc_tb_tableau_user_infoDao pwc_tb_tableau_user_infoDao;
 	@Autowired
+	DeptsDao deptsDao;
+	@Autowired
 	Eip00w230Service eip00w230Service;
     
     private final String SYS_ID = "EI";
@@ -92,6 +94,14 @@ public class Eip00w070Service {
     	List<User_roles> rsList = user_rolesDao.selectDataByRoleId(eipadm0w070Case.getRole_id());
     	List<Users> usersList = usersDao.selectAll();
     	
+    	//查詢部門中文名稱
+    	for(Users u:usersList) {
+    		List<Depts> deptsList = deptsDao.findByDeptid(u.getDept_id());
+    		if(CollectionUtils.isNotEmpty(deptsList)) {
+    			u.setDept_cname(deptsList.get(0).getDept_name());
+    		}
+    	} 
+    	//設定checkbox
     	for(Users u:usersList) {
     		for(User_roles ur:rsList) {
     			if(StringUtils.equals(u.getUser_id(),ur.getUser_id())) {
@@ -99,8 +109,14 @@ public class Eip00w070Service {
     			}
     		}
     	}
+    	
 
     	eipadm0w070Case.setUsersList(usersList);
+    }
+    
+    public void findDeptList(Eip00w070Case eipadm0w070Case){
+    	List<Depts> deptList = deptsDao.findByDeptid(null);
+    	eipadm0w070Case.setDeptsList(deptList);
     }
     
     public void updMember(Eip00w070Case eipadm0w070Case) {

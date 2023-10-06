@@ -16,16 +16,15 @@
     <tags:fieldset>
 		<form:form id="eip00w020Form" name="eip00w020Form" modelAttribute="${caseKey}" method="POST">
 			<tags:form-row>
-                 <form:label path="user_id" cssClass="col-form-label">員工編號：</form:label>
-                    <div class="col-6 col-md form-inline">
-                        <form:input path="user_id" cssClass="form-control eng_num_only" size="20" maxlength="20"/>
-                    </div>
+				<div class="col col-md-4 form-inline">
+				 	<form:label path="search_id" cssClass="col-form-label">員工編號或姓名：<form:input path="search_id" cssClass="form-control eng_num_only" size="20" maxlength="20"/></form:label>
+				</div>
+
             </tags:form-row>
             <tags:form-row>
-                 <form:label path="dept_id" cssClass="col-form-label">部門代號：</form:label>
-                    <div class="col-6 col-md form-inline">
-                        <form:input path="dept_id" cssClass="form-control eng_num_only" size="20" maxlength="20"/>
-                    </div>
+            	<div class="col col-md-4 form-inline">
+            		<form:label path="dept_name" cssClass="col-form-label">部門名稱：<form:input path="dept_name" cssClass="form-control eng_num_only" size="20" maxlength="20"/></form:label>
+            	</div>
             </tags:form-row>
         </form:form>
     </tags:fieldset>

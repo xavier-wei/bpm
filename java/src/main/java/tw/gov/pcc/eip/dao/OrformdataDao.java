@@ -68,4 +68,11 @@ public interface OrformdataDao {
      * @return
      */
     public int updateStatusBatch();
+
+    /**
+     * 使用課程分類代碼取得資料
+     * @param courseclacode
+     * @return
+     */
+    public List<Orformdata> getListByCourseclacode(Long courseclacode, String orformno);
 }

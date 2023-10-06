@@ -91,13 +91,15 @@ public class Eip07w020l00 extends PdfReportBase {
 		addCell(table, 100, 1, "[申請相關資料]:", SECOND_TITLE_FONT_SIZE, 0, Element.ALIGN_LEFT);
 		addCell(table, 100, 1, "用車事由:"+caseData.getApply_memo(), SECOND_TITLE_FONT_SIZE, 0, Element.ALIGN_LEFT);
 		addCell(table, 100, 1, "目的地:"+caseData.getDestination(), SECOND_TITLE_FONT_SIZE, 0, Element.ALIGN_LEFT);
-		addCell(table, 100, 1, "人數:"+caseData.getNum_of_people()+"人", SECOND_TITLE_FONT_SIZE, 0, Element.ALIGN_LEFT);
+		addCell(table, 100, 1, "人數:"+caseData.getNum_of_people(), SECOND_TITLE_FONT_SIZE, 0, Element.ALIGN_LEFT);
 		addCell(table, 100, 1, "用車日期:"+StringUtils.substring(caseData.getUsing_date(),0,3)+"/"+StringUtils.substring(caseData.getUsing_date(),3,5)+"/"+StringUtils.substring(caseData.getUsing_date(),5), SECOND_TITLE_FONT_SIZE, 0, Element.ALIGN_LEFT);
-		addCell(table, 100, 1, "申請用車時間(起):"+ StringUtils.substring(caseData.getUsing_time_s(),0,2)+":"+StringUtils.substring(caseData.getUsing_time_s(),2), SECOND_TITLE_FONT_SIZE, 0, Element.ALIGN_LEFT);
-		addCell(table, 100, 1, "            (迄):"+StringUtils.substring(caseData.getUsing_time_e(),0,2)+":"+StringUtils.substring(caseData.getUsing_time_e(),2), SECOND_TITLE_FONT_SIZE, 0, Element.ALIGN_LEFT);
+		addCell(table, 100, 1, "申請用車時間:"+ StringUtils.substring(caseData.getUsing_time_s(),0,2)+":"+StringUtils.substring(caseData.getUsing_time_s(),2)
+				+"~"+StringUtils.substring(caseData.getUsing_time_e(),0,2)+":"+StringUtils.substring(caseData.getUsing_time_e(),2), SECOND_TITLE_FONT_SIZE, 0, Element.ALIGN_LEFT);
+
 	if (StringUtils.isNotBlank(caseData.getApprove_using_time_s())){
-		addCell(table, 100, 1, "核定用車時間(起):"+ StringUtils.substring(caseData.getApprove_using_time_s(),0,2)+":"+StringUtils.substring(caseData.getApprove_using_time_s(),2), SECOND_TITLE_FONT_SIZE, 0, Element.ALIGN_LEFT);
-		addCell(table, 100, 1, "            (迄):"+StringUtils.substring(caseData.getApprove_using_time_e(),0,2)+":"+StringUtils.substring(caseData.getApprove_using_time_e(),2), SECOND_TITLE_FONT_SIZE, 0, Element.ALIGN_LEFT);
+		addCell(table, 100, 1, "核定用車時間:"+ StringUtils.substring(caseData.getApprove_using_time_s(),0,2)+":"+StringUtils.substring(caseData.getApprove_using_time_s(),2)
+				+"~"+StringUtils.substring(caseData.getApprove_using_time_e(),0,2)+":"+StringUtils.substring(caseData.getApprove_using_time_e(),2)+" (實際用車時間依核定時間為主)", SECOND_TITLE_FONT_SIZE, 0, Element.ALIGN_LEFT);
+
 	}
 		addCell(table, 100, 1, "表單狀態:"+caseData.getCodeName(), SECOND_TITLE_FONT_SIZE, 0, Element.ALIGN_LEFT);
 		addCell(table, 100, 1, EMPTY_FIELD, SIZE_12, 0, Element.ALIGN_CENTER); //把表格推下去一些
@@ -120,8 +122,8 @@ public class Eip07w020l00 extends PdfReportBase {
 		addCell(table, 30, 1, "駕駛人姓名:"+caseData.getName(), SECOND_TITLE_FONT_SIZE, 0, Element.ALIGN_LEFT);
 		addCell(table, 70, 1, "手機號碼:"+caseData.getCellphone(), SECOND_TITLE_FONT_SIZE, 0, Element.ALIGN_LEFT);
 		addCell(table, 30, 1, "車牌車號:"+caseData.getCarno1()+"-"+caseData.getCarno2(), SECOND_TITLE_FONT_SIZE, 0, Element.ALIGN_LEFT);
-		addCell(table, 40, 1, "車輛種類:"+ carty(caseData.getCartype()), SECOND_TITLE_FONT_SIZE, 0, Element.ALIGN_LEFT);
-		addCell(table, 30, 1, "顏色:"+caseData.getCarcolor(), SECOND_TITLE_FONT_SIZE, 0, Element.ALIGN_LEFT);
+		addCell(table, 70, 1, "顏色:"+caseData.getCarcolor(), SECOND_TITLE_FONT_SIZE, 0, Element.ALIGN_LEFT);
+		addCell(table, 100, 1, "車輛種類:"+ carty(caseData.getCartype()), SECOND_TITLE_FONT_SIZE, 0, Element.ALIGN_LEFT);
 		addCell(table, 100, 1, EMPTY_FIELD, SIZE_12, 0, Element.ALIGN_CENTER); //把表格推下去一些
 	}
 

@@ -50,7 +50,7 @@
                 </div>
             </div>
             <div class="list-group-item list-group-item-primary ">已選取儀表板</div>
-            <ul class="list-group" id="pickTabList">
+            <ul class="list-group" id="pickTabList" >
                 <c:forEach var="item" items="${caseData.pickTabList}">
                     <li data-id="${item.dashboard_fig_id}"
                         class="list-group-item list-group-item-action">${item.item_name}</li>
@@ -68,21 +68,35 @@
 </jsp:attribute>
     <jsp:attribute name="footers">
 <script>
+
     let sortable = null;
     $(function () {
+
         Sortable.create(tabList, {
             group: 'list-1',
             handle: '.list-group-item-action',
             sort: false,
-            chosenClass: 'list-group-item-primary'
+            chosenClass: 'list-group-item-primary',
         });
+
 
         sortable = Sortable.create(pickTabList, {
             animation: 100,
             group: 'list-1',
             handle: '.list-group-item-action',
             sort: true,
-            chosenClass: 'list-group-item-primary'
+            chosenClass: 'list-group-item-primary',
+        });
+
+        const tabListSize = $("#tabList").height();
+        const pickTabListSize = $("#pickTabList").height();
+        $("#pickTabList").css({
+            "border": "1px solid gray",
+            "height": tabListSize+pickTabListSize
+        });
+        $("#tabList").css({
+            "border": "1px solid gray",
+            "height": tabListSize+pickTabListSize
         });
 
         $('#allRight').click(function () {
