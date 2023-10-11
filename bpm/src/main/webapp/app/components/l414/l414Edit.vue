@@ -274,7 +274,7 @@
               <div class="card m-3" style="background-color: white">
                 <b-form-row>
                   <!--處理意見 : agreeType-->
-                  <i-form-group-check class="col-sm-5" label-cols="3" content-cols="9" :label="'處理意見：'">
+                  <i-form-group-check class="col-sm-12" label-cols="1" content-cols="11" :label="'處理意見：'">
                     <b-form-radio-group v-model="$v.agreeType.$model"
                                         :disabled="!configRoleToBpmIpt(userData.userRole) || formStatusRef === FormStatusEnum.READONLY">
                       <!--預定完成日期 : scheduleDate-->
@@ -293,7 +293,7 @@
                       </b-form-radio>
 
                       <!--部分同意設定原因 : partialAgreeReason-->
-                      <b-form-radio class="col-12" value="2">
+                      <b-form-radio class="col-12 fixedWidth" value="2">
                         <b-input-group>
                           <div>部分同意設定 : 原因 :　　 　</div>
                           <b-form-textarea
@@ -308,7 +308,7 @@
                       </b-form-radio>
 
                       <!--不同意設定原因 : notAgreeReason-->
-                      <b-form-radio class="col-12" value="3">
+                      <b-form-radio class="col-12 fixedWidth" value="3">
                         <b-input-group>
                           <div>不同意設定 : 原因 :　　　 　</div>
                           <b-form-textarea
@@ -328,7 +328,7 @@
 
               <div class="card m-3" style="background-color: white">
                 <b-form-row>
-                  <i-form-group-check class="col-sm-5" label-cols="3" content-cols="9" :label="`變更設備 ：`">
+                  <i-form-group-check class="col-sm-12" label-cols="1" content-cols="11" :label="`變更設備 ：`">
                     <b-input-group>
                       <!--是否為外部防火牆 : isExternalFirewall-->
                       <b-form-checkbox v-model="$v.isExternalFirewall.$model" value="Y" unchecked-value="N"
@@ -346,8 +346,8 @@
 
                 <b-form-row>
                   <i-form-group-check
-                    class="col-sm-5"
-                    label-cols="3"
+                    class="col-sm-12"
+                    label-cols="1"
                     content-cols="9"
                     :label="'設定內容 ：'"
                     :item="$v.firewallContent"
@@ -360,9 +360,9 @@
 
                 <b-form-row>
                   <i-form-group-check
-                    class="col-sm-5"
-                    label-cols="3"
-                    content-cols="9"
+                    class="col-sm-12"
+                    label-cols="1"
+                    content-cols="11"
                     :label="'實際完成日期 : '"
                     :item="$v.finishDatetime"
                   >
@@ -852,6 +852,9 @@ export default {
   border-top-right-radius: 10px;
 }
 
+.fixedWidth .custom-control-label{
+  width: 100%;
+}
 
 </style>
 
