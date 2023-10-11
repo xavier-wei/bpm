@@ -15,10 +15,14 @@ spring:
         prepStmtCacheSize: 250
         prepStmtCacheSqlLimit: 2048
         useServerPrepStmts: true
+      connection-timeout: 30000
+      maximum-pool-size: 10
 flowable:
   database-schema-update: true
 server:
   port: 9973
+  error:
+    include-message: always
 
 bpm:
   token: QAZWSXEDCRffvYTHnujkljkfyffd14651456uhweuhuijwdijoichchuhqiheciqhoieh
