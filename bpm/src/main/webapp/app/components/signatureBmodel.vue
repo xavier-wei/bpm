@@ -123,26 +123,26 @@
         </i-table>
 
         <b-form-row>
-          <i-form-group-check class="col-sm-5" label-cols="5" content-cols="7" :label="'加簽對象 : '"
+          <i-form-group-check class="col-sm-12" label-cols="2" content-cols="8" :label="'加簽對象 : '"
                               :item="$v.chooseName">
             <div>{{ $v.chooseName.$model }} ({{ $v.chooseId.$model }})</div>
 
           </i-form-group-check>
-          <i-form-group-check class="col-sm-5" label-cols="5" content-cols="7" :label="'單位 : '"
+          <i-form-group-check class="col-sm-12" label-cols="2" content-cols="8" :label="'單位 : '"
                               :item="$v.chooseUnit">
             <div>{{ changeDealWithUnit($v.chooseUnit.$model, bpmDeptsOptions) }}</div>
           </i-form-group-check>
 
         </b-form-row>
         <b-form-row>
-          <i-form-group-check class="col-sm-5" label-cols="5" content-cols="7" :label="'職稱 : '"
+          <i-form-group-check class="col-sm-12" label-cols="2" content-cols="8" :label="'職稱 : '"
                               :item="$v.chooseTitle">
             <div>{{ $v.chooseTitle.$model }}</div>
           </i-form-group-check>
         </b-form-row>
 
         <b-form-row>
-          <i-form-group-check class="col-sm-5" label-cols="5" content-cols="7" :label="'加簽理由 : '"
+          <i-form-group-check class="col-sm-12 fixedWidth" label-cols="2" content-cols="8" :label="'加簽理由 : '"
                               :item="$v.reason">
             <b-form-textarea v-model="$v.reason.$model" rows="1" maxlength="100" trim lazy/>
           </i-form-group-check>
@@ -391,6 +391,12 @@ export default {
 }
 </script>
 
-<style scoped>
+<style>
+
+
+.fixedWidth .custom-control-label{
+  width: 100%;
+}
+
 
 </style>
