@@ -35,7 +35,7 @@ import {useGetters, useRouter, useStore} from '@u3u/vue-hooks';
 import MenuService from '@/core/menu/menu-service';
 import NotificationService from './shared/notification/notification-service';
 import axios from 'axios';
-import Breadcrumb from '@/core/menu/breadcrumb.vue';
+// import Breadcrumb from '@/core/menu/breadcrumb.vue';
 import BlockUi from '@/core/block-ui/block-ui.vue';
 import {notificationErrorHandler} from "@/shared/http/http-response-helper";
 
@@ -49,7 +49,7 @@ export default {
     'jhi-navbar': JhiNavbar,
     'login-form': LoginForm,
     'jhi-footer': JhiFooter,
-    Breadcrumb,
+    // Breadcrumb,
     BlockUi,
     // Home,
   },
@@ -159,6 +159,5 @@ export default {
   height: 100%;
   background-color: white;
 }
-
 
 </style>
