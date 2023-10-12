@@ -135,17 +135,6 @@ public class BpmFunctionResource {
     }
 
     /**
-     * {@code GET  /bpm-functions} : get all the bpmFunctions.
-     *
-     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and the list of bpmFunctions in body.
-     */
-    @GetMapping("/bpm-functions")
-    public List<BpmFunctionDTO> getAllBpmFunctions() {
-        log.debug("REST request to get all BpmFunctions");
-        return bpmFunctionService.findAll();
-    }
-
-    /**
      * {@code GET  /bpm-functions/:id} : get the "id" bpmFunction.
      *
      * @param id the id of the bpmFunctionDTO to retrieve.

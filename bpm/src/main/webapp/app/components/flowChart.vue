@@ -44,7 +44,7 @@ export default {
     const translateY = ref(0);
 
     const handleWheel = (event) => {
-      if (event.ctrlKey) {
+      if (event.ctrlKey) { // 检查是否按下了Ctrl键
         event.preventDefault(); //阻止頁面整體縮放
         const delta = event.deltaY > 0 ? -0.1 : 0.1; //根據滑鼠滾輪計算縮放
         scale.value = Math.min(Math.max(0.1, scale.value + delta), 2); //限制圖片縮放比例在在0.1到2之間

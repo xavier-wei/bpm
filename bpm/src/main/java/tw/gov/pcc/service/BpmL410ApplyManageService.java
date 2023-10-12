@@ -35,39 +35,6 @@ public class BpmL410ApplyManageService {
     }
 
     /**
-     * Save a bpmL410ApplyManage.
-     *
-     * @param bpmL410ApplyManageDTO the entity to save.
-     * @return the persisted entity.
-     */
-    public BpmL410ApplyManageDTO save(BpmL410ApplyManageDTO bpmL410ApplyManageDTO) {
-        log.debug("Request to save BpmL410ApplyManage : {}", bpmL410ApplyManageDTO);
-        BpmL410ApplyManage bpmL410ApplyManage = bpmL410ApplyManageMapper.toEntity(bpmL410ApplyManageDTO);
-        bpmL410ApplyManage = bpmL410ApplyManageRepository.save(bpmL410ApplyManage);
-        return bpmL410ApplyManageMapper.toDto(bpmL410ApplyManage);
-    }
-
-    /**
-     * Partially update a bpmL410ApplyManage.
-     *
-     * @param bpmL410ApplyManageDTO the entity to update partially.
-     * @return the persisted entity.
-     */
-    public Optional<BpmL410ApplyManageDTO> partialUpdate(BpmL410ApplyManageDTO bpmL410ApplyManageDTO) {
-        log.debug("Request to partially update BpmL410ApplyManage : {}", bpmL410ApplyManageDTO);
-
-        return bpmL410ApplyManageRepository
-            .findById(bpmL410ApplyManageDTO.getId())
-            .map(existingBpmL410ApplyManage -> {
-                bpmL410ApplyManageMapper.partialUpdate(existingBpmL410ApplyManage, bpmL410ApplyManageDTO);
-
-                return existingBpmL410ApplyManage;
-            })
-            .map(bpmL410ApplyManageRepository::save)
-            .map(bpmL410ApplyManageMapper::toDto);
-    }
-
-    /**
      * Get all the bpmL410ApplyManages.
      *
      * @return the list of entities.
@@ -80,27 +47,5 @@ public class BpmL410ApplyManageService {
             .stream()
             .map(bpmL410ApplyManageMapper::toDto)
             .collect(Collectors.toCollection(LinkedList::new));
-    }
-
-    /**
-     * Get one bpmL410ApplyManage by id.
-     *
-     * @param id the id of the entity.
-     * @return the entity.
-     */
-    @Transactional(readOnly = true)
-    public Optional<BpmL410ApplyManageDTO> findOne(Long id) {
-        log.debug("Request to get BpmL410ApplyManage : {}", id);
-        return bpmL410ApplyManageRepository.findById(id).map(bpmL410ApplyManageMapper::toDto);
-    }
-
-    /**
-     * Delete the bpmL410ApplyManage by id.
-     *
-     * @param id the id of the entity.
-     */
-    public void delete(Long id) {
-        log.debug("Request to delete BpmL410ApplyManage : {}", id);
-        bpmL410ApplyManageRepository.deleteById(id);
     }
 }
