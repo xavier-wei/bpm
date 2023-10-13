@@ -4,10 +4,12 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.ModelAndView;
+import tw.gov.pcc.eip.bpm.utils.AESEncryption;
 import tw.gov.pcc.eip.bpm.utils.RefererTemp;
+import tw.gov.pcc.eip.bpm.utils.TokenUtil;
+import tw.gov.pcc.eip.framework.domain.UserBean;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
 import java.util.Map;
 
 @Controller
@@ -16,28 +18,37 @@ public class Bpm01w040Controller {
 
     public static final String CASE_KEY = "_bpm01w040Controller_caseData";
     private static final String MAIN_PAGE = "/bpm/Bpm01w040";//主頁
+    private final String MAPPING_PATH = "/Bpm01w040_enter.action";
+    private final UserBean userData;
 
-    @RequestMapping("/Bpm01w040_enter.action")
+    public Bpm01w040Controller(UserBean userData) {
+        this.userData = userData;
+    }
+
+    @RequestMapping(MAPPING_PATH)
     public ModelAndView notify(HttpServletRequest request) {
 
-        // 確認是否有無bpmLogin資訊
-        HttpSession session = request.getSession();
-        Boolean isBpmLogin =(Boolean) session.getAttribute("bpmLogin");
+        boolean isBpmLogin=Boolean.valueOf(request.getParameter("bpm"));
+        System.out.println("isBpmLogin = " + isBpmLogin);
+        String token = null;
+        try {
+            token = AESEncryption.encrypt(userData.getUserId(), TokenUtil.TOKEN);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
 
         // 無bpmLogin資訊情況
-        if (isBpmLogin == null|| !isBpmLogin) {
-            log.info("BPM表單管理:: {}導向頁面","/bpm cookies不存在，重導取得");
-            session.setAttribute("bpmLogin",true);
-            String referer = request.getHeader("referer");
-            String keyword = "/eip";
-            int index = referer.indexOf(keyword); //
-            referer = referer.replace(referer.substring(index, referer.length()), "");
+        if (!isBpmLogin) {
+            String referer = request.getRequestURL().toString();
+            String keyword = "/eip"+MAPPING_PATH;
+            referer = referer.replace(keyword, "");
             RefererTemp.refererMap.put("referer", referer);
             StringBuilder path = new StringBuilder(referer)
                     .append("/bpm/api/loginBpm")
                     .append("?referer=")
                     .append(referer)
-                    .append("&path=/Bpm01w040_enter.action");
+                    .append("&path=/Bpm01w040_enter.action&token=")
+                    .append(token);
             return new ModelAndView("redirect:"+path);
         }
 

@@ -273,6 +273,7 @@ public class LoginController extends BaseController {
     @ResponseBody
     public List<TableauDataCase> getTableauUserdata( ) {
         return tableauController.getUserdata();
+
     }
 
     /**
