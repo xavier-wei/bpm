@@ -127,5 +127,6 @@ jhipster:
 # application:
 bpm:
   token: QAZWSXEDCRffvYTHnujkljkfyffd14651456uhweuhuijwdijoichchuhqiheciqhoieh
+  key: 2wsx$RFV6yhn*IK<
 flowable:
   url: http://localhost:9973/process
