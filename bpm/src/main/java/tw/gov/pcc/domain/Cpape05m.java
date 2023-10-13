@@ -2,7 +2,6 @@ package tw.gov.pcc.domain;
 
 import javax.persistence.*;
 import java.io.Serializable;
-import java.sql.Timestamp;
 
 @Entity
 @Table(name = "VIEW_CPAPE05M")
@@ -25,7 +24,7 @@ public class Cpape05m implements Serializable {
     private String title;
     private String pehyear;
     private String pehmon;
-    private Double pehday;
+    private Float pehday;
     private String pesex;
     private String pebirthd;
     private String pecrkcod;
@@ -33,13 +32,13 @@ public class Cpape05m implements Serializable {
     private String pememcod;
     private String memcodName;
     private Integer peoverhfee;
-    private Timestamp peactdate;
+    private String peactdate;
     private String pelevdate;
     private String pepoint;
     private String peykind;
-    private Double perday;
-    private Double perday1;
-    private Double perday2;
+    private Float perday;
+    private Float perday1;
+    private Float perday2;
     private String pefstdate;
     private String pehyear2;
     private String pehmon2;
@@ -52,7 +51,6 @@ public class Cpape05m implements Serializable {
     private String ctHomeAddr;
     private Boolean isNationality;
     private String peupdate;
-
 
     public String getPecard() {
         return pecard;
@@ -158,11 +156,11 @@ public class Cpape05m implements Serializable {
         this.pehmon = pehmon;
     }
 
-    public Double getPehday() {
+    public Float getPehday() {
         return pehday;
     }
 
-    public void setPehday(Double pehday) {
+    public void setPehday(Float pehday) {
         this.pehday = pehday;
     }
 
@@ -222,11 +220,11 @@ public class Cpape05m implements Serializable {
         this.peoverhfee = peoverhfee;
     }
 
-    public Timestamp getPeactdate() {
+    public String getPeactdate() {
         return peactdate;
     }
 
-    public void setPeactdate(Timestamp peactdate) {
+    public void setPeactdate(String peactdate) {
         this.peactdate = peactdate;
     }
 
@@ -254,27 +252,27 @@ public class Cpape05m implements Serializable {
         this.peykind = peykind;
     }
 
-    public Double getPerday() {
+    public Float getPerday() {
         return perday;
     }
 
-    public void setPerday(Double perday) {
+    public void setPerday(Float perday) {
         this.perday = perday;
     }
 
-    public Double getPerday1() {
+    public Float getPerday1() {
         return perday1;
     }
 
-    public void setPerday1(Double perday1) {
+    public void setPerday1(Float perday1) {
         this.perday1 = perday1;
     }
 
-    public Double getPerday2() {
+    public Float getPerday2() {
         return perday2;
     }
 
-    public void setPerday2(Double perday2) {
+    public void setPerday2(Float perday2) {
         this.perday2 = perday2;
     }
 
@@ -398,7 +396,7 @@ public class Cpape05m implements Serializable {
             ", pememcod='" + pememcod + '\'' +
             ", memcodName='" + memcodName + '\'' +
             ", peoverhfee=" + peoverhfee +
-            ", peactdate=" + peactdate +
+            ", peactdate='" + peactdate + '\'' +
             ", pelevdate='" + pelevdate + '\'' +
             ", pepoint='" + pepoint + '\'' +
             ", peykind='" + peykind + '\'' +

@@ -29,6 +29,7 @@
               multiple
               browse-text="選擇檔案"
               @change="upload($event,row.index,row.item)"
+              style="text-align: left;"
             ></b-form-file>
           </template>
 
@@ -69,10 +70,7 @@
         </b-row>
       </b-container>
 
-
     </div>
-
-
 
     <div class="card" style="background-color: #d3ede8" v-show="readAppendix">
       <div class="card-body">
@@ -420,30 +418,6 @@ export default {
       {immediate: true}
     );
 
-    // const currentScale = reactive({data: 1});
-// const imgStyle = ref({
-//   transform: `scale(${currentScale.data})`,
-//   transition: "transform 0.2s ease", // 添加过渡效果，使缩放更平滑
-// });
-// // 處理滑鼠滾輪
-// const handleWheel = (event) => {
-//   if (event.ctrlKey) { // 检查是否按下了Ctrl键
-//     const newScale = currentScale.data + (event.deltaY > 0 ? -0.1 : 0.1); // 根據滾輪方向調整縮放比例
-//     currentScale.data = Math.max(0.1, Math.min(2, newScale)); // 限制缩放比例在0.1到2之间
-//     imgStyle.value.transform = `scale(${currentScale.data})`;
-//   }
-// };
-//
-//
-// // 在組件掛載後，加上滑鼠滾輪監聽
-// onMounted(() => {
-//   window.addEventListener('wheel', handleWheel);
-// });
-//
-// onUnmounted(() => {
-//   window.removeEventListener('wheel', handleWheel);
-// });
-
     return {
       appendixData,
       removeAnnouncement,
@@ -516,5 +490,6 @@ export default {
   border: 1px solid rgba(0, 0, 0, 0.125);
   border-radius: 0.15rem;
 }
+
 
 </style>

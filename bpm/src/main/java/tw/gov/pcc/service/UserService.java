@@ -1,7 +1,5 @@
 package tw.gov.pcc.service;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import tw.gov.pcc.domain.Cpape05m;
 import tw.gov.pcc.domain.User;
@@ -15,7 +13,6 @@ import java.util.stream.Collectors;
 
 @Service
 public class UserService {
-    private final Logger log = LoggerFactory.getLogger(UserService.class);
 
     private final UserRepository userRepository;
     private final Cpape05mRepository cpape05mRepository;

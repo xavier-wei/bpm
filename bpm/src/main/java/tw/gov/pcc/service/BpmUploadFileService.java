@@ -45,61 +45,6 @@ public class BpmUploadFileService {
         this.bpmUploadFileMapper = bpmUploadFileMapper;
     }
 
-    /**
-     * Save a bpmUploadFile.
-     *
-     * @param bpmUploadFileDTO the entity to save.
-     * @return the persisted entity.
-     */
-    public BpmUploadFileDTO save(BpmUploadFileDTO bpmUploadFileDTO) {
-        log.debug("Request to save BpmUploadFile : {}", bpmUploadFileDTO);
-        BpmUploadFile bpmUploadFile = bpmUploadFileMapper.toEntity(bpmUploadFileDTO);
-        bpmUploadFile = bpmUploadFileRepository.save(bpmUploadFile);
-        return bpmUploadFileMapper.toDto(bpmUploadFile);
-    }
-
-    /**
-     * Partially update a bpmUploadFile.
-     *
-     * @param bpmUploadFileDTO the entity to update partially.
-     * @return the persisted entity.
-     */
-    public Optional<BpmUploadFileDTO> partialUpdate(BpmUploadFileDTO bpmUploadFileDTO) {
-        log.debug("Request to partially update BpmUploadFile : {}", bpmUploadFileDTO);
-
-        return bpmUploadFileRepository
-                .findById(bpmUploadFileDTO.getId())
-                .map(existingBpmUploadFile -> {
-                    bpmUploadFileMapper.partialUpdate(existingBpmUploadFile, bpmUploadFileDTO);
-
-                    return existingBpmUploadFile;
-                })
-                .map(bpmUploadFileRepository::save)
-                .map(bpmUploadFileMapper::toDto);
-    }
-
-    /**
-     * Get all the bpmUploadFiles.
-     *
-     * @return the list of entities.
-     */
-    @Transactional(readOnly = true)
-    public List<BpmUploadFileDTO> findAll() {
-        log.debug("Request to get all BpmUploadFiles");
-        return bpmUploadFileRepository.findAll().stream().map(bpmUploadFileMapper::toDto).collect(Collectors.toCollection(LinkedList::new));
-    }
-
-    /**
-     * Get one bpmUploadFile by id.
-     *
-     * @param id the id of the entity.
-     * @return the entity.
-     */
-    @Transactional(readOnly = true)
-    public Optional<BpmUploadFileDTO> findOne(Long id) {
-        log.debug("Request to get BpmUploadFile : {}", id);
-        return bpmUploadFileRepository.findById(id).map(bpmUploadFileMapper::toDto);
-    }
 
     /**
      * Delete the bpmUploadFile by id.
