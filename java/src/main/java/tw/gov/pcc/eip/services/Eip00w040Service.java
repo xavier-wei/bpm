@@ -34,7 +34,7 @@ public class Eip00w040Service {
     }
   
     public List<Depts> queryDepts(String deptid){
-    	return deptsDao.findByDeptid(deptid);
+    	return deptsDao.findByLikeDeptid(deptid);
     }
     
     public void buildEditCaseData(Eip00w040Case eip00w040Case, Depts resultDepts){

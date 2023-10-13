@@ -106,6 +106,25 @@ public class RolesDaoImpl extends BaseDao<Roles> implements RolesDao {
                         " WHERE ROLE_ID = :role_id  ",
                 new BeanPropertySqlParameterSource(roles));
     }
+    
+    /**
+     * 根據key選取資料
+     *
+     * @return 唯一值
+     */
+    @Override
+    public List<Roles> selectListLikeRoleid(String role_id) {
+        Roles roles = new Roles();
+        roles.setSys_id("EI");
+        if(StringUtils.isNotBlank(role_id)) {
+        	roles.setRole_id(role_id);
+        }
+        String sql = "SELECT " +
+                ALL_COLUMNS_SQL +
+                " FROM " + TABLE_NAME + " t WHERE t.SYS_ID = :sys_id AND LOWER(t.ROLE_ID) like '%' + LOWER(ISNULL(:role_id ,t.ROLE_ID)) +'%' ";
+        List<Roles> list = getNamedParameterJdbcTemplate().query(sql, new BeanPropertySqlParameterSource(roles), BeanPropertyRowMapper.newInstance(Roles.class));
+        return list;
+    }
 
 
 }

@@ -998,6 +998,15 @@
                 before;
             if (isNaN(year) || isNaN(month))
                 return;
+            startYear=1912;
+            startMonth=0;
+            // //為EIP設定邊界避免破表
+            if(year < 1){
+                year = 1912;
+            }else if(year < 200){
+                year += 1911;
+            }
+            
             this.picker.find('.datepicker-days .datepicker-switch')
                 //.text(DPGlobal.formatDate(d, titleFormat, this.o.language));
                 .text('民國' + (year - (this.o.language == "zh-TW" ? 1911 : 0)) + '年' + dates[this.o.language].monthsShort[month]); //EDIT
@@ -1722,7 +1731,7 @@
         keyboardNavigation: true,
         language: 'en',
         minViewMode: 0,
-        maxViewMode: 4,
+        maxViewMode: 2,
         multidate: false,
         multidateSeparator: ',',
         orientation: "auto",

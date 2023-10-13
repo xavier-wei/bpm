@@ -59,4 +59,6 @@ public interface DeptsDao {
 
 	public List<Depts> findByLikeDeptname(String dept_name);
 
+	public List<Depts> findByLikeDeptid(String dept_id);
+
 }

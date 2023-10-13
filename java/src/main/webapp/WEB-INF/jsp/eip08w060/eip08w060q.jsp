@@ -31,7 +31,7 @@
 					&nbsp;&nbsp;&nbsp;
 					<form:radiobutton id="reportType" cssClass="checkedgreen" value="F-修繕請修單" path="applyTpNm"/>修繕請修單
 					&nbsp;&nbsp;&nbsp;
-					<form:radiobutton id="reportType" cssClass="checkedgreen" value="P-軟(硬)體請購單" path="applyTpNm"/>軟(硬)體請購單
+					<form:radiobutton id="reportType" cssClass="checkedgreen" value="P-軟體請購單" path="applyTpNm"/>軟體請購單
 				</div>
 			</tags:form-row>
 			<tags:form-row>

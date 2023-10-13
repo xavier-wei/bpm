@@ -312,8 +312,8 @@ public class UsersDaoImpl extends BaseDao<Users> implements UsersDao {
         String sql = "SELECT " +
                 ALL_COLUMNS_SQL +
                 " FROM " + TABLE_NAME + " t " +
-                " WHERE (t.USER_ID like '%' + ISNULL(:user_id, t.USER_ID) + '%' " +
-                " OR t.USER_NAME like '%' + ISNULL(:user_name, t.USER_NAME) + '%') ";
+                " WHERE (LOWER(t.USER_ID) like '%' + LOWER(ISNULL(:user_id, t.USER_ID)) + '%' " +
+                " OR LOWER(t.USER_NAME) like '%' + LOWER(ISNULL(:user_name, t.USER_NAME)) + '%') ";
     	
     	if (StringUtils.isBlank(user_id)) {
         	user_id = null;

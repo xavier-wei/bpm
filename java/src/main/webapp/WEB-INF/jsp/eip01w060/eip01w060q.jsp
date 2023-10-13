@@ -13,9 +13,9 @@
                         </form:select>
                     </div>
                 </tags:form-row>
-                <form:hidden path="fseq"/>
-                <form:hidden path="seq"/>
-                <form:hidden path="subject"/>
+                <form:hidden path="fseq" />
+                <form:hidden path="seq" />
+                <form:hidden path="subject" />
                 <br>
                 <div class="msg">
 
@@ -40,43 +40,42 @@
                             if (data == '') {
                                 showAlert('查無資料!');
                             } else {
-                            	var titile = '';
-                                var msg = '';
-                                var str = '';
-                                title = !$('select[name="dept"] option').length ? '' : $('select[name="dept"] :selected').html();
+                                var msgcontent = '';
+                                var fileList = '';
+                                var title = !$('select[name="dept"] option').length ? '' :
+                                    $('select[name="dept"] :selected').html();
                                 var count = Object.keys(data.files).length;
                                 if (count == 1) {
                                     var key = Object.keys(data.files);
-                                    str +=
+                                    fileList +=
                                         '附檔下載：<a href="javascript:;" class="alink" id=' +
                                         key + '>' +
                                         data.files[key] + '</a>';
                                 } else if (count == 0) {
-                                    str += '附檔下載：';
+                                    fileList += '附檔下載：';
                                 } else {
-                                    str +=
+                                    fileList +=
                                         '<div style="display: flex;">' +
                                         '<div style="flex: none;">附檔下載：</div><div>';
                                     $.each(data.files, function(key, value) {
-                                        str +=
+                                        fileList +=
                                             '<div class="d-inline-flex mr-3">' +
                                             '<input type="checkbox" id="' +
                                             key +
                                             '" name="filelist"><a href="javascript:;" class="alink" id=' +
                                             key + '>' + value + '</a></div>';
                                     });
-                                    str +=
+                                    fileList +=
                                         '</div></div>' +
                                         '<button type="button" class="btn btn-outline-be btn-sm mr-1" ' +
                                         'style="margin-left: 80px;" id="zipDownload">下載</button>';
                                 }
-                                $.each(data.msgs, function(i, e) { // 串接內容
-                                    msg += (e == null) ? '' : e + '<br>';
-                                });
+                                msgcontent += title + '<br>' +
+                                    ((data.pagetype === 'A') ? data.mcontent : '<a href="' +
+                                        data.mcontent + '" target="_blank">' + data
+                                        .mcontent + '</a>') + '<br>' + fileList;
                                 $('.msg').html('');
-                                $('.msg').html(title +
-                                    '<br>' + msg +
-                                    '<br>' + str);
+                                $('.msg').html(msgcontent);
                                 $('#fseq').val(data.fseq);
                                 $('#subject').val(data.subject);
                             }

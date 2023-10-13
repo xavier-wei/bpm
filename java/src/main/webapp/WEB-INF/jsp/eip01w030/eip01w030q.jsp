@@ -110,62 +110,10 @@
                 });
                 // 明細
                 $('#qryListTable #btnDetail').click(function() {
-                    $('#fseq').val($(this).parent('td').data('fseq'));
-                    $.ajax({
-                        type: "POST",
-                        url: '<c:url value="/Eip01w030_getDetail.action" />',
-                        data: {
-                            'fseq': $(this).parent('td').data('fseq')
-                        },
-                        timeout: 100000,
-                        success: function(data) {
-                            if (data == '') {
-                                showAlert('查無資料!');
-                            } else {
-                                var str = '';
-                                var count = Object.keys(data.file).length;
-                                if (count == 1) {
-                                    var key = Object.keys(data.file);
-                                    str +=
-                                        '附加檔案：<a href="javascript:;" class="alink" id=' +
-                                        key + '>' +
-                                        data.file[key] + '</a>';
-                                } else if (count == 0) {
-                                    str += '附加檔案：';
-                                } else {
-                                    str +=
-                                        '<div style="display: flex;">' +
-                                        '<div style="flex: none;">附加檔案：</div><div>';
-                                    $.each(data.file, function(key, value) {
-                                        str +=
-                                            '<div class="d-inline-flex mr-3">' +
-                                            '<input type="checkbox" id="' +
-                                            key +
-                                            '" name="filelist"><a href="javascript:;" class="alink" id=' +
-                                            key + '>' + value + '</a></div>';
-                                    });
-                                    str +=
-                                        '</div></div>' +
-                                        '<button type="button" class="btn btn-outline-be btn-sm mr-1" ' +
-                                        'style="margin-left: 80px;" id="zipDownload">下載</button>';
-                                }
-                                $('#subject').val(data.subject);
-                                $('.modal-title').html('公告事項－' + data.msgtype);
-                                $('.modal-body').html(
-                                    '主　　題：' + data.subject +
-                                    '<br>訊息文字：' + data.mcontent +
-                                    '<br>發布單位：' + data.contactunit +
-                                    '<br>' + str +
-                                    '<br>更新日期：' + data.upddt +
-                                    '<br>聯絡人　：' + data.contactperson +
-                                    '<br>聯絡電話：' + data.contacttel);
-                                $('#popModal').modal('show');
-                            }
-                        },
-                        error: function(e) {
-                            showAlert("取得資料發生錯誤");
-                        }
-                    });
+                    let url = '<c:url value="/Eip01w030_getDetail.action" />';
+                    let fseq = $(this).parent('td').data('fseq');
+                    $('#fseq').val(fseq);
+                    getDetail('3', url, fseq);
                 });
             });
             // 檔案下載按鈕
@@ -190,3 +138,4 @@
         </script>
     </jsp:attribute>
 </tags:layout>
+<%@ include file="/WEB-INF/jsp/eip01w010/eip01w010x.jsp" %>

@@ -20,6 +20,8 @@ public class Eip01wPopCase implements Serializable {
 
     private String fseq; // 項次
 
+    private String pagetype; // 頁面型態
+
     private String subject; // 主題
 
     private String msgtype; // 類別

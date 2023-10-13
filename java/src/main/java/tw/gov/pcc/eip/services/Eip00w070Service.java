@@ -64,7 +64,7 @@ public class Eip00w070Service {
      *
      */
     public List<Roles> findRolesList(String role_id) {
-    	return rolesDao.selectDataList(role_id);
+    	return rolesDao.selectListLikeRoleid(role_id);
     }
     
     /**

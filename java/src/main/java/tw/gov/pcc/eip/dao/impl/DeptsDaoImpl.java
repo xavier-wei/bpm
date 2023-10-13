@@ -188,4 +188,14 @@ public class DeptsDaoImpl extends BaseDao<Depts> implements DeptsDao {
                 BeanPropertyRowMapper.newInstance(Depts.class));
         return list;
     }
+    
+    @Override
+    public List<Depts> findByLikeDeptid(String dept_id) {
+        String sql = "SELECT " + ALL_COLUMNS_SQL + " FROM " + TABLE_NAME 
+        		      + " t WHERE LOWER(t.DEPT_ID) like  '%' + LOWER(ISNULL(:dept_id, t.DEPT_ID)) + '%' ";
+        SqlParameterSource params = new MapSqlParameterSource("dept_id", StringUtils.isNotBlank(dept_id)?dept_id:null);
+        List<Depts> list = getNamedParameterJdbcTemplate().query(sql, params,
+                BeanPropertyRowMapper.newInstance(Depts.class));
+        return list;
+    }
 }

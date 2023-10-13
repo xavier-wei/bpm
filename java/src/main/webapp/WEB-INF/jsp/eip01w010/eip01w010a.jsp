@@ -138,6 +138,27 @@
         <tags:fieldset legend="${caseData.fseq == '' ? '新增' : '編輯' }">
             <form:form id="eip01w010Form" modelAttribute="${caseKey}" enctype="multipart/form-data">
                 <tags:form-row>
+                    <form:label cssClass="col-form-label star" path="attributype">屬性：</form:label>
+                    <div class="col-sm-6">
+                        <form:select path="attributype" cssClass="form-control">
+                            <option value="" selected disabled hidden>請選擇</option>
+                            <c:forEach var="item" items="${caseData.attrtypes}" varStatus="status">
+                                <form:option value="${item.codeno}">
+                                    <c:out value="${item.codename}" />
+                                </form:option>
+                            </c:forEach>
+                        </form:select>
+                    </div>
+                </tags:form-row>
+                <tags:form-row>
+                    <form:label cssClass="col-form-label star" path="msgtype">訊息類別：</form:label>
+                    <div class="col-sm-6">
+                        <form:select path="msgtype" cssClass="form-control">
+                            <option value="">請先選擇屬性</option>
+                        </form:select>
+                    </div>
+                </tags:form-row>
+                <tags:form-row>
                     <form:label cssClass="col-form-label star" path="pagetype">頁面型態：</form:label>
                     <div class="col-sm-6">
                         <form:select path="pagetype" cssClass="form-control">
@@ -172,32 +193,11 @@
                     </div>
                 </tags:form-row>
                 <tags:form-row>
-                    <form:label cssClass="col-form-label star" path="attributype">屬性：</form:label>
-                    <div class="col-sm-6">
-                        <form:select path="attributype" cssClass="form-control">
-                            <option value="" selected disabled hidden>請選擇</option>
-                            <c:forEach var="item" items="${caseData.attrtypes}" varStatus="status">
-                                <form:option value="${item.codeno}">
-                                    <c:out value="${item.codename}" />
-                                </form:option>
-                            </c:forEach>
-                        </form:select>
-                    </div>
-                </tags:form-row>
-                <tags:form-row>
-                    <form:label cssClass="col-form-label star" path="msgtype">訊息類別：</form:label>
-                    <div class="col-sm-6">
-                        <form:select path="msgtype" cssClass="form-control">
-                            <option value="">請先選擇屬性</option>
-                        </form:select>
-                    </div>
-                </tags:form-row>
-                <tags:form-row>
-                    <form:label cssClass="col-form-label star" path="locatearea">顯示位置：</form:label>
+                    <form:label cssClass="col-form-label" path="locatearea">顯示位置：</form:label>
                     <div class="col-sm-6 d-flex my-auto">
                         <c:forEach var="item" items="${caseData.locateareas}" varStatus="status">
                             <label class="mb-0 d-inline-flex" style="margin-left:0px;">
-                                <form:radiobutton path="locatearea" value="${item.codeno }" cssClass="mr-1" />
+                                <form:radiobutton path="locatearea" value="${item.codeno }" disabled="true" cssClass="mr-1" />
                                 <span class="mr-2">${item.codename }</span>
                             </label>
                         </c:forEach>
@@ -263,10 +263,16 @@
                     </div>
                 </tags:form-row>
                 <tags:form-row>
-                    <form:label cssClass="col-form-label star subject-label-name" path="subject">主旨/連結網址：</form:label>
+                    <form:label cssClass="col-form-label star subject-label-name" path="subject">主旨/連結標題：</form:label>
                     <div class="col-sm-6 d-flex">
                         <form:input path="subject" cssClass="form-control" style="width:70%;" maxlength="400"
                             placeholder="400字內" />
+                    </div>
+                </tags:form-row>
+                <tags:form-row cssClass="content-link-row">
+                    <form:label cssClass="col-form-label star" path="mlink">連結網址：</form:label>
+                    <div class="col-sm-6 d-flex">
+                        <form:input path="mlink" cssClass="form-control" style="width:70%;" maxlength="400" />
                         <tags:button cssClass="ml-2" id="btnLink">測試連結</tags:button>
                     </div>
                 </tags:form-row>
@@ -445,6 +451,8 @@
                 <form:hidden path="p1attributype" />
                 <form:hidden path="seq" />
                 <form:hidden path="userId" />
+                <form:hidden path="tmpContactunit" />
+                <form:hidden path="tmpContacttel" />
             </form:form>
 
             <div id="preViewModal" class="modal fade" tabindex="-1" role="dialog">
@@ -626,7 +634,7 @@
                 // 存檔
                 $("#btnSave").click(function(e) {
                     e.preventDefault();
-                    localStorage.clear();
+                    $('input:radio[name="locatearea"]').prop('disabled', false);
                     $('#eip01w010Form').attr('action', '<c:url value="/Eip01w010_save.action" />')
                         .submit();
                 });
@@ -643,23 +651,30 @@
                             if (data === '') {
                                 showAlert('查無資料!');
                             } else {
-                                var str = '';
+                                var fileList = '';
+                                var bodyContent = '';
                                 $.each(data.file, function(i, e) {
-                                    str +=
+                                	fileList +=
                                         '<a href="javascript:;" class="alink" id=' +
                                         i + '>' +
                                         e + '</a>' + '　';
                                     //str += '<button type="button" class="btn btn-outline-info mr-3 mb-2" id='+i+'>'+e+'</button>';
                                 });
+                                if (data.pagetype === 'A') {
+                                    bodyContent += '主　　題：' + data.subject;
+                                    bodyContent += '<br>訊息文字：' + data.mcontent;
+                                } else {
+                                    bodyContent += '連結標題：' + data.subject;
+                                    bodyContent += '<br>連結網址：<a href="' + data.mcontent + '" target="_blank">' + data
+                                        .mcontent + '</a>';
+                                }
+                                bodyContent += '<br>發布單位：' + data.contactunit;
+                                bodyContent += '<br>附加檔案：' + fileList;
+                                bodyContent += '<br>更新日期：' + data.upddt;
+                                bodyContent += '<br>聯絡人　：' + data.contactperson;
+                                bodyContent += '<br>聯絡電話：' + data.contacttel;
                                 $('.md-t1').html(data.attributype);
-                                $('.md-b1').html(
-                                    '主　　題：' + data.subject +
-                                    '<br>訊息文字：' + data.mcontent +
-                                    '<br>發布單位：' + data.contactunit +
-                                    '<br>附加檔案：' + str +
-                                    '<br>更新日期：' + data.upddt +
-                                    '<br>聯絡人　：' + data.contactperson +
-                                    '<br>聯絡電話：' + data.contacttel);
+                                $('.md-b1').html(bodyContent);
                                 $('#preViewModal').modal('show');
                             }
                         },
@@ -680,6 +695,7 @@
                 });
                 // 上稿
                 $("#btnUpload").click(function(e) {
+                    $('input:radio[name="locatearea"]').prop('disabled', false);
                     $('#eip01w010Form').attr('action', '<c:url value="/Eip01w010_msg.action" />')
                         .submit();
                 });
@@ -691,6 +707,7 @@
                             .submit();
                     });
                 });
+                $('input:radio[name="locatearea"]:eq(2)').prop('checked', true);
                 // 清除
                 $('#btnClear').click(function(e) {
                     $('input:text, textarea').val('');
@@ -701,7 +718,7 @@
                     $('.imgblock').hide();
                     $('#pagetype option:eq(0)').prop('selected', true);
                     $('#attributype option:eq(0)').prop('selected', true);
-                    $('#contactunit option:eq(0)').prop('selected', true);
+                    $('#contactunit option[value="${caseData.tmpContactunit}"]').prop('selected', true);
                     $('#contactperson option[value="${caseData.userId}"]').prop('selected', true);
                     $('#msgtype').empty();
                     $('#msgtype').append("<option>請先選擇屬性</option>");
@@ -709,6 +726,7 @@
                     $('input:radio:not([name="istop"],[name="isfront"])').prop('checked', false);
                     $('input:radio[name="istop"],[name="isfront"]:eq(1)').prop('checked', true);
                     $('#word-count').css('visibility', 'hidden');
+                    $('#contacttel').val('${caseData.tmpContacttel}');
                     showhide('');
                 });
                 // 返回
@@ -732,7 +750,7 @@
                 function showhide(pagetype) {
 	                if(pagetype === 'A'){ // 文章
 	                    $('.mcontent-row, .images-row, .imgblock, .files-row, .textblock').show();
-	                    $('.oplink-row, #btnLink').hide();
+	                    $('.oplink-row, .content-link-row, #btnLink').hide();
 	                    $('input:radio[name="oplink"]').prop('checked', false);
 	                    $('.subject-label-name').html('主旨：');
 	                } else if (pagetype === 'B') { // 連結
@@ -742,16 +760,16 @@
 	                    $('#images').next('.custom-file-label').html('Choose images');
 	                    
 	                    $('.mcontent-row, .images-row, .imgblock, .files-row, .textblock').hide();
-	                    $('.oplink-row, #btnLink').show();
+	                    $('.oplink-row, .content-link-row, #btnLink').show();
 	                    $('input:radio[name="oplink"][value="1"]').prop('checked', true);
-	                    $('.subject-label-name').html('連結網址：');
+	                    $('.subject-label-name').html('連結標題：');
 	                } else {
 	                    $("#images, #files, #indir").val('');
 	                    $('.imgblock').html('');
-	                    $('.subject-label-name').html('主旨/連結網址：');
+	                    $('.subject-label-name').html('主旨/連結標題：');
 	                    $('#files').next('.custom-file-label').html('Choose files');
 	                    $('#images').next('.custom-file-label').html('Choose images');
-	                    $('.mcontent-row, .images-row, .imgblock, .files-row, .oplink-row, .indir-row, #btnLink, .textblock').hide();
+	                    $('.mcontent-row, .content-link-row, .images-row, .imgblock, .files-row, .oplink-row, .indir-row, #btnLink, .textblock').hide();
 	                }
                     if ($('#attributype').val() === '4' && pagetype === 'A') {
                         $('.indir-row').show();
@@ -761,7 +779,7 @@
                 }
                 // 測試連結
                 $('#btnLink').click(function(){
-                    let url = $('#subject').val();
+                    let url = $('#mlink').val();
                     if(url !== '') {
                         window.open(url);
                     }

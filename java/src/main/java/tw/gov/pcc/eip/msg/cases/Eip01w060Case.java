@@ -1,7 +1,6 @@
 package tw.gov.pcc.eip.msg.cases;
 
 import java.io.Serializable;
-import java.util.List;
 import java.util.Map;
 
 import lombok.Data;
@@ -23,7 +22,9 @@ public class Eip01w060Case implements Serializable {
 
     private String dept;
 
-    private List<String> msgs; // 簡介內容
+    private String pagetype; // 頁面型態
+
+    private String mcontent; // 簡介內容
 
     private Map<String, String> files = null; // 附檔清單
 

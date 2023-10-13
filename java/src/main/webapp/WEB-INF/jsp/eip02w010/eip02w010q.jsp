@@ -86,6 +86,9 @@
                 <table class="table" id="qryListTable">
                     <thead>
                         <tr>
+                            <th class="text-center" data-orderable="false" >
+                                <form:checkbox path="checkAll" />全選
+                            </th>
                             <th class="text-center">員工編號</th>
                             <th class="text-center">姓名</th>
                             <th class="text-center">英文名</th>
@@ -99,6 +102,10 @@
                     <tbody>
                         <c:forEach items="${caseData.qryList}" var="item" varStatus="status">
                             <tr data-seq="${status.index + 1 }">
+                                <td class="text-center">
+                                    <form:checkbox path="qryList[${status.index}].user_id" 
+                                    value="${status.index + 1 }" />
+                                </td>
                                 <td class="text-left">
                                     <c:out value="${item.user_id}" />
                                     <form:hidden path="qryList[${status.index}].user_id" />
@@ -151,6 +158,16 @@
                     onOff = !onOff;
                     $('#condition').slideToggle();
                 });
+                // checkbox 控制
+                var $checkAll = $('input[name="checkAll"]');
+                var $checks = $('#qryListTable > tbody input:checkbox:not(:disabled)');
+                $checkAll.prop('checked', false);
+                $checkAll.change(function(e) {
+                    $checks.prop("checked", $(this).prop("checked"));
+                });
+                $checks.change(function(e) {
+                    $checkAll.prop("checked", !$checks.is(':not(:checked)'));
+                });
                 // 查詢
                 $('#btnQuery').click(function() {
                     $('#on_off').val(onOff ? ' ' : null); // 字串:true;null:false
@@ -159,20 +176,24 @@
                 });
                 // 複製
                 $('#btnCopy').click(function() {
-//                     var ccc = ''; // 只複製當前頁碼內容
-//                     $('tbody tr:not(:hidden)').each(function(){ // tr[style*="display: none"]
-//                         var name = $.trim($(this).find('td:eq(1)').text());
-//                         var email = $.trim($(this).find('td:eq(5)').text());
-//                         ccc += name+'<'+email+'>;';
-//                     });
-//                     console.log(ccc.substring(0, ccc.length - 1));
-                    showMessageByMessageType('複製成功');
-                    copyToClipboard('${caseData.copyStr }');
+                    var copyStr = '';
+                    $('#qryListTable > tbody input:checkbox:checked').each(function(){ // tr:not(:hidden)
+                        var name = $.trim($(this).closest('tr').find('td:eq(2)').text());
+                        var email = $.trim($(this).closest('tr').find('td:eq(6)').text());
+                        copyStr += name+'<'+email+'>;';
+                    });
+                    if (copyStr !== '') {
+                        copyStr = copyStr.substring(0, copyStr.length - 1);
+                        showMessageByMessageType('複製成功');
+                        copyToClipboard(copyStr); // '${caseData.copyStr }'
+                    }
                 });
                 // 清除
                 $('#btnClear').click(function() {
-                    $('input[type="text"]').val('');
-                    $('#dept_id option:eq(0), #titlename option:eq(0)').prop('selected', true);
+//                     $('input[type="text"]').val('');
+//                     $('#dept_id option:eq(0), #titlename option:eq(0)').prop('selected', true);
+                    $('#eip02w010Form').attr('action', '<c:url value="/Eip02w010_enter.action" />')
+                    .submit();
                 });
                 const unsecuredCopyToClipboard = (text) => {
                     const textArea = document.createElement("textarea");

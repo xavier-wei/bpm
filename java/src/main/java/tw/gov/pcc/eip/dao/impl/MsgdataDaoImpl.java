@@ -188,7 +188,7 @@ public class MsgdataDaoImpl extends BaseDao<Msgdata> implements MsgdataDao {
     @Override
     public Eip01wPopCase getEip01wDetail(String fseq, String scodekind) {
         StringBuilder sql = new StringBuilder();
-        sql.append(" SELECT B.CODENAME MSGTYPE, "); // 屬性下的訊息類別
+        sql.append(" SELECT A.PAGETYPE,B.CODENAME MSGTYPE, "); // 屬性下的訊息類別
         sql.append("        A.FSEQ, ");
         sql.append("        A.SUBJECT, "); // 主旨
         sql.append("        A.MCONTENT, "); // 內文
@@ -294,6 +294,7 @@ public class MsgdataDaoImpl extends BaseDao<Msgdata> implements MsgdataDao {
     public List<Msgdata> getStatus4Mcontent(String attr, String contactunit) {
         StringBuilder sql = new StringBuilder();
         sql.append(" SELECT FSEQ, ");
+        sql.append("        PAGETYPE, ");
         sql.append("        SUBJECT, ");
         sql.append("        MCONTENT ");
         sql.append("   FROM MSGDATA A ");

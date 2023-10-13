@@ -52,21 +52,21 @@
                     </div>
                 </tags:form-row>
                 <tags:form-row>
-                    <div class="col-md-3">
+                    <div class="col-md-6">
                         <form:label cssClass="col-form-label " path="creUser">建立人員：</form:label>
                         <c:out value="${mixData.creDept}-${mixData.creUser}"/>
                     </div>
-                    <div class="col-md-3">
+                    <div class="col-md-6">
                         <form:label cssClass="col-form-label " path="creDt">建立時間：</form:label>
                         <func:minguo value="${mixData.creDt}"/>
                     </div>
                 </tags:form-row>
                 <tags:form-row>
-                    <div class="col-md-3">
+                    <div class="col-md-6">
                         <form:label cssClass="col-form-label " path="updUser">更新人員：</form:label>
                         <c:out value="${mixData.updDept }-${mixData.updUser}" />
                     </div>
-                    <div class="col-md-3">
+                    <div class="col-md-6">
                         <form:label cssClass="col-form-label " path="updDt">更新時間：</form:label>
                         <func:minguo value="${mixData.updDt}"/>
                     </div>

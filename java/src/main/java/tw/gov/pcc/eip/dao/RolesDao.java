@@ -24,4 +24,6 @@ public interface RolesDao {
 
 	int deleteByKey(Roles roles);
 
+	public List<Roles> selectListLikeRoleid(String role_id);
+
 }

@@ -102,7 +102,7 @@
                                     </th>
                                     <th class="text-center">項次</th>
                                     <th class="text-center">頁面型態</th>
-                                    <th class="text-center">主旨/連結網址</th>
+                                    <th class="text-center">主旨/連結標題</th>
                                     <th class="text-center">前台是否顯示</th>
                                     <th class="text-center">屬性</th>
                                     <th class="text-center">上架時間<br>下架時間</th>
@@ -240,23 +240,30 @@
                             if (data == '') {
                                 showAlert('查無資料!');
                             } else {
-                                var str = '';
+                                var fileList = '';
+                                var bodyContent = '';
                                 $.each(data.file, function(i, e) {
-                                    str +=
+                                	fileList +=
                                         '<a href="javascript:;" class="alink" data-fseq=' + fseq + ' data-seq=' +
                                         i + '>' +
                                         e + '</a>' + '　';
                                     //str += '<button type="button" class="btn btn-outline-info mr-3 mb-2" id='+i+'>'+e+'</button>';
                                 });
+                                if (data.pagetype === 'A') {
+                                    bodyContent += '主　　題：' + data.subject;
+                                    bodyContent += '<br>訊息文字：' + data.mcontent;
+                                } else {
+                                    bodyContent += '連結標題：' + data.subject;
+                                    bodyContent += '<br>連結網址：<a href="' + data.mcontent + '" target="_blank">' + data
+                                        .mcontent + '</a>';
+                                }
+                                bodyContent += '<br>發布單位：' + data.contactunit;
+                                bodyContent += '<br>附加檔案：' + fileList;
+                                bodyContent += '<br>更新日期：' + data.upddt;
+                                bodyContent += '<br>聯絡人　：' + data.contactperson;
+                                bodyContent += '<br>聯絡電話：' + data.contacttel;
                                 $('.modal-title').html(data.attributype);
-                                $('.modal-body').html(
-                                    '主　　題：' + data.subject +
-                                    '<br>訊息文字：' + data.mcontent +
-                                    '<br>發布單位：' + data.contactunit +
-                                    '<br>附加檔案：' + str +
-                                    '<br>更新日期：' + data.upddt +
-                                    '<br>聯絡人　：' + data.contactperson +
-                                    '<br>聯絡電話：' + data.contacttel);
+                                $('.modal-body').html(bodyContent);
                                 $('#popModal').modal('show');
                             }
                         },

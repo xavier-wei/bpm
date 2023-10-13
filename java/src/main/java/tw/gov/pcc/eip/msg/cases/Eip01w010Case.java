@@ -60,7 +60,6 @@ public class Eip01w010Case implements Serializable {
     @RequiredString(label = "訊息類別", groups = { Update.class })
     private String msgtype; // *訊息類別 依屬性ajax查找
 
-    @RequiredString(label = "顯示位置", groups = { Update.class })
     private String locatearea; // *顯示位置 1:登入前 2:登入後 3:各處室資訊網
 
     @RequiredString(label = "分眾", groups = { Update.class })
@@ -77,11 +76,12 @@ public class Eip01w010Case implements Serializable {
     private String isfront; // 前台是否顯示 1:是 2:否
 
     @RequiredString(label = "主旨/連結網址", groups = { Update.class })
-    private String subject; // *主旨/連結網址
+    private String subject; // *主旨/連結標題
 
     private String oplink; // 是否需要另開視窗 Y:是 N:否
 
     private String mcontent; // *內文
+    private String mlink; // *連結網址
 
 //    內文附圖： 
     private MultipartFile[] images;
@@ -108,6 +108,9 @@ public class Eip01w010Case implements Serializable {
 
     @RequiredString(label = "連絡電話", groups = { Update.class })
     private String contacttel;// *連絡電話：
+
+    private String tmpContactunit; // 連絡單位(暫存)
+    private String tmpContacttel; // 連絡電話(暫存)
 
     private String memo; // 備註：
 
@@ -184,6 +187,8 @@ public class Eip01w010Case implements Serializable {
     @Data
     public static class preView {
         private String attributype; // 屬性名稱
+
+        private String pagetype; // 頁面型態
 
         private String subject; // 主旨
 

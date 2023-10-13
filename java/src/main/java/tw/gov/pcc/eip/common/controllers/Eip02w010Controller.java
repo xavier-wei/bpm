@@ -12,6 +12,7 @@ import tw.gov.pcc.eip.framework.domain.UserBean;
 import tw.gov.pcc.eip.framework.spring.controllers.BaseController;
 import tw.gov.pcc.eip.services.Eip02w010Service;
 import tw.gov.pcc.eip.util.ExceptionUtility;
+import tw.gov.pcc.eip.util.ObjectUtility;
 
 /**
  * 通訊錄查詢
@@ -31,15 +32,9 @@ public class Eip02w010Controller extends BaseController {
     @Autowired
     private Eip02w010Service eip02w010Service;
 
-    /**
-     * 進入
-     * 
-     * @param caseData
-     * @return
-     */
-    @RequestMapping("/Eip02w010_enter.action")
-    public ModelAndView enter(@ModelAttribute(CASE_KEY) Eip02w010Case caseData) {
-        log.debug("導向 Eip02w010_enter 通訊錄查詢");
+    @ModelAttribute(CASE_KEY)
+    public Eip02w010Case getEip02w010Case() {
+        Eip02w010Case caseData = new Eip02w010Case();
         try {
             eip02w010Service.initOptions(caseData);
             eip02w010Service.initQuery(caseData, userData.getDeptId());
@@ -47,7 +42,18 @@ public class Eip02w010Controller extends BaseController {
             log.error("通訊錄查詢 - " + ExceptionUtility.getStackTrace(e));
             setSystemMessage(getQueryFailMessage());
         }
-        return new ModelAndView(MAIN_PAGE);
+        return ObjectUtility.normalizeObject(caseData);
+    }
+    /**
+     * 進入
+     * 
+     * @param caseData
+     * @return
+     */
+    @RequestMapping("/Eip02w010_enter.action")
+    public String enter() {
+        log.debug("導向 Eip02w010_enter 通訊錄查詢");
+        return MAIN_PAGE;
     }
 
     /**

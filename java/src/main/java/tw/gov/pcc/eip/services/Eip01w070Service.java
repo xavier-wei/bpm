@@ -1,6 +1,6 @@
 package tw.gov.pcc.eip.services;
 
-import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -62,18 +62,17 @@ public class Eip01w070Service {
         initOptions(caseData, deptId);
         // 部門
         List<Msgdata> result = msgdataDao.getStatus4Mcontent("7", contactunit);
-        List<String> fseqList = result.stream().map(m -> m.getFseq()).collect(Collectors.toCollection(ArrayList::new));
-        List<String> contentList = result.stream().map( m -> StringUtils.replace(m.getMcontent(), "\r\n", "<br>"))
-                .collect(Collectors.toCollection(ArrayList::new));
-        caseData.setMsgs(contentList);
-
-        if (!CollectionUtils.isEmpty(fseqList)) {
-            Map<String, String> filesMap = msgdepositDao.findbyfseq(fseqList).stream().collect(
+        if (!CollectionUtils.isEmpty(result)) {
+            Msgdata msgdata = result.get(0);
+            caseData.setFseq(msgdata.getFseq());
+            caseData.setPagetype(msgdata.getPagetype());
+            caseData.setSubject(msgdata.getSubject());
+            caseData.setMcontent(StringUtils.replace(msgdata.getMcontent(), "\r\n", "<br>"));
+            
+            Map<String, String> filesMap = msgdepositDao.findbyfseq(Arrays.asList(msgdata.getFseq())).stream().collect(
                     Collectors.toMap(Msgdeposit::getSeq, Msgdeposit::getAttachfile, (n, o) -> n, LinkedHashMap::new));
             caseData.setFiles(filesMap);
         }
-        caseData.setFseq(result.get(0).getFseq());
-        caseData.setSubject(result.get(0).getSubject());
         return caseData;
     }
 }

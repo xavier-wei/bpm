@@ -212,8 +212,12 @@ public class Eip01w010Service {
             caseData.setIssearch("2");
             caseData.setIstop("2");
             caseData.setIsfront("2");
+            caseData.setContactunit(userData.getDeptId());
             caseData.setContactperson(userData.getUserId());
+            caseData.setContacttel(userData.getTel2());
             caseData.setUserId(userData.getUserId());
+            caseData.setTmpContactunit(userData.getDeptId());
+            caseData.setTmpContacttel(userData.getTel2());
         }
     }
 
@@ -280,7 +284,11 @@ public class Eip01w010Service {
         caseData.setIstop(msgdata.getIstop()); // 是否置頂
         caseData.setIsfront(msgdata.getIsfront()); // 前台是否顯示
         caseData.setSubject(msgdata.getSubject()); // 主旨/連結網址
-        caseData.setMcontent(msgdata.getMcontent()); // 內文
+        if ("A".equals(msgdata.getPagetype())) {
+            caseData.setMcontent(msgdata.getMcontent()); // 內文
+        } else {
+            caseData.setMlink(msgdata.getMcontent()); // 連結網址
+        }
         caseData.setIndir(msgdata.getIndir()); // 存放目錄
 
         caseData.setOplink(msgdata.getOplink()); // 是否需要另開視窗
@@ -387,6 +395,7 @@ public class Eip01w010Service {
         String pagetype = caseData.getPagetype();
         String attr = caseData.getAttributype();
         String mcontent = caseData.getMcontent();
+        String mlink = caseData.getMlink();
         String contactunit = caseData.getContactunit();
         int cnt = msgdataDao.getEffectiveCount(attr, contactunit);
         if ("".equals(fseq)) {
@@ -417,6 +426,8 @@ public class Eip01w010Service {
         }
         if ("A".equals(pagetype) && StringUtils.isEmpty(mcontent)) {
             result.rejectValue("mcontent", "", "「內文」為必填");
+        } else if ("B".equals(pagetype) && StringUtils.isEmpty(mlink)) {
+            result.rejectValue("mlink", "", "「連結網址」為必填");
         }
     }
     /**
@@ -450,11 +461,10 @@ public class Eip01w010Service {
         m.setIstop(caseData.getIstop()); // 是否置頂
         m.setIsfront(caseData.getIsfront()); // 前台是否顯示
         m.setSubject(caseData.getSubject()); // 主旨/連結網址
-        m.setMcontent(trimToNull(caseData.getMcontent())); // 內文
+        m.setMcontent("A".equals(caseData.getPagetype()) ? caseData.getMcontent() : caseData.getMlink()); // 內文
         m.setOplink(caseData.getOplink()); // 是否需要另開視窗
         if ("A".equals(caseData.getPagetype()) && "4".equals(caseData.getAttributype())) {
             m.setIndir(caseData.getIndir()); // 存放目錄
-            
             // 存放目錄
             insertMsgdepositdir(caseData.getAttributype(), caseData.getTmpPath(), caseData.getIndir());
         } else {
@@ -594,26 +604,28 @@ public class Eip01w010Service {
         m.setIstop(caseData.getIstop()); // 是否置頂
         m.setIsfront(caseData.getIsfront()); // 前台是否顯示
         m.setSubject(caseData.getSubject()); // 主旨/連結網址
-        if ("A".equals(m.getPagetype()) && "B".equals(caseData.getPagetype())) {
-            m.setMcontent(null); // 內文
+        if ("B".equals(caseData.getPagetype())) {
+            m.setMcontent(caseData.getMlink()); // 內文
             m.setIndir(null); // 存放目錄
 
-            List<Msgdeposit> files = msgdepositDao.findbyfseq(Arrays.asList(fseq));
-            files.stream().forEach(origin -> {
-                File file = new File(dir + origin.getRealfilename());
-                file.delete();
-                Msgdeposit ms = new Msgdeposit();
-                ms.setFseq(origin.getFseq());
-                ms.setSeq(origin.getSeq());
-                msgdepositDao.delete(ms); // 刪附檔
-            });
-        } else if ("A".equals(caseData.getPagetype()) && "4".equals(caseData.getAttributype())) {
-            m.setMcontent(caseData.getMcontent()); // 內文
-            m.setIndir(caseData.getIndir()); // 存放目錄
-            // 存放目錄
-            insertMsgdepositdir(caseData.getAttributype(), caseData.getTmpPath(), caseData.getIndir());
+            if ("A".equals(m.getPagetype())) {
+                List<Msgdeposit> files = msgdepositDao.findbyfseq(Arrays.asList(fseq));
+                files.stream().forEach(origin -> {
+                    File file = new File(dir + origin.getRealfilename());
+                    file.delete();
+                    Msgdeposit ms = new Msgdeposit();
+                    ms.setFseq(origin.getFseq());
+                    ms.setSeq(origin.getSeq());
+                    msgdepositDao.delete(ms); // 刪附檔
+                });
+            }
         } else {
             m.setMcontent(trimToNull(caseData.getMcontent())); // 內文
+        }
+        if ("4".equals(caseData.getAttributype())) {
+            m.setIndir(caseData.getIndir()); // 存放目錄
+            // 新增存放目錄
+            insertMsgdepositdir(caseData.getAttributype(), caseData.getTmpPath(), caseData.getIndir());
         }
         m.setPagetype(caseData.getPagetype()); // 頁面型態
         m.setOplink(caseData.getOplink()); // 是否需要另開視窗
@@ -832,6 +844,7 @@ public class Eip01w010Service {
                 detail.setFile(files.stream().collect(Collectors.toMap(Msgdeposit::getSeq, Msgdeposit::getAttachfile,
                         (n, o) -> n, LinkedHashMap::new)));
             }
+            detail.setPagetype(m.getPagetype());
             return detail;
         }
         return null;
