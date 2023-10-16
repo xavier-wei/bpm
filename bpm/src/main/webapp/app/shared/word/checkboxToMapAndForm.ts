@@ -43,7 +43,7 @@ export function checkboxToMapAndForm(data: any, form: any, variables: any): any 
   }
 
 
-  if (data.checkbox === '1' && data.systemApplyName === '會議室管理系統') {
+  if (data.checkbox === '1' && data.systemApplyName === '會議室管理系統管理權限') {
 
     form.isMeetingRoom = '1'
     form.meetingRoom = data.sys
@@ -57,7 +57,7 @@ export function checkboxToMapAndForm(data: any, form: any, variables: any): any 
     mapData.set('isMeetingRoom', data)
     let arrData = Array.from(mapData);
     variables.push(Object.fromEntries(arrData))
-  } else if (data.systemApplyName === '會議室管理系統') {
+  } else if (data.systemApplyName === '會議室管理系統管理權限') {
     let mapData = new Map<string, object>();
     mapData.set('isMeetingRoom', null)
     let arrData = Array.from(mapData);

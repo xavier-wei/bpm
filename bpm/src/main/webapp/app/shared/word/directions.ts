@@ -24,7 +24,7 @@ export function changeDirections(user: any): string {
         case 'OdSysSigner':
             return '公文管理系統';
         case 'MeetingRoomSigner':
-            return '會議室管理系統';
+            return '會議室管理系統管理權限';
         case 'EmailSysSigner':
             return '電子郵件帳號';
         case 'WebSiteSigner':

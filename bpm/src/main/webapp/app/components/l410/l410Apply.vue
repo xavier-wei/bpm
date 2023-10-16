@@ -507,7 +507,6 @@ import IFormGroupCheck from '@/shared/form/i-form-group-check.vue';
 import {required} from '@/shared/validators';
 import IDatePicker from '@/shared/i-date-picker/i-date-picker.vue';
 import {useBvModal} from '@/shared/modal';
-import {systemToName} from "@/shared/i-system/system-to-name"
 import {handleBack, navigateByNameAndParams} from "@/router/router";
 import axios from "axios";
 import {notificationErrorHandler} from "@/shared/http/http-response-helper";
@@ -560,8 +559,8 @@ export default {
       appUnit: userData.deptId != null ? userData.deptId : '',//	單位別
       position: userData.titleName != null ? userData.titleName : '',//	職稱
       appReason: '1',//	申請事由 1.新進 2.離職 3.職務異動
-      isEnableDate: '0',//	是否有生效日期
-      enableDate: null,//	生效日期
+      isEnableDate: '1',//	是否有生效日期
+      enableDate: new Date(new Date().getFullYear(), new Date().getMonth(), new Date().getDate(), new Date().getHours(), new Date().getMinutes(), new Date().getSeconds(), new Date().getMilliseconds()),//	生效日期
       isOther: '0',//	其他
       otherReason: '',//	其他說明
       isHrSys: '0',
@@ -925,7 +924,6 @@ export default {
       changeTabIndex,
       activeTab,
       table,
-      systemToName,
       filePathData,
       appendixData,
       formStatusRef,

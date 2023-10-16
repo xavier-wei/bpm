@@ -6,7 +6,7 @@ export function l410NameToFormUnit(name: any, form: any, init: any): any {
   } else if (name === 'AD帳號') {
     form.adSysAdmUnit = init;
     return form;
-  } else if (name === '會議室管理系統') {
+  } else if (name === '會議室管理系統管理權限') {
     form.meetingRoomAdmUnit = init;
     return form;
   } else if (name === '公文管理系統角色') {

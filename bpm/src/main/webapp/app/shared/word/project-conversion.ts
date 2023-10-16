@@ -10,7 +10,7 @@ export function changeProject(project: any): string {
     projectList += 'AD系統帳號,' + '\n'
   }
   if (project.isMeetingRoom === '1') {
-    projectList += '會議室管理系統,' + '\n'
+    projectList += '會議室管理系統管理權限,' + '\n'
   }
   if (project.isOdSys === '1') {
     projectList += '公文系統帳號角色,' + '\n'

@@ -1,6 +1,6 @@
 
 //把l410的form去轉成畫面checkbox內的值
-export function formToCheckbox(data: any, form: any): any {
+export function formToCheckbox(data: any, form: any, taskName: any, userName: any): any {
 
   if (data.systemApplyName === '人事差勤系統') {
     data.checkbox = form.isHrSys
@@ -9,7 +9,7 @@ export function formToCheckbox(data: any, form: any): any {
     data.admUnit = form.hrSysAdmUnit !== '' ? form.hrSysAdmUnit : data.admUnit
     data.admStatus = form.hrSysStatus
     data.admEnableDate = form.hrSysEnableDate != null ? new Date(form.hrSysEnableDate) : null
-    data.admName = form.hrSysAdmName
+    data.admName = data.systemApplyName === taskName ? data.admName = userName : data.admName = form.hrSysAdmName;
   }
 
   if (data.systemApplyName === 'AD帳號') {
@@ -20,9 +20,9 @@ export function formToCheckbox(data: any, form: any): any {
     data.admUnit = form.adSysAdmUnit !== '' ? form.adSysAdmUnit : data.admUnit
     data.admStatus = form.adSysStatus
     data.admEnableDate = form.adSysEnableDate != null ? new Date(form.adSysEnableDate) : null
-    data.admName = form.adSysAdmName
+    data.admName = data.systemApplyName === taskName ? data.admName = userName : data.admName = form.adSysAdmName;
   }
-  if (data.systemApplyName === '會議室管理系統') {
+  if (data.systemApplyName === '會議室管理系統管理權限') {
 
     data.checkbox = form.isMeetingRoom
     data.sys = form.meetingRoom
@@ -30,7 +30,7 @@ export function formToCheckbox(data: any, form: any): any {
     data.admUnit = form.meetingRoomAdmUnit !== '' ? form.meetingRoomAdmUnit : data.admUnit
     data.admStatus = form.meetingRoomStatus
     data.admEnableDate = form.meetingRoomEnableDate != null ? new Date(form.meetingRoomEnableDate) : null
-    data.admName = form.meetingRoomAdmName
+    data.admName = data.systemApplyName === taskName ? data.admName = userName : data.admName = form.meetingRoomAdmName;
   }
 
   if (data.systemApplyName === '公文管理系統角色') {
@@ -43,7 +43,8 @@ export function formToCheckbox(data: any, form: any): any {
     data.admUnit = form.odSysAdmUnit !== '' ? form.odSysAdmUnit : data.admUnit
     data.admStatus = form.odSysStatus
     data.admEnableDate = form.odSysEnableDate != null ? new Date(form.odSysEnableDate) : null
-    data.admName = form.odSysAdmName
+    data.admName = data.systemApplyName === taskName ? data.admName = userName : data.admName = form.odSysAdmName;
+
   }
 
   if (data.systemApplyName === '電子郵件帳號') {
@@ -57,7 +58,8 @@ export function formToCheckbox(data: any, form: any): any {
     data.admUnit = form.emailSysAdmUnit !== '' ? form.emailSysAdmUnit : data.admUnit
     data.admStatus = form.emailSysStatus
     data.admEnableDate = form.emailSysEnableDate != null ? new Date(form.emailSysEnableDate) : null
-    data.admName = form.emailSysAdmName
+    data.admName = data.systemApplyName === taskName ? data.admName = userName : data.admName = form.emailSysAdmName;
+
   }
 
   if (data.systemApplyName === '全球資訊網&會內資訊網') {
@@ -83,7 +85,7 @@ export function formToCheckbox(data: any, form: any): any {
       data.admUnit = form.webSiteAdmUnit !== '' ? form.webSiteAdmUnit : data.admUnit
       data.admStatus = form.webSiteStatus
       data.admEnableDate = form.webSiteEnableDate != null ? new Date(form.webSiteEnableDate) : null
-      data.admName = form.webSiteAdmName
+      data.admName = data.systemApplyName === taskName ? data.admName = userName : data.admName = form.webSiteAdmName;
 
     }
   }
@@ -97,7 +99,8 @@ export function formToCheckbox(data: any, form: any): any {
     data.admUnit = form.pccPisAdmUnit !== '' ? form.pccPisAdmUnit : data.admUnit
     data.admStatus = form.pccPisStatus
     data.admEnableDate = form.pccPisEnableDate != null ? new Date(form.pccPisEnableDate) : null
-    data.admName = form.pccPisAdmName
+    data.admName = data.systemApplyName === taskName ? data.admName = userName : data.admName = form.pccPisAdmName;
+
   }
 
 
@@ -110,7 +113,8 @@ export function formToCheckbox(data: any, form: any): any {
     data.admUnit = form.engAndPrjInfoSysAdmUnit !== '' ? form.engAndPrjInfoSysAdmUnit : data.admUnit
     data.admStatus = form.engAndPrjInfoSysStatus
     data.admEnableDate = form.engAndPrjInfoSysEnableDate != null ? new Date(form.engAndPrjInfoSysEnableDate) : null
-    data.admName = form.engAndPrjInfoSysAdmName
+    data.admName = data.systemApplyName === taskName ? data.admName = userName : data.admName = form.engAndPrjInfoSysAdmName;
+
   }
 
   if (data.systemApplyName === '公共工程案件審議資訊系統') {
@@ -122,7 +126,8 @@ export function formToCheckbox(data: any, form: any): any {
     data.admUnit = form.revSysAdmUnit !== '' ? form.revSysAdmUnit : data.admUnit
     data.admStatus = form.revSysStatus
     data.admEnableDate = form.revSysEnableDate != null ? new Date(form.revSysEnableDate) : null
-    data.admName = form.revSysAdmName
+    data.admName = data.systemApplyName === taskName ? data.admName = userName : data.admName = form.revSysAdmName;
+
   }
 
   if (data.systemApplyName === '災後復建工程經費審議及執行資訊系統') {
@@ -134,7 +139,8 @@ export function formToCheckbox(data: any, form: any): any {
     data.admUnit = form.recSysAdmUnit !== '' ? form.recSysAdmUnit : data.admUnit
     data.admStatus = form.recSysStatus
     data.admEnableDate = form.recSysEnableDate != null ? new Date(form.recSysEnableDate) : null
-    data.admName = form.recSysAdmName
+    data.admName = data.systemApplyName === taskName ? data.admName = userName : data.admName = form.recSysAdmName;
+
   }
 
   if (data.systemApplyName === '公共工程標案管理系統') {
@@ -146,7 +152,8 @@ export function formToCheckbox(data: any, form: any): any {
     data.admUnit = form.bidSysAdmUnit !== '' ? form.bidSysAdmUnit : data.admUnit
     data.admStatus = form.bidSysStatus
     data.admEnableDate = form.bidSysEnableDate != null ? new Date(form.bidSysEnableDate) : null
-    data.admName = form.bidSysAdmName
+    data.admName = data.systemApplyName === taskName ? data.admName = userName : data.admName = form.bidSysAdmName;
+
   }
 
   if (data.systemApplyName === '本會其他資通系統1') {
@@ -159,7 +166,7 @@ export function formToCheckbox(data: any, form: any): any {
     data.admUnit = form.otherSys1AdmUnit !== '' ? form.otherSys1AdmUnit : data.admUnit
     data.admStatus = form.otherSys1Status
     data.admEnableDate = form.otherSys1EnableDate != null ? new Date(form.otherSys1EnableDate) : null
-    data.admName = form.otherSys1AdmName
+    data.admName = data.systemApplyName === taskName ? data.admName = userName : data.admName = form.otherSys1AdmName;
 
   }
 
@@ -173,7 +180,8 @@ export function formToCheckbox(data: any, form: any): any {
     data.admUnit = form.otherSys2AdmUnit !== '' ? form.otherSys2AdmUnit : data.admUnit
     data.admStatus = form.otherSys2Status
     data.admEnableDate = form.otherSys2EnableDate != null ? new Date(form.otherSys2EnableDate) : null
-    data.admName = form.otherSys2AdmName
+    data.admName = data.systemApplyName === taskName ? data.admName = userName : data.admName = form.otherSys2AdmName;
+
   }
 
   if (data.systemApplyName === '本會其他資通系統3') {
@@ -186,7 +194,7 @@ export function formToCheckbox(data: any, form: any): any {
     data.admUnit = form.otherSys3AdmUnit !== '' ? form.otherSys3AdmUnit : data.admUnit
     data.admStatus = form.otherSys3Status
     data.admEnableDate = form.otherSys3EnableDate != null ? new Date(form.otherSys3EnableDate) : null
-    data.admName = form.otherSys3AdmName
+    data.admName = data.systemApplyName === taskName ? data.admName = userName : data.admName = form.otherSys3AdmName;
 
   }
 
