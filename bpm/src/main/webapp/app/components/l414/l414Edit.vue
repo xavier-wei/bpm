@@ -800,6 +800,8 @@ export default {
           return '1';
         case '補件':
           return '2';
+        case '審核':
+          return '1';
         case '同意設定':
           return '1';
         case '部分同意設定':
