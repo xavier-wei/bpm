@@ -1,7 +1,6 @@
 package tw.gov.pcc.web.rest.loginBpm;
 
 import com.google.gson.Gson;
-import org.keycloak.KeycloakSecurityContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -60,24 +59,11 @@ public class RedirectSSOLoginResource {
     @ResponseBody
     public String redirectSSOLogin() {
         Gson gson = new Gson();
-//        KeycloakSecurityContext keycloakSecurityContext = (KeycloakSecurityContext) session.getAttribute(KeycloakSecurityContext.class.getName());
-//        User userInfo = userService.getUserInfo(keycloakSecurityContext.getToken().getPreferredUsername());
-//        System.out.println("帳號:" + keycloakSecurityContext.getToken().getPreferredUsername());
         User userInfo = (User) session.getAttribute(USER_INFO);
         log.info("{} 登入成功", userInfo.getUserId());
         return gson.toJson(userInfo);
 
     }
 
-    @RequestMapping("/api/logout")
-    public String logout() {
-        KeycloakSecurityContext keycloakSecurityContext = (KeycloakSecurityContext) session.getAttribute(KeycloakSecurityContext.class.getName());
-        KeycloakSecurityContext attribute = (KeycloakSecurityContext) session.getAttribute(KeycloakSecurityContext.class.getName());
-        String keycloakLogoutUrl = attribute
-            .getIdToken()
-            .getIssuer() + "/protocol/openid-connect/logout";
-        log.info("User {} 登出", keycloakSecurityContext.getToken().getPreferredUsername());
-        session.invalidate();
-        return "redirect:"+keycloakLogoutUrl;
-    }
+
 }

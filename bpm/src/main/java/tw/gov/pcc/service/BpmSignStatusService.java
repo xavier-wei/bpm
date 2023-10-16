@@ -33,8 +33,9 @@ public class BpmSignStatusService {
     }
 
     public void saveBpmSignStatus(BpmSignStatus bpmSignStatus) {
-
-
+        if ("申請人確認".equals(bpmSignStatus.getTaskName())) {
+            bpmSignStatus.setOpinion("(送審)");
+        }
         bpmSignStatusRepository.save(bpmSignStatus);
     }
 
@@ -49,7 +50,7 @@ public class BpmSignStatusService {
         bpmSignStatusDTO.setSignUnit(signUnit);
         bpmSignStatusDTO.setSignResult("1");
         bpmSignStatusDTO.setDirections("申請者");
-        bpmSignStatusDTO.setOpinion("(申請)");
+        bpmSignStatusDTO.setOpinion("(送審)");
         bpmSignStatusDTO.setSigningDatetime(Timestamp.from(Instant.now()));
         BpmSignStatus bpmSignStatus = bpmSignStatusMapper.toEntity(bpmSignStatusDTO);
         bpmSignStatusRepository.save(bpmSignStatus);
