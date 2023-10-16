@@ -13,7 +13,7 @@ public enum SingerDecisionEnum {
     HR_SYS("人事差勤系統", "HrSysSigner"),
     AD_SYS("AD帳號", "AdSysSigner"),
     OD_SYS("公文管理系統角色", "OdSysSigner"),
-    MEETING_ROOM("會議室管理系統", "MeetingRoomSigner"),
+    MEETING_ROOM("會議室管理系統管理權限", "MeetingRoomSigner"),
     EMAIL_SYS("電子郵件帳號", "EmailSysSigner"),
     WEB_SITE("全球資訊網&會內資訊網", "WebSiteSigner"),
     PCC_PIS("政府電子採購網", "PccPisSigner"),
