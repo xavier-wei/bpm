@@ -204,13 +204,13 @@
                 <i-form-group-check class="col-sm-5" label-cols="3" content-cols="7" :label="'來源IP ：'"
                                     :item="$v.sourceIp">
                   <!--來源IP : sourceIp-->
-                  <b-form-input v-model="$v.sourceIp.$model"/>
+                  <b-form-textarea v-model="$v.sourceIp.$model" rows="3" maxlength="2000" lazy/>
                 </i-form-group-check>
 
                 <i-form-group-check class="col-sm-7" label-cols="3" content-cols="7" :label="`目的IP ：`"
                                     :item="$v.targetIp">
                   <!--目的IP : targetIp-->
-                  <b-form-input v-model="$v.targetIp.$model"/>
+                  <b-form-textarea v-model="$v.targetIp.$model" rows="3" maxlength="2000" lazy/>
                 </i-form-group-check>
               </b-form-row>
 
