@@ -175,7 +175,7 @@
                           <span class="d-inline col-7">職務異動止</span>
                         </b-form-radio>
                         <b-form-radio value="3">
-                          <div class="m-1" style="height: 34px">永久使用(僅電腦機房可勾選)</div>
+                          <div class="m-1 col-12" style="height: 34px">永久使用(僅電腦機房可勾選)</div>
                         </b-form-radio>
                       </b-form-radio-group>
                     </i-form-group-check>
@@ -407,16 +407,22 @@
                             @click="submitForm('1')"
                             v-show="formStatusRef === FormStatusEnum.MODIFY">送出
                   </b-button>
-                  <b-button class="ml-2" style="background-color: #17a2b8; color: white"
-                            variant="outline-secondary"
-                            @click="reviewStart('同意',true)"
-                            v-show="formStatusRef === FormStatusEnum.VERIFY">同意
-                  </b-button>
-                  <b-button class="ml-2" style="background-color: #17a2b8; color: white"
-                            variant="outline-secondary"
-                            @click="reviewStart('不同意',true)"
-                            v-show="formStatusRef === FormStatusEnum.VERIFY">不同意
-                  </b-button>
+
+                  <div v-if="userData.titleName === '科長' ||
+                              userData.titleName === '處長' && formStatusRef === FormStatusEnum.VERIFY">
+                    <b-button class="ml-2" style="background-color: #17a2b8; color: white"
+                              @click="reviewStart('同意',true)">同意
+                    </b-button>
+                    <b-button class="ml-2" style="background-color: #17a2b8; color: white"
+                              @click="reviewStart('不同意',true)">不同意
+                    </b-button>
+                  </div>
+                  <div v-else-if="formStatusRef === FormStatusEnum.VERIFY">
+                    <b-button class="ml-2" style="background-color: #17a2b8; color: white"
+                              @click="reviewStart('審核',true)">送出
+                    </b-button>
+                  </div>
+
                   <b-button class="ml-2" style="background-color: #17a2b8" @click="showModel()"
                             v-show="formStatusRef === FormStatusEnum.VERIFY && isSignatureRef">加簽
                   </b-button>
@@ -709,9 +715,16 @@ export default {
     async function reviewStart(item, i) {
 
       let isOK = true;
+      console.log('userData.userRole', userData.userRole)
+      console.log('configRoleToBpmIpt(userData.userRole)', configRoleToBpmIpt(userData.userRole))
 
       if (i === true) {
-        isOK = await $bvModal.msgBoxConfirm('是否送出' + item + '?');
+        //判斷審核腳色是否為資推或是機房的，正常都是走下面，資推或是機房的才會用上面去判斷(資推或是機房的審核要看畫面的form.agreeType去決定是否同意)
+        if (configRoleToBpmIpt(userData.userRole) || configRoleToBpmCrOperator(userData.userRole)) {
+          isOK = await $bvModal.msgBoxConfirm('是否送出' + getAgreeType(form.agreeType) + '?');
+        } else {
+          isOK = await $bvModal.msgBoxConfirm('是否送出' + item + '?');
+        }
       }
 
       if (isOK) {
@@ -719,10 +732,19 @@ export default {
 
         if (taskDataRef.value.decisionRole !== null) {
           let mapData = new Map<string, string>();
-          mapData.set(taskDataRef.value.decisionRole, getItem(item))
+
+          //判斷審核腳色是否為資推或是機房的，正常都是走下面，資推或是機房的才會用上面去判斷(資推或是機房的審核要看畫面的form.agreeType去決定是否同意)
+          if (configRoleToBpmIpt(userData.userRole) || configRoleToBpmCrOperator(userData.userRole)) {
+            mapData.set(taskDataRef.value.decisionRole, getItem(getAgreeType(form.agreeType)))
+          }else {
+            mapData.set(taskDataRef.value.decisionRole, getItem(item))
+          }
+
           let arrData = Array.from(mapData);
           variables = Object.fromEntries(arrData)
         }
+
+        console.log('variables', variables)
 
         form.opinion = opinion.opinionData
 
@@ -778,6 +800,25 @@ export default {
           return '1';
         case '補件':
           return '2';
+        case '同意設定':
+          return '1';
+        case '部分同意設定':
+          return '1';
+        case '不同意設定':
+          return '0';
+        default:
+          return '';
+      }
+    };
+
+    const getAgreeType = (item: string) => {
+      switch (item) {
+        case '1':
+          return '同意設定';
+        case '2':
+          return '部分同意設定';
+        case '3':
+          return '不同意設定';
         default:
           return '';
       }
@@ -852,7 +893,7 @@ export default {
   border-top-right-radius: 10px;
 }
 
-.fixedWidth .custom-control-label{
+.fixedWidth .custom-control-label {
   width: 100%;
 }
 

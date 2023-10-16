@@ -899,7 +899,7 @@ export default {
       ],
       webSite: [
         {value: '0', text: '全球資訊網 (https://www.pcc.gov.tw)'},
-        {value: '1', text: '會內資訊網站請先至home.pcc.gov.tw「帳號登入」點選「註冊」，填寫個人基本資料'},
+        // {value: '1', text: '會內資訊網站請先至home.pcc.gov.tw「帳號登入」點選「註冊」，填寫個人基本資料'},
       ],
     });
 

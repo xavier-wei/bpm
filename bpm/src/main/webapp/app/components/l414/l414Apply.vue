@@ -166,7 +166,7 @@
                         <span class="d-inline col-7">職務異動止</span>
                       </b-form-radio>
                       <b-form-radio value="3">
-                        <div class="m-1" style="height: 34px">永久使用(僅電腦機房可勾選)</div>
+                        <div class="m-1 col-12" style="height: 34px">永久使用(僅電腦機房可勾選)</div>
                       </b-form-radio>
                     </b-form-radio-group>
                   </i-form-group-check>
