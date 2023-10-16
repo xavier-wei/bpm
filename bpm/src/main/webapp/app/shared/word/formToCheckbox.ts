@@ -62,21 +62,20 @@ export function formToCheckbox(data: any, form: any, taskName: any, userName: an
 
   }
 
-  if (data.systemApplyName === '全球資訊網&會內資訊網') {
+  if (data.systemApplyName === '全球資訊網 (https://www.pcc.gov.tw)') {
 
-    if (form.isWebSite === '1') {
+    // if (form.isWebSite === '1') {
       data.checkbox = form.isWebSite
 
-      let webSiteList = [];
-
-      if (form.isPccWww === '1') {
-        webSiteList.push('0')
-      }
-      if (form.isPccHome === '1') {
-        webSiteList.push('1')
-      }
-
-      form.webSiteList = webSiteList
+      // let webSiteList = [];
+      //
+      // if (form.isPccWww === '1') {
+      //   webSiteList.push('0')
+      // }
+      // if (form.isPccHome === '1') {
+      //   webSiteList.push('1')
+      // }
+      // form.webSiteList = webSiteList
       data.sys = form.webSite;
       data.isUnitAdm = form.isUnitAdm
       data.isUnitDataMgr = form.isUnitDataMgr
@@ -87,7 +86,7 @@ export function formToCheckbox(data: any, form: any, taskName: any, userName: an
       data.admEnableDate = form.webSiteEnableDate != null ? new Date(form.webSiteEnableDate) : null
       data.admName = data.systemApplyName === taskName ? data.admName = userName : data.admName = form.webSiteAdmName;
 
-    }
+    // }
   }
 
   if (data.systemApplyName === '政府電子採購網') {
@@ -104,18 +103,18 @@ export function formToCheckbox(data: any, form: any, taskName: any, userName: an
   }
 
 
-  if (data.systemApplyName === '技師與工程技術顧問公司管理資訊系統') {
-
-    data.checkbox = form.isEngAndPrjInfoSys
-    data.systemApplyInput = form.engAndPrjInfoSysAccount
-    data.sys = form.engAndPrjInfoSys
-    data.sysChange = form.engAndPrjInfoSysChange
-    data.admUnit = form.engAndPrjInfoSysAdmUnit !== '' ? form.engAndPrjInfoSysAdmUnit : data.admUnit
-    data.admStatus = form.engAndPrjInfoSysStatus
-    data.admEnableDate = form.engAndPrjInfoSysEnableDate != null ? new Date(form.engAndPrjInfoSysEnableDate) : null
-    data.admName = data.systemApplyName === taskName ? data.admName = userName : data.admName = form.engAndPrjInfoSysAdmName;
-
-  }
+  // if (data.systemApplyName === '技師與工程技術顧問公司管理資訊系統') {
+  //
+  //   data.checkbox = form.isEngAndPrjInfoSys
+  //   data.systemApplyInput = form.engAndPrjInfoSysAccount
+  //   data.sys = form.engAndPrjInfoSys
+  //   data.sysChange = form.engAndPrjInfoSysChange
+  //   data.admUnit = form.engAndPrjInfoSysAdmUnit !== '' ? form.engAndPrjInfoSysAdmUnit : data.admUnit
+  //   data.admStatus = form.engAndPrjInfoSysStatus
+  //   data.admEnableDate = form.engAndPrjInfoSysEnableDate != null ? new Date(form.engAndPrjInfoSysEnableDate) : null
+  //   data.admName = data.systemApplyName === taskName ? data.admName = userName : data.admName = form.engAndPrjInfoSysAdmName;
+  //
+  // }
 
   if (data.systemApplyName === '公共工程案件審議資訊系統') {
 

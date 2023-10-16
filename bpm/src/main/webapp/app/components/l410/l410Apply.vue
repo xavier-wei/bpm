@@ -260,9 +260,9 @@
                     <b-form-checkbox-group v-model="$v.applyItem.$model" :options="options.type"/>
                   </div>
 
-                  <div v-else-if="row.item.applyVersion == '4'">
-                    <b-form-checkbox-group v-model="$v.webSiteList.$model" :options="options.webSite"/>
-                  </div>
+<!--                  <div v-else-if="row.item.applyVersion == '4'">-->
+<!--                    <b-form-checkbox-group v-model="$v.webSiteList.$model" :options="options.webSite"/>-->
+<!--                  </div>-->
 
                 </template>
 
@@ -796,7 +796,7 @@ export default {
       ],
       webSite: [
         {value: '0', text: '全球資訊網 (https://www.pcc.gov.tw)'},
-        {value: '1', text: '會內資訊網站請先至home.pcc.gov.tw「帳號登入」點選「註冊」，填寫個人基本資料'},
+        // {value: '1', text: '會內資訊網站請先至home.pcc.gov.tw「帳號登入」點選「註冊」，填寫個人基本資料'},
       ],
     });
 
@@ -818,6 +818,8 @@ export default {
         if (isOK) {
           await Promise.all(table.data.map(data => checkboxToMapAndForm(data, form, l410Variables)));
           form.l410Variables = l410Variables;
+          console.log('form.l410Variables',form.l410Variables)
+          console.log('l410Variables',l410Variables)
           let body = {
             "L410": JSON.stringify(form)
           }
