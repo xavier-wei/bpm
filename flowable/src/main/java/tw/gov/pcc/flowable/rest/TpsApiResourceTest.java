@@ -52,8 +52,8 @@ public class TpsApiResourceTest {
                     "\t\t\t\t\t\"stServiceTypeCode\":\"10000001\",\n" +
                     "\t\t\t\t\t\"stServiceType\":\"計畫主持人\",\n" +
                     "\t\t\t\t\t\"stServiceTypeOther\":\"\",\n" +
-                    "\t\t\t\t\t\"stSiniorityCode\":\"10000002\",\n" +
-                    "\t\t\t\t\t\"stSiniority\":\"未滿10年\",\n" +
+                    "\t\t\t\t\t\"stSeniorityCode\":\"10000002\",\n" +
+                    "\t\t\t\t\t\"stSeniority\":\"未滿10年\",\n" +
                     "\t\t\t\t\t\"stPersonMonths\":13,\n" +
                     "\t\t\t\t\t\"stSalary\":75000\n" +
                     "\t\t\t\t},\n" +
@@ -61,8 +61,8 @@ public class TpsApiResourceTest {
                     "\t\t\t\t\t\"stServiceTypeCode\":\"10000007\",\n" +
                     "\t\t\t\t\t\"stServiceType\":\"監造工程師(受訓合格)\",\n" +
                     "\t\t\t\t\t\"stServiceTypeOther\":\"\",\n" +
-                    "\t\t\t\t\t\"stSiniorityCode\":\"10000005\",\n" +
-                    "\t\t\t\t\t\"stSiniority\":\"滿10年以上未滿15年\",\n" +
+                    "\t\t\t\t\t\"stSeniorityCode\":\"10000005\",\n" +
+                    "\t\t\t\t\t\"stSeniority\":\"滿10年以上未滿15年\",\n" +
                     "\t\t\t\t\t\"stPersonMonths\":7,\n" +
                     "\t\t\t\t\t\"stSalary\":66000\n" +
                     "\t\t\t\t}\n" +
@@ -85,8 +85,8 @@ public class TpsApiResourceTest {
                     "\t\t\t\t\t\"stServiceTypeCode\":\"10000001\",\n" +
                     "\t\t\t\t\t\"stServiceType\":\"計畫主持人\",\n" +
                     "\t\t\t\t\t\"stServiceTypeOther\":\"\",\n" +
-                    "\t\t\t\t\t\"stSiniorityCode\":\"10000007\",\n" +
-                    "\t\t\t\t\t\"stSiniority\":\"滿20年以上\",\n" +
+                    "\t\t\t\t\t\"stSeniorityCode\":\"10000007\",\n" +
+                    "\t\t\t\t\t\"stSeniority\":\"滿20年以上\",\n" +
                     "\t\t\t\t\t\"stPersonMonths\":24,\n" +
                     "\t\t\t\t\t\"stSalary\":95000\n" +
                     "\t\t\t\t},\n" +
@@ -94,8 +94,8 @@ public class TpsApiResourceTest {
                     "\t\t\t\t\t\"stServiceTypeCode\":\"10000016\",\n" +
                     "\t\t\t\t\t\"stServiceType\":\"技師【土木工程科】(技師執業執照)\",\n" +
                     "\t\t\t\t\t\"stServiceTypeOther\":\"\",\n" +
-                    "\t\t\t\t\t\"stSiniorityCode\":\"10000005\",\n" +
-                    "\t\t\t\t\t\"stSiniority\":\"滿10年以上未滿15年\",\n" +
+                    "\t\t\t\t\t\"stSeniorityCode\":\"10000005\",\n" +
+                    "\t\t\t\t\t\"stSeniority\":\"滿10年以上未滿15年\",\n" +
                     "\t\t\t\t\t\"stPersonMonths\":10,\n" +
                     "\t\t\t\t\t\"stSalary\":76000\n" +
                     "\t\t\t\t},\n" +
@@ -103,8 +103,8 @@ public class TpsApiResourceTest {
                     "\t\t\t\t\t\"stServiceTypeCode\":\"99999999\",\n" +
                     "\t\t\t\t\t\"stServiceType\":\"其他\",\n" +
                     "\t\t\t\t\t\"stServiceTypeOther\":\"古蹟遷移計師\",\n" +
-                    "\t\t\t\t\t\"stSiniorityCode\":\"10000002\",\n" +
-                    "\t\t\t\t\t\"stSiniority\":\"未滿10年\",\n" +
+                    "\t\t\t\t\t\"stSeniorityCode\":\"10000002\",\n" +
+                    "\t\t\t\t\t\"stSeniority\":\"未滿10年\",\n" +
                     "\t\t\t\t\t\"stPersonMonths\":3,\n" +
                     "\t\t\t\t\t\"stSalary\":56000\n" +
                     "\t\t\t\t}\n" +
