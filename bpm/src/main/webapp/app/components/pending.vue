@@ -239,14 +239,14 @@ export default defineComponent({
     });
 
     const toQuery = () => {
-      table.data = [];
+      table.data = undefined;
       const params = new FormData();
       params.append('bpmFormQueryDto', new Blob([JSON.stringify(form)], {type: 'application/json'}));
       params.append('isNotify', new Blob([JSON.stringify(false)], {type: 'application/json'}));
       axios.post(`/process/queryTask`, params).then(({data}) => {
         queryStatus.value = true;
+        table.data = [];
         if (data.length <= 0) return;
-
 
         table.data = data.slice(0, data.length);
 
@@ -262,28 +262,27 @@ export default defineComponent({
     };
 
     const toSubordinateQuery = () => {
-      table.data = [];
-      //TODO:方法未實作
+      table.data = undefined;
 
-      // const params = new FormData();
-      // params.append('bpmFormQueryDto', new Blob([JSON.stringify(form)], {type: 'application/json'}));
-      // params.append('isNotify', new Blob([JSON.stringify(false)], {type: 'application/json'}));
-      // axios.post(`/process/queryTask`, params).then(({data}) => {
-      //   queryStatus.value = true;
-      //   if (data.length <= 0) return;
-      //
-      //
-      //   table.data = data.slice(0, data.length);
-      //
-      //   //過濾table.data所有物件 要把畫面要顯示的值都先塞進table.data內 不然iTable內的b-modal會沒有值
-      //   table.data.forEach(i => {
-      //     i.subject = changeSubject(i, true)
-      //     i.filAndApp = (i.appEmpid === i.filEmpid) ? i.appName : i.appName + '/' + i.filName
-      //   });
-      //
-      //   table.totalItems = data.length;
-      // })
-      //   .catch(notificationErrorHandler(notificationService));
+      const params = new FormData();
+      params.append('bpmFormQueryDto', new Blob([JSON.stringify(form)], {type: 'application/json'}));
+      params.append('isNotify', new Blob([JSON.stringify(false)], {type: 'application/json'}));
+      axios.post(`/process/getAllSubordinateTask`, params).then(({data}) => {
+        queryStatus.value = true;
+        table.data = [];
+        if (data.length <= 0) return;
+
+        table.data = data.slice(0, data.length);
+
+        //過濾table.data所有物件 要把畫面要顯示的值都先塞進table.data內 不然iTable內的b-modal會沒有值
+        table.data.forEach(i => {
+          i.subject = changeSubject(i, true)
+          i.filAndApp = (i.appEmpid === i.filEmpid) ? i.appName : i.appName + '/' + i.filName
+        });
+
+        table.totalItems = data.length;
+      })
+        .catch(notificationErrorHandler(notificationService));
     };
 
     function toEdit(item, i) {

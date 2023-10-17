@@ -210,7 +210,7 @@ export default {
     });
 
     const toQuery = () => {
-      table.data = [];
+      table.data = undefined;
       const params = new URLSearchParams()
       params.append('word', form.word)
       // params.append('number', form.number)
@@ -219,7 +219,7 @@ export default {
       axios.get(`/eip/eip-bpm-isms-l414/findByWord?${params.toString()}`)
         .then(({data}) => {
           queryStatus.value = true
-
+          table.data = [];
           if (iTable.value) iTable.value.state.pagination.currentPage = 1;
           if (data) {
             table.data = data;

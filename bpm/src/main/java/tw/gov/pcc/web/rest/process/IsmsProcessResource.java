@@ -305,7 +305,7 @@ public class IsmsProcessResource {
 
     }
 
-    @GetMapping("/getAllSubordinateTask")
+    @PostMapping("/getAllSubordinateTask")
     public List<Map<String, Object>> getAllSubordinateTask(@Valid @RequestPart(required = false) BpmFormQueryDto bpmFormQueryDto) {
         User user = getUserInfo();
         String titleName = user.getTitleName();
