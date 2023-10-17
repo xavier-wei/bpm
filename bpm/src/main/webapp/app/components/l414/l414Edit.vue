@@ -392,7 +392,7 @@
               </div>
 
 
-              <!--簽核狀態模組-->
+              <!--簽核流程資訊模組-->
               <signerList :formId="formIdProp" :formStatus="formStatusRef" :opinion="opinion"
                           :processInstanceStatus="processInstanceStatusRef"></signerList>
 
@@ -716,9 +716,6 @@ export default {
     async function reviewStart(item, i) {
 
       let isOK = true;
-      console.log('userData.userRole', userData.userRole)
-      console.log('configRoleToBpmIpt(userData.userRole)', configRoleToBpmIpt(userData.userRole))
-
       if (i === true) {
         //判斷審核腳色是否為資推或是機房的，正常都是走下面，資推或是機房的才會用上面去判斷(資推或是機房的審核要看畫面的form.agreeType去決定是否同意)
         if (configRoleToBpmIpt(userData.userRole) || configRoleToBpmCrOperator(userData.userRole)) {
@@ -745,8 +742,6 @@ export default {
           variables = Object.fromEntries(arrData)
         }
 
-        console.log('variables', variables)
-
         form.opinion = opinion.opinionData
 
         let opinionData = '';
@@ -772,6 +767,10 @@ export default {
           opinion: opinionData,
           ipt: configRoleToBpmIpt(userData.userRole) || configRoleToBpmCrOperator(userData.userRole),
         };
+
+        if (configRoleToBpmIpt(userData.userRole) && form.agreeType === '') {
+          return  notificationService.makeModalComfirmCallback('未選擇處理意見','danger');
+        }
 
         axios
           .post(`/process/completeTask/${form.formId}`, body)
