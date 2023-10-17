@@ -3,25 +3,25 @@
     <div class="card m-3" style="background-color: white">
 
 
-      <div class="m-4">
+      <div class="m-2">
         <P> 簽核流程資訊： </P>
-        <div v-for="signer in signerList" :key="signer.taskName">
-          <b-input-group>
-            <p class="col-3">{{ signer.taskName }}</p>
 
-            <template v-for="(staffList, index) in signer.empIds">
-              <p class="col-4">
+        <b-table  :items="signerListTable.data" :fields="signerListTable.fields" bordered responsive="sm">
+
+          <template #cell(idAndName)="row">
+            <template v-for="(staffList, index) in row.item.empIds">
+              <p >
                 員工編號: {{ staffList }}
-                <span v-if="signer.empNames && signer.empNames[index]"> 姓名: {{ signer.empNames[index] }}</span>
+                <span v-if="row.item.empNames && row.item.empNames[index]"> 姓名: {{ row.item.empNames[index] }}</span>
               </p>
             </template>
-          </b-input-group>
-        </div>
+          </template>
+        </b-table>
 
       </div>
 
       <div class="m-2">
-        <b-table sticky-header :items="signStatusTable.data" :fields="signStatusTable.fields" bordered responsive="sm">
+        <b-table  :items="signStatusTable.data" :fields="signStatusTable.fields" bordered responsive="sm">
 
           <template #cell(situation)="row">
             <div v-if="row.item.taskName === '申請人確認'">
@@ -151,6 +151,26 @@ export default {
       totalItems: undefined,
     });
 
+    const signerListTable = reactive({
+      fields: [
+        {
+          key: 'taskName',
+          label: '簽核名稱',
+          sortable: false,
+          thClass: 'text-center',
+          tdClass: 'text-center align-middle ',
+        },
+        {
+          key: 'idAndName',
+          label: '員工編號/姓名',
+          sortable: false,
+          thClass: 'text-center',
+          tdClass: 'text-center align-middle ',
+        },
+      ],
+      data: undefined,
+      totalItems: undefined,
+    });
 
     function getBpmSignStatus(id) {
 
@@ -197,7 +217,9 @@ export default {
             signer.empIds = i.empIds.split(',')
             signer.empNames = i.empNames.split(',')
             signerList.value.push(signer)
+
           })
+          signerListTable.data = signerList
         })
         .catch(notificationErrorHandler(notificationService));
     }
@@ -219,11 +241,15 @@ export default {
       signerList,
       changeDealWithUnit,
       bpmDeptsOptions,
+      signerListTable,
     }
   }
 }
 </script>
 
-<style scoped>
-
+<style >
+.table-bordered thead th, .table-bordered thead td {
+  border-bottom-width: 2px;
+  background-color: #b0ded4;
+}
 </style>

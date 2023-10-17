@@ -107,8 +107,10 @@ public class BpmIsmsL414DTO implements Serializable {
 
     private Timestamp scheduleDate;
 
-    @Size(max = 200)
-    private String settingReason;
+    @Size(max = 500)
+    private String partialAgreeReason;
+    @Size(max = 500)
+    private String notAgreeReason;
 
     @Size(max = 1)
     private String isExternalFirewall;
@@ -257,6 +259,14 @@ public class BpmIsmsL414DTO implements Serializable {
         this.enableTime = enableTime;
     }
 
+    public String getWorkingTime() {
+        return workingTime;
+    }
+
+    public void setWorkingTime(String workingTime) {
+        this.workingTime = workingTime;
+    }
+
     public String getOtherEnableTime() {
         return otherEnableTime;
     }
@@ -369,12 +379,20 @@ public class BpmIsmsL414DTO implements Serializable {
         this.scheduleDate = scheduleDate;
     }
 
-    public String getSettingReason() {
-        return settingReason;
+    public String getPartialAgreeReason() {
+        return partialAgreeReason;
     }
 
-    public void setSettingReason(String settingReason) {
-        this.settingReason = settingReason;
+    public void setPartialAgreeReason(String partialAgreeReason) {
+        this.partialAgreeReason = partialAgreeReason;
+    }
+
+    public String getNotAgreeReason() {
+        return notAgreeReason;
+    }
+
+    public void setNotAgreeReason(String notAgreeReason) {
+        this.notAgreeReason = notAgreeReason;
     }
 
     public String getIsExternalFirewall() {
@@ -473,14 +491,6 @@ public class BpmIsmsL414DTO implements Serializable {
         this.signer = signer;
     }
 
-    public String getWorkingTime() {
-        return workingTime;
-    }
-
-    public void setWorkingTime(String workingTime) {
-        this.workingTime = workingTime;
-    }
-
     @Override
     public String toString() {
         return "BpmIsmsL414DTO{" +
@@ -514,7 +524,8 @@ public class BpmIsmsL414DTO implements Serializable {
             ", instructions='" + instructions + '\'' +
             ", agreeType='" + agreeType + '\'' +
             ", scheduleDate=" + scheduleDate +
-            ", settingReason='" + settingReason + '\'' +
+            ", partialAgreeReason='" + partialAgreeReason + '\'' +
+            ", notAgreeReason='" + notAgreeReason + '\'' +
             ", isExternalFirewall='" + isExternalFirewall + '\'' +
             ", isInternalFirewall='" + isInternalFirewall + '\'' +
             ", firewallContent='" + firewallContent + '\'' +

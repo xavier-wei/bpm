@@ -818,8 +818,6 @@ export default {
         if (isOK) {
           await Promise.all(table.data.map(data => checkboxToMapAndForm(data, form, l410Variables)));
           form.l410Variables = l410Variables;
-          console.log('form.l410Variables',form.l410Variables)
-          console.log('l410Variables',l410Variables)
           let body = {
             "L410": JSON.stringify(form)
           }

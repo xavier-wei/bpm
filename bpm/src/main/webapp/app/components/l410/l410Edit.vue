@@ -499,7 +499,7 @@
 
             </div>
 
-            <!--簽核狀態模組-->
+            <!--簽核流程資訊模組-->
             <signerList :formId="formIdProp" :formStatus="formStatusRef" :opinion="opinion"
                         :processInstanceStatus="processInstanceStatusRef"></signerList>
 
