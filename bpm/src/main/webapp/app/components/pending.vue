@@ -81,6 +81,7 @@
       </b-form-row>
 
       <div class="text-center pt-5">
+        <b-button class="ml-2" style="background-color: #17a2b8" @click="toSubordinateQuery()" v-show="superiorFilter(userData.titleName)">下屬查詢</b-button>
         <b-button class="ml-2" style="background-color: #17a2b8" @click="toQuery()">查詢</b-button>
         <b-button class="ml-2" style="background-color: #17a2b8" @click="reset()">清除</b-button>
       </div>
@@ -126,6 +127,7 @@ import {changeSubject} from "@/shared/word/change-word-utils";
 import {configRoleToBpmIpt} from "@/shared/word/configRole";
 import {useGetters} from "@u3u/vue-hooks";
 import {navigateByNameAndParams} from "@/router/router";
+import {superiorFilter} from "@/shared/word/superiorFilter";
 
 
 export default defineComponent({
@@ -259,6 +261,31 @@ export default defineComponent({
         .catch(notificationErrorHandler(notificationService));
     };
 
+    const toSubordinateQuery = () => {
+      table.data = [];
+      //TODO:方法未實作
+
+      // const params = new FormData();
+      // params.append('bpmFormQueryDto', new Blob([JSON.stringify(form)], {type: 'application/json'}));
+      // params.append('isNotify', new Blob([JSON.stringify(false)], {type: 'application/json'}));
+      // axios.post(`/process/queryTask`, params).then(({data}) => {
+      //   queryStatus.value = true;
+      //   if (data.length <= 0) return;
+      //
+      //
+      //   table.data = data.slice(0, data.length);
+      //
+      //   //過濾table.data所有物件 要把畫面要顯示的值都先塞進table.data內 不然iTable內的b-modal會沒有值
+      //   table.data.forEach(i => {
+      //     i.subject = changeSubject(i, true)
+      //     i.filAndApp = (i.appEmpid === i.filEmpid) ? i.appName : i.appName + '/' + i.filName
+      //   });
+      //
+      //   table.totalItems = data.length;
+      // })
+      //   .catch(notificationErrorHandler(notificationService));
+    };
+
     function toEdit(item, i) {
 
       let prefix = item.formId.substring(0, 4).toLowerCase()
@@ -305,6 +332,8 @@ export default defineComponent({
       toEdit,
       queryStatus,
       userData,
+      toSubordinateQuery,
+      superiorFilter,
     };
   },
 });
