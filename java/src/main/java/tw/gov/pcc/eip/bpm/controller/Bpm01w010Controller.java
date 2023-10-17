@@ -32,7 +32,7 @@ public class Bpm01w010Controller {
         System.out.println("isBpmLogin = " + isBpmLogin);
         String token = null;
         try {
-            token = AESEncryption.encrypt(userData.getUserId(), TokenUtil.TOKEN);
+            token = AESEncryption.encrypt(userData.getUserId());
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
