@@ -5,10 +5,7 @@ import com.google.gson.Gson;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.*;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.RestTemplate;
 import tw.gov.pcc.flowable.config.BpmSetting;
 import tw.gov.pcc.flowable.domain.ProcessReq;
@@ -20,6 +17,7 @@ import tw.gov.pcc.flowable.service.dto.ProcessReqDTO;
 import tw.gov.pcc.flowable.service.dto.TaskDTO;
 
 import javax.validation.Valid;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -98,4 +96,13 @@ public class ProcessResource {
         return "成功";
     }
 
+
+    @PostMapping("/getAllSubordinateTask")
+    public List<TaskDTO> getAllSubordinateTask(@RequestBody List<String> ids) {
+        List<TaskDTO> taskDTOS = new ArrayList<>();
+        for (String id : ids) {
+            taskDTOS.addAll(service.queryProcessingTask(id));
+        }
+        return taskDTOS;
+    }
 }
