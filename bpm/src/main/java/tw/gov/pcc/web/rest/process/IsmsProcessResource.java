@@ -26,6 +26,7 @@ import tw.gov.pcc.service.dto.*;
 import tw.gov.pcc.service.mapper.BpmIsmsL410Mapper;
 import tw.gov.pcc.service.mapper.BpmSignStatusMapper;
 import tw.gov.pcc.utils.MapUtils;
+import tw.gov.pcc.utils.ParameterUtil;
 
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
@@ -43,7 +44,6 @@ public class IsmsProcessResource {
 
     private static final Logger log = LoggerFactory.getLogger(IsmsProcessResource.class);
 
-    @Value("${bpm.token}")
     private String token;
     private static final String PROCESS_INSTANCE_ID = "processInstanceId";
     private static final String TASK_ID = "taskId";
@@ -71,6 +71,7 @@ public class IsmsProcessResource {
         this.bpmIsmsL410Mapper = bpmIsmsL410Mapper;
         this.bpmIsmsL410Repository = bpmIsmsL410Repository;
         this.subordinateTaskService = subordinateTaskService;
+        this.token = ParameterUtil.TOKEN;
     }
 
     @PostMapping(path = "/start/{key}", consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
@@ -175,6 +176,8 @@ public class IsmsProcessResource {
             return;
         }
         log.warn("ProcessL414Resource.java - receiveEndEvent - 203 ::{} ", "流程發生意外終止");
+
+        throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR,"流程發生意外終止");
     }
 
 
@@ -379,6 +382,7 @@ public class IsmsProcessResource {
         }
         throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "權限不足");
     }
+
 
     @RequestMapping("/notify/queryTask")
     public List<Map<String, Object>> notifyQueryTask(@Valid @RequestPart(required = false) BpmFormQueryDto bpmFormQueryDto) {

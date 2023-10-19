@@ -4,9 +4,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.ModelAndView;
-import tw.gov.pcc.eip.bpm.utils.AESEncryption;
+import tw.gov.pcc.eip.bpm.utils.AESEncryptionService;
 import tw.gov.pcc.eip.bpm.utils.RefererTemp;
-import tw.gov.pcc.eip.bpm.utils.TokenUtil;
 import tw.gov.pcc.eip.framework.domain.UserBean;
 
 import javax.servlet.http.HttpServletRequest;
@@ -20,19 +19,20 @@ public class Bpm01w010Controller {
     private final String MAPPING_PATH = "/Bpm01w010_enter.action";
     private static final String MAIN_PAGE = "/bpm/Bpm01w010";//主頁
     private final UserBean userData;
+    private final AESEncryptionService aesEncryptionService;
 
-    public Bpm01w010Controller(UserBean userData) {
+    public Bpm01w010Controller(UserBean userData, AESEncryptionService aesEncryptionService) {
         this.userData = userData;
+        this.aesEncryptionService = aesEncryptionService;
     }
 
     @RequestMapping(MAPPING_PATH)
     public ModelAndView l410(HttpServletRequest request) {
 
         boolean isBpmLogin=Boolean.valueOf(request.getParameter("bpm"));
-        System.out.println("isBpmLogin = " + isBpmLogin);
         String token = null;
         try {
-            token = AESEncryption.encrypt(userData.getUserId());
+            token = aesEncryptionService.encrypt(userData.getUserId());
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
