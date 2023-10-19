@@ -102,13 +102,15 @@ export default {
 
     function getCurrentDate() {
       const date = new Date();
-      return new Date(date.getFullYear(), date.getMonth(), date.getDate());
+      return new Date(date.getFullYear(), date.getMonth(), date.getDate(), new Date().getHours(), new Date().getMinutes(), new Date().getSeconds(), new Date().getMilliseconds());
     }
 
     function handleTimeZoneOffset(value) {
       const offset = new Date().getTimezoneOffset();
       if (value) {
-        date.value = new Date(date.value.getTime() - offset * 60 * 1000);
+        const date1 = new Date(value);
+        date.value = new Date(date1.getFullYear(), date1.getMonth(), date1.getDate(), new Date().getHours(), new Date().getMinutes(), new Date().getSeconds(), new Date().getMilliseconds());
+        // date.value = new Date(date.value.getTime() - offset * 60 * 1000);
       }
     }
 

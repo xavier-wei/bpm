@@ -274,7 +274,7 @@
                     </b-form-radio>
 
                     <!--部分同意設定原因 : partialAgreeReason-->
-                    <b-form-radio class="col-12 fixedWidth" value="2" >
+                    <b-form-radio class="col-12 fixedWidth" value="2">
                       <b-input-group>
                         <div>部分同意設定 : 原因 :　　 　</div>
                         <b-form-textarea
@@ -477,7 +477,7 @@ export default {
       otherEnableTime: '', //使用特殊時段內容
       selecteEdateType: '', //	啟用期間類別
       sdate: null, //啟用期間開始時間
-      eDate: null, //啟用期間結束時間
+      edate: null, //啟用期間結束時間
       othereEdate: '', //職務異動止說明
       delEnableDate: null, //刪除規則時間
       sourceIp: '', //來源 ip
@@ -540,12 +540,10 @@ export default {
     };
 
     async function submitForm(isSubmit) {
-
       checkValidity().then((isValid: boolean) => {
         if (isValid) {
           $bvModal.msgBoxConfirm('是否確認送出修改內容？').then((isOK: boolean) => {
             if (isOK) {
-
               form.isSubmit = isSubmit;
 
               let body = {
@@ -637,7 +635,7 @@ export default {
   align-items: flex-start;
 }
 
-.fixedWidth .custom-control-label{
+.fixedWidth .custom-control-label {
   width: 100%;
 }
 
