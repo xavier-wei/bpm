@@ -126,6 +126,7 @@
                                         :item="$v.enableTime">
                       <!--使用時段 : enableTime-->
                       <b-form-radio-group v-model="$v.enableTime.$model"
+                                          @change="changeEnableTime()"
                                           :disabled="formStatusRef === FormStatusEnum.READONLY || userData.userName !== $v.appName.$model">
                         <b-form-radio value="1">
                           <div style="height: 34px">每日24小時</div>
@@ -159,6 +160,7 @@
                     >
                       <!--啟用期間類別 : selecteEdateType-->
                       <b-form-radio-group v-model="$v.selecteEdateType.$model"
+                                          @change="changeSelecteEdateType()"
                                           :disabled="formStatusRef === FormStatusEnum.READONLY || userData.userName !== $v.appName.$model">
                         <b-form-radio value="1">
                           <!--啟用期間開始時間 : sdate 、啟用期間結束時間 : edate-->
@@ -277,6 +279,7 @@
                   <!--處理意見 : agreeType-->
                   <i-form-group-check class="col-sm-12" label-cols="1" content-cols="11" :label="'處理意見：'">
                     <b-form-radio-group v-model="$v.agreeType.$model"
+                                        @change="changeAgreeType()"
                                         :disabled="!configRoleToBpmIpt(userData.userRole) || formStatusRef === FormStatusEnum.READONLY">
                       <!--預定完成日期 : scheduleDate-->
                       <b-form-radio class="col-12" value="1">
@@ -734,7 +737,7 @@ export default {
           //判斷審核腳色是否為資推或是機房的，正常都是走下面，資推或是機房的才會用上面去判斷(資推或是機房的審核要看畫面的form.agreeType去決定是否同意)
           if (configRoleToBpmIpt(userData.userRole) || configRoleToBpmCrOperator(userData.userRole)) {
             mapData.set(taskDataRef.value.decisionRole, getItem(getAgreeType(form.agreeType)))
-          }else {
+          } else {
             mapData.set(taskDataRef.value.decisionRole, getItem(item))
           }
 
@@ -769,7 +772,7 @@ export default {
         };
 
         if (configRoleToBpmIpt(userData.userRole) && form.agreeType === '') {
-          return  notificationService.makeModalComfirmCallback('未選擇處理意見','danger');
+          return notificationService.makeModalComfirmCallback('未選擇處理意見', 'danger');
         }
 
         axios
@@ -826,6 +829,24 @@ export default {
       }
     };
 
+    function changeEnableTime() {
+      form.workingTime = '';
+      form.otherEnableTime = '';
+    }
+
+    function changeSelecteEdateType() {
+      form.sdate = null;
+      form.edate = null;
+      form.othereEdate = '';
+      form.delEnableDate = null;
+    }
+
+    function changeAgreeType() {
+      form.scheduleDate = null;
+      form.partialAgreeReason = '';
+      form.notAgreeReason = '';
+    }
+
     const activeTab = (index: number) => {
       return tabIndex.value === index;
     };
@@ -873,6 +894,9 @@ export default {
       processInstanceStatusRef,
       configRoleToBpmCrOperator,
       configRoleToBpmIpt,
+      changeEnableTime,
+      changeSelecteEdateType,
+      changeAgreeType,
     }
   }
 }

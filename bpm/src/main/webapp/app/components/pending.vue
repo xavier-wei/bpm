@@ -101,7 +101,7 @@
     >
 
       <template #cell(action)="row">
-        <b-button class="ml-1" v-if="userData.userName === row.item.appName" style="background-color: #17a2b8"
+        <b-button class="ml-1" v-if="userData.userName === row.item.appName && row.item.isSubmit === '0'" style="background-color: #17a2b8"
                   @click="toEdit(row.item,'0')">編輯
         </b-button>
         <b-button class="ml-1" v-else style="background-color: #17a2b8"
@@ -125,7 +125,7 @@ import {useNotification} from "@/shared/notification";
 import {newformatDate} from "@/shared/date/minguo-calendar-utils";
 import {changeSubject} from "@/shared/word/change-word-utils";
 import {configRoleToBpmIpt} from "@/shared/word/configRole";
-import {useGetters} from "@u3u/vue-hooks";
+import {dayjs, useGetters} from "@u3u/vue-hooks";
 import {navigateByNameAndParams} from "@/router/router";
 import {superiorFilter} from "@/shared/word/superiorFilter";
 
@@ -247,6 +247,7 @@ export default defineComponent({
         queryStatus.value = true;
         table.data = [];
         if (data.length <= 0) return;
+        console.log('data',data)
 
         table.data = data.slice(0, data.length);
 
