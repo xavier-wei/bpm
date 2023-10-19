@@ -4,9 +4,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.ModelAndView;
-import tw.gov.pcc.eip.bpm.utils.AESEncryption;
+import tw.gov.pcc.eip.bpm.utils.AESEncryptionService;
 import tw.gov.pcc.eip.bpm.utils.RefererTemp;
-import tw.gov.pcc.eip.bpm.utils.TokenUtil;
 import tw.gov.pcc.eip.framework.domain.UserBean;
 
 import javax.servlet.http.HttpServletRequest;
@@ -20,9 +19,11 @@ public class Bpm01w030Controller {
     private static final String MAIN_PAGE = "/bpm/Bpm01w030";//主頁
     private final String MAPPING_PATH = "/Bpm01w030_enter.action";
     private final UserBean userData;
+    private final AESEncryptionService aesEncryptionService;
 
-    public Bpm01w030Controller(UserBean userData) {
+    public Bpm01w030Controller(UserBean userData, AESEncryptionService aesEncryptionService) {
         this.userData = userData;
+        this.aesEncryptionService = aesEncryptionService;
     }
 
 
@@ -34,7 +35,7 @@ public class Bpm01w030Controller {
         System.out.println("isBpmLogin = " + isBpmLogin);
         String token = null;
         try {
-            token = AESEncryption.encrypt(userData.getUserId());
+            token = aesEncryptionService.encrypt(userData.getUserId());
         } catch (Exception e) {
             throw new RuntimeException(e);
         }

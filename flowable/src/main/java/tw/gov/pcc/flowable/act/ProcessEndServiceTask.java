@@ -20,11 +20,11 @@ public class ProcessEndServiceTask implements JavaDelegate {
         // get processDefinitionKey
         String processDefinitionKey = execution.getProcessDefinitionId().split(":")[0];
 
-        EndEventDTO endEventDTO = new EndEventDTO(execution.getProcessInstanceId(), TokenUtil.TOKEN, ProcessEnum.getFormNameByProcessKey(processDefinitionKey),"1");
+        EndEventDTO endEventDTO = new EndEventDTO(execution.getProcessInstanceId(), TokenUtil.token, ProcessEnum.getFormNameByProcessKey(processDefinitionKey),"1");
 
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
-        headers.set("flowableToken", TokenUtil.TOKEN);
+        headers.set("flowableToken", TokenUtil.token);
         Gson gson=new Gson();
         HttpEntity<String> requestEntity = new HttpEntity<>(gson.toJson(endEventDTO), headers);
         RestTemplate restTemplate = new RestTemplate();

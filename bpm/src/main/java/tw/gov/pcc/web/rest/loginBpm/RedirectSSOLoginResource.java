@@ -3,7 +3,6 @@ package tw.gov.pcc.web.rest.loginBpm;
 import com.google.gson.Gson;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -21,8 +20,7 @@ import javax.servlet.http.HttpSession;
 public class RedirectSSOLoginResource {
     private final Logger log = LoggerFactory.getLogger(RedirectSSOLoginResource.class);
     private final RestTemplate restTemplate = new RestTemplate();
-    @Value("${bpm.key}")
-    private String key;
+
     private static final String USER_INFO = "userInfo";
     private final HttpSession session;
     private final UserService userService;
@@ -40,7 +38,7 @@ public class RedirectSSOLoginResource {
         session.invalidate();
         String id = null;
         try {
-            id = AESDecryption.decrypt(token, key);
+            id = AESDecryption.decrypt(token);
         } catch (Exception e) {
             throw new RuntimeException(e);
         }

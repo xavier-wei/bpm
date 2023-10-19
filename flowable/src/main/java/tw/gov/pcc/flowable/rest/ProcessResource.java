@@ -2,7 +2,6 @@ package tw.gov.pcc.flowable.rest;
 
 
 import com.google.gson.Gson;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.*;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -10,6 +9,7 @@ import org.springframework.web.client.RestTemplate;
 import tw.gov.pcc.flowable.config.BpmSetting;
 import tw.gov.pcc.flowable.domain.ProcessReq;
 import tw.gov.pcc.flowable.domain.ProcessRes;
+import tw.gov.pcc.flowable.service.EipCodeService;
 import tw.gov.pcc.flowable.service.ProcessFlowService;
 import tw.gov.pcc.flowable.service.dto.CompleteReqDTO;
 import tw.gov.pcc.flowable.service.dto.EndEventDTO;
@@ -26,12 +26,12 @@ import java.util.Map;
 public class ProcessResource {
     private final ProcessFlowService service;
 
-    public ProcessResource(ProcessFlowService service) {
+    public ProcessResource(ProcessFlowService service, EipCodeService eipCodeService) {
         this.service = service;
+        this.eipCodeService = eipCodeService;
     }
 
-    @Value("${bpm.token}")
-    private String token;
+    private final EipCodeService eipCodeService;
 
     @RequestMapping("/startProcess")
     public ResponseEntity<TaskDTO> startProcess(@Valid @RequestBody ProcessReqDTO processReqDTO) {
@@ -72,6 +72,7 @@ public class ProcessResource {
 
     @RequestMapping("/deleteProcess")
     public String deleteProcess(@RequestBody Map<String, String> deleteRequest) {
+        String token = eipCodeService.findCodeName("BPM_TOKEN");
         if (token.equals(deleteRequest.get("token"))) {
             String processInstanceId = deleteRequest.get("processInstanceId");
             TaskDTO taskDTO = service.querySingleTask(processInstanceId);

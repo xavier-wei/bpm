@@ -81,7 +81,7 @@
                 <a href="<c:url value='/LoginForward.action' />" class="clickDiv" title="返回首頁"></a>
                 <div class="sys_info">
                     <div class="row flex-row-reverse m-auto" id="title_status">
-                        <div class="col-md-3 top_3 sitemap">
+                        <div class="col-md-2 top_3 sitemap">
                             <a href="<c:url value='/Common_sitemap.action' />">
                                 <img src="./images/top_icon2.png" alt="" class="d-inline-block align-middle">
                                 <div class="d-inline-block align-middle text-center">
@@ -89,7 +89,7 @@
                                 </div>
                             </a>
                         </div>
-                        <div class="col-md-3 top_3 title_status">
+                        <div class="col-md-2 top_3 title_status">
                             <a href="" target="_blank" style="text-decoration:none;"
                                class="title_05">
                                 <img src="./images/top_icon4.png" alt="" class="d-inline-block align-middle">
@@ -100,12 +100,23 @@
                                 </div>
                             </a>
                         </div>
-                        <div class="col-md-3 top_3 title_status">
+                        <div class="col-md-2 top_3 title_status">
                             <a href="" target="_blank" style="text-decoration:none;"
                                class="title_05">
                                 <img src="./images/top_icon1.png" alt="" class="d-inline-block align-middle">
                                 <div class="d-inline-block align-middle text-center">
                                     <div class="title_01">待簽核件數</div>
+                                    <span class="title_02"></span>
+                                    <span class="title_03">件</span>
+                                </div>
+                            </a>
+                        </div>
+                        <div class="col-md-2 top_3 title_status">
+                            <a href="" target="_blank" style="text-decoration:none;"
+                               class="title_05">
+                                <img src="./images/top_icon1.png" alt="" class="d-inline-block align-middle">
+                                <div class="d-inline-block align-middle text-center">
+                                    <div class="title_01">待處理ISMS表單件數</div>
                                     <span class="title_02"></span>
                                     <span class="title_03">件</span>
                                 </div>
