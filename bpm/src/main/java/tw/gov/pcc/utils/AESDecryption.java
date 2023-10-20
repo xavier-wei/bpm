@@ -7,7 +7,7 @@ import java.util.Base64;
 
 public class AESDecryption {
     public static String decrypt(String encryptedText) throws Exception {
-        String key = ParameterUtil.AESKey;
+        String key = ParameterUtil.getAesKey();
         System.out.println(key);
         SecretKeySpec secretKey = new SecretKeySpec(key.getBytes("UTF-8"), "AES");
         Cipher cipher = Cipher.getInstance("AES/CBC/PKCS5PADDING");

@@ -71,7 +71,7 @@ public class IsmsProcessResource {
         this.bpmIsmsL410Mapper = bpmIsmsL410Mapper;
         this.bpmIsmsL410Repository = bpmIsmsL410Repository;
         this.subordinateTaskService = subordinateTaskService;
-        this.token = ParameterUtil.TOKEN;
+        this.token = ParameterUtil.getToken();
     }
 
     @PostMapping(path = "/start/{key}", consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})

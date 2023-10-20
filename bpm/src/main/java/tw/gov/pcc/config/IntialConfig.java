@@ -9,9 +9,7 @@ import tw.gov.pcc.utils.ParameterUtil;
 public class IntialConfig implements CommandLineRunner {
     private final EipcodeDao eipcodeDao;
 
-    private final String BPM_TOKEN = "BPM_TOKEN";
 
-    public final String BPM_AES = "BPM_AES";
 
     public IntialConfig(EipcodeDao eipcodeDao) {
         this.eipcodeDao = eipcodeDao;
@@ -19,9 +17,9 @@ public class IntialConfig implements CommandLineRunner {
 
     @Override
     public void run(String... args) throws Exception {
-        ParameterUtil.TOKEN=eipcodeDao.findByCodeKindOrderByScodeno(BPM_TOKEN).get(0).getCodename();
-        ParameterUtil.AESKey = eipcodeDao.findByCodeKindOrderByScodeno(BPM_AES).get(0).getCodename();
-        System.out.println("ParameterUtil.TOKEN = " + ParameterUtil.TOKEN);
-        System.out.println("ParameterUtil.AESKey = " + ParameterUtil.AESKey);
+        String bpmToken = "BPM_TOKEN";
+        String bpmAes = "BPM_AES";
+        ParameterUtil.setToken(eipcodeDao.findByCodeKindOrderByScodeno(bpmToken).get(0).getCodename());
+        ParameterUtil.setAesKey(eipcodeDao.findByCodeKindOrderByScodeno(bpmAes).get(0).getCodename());
     }
 }

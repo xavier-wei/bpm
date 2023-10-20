@@ -1,7 +1,23 @@
 package tw.gov.pcc.utils;
 
 public class ParameterUtil {
-    public static String TOKEN =null;
+    private static String token =null;
 
-    public static String AESKey = null;
+    private static String aesKey = null;
+
+    private ParameterUtil() {
+    }
+
+    public static String getToken() {
+        return token;
+    }
+    public static String getAesKey() {
+        return aesKey;
+    }
+    public static void setToken(String tOKEN) {
+        token = tOKEN;
+    }
+    public static void setAesKey(String aESKey) {
+        aesKey = aESKey;
+    }
 }
