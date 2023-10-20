@@ -82,18 +82,20 @@
                                 <td class="text-center align-middle"><abbr title="${item.passnumAbbr}"><c:out value="${item.passnum}" /></abbr></td>
                                 <td class="text-center align-middle"><c:out value="${item.regisfmdt}" />~<br><c:out value="${item.regisendt}" />&nbsp;&nbsp;</td>
                                 <td class="text-center align-middle">
-                                    <form:select path="selectAction" cssClass="form-control d-inline-block" data-orformno="${item.orformno}" data-status="${item.statusVal}" cssStyle="max-width: 145px;" multiple="false">
-                                        <form:option value="M">人工報名</form:option>
-                                        <form:option value="V">報名審核</form:option>
-                                        <form:option value="A">時數認證</form:option>
-                                        <form:option value="H">修改歷程</form:option>
-                                        <form:option value="C">複製</form:option>
-                                        <form:option value="U">修改</form:option>
-                                        <form:option value="P">簽到簿列印</form:option>
-                                        <form:option value="E1">匯出學習時數</form:option>
-                                        <form:option value="E2">匯出報名資料</form:option>
-                                    </form:select>
-                                    <tags:button data-topicname="${item.topicname}">執行</tags:button>
+                                    <div class="d-inline-flex">
+                                        <form:select path="selectAction" cssClass="form-control d-inline-block mr-1" data-orformno="${item.orformno}" data-status="${item.statusVal}" cssStyle="max-width: 145px;" multiple="false">
+                                            <form:option value="M">人工報名</form:option>
+                                            <form:option value="V">報名審核</form:option>
+                                            <form:option value="A">時數認證</form:option>
+                                            <form:option value="H">修改歷程</form:option>
+                                            <form:option value="C">複製</form:option>
+                                            <form:option value="U">修改</form:option>
+                                            <form:option value="P">簽到簿列印</form:option>
+                                            <form:option value="E1">匯出學習時數</form:option>
+                                            <form:option value="E2">匯出報名資料</form:option>
+                                        </form:select>
+                                        <tags:button data-topicname="${item.topicname}" style="min-width:65px">執行</tags:button>
+                                    </div>
                                 </td>
                             </tr>
                         </c:forEach>

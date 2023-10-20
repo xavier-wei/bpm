@@ -159,6 +159,10 @@ public class Eip04w020ModifyCase implements Serializable {
 
     private MultipartFile[] files;
 
+    private List<String> fileList;
+
+    private List<String> delFileList;
+
     @AssertTrue(message = "「報名資格」為必填")
     private boolean isRegisqualEmpty() {
         if (CollectionUtils.isEmpty(getRegisqual())) {

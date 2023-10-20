@@ -21,6 +21,9 @@ import java.io.*;
 import java.math.BigDecimal;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.*;
@@ -225,7 +228,7 @@ public class Eip04w020Service extends OnlineRegService {
      * @param caseData
      * @param modifyCase
      */
-    public void getSingleFormData(Eip04w020Case caseData, Eip04w020ModifyCase modifyCase) {
+    public void getSingleFormData(Eip04w020Case caseData, Eip04w020ModifyCase modifyCase) throws IOException {
         Orformdata orformdata = orformdataDao.findByPk(caseData.getOrformno());
         modifyCase.setOrformno(caseData.getOrformno());
         modifyCase.setOrccode(String.valueOf(orformdata.getOrccode()));
@@ -269,6 +272,17 @@ public class Eip04w020Service extends OnlineRegService {
         modifyCase.setRegisqual(Arrays.asList(orformdata.getRegisqual().split(",")));
         modifyCase.setTopicdesc(orformdata.getTopicdesc());
         modifyCase.setRemark(orformdata.getRemark());
+        String filedir = eipcodeDao.findByCodeKindCodeNo("FILEDIR", "1").get().getCodename();
+        String fileSeparator = File.separator;
+        String dir = filedir + fileSeparator + "orfiles" + fileSeparator + orformdata.getOrformno();
+        File directory = new File(dir);
+        if (directory.exists() && directory.isDirectory()) {
+            List<String> fileList = new ArrayList<>();
+            Files.walk(Paths.get(dir))
+                    .filter(Files::isRegularFile)
+                    .forEach(f->fileList.add(f.getFileName().toString()));
+            modifyCase.setFileList(fileList);
+        }
     }
 
     /**
@@ -365,6 +379,22 @@ public class Eip04w020Service extends OnlineRegService {
             String fileName = file.getOriginalFilename();
             File targetFile = new File(savePath, fileName);
             file.transferTo(targetFile);
+        }
+        deleteFiles(saveDirectory, modifyCaseData.getDelFileList());
+    }
+
+    /**
+     * 刪除指定的已上傳檔案
+     * @param saveDirectory
+     * @param delFilesList
+     * @throws IOException
+     */
+    private void deleteFiles(String saveDirectory, List<String> delFilesList) throws IOException {
+        if (!CollectionUtils.isEmpty(delFilesList)) {
+            for (String filename : delFilesList) {
+                Path path = Paths.get(saveDirectory + File.separator + filename);
+                Files.deleteIfExists(path);
+            }
         }
     }
 

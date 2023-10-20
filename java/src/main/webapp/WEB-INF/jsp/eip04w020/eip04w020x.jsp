@@ -17,6 +17,38 @@
         .hidden-span {
             display: none;
         }
+        .text-box {
+            margin: 7px;
+            padding-right: 25px;
+            display: inline-block;
+            position: relative;
+        }
+        .text-remove {
+            padding-bottom: 4px;
+            background-color: black;
+            font-size: 23px;
+            width: 18px;
+            height: 18px;
+            color: white;
+            text-align: center;
+            border-radius: 100%;
+            cursor: pointer;
+            opacity: 0.3;
+            top: 2px;
+            right: 0px;
+            display: flex;
+            position: absolute;
+            align-items: center;
+            justify-content: center;
+        }
+        .text-remove:hover {
+            background-color: red;
+            font-weight: 800;
+            opacity: 0.6;
+        }
+        .textblock, .certihoursblock {
+            padding-left: 153px;
+        }
     </style>
 </jsp:attribute>
 <jsp:attribute name="buttons">
@@ -235,9 +267,8 @@
             <tags:button id="btnAdd">新增</tags:button>
         </div>
     </tags:form-row>
-    <tags:form-row>
+    <tags:form-row cssClass="certihoursblock">
         <div class="col-md-12">
-            <form:label cssClass="col-form-label" path="certihours"></form:label>
             <span id="certihoursText"></span>
         </div>
     </tags:form-row>
@@ -383,34 +414,40 @@
             <form:textarea path="remark" cssClass="form-control col-md-6" rows="5" maxlength="1333"/>
         </div>
     </tags:form-row>
-    <div id="fileRow">
     <tags:form-row>
-        <div class="col-md-12">
+        <div class="col-md-12 d-flex">
             <form:label cssClass="col-form-label" path="files">附加檔案：</form:label>
-            <form:input path="files" type="file"/>
-            <tags:button id="btnAddUpload">增加檔案</tags:button>
-            <tags:button id="btnDelUpload">刪除檔案</tags:button>
+            <div class="custom-file" style="width:50%;">
+                <input type="file" class="custom-file-input" id="files" name="files" multiple>
+                <label class="custom-file-label" id="filelable" for="files" style="margin-left: 2px;">Choose files</label>
+            </div>
         </div>
     </tags:form-row>
-    </div>
-    <tags:form-row>
-        <form:label cssClass="col-form-label mr-1" path="files"></form:label>
-
-    </tags:form-row>
+    <c:if test="${not empty modifyData.fileList }">
+        <tags:form-row cssClass="textblock">
+            <c:forEach var="item" items="${modifyData.fileList}">
+                <div class="text-box filename"><span>${item}</span><span class="text-remove">×</span></div>
+            </c:forEach>
+        </tags:form-row>
+    </c:if>
     <tags:form-note>
     <tags:form-note-item><span class="red">＊</span>為必填欄位。</tags:form-note-item>
     </tags:form-note>
     <form:hidden path="mode"/>
     <form:hidden path="certihours"/>
     <form:hidden path="orformno"/>
+    <form:hidden path="fileList"/>
+    <form:hidden path="delFileList"/>
 </form:form>
 </tags:fieldset>
 </jsp:attribute>
 <jsp:attribute name="footers">
 <script>
 $(function(){
-    var chvArray = new Array();
-    var chsArray = new Array();
+    var chvArray = [];// 認證時數組成value
+    var chsArray = [];// 認證時數element
+    var delFileArray = [];// 欲刪除
+    var fileArray = [];// 畫面留存，驗證未過時保留值
     $('#btnSave').click(function(e){
         e.preventDefault();
         $('#certihours').val(chvArray.join(','));
@@ -425,7 +462,7 @@ $(function(){
      * 刷新index
      */
     function refreshIndex () {
-        let newChvArray = new Array();
+        let newChvArray = [];
         $.each(chvArray,function (i,e){
             let oriStr = e.split('-');
             e = (i+1) + '-' + oriStr[1];
@@ -439,18 +476,17 @@ $(function(){
      */
     function composite () {
         $('#certihoursText').empty();
-        chsArray = new Array();
+        chsArray = [];
         $.each(chvArray,function (i,e){
             let oriStr = e.split('-');
             let str1 = oriStr[1].charAt(0) === 'P' ? '實體' : '數位';
             let str2 = oriStr[1].charAt(1) === 'M' ? '上午' : '下午';
             let str3 = oriStr[1].substring(2);
-            chsArray.push('<lable>' + str3 + '時' + '(' + str1 + str2 + ')'
+            chsArray.push('<div class="text-box">' + str3 + '時' + '(' + str1 + str2 + ')'
                 + '<span style="display: none;">'+ e +'</span>'
-                + '<span style="color: red;cursor: pointer;">X</span></lable>');
+                + '<span class="text-remove">×</span></div>');
         })
-        // showAlert(chsArray.join('、'));
-        $('#certihoursText').append(chsArray.join('、'));
+        $('#certihoursText').append(chsArray);
     }
 
     //新增認證時數
@@ -466,6 +502,7 @@ $(function(){
             // $('#certihoursText').append(chstr);
             refreshIndex();
             composite();
+            displayCertihoursblock();
         }
     })
 
@@ -477,6 +514,7 @@ $(function(){
         }
         refreshIndex();
         composite();
+        displayCertihoursblock();
     });
 
     //全選
@@ -502,25 +540,48 @@ $(function(){
         }
     });
 
-    //增加檔案
-    $("#btnAddUpload").click(function() {
-        let addfile = '<div class="form-row py-1 no-gutters">'+
-            '<div class="col-md-6">' +
-            '<label for="files" class="col-form-label"></label> ' +
-            '<input id="files" name="files" type="file" value>' +
-            '</div>'+
-            '</div>';
-        $("#fileRow").append(addfile);
-    });
-
-    //增加檔案
-    $("#btnDelUpload").click(function() {
-        if ($("#fileRow").find(".form-row").length > 1) {
-            $("#fileRow").find(".form-row:last").remove();
+    // 選擇檔案
+    $("#files").on("change", function() {
+        let counts = $(this)[0].files.length;
+        if (counts > 20) {
+            $("#files").val('');
+            alert('超過檔案數量 請重新選擇!');
+            $('#filelable').html('Choose files');
+            return false;
+        } else if (counts > 0 && counts <= 20) {
+            var files = [];
+            for (var i = 0; i < counts; i++) {
+                files.push($(this)[0].files[i].name);
+            }
+            $('#filelable').html(files.join(', '));
         } else {
-            $("#files").val("");
+            $('#filelable').html('Choose files');
         }
     });
+
+    //刪除上傳檔案
+    $(".filename > .text-remove").click(function(e) {
+        e.preventDefault();
+        fileArray = $('#fileList').val().split(',');
+        delFileArray.push($(this).prev().text());
+
+        var index = $.inArray($(this).prev().text(), fileArray);
+        if (index !== -1) {
+            // 刪除該檔案element
+            $(this).parent().remove();
+            fileArray.splice(index, 1);
+        }
+        $('#fileList').val(fileArray);
+        $('#delFileList').val(delFileArray);
+    });
+
+    function displayCertihoursblock() {
+        if ($('#certihoursText').text().length > 0) {
+            $('.certihoursblock').show();
+        } else {
+            $('.certihoursblock').hide();
+        }
+    }
 
     //初始化
     if ($('#certihours').val() != '') {
@@ -535,6 +596,7 @@ $(function(){
     }else {
         $("#selectAll").prop("checked",false);
     }
+    displayCertihoursblock();
 })
 </script>
 </jsp:attribute>

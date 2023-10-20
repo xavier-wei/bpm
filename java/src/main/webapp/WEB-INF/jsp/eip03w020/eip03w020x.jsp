@@ -156,7 +156,7 @@
                                         <form:label cssClass="col-form-label " path="rptDept">指定填報單位：</form:label>
 <%--                                        <c:out value="${item.value['rptDept']}"/>--%>
                                         <span id="deptRow" data-deptcodes="${item.value['rptDept']}" ><c:out value="${item.value['rptDeptName']}"/></span>
-                                        <tags:button id="btnInsertRptDept">插入代碼<i class="fas fa-pencil-alt"></i></tags:button>
+                                        <tags:button id="btnInsertRptDept">新增<i class="fas fa-pencil-alt"></i></tags:button>
                                     </div>
                                 </tags:form-row>
                                 <tags:form-row>
@@ -164,7 +164,7 @@
                                         <form:label cssClass="col-form-label " path="rptUser">指定填報人員：</form:label>
 <%--                                        <c:out value="${item.value['rptUser']}"/>--%>
                                         <span id="usersRow" data-userscodes="${item.value['rptUser']}"><c:out value="${item.value['rptUserName']}"/></span>
-                                        <tags:button id="btnInsertRptUser">插入代碼<i class="fas fa-pencil-alt"></i></tags:button>
+                                        <tags:button id="btnInsertRptUser">新增<i class="fas fa-pencil-alt"></i></tags:button>
                                     </div>
                                 </tags:form-row>
                             </c:when>
@@ -365,7 +365,7 @@
             }
         });
 
-        //插入代碼 btnInsertRptDept
+        //新增 btnInsertRptDept
         $('#btnInsertRptDept').click(function (e){
             var codes = $('#deptRow').attr('data-deptCodes');
             var data = {
@@ -432,7 +432,7 @@
             $('#usersRow').text("").attr("data-usersCodes", "");
         })
 
-        //插入代碼 btnInsertRptUser
+        //新增 btnInsertRptUser
         $('#btnInsertRptUser').click(function (e){
             var codes = $('#deptRow').attr('data-deptCodes');
             var data = {
