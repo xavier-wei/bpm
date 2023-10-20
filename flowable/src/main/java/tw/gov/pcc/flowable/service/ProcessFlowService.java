@@ -1,5 +1,6 @@
 package tw.gov.pcc.flowable.service;
 
+import lombok.extern.slf4j.Slf4j;
 import org.flowable.engine.HistoryService;
 import org.flowable.engine.RuntimeService;
 import org.flowable.engine.TaskService;
@@ -57,6 +58,11 @@ public class ProcessFlowService {
         Task task = taskService.createTaskQuery().processInstanceId(processInstanceId).taskId(taskId).singleResult();
         if (task.getId() != null) {
             taskService.complete(task.getId(), variables);
+            if ("applierConfirm".equals(task.getTaskDefinitionKey())) {
+                Map<String, Object> variables2 = runtimeService.getVariables(processInstanceId);
+                String processKey = task.getProcessDefinitionId().split(":")[0];
+                jumpIfSupervisor(processKey, variables2, processInstanceId);
+            }
             return new ProcessRes(SIGNATURE_STATUS[0], MESSAGE[0]);
         }
         return new ProcessRes(SIGNATURE_STATUS[1], MESSAGE[1]);

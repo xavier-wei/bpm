@@ -118,7 +118,7 @@
                   <i-form-group-check class="col-12" label-cols="3" content-cols="7" :label="`使用時段：`"
                                       :item="$v.enableTime">
                     <!--使用時段 : enableTime-->
-                    <b-form-radio-group v-model="$v.enableTime.$model">
+                    <b-form-radio-group v-model="$v.enableTime.$model" @change="changeEnableTime">
 
                       <b-form-radio class="col-12" value="1">
                         <div style="height: 34px">每日24小時</div>
@@ -150,7 +150,7 @@
                     :item="$v.selecteEdateType"
                   >
                     <!--啟用期間類別 : selecteEdateType-->
-                    <b-form-radio-group v-model="$v.selecteEdateType.$model">
+                    <b-form-radio-group v-model="$v.selecteEdateType.$model" @change="changeSelecteEdateType">
                       <b-form-radio value="1">
                         <!--啟用期間開始時間 : sdate 、啟用期間結束時間 : edate-->
                         <i-dual-date-picker
@@ -179,7 +179,7 @@
                     :item="$v.selecteEdateType"
                   >
                     <!--啟用期間類別 : selecteEdateType-->
-                    <b-form-radio-group v-model="$v.selecteEdateType.$model">
+                    <b-form-radio-group v-model="$v.selecteEdateType.$model" @change="changeSelecteEdateType">
                       <b-form-radio value="4">
                         <!--刪除規則時間 : delEnableDate-->
                         <b-input-group>
@@ -590,6 +590,18 @@ export default {
       handleBack({isReload: false, isNotKeepAlive: true});
     }
 
+    function changeEnableTime() {
+      form.workingTime = '';
+      form.otherEnableTime = '';
+    }
+
+    function changeSelecteEdateType() {
+      form.sdate = null;
+      form.edate = null;
+      form.othereEdate = '';
+      form.delEnableDate = null;
+    }
+
     return {
       $v,
       form,
@@ -608,6 +620,8 @@ export default {
       formStatusRef,
       bpmDeptsOptions,
       fileDataId,
+      changeEnableTime,
+      changeSelecteEdateType,
     }
   }
 }
