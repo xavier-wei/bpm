@@ -116,6 +116,11 @@ public class ProcessFlowService {
                 ).collect(Collectors.toList());
     }
 
+    public Integer queryProcessingTaskNumbers(String id) {
+
+        return queryProcessingTask(id).size();
+    }
+
     public List<TaskDTO> queryProcessingAllTask(String id) {
         return taskService.createTaskQuery()
                 .taskCandidateOrAssigned(id)

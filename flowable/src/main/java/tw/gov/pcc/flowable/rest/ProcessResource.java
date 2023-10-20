@@ -46,23 +46,28 @@ public class ProcessResource {
         return ResponseEntity.badRequest().body(null);
     }
 
-    @RequestMapping("/queryProcessingTask")
+    @PostMapping("/queryProcessingTask")
     public ResponseEntity<List<TaskDTO>> queryProcessingTask(@RequestBody String id) {
 
         return ResponseEntity.ok().body(service.queryProcessingTask(id));
     }
 
-    @RequestMapping("/queryProcessingAllTask")
+    @PostMapping("/queryProcessingTaskNumbers")
+    public ResponseEntity<Integer> queryProcessingTaskNumbers(@RequestBody String id) {
+        return ResponseEntity.ok().body(service.queryProcessingTaskNumbers(id));
+    }
+
+    @PostMapping("/queryProcessingAllTask")
     public ResponseEntity<List<TaskDTO>> queryProcessingAllTask(@RequestBody String id) {
         return ResponseEntity.ok().body(service.queryProcessingAllTask(id));
     }
 
-    @RequestMapping("/getAllTask")
+    @PostMapping("/getAllTask")
     public List<TaskDTO> getAllTask(@RequestBody String id) {
         return service.queryList(id);
     }
 
-    @RequestMapping("/completeTask")
+    @PostMapping("/completeTask")
     public ProcessRes completeTask(@Validated @RequestBody CompleteReqDTO completeReqDTO) {
         if (completeReqDTO.getVariables() != null && !completeReqDTO.getVariables().isEmpty()) {
             return service.completeTask(completeReqDTO.getProcessInstanceId(), completeReqDTO.getTaskId(), completeReqDTO.getVariables());
@@ -70,7 +75,7 @@ public class ProcessResource {
         return service.completeTask(completeReqDTO.getProcessInstanceId(), completeReqDTO.getTaskId());
     }
 
-    @RequestMapping("/deleteProcess")
+    @PostMapping("/deleteProcess")
     public String deleteProcess(@RequestBody Map<String, String> deleteRequest) {
         String token = eipCodeService.findCodeName("BPM_TOKEN");
         if (token.equals(deleteRequest.get("token"))) {
@@ -90,14 +95,6 @@ public class ProcessResource {
         }
     }
 
-    // 測試時期快速完成用API
-    @RequestMapping("/completeTaskTest/{pId}/{tId}")
-    public String completeTest(@PathVariable String pId, @PathVariable String tId) {
-        service.completeTask(pId, tId);
-        return "成功";
-    }
-
-
     @PostMapping("/getAllSubordinateTask")
     public List<TaskDTO> getAllSubordinateTask(@RequestBody List<String> ids) {
         List<TaskDTO> taskDTOS = new ArrayList<>();
@@ -106,4 +103,12 @@ public class ProcessResource {
         }
         return taskDTOS;
     }
+    // 測試時期快速完成用API
+
+    @RequestMapping("/completeTaskTest/{pId}/{tId}")
+    public String completeTest(@PathVariable String pId, @PathVariable String tId) {
+        service.completeTask(pId, tId);
+        return "成功";
+    }
+
 }
