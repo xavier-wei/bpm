@@ -295,6 +295,19 @@ public class IsmsProcessResource {
         return Collections.emptyList();
     }
 
+    @PostMapping("/queryProcessingTaskNumbers")
+    public Integer queryProcessingTaskNumbers(@RequestBody String id) {
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+        HttpEntity<String> requestEntity = new HttpEntity<>(id, headers);
+
+        ResponseEntity<String> exchange = restTemplate.exchange(flowableProcessUrl + "/queryProcessingTaskNumbers", HttpMethod.POST, requestEntity, String.class);
+
+        if (exchange.getStatusCodeValue() == 200) {
+            return Integer.parseInt(exchange.getBody());
+        }
+        return 0;
+    }
     @RequestMapping("/deleteProcessInstance/{processInstanceId}")
     public void deleteProcessInstance(@PathVariable String processInstanceId) {
         log.info("ProcessL414Resource.java - deleteProcessInstance - 206 :: " + processInstanceId);

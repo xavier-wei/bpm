@@ -592,13 +592,13 @@ a {
 	/*min-height: 52px;*/
 }
 
-.title_01 {
+.title_01, .bpm_title_01{
 	font-size: 0.5em;
 	color: #454545;
 	font-weight: 500;
 }
 
-.title_02 {
+.title_02, .bpm_title_02 {
 	font-size: 1.3em;
 	color: #e7671d;
 	font-weight:bold;
@@ -606,7 +606,7 @@ a {
 	font-weight: 800;
 }
 
-.title_03 {
+.title_03, .bpm_title_03{
 	font-size: 0.5em;
 	color: #454545;
 	font-weight: 500;
