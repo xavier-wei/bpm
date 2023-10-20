@@ -2,17 +2,14 @@ package tw.gov.pcc.flowable.rest;
 
 
 import com.google.gson.Gson;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.*;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.RestTemplate;
 import tw.gov.pcc.flowable.config.BpmSetting;
 import tw.gov.pcc.flowable.domain.ProcessReq;
 import tw.gov.pcc.flowable.domain.ProcessRes;
+import tw.gov.pcc.flowable.service.EipCodeService;
 import tw.gov.pcc.flowable.service.ProcessFlowService;
 import tw.gov.pcc.flowable.service.dto.CompleteReqDTO;
 import tw.gov.pcc.flowable.service.dto.EndEventDTO;
@@ -20,6 +17,7 @@ import tw.gov.pcc.flowable.service.dto.ProcessReqDTO;
 import tw.gov.pcc.flowable.service.dto.TaskDTO;
 
 import javax.validation.Valid;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -28,12 +26,12 @@ import java.util.Map;
 public class ProcessResource {
     private final ProcessFlowService service;
 
-    public ProcessResource(ProcessFlowService service) {
+    public ProcessResource(ProcessFlowService service, EipCodeService eipCodeService) {
         this.service = service;
+        this.eipCodeService = eipCodeService;
     }
 
-    @Value("${bpm.token}")
-    private String token;
+    private final EipCodeService eipCodeService;
 
     @RequestMapping("/startProcess")
     public ResponseEntity<TaskDTO> startProcess(@Valid @RequestBody ProcessReqDTO processReqDTO) {
@@ -48,23 +46,28 @@ public class ProcessResource {
         return ResponseEntity.badRequest().body(null);
     }
 
-    @RequestMapping("/queryProcessingTask")
+    @PostMapping("/queryProcessingTask")
     public ResponseEntity<List<TaskDTO>> queryProcessingTask(@RequestBody String id) {
 
         return ResponseEntity.ok().body(service.queryProcessingTask(id));
     }
 
-    @RequestMapping("/queryProcessingAllTask")
+    @PostMapping("/queryProcessingTaskNumbers")
+    public ResponseEntity<Integer> queryProcessingTaskNumbers(@RequestBody String id) {
+        return ResponseEntity.ok().body(service.queryProcessingTaskNumbers(id));
+    }
+
+    @PostMapping("/queryProcessingAllTask")
     public ResponseEntity<List<TaskDTO>> queryProcessingAllTask(@RequestBody String id) {
         return ResponseEntity.ok().body(service.queryProcessingAllTask(id));
     }
 
-    @RequestMapping("/getAllTask")
+    @PostMapping("/getAllTask")
     public List<TaskDTO> getAllTask(@RequestBody String id) {
         return service.queryList(id);
     }
 
-    @RequestMapping("/completeTask")
+    @PostMapping("/completeTask")
     public ProcessRes completeTask(@Validated @RequestBody CompleteReqDTO completeReqDTO) {
         if (completeReqDTO.getVariables() != null && !completeReqDTO.getVariables().isEmpty()) {
             return service.completeTask(completeReqDTO.getProcessInstanceId(), completeReqDTO.getTaskId(), completeReqDTO.getVariables());
@@ -72,8 +75,9 @@ public class ProcessResource {
         return service.completeTask(completeReqDTO.getProcessInstanceId(), completeReqDTO.getTaskId());
     }
 
-    @RequestMapping("/deleteProcess")
+    @PostMapping("/deleteProcess")
     public String deleteProcess(@RequestBody Map<String, String> deleteRequest) {
+        String token = eipCodeService.findCodeName("BPM_TOKEN");
         if (token.equals(deleteRequest.get("token"))) {
             String processInstanceId = deleteRequest.get("processInstanceId");
             TaskDTO taskDTO = service.querySingleTask(processInstanceId);
@@ -91,7 +95,16 @@ public class ProcessResource {
         }
     }
 
+    @PostMapping("/getAllSubordinateTask")
+    public List<TaskDTO> getAllSubordinateTask(@RequestBody List<String> ids) {
+        List<TaskDTO> taskDTOS = new ArrayList<>();
+        for (String id : ids) {
+            taskDTOS.addAll(service.queryProcessingTask(id));
+        }
+        return taskDTOS;
+    }
     // 測試時期快速完成用API
+
     @RequestMapping("/completeTaskTest/{pId}/{tId}")
     public String completeTest(@PathVariable String pId, @PathVariable String tId) {
         service.completeTask(pId, tId);

@@ -36,81 +36,299 @@ public class TpsApiResourceTest {
         }
 
         if (timeComaprison(tpsAgenciesDTO.getAwardNoticeDateFrom(), tpsAgenciesDTO.getAwardNoticeDateTo())) {
-            String DATA ="{\n" +
-                    "\t\t\t\"orgId\":\"3.76.53.82\",\n" +
-                    "\t\t\t\"orgName\":\"屏東縣獅子鄉公所\",\n" +
-                    "\t\t\t\"tenderCaseNo\":\"103020\",\n" +
-                    "\t\t\t\"tenderName\":\"獅子鄉103年度觀光業務工程委託設計及監造開口契約(新的標案)\",\n" +
-                    "\t\t\t\"tenderSq\":\"01\",\n" +
-                    "\t\t\t\"uniqueKey\":51247230,\n" +
-                    "\t\t\t\"tenderWay\":\"公開招標\",\n" +
-                    "\t\t\t\"awardWay\":\"最低標\",\n" +
-                    "\t\t\t\"tenderProcCate\":\"工程類\",\n" +
-                    "\t\t\t\"tenderCpcName\":\"5139 - 其他土木工程\",\n" +
-                    "\t\t\t\"stServiceList\":[\n" +
-                    "\t\t\t\t{\n" +
-                    "\t\t\t\t\t\"stServiceTypeCode\":\"10000001\",\n" +
-                    "\t\t\t\t\t\"stServiceType\":\"計畫主持人\",\n" +
-                    "\t\t\t\t\t\"stServiceTypeOther\":\"\",\n" +
-                    "\t\t\t\t\t\"stSiniorityCode\":\"10000002\",\n" +
-                    "\t\t\t\t\t\"stSiniority\":\"未滿10年\",\n" +
-                    "\t\t\t\t\t\"stPersonMonths\":13,\n" +
-                    "\t\t\t\t\t\"stSalary\":75000\n" +
-                    "\t\t\t\t},\n" +
+            String DATA = "{\n" +
+                    "            \"orgId\": \"9.99\",\n" +
+                    "            \"orgName\": \"測試機關一\",\n" +
+                    "            \"tenderCaseNo\": \"20231002ST003_2\",\n" +
+                    "            \"tenderName\": \"技術服務薪資測試\",\n" +
+                    "            \"tenderSq\": \"01\",\n" +
+                    "            \"uniqueKey\": 60008566,\n" +
+                    "            \"tenderWay\": \"經公開評選或公開徵求之限制性招標\",\n" +
+                    "            \"awardWay\": \"最低標\",\n" +
+                    "            \"tenderProcCate\": \"勞務類\",\n" +
+                    "            \"tenderCpcName\": \"綜合工程服務\",\n" +
+                    "            \"stServiceList\": [\n" +
                     "                {\n" +
-                    "\t\t\t\t\t\"stServiceTypeCode\":\"10000007\",\n" +
-                    "\t\t\t\t\t\"stServiceType\":\"監造工程師(受訓合格)\",\n" +
-                    "\t\t\t\t\t\"stServiceTypeOther\":\"\",\n" +
-                    "\t\t\t\t\t\"stSiniorityCode\":\"10000005\",\n" +
-                    "\t\t\t\t\t\"stSiniority\":\"滿10年以上未滿15年\",\n" +
-                    "\t\t\t\t\t\"stPersonMonths\":7,\n" +
-                    "\t\t\t\t\t\"stSalary\":66000\n" +
-                    "\t\t\t\t}\n" +
-                    "\t\t\t],\n" +
-                    "\t\t\t\"dig\":\"M2ZjMzIwMzZkYzFl\"\n" +
-                    "\t\t},\n" +
-                    "\t\t{\n" +
-                    "\t\t\t\"orgId\":\"3.15.18.3\",\n" +
-                    "\t\t\t\"orgName\":\"交通部臺灣鐵路管理局\",\n" +
-                    "\t\t\t\"tenderCaseNo\":\"1009210525-1\",\n" +
-                    "\t\t\t\"tenderName\":\"「山佳車站暨浮洲車站新建工程」公共藝術設置(舊的標案)\",\n" +
-                    "\t\t\t\"tenderSq\":\"01\",\n" +
-                    "\t\t\t\"uniqueKey\":51646290,\n" +
-                    "\t\t\t\"tenderWay\":\"公開招標\",\n" +
-                    "\t\t\t\"awardWay\":\"最低標\",\n" +
-                    "\t\t\t\"tenderProcCate\":\"工程類\",\n" +
-                    "\t\t\t\"tenderCpcName\":\"5139 - 其他土木工程\",\n" +
-                    "\t\t\t\"stServiceList\":[\n" +
-                    "\t\t\t\t{\n" +
-                    "\t\t\t\t\t\"stServiceTypeCode\":\"10000001\",\n" +
-                    "\t\t\t\t\t\"stServiceType\":\"計畫主持人\",\n" +
-                    "\t\t\t\t\t\"stServiceTypeOther\":\"\",\n" +
-                    "\t\t\t\t\t\"stSiniorityCode\":\"10000007\",\n" +
-                    "\t\t\t\t\t\"stSiniority\":\"滿20年以上\",\n" +
-                    "\t\t\t\t\t\"stPersonMonths\":24,\n" +
-                    "\t\t\t\t\t\"stSalary\":95000\n" +
-                    "\t\t\t\t},\n" +
+                    "                    \"stServiceTypeCode\": \"99999999\",\n" +
+                    "                    \"stServiceType\": \"其他\",\n" +
+                    "                    \"stServiceTypeOther\": \"其他工程人員\",\n" +
+                    "                    \"stSeniorityCode\": null,\n" +
+                    "                    \"stSeniority\": null,\n" +
+                    "                    \"stPersonMonths\": 1,\n" +
+                    "                    \"stSalary\": 40000\n" +
+                    "                },\n" +
                     "                {\n" +
-                    "\t\t\t\t\t\"stServiceTypeCode\":\"10000016\",\n" +
-                    "\t\t\t\t\t\"stServiceType\":\"技師【土木工程科】(技師執業執照)\",\n" +
-                    "\t\t\t\t\t\"stServiceTypeOther\":\"\",\n" +
-                    "\t\t\t\t\t\"stSiniorityCode\":\"10000005\",\n" +
-                    "\t\t\t\t\t\"stSiniority\":\"滿10年以上未滿15年\",\n" +
-                    "\t\t\t\t\t\"stPersonMonths\":10,\n" +
-                    "\t\t\t\t\t\"stSalary\":76000\n" +
-                    "\t\t\t\t},\n" +
+                    "                    \"stServiceTypeCode\": \"3\",\n" +
+                    "                    \"stServiceType\": \"組長—測試\",\n" +
+                    "                    \"stServiceTypeOther\": null,\n" +
+                    "                    \"stSeniorityCode\": \"1\",\n" +
+                    "                    \"stSeniority\": \"3年以上未滿5年—測試\",\n" +
+                    "                    \"stPersonMonths\": 2,\n" +
+                    "                    \"stSalary\": 50000\n" +
+                    "                },\n" +
                     "                {\n" +
-                    "\t\t\t\t\t\"stServiceTypeCode\":\"99999999\",\n" +
-                    "\t\t\t\t\t\"stServiceType\":\"其他\",\n" +
-                    "\t\t\t\t\t\"stServiceTypeOther\":\"古蹟遷移計師\",\n" +
-                    "\t\t\t\t\t\"stSiniorityCode\":\"10000002\",\n" +
-                    "\t\t\t\t\t\"stSiniority\":\"未滿10年\",\n" +
-                    "\t\t\t\t\t\"stPersonMonths\":3,\n" +
-                    "\t\t\t\t\t\"stSalary\":56000\n" +
-                    "\t\t\t\t}\n" +
-                    "\t\t\t],\n" +
-                    "\t\t\t\"dig\":\"M2ZjMzIwMzZkYzFl\"\n" +
-                    "\t\t}\t\t";
+                    "                    \"stServiceTypeCode\": \"1\",\n" +
+                    "                    \"stServiceType\": \"計畫主持人—測試\",\n" +
+                    "                    \"stServiceTypeOther\": null,\n" +
+                    "                    \"stSeniorityCode\": \"1\",\n" +
+                    "                    \"stSeniority\": \"3年以上未滿5年—測試\",\n" +
+                    "                    \"stPersonMonths\": 3,\n" +
+                    "                    \"stSalary\": 60000\n" +
+                    "                }\n" +
+                    "            ],\n" +
+                    "            \"dig\": \"2o4Sz32y4zHZVhJU\"\n" +
+                    "        },\n" +
+                    "        {\n" +
+                    "            \"orgId\": \"9.99\",\n" +
+                    "            \"orgName\": \"測試機關一\",\n" +
+                    "            \"tenderCaseNo\": \"20231002ST001_1\",\n" +
+                    "            \"tenderName\": \"技術服務薪資測試8671\",\n" +
+                    "            \"tenderSq\": \"01\",\n" +
+                    "            \"uniqueKey\": 60008562,\n" +
+                    "            \"tenderWay\": \"公開取得報價單或企劃書\",\n" +
+                    "            \"awardWay\": \"最低標\",\n" +
+                    "            \"tenderProcCate\": \"勞務類\",\n" +
+                    "            \"tenderCpcName\": \"建築服務\",\n" +
+                    "            \"stServiceList\": [\n" +
+                    "                {\n" +
+                    "                    \"stServiceTypeCode\": \"4\",\n" +
+                    "                    \"stServiceType\": \"建築師—測試(建築師開業證書)\",\n" +
+                    "                    \"stServiceTypeOther\": null,\n" +
+                    "                    \"stSeniorityCode\": \"1\",\n" +
+                    "                    \"stSeniority\": \"3年以上未滿5年—測試\",\n" +
+                    "                    \"stPersonMonths\": 1,\n" +
+                    "                    \"stSalary\": 40000\n" +
+                    "                }\n" +
+                    "            ],\n" +
+                    "            \"dig\": \"xz5gOQFBPi0wRzvg\"\n" +
+                    "        },\n" +
+                    "        {\n" +
+                    "            \"orgId\": \"9.99\",\n" +
+                    "            \"orgName\": \"測試機關一\",\n" +
+                    "            \"tenderCaseNo\": \"20231002ST005_2\",\n" +
+                    "            \"tenderName\": \"技術服務薪資測試\",\n" +
+                    "            \"tenderSq\": \"01\",\n" +
+                    "            \"uniqueKey\": 60008568,\n" +
+                    "            \"tenderWay\": \"選擇性招標(建立合格廠商名單後續邀標)\",\n" +
+                    "            \"awardWay\": \"最低標\",\n" +
+                    "            \"tenderProcCate\": \"勞務類\",\n" +
+                    "            \"tenderCpcName\": \"與科技工程有關之顧問服務\",\n" +
+                    "            \"stServiceList\": [\n" +
+                    "                {\n" +
+                    "                    \"stServiceTypeCode\": \"3\",\n" +
+                    "                    \"stServiceType\": \"組長—測試\",\n" +
+                    "                    \"stServiceTypeOther\": null,\n" +
+                    "                    \"stSeniorityCode\": \"1\",\n" +
+                    "                    \"stSeniority\": \"3年以上未滿5年—測試\",\n" +
+                    "                    \"stPersonMonths\": 1,\n" +
+                    "                    \"stSalary\": 40000\n" +
+                    "                }\n" +
+                    "            ],\n" +
+                    "            \"dig\": \"oWR3gEqa107paQTZ\"\n" +
+                    "        },\n" +
+                    "        {\n" +
+                    "            \"orgId\": \"9.99\",\n" +
+                    "            \"orgName\": \"測試機關一\",\n" +
+                    "            \"tenderCaseNo\": \"20231002ST007_3\",\n" +
+                    "            \"tenderName\": \"技術服務薪資測試\",\n" +
+                    "            \"tenderSq\": \"00\",\n" +
+                    "            \"uniqueKey\": 60008561,\n" +
+                    "            \"tenderWay\": \"限制性招標(未經公開評選或公開徵求)\",\n" +
+                    "            \"awardWay\": \"最低標\",\n" +
+                    "            \"tenderProcCate\": \"勞務類\",\n" +
+                    "            \"tenderCpcName\": \"建築服務\",\n" +
+                    "            \"stServiceList\": [\n" +
+                    "                {\n" +
+                    "                    \"stServiceTypeCode\": \"3\",\n" +
+                    "                    \"stServiceType\": \"組長—測試\",\n" +
+                    "                    \"stServiceTypeOther\": null,\n" +
+                    "                    \"stSeniorityCode\": \"1\",\n" +
+                    "                    \"stSeniority\": \"3年以上未滿5年—測試\",\n" +
+                    "                    \"stPersonMonths\": 1,\n" +
+                    "                    \"stSalary\": 40000\n" +
+                    "                },\n" +
+                    "                {\n" +
+                    "                    \"stServiceTypeCode\": \"99999999\",\n" +
+                    "                    \"stServiceType\": \"其他\",\n" +
+                    "                    \"stServiceTypeOther\": \"工程專業人員\",\n" +
+                    "                    \"stSeniorityCode\": null,\n" +
+                    "                    \"stSeniority\": null,\n" +
+                    "                    \"stPersonMonths\": 3,\n" +
+                    "                    \"stSalary\": 60000\n" +
+                    "                }\n" +
+                    "            ],\n" +
+                    "            \"dig\": \"wHVRVViLwBF9Wjvc\"\n" +
+                    "        },\n" +
+                    "        {\n" +
+                    "            \"orgId\": \"9.99\",\n" +
+                    "            \"orgName\": \"測試機關一\",\n" +
+                    "            \"tenderCaseNo\": \"20231002ST002_1\",\n" +
+                    "            \"tenderName\": \"技術服務薪資測試8671\",\n" +
+                    "            \"tenderSq\": \"01\",\n" +
+                    "            \"uniqueKey\": 60008563,\n" +
+                    "            \"tenderWay\": \"公開招標\",\n" +
+                    "            \"awardWay\": \"最低標\",\n" +
+                    "            \"tenderProcCate\": \"勞務類\",\n" +
+                    "            \"tenderCpcName\": \"工程服務\",\n" +
+                    "            \"stServiceList\": [\n" +
+                    "                {\n" +
+                    "                    \"stServiceTypeCode\": \"1\",\n" +
+                    "                    \"stServiceType\": \"計畫主持人—測試\",\n" +
+                    "                    \"stServiceTypeOther\": null,\n" +
+                    "                    \"stSeniorityCode\": \"1\",\n" +
+                    "                    \"stSeniority\": \"3年以上未滿5年—測試\",\n" +
+                    "                    \"stPersonMonths\": 5,\n" +
+                    "                    \"stSalary\": 80000\n" +
+                    "                },\n" +
+                    "                {\n" +
+                    "                    \"stServiceTypeCode\": \"99999999\",\n" +
+                    "                    \"stServiceType\": \"其他\",\n" +
+                    "                    \"stServiceTypeOther\": \"工程專業人員\",\n" +
+                    "                    \"stSeniorityCode\": null,\n" +
+                    "                    \"stSeniority\": null,\n" +
+                    "                    \"stPersonMonths\": 1,\n" +
+                    "                    \"stSalary\": 40000\n" +
+                    "                }\n" +
+                    "            ],\n" +
+                    "            \"dig\": \"YC3jQ9v7upRO7Jo8\"\n" +
+                    "        },\n" +
+                    "        {\n" +
+                    "            \"orgId\": \"9.99\",\n" +
+                    "            \"orgName\": \"測試機關一\",\n" +
+                    "            \"tenderCaseNo\": \"20231002ST002_2\",\n" +
+                    "            \"tenderName\": \"技術服務薪資測試\",\n" +
+                    "            \"tenderSq\": \"01\",\n" +
+                    "            \"uniqueKey\": 60008564,\n" +
+                    "            \"tenderWay\": \"公開招標\",\n" +
+                    "            \"awardWay\": \"最低標\",\n" +
+                    "            \"tenderProcCate\": \"勞務類\",\n" +
+                    "            \"tenderCpcName\": \"工程服務\",\n" +
+                    "            \"stServiceList\": [\n" +
+                    "                {\n" +
+                    "                    \"stServiceTypeCode\": \"3\",\n" +
+                    "                    \"stServiceType\": \"組長—測試\",\n" +
+                    "                    \"stServiceTypeOther\": null,\n" +
+                    "                    \"stSeniorityCode\": \"1\",\n" +
+                    "                    \"stSeniority\": \"3年以上未滿5年—測試\",\n" +
+                    "                    \"stPersonMonths\": 1,\n" +
+                    "                    \"stSalary\": 40000\n" +
+                    "                },\n" +
+                    "                {\n" +
+                    "                    \"stServiceTypeCode\": \"5\",\n" +
+                    "                    \"stServiceType\": \"技師-土木工程科—測試(技師執業執照)\",\n" +
+                    "                    \"stServiceTypeOther\": null,\n" +
+                    "                    \"stSeniorityCode\": \"1\",\n" +
+                    "                    \"stSeniority\": \"3年以上未滿5年—測試\",\n" +
+                    "                    \"stPersonMonths\": 3,\n" +
+                    "                    \"stSalary\": 60000\n" +
+                    "                }\n" +
+                    "            ],\n" +
+                    "            \"dig\": \"49dVSZgazmAmZlKB\"\n" +
+                    "        },\n" +
+                    "        {\n" +
+                    "            \"orgId\": \"9.99\",\n" +
+                    "            \"orgName\": \"測試機關一\",\n" +
+                    "            \"tenderCaseNo\": \"20231002ST006_1\",\n" +
+                    "            \"tenderName\": \"技術服務薪資測試\",\n" +
+                    "            \"tenderSq\": \"01\",\n" +
+                    "            \"uniqueKey\": 60008569,\n" +
+                    "            \"tenderWay\": \"選擇性招標(個案)\",\n" +
+                    "            \"awardWay\": \"最低標\",\n" +
+                    "            \"tenderProcCate\": \"勞務類\",\n" +
+                    "            \"tenderCpcName\": \"技術檢定與分析服務\",\n" +
+                    "            \"stServiceList\": [\n" +
+                    "                {\n" +
+                    "                    \"stServiceTypeCode\": \"1\",\n" +
+                    "                    \"stServiceType\": \"計畫主持人—測試\",\n" +
+                    "                    \"stServiceTypeOther\": null,\n" +
+                    "                    \"stSeniorityCode\": \"1\",\n" +
+                    "                    \"stSeniority\": \"3年以上未滿5年—測試\",\n" +
+                    "                    \"stPersonMonths\": 1,\n" +
+                    "                    \"stSalary\": 40000\n" +
+                    "                },\n" +
+                    "                {\n" +
+                    "                    \"stServiceTypeCode\": \"5\",\n" +
+                    "                    \"stServiceType\": \"技師-土木工程科—測試(技師執業執照)\",\n" +
+                    "                    \"stServiceTypeOther\": null,\n" +
+                    "                    \"stSeniorityCode\": \"1\",\n" +
+                    "                    \"stSeniority\": \"3年以上未滿5年—測試\",\n" +
+                    "                    \"stPersonMonths\": 2,\n" +
+                    "                    \"stSalary\": 50000\n" +
+                    "                }\n" +
+                    "            ],\n" +
+                    "            \"dig\": \"yztjEY8oKkLdGjlm\"\n" +
+                    "        },\n" +
+                    "        {\n" +
+                    "            \"orgId\": \"9.99\",\n" +
+                    "            \"orgName\": \"測試機關一\",\n" +
+                    "            \"tenderCaseNo\": \"20231002ST006_2\",\n" +
+                    "            \"tenderName\": \"技術服務薪資測試\",\n" +
+                    "            \"tenderSq\": \"01\",\n" +
+                    "            \"uniqueKey\": 60008570,\n" +
+                    "            \"tenderWay\": \"選擇性招標(個案)\",\n" +
+                    "            \"awardWay\": \"最低標\",\n" +
+                    "            \"tenderProcCate\": \"勞務類\",\n" +
+                    "            \"tenderCpcName\": \"技術檢定與分析服務\",\n" +
+                    "            \"stServiceList\": [\n" +
+                    "                {\n" +
+                    "                    \"stServiceTypeCode\": \"99999999\",\n" +
+                    "                    \"stServiceType\": \"其他\",\n" +
+                    "                    \"stServiceTypeOther\": \"工程人員\",\n" +
+                    "                    \"stSeniorityCode\": null,\n" +
+                    "                    \"stSeniority\": null,\n" +
+                    "                    \"stPersonMonths\": 1,\n" +
+                    "                    \"stSalary\": 40000\n" +
+                    "                },\n" +
+                    "                {\n" +
+                    "                    \"stServiceTypeCode\": \"3\",\n" +
+                    "                    \"stServiceType\": \"組長—測試\",\n" +
+                    "                    \"stServiceTypeOther\": null,\n" +
+                    "                    \"stSeniorityCode\": \"1\",\n" +
+                    "                    \"stSeniority\": \"3年以上未滿5年—測試\",\n" +
+                    "                    \"stPersonMonths\": 2,\n" +
+                    "                    \"stSalary\": 50000\n" +
+                    "                }\n" +
+                    "            ],\n" +
+                    "            \"dig\": \"MXQXcUkWTMYLajvw\"\n" +
+                    "        },\n" +
+                    "        {\n" +
+                    "            \"orgId\": \"9.99\",\n" +
+                    "            \"orgName\": \"測試機關一\",\n" +
+                    "            \"tenderCaseNo\": \"20231002ST007_1\",\n" +
+                    "            \"tenderName\": \"技術服務薪資測試\",\n" +
+                    "            \"tenderSq\": \"00\",\n" +
+                    "            \"uniqueKey\": 60008559,\n" +
+                    "            \"tenderWay\": \"限制性招標(未經公開評選或公開徵求)\",\n" +
+                    "            \"awardWay\": \"最低標\",\n" +
+                    "            \"tenderProcCate\": \"勞務類\",\n" +
+                    "            \"tenderCpcName\": \"建築服務\",\n" +
+                    "            \"stServiceList\": [\n" +
+                    "                {\n" +
+                    "                    \"stServiceTypeCode\": \"5\",\n" +
+                    "                    \"stServiceType\": \"技師-土木工程科—測試(技師執業執照)\",\n" +
+                    "                    \"stServiceTypeOther\": null,\n" +
+                    "                    \"stSeniorityCode\": \"1\",\n" +
+                    "                    \"stSeniority\": \"3年以上未滿5年—測試\",\n" +
+                    "                    \"stPersonMonths\": 1,\n" +
+                    "                    \"stSalary\": 40000\n" +
+                    "                }\n" +
+                    "            ],\n" +
+                    "            \"dig\": \"eUmHgUoruJICQri2\"\n" +
+                    "        },\n" +
+                    "        {\n" +
+                    "            \"orgId\": \"9.99\",\n" +
+                    "            \"orgName\": \"測試機關一\",\n" +
+                    "            \"tenderCaseNo\": \"20231003ST001_2\",\n" +
+                    "            \"tenderName\": \"未到期技術服務測試\",\n" +
+                    "            \"tenderSq\": \"00\",\n" +
+                    "            \"uniqueKey\": 60008572,\n" +
+                    "            \"tenderWay\": \"限制性招標(未經公開評選或公開徵求)\",\n" +
+                    "            \"awardWay\": \"最低標\",\n" +
+                    "            \"tenderProcCate\": \"勞務類\",\n" +
+                    "            \"tenderCpcName\": \"建築服務\",\n" +
+                    "            \"stServiceList\": [],\n" +
+                    "            \"dig\": \"AXaugv0J7COuTREo\"\n" +
+                    "        }";
             return ResponseEntity.ok().body(String.format(RESPONSE_JSON,tpsAgenciesDTO.getTxnSq(),tpsAgenciesDTO.getTxnTime(), "0000", "成功", DATA));
         } else {
             return ResponseEntity.badRequest().body(String.format(RESPONSE_JSON,tpsAgenciesDTO.getTxnSq(),tpsAgenciesDTO.getTxnTime(), "E002", "參數錯誤或查詢起迄日期超過允許區間", ""));

@@ -139,9 +139,13 @@ public class BpmIsmsL414 implements Serializable {
     @Column(name = "schedule_date")
     private Timestamp scheduleDate;
 
-    @Size(max = 200)
-    @Column(name = "setting_reason", length = 200)
-    private String settingReason;
+    @Size(max = 500)
+    @Column(name = "partial_agree_reason", length = 500)
+    private String partialAgreeReason;
+
+    @Size(max = 500)
+    @Column(name = "not_agree_reason", length = 500)
+    private String notAgreeReason;
 
     @Size(max = 1)
     @Column(name = "is_external_firewall", length = 1)
@@ -299,6 +303,14 @@ public class BpmIsmsL414 implements Serializable {
         this.enableTime = enableTime;
     }
 
+    public String getWorkingTime() {
+        return workingTime;
+    }
+
+    public void setWorkingTime(String workingTime) {
+        this.workingTime = workingTime;
+    }
+
     public String getOtherEnableTime() {
         return otherEnableTime;
     }
@@ -411,12 +423,20 @@ public class BpmIsmsL414 implements Serializable {
         this.scheduleDate = scheduleDate;
     }
 
-    public String getSettingReason() {
-        return settingReason;
+    public String getPartialAgreeReason() {
+        return partialAgreeReason;
     }
 
-    public void setSettingReason(String settingReason) {
-        this.settingReason = settingReason;
+    public void setPartialAgreeReason(String partialAgreeReason) {
+        this.partialAgreeReason = partialAgreeReason;
+    }
+
+    public String getNotAgreeReason() {
+        return notAgreeReason;
+    }
+
+    public void setNotAgreeReason(String notAgreeReason) {
+        this.notAgreeReason = notAgreeReason;
     }
 
     public String getIsExternalFirewall() {
@@ -491,14 +511,6 @@ public class BpmIsmsL414 implements Serializable {
         this.createTime = createTime;
     }
 
-    public String getWorkingTime() {
-        return workingTime;
-    }
-
-    public void setWorkingTime(String workingTime) {
-        this.workingTime = workingTime;
-    }
-
     @Override
     public String toString() {
         return "BpmIsmsL414{" +
@@ -532,7 +544,8 @@ public class BpmIsmsL414 implements Serializable {
             ", instructions='" + instructions + '\'' +
             ", agreeType='" + agreeType + '\'' +
             ", scheduleDate=" + scheduleDate +
-            ", settingReason='" + settingReason + '\'' +
+            ", partialAgreeReason='" + partialAgreeReason + '\'' +
+            ", notAgreeReason='" + notAgreeReason + '\'' +
             ", isExternalFirewall='" + isExternalFirewall + '\'' +
             ", isInternalFirewall='" + isInternalFirewall + '\'' +
             ", firewallContent='" + firewallContent + '\'' +

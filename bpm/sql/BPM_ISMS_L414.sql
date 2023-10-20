@@ -29,7 +29,8 @@ create table dbo.BPM_ISMS_L414
     INSTRUCTIONS            NVARCHAR(1000) collate Chinese_Taiwan_Stroke_CS_AS,
     AGREE_TYPE              NVARCHAR(1) default '1',
     SCHEDULE_DATE           DATETIME,
-    SETTING_REASON          NVARCHAR(200) collate Chinese_Taiwan_Stroke_CS_AS,
+    PARTIAL_AGREE_REASON    NVARCHAR(500) collate Chinese_Taiwan_Stroke_CS_AS,
+    NOT_AGREE_REASON        NVARCHAR(500) collate Chinese_Taiwan_Stroke_CS_AS,
     IS_EXTERNAL_FIREWALL    NVARCHAR(1) default '0',
     IS_INTERNAL_FIREWALL    NVARCHAR(1) default '0',
     FIREWALL_CONTENT        NVARCHAR(1000) collate Chinese_Taiwan_Stroke_CS_AS,
@@ -152,8 +153,12 @@ exec sp_addextendedproperty 'MS_Description', N'預定完成日期', 'SCHEMA', '
      'SCHEDULE_DATE'
 go
 
-exec sp_addextendedproperty 'MS_Description', N'設定理由', 'SCHEMA', 'dbo', 'TABLE', 'BPM_ISMS_L414', 'COLUMN',
-     'SETTING_REASON'
+exec sp_addextendedproperty 'MS_Description', N'部分同意設定原因', 'SCHEMA', 'dbo', 'TABLE', 'BPM_ISMS_L414', 'COLUMN',
+     'PARTIAL_AGREE_REASON'
+go
+
+exec sp_addextendedproperty 'MS_Description', N'不同意設定原因', 'SCHEMA', 'dbo', 'TABLE', 'BPM_ISMS_L414', 'COLUMN',
+     'NOT_AGREE_REASON'
 go
 
 exec sp_addextendedproperty 'MS_Description', N'變更設備：是否為外部防火牆', 'SCHEMA', 'dbo', 'TABLE',

@@ -179,4 +179,35 @@ export default class NotificationService {
         callback(trigger);
       });
   }
+
+  makeModalComfirmCallback(message: string, variant: string) {
+    const bvModal = this.$root.$bvModal;
+    const h = this.$root.$createElement;
+    const pattern = /.*\n.*/;
+    const messageList = [];
+    //message裡面有換行
+    if (pattern.test(message)) {
+      const messageArr = message.split('\n');
+      messageArr.forEach(oneMessage => {
+        messageList.push(h('p', { class: ['text-left'] }, [oneMessage]));
+      });
+    } else {
+      messageList.push(h('p', { class: ['text-left'] }, [message]));
+    }
+    const messageVNode = h('div', [...messageList]);
+    bvModal
+      .msgBoxConfirm([messageVNode], {
+        headerBgVariant: variant,
+        headerTextVariant: 'light',
+        titleTag: 'h4',
+        size: 'lg',
+        title: '系統訊息',
+        headerClass: 'p-2 justify-content-center font-weight-bolder',
+        bodyClass: 'h5',
+        footerClass: 'justify-content-center',
+        okTitle: '確定',
+        cancelTitle: '取消',
+        buttonSize: 'sm',
+      })
+  }
 }

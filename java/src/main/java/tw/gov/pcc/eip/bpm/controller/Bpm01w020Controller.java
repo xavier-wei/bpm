@@ -4,10 +4,11 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.ModelAndView;
+import tw.gov.pcc.eip.bpm.utils.AESEncryptionService;
 import tw.gov.pcc.eip.bpm.utils.RefererTemp;
+import tw.gov.pcc.eip.framework.domain.UserBean;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
 import java.util.Map;
 
 @Controller
@@ -17,45 +18,54 @@ public class Bpm01w020Controller {
 
     public static final String CASE_KEY = "_bpm01w010Controller_caseData";
     private static final String MAIN_PAGE = "/bpm/Bpm01w020";//主頁
+    private final String MAPPING_PATH = "/Bpm01w020_enter.action";
+    private final UserBean userData;
+    private final AESEncryptionService aesEncryptionService;
 
-    @RequestMapping("/Bpm01w020_enter.action")
+    public Bpm01w020Controller(UserBean userData, AESEncryptionService aesEncryptionService) {
+        this.userData = userData;
+        this.aesEncryptionService = aesEncryptionService;
+    }
+
+    @RequestMapping(MAPPING_PATH)
     public ModelAndView l414(HttpServletRequest request) {
 
-        // 確認是否有無bpmLogin資訊
-        HttpSession session = request.getSession();
-        Boolean isBpmLogin =(Boolean) session.getAttribute("bpmLogin");
+        boolean isBpmLogin=Boolean.valueOf(request.getParameter("bpm"));
+        System.out.println("isBpmLogin = " + isBpmLogin);
+        String token = null;
+
+        try {
+            token = aesEncryptionService.encrypt(userData.getUserId());
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+
 
         // 無bpmLogin資訊情況
-        if (isBpmLogin == null|| !isBpmLogin) {
-            log.info("BPM表單管理:: {}導向頁面","/bpm cookies不存在，重導取得");
-            session.setAttribute("bpmLogin",true);
-            String referer = request.getHeader("referer");
-            String keyword = "/eip";
-            int index = referer.indexOf(keyword); //
-            referer = referer.replace(referer.substring(index, referer.length()), "");
+        if (!isBpmLogin) {
+            String referer = request.getRequestURL().toString();
+            String keyword = "/eip"+MAPPING_PATH;
+            referer = referer.replace(keyword, "");
             RefererTemp.refererMap.put("referer", referer);
             StringBuilder path = new StringBuilder(referer)
-                                    .append("/bpm/api/loginBpm")
-                                    .append("?referer=")
-                                    .append(referer)
-                                    .append("&path=/Bpm01w020_enter.action");
-            return new ModelAndView("redirect:"+path);
+                    .append("/bpm/api/loginBpm")
+                    .append("?referer=")
+                    .append(referer)
+                    .append("&path=/Bpm01w020_enter.action&token=").append(token);
+            return new ModelAndView("redirect:" + path);
         }
 
         // 有bpmLogin資訊情況
-        String referer=RefererTemp.refererMap.get("referer");
+        String referer = RefererTemp.refererMap.get("referer");
 
         // todo 本地開發用，未來上線記得拔掉;
         if (request.getServerPort() == 8080) {
             referer = "http://localhost:9000";
         }
 
-        log.info("BPM表單管理:: 導向{}頁面","Bpm01w010 表單申請-l414");
+        log.info("BPM表單管理:: 導向{}頁面", "Bpm01w020 表單申請-l414");
         return new ModelAndView(MAIN_PAGE).addAllObjects(Map.of("bpmPath", referer + "/bpm/l414Query"));
     }
-
-
-
 
 
 }

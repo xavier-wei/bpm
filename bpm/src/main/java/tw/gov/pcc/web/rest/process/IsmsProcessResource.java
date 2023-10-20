@@ -10,6 +10,7 @@ import org.springframework.http.*;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.server.ResponseStatusException;
 import tw.gov.pcc.domain.BpmIsmsL410;
 import tw.gov.pcc.domain.BpmIsmsServiceBeanNameEnum;
 import tw.gov.pcc.domain.SingerDecisionEnum;
@@ -20,10 +21,12 @@ import tw.gov.pcc.repository.BpmIsmsAdditionalRepository;
 import tw.gov.pcc.repository.BpmIsmsL410Repository;
 import tw.gov.pcc.service.BpmIsmsService;
 import tw.gov.pcc.service.BpmSignStatusService;
+import tw.gov.pcc.service.SubordinateTaskService;
 import tw.gov.pcc.service.dto.*;
 import tw.gov.pcc.service.mapper.BpmIsmsL410Mapper;
 import tw.gov.pcc.service.mapper.BpmSignStatusMapper;
 import tw.gov.pcc.utils.MapUtils;
+import tw.gov.pcc.utils.ParameterUtil;
 
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
@@ -41,7 +44,6 @@ public class IsmsProcessResource {
 
     private static final Logger log = LoggerFactory.getLogger(IsmsProcessResource.class);
 
-    @Value("${bpm.token}")
     private String token;
     private static final String PROCESS_INSTANCE_ID = "processInstanceId";
     private static final String TASK_ID = "taskId";
@@ -55,11 +57,12 @@ public class IsmsProcessResource {
     private final BpmSignStatusService bpmSignStatusService;
     private final BpmSignStatusMapper bpmSignStatusMapper;
     private final BpmIsmsAdditionalRepository bpmIsmsAdditionalRepository;
-
     private final BpmIsmsL410Mapper bpmIsmsL410Mapper;
     private final BpmIsmsL410Repository bpmIsmsL410Repository;
 
-    public IsmsProcessResource(ApplicationContext applicationContext, HttpSession httpSession, BpmSignStatusService bpmSignStatusService, BpmSignStatusMapper bpmSignStatusMapper, BpmIsmsAdditionalRepository bpmIsmsAdditionalRepository, BpmIsmsL410Mapper bpmIsmsL410Mapper, BpmIsmsL410Repository bpmIsmsL410Repository) {
+    private final SubordinateTaskService subordinateTaskService;
+
+    public IsmsProcessResource(ApplicationContext applicationContext, HttpSession httpSession, BpmSignStatusService bpmSignStatusService, BpmSignStatusMapper bpmSignStatusMapper, BpmIsmsAdditionalRepository bpmIsmsAdditionalRepository, BpmIsmsL410Mapper bpmIsmsL410Mapper, BpmIsmsL410Repository bpmIsmsL410Repository, SubordinateTaskService subordinateTaskService) {
         this.applicationContext = applicationContext;
         this.httpSession = httpSession;
         this.bpmSignStatusService = bpmSignStatusService;
@@ -67,6 +70,8 @@ public class IsmsProcessResource {
         this.bpmIsmsAdditionalRepository = bpmIsmsAdditionalRepository;
         this.bpmIsmsL410Mapper = bpmIsmsL410Mapper;
         this.bpmIsmsL410Repository = bpmIsmsL410Repository;
+        this.subordinateTaskService = subordinateTaskService;
+        this.token = ParameterUtil.getToken();
     }
 
     @PostMapping(path = "/start/{key}", consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
@@ -171,6 +176,8 @@ public class IsmsProcessResource {
             return;
         }
         log.warn("ProcessL414Resource.java - receiveEndEvent - 203 ::{} ", "流程發生意外終止");
+
+        throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR,"流程發生意外終止");
     }
 
 
@@ -288,6 +295,19 @@ public class IsmsProcessResource {
         return Collections.emptyList();
     }
 
+    @PostMapping("/queryProcessingTaskNumbers")
+    public Integer queryProcessingTaskNumbers(@RequestBody String id) {
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+        HttpEntity<String> requestEntity = new HttpEntity<>(id, headers);
+
+        ResponseEntity<String> exchange = restTemplate.exchange(flowableProcessUrl + "/queryProcessingTaskNumbers", HttpMethod.POST, requestEntity, String.class);
+
+        if (exchange.getStatusCodeValue() == 200) {
+            return Integer.parseInt(exchange.getBody());
+        }
+        return 0;
+    }
     @RequestMapping("/deleteProcessInstance/{processInstanceId}")
     public void deleteProcessInstance(@PathVariable String processInstanceId) {
         log.info("ProcessL414Resource.java - deleteProcessInstance - 206 :: " + processInstanceId);
@@ -299,6 +319,81 @@ public class IsmsProcessResource {
         HttpEntity<String> requestEntity = new HttpEntity<>(gson.toJson(deleteRequest), headers);
         restTemplate.exchange(flowableProcessUrl + "/deleteProcess", HttpMethod.POST, requestEntity, String.class);
 
+    }
+
+    @PostMapping("/getAllSubordinateTask")
+    public List<Map<String, Object>> getAllSubordinateTask(@Valid @RequestPart(required = false) BpmFormQueryDto bpmFormQueryDto) {
+        User user = getUserInfo();
+        String titleName = user.getTitleName();
+        if ("處長".equals(titleName)||"副處長".equals(titleName)||"主任".equals(titleName)) {
+            List<String> allSubordinate = subordinateTaskService.findAllSubordinate(user.getUserId());
+            HttpHeaders headers = new HttpHeaders();
+            headers.setContentType(MediaType.APPLICATION_JSON);
+            HttpEntity<String> requestEntity = new HttpEntity<>(gson.toJson(allSubordinate), headers);
+            ResponseEntity<String> response = restTemplate.exchange(flowableProcessUrl + "/getAllSubordinateTask", HttpMethod.POST, requestEntity, String.class);
+            if (response.getStatusCodeValue() == 200) {
+                String body = response.getBody();
+                Type listType = new TypeToken<ArrayList<TaskDTO>>() {
+                }.getType();
+                List<TaskDTO> taskDTOS = gson.fromJson(body, listType);
+                assert taskDTOS != null;
+                return taskDTOS.isEmpty() ? null :
+                    taskDTOS.stream()
+                        .map(taskDTO -> {
+                            if (taskDTO.getFormName().equals("Additional")) {
+                                BpmIsmsAdditional bpmIsmsAdditional = bpmIsmsAdditionalRepository.findByProcessInstanceId(taskDTO.getProcessInstanceId());
+                                List<Map<String, Object>> mapList = bpmIsmsAdditionalRepository.findAllByProcessInstanceId(
+                                    bpmIsmsAdditional.getMainProcessInstanceId(),
+                                    bpmFormQueryDto.getFormId(),
+                                    bpmFormQueryDto.getProcessInstanceStatus(),
+                                    bpmFormQueryDto.getUnit(),
+                                    bpmFormQueryDto.getAppName(),
+                                    bpmFormQueryDto.getDateStart(),
+                                    bpmFormQueryDto.getDateEnd()
+                                );
+
+                                if (!mapList.isEmpty()) {
+                                    Map<String, Object> map = new HashMap<>(new MapUtils().getNewMap(mapList.get(0)));
+                                    map.put(PROCESS_INSTANCE_ID, taskDTO.getProcessInstanceId());
+                                    map.put(TASK_ID, taskDTO.getTaskId());
+                                    map.put("taskName", "加簽-" + bpmIsmsAdditional.getTaskName());
+                                    String decisionByName = SingerDecisionEnum.getDecisionByName(taskDTO.getTaskName());
+                                    map.put("decisionRole", decisionByName);
+                                    map.put("additional", true);
+                                    return map;
+                                } else {
+                                    return null;
+                                }
+                            } else {
+                                List<Map<String, Object>> mapList = bpmIsmsAdditionalRepository.findAllByProcessInstanceId(
+                                    taskDTO.getProcessInstanceId(),
+                                    bpmFormQueryDto.getFormId(),
+                                    bpmFormQueryDto.getProcessInstanceStatus(),
+                                    bpmFormQueryDto.getUnit(),
+                                    bpmFormQueryDto.getAppName(),
+                                    bpmFormQueryDto.getDateStart(),
+                                    bpmFormQueryDto.getDateEnd()
+                                );
+
+                                if (!mapList.isEmpty()) {
+                                    Map<String, Object> map = new HashMap<>(new MapUtils().getNewMap(mapList.get(0)));
+                                    map.put(TASK_ID, taskDTO.getTaskId());
+                                    map.put("taskName", taskDTO.getTaskName());
+                                    String decisionByName = SingerDecisionEnum.getDecisionByName(taskDTO.getTaskName());
+                                    map.put("decisionRole", decisionByName);
+                                    map.put("additional", false);
+                                    return map;
+                                } else {
+                                    return null;
+                                }
+                            }
+
+                        })
+                        .filter(Objects::nonNull)
+                        .collect(Collectors.toList());
+            }
+        }
+        throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "權限不足");
     }
 
 

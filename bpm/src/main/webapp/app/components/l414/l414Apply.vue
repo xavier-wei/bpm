@@ -118,7 +118,7 @@
                   <i-form-group-check class="col-12" label-cols="3" content-cols="7" :label="`使用時段：`"
                                       :item="$v.enableTime">
                     <!--使用時段 : enableTime-->
-                    <b-form-radio-group v-model="$v.enableTime.$model">
+                    <b-form-radio-group v-model="$v.enableTime.$model" @change="changeEnableTime">
 
                       <b-form-radio class="col-12" value="1">
                         <div style="height: 34px">每日24小時</div>
@@ -150,7 +150,7 @@
                     :item="$v.selecteEdateType"
                   >
                     <!--啟用期間類別 : selecteEdateType-->
-                    <b-form-radio-group v-model="$v.selecteEdateType.$model">
+                    <b-form-radio-group v-model="$v.selecteEdateType.$model" @change="changeSelecteEdateType">
                       <b-form-radio value="1">
                         <!--啟用期間開始時間 : sdate 、啟用期間結束時間 : edate-->
                         <i-dual-date-picker
@@ -166,7 +166,7 @@
                         <span class="d-inline col-7">職務異動止</span>
                       </b-form-radio>
                       <b-form-radio value="3">
-                        <div class="m-1" style="height: 34px">永久使用(僅電腦機房可勾選)</div>
+                        <div class="m-1 col-12" style="height: 34px">永久使用(僅電腦機房可勾選)</div>
                       </b-form-radio>
                     </b-form-radio-group>
                   </i-form-group-check>
@@ -179,7 +179,7 @@
                     :item="$v.selecteEdateType"
                   >
                     <!--啟用期間類別 : selecteEdateType-->
-                    <b-form-radio-group v-model="$v.selecteEdateType.$model">
+                    <b-form-radio-group v-model="$v.selecteEdateType.$model" @change="changeSelecteEdateType">
                       <b-form-radio value="4">
                         <!--刪除規則時間 : delEnableDate-->
                         <b-input-group>
@@ -204,13 +204,13 @@
                 <i-form-group-check class="col-sm-5" label-cols="3" content-cols="7" :label="'來源IP ：'"
                                     :item="$v.sourceIp">
                   <!--來源IP : sourceIp-->
-                  <b-form-input v-model="$v.sourceIp.$model"/>
+                  <b-form-textarea v-model="$v.sourceIp.$model" rows="3" maxlength="2000" lazy/>
                 </i-form-group-check>
 
                 <i-form-group-check class="col-sm-7" label-cols="3" content-cols="7" :label="`目的IP ：`"
                                     :item="$v.targetIp">
                   <!--目的IP : targetIp-->
-                  <b-form-input v-model="$v.targetIp.$model"/>
+                  <b-form-textarea v-model="$v.targetIp.$model" rows="3" maxlength="2000" lazy/>
                 </i-form-group-check>
               </b-form-row>
 
@@ -274,7 +274,7 @@
                     </b-form-radio>
 
                     <!--部分同意設定原因 : partialAgreeReason-->
-                    <b-form-radio class="col-12 fixedWidth" value="2" >
+                    <b-form-radio class="col-12 fixedWidth" value="2">
                       <b-input-group>
                         <div>部分同意設定 : 原因 :　　 　</div>
                         <b-form-textarea
@@ -477,7 +477,7 @@ export default {
       otherEnableTime: '', //使用特殊時段內容
       selecteEdateType: '', //	啟用期間類別
       sdate: null, //啟用期間開始時間
-      eDate: null, //啟用期間結束時間
+      edate: null, //啟用期間結束時間
       othereEdate: '', //職務異動止說明
       delEnableDate: null, //刪除規則時間
       sourceIp: '', //來源 ip
@@ -540,12 +540,10 @@ export default {
     };
 
     async function submitForm(isSubmit) {
-
       checkValidity().then((isValid: boolean) => {
         if (isValid) {
           $bvModal.msgBoxConfirm('是否確認送出修改內容？').then((isOK: boolean) => {
             if (isOK) {
-
               form.isSubmit = isSubmit;
 
               let body = {
@@ -592,6 +590,18 @@ export default {
       handleBack({isReload: false, isNotKeepAlive: true});
     }
 
+    function changeEnableTime() {
+      form.workingTime = '';
+      form.otherEnableTime = '';
+    }
+
+    function changeSelecteEdateType() {
+      form.sdate = null;
+      form.edate = null;
+      form.othereEdate = '';
+      form.delEnableDate = null;
+    }
+
     return {
       $v,
       form,
@@ -610,6 +620,8 @@ export default {
       formStatusRef,
       bpmDeptsOptions,
       fileDataId,
+      changeEnableTime,
+      changeSelecteEdateType,
     }
   }
 }
@@ -637,7 +649,7 @@ export default {
   align-items: flex-start;
 }
 
-.fixedWidth .custom-control-label{
+.fixedWidth .custom-control-label {
   width: 100%;
 }
 

@@ -43,7 +43,7 @@ export function checkboxToMapAndForm(data: any, form: any, variables: any): any 
   }
 
 
-  if (data.checkbox === '1' && data.systemApplyName === '會議室管理系統') {
+  if (data.checkbox === '1' && data.systemApplyName === '會議室管理系統管理權限') {
 
     form.isMeetingRoom = '1'
     form.meetingRoom = data.sys
@@ -57,7 +57,7 @@ export function checkboxToMapAndForm(data: any, form: any, variables: any): any 
     mapData.set('isMeetingRoom', data)
     let arrData = Array.from(mapData);
     variables.push(Object.fromEntries(arrData))
-  } else if (data.systemApplyName === '會議室管理系統') {
+  } else if (data.systemApplyName === '會議室管理系統管理權限') {
     let mapData = new Map<string, object>();
     mapData.set('isMeetingRoom', null)
     let arrData = Array.from(mapData);
@@ -116,18 +116,17 @@ export function checkboxToMapAndForm(data: any, form: any, variables: any): any 
     variables.push(Object.fromEntries(arrData))
   }
 
-  if (data.checkbox === '1' && data.systemApplyName === '全球資訊網&會內資訊網') {
-    if (form.webSiteList.length >= 1) {
-
-      form.webSiteList.forEach(i => {
-        if (i === '0') {
-          form.isPccWww = '1'
-        } else if (i === '1') {
-          form.isPccHome = '1'
-        }
-      })
-
+  if (data.checkbox === '1' && data.systemApplyName === '全球資訊網 (https://www.pcc.gov.tw)') {
+    // if (form.webSiteList.length >= 1) {
+      // form.webSiteList.forEach(i => {
+      //   if (i === '0') {
+      //
+      //   } else if (i === '1') {
+      //     form.isPccHome = '1'
+      //   }
+      // })
       form.isWebSite = '1'
+      form.isPccWww = '1'
       form.webSite = data.sys
       form.isUnitAdm = data.isUnitAdm
       form.isUnitDataMgr = data.isUnitDataMgr
@@ -141,9 +140,8 @@ export function checkboxToMapAndForm(data: any, form: any, variables: any): any 
       mapData.set('isWebSite', data)
       let arrData = Array.from(mapData);
       variables.push(Object.fromEntries(arrData))
-    }
-
-  } else if (data.systemApplyName === '全球資訊網&會內資訊網') {
+    // }
+  } else if (data.systemApplyName === '全球資訊網 (https://www.pcc.gov.tw)') {
     let mapData = new Map<string, object>();
     mapData.set('isWebSite', null)
     let arrData = Array.from(mapData);
@@ -173,27 +171,27 @@ export function checkboxToMapAndForm(data: any, form: any, variables: any): any 
   }
 
 
-  if (data.checkbox === '1' && data.systemApplyName === '技師與工程技術顧問公司管理資訊系統') {
-
-    form.isEngAndPrjInfoSys = '1'
-    form.engAndPrjInfoSysAccount = data.systemApplyInput
-    form.engAndPrjInfoSys = data.sys
-    form.engAndPrjInfoSysChange = data.sysChange
-    form.engAndPrjInfoSysAdmUnit = data.admUnit
-    form.engAndPrjInfoSysStatus = data.admStatus
-    form.engAndPrjInfoSysEnableDate = data.admEnableDate
-    form.engAndPrjInfoSysAdmName = data.admName
-
-    let mapData = new Map<string, object>();
-    mapData.set('isEngAndPrjInfoSys', data)
-    let arrData = Array.from(mapData);
-    variables.push(Object.fromEntries(arrData))
-  } else if (data.systemApplyName === '技師與工程技術顧問公司管理資訊系統') {
-    let mapData = new Map<string, object>();
-    mapData.set('isEngAndPrjInfoSys', null)
-    let arrData = Array.from(mapData);
-    variables.push(Object.fromEntries(arrData))
-  }
+  // if (data.checkbox === '1' && data.systemApplyName === '技師與工程技術顧問公司管理資訊系統') {
+  //
+  //   form.isEngAndPrjInfoSys = '1'
+  //   form.engAndPrjInfoSysAccount = data.systemApplyInput
+  //   form.engAndPrjInfoSys = data.sys
+  //   form.engAndPrjInfoSysChange = data.sysChange
+  //   form.engAndPrjInfoSysAdmUnit = data.admUnit
+  //   form.engAndPrjInfoSysStatus = data.admStatus
+  //   form.engAndPrjInfoSysEnableDate = data.admEnableDate
+  //   form.engAndPrjInfoSysAdmName = data.admName
+  //
+  //   let mapData = new Map<string, object>();
+  //   mapData.set('isEngAndPrjInfoSys', data)
+  //   let arrData = Array.from(mapData);
+  //   variables.push(Object.fromEntries(arrData))
+  // } else if (data.systemApplyName === '技師與工程技術顧問公司管理資訊系統') {
+  //   let mapData = new Map<string, object>();
+  //   mapData.set('isEngAndPrjInfoSys', null)
+  //   let arrData = Array.from(mapData);
+  //   variables.push(Object.fromEntries(arrData))
+  // }
 
   if (data.checkbox === '1' && data.systemApplyName === '公共工程案件審議資訊系統') {
 

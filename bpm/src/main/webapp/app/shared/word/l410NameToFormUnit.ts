@@ -6,7 +6,7 @@ export function l410NameToFormUnit(name: any, form: any, init: any): any {
   } else if (name === 'AD帳號') {
     form.adSysAdmUnit = init;
     return form;
-  } else if (name === '會議室管理系統') {
+  } else if (name === '會議室管理系統管理權限') {
     form.meetingRoomAdmUnit = init;
     return form;
   } else if (name === '公文管理系統角色') {
@@ -21,10 +21,12 @@ export function l410NameToFormUnit(name: any, form: any, init: any): any {
   } else if (name === '政府電子採購網') {
     form.pccPisAdmUnit = init;
     return form;
-  } else if (name === '技師與工程技術顧問公司管理資訊系統') {
-    form.engAndPrjInfoSysAdmUnit = init;
-    return form;
-  } else if (name === '公共工程案件審議資訊系統') {
+  }
+  // else if (name === '技師與工程技術顧問公司管理資訊系統') {
+  //   form.engAndPrjInfoSysAdmUnit = init;
+  //   return form;
+  // }
+  else if (name === '公共工程案件審議資訊系統') {
     form.revSysAdmUnit = init;
     return form;
   } else if (name === '災後復建工程經費審議及執行資訊系統') {

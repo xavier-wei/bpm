@@ -149,7 +149,7 @@
                 >
 
                   <!--申請事由-->
-                  <b-form-radio-group  v-model="$v.appReason.$model"
+                  <b-form-radio-group v-model="$v.appReason.$model"
                                       :disabled="userData.userId !== $v.filEmpid.$model || userData.userId !== $v.appEmpid.$model  || formStatusRef === FormStatusEnum.READONLY">
                     <b-form-radio value="1">
                       <div style="height: 34px;">新進</div>
@@ -179,22 +179,22 @@
                   label-align-md="right"
                 >
 
-                    <!--生效日期checkbox : isEnableDate-->
-                    <b-form-checkbox v-model="$v.isEnableDate.$model" value="1" unchecked-value="0"
-                                     :disabled="userData.userId !== $v.filEmpid.$model || userData.userId !== $v.appEmpid.$model  || formStatusRef === FormStatusEnum.READONLY">
-                      生效日期 :
-                    </b-form-checkbox>
-                    <!--生效日期 : enableDate-->
-                    <i-date-picker
-                      placeholder="yyy/MM/dd"
-                      v-model="$v.enableDate.$model"
-                      :disabled="$v.isEnableDate.$model !== '1' || userData.userId !== $v.filEmpid.$model || userData.userId !== $v.appEmpid.$model  ||  formStatusRef === FormStatusEnum.READONLY"
-                      lazy
-                      trim
-                    ></i-date-picker>
-                    <div class="text-danger text1"
-                         v-if="$v.enableDate.$model === null && $v.isEnableDate.$model === '1'">請輸入值
-                    </div>
+                  <!--生效日期checkbox : isEnableDate-->
+                  <b-form-checkbox v-model="$v.isEnableDate.$model" value="1" unchecked-value="0"
+                                   :disabled="userData.userId !== $v.filEmpid.$model || userData.userId !== $v.appEmpid.$model  || formStatusRef === FormStatusEnum.READONLY">
+                    生效日期 :
+                  </b-form-checkbox>
+                  <!--生效日期 : enableDate-->
+                  <i-date-picker
+                    placeholder="yyy/MM/dd"
+                    v-model="$v.enableDate.$model"
+                    :disabled="$v.isEnableDate.$model !== '1' || userData.userId !== $v.filEmpid.$model || userData.userId !== $v.appEmpid.$model  ||  formStatusRef === FormStatusEnum.READONLY"
+                    lazy
+                    trim
+                  ></i-date-picker>
+                  <div class="text-danger text1"
+                       v-if="$v.enableDate.$model === null && $v.isEnableDate.$model === '1'">請輸入值
+                  </div>
 
                 </b-form-group>
                 <b-form-group
@@ -499,7 +499,7 @@
 
             </div>
 
-            <!--簽核狀態模組-->
+            <!--簽核流程資訊模組-->
             <signerList :formId="formIdProp" :formStatus="formStatusRef" :opinion="opinion"
                         :processInstanceStatus="processInstanceStatusRef"></signerList>
 
@@ -514,14 +514,22 @@
                           @click="submitForm('1')"
                           v-show="formStatusRef === FormStatusEnum.MODIFY">送出
                 </b-button>
-                <b-button class="ml-2" style="background-color: #17a2b8; color: white"
-                          @click="reviewStart('同意',true)"
-                          v-show="formStatusRef === FormStatusEnum.VERIFY">同意
-                </b-button>
-                <b-button class="ml-2" style="background-color: #17a2b8; color: white"
-                          @click="reviewStart('不同意',true)"
-                          v-show="formStatusRef === FormStatusEnum.VERIFY">不同意
-                </b-button>
+
+                <div v-if="userData.titleName === '科長' ||
+                              userData.titleName === '處長' && formStatusRef === FormStatusEnum.VERIFY">
+                  <b-button class="ml-2" style="background-color: #17a2b8; color: white"
+                            @click="reviewStart('同意',true)">同意
+                  </b-button>
+                  <b-button class="ml-2" style="background-color: #17a2b8; color: white"
+                            @click="reviewStart('不同意',true)">不同意
+                  </b-button>
+                </div>
+                <div v-else-if="formStatusRef === FormStatusEnum.VERIFY">
+                  <b-button class="ml-2" style="background-color: #17a2b8; color: white"
+                            @click="reviewStart('審核',true)">送出
+                  </b-button>
+                </div>
+
                 <b-button class="ml-2" style="background-color: #17a2b8" @click="showModel()"
                           v-show="formStatusRef === FormStatusEnum.VERIFY && isSignatureRef">加簽
                 </b-button>
@@ -569,7 +577,6 @@ import IFormGroupCheck from '@/shared/form/i-form-group-check.vue';
 import {required} from '@/shared/validators';
 import IDatePicker from '@/shared/i-date-picker/i-date-picker.vue';
 import {useBvModal} from '@/shared/modal';
-import {systemToName} from "@/shared/i-system/system-to-name"
 import {handleBack, navigateByNameAndParams} from "@/router/router";
 import axios from "axios";
 import {notificationErrorHandler} from "@/shared/http/http-response-helper";
@@ -892,7 +899,7 @@ export default {
       ],
       webSite: [
         {value: '0', text: '全球資訊網 (https://www.pcc.gov.tw)'},
-        {value: '1', text: '會內資訊網站請先至home.pcc.gov.tw「帳號登入」點選「註冊」，填寫個人基本資料'},
+        // {value: '1', text: '會內資訊網站請先至home.pcc.gov.tw「帳號登入」點選「註冊」，填寫個人基本資料'},
       ],
     });
 
@@ -921,7 +928,7 @@ export default {
         .get(`/eip/bpm-l410-apply-manages`)
         .then(({data}) => {
           data.forEach(i => {
-            formToCheckbox(i, formData)
+            formToCheckbox(i, formData,taskDataRef.value.taskName.replace('加簽-', ''),userData.userName)
           })
           table.data = data
           if (formData.processInstanceId !== null && formData.processInstanceId !== undefined) {
@@ -1095,6 +1102,8 @@ export default {
           return '1';
         case '補件':
           return '2';
+        case '審核':
+          return '1';
         default:
           return '';
       }
@@ -1152,7 +1161,6 @@ export default {
       changeTabIndex,
       activeTab,
       table,
-      systemToName,
       filePathData,
       appendixData,
       formStatusRef,

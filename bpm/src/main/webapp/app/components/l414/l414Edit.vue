@@ -51,21 +51,21 @@
                   >
                     <!--填表人員工編號 : filEmpid-->
                     <b-form-input v-model="$v.filEmpid.$model"
-                                  :disabled="formStatusRef === FormStatusEnum.READONLY || userData.userName !== $v.appName.$model"/>
+                                  :disabled="formStatusRef === FormStatusEnum.READONLY  || isEdit"/>
                   </i-form-group-check>
 
                   <i-form-group-check class="col-sm-4" label-cols="4" content-cols="8" :label="`姓名：`"
                                       :item="$v.filName">
                     <!--填表人姓名 :　filName-->
                     <b-form-input v-model="$v.filName.$model"
-                                  :disabled="formStatusRef === FormStatusEnum.READONLY || userData.userName !== $v.appName.$model"/>
+                                  :disabled="formStatusRef === FormStatusEnum.READONLY  || isEdit "/>
                   </i-form-group-check>
 
                   <i-form-group-check class="col-sm-3" label-cols="3" content-cols="7" :label="`單位：`"
                                       :item="$v.filUnit">
                     <!--填表人單位名稱　: filUnit-->
                     <b-form-select v-model="$v.filUnit.$model" :options="bpmDeptsOptions"
-                                   :disabled="formStatusRef === FormStatusEnum.READONLY || userData.userName !== $v.appName.$model">
+                                   :disabled="formStatusRef === FormStatusEnum.READONLY  || isEdit">
                       <template #first>
                         <b-form-select-option value="" disabled>請選擇</b-form-select-option>
                       </template>
@@ -83,21 +83,21 @@
                   >
                     <!--申請人員工編號 : appEmpid-->
                     <b-form-input v-model="$v.appEmpid.$model"
-                                  :disabled="formStatusRef === FormStatusEnum.READONLY || userData.userName !== $v.appName.$model"/>
+                                  :disabled="formStatusRef === FormStatusEnum.READONLY  || isEdit"/>
                   </i-form-group-check>
 
                   <i-form-group-check class="col-sm-4" label-cols="4" content-cols="8" :label="`姓名：`"
                                       :item="$v.appName">
                     <!--申請人姓名 :　appName-->
                     <b-form-input v-model="$v.appName.$model"
-                                  :disabled="formStatusRef === FormStatusEnum.READONLY || userData.userName !== $v.appName.$model"/>
+                                  :disabled="formStatusRef === FormStatusEnum.READONLY  || isEdit"/>
                   </i-form-group-check>
 
                   <i-form-group-check class="col-sm-3" label-cols="3" content-cols="7" :label="`單位：`"
                                       :item="$v.appUnit">
                     <!--申請人單位名稱 : appUnit-->
                     <b-form-select v-model="$v.appUnit.$model" :options="bpmDeptsOptions"
-                                   :disabled="formStatusRef === FormStatusEnum.READONLY || userData.userName !== $v.appName.$model">
+                                   :disabled="formStatusRef === FormStatusEnum.READONLY  || isEdit">
                       <template #first>
                         <b-form-select-option value="" disabled>請選擇</b-form-select-option>
                       </template>
@@ -118,7 +118,7 @@
                               { value: '1', text: '啟用' },
                               { value: '0', text: '停用' },
                             ]"
-                        :disabled="formStatusRef === FormStatusEnum.READONLY || userData.userName !== $v.appName.$model"
+                        :disabled="formStatusRef === FormStatusEnum.READONLY  || isEdit"
                       />
                     </i-form-group-check>
 
@@ -126,7 +126,8 @@
                                         :item="$v.enableTime">
                       <!--使用時段 : enableTime-->
                       <b-form-radio-group v-model="$v.enableTime.$model"
-                                          :disabled="formStatusRef === FormStatusEnum.READONLY || userData.userName !== $v.appName.$model">
+                                          @change="changeEnableTime"
+                                          :disabled="formStatusRef === FormStatusEnum.READONLY  || isEdit">
                         <b-form-radio value="1">
                           <div style="height: 34px">每日24小時</div>
                         </b-form-radio>
@@ -135,7 +136,7 @@
                           <div style="height: 34px">每周一至周五 :</div>
                           <!--每周一至周五使用時段內容 : workingTime-->
                           <b-form-input
-                            :disabled="$v.enableTime.$model !== '2' && formStatusRef === FormStatusEnum.READONLY || userData.userName !== $v.appName.$model"
+                            :disabled="$v.enableTime.$model !== '2' && formStatusRef === FormStatusEnum.READONLY  || isEdit"
                             v-model="$v.workingTime.$model"/>
                         </b-form-radio>
 
@@ -143,7 +144,7 @@
                           <div style="height: 34px">特殊時段 :</div>
                           <!--使用特殊時段內容 : otherEnableTime-->
                           <b-form-input
-                            :disabled="$v.enableTime.$model !== '3' && formStatusRef === FormStatusEnum.READONLY || userData.userName !== $v.appName.$model"
+                            :disabled="$v.enableTime.$model !== '3' && formStatusRef === FormStatusEnum.READONLY  || isEdit"
                             v-model="$v.otherEnableTime.$model"/>
                         </b-form-radio>
                       </b-form-radio-group>
@@ -159,7 +160,8 @@
                     >
                       <!--啟用期間類別 : selecteEdateType-->
                       <b-form-radio-group v-model="$v.selecteEdateType.$model"
-                                          :disabled="formStatusRef === FormStatusEnum.READONLY || userData.userName !== $v.appName.$model">
+                                          @change="changeSelecteEdateType"
+                                          :disabled="formStatusRef === FormStatusEnum.READONLY  || isEdit">
                         <b-form-radio value="1">
                           <!--啟用期間開始時間 : sdate 、啟用期間結束時間 : edate-->
                           <i-dual-date-picker
@@ -171,11 +173,11 @@
                         <b-form-radio value="2">
                           <!--職務異動止說明 : othereEdate-->
                           <b-form-input class="d-inline col-5" v-model="$v.othereEdate.$model"
-                                        :disabled="$v.selecteEdateType.$model !== '2' && formStatusRef === FormStatusEnum.READONLY || userData.userName !== $v.appName.$model"/>
+                                        :disabled="$v.selecteEdateType.$model !== '2' && formStatusRef === FormStatusEnum.READONLY  || isEdit"/>
                           <span class="d-inline col-7">職務異動止</span>
                         </b-form-radio>
                         <b-form-radio value="3">
-                          <div class="m-1" style="height: 34px">永久使用(僅電腦機房可勾選)</div>
+                          <div class="m-1 col-12" style="height: 34px">永久使用(僅電腦機房可勾選)</div>
                         </b-form-radio>
                       </b-form-radio-group>
                     </i-form-group-check>
@@ -189,12 +191,13 @@
                     >
                       <!--啟用期間類別 : selecteEdateType-->
                       <b-form-radio-group v-model="$v.selecteEdateType.$model"
-                                          :disabled="formStatusRef === FormStatusEnum.READONLY || userData.userName !== $v.appName.$model">
+                                          @change="changeSelecteEdateType"
+                                          :disabled="formStatusRef === FormStatusEnum.READONLY  || isEdit">
                         <b-form-radio value="4">
                           <!--刪除規則時間 : delEnableDate-->
                           <b-input-group>
                             <i-date-picker
-                              :disabled="$v.selecteEdateType.$model !== '4' && formStatusRef === FormStatusEnum.READONLY || userData.userName !== $v.appName.$model"
+                              :disabled="$v.selecteEdateType.$model !== '4' && formStatusRef === FormStatusEnum.READONLY  || isEdit"
                               placeholder="yyy/MM/dd"
                               v-model="$v.delEnableDate.$model"
                               :state="validateState($v.delEnableDate)"
@@ -214,15 +217,16 @@
                   <i-form-group-check class="col-sm-5" label-cols="3" content-cols="7" :label="'來源IP：'"
                                       :item="$v.sourceIp">
                     <!--來源IP : sourceIp-->
-                    <b-form-input v-model="$v.sourceIp.$model"
-                                  :disabled="formStatusRef === FormStatusEnum.READONLY || userData.userName !== $v.appName.$model"/>
+                    <b-form-textarea v-model="$v.sourceIp.$model" rows="3" maxlength="2000" lazy
+                                     :disabled="formStatusRef === FormStatusEnum.READONLY  || isEdit"/>
                   </i-form-group-check>
 
                   <i-form-group-check class="col-sm-7" label-cols="3" content-cols="7" :label="`目的IP：`"
                                       :item="$v.targetIp">
                     <!--目的IP : targetIp-->
-                    <b-form-input v-model="$v.targetIp.$model"
-                                  :disabled="formStatusRef === FormStatusEnum.READONLY || userData.userName !== $v.appName.$model"/>
+                    <b-form-textarea v-model="$v.targetIp.$model" rows="3" maxlength="2000" lazy
+                                     :disabled="formStatusRef === FormStatusEnum.READONLY  || isEdit"/>
+
                   </i-form-group-check>
                 </b-form-row>
 
@@ -231,19 +235,19 @@
                                       :item="$v.port">
                     <!--使用協定(port) : port-->
                     <b-form-input v-model="$v.port.$model"
-                                  :disabled="formStatusRef === FormStatusEnum.READONLY || userData.userName !== $v.appName.$model"/>
+                                  :disabled="formStatusRef === FormStatusEnum.READONLY  || isEdit"/>
                   </i-form-group-check>
 
                   <i-form-group-check class="col-sm-7" label-cols="3" content-cols="7" :label="`傳輸模式 ：`">
                     <b-input-group>
                       <!--傳輸模式是否為tcp: isTcp-->
                       <b-form-checkbox class="col-6" v-model="$v.isTcp.$model" value="Y" unchecked-value="N"
-                                       :disabled="formStatusRef === FormStatusEnum.READONLY || userData.userName !== $v.appName.$model">
+                                       :disabled="formStatusRef === FormStatusEnum.READONLY  || isEdit">
                         TCP
                       </b-form-checkbox>
                       <!--傳輸模式是否為udp: isUdp-->
                       <b-form-checkbox class="col-6" v-model="$v.isUdp.$model" value="Y" unchecked-value="N"
-                                       :disabled="formStatusRef === FormStatusEnum.READONLY || userData.userName !== $v.appName.$model">
+                                       :disabled="formStatusRef === FormStatusEnum.READONLY  || isEdit">
                         UDP
                       </b-form-checkbox>
                     </b-input-group>
@@ -260,7 +264,7 @@
                   >
                     <!--用途說明 : instructions-->
                     <b-form-textarea v-model="$v.instructions.$model" rows="3" maxlength="2000" trim lazy
-                                     :disabled="formStatusRef === FormStatusEnum.READONLY || userData.userName !== $v.appName.$model"/>
+                                     :disabled="formStatusRef === FormStatusEnum.READONLY || isEdit"/>
                   </i-form-group-check>
                 </b-form-row>
               </div>
@@ -276,6 +280,7 @@
                   <!--處理意見 : agreeType-->
                   <i-form-group-check class="col-sm-12" label-cols="1" content-cols="11" :label="'處理意見：'">
                     <b-form-radio-group v-model="$v.agreeType.$model"
+                                        @change="changeAgreeType"
                                         :disabled="!configRoleToBpmIpt(userData.userRole) || formStatusRef === FormStatusEnum.READONLY">
                       <!--預定完成日期 : scheduleDate-->
                       <b-form-radio class="col-12" value="1">
@@ -391,7 +396,7 @@
               </div>
 
 
-              <!--簽核狀態模組-->
+              <!--簽核流程資訊模組-->
               <signerList :formId="formIdProp" :formStatus="formStatusRef" :opinion="opinion"
                           :processInstanceStatus="processInstanceStatusRef"></signerList>
 
@@ -407,16 +412,22 @@
                             @click="submitForm('1')"
                             v-show="formStatusRef === FormStatusEnum.MODIFY">送出
                   </b-button>
-                  <b-button class="ml-2" style="background-color: #17a2b8; color: white"
-                            variant="outline-secondary"
-                            @click="reviewStart('同意',true)"
-                            v-show="formStatusRef === FormStatusEnum.VERIFY">同意
-                  </b-button>
-                  <b-button class="ml-2" style="background-color: #17a2b8; color: white"
-                            variant="outline-secondary"
-                            @click="reviewStart('不同意',true)"
-                            v-show="formStatusRef === FormStatusEnum.VERIFY">不同意
-                  </b-button>
+
+                  <div v-if="userData.titleName === '科長' ||
+                              userData.titleName === '處長' && formStatusRef === FormStatusEnum.VERIFY">
+                    <b-button class="ml-2" style="background-color: #17a2b8; color: white"
+                              @click="reviewStart('同意',true)">同意
+                    </b-button>
+                    <b-button class="ml-2" style="background-color: #17a2b8; color: white"
+                              @click="reviewStart('不同意',true)">不同意
+                    </b-button>
+                  </div>
+                  <div v-else-if="formStatusRef === FormStatusEnum.VERIFY">
+                    <b-button class="ml-2" style="background-color: #17a2b8; color: white"
+                              @click="reviewStart('審核',true)">送出
+                    </b-button>
+                  </div>
+
                   <b-button class="ml-2" style="background-color: #17a2b8" @click="showModel()"
                             v-show="formStatusRef === FormStatusEnum.VERIFY && isSignatureRef">加簽
                   </b-button>
@@ -523,6 +534,7 @@ export default {
     const tabIndex = ref(0);
     const dual1 = ref(null);
     const dual2 = ref(null);
+    const isEdit = ref(false);
     const notificationService = useNotification();
     const $bvModal = useBvModal();
     const signatureBmodel = ref(null);
@@ -645,8 +657,11 @@ export default {
           //用現在表單編號直接給file模組去自動取值
           fileDataId.fileId = data.formId;
 
+          //判斷暫存還是以送出申請(畫面開啟編輯 需要登入者跟申請者一致 且isSubmit是0)
+          isEdit.value = userData.userName !== data.appName || data.isSubmit !== '0'
+
           Object.assign(formDefault, data);
-          Object.assign(form, formDefault)
+          Object.assign(form, formDefault);
           reset();
         })
         .catch(notificationErrorHandler(notificationService));
@@ -709,9 +724,13 @@ export default {
     async function reviewStart(item, i) {
 
       let isOK = true;
-
       if (i === true) {
-        isOK = await $bvModal.msgBoxConfirm('是否送出' + item + '?');
+        //判斷審核腳色是否為資推或是機房的，正常都是走下面，資推或是機房的才會用上面去判斷(資推或是機房的審核要看畫面的form.agreeType去決定是否同意)
+        if (configRoleToBpmIpt(userData.userRole) || configRoleToBpmCrOperator(userData.userRole)) {
+          isOK = await $bvModal.msgBoxConfirm('是否送出' + getAgreeType(form.agreeType) + '?');
+        } else {
+          isOK = await $bvModal.msgBoxConfirm('是否送出' + item + '?');
+        }
       }
 
       if (isOK) {
@@ -719,7 +738,14 @@ export default {
 
         if (taskDataRef.value.decisionRole !== null) {
           let mapData = new Map<string, string>();
-          mapData.set(taskDataRef.value.decisionRole, getItem(item))
+
+          //判斷審核腳色是否為資推或是機房的，正常都是走下面，資推或是機房的才會用上面去判斷(資推或是機房的審核要看畫面的form.agreeType去決定是否同意)
+          if (configRoleToBpmIpt(userData.userRole) || configRoleToBpmCrOperator(userData.userRole)) {
+            mapData.set(taskDataRef.value.decisionRole, getItem(getAgreeType(form.agreeType)))
+          } else {
+            mapData.set(taskDataRef.value.decisionRole, getItem(item))
+          }
+
           let arrData = Array.from(mapData);
           variables = Object.fromEntries(arrData)
         }
@@ -750,6 +776,10 @@ export default {
           ipt: configRoleToBpmIpt(userData.userRole) || configRoleToBpmCrOperator(userData.userRole),
         };
 
+        if (configRoleToBpmIpt(userData.userRole) && form.agreeType === '') {
+          return notificationService.makeModalComfirmCallback('未選擇處理意見', 'danger');
+        }
+
         axios
           .post(`/process/completeTask/${form.formId}`, body)
           .then(({data}) => {
@@ -778,10 +808,49 @@ export default {
           return '1';
         case '補件':
           return '2';
+        case '審核':
+          return '1';
+        case '同意設定':
+          return '1';
+        case '部分同意設定':
+          return '1';
+        case '不同意設定':
+          return '0';
         default:
           return '';
       }
     };
+
+    const getAgreeType = (item: string) => {
+      switch (item) {
+        case '1':
+          return '同意設定';
+        case '2':
+          return '部分同意設定';
+        case '3':
+          return '不同意設定';
+        default:
+          return '';
+      }
+    };
+
+    function changeEnableTime() {
+      form.workingTime = '';
+      form.otherEnableTime = '';
+    }
+
+    function changeSelecteEdateType() {
+      form.sdate = null;
+      form.edate = null;
+      form.othereEdate = '';
+      form.delEnableDate = null;
+    }
+
+    function changeAgreeType() {
+      form.scheduleDate = null;
+      form.partialAgreeReason = '';
+      form.notAgreeReason = '';
+    }
 
     const activeTab = (index: number) => {
       return tabIndex.value === index;
@@ -830,6 +899,10 @@ export default {
       processInstanceStatusRef,
       configRoleToBpmCrOperator,
       configRoleToBpmIpt,
+      changeEnableTime,
+      changeSelecteEdateType,
+      changeAgreeType,
+      isEdit
     }
   }
 }
@@ -852,7 +925,7 @@ export default {
   border-top-right-radius: 10px;
 }
 
-.fixedWidth .custom-control-label{
+.fixedWidth .custom-control-label {
   width: 100%;
 }
 

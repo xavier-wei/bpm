@@ -25,5 +25,4 @@ server:
     include-message: always
 
 bpm:
-  token: QAZWSXEDCRffvYTHnujkljkfyffd14651456uhweuhuijwdijoichchuhqiheciqhoieh
   url: http://localhost:9986

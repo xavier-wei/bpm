@@ -312,13 +312,13 @@ export default defineComponent({
     });
 
     const toQuery = () => {
-      table.data = [];
+      table.data = undefined;
       const params = new FormData();
       params.append('bpmFormQueryDto', new Blob([JSON.stringify(form)], {type: 'application/json'}));
       axios.post(`/process/notify/queryTask`, params).then(({data}) => {
         queryStatus.value = true;
+        table.data = [];
         if (data.length <= 0) return;
-
 
         // 最新的日期到最舊的日期排序
         table.data = data.sort((a, b) => {

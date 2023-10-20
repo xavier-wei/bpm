@@ -24,15 +24,15 @@ export function changeDirections(user: any): string {
         case 'OdSysSigner':
             return '公文管理系統';
         case 'MeetingRoomSigner':
-            return '會議室管理系統';
+            return '會議室管理系統管理權限';
         case 'EmailSysSigner':
             return '電子郵件帳號';
         case 'WebSiteSigner':
-            return '全球資訊網&會內資訊網';
+            return '全球資訊網';
         case 'PccPisSigner':
             return '政府電子採購網';
-        case 'EngAndPrjInfoSysSigner':
-            return '技師與工程技術顧問公司管理資訊系統';
+        // case 'EngAndPrjInfoSysSigner':
+        //     return '技師與工程技術顧問公司管理資訊系統';
         case 'RevSysSigner':
             return '公共工程案件審議資訊系統';
         case 'BidSysSigner':

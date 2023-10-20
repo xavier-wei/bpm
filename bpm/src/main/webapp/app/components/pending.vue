@@ -81,6 +81,7 @@
       </b-form-row>
 
       <div class="text-center pt-5">
+        <b-button class="ml-2" style="background-color: #17a2b8" @click="toSubordinateQuery()" v-show="superiorFilter(userData.titleName)">下屬查詢</b-button>
         <b-button class="ml-2" style="background-color: #17a2b8" @click="toQuery()">查詢</b-button>
         <b-button class="ml-2" style="background-color: #17a2b8" @click="reset()">清除</b-button>
       </div>
@@ -100,7 +101,7 @@
     >
 
       <template #cell(action)="row">
-        <b-button class="ml-1" v-if="userData.userName === row.item.appName" style="background-color: #17a2b8"
+        <b-button class="ml-1" v-if="userData.userName === row.item.appName && row.item.isSubmit === '0'" style="background-color: #17a2b8"
                   @click="toEdit(row.item,'0')">編輯
         </b-button>
         <b-button class="ml-1" v-else style="background-color: #17a2b8"
@@ -124,8 +125,9 @@ import {useNotification} from "@/shared/notification";
 import {newformatDate} from "@/shared/date/minguo-calendar-utils";
 import {changeSubject} from "@/shared/word/change-word-utils";
 import {configRoleToBpmIpt} from "@/shared/word/configRole";
-import {useGetters} from "@u3u/vue-hooks";
+import {dayjs, useGetters} from "@u3u/vue-hooks";
 import {navigateByNameAndParams} from "@/router/router";
+import {superiorFilter} from "@/shared/word/superiorFilter";
 
 
 export default defineComponent({
@@ -237,14 +239,39 @@ export default defineComponent({
     });
 
     const toQuery = () => {
-      table.data = [];
+      table.data = undefined;
       const params = new FormData();
       params.append('bpmFormQueryDto', new Blob([JSON.stringify(form)], {type: 'application/json'}));
       params.append('isNotify', new Blob([JSON.stringify(false)], {type: 'application/json'}));
       axios.post(`/process/queryTask`, params).then(({data}) => {
         queryStatus.value = true;
+        table.data = [];
         if (data.length <= 0) return;
+        console.log('data',data)
 
+        table.data = data.slice(0, data.length);
+
+        //過濾table.data所有物件 要把畫面要顯示的值都先塞進table.data內 不然iTable內的b-modal會沒有值
+        table.data.forEach(i => {
+          i.subject = changeSubject(i, true)
+          i.filAndApp = (i.appEmpid === i.filEmpid) ? i.appName : i.appName + '/' + i.filName
+        });
+
+        table.totalItems = data.length;
+      })
+        .catch(notificationErrorHandler(notificationService));
+    };
+
+    const toSubordinateQuery = () => {
+      table.data = undefined;
+
+      const params = new FormData();
+      params.append('bpmFormQueryDto', new Blob([JSON.stringify(form)], {type: 'application/json'}));
+      params.append('isNotify', new Blob([JSON.stringify(false)], {type: 'application/json'}));
+      axios.post(`/process/getAllSubordinateTask`, params).then(({data}) => {
+        queryStatus.value = true;
+        table.data = [];
+        if (data.length <= 0) return;
 
         table.data = data.slice(0, data.length);
 
@@ -305,6 +332,8 @@ export default defineComponent({
       toEdit,
       queryStatus,
       userData,
+      toSubordinateQuery,
+      superiorFilter,
     };
   },
 });

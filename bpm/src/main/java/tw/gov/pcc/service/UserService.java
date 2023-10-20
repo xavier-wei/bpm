@@ -9,6 +9,7 @@ import tw.gov.pcc.repository.UserRepository;
 import tw.gov.pcc.repository.UserRoleRepository;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -28,10 +29,11 @@ public class UserService {
 
     public User getUserInfo(String userId) {
         User user = userRepository.findByUserId(userId);
-        Cpape05m cpape05m = cpape05mRepository.findByPecard(userId);
-        if(cpape05m!= null) {
-            user.setTitleName(cpape05m.getTitle());
+        Optional<Cpape05m> cpape05m = cpape05mRepository.findByPecard(userId);
+        if (!(cpape05m.orElse(null) ==null)) {
+            user.setTitleName(cpape05m.get().getTitle());
         }
+
         List<UserRole> userRoles = userRoleRepository.findAllByUserId(userId);
         if (userRoles != null && !userRoles.isEmpty()) {
             List<String> roles= userRoles.stream().map(UserRole::getRoleId).collect(Collectors.toList());
