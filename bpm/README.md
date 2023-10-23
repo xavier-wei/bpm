@@ -20,6 +20,10 @@ npm start
 
 Move-Item target\bpm.war -Destination "C:\wildfly-2\standalone\deployments"
 Remove-Item "C:\wildfly-2\standalone\deployments\bpm.war"
-mvn clean package -P prod,no-liquibase
+## 打包到202
+mvn  package -P prod,no-liquibase
+
+## 打包到工程會正式區
+mvn  package -P prod_dr,no-liquibase
 ```
 
