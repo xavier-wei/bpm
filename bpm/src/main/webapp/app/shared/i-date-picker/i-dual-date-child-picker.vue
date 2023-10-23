@@ -109,7 +109,8 @@ export default {
       const offset = new Date().getTimezoneOffset();
       if (value) {
         const date1 = new Date(value);
-        date.value = new Date(date1.getFullYear(), date1.getMonth(), date1.getDate(), new Date().getHours(), new Date().getMinutes(), new Date().getSeconds(), new Date().getMilliseconds());
+        // date.value = new Date(date1.getFullYear(), date1.getMonth(), date1.getDate(), new Date().getHours(), new Date().getMinutes(), new Date().getSeconds(), new Date().getMilliseconds());
+        date.value = new Date(date1.getFullYear(), date1.getMonth(), date1.getDate(), 0, 0, 0, 0)
         // date.value = new Date(date.value.getTime() - offset * 60 * 1000);
       }
     }
