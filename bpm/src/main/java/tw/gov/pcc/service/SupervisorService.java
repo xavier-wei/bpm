@@ -7,15 +7,22 @@ import org.springframework.web.server.ResponseStatusException;
 import tw.gov.pcc.domain.User;
 import tw.gov.pcc.repository.SupervisorRepository;
 
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 @Service
 @Slf4j
 public class SupervisorService {
-    public static final String PECARD = "PECARD";
-    public static final String NO_SIGN = "NO_SIGN";
+    private static final String NO_SIGN = "NO_SIGN";
+    private static final String POSNAME = "POSNAME";
+    private static final String F1_POSNAME = "F1_POSNAME";
+    private static final String F2_POSNAME = "F2_POSNAME";
+    private static final String F1_ACCOUNT = "F1_ACCOUNT";
+    private static final String F2_ACCOUNT = "F2_ACCOUNT";
+    private static final String F3_ACCOUNT = "F3_ACCOUNT";
+    private static final String DECISION = "decision";
+    private static final String SECTION_CHIEF = "sectionChief";
+    private static final String DIRECTOR = "director";
     private final SupervisorRepository supervisorRepository;
 
     public SupervisorService(SupervisorRepository supervisorRepository) {
@@ -23,7 +30,7 @@ public class SupervisorService {
     }
 
 
-    public void setSupervisor(HashMap<String, Object> variables, String appEmpId, User user) {
+    public void setSupervisor(Map<String, Object> variables, String appEmpId, User user) {
         List<Map<String, Object>> maps = supervisorRepository.executeQuery(user.getOrgId(), appEmpId);
         // 三種情況 POSNAME為科員、科長、處長(或更高階主管情形)
         Map<String, Object> positionData;
@@ -33,28 +40,32 @@ public class SupervisorService {
             log.error("{}", "申請人員未建檔");
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "申請人員未建檔");
         }
+        log.info("申請者職稱：{}", positionData.get(POSNAME));
 
         String sectionChief;
         String director;
-        if ("科員".equals(positionData.get("POSNAME"))) {
-            if (positionData.get("F1_ACCOUNT") == null) {
-                sectionChief = NO_SIGN;
-                variables.put("sectionChiefDecision", "1");
-            } else {
-                sectionChief = (String) positionData.get("F1_ACCOUNT");
-            }
-            director = (String) positionData.get("F2_ACCOUNT");
-            variables.put("sectionChief", sectionChief);
-            variables.put("director", director);
-        } else if ("科長".equals(positionData.get("POSNAME"))) {
+
+        if ("處長".equals(positionData.get(F1_POSNAME)) || "主任".equals(positionData.get(F1_POSNAME))|| "副處長".equals(positionData.get(F1_POSNAME))) {
+            // 查到第一層長官為以上三種，表示自己為科長級或副處長級或室級成員
+
             sectionChief = NO_SIGN;
-            director = (String) positionData.get("F1_ACCOUNT");
-        } else {
+            director = "副處長".equals(positionData.get(F1_POSNAME)) ? (String) positionData.get(F2_ACCOUNT) : (String) positionData.get(F1_ACCOUNT);
+
+        }else if ("科長".equals(positionData.get(F1_POSNAME)) || null == positionData.get(F1_POSNAME)) {
+            sectionChief = (null == positionData.get(F1_POSNAME)) ? NO_SIGN : (String) positionData.get(F1_ACCOUNT);
+            director = (String) (("副處長".equals(positionData.get(F2_POSNAME))) ? positionData.get(F3_ACCOUNT) : positionData.get(F2_ACCOUNT));
+
+        }else {
             sectionChief = NO_SIGN;
             director = NO_SIGN;
         }
-        variables.put("sectionChief", sectionChief);
-        variables.put("director", director);
+
+        variables.put(SECTION_CHIEF, sectionChief);
+        variables.put(DIRECTOR, director);
+        if(NO_SIGN.equals(sectionChief)) variables.put(SECTION_CHIEF + DECISION, "1");
+        if(NO_SIGN.equals(director)) variables.put(DIRECTOR + DECISION, "1");
     }
+
+
 
 }
