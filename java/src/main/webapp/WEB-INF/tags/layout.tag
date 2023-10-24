@@ -111,7 +111,7 @@
 						</div>
 					</a>
 				</div>
-                <div class="col-md-2 top_3 bpm_title_status">
+                <div class="col-md-3 top_3 bpm_title_status">
                     <a href="<c:url value='/Bpm01w030_enter.action' />">
                         <img src="./images/top_icon3.png" alt="" class="d-inline-block align-middle">
                         <div class="d-inline-block align-middle text-center">
