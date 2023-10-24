@@ -42,7 +42,7 @@ public class Bpm01w040Controller {
             String referer = request.getRequestURL().toString();
             String keyword = "/eip"+MAPPING_PATH;
             referer = referer.replace(keyword, "");
-            RefererTemp.refererMap.put("referer", referer);
+            RefererTemp.REFERER_MAP.put("referer", referer);
             StringBuilder path = new StringBuilder(referer)
                     .append("/bpm/api/loginBpm")
                     .append("?referer=")
@@ -53,7 +53,7 @@ public class Bpm01w040Controller {
         }
 
         // 有bpmLogin資訊情況
-        String referer=RefererTemp.refererMap.get("referer");
+        String referer=RefererTemp.REFERER_MAP.get("referer");
 
         // todo 本地開發用，未來上線記得拔掉;
         if (request.getServerPort() == 8080) {

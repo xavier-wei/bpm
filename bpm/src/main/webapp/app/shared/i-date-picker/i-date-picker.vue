@@ -36,7 +36,7 @@ import $ from 'jquery';
 
 export default {
   name: 'i-date-picker',
-  components: { DatePicker },
+  components: {DatePicker},
   props: {
     lang: {
       required: false,
@@ -127,9 +127,13 @@ export default {
     function handleTimeZoneOffset(value) {
       const offset = new Date().getTimezoneOffset();
       if (value) {
-        if (isTypeYear.value && new Date(value).getFullYear() < 1912)
+        if (isTypeYear.value && new Date(value).getFullYear() < 1912) {
           date.value = new Date(new Date('1912-01-01').getTime() - offset * 60 * 1000);
-        else date.value = new Date(date.value.getTime() - offset * 60 * 1000);
+        } else {
+          const date1 = new Date(value);
+          // date.value = new Date(date.value.getTime() - offset * 60 * 1000);
+          date.value = new Date(date1.getFullYear(), date1.getMonth(), date1.getDate(), 0, 0, 0, 0)
+        }
       }
     }
 

@@ -17,6 +17,7 @@ import tw.gov.pcc.domain.SingerDecisionEnum;
 import tw.gov.pcc.domain.User;
 import tw.gov.pcc.domain.entity.BpmIsmsAdditional;
 import tw.gov.pcc.domain.entity.BpmSignStatus;
+import tw.gov.pcc.eip.impl.EipcodeDaoImpl;
 import tw.gov.pcc.repository.BpmIsmsAdditionalRepository;
 import tw.gov.pcc.repository.BpmIsmsL410Repository;
 import tw.gov.pcc.service.BpmIsmsService;
@@ -26,8 +27,8 @@ import tw.gov.pcc.service.dto.*;
 import tw.gov.pcc.service.mapper.BpmIsmsL410Mapper;
 import tw.gov.pcc.service.mapper.BpmSignStatusMapper;
 import tw.gov.pcc.utils.MapUtils;
-import tw.gov.pcc.utils.ParameterUtil;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
@@ -44,7 +45,7 @@ public class IsmsProcessResource {
 
     private static final Logger log = LoggerFactory.getLogger(IsmsProcessResource.class);
 
-    private String token;
+    private final String token;
     private static final String PROCESS_INSTANCE_ID = "processInstanceId";
     private static final String TASK_ID = "taskId";
     private final ApplicationContext applicationContext;
@@ -62,7 +63,7 @@ public class IsmsProcessResource {
 
     private final SubordinateTaskService subordinateTaskService;
 
-    public IsmsProcessResource(ApplicationContext applicationContext, HttpSession httpSession, BpmSignStatusService bpmSignStatusService, BpmSignStatusMapper bpmSignStatusMapper, BpmIsmsAdditionalRepository bpmIsmsAdditionalRepository, BpmIsmsL410Mapper bpmIsmsL410Mapper, BpmIsmsL410Repository bpmIsmsL410Repository, SubordinateTaskService subordinateTaskService) {
+    public IsmsProcessResource(ApplicationContext applicationContext, HttpSession httpSession, BpmSignStatusService bpmSignStatusService, BpmSignStatusMapper bpmSignStatusMapper, BpmIsmsAdditionalRepository bpmIsmsAdditionalRepository, BpmIsmsL410Mapper bpmIsmsL410Mapper, BpmIsmsL410Repository bpmIsmsL410Repository, SubordinateTaskService subordinateTaskService, EipcodeDaoImpl eipcodeDao) {
         this.applicationContext = applicationContext;
         this.httpSession = httpSession;
         this.bpmSignStatusService = bpmSignStatusService;
@@ -71,7 +72,7 @@ public class IsmsProcessResource {
         this.bpmIsmsL410Mapper = bpmIsmsL410Mapper;
         this.bpmIsmsL410Repository = bpmIsmsL410Repository;
         this.subordinateTaskService = subordinateTaskService;
-        this.token = ParameterUtil.getToken();
+        this.token = eipcodeDao.findByCodeKindOrderByScodeno("BPM_TOKEN").get(0).getCodename();
     }
 
     @PostMapping(path = "/start/{key}", consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
@@ -167,9 +168,9 @@ public class IsmsProcessResource {
     }
 
     @PutMapping("/receiveEndEvent")
-    public void receiveEndEvent(@RequestBody EndEventDTO endEventDTO) {
+    public void receiveEndEvent(@RequestBody EndEventDTO endEventDTO, HttpServletRequest request) {
         log.info("ProcessL414Resource.java - receiveEndEvent - 196 :: " + endEventDTO.getProcessInstanceId());
-        if (token.equals(endEventDTO.getToken())) {
+        if (token.equals(request.getHeader("flowableToken"))) {
             BpmIsmsService service = (BpmIsmsService) applicationContext.getBean(Objects.requireNonNull(BpmIsmsServiceBeanNameEnum.getServiceBeanNameByKey(endEventDTO.getFormName())));
             service.endForm(endEventDTO);
 

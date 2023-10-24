@@ -32,18 +32,7 @@ spring:
     livereload:
       enabled: false
   datasource:
-    type: com.zaxxer.hikari.HikariDataSource
-    url: jdbc:sqlserver://192.168.57.201:9981;databaseName=eip;encrypt=true;trustServerCertificate=true
-    username: eip
-    password: iisi@12345
-    hikari:
-      poolName: Hikari
-      auto-commit: true
-      data-source-properties:
-        cachePrepStmts: true
-        prepStmtCacheSize: 250
-        prepStmtCacheSqlLimit: 2048
-        useServerPrepStmts: true
+    jndi-name: java:jboss/datasources/pwcDS
   jpa:
   # Replace by 'prod, faker' to add the faker context and have sample data loaded in production
   liquibase:
@@ -55,6 +44,8 @@ spring:
     password:
   thymeleaf:
     cache: true
+
+
 server:
   port: 8080
   shutdown: graceful # see https://docs.spring.io/spring-boot/docs/current/reference/html/spring-boot-features.html#boot-features-graceful-shutdown
@@ -106,4 +97,4 @@ jhipster:
 
 # application:
 flowable:
-  url: http://localhost:9973/process
+  url: http://192.168.2.91:9973/process

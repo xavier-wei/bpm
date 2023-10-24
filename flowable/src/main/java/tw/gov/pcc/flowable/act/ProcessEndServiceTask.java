@@ -10,7 +10,6 @@ import org.springframework.web.client.RestTemplate;
 import tw.gov.pcc.flowable.config.BpmSetting;
 import tw.gov.pcc.flowable.domain.ProcessEnum;
 import tw.gov.pcc.flowable.service.dto.EndEventDTO;
-import tw.gov.pcc.flowable.utils.TokenUtil;
 
 public class ProcessEndServiceTask implements JavaDelegate {
     private final Logger log = LoggerFactory.getLogger(ProcessEndServiceTask.class);
@@ -19,12 +18,12 @@ public class ProcessEndServiceTask implements JavaDelegate {
     public void execute(DelegateExecution execution) {
         // get processDefinitionKey
         String processDefinitionKey = execution.getProcessDefinitionId().split(":")[0];
-
-        EndEventDTO endEventDTO = new EndEventDTO(execution.getProcessInstanceId(), TokenUtil.token, ProcessEnum.getFormNameByProcessKey(processDefinitionKey),"1");
+log.info("token: {}",BpmSetting.token);
+        EndEventDTO endEventDTO = new EndEventDTO(execution.getProcessInstanceId(), BpmSetting.token, ProcessEnum.getFormNameByProcessKey(processDefinitionKey),"1");
 
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
-        headers.set("flowableToken", TokenUtil.token);
+        headers.set("flowableToken", BpmSetting.token);
         Gson gson=new Gson();
         HttpEntity<String> requestEntity = new HttpEntity<>(gson.toJson(endEventDTO), headers);
         RestTemplate restTemplate = new RestTemplate();

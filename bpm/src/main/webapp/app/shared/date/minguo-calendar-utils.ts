@@ -270,30 +270,38 @@ export function parseStringDate(date, isCh = false): string {
 }
 
 
-//bpm時間轉換器，
+//bpm時間轉換器 12小時制
 export function newformatDate(value: Ref<Date> | Date | null, delimiter?: string): string {
-    const colon = ':'
-    const date: Date | null = unwrap(value);
-    if (date) {
-        const year =
-            date.getFullYear() < 1911
-                ? '-' + Math.abs(date.getFullYear() - 1911).toString()
-                : (date.getFullYear() - 1911).toString().padStart(3, '0');
-        const month = (date.getMonth() + 1).toString().padStart(2, '0');
-        const day = date.getDate().toString().padStart(2, '0');
+  const colon = ':'
+  const date: Date | null = unwrap(value);
+  if (date) {
+    const year =
+      date.getFullYear() < 1911
+        ? '-' + Math.abs(date.getFullYear() - 1911).toString()
+        : (date.getFullYear() - 1911).toString().padStart(3, '0');
+    const month = (date.getMonth() + 1).toString().padStart(2, '0');
+    const day = date.getDate().toString().padStart(2, '0');
 
-        const hours = date.getHours();
-        const minutes = date.getMinutes().toString().padStart(2, '0');
-        const seconds = date.getSeconds().toString().padStart(2, '0');
-        const timeValue = "" + ((hours >= 12) ? "下午" : "上午")
+    let hours = date.getHours();
+    const minutes = date.getMinutes().toString().padStart(2, '0');
+    const seconds = date.getSeconds().toString().padStart(2, '0');
+    const timeValue = hours >= 12 ? '下午' : '上午';
 
-        if (delimiter) {
-            return `${year}${delimiter}${month}${delimiter}${day}` + ' ' + `${timeValue}` + ' ' + `${hours.toString().padStart(2, '0')}${colon}${minutes}${colon}${seconds}`;
-        }
-        return `${year}${month}${day}`;
+    if (hours > 12) {
+      hours -= 12;
     }
-    return '';
+    if (hours === 0) {
+      hours = 12;
+    }
+
+    if (delimiter) {
+      return `${year}${delimiter}${month}${delimiter}${day}` + ' ' + `${timeValue}` + ' ' + `${hours.toString().padStart(2, '0')}${colon}${minutes}${colon}${seconds}`;
+    }
+    return `${year}${month}${day}`;
+  }
+  return '';
 }
+
 
 
 
