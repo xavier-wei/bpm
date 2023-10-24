@@ -1,7 +1,7 @@
 spring:
   datasource:
     type: com.zaxxer.hikari.HikariDataSource
-    url: jdbc:sqlserver://192.168.57.201:9981;databaseName=eip;encrypt=true;trustServerCertificate=true
+    url: jdbc:sqlserver://192.168.3.91;databaseName=eip;encrypt=true;trustServerCertificate=true
     #    url: jdbc:sqlserver://localhost:1433;database=eip;encrypt=false
     username: eip
     #    username: sa
@@ -17,7 +17,6 @@ spring:
         useServerPrepStmts: true
       connection-timeout: 30000
       maximum-pool-size: 10
-    driver-class-name: com.microsoft.sqlserver.jdbc.SQLServerDriver
 flowable:
   database-schema-update: true
 server:
@@ -26,4 +25,4 @@ server:
     include-message: always
 
 bpm:
-  url: http://localhost:9986
+  url: http://192.168.2.91
