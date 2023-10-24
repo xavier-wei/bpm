@@ -2,7 +2,7 @@
 <Configuration status="ERROR">
     <Properties>
         <Property name="fileName">/apdata/aplog/eip_eip_${hostName}.log</Property>
-        <Property name="jndiName">java:comp/env/jdbc/eipDS</Property>
+        <Property name="jndiName">java:jboss/datasources/eipDS</Property>
     </Properties>
     <Appenders>
         <Console name="A1" target="SYSTEM_OUT">

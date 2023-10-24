@@ -26,4 +26,4 @@ server:
     include-message: always
 
 bpm:
-  url: http://localhost:9986
+  url: http://localhost:8080

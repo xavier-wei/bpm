@@ -5,6 +5,7 @@ public class ParameterUtil {
 
     private static String aesKey = null;
 
+    private static String bpmCipher = null;
     private ParameterUtil() {
     }
 
@@ -14,10 +15,18 @@ public class ParameterUtil {
     public static String getAesKey() {
         return aesKey;
     }
+    public static String getBpmCipher() {
+        return bpmCipher;
+    }
     public static void setToken(String tOKEN) {
         token = tOKEN;
     }
+
     public static void setAesKey(String aESKey) {
         aesKey = aESKey;
+    }
+
+    public static void setBpmCipher(String bpmCipher) {
+        ParameterUtil.bpmCipher = bpmCipher;
     }
 }
