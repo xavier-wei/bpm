@@ -398,16 +398,16 @@
 					return;
 				}
 				
+				if(($("#starH").val()== $("#endH").val()) && ($("#starM").val()==$("#endM").val())){
+					showAlert('核定時間起訖不可相同');
+					return;
+				}
+				
 	        	var data = {};
 				data["starH"] = $("#starH").val();
 				data["starM"] = $("#starM").val();
 				data["endH"] = $("#endH").val();
 				data["endM"] = $("#endM").val();
-				
-				console.log("1."+$("#starH").val());
-				console.log("2."+$("#starM").val());
-				console.log("3."+$("#endH").val());
-				console.log("4."+$("#endM").val());
 				
 				var url = '<c:url value='/Eip07w040_getTime.action' />';
 				$.ajax({

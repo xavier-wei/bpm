@@ -1000,10 +1000,12 @@
                 return;
             startYear=1912;
             startMonth=0;
+            endYear=2111;
+            endMonth=11;
             // //為EIP設定邊界避免破表
             if(year < 1){
                 year = 1912;
-            }else if(year < 200){
+            }else if(year < 1912){
                 year += 1911;
             }
             

@@ -5,12 +5,10 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.util.List;
-
 @Data
 @Builder
 public class Eip0aw010Case {
-    private List<ApiResult> apiResultList;
+    private ApiResult apiResult;
     private String interval;
 
 

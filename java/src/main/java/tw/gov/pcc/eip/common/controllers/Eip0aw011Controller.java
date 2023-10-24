@@ -10,21 +10,21 @@ import tw.gov.pcc.eip.common.cases.Eip0aw010Case;
 import tw.gov.pcc.eip.services.Eip0aw010Service;
 
 /**
- * 讀取 TITLE 介接差勤
+ * 讀取 TITLE 介接公文
  *
  * @author swho
  */
 @Controller
 @Slf4j
 @AllArgsConstructor
-public class Eip0aw010Controller {
+public class Eip0aw011Controller {
 
     private final Eip0aw010Service eip0aw010Service;
 
-    @RequestMapping(value = "/Common_getEip0aw010Case.action")
+    @RequestMapping(value = "/Common_getEip0aw011Case.action")
     @ResponseBody
     public Eip0aw010Case getEip0aw010Case() {
-        return eip0aw010Service.getEip0aw010Case();
+        return eip0aw010Service.getEip0aw011Case();
     }
 
 }

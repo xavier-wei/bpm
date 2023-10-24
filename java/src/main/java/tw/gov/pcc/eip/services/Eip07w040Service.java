@@ -152,6 +152,9 @@ public class Eip07w040Service {
 		caseData.setStarH(carBookingDetailData.getUsing_time_s().substring(0,2));
 		caseData.setStarM(carBookingDetailData.getUsing_time_s().substring(2,4));
 		
+		caseData.setEndH(carBookingDetailData.getUsing_time_e().substring(0,2));
+		caseData.setEndM(carBookingDetailData.getUsing_time_e().substring(2,4));
+		
 		if("eip07w040x".equals(enterpage)) {
 			List<CarBase> carList = carBaseDao.getAllData();//取得所有非首長&&carstatus=1的車輛
 			List<CarBase>carnoList = carList.stream().filter(e -> "N".equals(e.getBoss_mk()) && "1".equals(e.getCarstatus())).collect(Collectors.toList());

@@ -1,8 +1,5 @@
 <jboss-deployment-structure>
     <deployment>
-        <dependencies>
-            <module name="com.mssql"/>
-        </dependencies>
         <exclusions>
             <module name='org.slf4j'/>
             <module name='org.slf4j.impl'/>

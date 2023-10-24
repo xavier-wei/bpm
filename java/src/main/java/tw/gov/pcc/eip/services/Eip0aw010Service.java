@@ -18,7 +18,10 @@ import tw.gov.pcc.eip.util.BeanUtility;
 import tw.gov.pcc.eip.util.ExceptionUtility;
 import tw.gov.pcc.eip.util.ObjectUtility;
 
-import java.util.*;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 /**
@@ -56,32 +59,27 @@ public class Eip0aw010Service {
         eip0aw050Service.updateAllTitleFromView_cpape05m();
     }
 
-    public Eip0aw010Case getEip0aw010Case() {
-        if (Optional.ofNullable(userData)
-                .map(UserBean::getUserId)
-                .isEmpty()) {
-            return null;
-        }
-        List<Eip0aw010Case.ApiResult> result = new ArrayList<>();
-        //第一個一定是差勤
-        result.add(getIrtSql());
-
-        result.add(doApi(getSys_api(String.valueOf(2))));
-
+    public Eip0aw010Case getEmptyEip0aw010Case(String index) {
+        Eip0aw010Case.ApiResult apiResult = Eip0aw010Case.ApiResult.builder().cnt(StringUtils.EMPTY).click_url(eipcodeDao.findByCodeKindCodeNo("SYS_API", index + "_CLICK_URL").map(Eipcode::getCodename).orElse(StringUtils.EMPTY)).build();
         return ObjectUtility.normalizeObject(Eip0aw010Case.builder()
-                .apiResultList(result)
+                .apiResult(apiResult)
                 .interval(eipcodeDao.findByCodeKindCodeNo("SYS_API", "INTERVAL")
                         .map(Eipcode::getCodename)
                         .orElse("60"))
                 .build());
     }
 
+    public Eip0aw010Case getEip0aw010Case() {
+        Eip0aw010Case eip0aw010Case = getEmptyEip0aw010Case("1");
+        Eip0aw010Case.ApiResult apiResult = getIrtSql();
+        eip0aw010Case.getApiResult().setCnt(apiResult.getCnt());
+        return eip0aw010Case;
+    }
+
     private Eip0aw010Case.ApiResult getIrtSql() {
         String url = StringUtils.EMPTY;
         try {
-            url = eipcodeDao.findByCodeKindCodeNo("SYS_API", "1_CLICK_URL").map(Eipcode::getCodename).orElse(StringUtils.EMPTY);
             return Eip0aw010Case.ApiResult.builder()
-                    .click_url(url)
                     .cnt(viewFlowDao.selectCountByNext_card_id(View_flow.builder().next_card_id(userData.getUserId()).build()).toString()).build();
         } catch (Exception e) {
             log.error("取得差勤資料錯誤{}。", ExceptionUtility.getStackTrace(e));
@@ -89,10 +87,21 @@ public class Eip0aw010Service {
         return Eip0aw010Case.ApiResult.builder().cnt("0").click_url(url).build();
     }
 
-    private Eip0aw010Case.ApiParams getSys_api(String apiNumber) {
+    public Eip0aw010Case getEip0aw011Case() {
+        Eip0aw010Case eip0aw010Case = getEmptyEip0aw010Case("2");
+        Eip0aw010Case.ApiResult apiResult = getDocApi();
+        eip0aw010Case.getApiResult().setCnt(apiResult.getCnt());
+        return eip0aw010Case;
+    }
+
+    private Eip0aw010Case.ApiResult getDocApi() {
+        return doApi(getApiParams("2"));
+    }
+
+    private Eip0aw010Case.ApiParams getApiParams(String index) {
         Eip0aw010Case.ApiParams apiParam = null;
         try {
-            List<Eipcode> list = eipcodeDao.findByCodekindScodekindOrderByCodeno("SYS_API", apiNumber);
+            List<Eipcode> list = eipcodeDao.findByCodekindScodekindOrderByCodeno("SYS_API", index);
             Map<String, Eipcode> map = list.stream()
                     .collect(Collectors.toMap(x -> StringUtils.substringAfter(x.getCodeno(), "_"), x -> x));
             if (!map.isEmpty()) {

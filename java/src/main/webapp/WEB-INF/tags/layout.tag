@@ -89,28 +89,28 @@
                         </div>
                     </a>
                 </div>
-                <div class="col-md-2 top_3 title_status">
-                    <a href="" target="_blank" style="text-decoration:none;"
-                       class="title_05">
-                        <img src="./images/top_icon4.png" alt="" class="d-inline-block align-middle">
-                        <div class="d-inline-block align-middle text-center">
-                            <div class="title_01">待處理公文</div>
-                            <span class="title_02"></span>
-                            <span class="title_03">件</span>
-                        </div>
-                    </a>
-                </div>
-                <div class="col-md-2 top_3 title_status">
-                    <a href="" target="_blank" style="text-decoration:none;"
-                       class="title_05">
-                        <img src="./images/top_icon1.png" alt="" class="d-inline-block align-middle">
-                        <div class="d-inline-block align-middle text-center">
-                            <div class="title_01">待簽核件數</div>
-                            <span class="title_02"></span>
-                            <span class="title_03">件</span>
-                        </div>
-                    </a>
-                </div>
+				<div id="eip0aw011Case" class="col-md-3 top_3 title_status">
+					<a href="${eip0aw011Case.apiResult.click_url}" target="_blank" style="text-decoration:none;"
+					   class="title_05">
+						<img src="./images/top_icon4.png" alt="" class="d-inline-block align-middle">
+						<div class="d-inline-block align-middle text-center">
+							<div class="title_01">待處理公文</div>
+							<span class="title_02">${eip0aw011Case.apiResult.cnt}</span>
+							<span class="title_03">件</span>
+						</div>
+					</a>
+				</div>
+				<div id="eip0aw010Case" class="col-md-3 top_3 title_status">
+					<a href="${eip0aw010Case.apiResult.click_url}" target="_blank" style="text-decoration:none;"
+					   class="title_05">
+						<img src="./images/top_icon1.png" alt="" class="d-inline-block align-middle">
+						<div class="d-inline-block align-middle text-center">
+							<div class="title_01">待簽核件數</div>
+							<span class="title_02">${eip0aw010Case.apiResult.cnt}</span>
+							<span class="title_03">件</span>
+						</div>
+					</a>
+				</div>
                 <div class="col-md-2 top_3 bpm_title_status">
                     <a href="<c:url value='/Bpm01w030_enter.action' />">
                         <img src="./images/top_icon1.png" alt="" class="d-inline-block align-middle">
@@ -296,39 +296,42 @@
         $('input:checkbox:enabled[data-checkall]').on('click', checkall);
 
 
-        reloadTitleStatus();
+        reloadEip0aw010Case();
+        reloadEip0aw011Case();
     });
 
-    function reloadTitleStatus() {
-        let interval = 60;
-        $.ajax({
-            url: '<c:url value="/Common_getEip0aw010Case.action"/>',
-            type: "POST",
-            dataType: "json",
-            cache: false,
-            data: {'p': new Date().getTime()},
-            contentType: "application/json",
-            success: function (data) {
-                let $titleStatus = $('#title_status .title_status');
-                let t02 = $titleStatus.find('.title_02').get().reverse();
-                let t05 = $titleStatus.find('.title_05').get().reverse();
-                $(data.apiResultList).each((i, x) => {
-                    $(t02[i]).text(x.cnt);
-                    $(t05[i]).prop('href', x.click_url);
-                });
-                interval = data.interval;
-            },
-            error: function (xhr, ajaxOptions, thrownError) {
-                console.log(xhr.status + " " + thrownError);
-            },
-            complete: function (xhr, sts) {
-                if (!$.isNumeric(interval) || interval < 10) {
-                    interval = 10;
-                }
-                setTimeout(reloadTitleStatus, interval * 1000);
-            }
-        });
-    }
+	 function reloadEip0aw010Case() {
+		reloadCase($('#eip0aw010Case'),'<c:url value="/Common_getEip0aw010Case.action"/>');
+	}
+	
+	function reloadEip0aw011Case() {
+		reloadCase($('#eip0aw011Case'),'<c:url value="/Common_getEip0aw011Case.action"/>');
+	}
+
+	function reloadCase(obj, url) {
+		let interval = '<c:out value="${eip0aw010Case.interval}"/>';
+		$.ajax({
+			url: url,
+			type: "POST",
+			dataType: "json",
+			cache: false,
+			data: {'p':new Date().getTime()},
+			contentType: "application/json",
+			success: function (data) {
+				$(obj).find('.title_02').text(data.apiResult.cnt);
+			},
+			error: function (xhr, ajaxOptions, thrownError) {
+				console.log(xhr.status + " " + thrownError);
+			},
+			complete: function (xhr, sts) {
+				if (!$.isNumeric(interval) || interval < 10) {
+					interval = 10;
+				}
+				setTimeout(() => reloadCase(obj, url), interval * 1000);
+			}
+		});
+	}
+   
     getPendingBpm()
     function getPendingBpm() {
         // $('#bpm_pending').text(10);
