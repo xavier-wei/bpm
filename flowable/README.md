@@ -2,9 +2,9 @@
 
 ```bash
 ## 工程會
-mvn clean package -Prod
+mvn clean package -P prod_dr
 
 ## 202
-mvn clean package -Pdev
+mvn clean package -P prod
 
 ```

@@ -113,7 +113,7 @@
                 </div>
                 <div class="col-md-2 top_3 bpm_title_status">
                     <a href="<c:url value='/Bpm01w030_enter.action' />">
-                        <img src="./images/top_icon1.png" alt="" class="d-inline-block align-middle">
+                        <img src="./images/top_icon3.png" alt="" class="d-inline-block align-middle">
                         <div class="d-inline-block align-middle text-center">
                             <div class="bpm_title_01">待處理表單</div>
                             <span class="bpm_title_02" id="bpm_pending"></span>

@@ -156,5 +156,11 @@
                 <flowable.profiles.active>prod</flowable.profiles.active>
             </properties>
         </profile>
+        <profile>
+            <id>prod_dr</id>
+            <properties>
+                <flowable.profiles.active>prod_dr</flowable.profiles.active>
+            </properties>
+        </profile>
     </profiles>
 </project>

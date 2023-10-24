@@ -32,7 +32,7 @@ spring:
     livereload:
       enabled: false
   datasource:
-    jndi-name: java:jboss/datasources/pwcDS
+    jndi-name: java:jboss/datasources/eipDS
   jpa:
   # Replace by 'prod, faker' to add the faker context and have sample data loaded in production
   liquibase:
