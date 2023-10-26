@@ -168,7 +168,7 @@
     </tags:form-row>
     <tags:form-row>
         <form:label cssClass="col-form-label" path="file"></form:label>
-        <form:input path="file" type="file"/>
+        <tags:file name="file" id="file"/>
     </tags:form-row>
     </div>
     <tags:form-note>

@@ -73,7 +73,7 @@
             	</div>
             </tags:form-row>
             <tags:form-row>
-            	<div class="col-4 col-md-4">
+            	<div class="col-4 col-md-7 col-sm-8">
             		<tags:text-item label="申請用車時間">
 	            		<func:timeconvert value="${caseData.carBookingDetailData.using_time_s}"/>~
 	            		<func:timeconvert value="${caseData.carBookingDetailData.using_time_e}"/>
@@ -82,12 +82,13 @@
             	<div class="col-4 col-md-4">
             		<tags:text-item label="申請用車區間">
 		            	<c:out value="${caseData.carBookingDetailData.usingStr}"/>
+		            	<form:hidden path="approve_using_timeStr" value="${caseData.approve_using_timeStr}"/>
             		</tags:text-item>
             	</div>
             </tags:form-row>
 
 		    <tags:form-row>
-		    <div class="d-flex align-items-center col-4 col-md-4">
+		    <div class="d-flex align-items-center col-4  col-md-7 col-sm-8">
 		    	  <form:label path="starH" cssClass="col-form-label star">核定用車時間：</form:label>
 				  <form:select id="starH"  path="starH" cssClass="form-control timeselect">
                   	<form:option value=""></form:option>
@@ -119,7 +120,7 @@
 		    </div>
 		    <div class="col-4 col-md-4">
             		<tags:text-item label="核定用車區間">
-		            	                   	<div class="approve_using_time_s"></div>
+		            <div class="approve_using_time_s"></div>
 					<form:hidden path="approve_using_time_s" cssClass="form-control" maxlength="4" readOnly="true" size="3"/>
 		            <form:hidden path="approve_using_time_e" cssClass="form-control" maxlength="4" readOnly="true" size="3"/>
             		</tags:text-item>
@@ -315,6 +316,8 @@
 <jsp:attribute name="footers">
 <script>
         $(function() {
+        	
+			$(".approve_using_time_s").text($('#approve_using_timeStr').val());
 
         	//處理時間表
         	if($('#timeMK').val() !==''){
@@ -333,10 +336,6 @@
         	
         	$('#carno').change(function(e){
         		e.preventDefault();
-        		if($("#approve_using_time_s").val()==''){
-        			showAlert('核定用車時間未選取');
-        			return;
-        		}
         		
         		if($('#carno').val()!==''){
         			$('#eip07w040Form').attr('action', '<c:url value="/Eip07w040_getUsingData.action" />').submit();
@@ -426,6 +425,7 @@
 
 						$("#approve_using_time_s").val(data.starTime);
 						$("#approve_using_time_e").val(data.endTime);
+						$("#approve_using_timeStr").val(str);
 					},
 					error : function(e) {
 						showAlert("取得核定區間失敗");

@@ -5,6 +5,8 @@ import java.util.List;
 
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import tw.gov.pcc.eip.apply.cases.Eip08w030Case.Update;
+import tw.gov.pcc.eip.framework.validation.RequiredString;
 
 /**
  * 派車預約暨派車結果查詢作業Case
@@ -31,6 +33,8 @@ public class Eip07w050Case implements Serializable {
 	private String apply_memo;
 	private String carprocess_status;
 	private List<String>applyIdList;
+	
+	@RequiredString(label = "同意/不同意", groups = {Update.class})
 	private String agree;
 	private String apply_date;
 	
