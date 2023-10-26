@@ -1,4 +1,3 @@
-@echo off
 
 set projectPath=%cd%
 set destinationDirPath=%projectPath%\war\
