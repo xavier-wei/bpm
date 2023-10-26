@@ -52,7 +52,7 @@ public class TableauService {
     public List<TableauDataCase> findTableauDataByUser(String userId) throws IOException {
         List<TableauUserInfo> subscribedData = tableauUserInfoDao.selectByUserId(userId);
         List<TableauDataCase> resultList = new ArrayList<>();
-        List<TableauDashboardInfo> dashboardList;
+        List<TableauDashboardInfo> dashboardList = new ArrayList<>();
 
         //有訂閱
         if (CollectionUtils.isNotEmpty(subscribedData)) {
@@ -61,26 +61,28 @@ public class TableauService {
                     .map(TableauUserInfo::getDashboard_fig_id)
                     .collect(Collectors.toList());
             dashboardList = tableauDashboardInfoDao.selectByDashboardFigId(figIdList);
-            //無訂閱
-        } else {
-            Users users = usersDao.selectByKey(userId); // ex. n5000
-            String deptId = users.getDept_id();
-            log.info("該使用者<無>訂閱儀錶板，使用者 userId :{}，所屬機關為:{}", userId, deptId); //ex. n5000，iisi
-            Depts depts;
-            do {
-                depts = deptsDao.findByPk(deptId);
-                deptId = depts.getDept_id_p();
-            } while (!deptId.equals("9999")); //要找到"處級"機關
-            deptId = depts.getDept_id();
-            log.info("該使用者無訂閱儀錶板，使用者所屬 <處級> 機關為:{}", deptId);
 
-            //找該處級機關應顯示的dashboards
-            List<TableauDepartmentInfo> departmentInfos = tableauDepartmentInfoDao.selectByDepartmentId(depts.getDept_id());
-            List<String> figIdList = departmentInfos.stream()
-                    .map(TableauDepartmentInfo::getDashboard_fig_id)
-                    .collect(Collectors.toList());
-            dashboardList = tableauDashboardInfoDao.selectByDashboardFigId(figIdList);
         }
+        //無訂閱
+//        else {
+//            Users users = usersDao.selectByKey(userId); // ex. n5000
+//            String deptId = users.getDept_id();
+//            log.info("該使用者<無>訂閱儀錶板，使用者 userId :{}，所屬機關為:{}", userId, deptId); //ex. n5000，iisi
+//            Depts depts;
+//            do {
+//                depts = deptsDao.findByPk(deptId);
+//                deptId = depts.getDept_id_p();
+//            } while (!deptId.equals("9999")); //要找到"處級"機關
+//            deptId = depts.getDept_id();
+//            log.info("該使用者無訂閱儀錶板，使用者所屬 <處級> 機關為:{}", deptId);
+//
+//            //找該處級機關應顯示的dashboards
+//            List<TableauDepartmentInfo> departmentInfos = tableauDepartmentInfoDao.selectByDepartmentId(depts.getDept_id());
+//            List<String> figIdList = departmentInfos.stream()
+//                    .map(TableauDepartmentInfo::getDashboard_fig_id)
+//                    .collect(Collectors.toList());
+//            dashboardList = tableauDashboardInfoDao.selectByDashboardFigId(figIdList);
+//        }
         log.info("使用者應顯示的儀表板為:{}", dashboardList.toString());
         String tableauFolderPathPrefix = "";
         String env = System.getenv("spring.profiles.active");

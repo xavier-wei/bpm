@@ -89,7 +89,7 @@
                         </div>
                     </a>
                 </div>
-				<div id="eip0aw011Case" class="col-md-3 top_3 title_status">
+				<div id="eip0aw011Case" class="col-md-2 top_3 title_status">
 					<a href="${eip0aw011Case.apiResult.click_url}" target="_blank" style="text-decoration:none;"
 					   class="title_05">
 						<img src="./images/top_icon4.png" alt="" class="d-inline-block align-middle">
@@ -100,7 +100,7 @@
 						</div>
 					</a>
 				</div>
-				<div id="eip0aw010Case" class="col-md-3 top_3 title_status">
+				<div id="eip0aw010Case" class="col-md-2 top_3 title_status">
 					<a href="${eip0aw010Case.apiResult.click_url}" target="_blank" style="text-decoration:none;"
 					   class="title_05">
 						<img src="./images/top_icon1.png" alt="" class="d-inline-block align-middle">

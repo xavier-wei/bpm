@@ -208,7 +208,8 @@
 					<tags:form-row>
 						<div  class="col-md d-flex">
 							<form:label cssClass="col-form-label star" path="lable">表單狀態：</form:label>
-							<form:input id="codeName" name="codeName" path="detailsList[0].codeName" cssClass="form-control"    disabled="true"/>
+<%--							<form:input id="codeName" name="codeName" path="detailsList[0].codeName" cssClass="form-control"   size="33" disabled="true"/>--%>
+							<label class="col-form-label text-left col-6" ><c:out value='${caseData.detailsList[0].codeName}'/></label>
 						</div>
 					</tags:form-row>
 					<c:if test="${not empty caseData.detailsList[0].approve_using_time_s}">

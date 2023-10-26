@@ -95,6 +95,7 @@ public class BpmIsmsL414ServiceNew implements BpmIsmsService {
 
     public void saveBpmByPatch(String form) {
         BpmIsmsL414DTO bpmIsmsL414DTO = gson.fromJson(form, BpmIsmsL414DTO.class);
+        bpmIsmsL414DTO.setUpdateTime(Timestamp.valueOf(LocalDateTime.now()));
         bpmIsmsL414Repository.save(bpmIsmsL414Mapper.toEntity(bpmIsmsL414DTO));
     }
 

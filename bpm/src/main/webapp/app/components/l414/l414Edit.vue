@@ -336,12 +336,12 @@
                   <i-form-group-check class="col-sm-12" label-cols="1" content-cols="11" :label="`變更設備 ：`">
                     <b-input-group>
                       <!--是否為外部防火牆 : isExternalFirewall-->
-                      <b-form-checkbox v-model="$v.isExternalFirewall.$model" value="Y" unchecked-value="N"
+                      <b-form-checkbox v-model="$v.isExternalFirewall.$model" value="Y" unchecked-value=""
                                        :disabled="!configRoleToBpmCrOperator(userData.userRole) || formStatusRef === FormStatusEnum.READONLY">
                         外部防火牆
                       </b-form-checkbox>
                       <!--變更設備：是否為內部防火牆 : isInternalFirewall-->
-                      <b-form-checkbox class="mx-3" v-model="$v.isInternalFirewall.$model" value="Y" unchecked-value="N"
+                      <b-form-checkbox class="mx-3" v-model="$v.isInternalFirewall.$model" value="Y" unchecked-value=""
                                        :disabled="!configRoleToBpmCrOperator(userData.userRole) || formStatusRef === FormStatusEnum.READONLY">
                         外部防火牆
                       </b-form-checkbox>
@@ -584,13 +584,13 @@ export default {
       isUdp: '', //	傳輸模式是否為udp
       instructions: '', //	用途說明
       agreeType: '', //	處理意見
-      scheduleDate: '', //預定完成日期
+      scheduleDate: null, //預定完成日期
       partialAgreeReason: '', //	部分同意設定原因
       notAgreeReason: '', //不同意設定原因
       isExternalFirewall: '', //	變更設備：是否為外部防火牆
       isInternalFirewall: '', //	變更設備：是否為內部防火牆
       firewallContent: '', //	設定內容
-      finishDatetime: '', //	實際完成日期
+      finishDatetime: null, //	實際完成日期
       processInstanceId: '', //流程實體編號
       taskId: '',   //任務ID
       taskName: '', //任務名稱
@@ -734,6 +734,21 @@ export default {
       }
 
       if (isOK) {
+
+        if (configRoleToBpmIpt(userData.userRole) && form.agreeType === '') {
+          return notificationService.makeModalComfirmCallback('未選擇處理意見', 'danger');
+        }
+
+        if (configRoleToBpmIpt(userData.userRole) && form.partialAgreeReason === '' && form.notAgreeReason === '' && form.scheduleDate === null) {
+          return notificationService.makeModalComfirmCallback('未填寫預定完成日期或說明原因', 'danger');
+        }
+
+        if (configRoleToBpmCrOperator(userData.userRole)) {
+          if (form.isExternalFirewall === '' && form.isInternalFirewall === '') return notificationService.makeModalComfirmCallback('未選擇變更設備', 'danger');
+          if (form.firewallContent === '') return notificationService.makeModalComfirmCallback('未填寫設定內容', 'danger');
+          if (form.finishDatetime === null) return notificationService.makeModalComfirmCallback('未選擇實際完成日期', 'danger');
+        }
+
         let variables = {};
 
         if (taskDataRef.value.decisionRole !== null) {
@@ -775,10 +790,6 @@ export default {
           opinion: opinionData,
           ipt: configRoleToBpmIpt(userData.userRole) || configRoleToBpmCrOperator(userData.userRole),
         };
-
-        if (configRoleToBpmIpt(userData.userRole) && form.agreeType === '') {
-          return notificationService.makeModalComfirmCallback('未選擇處理意見', 'danger');
-        }
 
         axios
           .post(`/process/completeTask/${form.formId}`, body)
