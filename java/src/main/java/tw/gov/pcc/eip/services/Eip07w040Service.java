@@ -143,6 +143,7 @@ public class Eip07w040Service {
 		if(StringUtils.isNotEmpty(carBookingDetailData.getUsing())){
 			String[] usingTime = timeConversionService.timeStringToBeginEndTime(carBookingDetailData.getUsing());
 			carBookingDetailData.setUsingStr(usingTime[0].substring(0,2)+":"+usingTime[0].substring(2,4) + "~"+usingTime[1].substring(0,2)+":"+usingTime[1].substring(2,4));
+			caseData.setApprove_using_timeStr(usingTime[0].substring(0,2)+":"+usingTime[0].substring(2,4) + "~"+usingTime[1].substring(0,2)+":"+usingTime[1].substring(2,4));
 		}
 		carBookingDetailData.setApply_user(carBookingDetailData.getApply_user());
 		
@@ -154,6 +155,7 @@ public class Eip07w040Service {
 		
 		caseData.setEndH(carBookingDetailData.getUsing_time_e().substring(0,2));
 		caseData.setEndM(carBookingDetailData.getUsing_time_e().substring(2,4));
+		
 		
 		if("eip07w040x".equals(enterpage)) {
 			List<CarBase> carList = carBaseDao.getAllData();//取得所有非首長&&carstatus=1的車輛
@@ -449,7 +451,6 @@ public class Eip07w040Service {
         Map<String,String> timeMap = new HashMap<>();
         timeMap.put("starTime", starTime);
         timeMap.put("endTime", endTime);
-        
         return timeMap;
     }
     

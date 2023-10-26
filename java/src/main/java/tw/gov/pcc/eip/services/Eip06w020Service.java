@@ -82,7 +82,7 @@ public class Eip06w020Service {
      * @return
      */
     public List<MeetingCode> findValidRoom(String meetingDt, String meetingBegin, String meetingEnd){
-        String using = timeConversionService.to48binary(meetingBegin, meetingEnd);
+        String using = timeConversionService.to48binaryForMeeting(meetingBegin, meetingEnd);
         return meetingCodeDao.findValidRoomByDtandUsing(DateUtility.changeDateTypeToWestDate(meetingDt), using);
     }
 
@@ -93,8 +93,8 @@ public class Eip06w020Service {
      */
     public void saveMeeting(Eip06w020Case caseData){
         Meeting meeting = new Meeting();
-        String using = timeConversionService.to48binary(caseData.getMeetingBegin(), caseData.getMeetingEnd());
-        int maxNum = meetingDao.findMaxMeetingId().getMeetingId() + 1;
+        String using = timeConversionService.to48binaryForMeeting(caseData.getMeetingBegin(), caseData.getMeetingEnd());
+        int maxNum = meetingDao.findMaxMeetingId() == null ? 1 : meetingDao.findMaxMeetingId().getMeetingId() + 1;
         meeting.setMeetingId(maxNum);
         meeting.setMeetingName(caseData.getMeetingName());
         meeting.setChairman(caseData.getChairman());

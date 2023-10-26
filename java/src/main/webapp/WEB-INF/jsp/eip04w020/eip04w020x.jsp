@@ -418,7 +418,7 @@
         <div class="col-md-12 d-flex">
             <form:label cssClass="col-form-label" path="files">附加檔案：</form:label>
             <div class="custom-file" style="width:50%;">
-                <input type="file" class="custom-file-input" id="files" name="files" multiple>
+                <tags:file cssClass="custom-file-input" id="files" name="files" multiple="Y"/>
                 <label class="custom-file-label" id="filelable" for="files" style="margin-left: 2px;">Choose files</label>
             </div>
         </div>

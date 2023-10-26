@@ -213,7 +213,7 @@ public class Eip06w010Controller extends BaseController {
     @RequestMapping("/Eip06w010_findValidRoominclBooked.action")
     @ResponseBody
     public Eip06w010Case findValidRoominclBooked(@RequestBody Map<Object, Object> map, @ModelAttribute(CASE_KEY) Eip06w010Case caseData) {
-        String meetingDt = map.get("meetingdt").toString().replace("-","");
+        String meetingDt = DateUtility.changeDateTypeToWestDate(map.get("meetingdt").toString().replace("/",""));
         String meetingBegin = map.get("meetingBegin").toString();
         String meetingEnd  = map.get("meetingEnd").toString();
         String meetingId =  map.get("meetingId").toString();

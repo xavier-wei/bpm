@@ -58,6 +58,60 @@ public class TimeConversionService {
     }
 
     /**
+     * 起訖時間轉為48位二進制編碼
+     * 0000_0000_0000_0000_0000_0000_0000_0000_0000_0000_0000_0000
+     * ex 1300~1430 0000_0000_0000_0000_0000_0000_0011_1000_0000_0000_0000_0000
+     * @param begin
+     * @param end
+     * @return
+     */
+    public String to48binaryForMeeting(String begin, String end){
+        StringBuilder using = new StringBuilder(); //回傳值
+        //取得時間差間隔幾個半小時
+        int duration = Integer.parseInt(end) - Integer.parseInt(begin);  // 每50 = 半小時 1400- 1600 = 200 = 50 * 4
+        int halfHours;
+
+        if (begin.charAt(0) == '0'){
+            if((end.endsWith("30") && duration % 100 > 0) || duration < 50 ){
+                halfHours = duration/50 + 1 ; //如果開始時間為00，則需無條件進位  (ex (1630-1400) / 50 = 4.6
+            }else {
+                halfHours = duration/50; //如果開始時間為00，則需無條件進位  (ex (1630-1400) / 50 = 4.6
+            }
+        }else {
+            halfHours = duration % 50 != 0 ? duration/50+1 : duration/50; //如果開始時間為00，則需無條件進位  (ex (1630-1400) / 50 = 4.6
+        }
+
+        //取得開始時間位置
+        //前兩位如果是00，後兩位是30? +0 : +1
+        //前兩位如果不是00，取前兩位數/100*2，後兩位是30? +0 : +1
+        int beginPosition = 0;
+        if(begin.startsWith("00")){
+            beginPosition += StringUtils.equals(begin.substring(2),"30")? 1 : 0;
+        }else {
+            beginPosition = Integer.parseInt(begin.substring(0,2) + "00")/100*2;
+            beginPosition += StringUtils.equals(begin.substring(2),"30")? 1 : 0;
+        }
+
+        //生成48字元字串
+        for(int i = 0 ; using.length() < 48 ; i++){
+            if(i!=beginPosition){
+                using.append("0");
+            }else {
+                //將開始時間+半小時個數填為1 其餘皆為0
+                for (int j = 0; j < halfHours ; j++ ){
+                    using.append("1");
+                }
+                using.append("0");
+            }
+        }
+        //若訖的時間為2330 則將第48位元轉成1
+        if(StringUtils.equals(end,"2330")){
+            using.setCharAt(using.length()-1, '1');
+        }
+        return using.toString();
+    }
+
+    /**
      * 會議室啟用期間 轉為48位二進制編碼
      * ex 1300~1430 1111_1111_1111_1111_1111_1111_1100_0111_1111_1111_1111_1111
      * @param begin

@@ -18,6 +18,7 @@ import tw.gov.pcc.eip.services.Eip06w020Service;
 import tw.gov.pcc.eip.domain.MeetingCode;
 import tw.gov.pcc.eip.framework.domain.UserBean;
 import tw.gov.pcc.eip.framework.spring.controllers.BaseController;
+import tw.gov.pcc.eip.util.DateUtility;
 import tw.gov.pcc.eip.util.ExceptionUtility;
 import tw.gov.pcc.eip.util.ObjectUtility;
 
@@ -121,7 +122,7 @@ public class Eip06w020Controller extends BaseController {
     @RequestMapping("/Eip06w020_findValidRoom.action")
     @ResponseBody
     public Eip06w020Case findValidRoom(@RequestBody Map<Object, Object> map, @ModelAttribute(CASE_KEY) Eip06w020Case caseData) {
-        String meetingDt = map.get("meetingdt").toString().replace("-","");
+        String meetingDt = DateUtility.changeDateTypeToWestDate(map.get("meetingdt").toString().replace("/",""));
         String meetingBegin = map.get("meetingBegin").toString();
         String meetingEnd = map.get("meetingEnd").toString();
         List<MeetingCode> roomList = eip06w020Service.findValidRoom(meetingDt, meetingBegin, meetingEnd);

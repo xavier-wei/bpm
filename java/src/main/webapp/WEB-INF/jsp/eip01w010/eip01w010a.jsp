@@ -303,8 +303,8 @@
                 <tags:form-row cssClass="images-row">
                     <form:label cssClass="col-form-label" path="images">內文附圖：</form:label>
                     <div class="custom-file" style="width:50%;">
-                        <input type="file" class="custom-file-input" id="images" name="images" multiple
-                            accept="image/*">
+                        <tags:file cssClass="custom-file-input" id="images" name="images" multiple="Y"
+                                    accept="image/*"/>
                         <label class="custom-file-label" for="images" style="margin-left: 2px;">Choose images</label>
                     </div>
                 </tags:form-row>
@@ -322,8 +322,8 @@
                 <tags:form-row cssClass="files-row">
                     <form:label cssClass="col-form-label" path="files">附加檔案：</form:label>
                     <div class="custom-file" style="width:50%;">
-                        <input type="file" class="custom-file-input" id="files" name="files" multiple
-                            accept=".docx,.doc,.xls,.xlsx,.pdf,.txt,.csv,.ods">
+                        <tags:file cssClass="custom-file-input" id="files" name="files" multiple="Y"
+                                   accept=".docx,.doc,.xls,.xlsx,.pdf,.txt,.csv,.ods"/>
                         <label class="custom-file-label" for="files" style="margin-left: 2px;">Choose files</label>
                     </div>
                 </tags:form-row>

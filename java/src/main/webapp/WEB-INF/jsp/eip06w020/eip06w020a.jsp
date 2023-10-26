@@ -123,10 +123,11 @@
         $dateTW.datepicker("setEndDate", maxDate);
 
 
-        //依選擇會議日期、時間判斷會議室是否已預約或禁用
-        $('#meetingdt, #meetingBegin, #meetingEnd').change(function () {
+        // 依選擇會議日期、時間判斷會議室是否已預約或禁用
+        $('#meetingdt_OUTSIDE, #meetingBegin, #meetingEnd').change(function () {
             findValidRoom();
         })
+
         //btnsave
         $('#btnSave').click(function(e) {
             e.preventDefault();
@@ -248,7 +249,7 @@
     //findValidRoom
     function findValidRoom() {
         //依選擇會議日期、時間判斷會議室是否已預約或禁用
-        let meetingdt = $('#meetingdt').val();
+        let meetingdt = $('#meetingdt_OUTSIDE').val();
         let meetingBegin = $('#meetingBegin').val();
         let meetingEnd = $('#meetingEnd').val();
         //當會議室時間及起始有值就enable會議室選單

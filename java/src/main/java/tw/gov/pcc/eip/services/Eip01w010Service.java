@@ -576,7 +576,7 @@ public class Eip01w010Service {
      * @param userId
      */
     public void update(Eip01w010Case caseData, String userId) {
-        String dir = eipCodeDao.findByCodeKindCodeNo("FILEDIR", "1").get().getCodename() + "\\"; // 檔案所在資料夾
+        String dir = eipCodeDao.findByCodeKindCodeNo("FILEDIR", "1").get().getCodename() + File.separator; // 檔案所在資料夾
 
         String fseq = caseData.getFseq();
         Msgdata m = msgdataDao.findbyfseq(fseq);
@@ -671,7 +671,7 @@ public class Eip01w010Service {
             msgdataDao.updateStatus(fseqs, status);
         } else {
             // 實體刪除
-            String dir = eipCodeDao.findByCodeKindCodeNo("FILEDIR", "1").get().getCodename() + "\\"; // 檔案所在資料夾
+            String dir = eipCodeDao.findByCodeKindCodeNo("FILEDIR", "1").get().getCodename() + File.separator; // 檔案所在資料夾
             fseqs.stream().forEach(f -> {
                 Msgdata data = new Msgdata();
                 data.setFseq(f);

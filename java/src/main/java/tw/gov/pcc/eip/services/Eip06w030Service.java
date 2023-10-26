@@ -159,7 +159,7 @@ public class Eip06w030Service {
      * @throws ParseException
      */
     public List<Meeting> findExistedMeeting(Map<Object, Object> map) throws ParseException {
-        String using = timeConversionService.to48binary(map.get("meetingBegin").toString(), map.get("meetingEnd").toString());
+        String using = timeConversionService.to48binaryForMeeting(map.get("meetingBegin").toString(), map.get("meetingEnd").toString());
         String roomId = map.get("roomId").toString();
         String periodStart = DateUtility.changeDateTypeToWestDate(map.get("periodStart").toString());
         String periodEnd = DateUtility.changeDateTypeToWestDate(map.get("periodEnd").toString());
@@ -196,7 +196,7 @@ public class Eip06w030Service {
      */
     public void saveMeeting(Eip06w030Case caseData){
         Meeting meeting = new Meeting();
-        String using = timeConversionService.to48binary(caseData.getMeetingBegin(), caseData.getMeetingEnd());
+        String using = timeConversionService.to48binaryForMeeting(caseData.getMeetingBegin(), caseData.getMeetingEnd());
         int maxNum = meetingDao.findMaxMeetingId().getMeetingId() + 1;
         meeting.setMeetingId(maxNum);
         meeting.setMeetingName(caseData.getMeetingName());
@@ -243,7 +243,7 @@ public class Eip06w030Service {
     public void saveMultiMeeting(Eip06w030Case caseData) throws ParseException {
         deleteMeeting(caseData);
         Meeting meeting = new Meeting();
-        String using = timeConversionService.to48binary(caseData.getMeetingBegin(), caseData.getMeetingEnd());
+        String using = timeConversionService.to48binaryForMeeting(caseData.getMeetingBegin(), caseData.getMeetingEnd());
         meeting.setMeetingName(caseData.getMeetingName());
         meeting.setOrganizerId(userData.getUserId());
         meeting.setMeetingBegin(caseData.getMeetingBegin());

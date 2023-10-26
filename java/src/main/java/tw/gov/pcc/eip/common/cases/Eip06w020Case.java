@@ -76,9 +76,13 @@ public class Eip06w020Case implements Serializable {
         return true;
     }
 
-    @AssertTrue(groups={Sequence.Second.class}, message="會議日期不得小於今日")
-    private boolean isbeforeToday() {
-        return Integer.parseInt(DateUtility.getNowChineseDate()) < Integer.parseInt(getMeetingdt());
+    @AssertTrue(groups={Sequence.Second.class}, message="超過中午不得預約當日會議")
+    private boolean isBeforeNoonToday() {
+        Map<String, String> nowDateTimeStrMap = DateUtility.getNowDateTimeStrMap(false, false,false);
+        if(Integer.parseInt(nowDateTimeStrMap.get("time").substring(0,2)) >= 12){
+            return Integer.parseInt(DateUtility.getNowChineseDate()) < Integer.parseInt(getMeetingdt());
+        }
+        return true;
     }
 
 

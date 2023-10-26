@@ -92,6 +92,7 @@ public class Eip07w050Controller extends BaseController {
 	@RequestMapping("/Eip07w050_update.action")
 	public String updateData(@Validated(Eip08w030Case.Update.class) @ModelAttribute(CASE_KEY) Eip07w050Case caseData, BindingResult result) {
 		log.debug("導向   Eip07w050  秘書處主管核派作業：更新資料 ");
+
 		if (result.hasErrors()) {
 			return QUERY_PAGE;
 		}
