@@ -560,7 +560,7 @@ export default {
       position: userData.titleName != null ? userData.titleName : '',//	職稱
       appReason: '1',//	申請事由 1.新進 2.離職 3.職務異動
       isEnableDate: '1',//	是否有生效日期
-      enableDate: new Date(new Date().getFullYear(), new Date().getMonth(), new Date().getDate(), new Date().getHours(), new Date().getMinutes(), new Date().getSeconds(), new Date().getMilliseconds()),//	生效日期
+      enableDate: new Date(new Date().getFullYear(), new Date().getMonth(), new Date().getDate(), 0,0,0,0),//	生效日期
       isOther: '0',//	其他
       otherReason: '',//	其他說明
       isHrSys: '0',
