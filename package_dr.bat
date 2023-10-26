@@ -9,7 +9,7 @@ if not exist "%destinationDirPath%" (
 
 git fetch
 
-git checkout -b deploy/packageForPcc origin/deploy/packageForPcc
+git checkout -B deploy/packageForPcc origin/deploy/packageForPcc
 
 git merge master
 
