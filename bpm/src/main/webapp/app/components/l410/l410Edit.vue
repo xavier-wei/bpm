@@ -83,14 +83,14 @@
                                   :item="$v.appName">
                 <!--姓名(中文) : -->
                 <b-form-input v-model="$v.appName.$model"
-                              :disabled="userData.userId !== $v.filEmpid.$model || userData.userId !== $v.appEmpid.$model  || formStatusRef === FormStatusEnum.READONLY"/>
+                              :disabled="form.isSubmit === '1' || userData.userId !== $v.filEmpid.$model || userData.userId !== $v.appEmpid.$model  || formStatusRef === FormStatusEnum.READONLY"/>
               </i-form-group-check>
 
               <i-form-group-check label-star class="col-sm-5" label-cols="5" content-cols="7" :label="`單位別 ：`"
                                   :item="$v.appUnit">
                 <!--單位別 : -->
                 <b-form-select v-model="$v.appUnit.$model" :options="bpmDeptsOptions"
-                               :disabled="userData.userId !== $v.filEmpid.$model || userData.userId !== $v.appEmpid.$model  || formStatusRef === FormStatusEnum.READONLY">
+                               :disabled="form.isSubmit === '1' || userData.userId !== $v.filEmpid.$model || userData.userId !== $v.appEmpid.$model  || formStatusRef === FormStatusEnum.READONLY">
                   <template #first>
                     <b-form-select-option value="null" disabled>請選擇</b-form-select-option>
                   </template>
@@ -104,7 +104,7 @@
                                   :item="$v.appEngName">
                 <!--姓名(英文) : -->
                 <b-form-input v-model="$v.appEngName.$model"
-                              :disabled="userData.userId !== $v.filEmpid.$model || userData.userId !== $v.appEmpid.$model  || formStatusRef === FormStatusEnum.READONLY"/>
+                              :disabled="form.isSubmit === '1' || userData.userId !== $v.filEmpid.$model || userData.userId !== $v.appEmpid.$model  || formStatusRef === FormStatusEnum.READONLY"/>
               </i-form-group-check>
 
 
@@ -112,7 +112,7 @@
                                   :item="$v.position">
                 <!--職稱 : -->
                 <b-form-input v-model="$v.position.$model"
-                              :disabled="userData.userId !== $v.filEmpid.$model || userData.userId !== $v.appEmpid.$model  || formStatusRef === FormStatusEnum.READONLY"/>
+                              :disabled="form.isSubmit === '1' || userData.userId !== $v.filEmpid.$model || userData.userId !== $v.appEmpid.$model  || formStatusRef === FormStatusEnum.READONLY"/>
               </i-form-group-check>
             </b-form-row>
 
@@ -122,14 +122,14 @@
                                   :item="$v.appEmpid">
                 <!--員工編號 : -->
                 <b-form-input v-model="$v.appEmpid.$model"
-                              :disabled="userData.userId !== $v.filEmpid.$model || userData.userId !== $v.appEmpid.$model  || formStatusRef === FormStatusEnum.READONLY"/>
+                              :disabled="form.isSubmit === '1' || userData.userId !== $v.filEmpid.$model || userData.userId !== $v.appEmpid.$model  || formStatusRef === FormStatusEnum.READONLY"/>
               </i-form-group-check>
 
               <i-form-group-check class="col-sm-5" label-cols="5" content-cols="7" :label="'分機 ：'"
                                   :item="$v.extNum">
                 <!--分機 : -->
                 <b-form-input v-model="$v.extNum.$model"
-                              :disabled="userData.userId !== $v.filEmpid.$model || userData.userId !== $v.appEmpid.$model  || formStatusRef === FormStatusEnum.READONLY"/>
+                              :disabled="form.isSubmit === '1' || userData.userId !== $v.filEmpid.$model || userData.userId !== $v.appEmpid.$model  || formStatusRef === FormStatusEnum.READONLY"/>
               </i-form-group-check>
 
             </b-form-row>
@@ -150,7 +150,7 @@
 
                   <!--申請事由-->
                   <b-form-radio-group v-model="$v.appReason.$model"
-                                      :disabled="userData.userId !== $v.filEmpid.$model || userData.userId !== $v.appEmpid.$model  || formStatusRef === FormStatusEnum.READONLY">
+                                      :disabled="form.isSubmit === '1' || userData.userId !== $v.filEmpid.$model || userData.userId !== $v.appEmpid.$model  || formStatusRef === FormStatusEnum.READONLY">
                     <b-form-radio value="1">
                       <div style="height: 34px;">新進</div>
                     </b-form-radio>
@@ -181,14 +181,14 @@
 
                   <!--生效日期checkbox : isEnableDate-->
                   <b-form-checkbox v-model="$v.isEnableDate.$model" value="1" unchecked-value="0"
-                                   :disabled="userData.userId !== $v.filEmpid.$model || userData.userId !== $v.appEmpid.$model  || formStatusRef === FormStatusEnum.READONLY">
+                                   :disabled="form.isSubmit === '1' || userData.userId !== $v.filEmpid.$model || userData.userId !== $v.appEmpid.$model  || formStatusRef === FormStatusEnum.READONLY">
                     生效日期 :
                   </b-form-checkbox>
                   <!--生效日期 : enableDate-->
                   <i-date-picker
                     placeholder="yyy/MM/dd"
                     v-model="$v.enableDate.$model"
-                    :disabled="$v.isEnableDate.$model !== '1' || userData.userId !== $v.filEmpid.$model || userData.userId !== $v.appEmpid.$model  ||  formStatusRef === FormStatusEnum.READONLY"
+                    :disabled="form.isSubmit === '1' || $v.isEnableDate.$model !== '1' || userData.userId !== $v.filEmpid.$model || userData.userId !== $v.appEmpid.$model  ||  formStatusRef === FormStatusEnum.READONLY"
                     lazy
                     trim
                   ></i-date-picker>
@@ -205,12 +205,12 @@
                 >
                   <!--其他 checkbox : isOther-->
                   <b-form-checkbox v-model="$v.isOther.$model" value="1" unchecked-value="0"
-                                   :disabled="userData.userId !== $v.filEmpid.$model || userData.userId !== $v.appEmpid.$model  || formStatusRef === FormStatusEnum.READONLY">
+                                   :disabled="form.isSubmit === '1' || userData.userId !== $v.filEmpid.$model || userData.userId !== $v.appEmpid.$model  || formStatusRef === FormStatusEnum.READONLY">
                     其他 :
                   </b-form-checkbox>
                   <!--其他說明 : otherReason-->
                   <b-form-input v-model="$v.otherReason.$model"
-                                :disabled="userData.userId !== $v.filEmpid.$model || userData.userId !== $v.appEmpid.$model  || formStatusRef === FormStatusEnum.READONLY"/>
+                                :disabled="form.isSubmit === '1' || userData.userId !== $v.filEmpid.$model || userData.userId !== $v.appEmpid.$model  || formStatusRef === FormStatusEnum.READONLY"/>
                   <div class="text-danger text1" v-if="$v.otherReason.$model === '' && $v.isOther.$model === '1'">
                     請輸入值
                   </div>
@@ -456,6 +456,14 @@
                 <template #cell(lastWork)="row">
                   <b-form-input maxlength="200" v-model="row.item.admStatus"
                                 :disabled="userData.deptId !== row.item.admUnit || taskDataRef.taskName.replace('加簽-', '') !== row.item.systemApplyName || row.item.checkbox !== '1'  || formStatusRef === FormStatusEnum.READONLY"/>
+                  <div class="text-danger text1 mx-1"
+                       v-if="userData.deptId === row.item.admUnit &&
+                       taskDataRef.taskName.replace('加簽-', '') ===
+                       row.item.systemApplyName && row.item.checkbox === '1'  &&
+                       formStatusRef !== FormStatusEnum.READONLY &&
+                       row.item.admStatus === ''">
+                    請輸入值
+                  </div>
                   <i-date-picker
                     placeholder="yyy/MM/dd"
                     lazy
@@ -463,12 +471,28 @@
                     v-model="row.item.admEnableDate"
                     :disabled="userData.deptId !== row.item.admUnit || taskDataRef.taskName.replace('加簽-', '') !== row.item.systemApplyName || row.item.checkbox !== '1'  || formStatusRef === FormStatusEnum.READONLY"
                   ></i-date-picker>
+                  <div class="text-danger text1 mx-1"
+                       v-if="userData.deptId === row.item.admUnit &&
+                       taskDataRef.taskName.replace('加簽-', '') === row.item.systemApplyName &&
+                       row.item.checkbox === '1'  &&
+                       formStatusRef !== FormStatusEnum.READONLY &&
+                       row.item.admEnableDate === null">
+                    請輸入值
+                  </div>
                 </template>
 
                 <!--處理人員-->
                 <template #cell(reviewStaffName)="row">
                   <b-form-input maxlength="200" v-model="row.item.admName"
                                 :disabled=" userData.deptId !== row.item.admUnit ||taskDataRef.taskName.replace('加簽-', '') !== row.item.systemApplyName || row.item.checkbox !== '1'  || formStatusRef === FormStatusEnum.READONLY"/>
+                  <div class="text-danger text1 mx-1"
+                       v-if="userData.deptId === row.item.admUnit &&
+                       taskDataRef.taskName.replace('加簽-', '') === row.item.systemApplyName &&
+                       row.item.checkbox === '1'  &&
+                       formStatusRef !== FormStatusEnum.READONLY &&
+                       row.item.admName === ''">
+                    請輸入值
+                  </div>
                 </template>
 
               </b-table>
@@ -588,6 +612,7 @@ import {formToCheckbox} from "@/shared/word/formToCheckbox";
 import signatureBmodel from "@/components/signatureBmodel.vue";
 import signerList from "@/components/signerList.vue";
 import {changeDealWithUnit} from "@/shared/word/directions";
+import {confirmAllData} from "@/shared/word/confirm-iTable";
 
 const appendix = () => import('@/components/appendix.vue');
 const flowChart = () => import('@/components/flowChart.vue');
@@ -928,7 +953,7 @@ export default {
         .get(`/eip/bpm-l410-apply-manages`)
         .then(({data}) => {
           data.forEach(i => {
-            formToCheckbox(i, formData,taskDataRef.value.taskName.replace('加簽-', ''),userData.userName)
+            formToCheckbox(i, formData, taskDataRef.value.taskName.replace('加簽-', ''), userData.userName,formStatusRef.value,FormStatusEnum)
           })
           table.data = data
           if (formData.processInstanceId !== null && formData.processInstanceId !== undefined) {
@@ -1018,7 +1043,12 @@ export default {
         isOK = await $bvModal.msgBoxConfirm('是否送出' + item + '?');
       }
 
-      if (isOK) {
+      //判斷審核者需要填寫的欄位,需要回傳的array都是true 才能繼續往下
+      let confirmOK = await Promise.all(table.data.map(data => confirmAllData(data, userData.deptId, taskDataRef.value.taskName.replace('加簽-', ''), notificationService)));
+
+      const allTrue = confirmOK.every(item => item === true);
+
+      if (isOK && allTrue) {
 
         //把頁面上iTable內的所有資料逐一轉成form裡的值，並把組出List<HashMap<String, HashMap<String, Object>>>傳給後端
         await Promise.all(table.data.map(data => checkboxToMapAndForm(data, form, l410Variables)));
