@@ -240,7 +240,7 @@ public class Eip06w010Service {
      * @return
      */
     public List<MeetingCode> findValidRoominclBooked(String meetingId, String meetingDt, String meetingBegin, String meetingEnd){
-        String using = timeConversionService.to48binary(meetingBegin, meetingEnd);
+        String using = timeConversionService.to48binaryForMeeting(meetingBegin, meetingEnd);
         return meetingCodeDao.findValidRoominclBookedByDtandUsing(meetingId, DateUtility.changeDateTypeToWestDate(meetingDt), using);
     }
 
@@ -259,7 +259,7 @@ public class Eip06w010Service {
         mt = meetingDao.selectDataByPrimaryKey(mt);
         BeanUtils.copyProperties(mt, newMt);
 
-        String using = timeConversionService.to48binary(caseData.getMeetingBegin(), caseData.getMeetingEnd());
+        String using = timeConversionService.to48binaryForMeeting(caseData.getMeetingBegin(), caseData.getMeetingEnd());
 
         newMt.setMeetingName(caseData.getMeetingName());
         newMt.setChairman(caseData.getChairman());
