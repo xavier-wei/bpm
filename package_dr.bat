@@ -1,3 +1,4 @@
+@echo off
 
 set projectPath=%cd%
 set destinationDirPath=%projectPath%\war\
@@ -18,17 +19,17 @@ cd bpm
 call mvn clean package -P prod_dr,no-liquibase
 
 
-cd ..\flowable
+cd %projectPath%\flowable
 call mvn clean package -P prod_dr
 
 
-cd ..\java
+cd %projectPath%\java
 call mvn clean package
 
 
-set bpmWarPath=%projectPath%\repo\bpm\target\bpm.war
-set flowableWarPath=%projectPath%\repo\flowable\target\flowable.war
-set eipWarPath=%projectPath%\repo\java\target\eip.war
+set bpmWarPath=%projectPath%\bpm\target\bpm.war
+set flowableWarPath=%projectPath%\flowable\target\flowable.war
+set eipWarPath=%projectPath%\java\target\eip.war
 
 move "%bpmWarPath%" "%destinationDirPath%"
 move "%flowableWarPath%"  "%destinationDirPath%"
