@@ -13,6 +13,8 @@ git checkout -B deploy/packageForPcc origin/deploy/packageForPcc
 
 git merge master
 
+git push origin/deploy/packageForPcc
+
 cd bpm
 call mvn clean package -P prod_dr,no-liquibase
 
