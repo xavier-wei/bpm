@@ -344,12 +344,8 @@
             contentType: "application/json",
             success: function (data) {
                 $('#bpm_pending').text(data);
-                console.log(data);
-                console.log('成功拉');
-
             },
             error: function (xhr, ajaxOptions, thrownError) {
-                console.log('出事拉');
                 console.log(xhr.status + " " + thrownError);
             }
         });

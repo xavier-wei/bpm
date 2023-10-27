@@ -42,6 +42,13 @@ public class SupervisorRepository {
             "  AND A.[PEORG] = ? " +
             "  AND A.PECARD = ? ";
 
+    private static final String FIND_SPECILIST =
+        "SELECT PECARD FROM view_cpape05m where PEIDNO =" +
+            " (SELECT id " +
+            "  from position " +
+            "  where depart = '600038' " +
+            "  and posname = '技正')";
+
 
     public SupervisorRepository(JdbcTemplate jdbcTemplate, NamedParameterJdbcTemplate namedParameterJdbcTemplate) {
         this.jdbcTemplate = jdbcTemplate;
@@ -50,6 +57,10 @@ public class SupervisorRepository {
 
     public List<Map<String, Object>> executeQuery(String orgId, String userId) {
         return jdbcTemplate.queryForList(FIND_SUPERVISOR, orgId, userId);
+    }
+
+    public List<Map<String, Object>> executeQueryInfoGroup() {
+        return jdbcTemplate.queryForList(FIND_SPECILIST);
     }
 
 }

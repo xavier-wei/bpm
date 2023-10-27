@@ -119,6 +119,8 @@ public class IsmsProcessResource {
             }
             service.saveBpm(uuid, processInstanceId, taskDTO, dto, appendixFiles);
 
+        } catch (ResponseStatusException e) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
         } catch (Exception e) {
             log.error("BpmSaveError - startProcess - 90 :: {} ", "BpmSaveError");
             // 如果BPM寫入失敗，通知flowable原流程撤銷
@@ -167,7 +169,7 @@ public class IsmsProcessResource {
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("流程引擎連線異常，請聯絡管理員");
     }
 
-    @PutMapping("/receiveEndEvent")
+    @RequestMapping("/receiveEndEvent")
     public void receiveEndEvent(@RequestBody EndEventDTO endEventDTO, HttpServletRequest request) {
         log.info("ProcessL414Resource.java - receiveEndEvent - 196 :: " + endEventDTO.getProcessInstanceId());
         if (token.equals(request.getHeader("flowableToken"))) {
@@ -178,7 +180,7 @@ public class IsmsProcessResource {
         }
         log.warn("ProcessL414Resource.java - receiveEndEvent - 203 ::{} ", "流程發生意外終止");
 
-        throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR,"流程發生意外終止");
+//        throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR,"流程發生意外終止");
     }
 
 

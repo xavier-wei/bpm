@@ -18,16 +18,16 @@ public class ProcessEndServiceTask implements JavaDelegate {
     public void execute(DelegateExecution execution) {
         // get processDefinitionKey
         String processDefinitionKey = execution.getProcessDefinitionId().split(":")[0];
-log.info("token: {}",BpmSetting.token);
-        EndEventDTO endEventDTO = new EndEventDTO(execution.getProcessInstanceId(), BpmSetting.token, ProcessEnum.getFormNameByProcessKey(processDefinitionKey),"1");
+        log.info("token: {}", BpmSetting.getToken());
+        EndEventDTO endEventDTO = new EndEventDTO(execution.getProcessInstanceId(), BpmSetting.getToken(), ProcessEnum.getFormNameByProcessKey(processDefinitionKey), "1");
 
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
-        headers.set("flowableToken", BpmSetting.token);
-        Gson gson=new Gson();
+        headers.set("flowableToken", BpmSetting.getToken());
+        Gson gson = new Gson();
         HttpEntity<String> requestEntity = new HttpEntity<>(gson.toJson(endEventDTO), headers);
         RestTemplate restTemplate = new RestTemplate();
-        ResponseEntity<String> exchange = restTemplate.exchange(BpmSetting.url+"/bpm/api/process/receiveEndEvent", HttpMethod.PUT, requestEntity, String.class);
-        log.info("process end event response: {}",exchange.getBody());
+        ResponseEntity<String> exchange = restTemplate.exchange(BpmSetting.getUrl() + "/bpm/api/process/receiveEndEvent", HttpMethod.PUT, requestEntity, String.class);
+        log.info("process end event response: {}", exchange.getBody());
     }
 }
