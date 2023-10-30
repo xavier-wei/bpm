@@ -150,10 +150,11 @@ public class MeetingCodeDaoImpl extends BaseDao<MeetingCode> implements MeetingC
     @Override
     public List<MeetingCode> selectDataByItemType(String itemtyp) {
         StringBuilder sql = new StringBuilder();
-        sql.append(" SELECT ");
+        sql.append("    SELECT ");
         sql.append(ALL_COLUMNS_SQL);
-        sql.append(" FROM MEETINGCODE T");
-        sql.append(" WHERE T.ITEMTYP = :itemtyp");
+        sql.append("     FROM MEETINGCODE T");
+        sql.append("    WHERE T.ITEMTYP = :itemtyp");
+        sql.append(" ORDER BY RIGHT(T.ITEMID, 2) ");
 
         Map<String, Object> params = new HashMap<>();
         params.put("itemtyp", itemtyp);
@@ -206,24 +207,29 @@ public class MeetingCodeDaoImpl extends BaseDao<MeetingCode> implements MeetingC
     @Override
     public List<MeetingCode> findValidRoomByDtandUsing(String meetingDt, String using) {
         StringBuilder sql = new StringBuilder();
-        sql.append("    SELECT a.ITEMID, a.ITEMNAME FROM MEETINGCODE a ");
-        sql.append("     WHERE a.ITEMTYP = 'F' ");
-        sql.append("       AND NOT exists ( ");
-        sql.append("            SELECT b.ROOMID FROM MEETING b ");
-        sql.append("             WHERE b.MEETINGDT = :meetingDt ");
-        sql.append("               AND b.STATUS = 'A' ");
-        sql.append("               AND (SELECT dbo.UFN_CHECK(b.USING, :using) AS RTN) = 'Y' ");
-        sql.append("               AND a.ITEMID = b.ROOMID ");
-        sql.append("                 ) ");
+        sql.append("SELECT RIGHT(ITEMID, 2),ITEMID, ");
+        sql.append("       ITEMNAME ");
+        sql.append("  FROM MEETINGCODE a ");
+        sql.append(" WHERE ITEMTYP = 'F' ");
+        sql.append("   AND NOT exists (SELECT ROOMID ");
+        sql.append("                     FROM MEETING ");
+        sql.append("                    WHERE MEETINGDT = :meetingDt ");
+        sql.append("                      AND STATUS = 'A' ");
+        sql.append("                      AND (SELECT dbo.UFN_CHECK(USING, :using) AS RTN) = 'Y' ");
+        sql.append("                      AND ROOMID = a.ITEMID ");
+        sql.append("                   ) ");
+        sql.append("   AND NOT exists(SELECT ITEMID ");
+        sql.append("                    FROM ROOMISABLE ");
+        sql.append("                   WHERE ITEMID = a.ITEMID ");
+        sql.append("                     AND ISABLEDATE = :meetingDt ");
+        sql.append("                     AND (SELECT dbo.UFN_CHECK(ISABLETIME, :using) AS RTN) = 'Y')");
         sql.append(" UNION ALL ");
-        sql.append("    SELECT a.ITEMID, a.ITEMNAME FROM MEETINGCODE a ");
-        sql.append("     WHERE a.ITEMTYP = 'FX' ");
-        sql.append("       AND exists(SELECT distinct d.ITEMID ");
-        sql.append("      FROM ROOMISABLE d ");
-        sql.append("     WHERE d.ITEMID = a.ITEMID ");
-        sql.append("       AND d.ISABLEDATE = :meetingDt ");
-        sql.append("       AND (SELECT dbo.UFN_CHECK(d.ISABLETIME, :using) AS RTN) = 'N') ");
-        sql.append("  ORDER BY ITEMID, ITEMNAME ");
+        sql.append("    SELECT RIGHT(ITEMID, 2),");
+        sql.append("           ITEMID,");
+        sql.append("           ITEMNAME ");
+        sql.append("      FROM MEETINGCODE ");
+        sql.append("     WHERE ITEMTYP = 'FX' ");
+        sql.append(" ORDER BY  RIGHT(ITEMID, 2); ");
 
         Map<String, Object> params = new HashMap<>();
         params.put("meetingDt", meetingDt);
@@ -278,7 +284,7 @@ public class MeetingCodeDaoImpl extends BaseDao<MeetingCode> implements MeetingC
         sql.append(ALL_COLUMNS_SQL);
         sql.append("      FROM MEETINGCODE T ");
         sql.append("     WHERE T.ITEMTYP in (:itemtyps)");
-        sql.append("  ORDER BY T.ITEMNAME, SUBSTRING(T.ITEMID,2,2)");
+        sql.append("  ORDER BY RIGHT(T.ITEMID,2), T.ITEMNAME");
 
         Map<String, Object> params = new HashMap<>();
         params.put("itemtyps", itemtyps);

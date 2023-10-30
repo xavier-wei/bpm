@@ -24,7 +24,7 @@
 </jsp:attribute>
 
 <jsp:attribute name="contents">
-<tags:fieldset legend="會議室啟用">
+<tags:fieldset legend="會議室禁用">
 <form:form id="eip06w060Form" modelAttribute="${caseKey}">
                  <tags:form-row>
                  <div class="col-md d-flex">
@@ -67,8 +67,6 @@
                             <form:option value="6">六</form:option>
                             <form:option value="7">日</form:option>
                         </form:select>
-
-<%--                        如使用dateTW樣式，cssClass="form-control dateTW"、maxlength="9"--%>
                         <form:input path="periodStart" cssClass="form-control dateTW" size="8" maxlength="9" />
                         <span class="pt-2 mx-1">~</span>
                         <form:input path="periodEnd" cssClass="form-control dateTW" size="8" maxlength="9" />
@@ -77,16 +75,16 @@
 
                 <tags:form-row>
                     <div class="col-md d-flex">
-                        <form:label cssClass="col-form-label star" path="meetingBegin">啟用時間：</form:label>
+                        <form:label cssClass="col-form-label star" path="meetingBegin">禁用時間：</form:label>
                         <form:select path="meetingBegin" cssClass="form-control selector">
-                            <form:option value="">開啟時間</form:option>
+                            <form:option value="">開始時間</form:option>
                             <c:forEach items="${caseData.timeBeginMap}" var="opts" varStatus="optStatus">
                                 <option value="${opts.key}">${opts.value.substring(0,2)}:${opts.value.substring(2)}</option>
                             </c:forEach>
                         </form:select>
                         <span class="input-group-text">~</span>
                         <form:select path="meetingEnd" cssClass="form-control selector">
-                            <form:option value="">關閉時間</form:option>
+                            <form:option value="">結束時間</form:option>
                             <c:forEach items="${caseData.timeEndMap}" var="opts" varStatus="optStatus">
                                 <option value="${opts.key}">${opts.value.substring(0,2)}:${opts.value.substring(2)}</option>
                             </c:forEach>

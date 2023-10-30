@@ -69,17 +69,7 @@ public class TimeConversionService {
         StringBuilder using = new StringBuilder(); //回傳值
         //取得時間差間隔幾個半小時
         int duration = Integer.parseInt(end) - Integer.parseInt(begin);  // 每50 = 半小時 1400- 1600 = 200 = 50 * 4
-        int halfHours;
-
-        if (begin.charAt(0) == '0'){
-            if((end.endsWith("30") && duration % 100 > 0) || duration < 50 ){
-                halfHours = duration/50 + 1 ; //如果開始時間為00，則需無條件進位  (ex (1630-1400) / 50 = 4.6
-            }else {
-                halfHours = duration/50; //如果開始時間為00，則需無條件進位  (ex (1630-1400) / 50 = 4.6
-            }
-        }else {
-            halfHours = duration % 50 != 0 ? duration/50+1 : duration/50; //如果開始時間為00，則需無條件進位  (ex (1630-1400) / 50 = 4.6
-        }
+        double halfHours = Math.round ((double) duration / 50) ;  //如果開始時間為00，則需無條件進位  (ex (1630-1400) / 50 = 4.6
 
         //取得開始時間位置
         //前兩位如果是00，後兩位是30? +0 : +1
@@ -112,8 +102,8 @@ public class TimeConversionService {
     }
 
     /**
-     * 會議室啟用期間 轉為48位二進制編碼
-     * ex 1300~1430 1111_1111_1111_1111_1111_1111_1100_0111_1111_1111_1111_1111
+     * 會議室禁用期間 轉為48位二進制編碼
+     * ex 1300~1430 0000_0000_0000_0000_0000_0000_0011_1000_0000_0000_0000_0000
      * @param begin
      * @param end
      * @return
@@ -122,7 +112,7 @@ public class TimeConversionService {
         StringBuilder using = new StringBuilder(); //回傳值
 
         int duration= Integer.parseInt(end) -Integer.parseInt(begin);// 半小時為50  ex 1600-1400= 200/50 =4
-        //若啟用區間不能整除，四捨五入
+        //若禁用區間不能整除，四捨五入
         //1600-1430=170/50=3.4=3、1700-1430=240/50=5.4=5
         //1630-1400=230/50=4.6=5、1730-1400=330/50=6.6=7
         int halfHours=duration % 50 != 0 ? (int)Math.round( (double) duration/50) : duration/50;
@@ -140,20 +130,20 @@ public class TimeConversionService {
 
         //生成48字元字串
         for(int i = 0 ; using.length() < 48 ; i++){
-            //會議室非啟用區間 回傳為 1 (串)
+            //會議室非禁用區間 回傳為 0 (串)
             if(i!=beginPosition){
-                using.append("1");
+                using.append("0");
             }else {
-                //會議室啟用區間 回傳為0
+                //會議室禁用區間 回傳為1
                 for (int j = 0; j < halfHours ; j++ ){
-                    using.append("0");
+                    using.append("1");
                 }
             }
         }
 
-        //若訖的時間為2359 則將第48位元轉成0
+        //若訖的時間為2359 則將第48位元轉成1
         if(StringUtils.equals(end,"2359")){
-            using.setCharAt(using.length()-1, '0');
+            using.setCharAt(using.length()-1, '1');
         }
         return using.toString();
     }
@@ -164,7 +154,7 @@ public class TimeConversionService {
         String beginTime = null;
         String endTime = null;
         int i;
-        //            beginTime
+        //beginTime
         for ( i = 0 ; i < chars.length ; i++){
             if( chars[i] == '1' && i <= 1){  //0000 or 0030 for beginTime
                 if( i == 0){  //偶數 = XX:00 奇數 = XX:30

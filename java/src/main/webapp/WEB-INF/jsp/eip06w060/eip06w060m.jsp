@@ -24,7 +24,6 @@
                 <table class="table" id="tb1">
                     <thead data-orderable="true">
                     <tr>
-<%--                        <th style="width: 15%">類別</th>--%>
                         <th style="width: 15%">編號</th>
                         <th style="width: 15%">名稱</th>
                         <th style="width: 15%">數量</th>
@@ -64,8 +63,8 @@
                                         <c:when test="${item.itemTyp == 'FX'}">啟用</c:when>
                                       </c:choose>
                                     </tags:button>
-                                    <c:if test="${item.itemTyp == 'FX'}">
-                                      <tags:button name="partisable">部分啟用</tags:button>
+                                    <c:if test="${item.itemTyp == 'F'}">
+                                      <tags:button name="partisable">部分禁用</tags:button>
                                     </c:if>
                                 </td>
                             </tr>
@@ -77,7 +76,7 @@
         <form:hidden path="itemId"/>
         <form:hidden path="itemName"/>
         <tags:form-note>
-            <tags:form-note-item>「目前狀態」為「禁用」時，點選啟用，將清空部分啟用內容。</tags:form-note-item>
+            <tags:form-note-item>「目前狀態」為「啟用」時，點選禁用，將清空部分禁用內容。</tags:form-note-item>
         </tags:form-note>
     </form:form>
     </tags:fieldset>

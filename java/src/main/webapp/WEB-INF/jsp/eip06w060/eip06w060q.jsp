@@ -35,7 +35,7 @@
                     <thead data-orderable="true">
                     <tr>
                         <th style="width: 5%">序號</th>
-                        <th style="width: 15%">啟用日期</th>
+                        <th style="width: 15%">禁用日期</th>
                         <th style="width: 15%">開始時間</th>
                         <th style="width: 15%">結束時間</th>
                         <th style="width: 15%">操作區</th>

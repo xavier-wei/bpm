@@ -32,7 +32,7 @@ public class Eip06w040l00xls extends XlsReport {
     private final CellStyle alignThinLeft;
     private final CellStyle alignThinRight;
     private final CellStyle alignCenterTitle;
-    private final CellStyle alignCenterHeader;
+    private final CellStyle alignLeftHeader;
     private final CellStyle alignTopBorder;
 
     // 設定欄位數量
@@ -48,16 +48,12 @@ public class Eip06w040l00xls extends XlsReport {
     {
         // 設定字體
         Font font = workbook.createFont();
-        font.setFontHeightInPoints((short) 12);
+        font.setFontHeightInPoints((short) 10);
+        font.setBold(true);
         font.setFontName("標楷體");
 
-        Font boldFont = workbook.createFont();
-        boldFont.setFontHeightInPoints((short) 12);
-        boldFont.setBold(true);
-        boldFont.setFontName("標楷體");
-
         Font titleFont = workbook.createFont();
-        titleFont.setFontHeightInPoints((short) 12);
+        titleFont.setFontHeightInPoints((short) 14);
         titleFont.setBold(true);
         titleFont.setFontName("標楷體");
 
@@ -67,13 +63,13 @@ public class Eip06w040l00xls extends XlsReport {
         titleStyle.setVerticalAlignment(VerticalAlignment.CENTER);
         titleStyle.setFont(titleFont);
 
-        // 設定 置中對齊 表頭
-        alignCenterHeader = workbook.createCellStyle();
-        alignCenterHeader.setAlignment(HorizontalAlignment.CENTER);
-        alignCenterHeader.setVerticalAlignment(VerticalAlignment.CENTER);
-        alignCenterHeader.setBorderBottom(BorderStyle.DOUBLE);
-        alignCenterHeader.setBorderTop(BorderStyle.valueOf(borderWidth));
-        alignCenterHeader.setFont(boldFont);
+        // 設定 置左對齊 表頭
+        alignLeftHeader = workbook.createCellStyle();
+        alignLeftHeader.setAlignment(HorizontalAlignment.LEFT);
+        alignLeftHeader.setVerticalAlignment(VerticalAlignment.CENTER);
+        alignLeftHeader.setBorderBottom(BorderStyle.DOUBLE);
+        alignLeftHeader.setBorderTop(BorderStyle.valueOf(borderWidth));
+        alignLeftHeader.setFont(font);
         // 設定 Top Border 表頭
         alignTopBorder = workbook.createCellStyle();
         alignTopBorder.setBorderTop(BorderStyle.valueOf(borderWidth));
@@ -82,7 +78,7 @@ public class Eip06w040l00xls extends XlsReport {
         alignLeft = workbook.createCellStyle();
         alignLeft.setAlignment(HorizontalAlignment.LEFT);
         alignLeft.setVerticalAlignment(VerticalAlignment.CENTER);
-        alignLeft.setFont(boldFont);
+        alignLeft.setFont(font);
         alignLeft.setWrapText(true);
 
         // 設定 靠左對齊文字 格式
@@ -95,7 +91,7 @@ public class Eip06w040l00xls extends XlsReport {
         alignRight = workbook.createCellStyle();
         alignRight.setAlignment(HorizontalAlignment.RIGHT);
         alignRight.setVerticalAlignment(VerticalAlignment.CENTER);
-        alignRight.setFont(boldFont);
+        alignRight.setFont(font);
 
         // 設定 靠右對齊 數字格式
         alignThinRight = workbook.createCellStyle();
@@ -109,13 +105,13 @@ public class Eip06w040l00xls extends XlsReport {
         alignCenterTitle.setVerticalAlignment(VerticalAlignment.CENTER);
         alignCenterTitle.setBorderBottom(BorderStyle.DOUBLE);
         alignCenterTitle.setBorderTop(BorderStyle.valueOf(borderWidth));
-        alignCenterTitle.setFont(boldFont);
+        alignCenterTitle.setFont(font);
 
         // 設定 置中對齊文字 格式
         alignCenter = workbook.createCellStyle();
         alignCenter.setAlignment(HorizontalAlignment.CENTER);
         alignCenter.setVerticalAlignment(VerticalAlignment.CENTER);
-        alignCenter.setFont(boldFont);
+        alignCenter.setFont(font);
     }
 
     /**
@@ -123,17 +119,18 @@ public class Eip06w040l00xls extends XlsReport {
      *
      * @param resultList 資料參數
      */
-    public void createXls(List<Eip06w040Report> resultList) {
-        createSheet(resultList);
+    public void createXls(List<Eip06w040Report> resultList, String meetingdt) {
+        createSheet(resultList, meetingdt);
     }
 
     /**
      * 產生頁籤
      * @param list 統計資料 list
      */
-    public void createSheet(List<Eip06w040Report> list) {
+    public void createSheet(List<Eip06w040Report> list, String meetingdt) {
         // 設定列印格式
-        this.sheet = createSheet(DateUtility.getNowChineseDate());
+        String formatChineseDate = DateUtility.formatChineseDateString(meetingdt, true);
+        this.sheet = createSheet(formatChineseDate);
         PrintSetup printSetup = sheet.getPrintSetup();
         printSetup.setLandscape(true);
         printSetup.setPaperSize(HSSFPrintSetup.A4_PAPERSIZE);
@@ -142,19 +139,20 @@ public class Eip06w040l00xls extends XlsReport {
         Row row0 = createRow(sheet, 0, cellAmountSheet, titleStyle);
         row0.getSheet().addMergedRegion(new CellRangeAddress(0, 0, 0, 7));
         row0.setHeightInPoints(20f);
-        setCellValue(row0, 0, EMPTY_FIELD, titleStyle);
+        int dayOfWeek = DateUtility.getDayOfWeek(meetingdt, false) ;
+        setCellValue(row0, 0, formatChineseDate + " " + "星期" + "日一二三四五六".charAt(dayOfWeek) + " " + "會議活動", titleStyle);  //112年11月3日 星期五 會議活動
 
         // 報表資料標題
         Row row1 = createRow(sheet, 1, cellAmountSheet, alignCenterTitle);
         row1.setHeightInPoints(20f);
         setColumnWidth(sheet, 0, 20);
         setColumnWidth(sheet, 1, 8);
-        setColumnWidth(sheet, 2, 30);
+        setColumnWidth(sheet, 2, 20);
         setColumnWidth(sheet, 3, 18);
         setColumnWidth(sheet, 4, 18);
         setColumnWidth(sheet, 5, 8);
-        setColumnWidth(sheet, 6, 30);
-        setColumnWidth(sheet, 7, 30);
+        setColumnWidth(sheet, 6, 18);
+        setColumnWidth(sheet, 7, 18);
 
         setCellValue(row1, 0, "地點", alignCenterTitle);
         setCellValue(row1, 1, "時間", alignCenterTitle);
@@ -175,7 +173,7 @@ public class Eip06w040l00xls extends XlsReport {
             Row row = createRow(sheet, rowCount, cellAmountSheet, alignLeft);
             row.setHeightInPoints(20f);
             for(Eip06w040Report data : details){
-                setCellValue(row, 0, data.getRoomName(), alignCenterHeader);
+                setCellValue(row, 0, data.getRoomName(), alignLeftHeader);
                 setCellValue(row, 1, EMPTY_FIELD, alignTopBorder);
                 setCellValue(row, 2, EMPTY_FIELD, alignTopBorder);
                 setCellValue(row, 3, EMPTY_FIELD, alignTopBorder);
@@ -191,9 +189,9 @@ public class Eip06w040l00xls extends XlsReport {
                 setCellValue(rowData, 0, EMPTY_FIELD, alignLeft);
                 setCellValue(rowData, 1, data.getMeetingBegin(), alignLeft);
                 setCellValue(rowData, 2, data.getMeetingName(), alignLeft);
-                setCellValue(rowData, 3, data.getChairman(), alignLeft);
-                setCellValue(rowData, 4, data.getOrganizerId(), alignThinLeft);
-                setCellValue(rowData, 5, data.getMeetingQty(), alignThinRight);
+                setCellValue(rowData, 3, data.getChairman(), alignCenter);
+                setCellValue(rowData, 4, data.getOrganizerId(), alignCenter);
+                setCellValue(rowData, 5, data.getMeetingQty(), alignCenter);
                 setCellValue(rowData, 6, data.getFoodName().length() > 1 ? data.getFoodName().substring(2) : "", alignLeft); //餐點_數量
                 setCellValue(rowData, 7, data.getItemName().length() > 1 ? data.getItemName().substring(2) : "", alignLeft); //設備
             }

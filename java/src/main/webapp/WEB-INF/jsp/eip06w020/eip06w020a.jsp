@@ -235,7 +235,7 @@
                 data: JSON.stringify(data),
                 success: function (data){
                     if(parseInt(data) < parseInt(meetingQty)){
-                        showAlert('「開會人數」需小於或等於'+ data, null)
+                        showAlert('此會議室可容納人數上限為'+ data + '人，請確認是否仍要借用此會議室', null)
                     }
                 },
                 error:function(jqXHR, textStatus, errorThrown) {

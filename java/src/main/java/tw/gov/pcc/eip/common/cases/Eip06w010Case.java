@@ -48,6 +48,8 @@ public class Eip06w010Case implements Serializable {
     private String roomId; //會議室編號
     private String itemId; //物品編號
     private String foodId; //餐點編號
+    private String itemList; //查詢畫面設備欄位
+
     List<Object> itemIds; //選取物品編號
     List<Object> foodId_Qty; //選取餐點編號
     List<Object> food_Qty;; //餐點數量
@@ -82,6 +84,8 @@ public class Eip06w010Case implements Serializable {
         this.itemName = eip06w010Case.getItemName();
         this.isEditable = eip06w010Case.isEditable();
         this.isOrderFood = eip06w010Case.isOrderFood();
+        this.qty = eip06w010Case.getQty();
+        this.itemList = eip06w010Case.getItemList();
     }
 
 

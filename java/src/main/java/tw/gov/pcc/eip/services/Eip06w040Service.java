@@ -55,7 +55,7 @@ public class Eip06w040Service {
         // get list from Dao
         List<Eip06w040Report> resultList = meetingDao.selectValidMeetingByMeetingdt(meetingdt);
         StringBuilder itemName = new StringBuilder();
-        StringBuilder foodName_Qty = new StringBuilder();
+        StringBuilder foodName = new StringBuilder();
         String meetingId = null;
         if (resultList.size() != 0) {
             try {
@@ -63,7 +63,7 @@ public class Eip06w040Service {
                 List<Eip06w040Report> newResultList = new ArrayList<>();
                 for (int i = 0 ; i < resultList.size() ; i++){
                     if (resultList.get(i).getItemId() != null && resultList.get(i).getItemId().startsWith("A")){
-                        foodName_Qty.append(", ").append(resultList.get(i).getItemName()).append("-").append(resultList.get(i).getItemQty());
+                        foodName.append(", ").append(resultList.get(i).getItemName());
                     } else if (resultList.get(i).getItemId() != null && resultList.get(i).getItemId().startsWith("B")) {
                         itemName.append(", ").append(resultList.get(i).getItemName());
                     }
@@ -71,15 +71,15 @@ public class Eip06w040Service {
                     meetingId = resultList.get(i).getMeetingId();
                     if((resultList.size()-1 > i && !StringUtils.equals(meetingId, resultList.get(i+1).getMeetingId()))
                             || (resultList.size()-1 == i)){
-                        resultList.get(i).setFoodName(foodName_Qty.toString());
+                        resultList.get(i).setFoodName(foodName.toString());
                         resultList.get(i).setItemName(itemName.toString());
-                        resultList.get(i).setOrganizerId(resultList.get(i).getOrganizerId() + "-" + usersDao.selectByKey(resultList.get(i).getOrganizerId()).getUser_name());
+                        resultList.get(i).setOrganizerId(usersDao.selectByKey(resultList.get(i).getOrganizerId()).getUser_name());
                         newResultList.add(resultList.get(i));
-                        foodName_Qty.delete(0,foodName_Qty.length());
+                        foodName.delete(0,foodName.length());
                         itemName.delete(0,itemName.length());
                     }
                 }
-                eip06w040l00xls.createXls(newResultList);
+                eip06w040l00xls.createXls(newResultList, meetingdt);
                 return eip06w040l00xls.getOutputStream();
             } catch (Exception e) {
                 log.error(ExceptionUtility.getStackTrace(e));

@@ -128,7 +128,7 @@ public class Eip06w020Controller extends BaseController {
         List<MeetingCode> roomList = eip06w020Service.findValidRoom(meetingDt, meetingBegin, meetingEnd);
 
         //初始化會議場地下拉選單
-        Map<String, String> meetingRoomMap = new TreeMap<>();
+        Map<String, String> meetingRoomMap =  new LinkedHashMap<>();
         roomList.forEach(a->{
             meetingRoomMap.put(a.getItemId(), a.getItemId()+'-'+a.getItemName());
         });

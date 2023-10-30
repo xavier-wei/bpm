@@ -70,14 +70,16 @@
                 <table id="dataTable" class="table">
                     <thead data-orderable="true">
                     <tr>
-                        <th style="width: 2%" >序號</th>
-                        <th style="width: 15%" >會議名稱</th>
-                        <th style="width: 10%" >主持人</th>
+                            <%--                            <th style="width: 2%" >序號</th>--%>
                         <th style="width: 8%" >會議日期</th>
-                        <th style="width: 10%" >會議時間</th>
-                        <th style="width: 8%" >場地</th>
                         <th style="width: 12%" >場地名稱</th>
+                        <th style="width: 10%" >會議時間</th>
                         <th style="width: 8%" >申請人</th>
+                        <th style="width: 18%" >會議名稱</th>
+                        <th style="width: 10%" >主持人</th>
+                        <th style="width: 5%" >人數</th>
+                        <th style="width: 15%" >設備</th>
+                            <%--                            <th style="width: 8%" >場地</th>--%>
                         <th data-orderable="false"></th>
                             <%--                            <th style="display: none"></th>--%>
                     </tr>
@@ -85,8 +87,20 @@
                     <tbody>
                     <c:forEach items="${caseData.resultList}" var="item" varStatus="status">
                                 <tr class="text-left">
-                                    <td class="text-center">
-                                        <c:out value='${status.count}'/>
+                                        <%--                                    <td class="text-center">--%>
+                                        <%--                                        <c:out value='${status.count}'/>--%>
+                                        <%--                                    </td>--%>
+                                    <td>
+                                        <func:minguo value="${item.meetingdt}"/>
+                                    </td>
+                                    <td>
+                                        <c:out value='${item.itemName}' />
+                                    </td>
+                                    <td>
+                                        <c:out value='${item.meetingBegin.substring(0,2)}:${item.meetingBegin.substring(2)} ~ ${item.meetingEnd.substring(0,2)}:${item.meetingEnd.substring(2)}'/>
+                                    </td>
+                                    <td>
+                                        <c:out value='${item.organizerId}' />
                                     </td>
                                     <td>
                                         <c:out value='${item.meetingName}'/>
@@ -95,20 +109,14 @@
                                         <c:out value='${item.chairman}'/>
                                     </td>
                                     <td>
-                                        <func:minguo value="${item.meetingdt}"/>
+                                        <c:out value='${item.qty}' />
                                     </td>
                                     <td>
-                                        <c:out value='${item.meetingBegin.substring(0,2)}:${item.meetingBegin.substring(2)} ~ ${item.meetingEnd.substring(0,2)}:${item.meetingEnd.substring(2)}'/>
+                                        <c:out value='${item.itemList}'/>
                                     </td>
-                                    <td>
-                                        <c:out value='${item.roomId}'/>
-                                    </td>
-                                    <td>
-                                        <c:out value='${item.itemName}' />
-                                    </td>
-                                    <td>
-                                        <c:out value='${item.organizerId}' />
-                                    </td>
+                                        <%--                                    <td>--%>
+                                        <%--                                        <c:out value='${item.roomId}'/>--%>
+                                        <%--                                    </td>--%>
                                     <td class="text-left" >
                                         <c:choose>
 <%--                                            無訂餐隱藏--%>

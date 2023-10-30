@@ -426,6 +426,10 @@
 						$("#approve_using_time_s").val(data.starTime);
 						$("#approve_using_time_e").val(data.endTime);
 						$("#approve_using_timeStr").val(str);
+						
+		        		if($('#carno').val()!==''){
+		        			$('#eip07w040Form').attr('action', '<c:url value="/Eip07w040_getUsingData.action" />').submit();
+		        		}
 					},
 					error : function(e) {
 						showAlert("取得核定區間失敗");

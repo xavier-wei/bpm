@@ -142,6 +142,7 @@
                 <form:hidden path="food_Qty"/>
                 <form:hidden path="meetingsNeedCancel"/>
                 <form:hidden path="maxPeriodDays"/>
+<%--                <form:hidden path="repeat" value="true"/>--%>
                  <tags:form-note>
                     <tags:form-note-item><span class="red">＊</span>為必填欄位。</tags:form-note-item>
                 </tags:form-note>
@@ -160,7 +161,7 @@
         $dateTW.datepicker("setStartDate", new Date());
         $dateTW.datepicker("setEndDate", maxDate);
 
-        $('#repeat, #dateWeekMonth').change(function () {
+        $('#dateWeekMonth').change(function () {
             // let repeat = $('#repeat').val('true');
             let dateWeekMonth = $('#dateWeekMonth').val();
 
@@ -182,6 +183,11 @@
         //btnsave
         $('#btnSave').click(function(e) {
             e.preventDefault();
+
+            if($('#periodStart').val() > $('#periodEnd').val()){ //結束時間小於開始時間
+                showAlert('結束日期不得小於開始日期', null)
+            }
+
 
             let meetingQty = $('#meetingQty');
             if(meetingQty.val() === ""){
@@ -241,7 +247,7 @@
                     $('#food_Qty').val(JSON.stringify(food_Qtys));
 
                     var data = {};
-                    data["repeat"] = $('#repeat').val('true');
+                    // data["repeat"] = $('#repeat').val('true');
                     data["meetingBegin"] = $('#meetingBegin').val();
                     data["meetingEnd"] = $('#meetingEnd').val();
                     data["periodStart"] = $('#periodStart').val();
@@ -352,7 +358,7 @@
                 data: JSON.stringify(data),
                 success: function (data){
                     if(parseInt(data) < parseInt(meetingQty)){
-                        showAlert('「開會人數」需小於或等於'+ data, null)
+                        showAlert('此會議室可容納人數上限為'+ data + '人，請確認是否仍要借用此會議室', null)
                     }
                 },
                 error:function(jqXHR, textStatus, errorThrown) {

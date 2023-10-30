@@ -77,7 +77,7 @@ public class Eip06w060Controller extends BaseController {
     @RequestMapping("/Eip06w060_partisable.action")
     public String partisable(@ModelAttribute(CASE_KEY) Eip06w060Case caseData) {
         try {
-            log.debug("部分啟用 會議室管理");
+            log.debug("部分禁用 會議室管理");
             eip06w060Service.getRoomIsableList(caseData);
         } catch (Exception e) {
             log.error(ExceptionUtility.getStackTrace(e));
@@ -89,7 +89,7 @@ public class Eip06w060Controller extends BaseController {
     @RequestMapping("/Eip06w060_delete.action")
     public String deleteClass(@ModelAttribute(CASE_KEY) Eip06w060Case caseData) {
         try {
-            log.debug("刪除 啟用時間");
+            log.debug("刪除 禁用時間");
             eip06w060Service.deleteClass(caseData);
             setSystemMessage(getDeleteSuccessMessage());
         } catch (Exception e) {
@@ -103,7 +103,7 @@ public class Eip06w060Controller extends BaseController {
     @RequestMapping("/Eip06w060_deleteSingle.action")
     public String deleteSingleClass(@ModelAttribute(CASE_KEY) Eip06w060Case caseData) {
         try {
-            log.debug("刪除 指定啟用時間");
+            log.debug("刪除 指定禁用時間");
             eip06w060Service.deleteSingleClass(caseData);
             setSystemMessage(getDeleteSuccessMessage());
         } catch (Exception e) {
@@ -119,7 +119,7 @@ public class Eip06w060Controller extends BaseController {
     @RequestMapping("/Eip06w060_inster.action")
     public String insterClass(@ModelAttribute(CASE_KEY) Eip06w060Case caseData){
         try{
-            log.debug("新增 指定啟用時間");
+            log.debug("新增 指定禁用時間");
             eip06w060Service.initSelectBeginList(caseData); //時間開始
             eip06w060Service.initSelectEndList(caseData);//時間結束
         }catch (Exception e){
@@ -133,11 +133,11 @@ public class Eip06w060Controller extends BaseController {
     @RequestMapping("/Eip06w060_save.action")
     public String saveClass(@Validated @ModelAttribute(CASE_KEY) Eip06w060Case caseData, BindingResult result){
         try{
-            log.debug("儲存 指定啟用時間");
-            eip06w060Service.initSelectBeginList(caseData); //初始化 開起時間清單
-            eip06w060Service.initSelectEndList(caseData);//初始化 關閉時間清單
+            log.debug("儲存 指定禁用時間");
+            eip06w060Service.initSelectBeginList(caseData); //初始化 開始時間清單
+            eip06w060Service.initSelectEndList(caseData);//初始化 結束時間清單
             eip06w060Service.validate(caseData, result);
-            eip06w060Service.isableTime(caseData, result);//檢查 會議室啟用區間是否重複
+            eip06w060Service.isableTime(caseData, result);//檢查 會議室禁用區間是否重複
             if (result.hasErrors()){
                 return INSERT_PAGE;
             }

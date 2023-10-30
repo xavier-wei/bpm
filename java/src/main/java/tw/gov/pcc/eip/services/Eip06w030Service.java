@@ -165,11 +165,11 @@ public class Eip06w030Service {
         String periodEnd = DateUtility.changeDateTypeToWestDate(map.get("periodEnd").toString());
         periodStart = periodStart.substring(0,4) + "-" + periodStart.substring(4,6) + "-" + periodStart.substring(6);
         String dateWeekMonth = map.get("dateWeekMonth").toString();
-        String repeat = map.get("repeat").toString();
+//        String repeat = map.get("repeat").toString();
         int day = Integer.parseInt(map.get("day").toString());
         int week = Integer.parseInt(map.get("week").toString());
         List<String> datelist =new ArrayList<>();
-        if(repeat.equals("true")){
+//        if(repeat.equals("true")){
             periodEnd = periodEnd.substring(0,4) + "-" + periodEnd.substring(4,6) + "-" + periodEnd.substring(6);
             if(dateWeekMonth.equals("date")) {   //每天
                 datelist = getBeginAndEndDateBetween(periodStart, periodEnd);
@@ -178,9 +178,9 @@ public class Eip06w030Service {
             } else if (dateWeekMonth.equals("month")) {  //每月第幾週
                 datelist = getDayOfWeekAndMonthWithinDateInterval(periodStart, periodEnd, week, day);
             }
-        }else {
-            datelist.add(periodStart);
-        }
+//        }else {
+//            datelist.add(periodStart);
+//        }
 
         List<String> newDatelist =new ArrayList<>();
         datelist.forEach(a -> {
@@ -189,51 +189,51 @@ public class Eip06w030Service {
         return meetingDao.findExistedMeeting(newDatelist, using, roomId);
     }
 
-    /**
-     * 新增會議
-     * @param caseData
-     * @return
-     */
-    public void saveMeeting(Eip06w030Case caseData){
-        Meeting meeting = new Meeting();
-        String using = timeConversionService.to48binaryForMeeting(caseData.getMeetingBegin(), caseData.getMeetingEnd());
-        int maxNum = meetingDao.findMaxMeetingId().getMeetingId() + 1;
-        meeting.setMeetingId(maxNum);
-        meeting.setMeetingName(caseData.getMeetingName());
-        meeting.setChairman(caseData.getChairman());
-        meeting.setOrganizerId(userData.getUserId());
-        meeting.setMeetingdt(DateUtility.changeDateTypeToWestDate(caseData.getPeriodStart()));
-        meeting.setMeetingBegin(caseData.getMeetingBegin());
-        meeting.setMeetingEnd(caseData.getMeetingEnd());
-        meeting.setRoomId(caseData.getRoomId());
-        meeting.setQty(caseData.getMeetingQty());
-        meeting.setApplydt(LocalDateTime.now());
-        meeting.setUsing(using);
-        meetingDao.insertData(meeting);
-
-        if(caseData.getItemIds().size()>0){
-            for(Object obj : caseData.getItemIds()){
-                MeetingItem mtItem = new MeetingItem();
-                mtItem.setMeetingId(maxNum);
-                mtItem.setItemId(obj.toString());
-                mtItem.setQty(1);
-                meetingItemDao.insertData(mtItem);
-            }
-        }
-
-        if(caseData.getFoodId_Qty().size()>1){
-            for(int i = 0 ; i < caseData.getFoodId_Qty().size() ; i++){
-                MeetingItem mtItem = new MeetingItem();
-                String foodId = caseData.getFoodId_Qty().get(i).toString().split(":")[1].replace("\"","");
-                int foodIdQty = Integer.parseInt(caseData.getFoodId_Qty().get(i+1).toString().split(":")[1].replace("\"","").replace("}","").replace("]",""));
-                mtItem.setMeetingId(maxNum);
-                mtItem.setItemId(foodId);
-                mtItem.setQty(foodIdQty);
-                meetingItemDao.insertData(mtItem);
-                i++;
-            }
-        }
-    }
+//    /**
+//     * 新增會議
+//     * @param caseData
+//     * @return
+//     */
+//    public void saveMeeting(Eip06w030Case caseData){
+//        Meeting meeting = new Meeting();
+//        String using = timeConversionService.to48binaryForMeeting(caseData.getMeetingBegin(), caseData.getMeetingEnd());
+//        int maxNum = meetingDao.findMaxMeetingId().getMeetingId() + 1;
+//        meeting.setMeetingId(maxNum);
+//        meeting.setMeetingName(caseData.getMeetingName());
+//        meeting.setChairman(caseData.getChairman());
+//        meeting.setOrganizerId(userData.getUserId());
+//        meeting.setMeetingdt(DateUtility.changeDateTypeToWestDate(caseData.getPeriodStart()));
+//        meeting.setMeetingBegin(caseData.getMeetingBegin());
+//        meeting.setMeetingEnd(caseData.getMeetingEnd());
+//        meeting.setRoomId(caseData.getRoomId());
+//        meeting.setQty(caseData.getMeetingQty());
+//        meeting.setApplydt(LocalDateTime.now());
+//        meeting.setUsing(using);
+//        meetingDao.insertData(meeting);
+//
+//        if(caseData.getItemIds().size()>0){
+//            for(Object obj : caseData.getItemIds()){
+//                MeetingItem mtItem = new MeetingItem();
+//                mtItem.setMeetingId(maxNum);
+//                mtItem.setItemId(obj.toString());
+//                mtItem.setQty(1);
+//                meetingItemDao.insertData(mtItem);
+//            }
+//        }
+//
+//        if(caseData.getFoodId_Qty().size()>1){
+//            for(int i = 0 ; i < caseData.getFoodId_Qty().size() ; i++){
+//                MeetingItem mtItem = new MeetingItem();
+//                String foodId = caseData.getFoodId_Qty().get(i).toString().split(":")[1].replace("\"","");
+//                int foodIdQty = Integer.parseInt(caseData.getFoodId_Qty().get(i+1).toString().split(":")[1].replace("\"","").replace("}","").replace("]",""));
+//                mtItem.setMeetingId(maxNum);
+//                mtItem.setItemId(foodId);
+//                mtItem.setQty(foodIdQty);
+//                meetingItemDao.insertData(mtItem);
+//                i++;
+//            }
+//        }
+//    }
 
     /**
      * 新增多個會議
@@ -253,7 +253,9 @@ public class Eip06w030Service {
         meeting.setApplydt(LocalDateTime.now());
         meeting.setUsing(using);
 
-        int maxNum = meetingDao.findMaxMeetingId().getMeetingId();
+//        int maxNum = meetingDao.findMaxMeetingId().getMeetingId();
+        int maxNum = meetingDao.findMaxMeetingId() == null ? 0 : meetingDao.findMaxMeetingId().getMeetingId();
+
 
         String periodStart = DateUtility.changeDateTypeToWestDate(caseData.getPeriodStart());
         String periodEnd = DateUtility.changeDateTypeToWestDate(caseData.getPeriodEnd());
@@ -286,7 +288,9 @@ public class Eip06w030Service {
         Date dateEnd = sdf.parse(periodEnd);
         Calendar cd = Calendar.getInstance(); //用Calendar進行日期比較判斷
         while (dateStart.getTime() <= dateEnd.getTime()){
-            list.add(sdf.format(dateStart));
+            if(cd.get(Calendar.DAY_OF_WEEK) != Calendar.SUNDAY && cd.get(Calendar.DAY_OF_WEEK) != Calendar.SATURDAY){
+                list.add(sdf.format(dateStart));
+            }
             cd.setTime(dateStart);
             cd.add(Calendar.DATE, 1); //增加一天放入list
             dateStart = cd.getTime();

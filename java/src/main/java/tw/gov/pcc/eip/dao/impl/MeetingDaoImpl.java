@@ -153,8 +153,18 @@ public class MeetingDaoImpl extends BaseDao<Meeting> implements MeetingDao{
         sql.append("            , M.ITEMNAME  ");
         sql.append("            , (SELECT count(1) FROM MEETINGITEM MI WHERE T.MEETINGID = MI.MEETINGID AND MI.ITEMID LIKE 'A%') as orderNum");
         sql.append("            , substring(T.ROOMID, 4, 2) as orders ");
+        sql.append("            , itemList ");
         sql.append("      FROM MEETING T ");
         sql.append(" LEFT JOIN MEETINGCODE M on T.ROOMID = M.ITEMID ");
+
+        //20231027 維護畫面欄位新增需求
+        sql.append(" LEFT JOIN ( SELECT MI.MEETINGID, ");
+        sql.append("                    STRING_AGG(MC.ITEMNAME,',') itemList ");
+        sql.append("               FROM MEETINGITEM MI ");
+        sql.append("         INNER JOIN MEETINGCODE MC on MI.ITEMID = MC.ITEMID ");
+        sql.append("              WHERE MI.ITEMID LIKE 'B%' ");
+        sql.append("           GROUP BY MI.MEETINGID ) subquery on T.MEETINGID = subquery.MEETINGID ");
+
         sql.append("     WHERE ");
         sql.append("            T.STATUS = 'A' ");
         if(StringUtils.isNotBlank(caseData.getMeetingName())){
@@ -214,7 +224,7 @@ public class MeetingDaoImpl extends BaseDao<Meeting> implements MeetingDao{
         sql.append("    SELECT d.ITEMNAME as roomName, a.MEETINGID as meetingId, a.MEETINGBEGIN as meetingBegin, ");
         sql.append("           a.MEETINGNAME as meetingName, a.CHAIRMAN as chairman, a.ORGANIZERID as organizerId, ");
         sql.append("           a.QTY as meetingQty, b.ITEMID as itemId, c.ITEMNAME as itemName, b.qty as itemQty, ");
-        sql.append("           RIGHT(REPLICATE('0', 4) + SUBSTRING(a.ROOMID,2, len(a.ROOMID)), 4) as orders ");
+        sql.append("           RIGHT(a.ROOMID, 2) as orders ");
         sql.append("      FROM MEETING a ");
         sql.append(" LEFT JOIN MEETINGITEM b on a.MEETINGID = b.MEETINGID ");
         sql.append(" LEFT JOIN MEETINGCODE c on b.ITEMID = c.ITEMID ");

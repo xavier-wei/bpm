@@ -63,7 +63,7 @@ public class Eip06w060Service extends OnlineRegService {
     }
 
     /**
-     * 查詢部分啟用清單
+     * 查詢部分禁用清單
      * @param caseData
      */
     public void getRoomIsableList(Eip06w060Case caseData) {
@@ -82,7 +82,7 @@ public class Eip06w060Service extends OnlineRegService {
     }
 
     /**
-     * 會議室啟用/禁用管理
+     * 會議室禁用/禁用管理
      * @param caseData
      */
     public void getIsable(Eip06w060Case caseData) {
@@ -95,7 +95,7 @@ public class Eip06w060Service extends OnlineRegService {
     }
 
     /**
-     * 刪除 啟用時間
+     * 刪除 禁用時間
      * @param caseData
      */
     public void deleteClass(Eip06w060Case caseData) {
@@ -103,7 +103,7 @@ public class Eip06w060Service extends OnlineRegService {
     }
 
     /**
-     * 刪除 指定啟用時間
+     * 刪除 指定禁用時間
      * @param caseData
      */
     public void deleteSingleClass(Eip06w060Case caseData) {
@@ -292,17 +292,17 @@ public class Eip06w060Service extends OnlineRegService {
        }
 
         if (isEmpty(caseData.getMeetingBegin())) {
-            error = new ObjectError("meetingBegin","「啟用時間起」為必填");
+            error = new ObjectError("meetingBegin","「禁用時間起」為必填");
             result.addError(error);
         }
         if (isEmpty(caseData.getMeetingEnd())) {
-            error = new ObjectError("meetingEnd","「啟用時間訖」為必填");
+            error = new ObjectError("meetingEnd","「禁用時間訖」為必填");
             result.addError(error);
         }
 
         if (isNotEmpty(caseData.getMeetingBegin()) && isNotEmpty(caseData.getMeetingEnd())){
             if (Integer.parseInt(caseData.getMeetingBegin()) >= Integer.parseInt(caseData.getMeetingEnd())){
-                error = new ObjectError("meetingEnd","「開啟時間」須早於「關閉時間」");
+                error = new ObjectError("meetingEnd","「開始時間」須早於「結束時間」");
                 result.addError(error);
             }
         }
@@ -323,7 +323,7 @@ public class Eip06w060Service extends OnlineRegService {
         LocalTime begin=LocalTime.parse(caseData.getMeetingBegin(), format);
         LocalTime end=LocalTime.parse(caseData.getMeetingEnd(), format);
 
-        //撈出會議室啟用清單
+        //撈出會議室禁用清單
         List<RoomIsable> datelist=roomIsableDao.selectItemIdByDate(caseData.getItemId(), periodStart);
 
 
@@ -336,8 +336,8 @@ public class Eip06w060Service extends OnlineRegService {
                     || (end.isAfter(beginDb) && end.isBefore(endDb))//結束介於某段時間之中
                     || (begin.isBefore(beginDb) && end.isAfter(endDb))//包含某段時間
                     || begin.equals(beginDb) || end.equals(endDb)) {//必重疊
-                        log.debug("輸入isableTime(啟用時間)已經存在");
-                        result.rejectValue("isableTime", "W0031", new Object[]{"啟用時間"}, "");//{0}已存在，請重新輸入！
+                        log.debug("輸入isableTime(禁用時間)已經存在");
+                        result.rejectValue("isableTime", "W0031", new Object[]{"禁用時間"}, "");//{0}已存在，請重新輸入！
                         break;
 
             }
