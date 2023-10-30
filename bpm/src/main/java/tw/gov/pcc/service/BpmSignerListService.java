@@ -1,6 +1,8 @@
 package tw.gov.pcc.service;
 
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 import tw.gov.pcc.domain.BpmIsmsSignerOrder;
 import tw.gov.pcc.domain.BpmSignerList;
 import tw.gov.pcc.domain.SinerTaskEnum;
@@ -11,10 +13,7 @@ import tw.gov.pcc.repository.UserRepository;
 
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -29,7 +28,7 @@ public class BpmSignerListService {
         this.bpmIsmsSignerOrderRepository = bpmIsmsSignerOrderRepository;
     }
 
-    public void saveBpmSignerList(Map<String, Object> variables,String formId) {
+    public void saveBpmSignerList(Map<String, Object> variables,String formId) throws ResponseStatusException{
 
         HashMap<String, String> userTaskMap = new HashMap<>();
         variables.keySet()
@@ -43,7 +42,12 @@ public class BpmSignerListService {
         bpmIsmsSignerOrders.forEach(bpmIsmsSignerOrder -> sortMap.put(bpmIsmsSignerOrder.getTaskName(), bpmIsmsSignerOrder.getSort()));
         userTaskMap.keySet().forEach(key->{
             String ids = userTaskMap.get(key);
-            List<User> users = ids.contains(",") ? userRepository.findByUserIdIn(List.of(ids.split(","))) : List.of(userRepository.findByUserId(ids));
+
+            Optional<List<User>> optionalUsers = userRepository.findByUserIdIn(List.of(ids.split(",")));
+            List<User> users = optionalUsers.orElse(List.of());
+            if (users.isEmpty()) {
+                throw new ResponseStatusException(HttpStatus.BAD_REQUEST, key + "人員未於Users table建檔，請洽管理人員");
+            }
 
             users.forEach(user -> {
                 BpmSignerList bpmSignerList = new BpmSignerList();

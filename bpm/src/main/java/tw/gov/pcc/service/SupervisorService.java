@@ -42,12 +42,16 @@ public class SupervisorService {
         }
         log.info("申請者職稱：{}", positionData.get(POSNAME));
 
-        String sectionChief;
-        String director;
+        String sectionChief = null;
+        String director = null;
 
+//        if ("600038".equals(user.getDeptId())) {
+//            setIfInfoGroup(sectionChief,director,positionData);
+//        }else {
+//            setIfNotInfoGroup(sectionChief,director,positionData);
+//        }
         if ("處長".equals(positionData.get(F1_POSNAME)) || "主任".equals(positionData.get(F1_POSNAME))|| "副處長".equals(positionData.get(F1_POSNAME))) {
             // 查到第一層長官為以上三種，表示自己為科長級或副處長級或室級成員
-
             sectionChief = NO_SIGN;
             director = "副處長".equals(positionData.get(F1_POSNAME)) ? (String) positionData.get(F2_ACCOUNT) : (String) positionData.get(F1_ACCOUNT);
 
@@ -67,5 +71,26 @@ public class SupervisorService {
     }
 
 
-
+//    private void setIfNotInfoGroup(String sectionChief, String director,Map<String, Object> positionData) {
+//        if ("處長".equals(positionData.get(F1_POSNAME)) || "主任".equals(positionData.get(F1_POSNAME))|| "副處長".equals(positionData.get(F1_POSNAME))) {
+//            // 查到第一層長官為以上三種，表示自己為科長級或副處長級或室級成員
+//            sectionChief = NO_SIGN;
+//            director = "副處長".equals(positionData.get(F1_POSNAME)) ? (String) positionData.get(F2_ACCOUNT) : (String) positionData.get(F1_ACCOUNT);
+//
+//        }else if ("科長".equals(positionData.get(F1_POSNAME)) || null == positionData.get(F1_POSNAME)) {
+//            sectionChief = (null == positionData.get(F1_POSNAME)) ? NO_SIGN : (String) positionData.get(F1_ACCOUNT);
+//            director = (String) (("副處長".equals(positionData.get(F2_POSNAME))) ? positionData.get(F3_ACCOUNT) : positionData.get(F2_ACCOUNT));
+//
+//        }else {
+//            sectionChief = NO_SIGN;
+//            director = NO_SIGN;
+//        }
+//    }
+//    private void setIfInfoGroup(String sectionChief, String director,Map<String, Object> positionData) {
+//        List<Map<String, Object>> maps = supervisorRepository.executeQueryInfoGroup();
+//        sectionChief = (null == positionData.get(F1_POSNAME)) ? NO_SIGN : (String) positionData.get(F1_ACCOUNT);
+//
+//        director = maps.get(0).get("PECARD") ==null? NO_SIGN :(String) maps.get(0).get("PECARD");
+//
+//    }
 }

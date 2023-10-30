@@ -6,6 +6,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.server.ResponseStatusException;
 import tw.gov.pcc.domain.BpmIsmsL414;
 import tw.gov.pcc.domain.User;
 import tw.gov.pcc.domain.UserRole;
@@ -52,7 +53,7 @@ public class BpmIsmsL414ServiceNew implements BpmIsmsService {
 
     @Override
     @Transactional(rollbackFor = SQLException.class)
-    public void saveBpm(UUID uuid, String processInstanceId, TaskDTO taskDTO, List<BpmUploadFileDTO> dto, List<MultipartFile> appendixFiles) {
+    public void saveBpm(UUID uuid, String processInstanceId, TaskDTO taskDTO, List<BpmUploadFileDTO> dto, List<MultipartFile> appendixFiles) throws ResponseStatusException {
         BpmIsmsL414DTO bpmIsmsL414DTO = DTO_HOLDER.get(uuid);
 
         //取得表單最後的流水號
@@ -71,6 +72,8 @@ public class BpmIsmsL414ServiceNew implements BpmIsmsService {
         BpmIsmsL414 bpmIsmsL414 = bpmIsmsL414Mapper.toEntity(bpmIsmsL414DTO);
 
         // 儲存表單
+        bpmSignerListService.saveBpmSignerList(VARIABLES_HOLDER.get(uuid), formId);
+
         bpmIsmsL414Repository.save(bpmIsmsL414);
 
         //儲存照片
@@ -87,7 +90,6 @@ public class BpmIsmsL414ServiceNew implements BpmIsmsService {
                 bpmIsmsL414DTO.getAppUnit()
             );
         }
-        bpmSignerListService.saveBpmSignerList(VARIABLES_HOLDER.get(uuid), formId);
 
         DTO_HOLDER.remove(uuid);
         VARIABLES_HOLDER.remove(uuid);
