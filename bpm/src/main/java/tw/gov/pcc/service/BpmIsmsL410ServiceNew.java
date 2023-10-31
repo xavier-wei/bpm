@@ -155,6 +155,8 @@ public class BpmIsmsL410ServiceNew implements BpmIsmsService {
         variables.put("infoGroup", signerIds.get("BPM_IPT_Operator"));
         variables.put("seniorTechSpecialist", signerIds.get("BPM_IPT_Mgr"));
         setSys(variables, bpmIsmsL410DTO,signerIds);
+        log.info("--------variable isWebSite={}",variables.get("isWebSite"));
+
         VARIABLES_HOLDER.put(uuid, variables);
         DTO_HOLDER.put(uuid, bpmIsmsL410DTO);
 

@@ -38,6 +38,8 @@ public class ProcessResource {
 
         ProcessReq processReq = new ProcessReq(processReqDTO);
         if (processReq.getProcessKey() != null) {
+            processReq.getVariables().keySet().forEach(System.out::println);
+            processReq.getVariables().values().forEach(System.out::println);
             TaskDTO taskDTO = service.startProcess(processReq.getProcessKey(), processReq.getVariables());
 
             return ResponseEntity.ok(taskDTO);
