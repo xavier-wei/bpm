@@ -334,6 +334,7 @@ public class IsmsProcessResource {
         HttpEntity<String> requestEntity = new HttpEntity<>(gson.toJson(deleteRequest), headers);
         restTemplate.exchange(flowableProcessUrl + "/deleteProcess", HttpMethod.POST, requestEntity, String.class);
         BpmIsmsService service = (BpmIsmsService) applicationContext.getBean(Objects.requireNonNull(BpmIsmsServiceBeanNameEnum.getServiceBeanNameByKey(Request.getKey())));
+        //註銷流程後，需要把表單內的ProcessInstanceStatus改成3,來判斷此表單已註銷
         service.cancel(Request.getProcessInstanceId());
     }
 
