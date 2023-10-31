@@ -81,10 +81,11 @@
       </b-form-row>
 
       <div class="text-center pt-5">
-        <b-button class="ml-2" style="background-color: #17a2b8" @click="toSubordinateQuery()" v-show="superiorFilter(userData.titleName)">下屬查詢</b-button>
         <b-button class="ml-2" style="background-color: #17a2b8" @click="toQuery()">查詢</b-button>
+        <b-button class="ml-2" style="background-color: #17a2b8" @click="toSubordinateQuery()" v-show="superiorFilter(userData.titleName)">下屬表單查詢</b-button>
         <b-button class="ml-2" style="background-color: #17a2b8" @click="reset()">清除</b-button>
       </div>
+
     </div>
 
     <i-table
@@ -247,7 +248,6 @@ export default defineComponent({
         queryStatus.value = true;
         table.data = [];
         if (data.length <= 0) return;
-        console.log('data',data)
 
         table.data = data.slice(0, data.length);
 
