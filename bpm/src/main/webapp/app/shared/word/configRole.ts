@@ -3,6 +3,7 @@ import {forEach as _forEach,} from 'lodash';
 
 //1.判斷userData.userRole，有下列權限就去更新資料
 //2.判斷使否是下列權限，切換disabled
+//判斷是否是資推的人
 export function configRoleToBpmIpt(role: any): any {
   let shouldBreak = false;
   let result = false;
@@ -20,6 +21,7 @@ export function configRoleToBpmIpt(role: any): any {
 
 //1.判斷userData.userRole，有下列權限就去更新資料
 //2.判斷使否是下列權限，切換disabled
+//判斷是否是 機房操作人員
 export function configRoleToBpmCrOperator(role: any): any {
   let shouldBreak = false;
   let result = false;
