@@ -190,7 +190,7 @@ public class IsmsProcessResource {
      * @param processInstanceId the id of the prcocessInstance.
      */
     public void deleteProcessWhenSaveBpmFailed(String processInstanceId) {
-        log.info("ProcessL414Resource.java - deleteProcessInstance - 206 :: " + processInstanceId);
+        log.info("ProcessL414Resource.java - deleteProcessWhenSaveBpmFailed - 206 :: " + processInstanceId);
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
 
@@ -311,8 +311,8 @@ public class IsmsProcessResource {
         }
         return 0;
     }
-    @RequestMapping("/deleteProcessInstance/{processInstanceId}")
-    public void deleteProcessInstance(@PathVariable String processInstanceId) {
+    @RequestMapping("/deleteProcessInstance")
+    public void deleteProcessInstance(@RequestBody String processInstanceId) {
         log.info("ProcessL414Resource.java - deleteProcessInstance - 206 :: " + processInstanceId);
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
