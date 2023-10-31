@@ -281,13 +281,13 @@
                   <i-form-group-check class="col-sm-12" label-cols="1" content-cols="11" :label="'處理意見：'">
                     <b-form-radio-group v-model="$v.agreeType.$model"
                                         @change="changeAgreeType"
-                                        :disabled="!configRoleToBpmIpt(userData.userRole) || formStatusRef === FormStatusEnum.READONLY">
+                                        :disabled="!configRoleToBpmIpt(userData.userRole) || form.isSubmit !== '1' || formStatusRef === FormStatusEnum.READONLY">
                       <!--預定完成日期 : scheduleDate-->
                       <b-form-radio class="col-12" value="1">
                         <b-input-group>
                           <div>同意設定 : 預定完成日期 : 　</div>
                           <i-date-picker
-                            :disabled="$v.agreeType.$model !== '1' || !configRoleToBpmIpt(userData.userRole) || formStatusRef === FormStatusEnum.READONLY"
+                            :disabled="$v.agreeType.$model !== '1' || !configRoleToBpmIpt(userData.userRole) || form.isSubmit !== '1' || formStatusRef === FormStatusEnum.READONLY"
                             placeholder="yyy/MM/dd"
                             v-model="$v.scheduleDate.$model"
                             :state="validateState($v.scheduleDate)"
@@ -302,7 +302,7 @@
                         <b-input-group>
                           <div>部分同意設定 : 原因 :　　 　</div>
                           <b-form-textarea
-                            :disabled="$v.agreeType.$model !== '2' || !configRoleToBpmIpt(userData.userRole) || formStatusRef === FormStatusEnum.READONLY "
+                            :disabled="$v.agreeType.$model !== '2' || !configRoleToBpmIpt(userData.userRole) || form.isSubmit !== '1' || formStatusRef === FormStatusEnum.READONLY "
                             v-model="$v.partialAgreeReason.$model"
                             rows="1"
                             maxlength="2000"
@@ -317,7 +317,7 @@
                         <b-input-group>
                           <div>不同意設定 : 原因 :　　　 　</div>
                           <b-form-textarea
-                            :disabled="$v.agreeType.$model !== '3' || !configRoleToBpmIpt(userData.userRole) || formStatusRef === FormStatusEnum.READONLY"
+                            :disabled="$v.agreeType.$model !== '3' || !configRoleToBpmIpt(userData.userRole) || form.isSubmit !== '1' || formStatusRef === FormStatusEnum.READONLY"
                             v-model="$v.notAgreeReason.$model"
                             rows="1"
                             maxlength="2000"
@@ -337,12 +337,12 @@
                     <b-input-group>
                       <!--是否為外部防火牆 : isExternalFirewall-->
                       <b-form-checkbox v-model="$v.isExternalFirewall.$model" value="Y" unchecked-value=""
-                                       :disabled="!configRoleToBpmCrOperator(userData.userRole) || formStatusRef === FormStatusEnum.READONLY">
+                                       :disabled="!configRoleToBpmCrOperator(userData.userRole) || form.isSubmit !== '1' || formStatusRef === FormStatusEnum.READONLY">
                         外部防火牆
                       </b-form-checkbox>
                       <!--變更設備：是否為內部防火牆 : isInternalFirewall-->
                       <b-form-checkbox class="mx-3" v-model="$v.isInternalFirewall.$model" value="Y" unchecked-value=""
-                                       :disabled="!configRoleToBpmCrOperator(userData.userRole) || formStatusRef === FormStatusEnum.READONLY">
+                                       :disabled="!configRoleToBpmCrOperator(userData.userRole) || form.isSubmit !== '1' || formStatusRef === FormStatusEnum.READONLY">
                         外部防火牆
                       </b-form-checkbox>
                     </b-input-group>
@@ -359,7 +359,7 @@
                   >
                     <!--設定內容 : firewallContent-->
                     <b-form-textarea v-model="$v.firewallContent.$model" rows="1" maxlength="2000" trim lazy
-                                     :disabled="!configRoleToBpmCrOperator(userData.userRole) || formStatusRef === FormStatusEnum.READONLY"/>
+                                     :disabled="!configRoleToBpmCrOperator(userData.userRole) || form.isSubmit !== '1' || formStatusRef === FormStatusEnum.READONLY"/>
                   </i-form-group-check>
                 </b-form-row>
 
@@ -380,7 +380,7 @@
                         :state="validateState($v.finishDatetime)"
                         lazy
                         trim
-                        :disabled="!configRoleToBpmCrOperator(userData.userRole) || formStatusRef === FormStatusEnum.READONLY"
+                        :disabled="!configRoleToBpmCrOperator(userData.userRole) || form.isSubmit !== '1' || formStatusRef === FormStatusEnum.READONLY"
                       ></i-date-picker>
                       <span class="m-1">，並以電話通知申請單位。</span>
                     </b-input-group>
@@ -733,21 +733,40 @@ export default {
         }
       }
 
-      if (isOK) {
+      //只有在審核狀態下才會進入
+      if(formStatusRef.value === FormStatusEnum.VERIFY){
 
-        if (configRoleToBpmIpt(userData.userRole) && form.agreeType === '') {
-          return notificationService.makeModalComfirmCallback('未選擇處理意見', 'danger');
+        //判斷是否是資推的人跟畫面必填欄位是否為空
+        if (configRoleToBpmIpt(userData.userRole) && form.agreeType === '' ) {
+          isOK = false;
+          notificationService.makeModalComfirmCallback('未選擇處理意見', 'danger');
         }
 
-        if (configRoleToBpmIpt(userData.userRole) && form.partialAgreeReason === '' && form.notAgreeReason === '' && form.scheduleDate === null) {
-          return notificationService.makeModalComfirmCallback('未填寫預定完成日期或說明原因', 'danger');
+        //判斷是否是資推的人跟畫面必填欄位是否為空
+        if (configRoleToBpmIpt(userData.userRole) && form.partialAgreeReason === '' && form.notAgreeReason === '' && form.scheduleDate === null ) {
+          isOK = false;
+          notificationService.makeModalComfirmCallback('未填寫預定完成日期或說明原因', 'danger');
         }
 
+        //判斷是否是機房操作的人跟畫面必填欄位是否為空
         if (configRoleToBpmCrOperator(userData.userRole)) {
-          if (form.isExternalFirewall === '' && form.isInternalFirewall === '') return notificationService.makeModalComfirmCallback('未選擇變更設備', 'danger');
-          if (form.firewallContent === '') return notificationService.makeModalComfirmCallback('未填寫設定內容', 'danger');
-          if (form.finishDatetime === null) return notificationService.makeModalComfirmCallback('未選擇實際完成日期', 'danger');
+          if (form.isExternalFirewall === '' && form.isInternalFirewall === '') {
+            isOK = false;
+            notificationService.makeModalComfirmCallback('未選擇變更設備', 'danger');
+          }
+          if (form.firewallContent === '') {
+            isOK = false;
+            notificationService.makeModalComfirmCallback('未填寫設定內容', 'danger');
+          }
+          if (form.finishDatetime === null) {
+            isOK = false;
+            notificationService.makeModalComfirmCallback('未選擇實際完成日期', 'danger');
+          }
         }
+      }
+
+
+      if (isOK) {
 
         let variables = {};
 
