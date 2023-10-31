@@ -25,4 +25,7 @@ public interface BpmIsmsService {
     Map<String,Object> getBpm(String formId);
 
     void endForm(EndEventDTO endEventDTO);
+
+    void saveBpmByPatchToIsSubmit(String processInstanceId);
+    void cancel(String processInstanceId);
 }

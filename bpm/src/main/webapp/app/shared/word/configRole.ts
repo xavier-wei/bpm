@@ -38,6 +38,21 @@ export function configRoleToBpmCrOperator(role: any): any {
 }
 
 
+//判斷title是否是 科長、處長 用來顯示補件按鈕
+export function configTitleName(title: any): any {
+  let shouldBreak = false;
+  let result = false;
+  _forEach(title.split(','), f => {
+    if (f === '科長' || f === '處長') {
+      shouldBreak = true;
+      result = true;
+    }
+    if (shouldBreak) {
+      return false;
+    }
+  })
+  return result;
+}
 
 
 

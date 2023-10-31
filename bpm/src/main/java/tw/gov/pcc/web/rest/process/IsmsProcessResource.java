@@ -151,13 +151,24 @@ public class IsmsProcessResource {
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
         HttpEntity<String> requestEntity = new HttpEntity<>(gson.toJson(completeReqDTO), headers);
+
+        //判斷是否是資推或機房的，如果是就去更新資料
         if (Objects.equals(completeReqDTO.getIpt(), true)) {
             int i = formId.indexOf("-");
             String key = formId.substring(0, i);
             BpmIsmsService service = (BpmIsmsService) applicationContext.getBean(Objects.requireNonNull(BpmIsmsServiceBeanNameEnum.getServiceBeanNameByKey(key)));
             service.saveBpmByPatch(completeReqDTO.getForm().get(key));
-
         }
+
+        //判斷variables裡的value，2代表前端送補件過來，需要把表單的IS_SUBMIT改回0 補件的人才能編輯
+        if (completeReqDTO.getVariables() != null && completeReqDTO.getVariables().containsValue("2")) {
+            int i = formId.indexOf("-");
+            String key = formId.substring(0, i);
+            BpmIsmsService service = (BpmIsmsService) applicationContext.getBean(Objects.requireNonNull(BpmIsmsServiceBeanNameEnum.getServiceBeanNameByKey(key)));
+            service.saveBpmByPatchToIsSubmit(completeReqDTO.getProcessInstanceId());
+        }
+
+
         ResponseEntity<String> exchange = restTemplate.exchange(flowableProcessUrl + "/completeTask", HttpMethod.POST, requestEntity, String.class);
         if (exchange.getStatusCodeValue() == 200) {
             BpmSignStatusDTO bpmSignStatusDTO = getBpmSignStatusDTO(completeReqDTO, formId);
@@ -311,24 +322,27 @@ public class IsmsProcessResource {
         }
         return 0;
     }
+
     @RequestMapping("/deleteProcessInstance")
-    public void deleteProcessInstance(@RequestBody String processInstanceId) {
-        log.info("ProcessL414Resource.java - deleteProcessInstance - 206 :: " + processInstanceId);
+    public void deleteProcessInstance(@RequestBody ProcessInstanceIdRequestDTO Request) {
+        log.info("ProcessL414Resource.java - deleteProcessInstance - 206 :: " + Request.getProcessInstanceId());
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
         HashMap<String, String> deleteRequest = new HashMap<>();
-        deleteRequest.put(PROCESS_INSTANCE_ID, processInstanceId);
+        deleteRequest.put(PROCESS_INSTANCE_ID, Request.getProcessInstanceId());
         deleteRequest.put("token", token);
         HttpEntity<String> requestEntity = new HttpEntity<>(gson.toJson(deleteRequest), headers);
         restTemplate.exchange(flowableProcessUrl + "/deleteProcess", HttpMethod.POST, requestEntity, String.class);
-
+        BpmIsmsService service = (BpmIsmsService) applicationContext.getBean(Objects.requireNonNull(BpmIsmsServiceBeanNameEnum.getServiceBeanNameByKey(Request.getKey())));
+        //註銷流程後，需要把表單內的ProcessInstanceStatus改成3,來判斷此表單已註銷
+        service.cancel(Request.getProcessInstanceId());
     }
 
     @PostMapping("/getAllSubordinateTask")
     public List<Map<String, Object>> getAllSubordinateTask(@Valid @RequestPart(required = false) BpmFormQueryDto bpmFormQueryDto) {
         User user = getUserInfo();
         String titleName = user.getTitleName();
-        if ("處長".equals(titleName)||"副處長".equals(titleName)||"主任".equals(titleName)) {
+        if ("處長".equals(titleName) || "副處長".equals(titleName) || "主任".equals(titleName)) {
             List<String> allSubordinate = subordinateTaskService.findAllSubordinate(user.getUserId());
             HttpHeaders headers = new HttpHeaders();
             headers.setContentType(MediaType.APPLICATION_JSON);

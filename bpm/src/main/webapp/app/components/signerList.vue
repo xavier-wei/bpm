@@ -22,13 +22,15 @@
 
       <div class="m-2">
         <b-table  :items="signStatusTable.data" :fields="signStatusTable.fields" bordered responsive="sm">
-
           <template #cell(situation)="row">
             <div v-if="row.item.taskName === '申請人確認'">
               申請
             </div>
             <div v-else-if="row.item.taskName === '結束'" style="color: red">
               結束
+            </div>
+            <div v-else-if="row.item.taskName === '撤銷'" style="color: red">
+              撤銷
             </div>
             <div v-else>
               處理
@@ -188,7 +190,7 @@ export default {
               taskName: '結束',
               signingDatetime: ''
             });
-          } else if (processInstanceStatusRef.value === '2') {
+          } else if (processInstanceStatusRef.value === '3') {
             signStatusTable.data.push({
               taskName: '撤銷',
               signingDatetime: ''

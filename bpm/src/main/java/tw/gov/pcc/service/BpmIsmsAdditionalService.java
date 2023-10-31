@@ -103,4 +103,10 @@ public class BpmIsmsAdditionalService implements BpmIsmsService{
     public Map<String, Object> getBpm(String formId) {
         return null;
     }
+    @Override
+    public void cancel(String formId) {
+    }
+    @Override
+    public void saveBpmByPatchToIsSubmit(String formId) {
+    }
 }

@@ -559,9 +559,12 @@
                 </b-button>
                 <b-button class="ml-2" style="background-color: #17a2b8; color: white"
                           @click="reviewStart('補件',true)"
-                          v-show="userData.titleName === '科長' ||
-                              userData.titleName === '處長' &&
-                              formStatusRef === FormStatusEnum.VERIFY">補件
+                          v-show="configTitleName(userData.titleName) && formStatusRef === FormStatusEnum.VERIFY">補件
+                </b-button>
+                <b-button class="ml-2" style="background-color: #17a2b8; color: white"
+                          variant="outline-secondary"
+                          v-show="isCancelRef && userData.userId === form.appEmpid && (form.processInstanceStatus === '0' || form.processInstanceStatus === '2') "
+                          @click="toCancel">撤銷
                 </b-button>
                 <b-button class="ml-2" style="background-color: #17a2b8; color: white"
                           @click="toQueryView">返回
@@ -613,6 +616,7 @@ import signatureBmodel from "@/components/signatureBmodel.vue";
 import signerList from "@/components/signerList.vue";
 import {changeDealWithUnit} from "@/shared/word/directions";
 import {confirmAllData} from "@/shared/word/confirm-iTable";
+import {configTitleName} from '@/shared/word/configRole';
 
 const appendix = () => import('@/components/appendix.vue');
 const flowChart = () => import('@/components/flowChart.vue');
@@ -644,6 +648,11 @@ export default {
       required: false,
       type: String,
     },
+    isCancel: {
+      required: false,
+      type: Boolean,
+      default: false,
+    },
   },
   components: {
     'i-form-group-check': IFormGroupCheck,
@@ -664,6 +673,7 @@ export default {
     const processInstanceStatusRef = toRef(props, 'processInstanceStatus');
     const bpmDeptsOptions = ref(useGetters(['getBpmDeptsOptions']).getBpmDeptsOptions).value;
     const userData = ref(useGetters(['getUserData']).getUserData).value;
+    const isCancelRef = toRef(props, 'isCancel');
     let iptData = ref(false);
     const $bvModal = useBvModal();
     const notificationService = useNotification();
@@ -821,6 +831,7 @@ export default {
       otherSys3EnableDate: null,
       otherSys3AdmName: '',
       processInstanceId: '', //流程實體編號
+      processInstanceStatus: '', //流程實體狀態
       taskId: '',  //任務ID
       opinion: '',  //審核的處理意見
       applyItem: [],
@@ -1120,6 +1131,22 @@ export default {
       return tabIndex.value === index;
     };
 
+    async function toCancel() {
+      let isOK = await $bvModal.msgBoxConfirm('是否撤銷表單?');
+      if (isOK) {
+        let request = {
+          processInstanceId: form.processInstanceId,
+          key:'L410'
+        }
+        axios.post(`/process/deleteProcessInstance`, request)
+          .then(({data}) => {
+            $bvModal.msgBoxOk('表單流程撤銷完畢');
+            handleBack({isReload: true, isNotKeepAlive: false});
+          })
+          .catch(notificationErrorHandler(notificationService))
+      }
+    }
+
     function toQueryView() {
       handleBack({isReload: true, isNotKeepAlive: true});
     }
@@ -1211,7 +1238,10 @@ export default {
       l410Data,
       taskDataRef,
       changeDealWithUnit,
-      processInstanceStatusRef
+      processInstanceStatusRef,
+      toCancel,
+      isCancelRef,
+      configTitleName,
     }
   }
 }
