@@ -52,7 +52,8 @@
             <fieldset>
             <legend>待處理派車案件</legend>
             <tags:form-row>
-            	    <table id="notHandleListTable" class="table table-hover m-2">
+            <div class="table-responsive">	 
+            	    <table id="notHandleListTable" class="table">
                         <thead>
                         	<tr>
 	                            <th style="width: 5%">序號</th>
@@ -65,13 +66,6 @@
 	                            <th style="width: 10%">明細</th>
                         	</tr>
                         </thead>
-                        <c:if test="${empty caseData.notHandleList}">
-                        <tbody>
-	                        <tr>
-	                        	<td colspan="7">目前無待處理派車案件</td>
-	                        </tr>
-                        </tbody>
-                        </c:if>
                         <c:forEach items="${caseData.notHandleList}" var="item" varStatus="status">
                         <tbody><tr>
                         	<td><c:out value="${status.index+1}"/></td>
@@ -103,6 +97,7 @@
                         </tbody>
                         </c:forEach>
                     </table>
+                    </div>
             </tags:form-row>
             </fieldset>
             
@@ -250,7 +245,7 @@
         $(function() {
         
             let config = getDataTablesConfig();
-            var table = $("#qryListTable,#dataList").DataTable(config);
+            var table = $("#qryListTable,#dataList,#notHandleListTable").DataTable(config);
             
             $('.btnDetail').click(function() {
 				$('#applyid').val($(this).val());

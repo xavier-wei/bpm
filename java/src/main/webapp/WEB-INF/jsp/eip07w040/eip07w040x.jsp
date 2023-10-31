@@ -285,7 +285,15 @@
                 <div class="row vertical-align-center d-flex">
 	            		<label class="col-form-label">併單：</label>
 	            		<div class="mt-2">
-			            	<label><input type="radio"  name="merge" value="Y" />是</label>
+	            		<c:choose>
+	            			<c:when test="${empty caseData.carBookingList && caseData.showEmptyStr}">
+	            			<label><input type="radio"  name="merge" value="Y" disabled="true"/>是</label>
+	            			</c:when>
+	            			<c:otherwise>
+	            			<label><input type="radio"  name="merge" value="Y" />是</label>
+	            			</c:otherwise>
+	            		</c:choose>
+
 			            	<label><input type="radio"  name="merge" value="N" checked />否</label>
 		            	</div>
 	            	<label class="col-form-label mergeApplyid">併單單號：</label>
@@ -356,9 +364,11 @@
         	});
         	
         	function changeOption(){
-        		var num = ""; 
+        		var num = [1,2,3,4,5,6,7]; 
         		var timeMK = $('#timeMK').val();
         		var merge = $("input[name='merge']:checked").val();
+        		$("#status").val('');
+        		num.forEach(e => $("#status>option").eq(e).show());
         		
         		if($('#num_of_people').val()>4){
         			num = [1,2,3,4,5,7];
@@ -383,6 +393,18 @@
             });
             
             $('#btnSubmit').click(function(){
+            	if($("input[name='merge']:checked").val()=='Y' && $("#mergeReason").val()==''){
+            		showAlert("併單原因未填寫");
+            		return;
+            	}
+            	if($("input[name='merge']:checked").val()=='Y' && $("#mergeApplyid").val()==''){
+            		showAlert("併單單號未選取");
+            		return;
+            	}
+            	if($("#status").val()==''){
+            		showAlert("派車結果選項未選取");
+            		return;
+            	}
             	$('#eip07w040Form').attr('action', '<c:url value="/Eip07w040_updateAll.action" />').submit();
             });
             

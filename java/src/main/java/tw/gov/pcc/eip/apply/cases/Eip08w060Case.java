@@ -33,13 +33,17 @@ public class Eip08w060Case implements Serializable {
 	private String itemId;
 
 	/**
+	 *申請人(ID)
+	 */
+	private String userName;
+
+	/**
 	 * 請購/請修單號 (主鍵值)
 	 */
 	private String itemNo;
 	/**
 	 * 品名及規格
 	 */
-
 	private String item;
 	/**
 	 * 用途說明

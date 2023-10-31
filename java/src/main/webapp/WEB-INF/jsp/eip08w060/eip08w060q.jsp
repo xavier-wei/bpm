@@ -36,8 +36,8 @@
 			</tags:form-row>
 			<tags:form-row>
 				<div class="col-md-4 d-flex">
-					<form:label cssClass="col-form-label star" path="user">申請人：</form:label>
-					<form:input id="user" name="user" path="user" cssClass="form-control"   size="12"
+					<form:label cssClass="col-form-label star" path="userName">申請人：</form:label>
+					<form:input id="userName" name="userName" path="userName" cssClass="form-control"   size="12"
 								maxlength="12" disabled="true" />
 				</div>
             </tags:form-row>

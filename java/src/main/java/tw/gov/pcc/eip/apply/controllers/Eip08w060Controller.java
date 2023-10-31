@@ -69,6 +69,7 @@ public class Eip08w060Controller extends BaseController {
         log.debug("導向 adm0w010_enter 設定系統管理員");
         caseData.setUser(userData.getUserId());
         caseData.setApplyTpNm("I-物品請購單");
+        caseData.setUserName(userData.getUserName());
         caseData.setSave("N");
         caseData.setApplyDate(DateUtil.getNowChineseDate());
 
@@ -78,6 +79,7 @@ public class Eip08w060Controller extends BaseController {
     private void resetData(Eip08w060Case caseData) {
         Eip08w060Case newCase = new Eip08w060Case();
         BeanUtility.copyProperties(caseData, newCase);// 進來時清除caseData
+        caseData.setUserName(userData.getUserName());
         log.debug("導向 adm0w010_enter 設定系統管理員");
         caseData.setUser(userData.getUserId());
         caseData.setApplyTpNm("I-物品請購單");
