@@ -304,7 +304,8 @@ export default defineComponent({
           taskData: taskData,
           formStatus: FormStatusEnum.MODIFY,
           isNotKeepAlive: false,
-          isSignature: false
+          isSignature: false,
+          isCancel:true,
         });
       } else {
         navigateByNameAndParams(prefix + 'Edit', {

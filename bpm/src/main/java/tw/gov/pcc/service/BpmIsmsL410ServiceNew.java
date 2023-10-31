@@ -206,6 +206,23 @@ public class BpmIsmsL410ServiceNew implements BpmIsmsService {
         return null;
     }
 
+    @Override
+    public void saveBpmByPatchToIsSubmit(String processInstanceId) {
+        BpmIsmsL410 bpmIsmsL410 = bpmIsmsL410Repository.findFirstByProcessInstanceId(processInstanceId);
+        bpmIsmsL410.setIsSubmit("0");
+        bpmIsmsL410.setProcessInstanceStatus("2");
+        bpmIsmsL410.setUpdateTime(Timestamp.valueOf(LocalDateTime.now()));
+        bpmIsmsL410Repository.save(bpmIsmsL410);
+    }
+
+    @Override
+    public void cancel(String processInstanceId) {
+        BpmIsmsL410 bpmIsmsL410 = bpmIsmsL410Repository.findFirstByProcessInstanceId(processInstanceId);
+        bpmIsmsL410.setProcessInstanceStatus("3");
+        bpmIsmsL410.setUpdateTime(Timestamp.valueOf(LocalDateTime.now()));
+        bpmIsmsL410Repository.save(bpmIsmsL410);
+    }
+
     private void savePhoto(List<BpmUploadFileDTO> dto, List<MultipartFile> appendixFiles, String formId) {
         if (appendixFiles != null) {
             for (int i = 0; i < appendixFiles.size(); i++) {
@@ -254,7 +271,6 @@ enum SysSignerEnum {
         }
         return null;
     }
-
 
 
 

@@ -434,15 +434,17 @@
                   <b-button class="ml-2" style="background-color: #17a2b8; color: white"
                             variant="outline-secondary"
                             @click="reviewStart('補件',true)"
-                            v-show="userData.titleName === null ? false: userData.titleName ==='科長' ||
-                                userData.titleName === null ? false: userData.titleName ==='處長' &&
-                                formStatusRef === FormStatusEnum.VERIFY">補件
+                            v-show="configTitleName(userData.titleName) && formStatusRef === FormStatusEnum.VERIFY">補件
+                  </b-button>
+                  <b-button class="ml-2" style="background-color: #17a2b8; color: white"
+                            variant="outline-secondary"
+                            v-show="isCancelRef && userData.userId === form.appEmpid && (form.processInstanceStatus === '0' || form.processInstanceStatus === '2')"
+                            @click="toCancel">撤銷
                   </b-button>
                   <b-button class="ml-2" style="background-color: #17a2b8; color: white"
                             variant="outline-secondary"
                             @click="toQueryView">返回
                   </b-button>
-
                 </b-row>
               </b-container>
 
@@ -481,8 +483,7 @@ import axios from "axios";
 import {notificationErrorHandler} from "@/shared/http/http-response-helper";
 import {changeDirections} from "@/shared/word/directions";
 import signatureBmodel from "@/components/signatureBmodel.vue";
-import {configRoleToBpmIpt} from '@/shared/word/configRole';
-import {configRoleToBpmCrOperator} from '@/shared/word/configRole';
+import {configRoleToBpmIpt,configRoleToBpmCrOperator,configTitleName} from '@/shared/word/configRole';
 
 const appendix = () => import('@/components/appendix.vue');
 const flowChart = () => import('@/components/flowChart.vue');
@@ -513,6 +514,11 @@ export default {
       required: false,
       type: String,
     },
+    isCancel: {
+      required: false,
+      type: Boolean,
+      default: false,
+    },
   },
   components: {
     'i-form-group-check': IFormGroupCheck,
@@ -531,6 +537,7 @@ export default {
     const taskDataRef = toRef(props, 'taskData');
     const isSignatureRef = toRef(props, 'isSignature');
     const processInstanceStatusRef = toRef(props, 'processInstanceStatus');
+    const isCancelRef = toRef(props, 'isCancel');
     const tabIndex = ref(0);
     const dual1 = ref(null);
     const dual2 = ref(null);
@@ -592,6 +599,7 @@ export default {
       firewallContent: '', //	設定內容
       finishDatetime: null, //	實際完成日期
       processInstanceId: '', //流程實體編號
+      processInstanceStatus: '', //流程實體狀態
       taskId: '',   //任務ID
       taskName: '', //任務名稱
       opinion: '', //審核的處理意見
@@ -734,16 +742,16 @@ export default {
       }
 
       //只有在審核狀態下才會進入
-      if(formStatusRef.value === FormStatusEnum.VERIFY){
+      if (formStatusRef.value === FormStatusEnum.VERIFY) {
 
         //判斷是否是資推的人跟畫面必填欄位是否為空
-        if (configRoleToBpmIpt(userData.userRole) && form.agreeType === '' ) {
+        if (configRoleToBpmIpt(userData.userRole) && form.agreeType === '') {
           isOK = false;
           notificationService.makeModalComfirmCallback('未選擇處理意見', 'danger');
         }
 
         //判斷是否是資推的人跟畫面必填欄位是否為空
-        if (configRoleToBpmIpt(userData.userRole) && form.partialAgreeReason === '' && form.notAgreeReason === '' && form.scheduleDate === null ) {
+        if (configRoleToBpmIpt(userData.userRole) && form.partialAgreeReason === '' && form.notAgreeReason === '' && form.scheduleDate === null) {
           isOK = false;
           notificationService.makeModalComfirmCallback('未填寫預定完成日期或說明原因', 'danger');
         }
@@ -886,6 +894,22 @@ export default {
       return tabIndex.value === index;
     };
 
+    async function toCancel() {
+      let isOK = await $bvModal.msgBoxConfirm('是否撤銷表單?');
+      if (isOK) {
+        let request = {
+          processInstanceId: form.processInstanceId,
+          key:'L414'
+        }
+        axios.post(`/process/deleteProcessInstance`, request)
+          .then(({data}) => {
+            $bvModal.msgBoxOk('表單流程撤銷完畢');
+            handleBack({isReload: true, isNotKeepAlive: false});
+          })
+          .catch(notificationErrorHandler(notificationService))
+      }
+    }
+
     function toQueryView() {
       handleBack({isReload: true, isNotKeepAlive: false});
     }
@@ -932,7 +956,10 @@ export default {
       changeEnableTime,
       changeSelecteEdateType,
       changeAgreeType,
-      isEdit
+      isEdit,
+      toCancel,
+      isCancelRef,
+      configTitleName
     }
   }
 }

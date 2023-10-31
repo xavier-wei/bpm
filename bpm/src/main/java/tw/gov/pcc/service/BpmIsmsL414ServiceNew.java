@@ -163,4 +163,21 @@ public class BpmIsmsL414ServiceNew implements BpmIsmsService {
         bpmIsmsL414.setUpdateTime(Timestamp.valueOf(LocalDateTime.now()));
         bpmIsmsL414Repository.save(bpmIsmsL414);
     }
+
+    @Override
+    public void saveBpmByPatchToIsSubmit(String processInstanceId) {
+        BpmIsmsL414 bpmIsmsL414 = bpmIsmsL414Repository.findFirstByProcessInstanceId(processInstanceId);
+        bpmIsmsL414.setIsSubmit("0");
+        bpmIsmsL414.setProcessInstanceStatus("2");
+        bpmIsmsL414.setUpdateTime(Timestamp.valueOf(LocalDateTime.now()));
+        bpmIsmsL414Repository.save(bpmIsmsL414);
+    }
+    @Override
+    public void cancel(String processInstanceId) {
+        BpmIsmsL414 bpmIsmsL414 = bpmIsmsL414Repository.findFirstByProcessInstanceId(processInstanceId);
+        bpmIsmsL414.setProcessInstanceStatus("3");
+        bpmIsmsL414.setUpdateTime(Timestamp.valueOf(LocalDateTime.now()));
+        bpmIsmsL414Repository.save(bpmIsmsL414);
+    }
+
 }

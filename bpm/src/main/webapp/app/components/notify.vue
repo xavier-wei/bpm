@@ -271,7 +271,9 @@ export default defineComponent({
                 case '1':
                   return '已處理完畢';
                 case '2':
-                  return '退件';
+                  return '補件';
+                case '3':
+                  return '撤銷';
                 default:
                   return '';
               }
@@ -351,6 +353,7 @@ export default defineComponent({
         formStatus: FormStatusEnum.READONLY,
         isNotKeepAlive: false,
         processInstanceStatus: item.processInstanceStatus,
+        isCancel:true,
       });
     }
 
@@ -363,7 +366,6 @@ export default defineComponent({
         })
         .catch(notificationErrorHandler(notificationService))
     }
-
 
     return {
       $v,
