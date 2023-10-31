@@ -134,6 +134,9 @@ public class Eip08w060Service {
 
 		Eip08w060l00 pdf = new Eip08w060l00();
 		pdf.createEip08w060DataPdf(caseData);
+		List<Eip08w060Case> oldData =  caseData.getEip08w060CaseList();
+		oldData.remove(oldData.size()-1);//移除"以下空白"
+		caseData.setEip08w060CaseList(oldData);
 		return pdf.getOutputStream();
 	};
 

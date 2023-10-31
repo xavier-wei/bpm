@@ -207,7 +207,7 @@ public class MeetingCodeDaoImpl extends BaseDao<MeetingCode> implements MeetingC
     @Override
     public List<MeetingCode> findValidRoomByDtandUsing(String meetingDt, String using) {
         StringBuilder sql = new StringBuilder();
-        sql.append("SELECT RIGHT(ITEMID, 2),ITEMID, ");
+        sql.append("SELECT ITEMID, ");
         sql.append("       ITEMNAME ");
         sql.append("  FROM MEETINGCODE a ");
         sql.append(" WHERE ITEMTYP = 'F' ");
@@ -223,12 +223,6 @@ public class MeetingCodeDaoImpl extends BaseDao<MeetingCode> implements MeetingC
         sql.append("                   WHERE ITEMID = a.ITEMID ");
         sql.append("                     AND ISABLEDATE = :meetingDt ");
         sql.append("                     AND (SELECT dbo.UFN_CHECK(ISABLETIME, :using) AS RTN) = 'Y')");
-        sql.append(" UNION ALL ");
-        sql.append("    SELECT RIGHT(ITEMID, 2),");
-        sql.append("           ITEMID,");
-        sql.append("           ITEMNAME ");
-        sql.append("      FROM MEETINGCODE ");
-        sql.append("     WHERE ITEMTYP = 'FX' ");
         sql.append(" ORDER BY  RIGHT(ITEMID, 2); ");
 
         Map<String, Object> params = new HashMap<>();
@@ -241,33 +235,34 @@ public class MeetingCodeDaoImpl extends BaseDao<MeetingCode> implements MeetingC
     public List<MeetingCode> findValidRoominclBookedByDtandUsing(String meetingId, String meetingDt, String using) {
         StringBuilder sql = new StringBuilder();
 
-        sql.append("     SELECT a.ITEMID, a.ITEMNAME FROM MEETINGCODE a ");
-        sql.append("      WHERE a.ITEMTYP = 'F' ");
+        sql.append("  SELECT a.itemid,");
+        sql.append("         a.itemname");
+        sql.append("    FROM meetingcode a");
+        sql.append("   WHERE a.itemtyp = 'F'");
         //判斷是否為同一筆會議 相同就列出該會議室
-        sql.append("        AND (exists ( ");
-        sql.append("             SELECT b.ROOMID FROM MEETING b ");
-        sql.append("              WHERE b.MEETINGID = :meetingId ");
-        sql.append("                AND a.ITEMID = b.ROOMID ");
-        sql.append("                AND b.MEETINGDT = :meetingDt ");
-        sql.append("                AND b.USING = :using ");
-        sql.append("             ) ");
-        sql.append("        OR (NOT exists ( ");
+        sql.append("     AND (EXISTS (SELECT b.roomid");
+        sql.append("                    FROM meeting b");
+        sql.append("                   WHERE b.meetingid = :meetingId");
+        sql.append("                     AND a.itemid = b.roomid");
+        sql.append("                     AND b.meetingdt = :meetingDt");
+        sql.append("                     AND b.using = :using) OR");
         //判斷相同日期時間MEETING是否已存在且
+        sql.append("          (NOT EXISTS(");
+        sql.append("                       (SELECT c.roomid");
+        sql.append("                          FROM meeting c");
+        sql.append("                         WHERE c.meetingdt = :meetingDt");
+        sql.append("                           AND a.itemid = c.roomid");
+        sql.append("                           AND (SELECT dbo.ufn_check(c.using, :using) AS rtn) = 'Y')");
+        sql.append("                         UNION");
         //ROOMISABLE沒有該間會議室或ROOMISABLE有該會議室且在可預約時段內
-        sql.append("             SELECT c.ROOMID FROM MEETING c ");
-        sql.append("              WHERE c.MEETINGDT = :meetingDt ");
-        sql.append("                AND (SELECT dbo.UFN_CHECK(c.USING, :using) AS RTN) = 'Y' ");
-        sql.append("                AND a.ITEMID = c.ROOMID) ");
-        sql.append("             ) ");
-        sql.append("           ) ");
-        sql.append(" UNION ALL ");
-        sql.append("    SELECT a.ITEMID, a.ITEMNAME FROM MEETINGCODE a ");
-        sql.append("     WHERE a.ITEMTYP = 'FX' ");
-        sql.append("       AND exists(SELECT distinct e.ITEMID ");
-        sql.append("      FROM ROOMISABLE e ");
-        sql.append("     WHERE e.ITEMID = a.ITEMID ");
-        sql.append("       AND e.ISABLEDATE = :meetingDt ");
-        sql.append("       AND (SELECT dbo.UFN_CHECK(e.ISABLETIME, :using) AS RTN) = 'N') ");
+        sql.append("                       (SELECT e.itemid");
+        sql.append("                          FROM roomisable e");
+        sql.append("                         WHERE e.itemid = a.itemid");
+        sql.append("                           AND e.isabledate = :meetingDt");
+        sql.append("                           AND (SELECT dbo.ufn_check(e.isabletime, :using) AS rtn) = 'Y')");
+        sql.append("                     )");
+        sql.append("           )");
+        sql.append("           )");
 
         Map<String, Object> params = new HashMap<>();
         params.put("meetingId", meetingId);

@@ -24,7 +24,7 @@
 				<label class="col-form-label text-left col-3">選項：<c:out value="${fn:substring(caseData.applyTpNm, 2,-1)}"/></label>
 			</tags:form-row>
 			<tags:form-row>
-				<label class="col-form-label text-left col-3">申請人：<c:out value="${caseData.user}"/></label>
+				<label class="col-form-label text-left col-3">申請人：<c:out value="${caseData.userName}"/></label>
 				<label class="col-form-label text-left col-3">申請日期：<c:out value="${fn:substring(caseData.applyDate, 0,3)}"/>/<c:out value="${fn:substring(caseData.applyDate, 3,5)}"/>/<c:out value="${fn:substring(caseData.applyDate, 5,-1)}"/></label>
 				<label class="col-form-label text-left col-3">暫存：<c:out value="${caseData.save}"/></label>
             </tags:form-row>
