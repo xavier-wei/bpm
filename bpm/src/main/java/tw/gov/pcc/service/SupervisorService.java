@@ -48,7 +48,7 @@ public class SupervisorService {
         if ("處長".equals(positionData.get(F1_POSNAME)) || "主任".equals(positionData.get(F1_POSNAME)) || "副處長".equals(positionData.get(F1_POSNAME))) {
             // 查到第一層長官為以上三種，表示自己為科長級或副處長級或室級成員
             sectionChief = NO_SIGN;
-            director = "副處長".equals(positionData.get(F1_POSNAME)) ? (String) positionData.get(F2_ACCOUNT) : (String) positionData.get(F1_POSNAME);
+            director = "副處長".equals(positionData.get(F1_POSNAME)) ? (String) positionData.get(F2_ACCOUNT) : (String) positionData.get(F1_ACCOUNT);
 
         } else if ("科長".equals(positionData.get(F1_POSNAME)) || (null == positionData.get(F1_POSNAME)&&!"處長".equals(positionData.get(POSNAME)))) {
             sectionChief = (null == positionData.get(F1_POSNAME)) ? NO_SIGN : (String) positionData.get(F1_ACCOUNT);
