@@ -81,9 +81,13 @@
                     :label="'申請人：員工編號：'"
                     :item="$v.appEmpid"
                   >
-                    <!--申請人員工編號 : appEmpid-->
-                    <b-form-input v-model="$v.appEmpid.$model"
-                                  :disabled="formStatusRef === FormStatusEnum.READONLY  || isEdit"/>
+                    <b-input-group>
+                      <!--申請人員工編號 : appEmpid-->
+                      <b-form-input v-model="$v.appEmpid.$model"
+                                    :disabled="formStatusRef === FormStatusEnum.READONLY  || isEdit"/>
+                      <b-button class="ml-2" v-show="formStatusRef === FormStatusEnum.MODIFY  || isEdit" variant="outline-dark" @click="showErrandModel()">差勤資訊</b-button>
+                    </b-input-group>
+
                   </i-form-group-check>
 
                   <i-form-group-check class="col-sm-4" label-cols="4" content-cols="8" :label="`姓名：`"
@@ -464,6 +468,7 @@
       </b-card-body>
     </div>
     <signatureBmodel ref="signatureBmodel" :formData="form" :taskData="taskDataRef"></signatureBmodel>
+    <errandBmodel ref="errandBmodel" :formData="form"></errandBmodel>
   </div>
 </template>
 
@@ -484,7 +489,7 @@ import {notificationErrorHandler} from "@/shared/http/http-response-helper";
 import {changeDirections} from "@/shared/word/directions";
 import signatureBmodel from "@/components/signatureBmodel.vue";
 import {configRoleToBpmIpt,configRoleToBpmCrOperator,configTitleName} from '@/shared/word/configRole';
-
+import errandBmodel from "@/components/errandBmodel.vue";
 const appendix = () => import('@/components/appendix.vue');
 const flowChart = () => import('@/components/flowChart.vue');
 const signerList = () => import('@/components/signerList.vue');
@@ -527,7 +532,8 @@ export default {
     appendix,
     flowChart,
     signatureBmodel,
-    signerList
+    signerList,
+    errandBmodel
   },
   setup(props) {
     const userData = ref(useGetters(['getUserData']).getUserData).value;
@@ -548,7 +554,7 @@ export default {
     const filePathData = reactive({
       filePathName: '',
     });
-
+    const errandBmodel = ref(null);
     enum FormStatusEnum {
       CREATE = '新增',
       MODIFY = '編輯',
@@ -918,6 +924,10 @@ export default {
       signatureBmodel.value.isShowDia(true);
     }
 
+    function showErrandModel() {
+      errandBmodel.value.isShowDia(true);
+    }
+
     watch(formIdProp, () => {
         handleQuery();
       },
@@ -959,7 +969,9 @@ export default {
       isEdit,
       toCancel,
       isCancelRef,
-      configTitleName
+      configTitleName,
+      errandBmodel,
+      showErrandModel,
     }
   }
 }
