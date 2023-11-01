@@ -1,8 +1,0 @@
-{
-  "realm": "eip",
-  "auth-server-url": "http://192.168.57.200:6404/auth/",
-  "ssl-required": "external",
-  "resource": "eip",
-  "public-client": true,
-  "confidential-port": 0
-}

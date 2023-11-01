@@ -2,6 +2,7 @@ package tw.gov.pcc.flowable.rest;
 
 
 import com.google.gson.Gson;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.*;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -23,6 +24,7 @@ import java.util.Map;
 
 @RestController
 @RequestMapping("/process")
+@Slf4j
 public class ProcessResource {
     private final ProcessFlowService service;
 
@@ -38,8 +40,7 @@ public class ProcessResource {
 
         ProcessReq processReq = new ProcessReq(processReqDTO);
         if (processReq.getProcessKey() != null) {
-            processReq.getVariables().keySet().forEach(System.out::println);
-            processReq.getVariables().values().forEach(System.out::println);
+
             TaskDTO taskDTO = service.startProcess(processReq.getProcessKey(), processReq.getVariables());
 
             return ResponseEntity.ok(taskDTO);

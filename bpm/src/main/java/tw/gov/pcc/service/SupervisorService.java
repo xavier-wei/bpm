@@ -46,11 +46,6 @@ public class SupervisorService {
         String sectionChief = null;
         String director = null;
 
-//        if ("600038".equals(user.getDeptId())) {
-//            setIfInfoGroup(sectionChief,director,positionData);
-//        }else {
-//            setIfNotInfoGroup(sectionChief,director,positionData);
-//        }
         if ("處長".equals(positionData.get(F1_POSNAME)) || "主任".equals(positionData.get(F1_POSNAME)) || "副處長".equals(positionData.get(F1_POSNAME))) {
             // 查到第一層長官為以上三種，表示自己為科長級或副處長級或室級成員
             sectionChief = NO_SIGN;
