@@ -77,8 +77,11 @@
                   :label="'申請人：員工編號：'"
                   :item="$v.appEmpid"
                 >
-                  <!--申請人員工編號 : appEmpid-->
-                  <b-form-input v-model="$v.appEmpid.$model"/>
+                  <b-input-group>
+                    <!--申請人員工編號 : appEmpid-->
+                    <b-form-input v-model="$v.appEmpid.$model"/>
+                    <b-button class="ml-2"  variant="outline-dark" @click="showModel()">差勤資訊</b-button>
+                  </b-input-group>
                 </i-form-group-check>
 
                 <i-form-group-check class="col-sm-3" label-cols="5" content-cols="7" :label="`姓名：`"
@@ -404,12 +407,11 @@
       </b-tabs>
     </b-card-body>
 
-
+    <errandBmodel ref="errandBmodel" :formData="form"></errandBmodel>
   </div>
 </template>
 
 <script lang="ts">
-
 
 import IDualDatePicker from '@/shared/i-date-picker/i-dual-date-picker.vue';
 import {reactive, ref, toRef, watch, onMounted} from '@vue/composition-api';
@@ -418,15 +420,16 @@ import IFormGroupCheck from '@/shared/form/i-form-group-check.vue';
 import {required} from '@/shared/validators';
 import IDatePicker from '@/shared/i-date-picker/i-date-picker.vue';
 import {useBvModal} from '@/shared/modal';
-
-const appendix = () => import('@/components/appendix.vue');
-const flowChart = () => import('@/components/flowChart.vue');
 import {notificationErrorHandler} from '@/shared/http/http-response-helper';
 import {useNotification} from '@/shared/notification';
 import axios from 'axios';
 import {useGetters} from '@u3u/vue-hooks';
 import {navigateByNameAndParams} from "@/router/router";
 import {handleBack} from '@/router/router';
+import errandBmodel from "@/components/errandBmodel.vue";
+
+const appendix = () => import('@/components/appendix.vue');
+const flowChart = () => import('@/components/flowChart.vue');
 
 export default {
   name: 'l414Apply',
@@ -442,6 +445,7 @@ export default {
     'i-date-picker': IDatePicker,
     appendix,
     flowChart,
+    errandBmodel,
   },
   setup(props) {
     const userData = ref(useGetters(['getUserData']).getUserData).value
@@ -452,9 +456,11 @@ export default {
     const dual2 = ref(null);
     const notificationService = useNotification();
     const $bvModal = useBvModal();
+    const errandBmodel = ref(null);
     const filePathData = reactive({
       filePathName: '',
     });
+
 
     let appendixData = reactive({});
     let fileDataId = reactive({
@@ -602,6 +608,10 @@ export default {
       form.delEnableDate = null;
     }
 
+    function showModel() {
+      errandBmodel.value.isShowDia(true);
+    }
+
     return {
       $v,
       form,
@@ -622,6 +632,8 @@ export default {
       fileDataId,
       changeEnableTime,
       changeSelecteEdateType,
+      errandBmodel,
+      showModel,
     }
   }
 }

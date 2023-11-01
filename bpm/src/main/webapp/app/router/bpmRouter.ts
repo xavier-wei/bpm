@@ -5,10 +5,10 @@ const flowChart =() => import('@/components/flowChart.vue');
 const signatureBmodel =() => import('@/components/signatureBmodel.vue');
 const signerList =() => import('@/components/signerList.vue');
 const userSys =() => import('@/components/userSys.vue');
-
 const breadcrumb =() => import('../core/menu/breadcrumb.vue');
 const l414Edit =() => import('@/components/l414/l414Edit.vue');
 const l410Edit =() => import('@/components/l410/l410Edit.vue');
+const errandBmodel =() => import('@/components/errandBmodel.vue');
 
 export default [
   {
@@ -98,6 +98,15 @@ export default [
     component: userSys,
     meta: {
       functionId: 'userSys',
+    },
+    props: true,
+  },
+  {
+    path: '/errandBmodel',
+    name: 'errandBmodel',
+    component: errandBmodel,
+    meta: {
+      functionId: 'errandBmodel',
     },
     props: true,
   },
