@@ -116,7 +116,9 @@ export function checkboxToMapAndForm(data: any, form: any, variables: any): any 
     variables.push(Object.fromEntries(arrData))
   }
 
-  if (data.checkbox === '1' && data.systemApplyName === '全球資訊網 (https://www.pcc.gov.tw)') {
+  //只有 全球資訊網 要用includes() 去判斷 ， 資料庫完整是 全球資訊網 (https://www.pcc.gov.tw)
+  //怕會遇到網址變更或是少了空白，導致isWebSite不會存進map裡面
+  if (data.checkbox === '1' && data.systemApplyName.includes('全球資訊網')) {
     // if (form.webSiteList.length >= 1) {
       // form.webSiteList.forEach(i => {
       //   if (i === '0') {
@@ -141,7 +143,7 @@ export function checkboxToMapAndForm(data: any, form: any, variables: any): any 
       let arrData = Array.from(mapData);
       variables.push(Object.fromEntries(arrData))
     // }
-  } else if (data.systemApplyName === '全球資訊網 (https://www.pcc.gov.tw)') {
+  } else if (data.systemApplyName.includes('全球資訊網')) {
     let mapData = new Map<string, object>();
     mapData.set('isWebSite', null)
     let arrData = Array.from(mapData);
