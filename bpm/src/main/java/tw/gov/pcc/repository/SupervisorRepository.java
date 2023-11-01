@@ -42,6 +42,37 @@ public class SupervisorRepository {
             "  AND A.[PEORG] = ? " +
             "  AND A.PECARD = ? ";
 
+    private static final String FIND_SUPERVISOR_TEST =
+        "SELECT A.[UNIT_NAME] " +
+            "     ,A.[PEIDNO] " +
+            "     ,A.[PECARD] " +
+            "     ,A.[PENAME] " +
+            "     ,P1.POSNAME " +
+            "     ,F1.[UNIT_NAME] F1_UNIT_NAME " +
+            "     ,P2.ID F1_ID " +
+            "     ,F1.PECARD F1_ACCOUNT " +
+            "     ,F1.PENAME F1_PENAME " +
+            "     ,P2.POSNAME F1_POSNAME " +
+            "     ,F2.[UNIT_NAME] F2_UNIT_NAME " +
+            "     ,P3.ID F2_ID " +
+            "     ,F2.PECARD F2_ACCOUNT " +
+            "     ,F2.PENAME F2_PENAME " +
+            "     ,P3.POSNAME F2_POSNAME " +
+            "     ,P4.ID F3_ID " +
+            "     ,F3.PECARD F3_ACCOUNT " +
+            "     ,F3.PENAME F3_PENAME " +
+            "     ,P4.POSNAME F3_POSNAME " +
+            "FROM [eip].[dbo].[VIEW_CPAPE05M_FORTEST] A " +
+            "         LEFT JOIN POSITION_FORTEST P1 ON  A.PEIDNO =  P1.ID " +
+            "         LEFT JOIN POSITION_FORTEST P2 ON  P1.FID =  P2.POSID " +
+            "         LEFT JOIN [VIEW_CPAPE05M_FORTEST] F1 ON F1.PEIDNO = P2.ID " +
+            "         LEFT JOIN POSITION_FORTEST P3 ON  P2.FID =  P3.POSID " +
+            "         LEFT JOIN [VIEW_CPAPE05M_FORTEST] F2 ON F2.PEIDNO = P3.ID " +
+            "         LEFT JOIN POSITION_FORTEST P4 ON  P3.FID =  P4.POSID " +
+            "         LEFT JOIN [VIEW_CPAPE05M_FORTEST] F3 ON F3.PEIDNO = P4.ID " +
+            "WHERE 1=1" +
+            "  AND A.[PEORG] = ? " +
+            "  AND A.PECARD = ? ";
     private static final String FIND_SPECILIST =
         "SELECT PECARD FROM view_cpape05m where PEIDNO =" +
             " (SELECT id " +
@@ -56,7 +87,11 @@ public class SupervisorRepository {
 
 
     public List<Map<String, Object>> executeQuery(String orgId, String userId) {
-        return jdbcTemplate.queryForList(FIND_SUPERVISOR, orgId, userId);
+        List<Map<String, Object>> supervisors = jdbcTemplate.queryForList(FIND_SUPERVISOR, orgId, userId);
+        if (supervisors.isEmpty()) {
+            supervisors = jdbcTemplate.queryForList(FIND_SUPERVISOR_TEST, orgId, userId);
+        }
+        return supervisors;
     }
 
     public List<Map<String, Object>> executeQueryInfoGroup() {

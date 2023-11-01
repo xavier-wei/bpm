@@ -33,7 +33,7 @@ public class BpmIsmsL410ServiceNew implements BpmIsmsService {
     private final String[] ROLE_IDS = {"BPM_IPT_Operator", "BPM_IPT_Mgr", "BPM_PR_Operator", "BPM_SEC_Operator"};
 
     private final Logger log = LoggerFactory.getLogger(BpmIsmsL410ServiceNew.class);
-    public static final HashMap<UUID, BpmIsmsL410DTO> DTO_HOLDER = new HashMap<>();
+    private static final HashMap<UUID, BpmIsmsL410DTO> DTO_HOLDER = new HashMap<>();
     private static final HashMap<UUID,Map<String,Object>> VARIABLES_HOLDER = new HashMap<>();
     private final Gson gson = new Gson();
 
@@ -145,7 +145,7 @@ public class BpmIsmsL410ServiceNew implements BpmIsmsService {
         // 填入上級
         List<UserRole> userRoles = userRoleRepository.findByRoleIdIn(List.of(ROLE_IDS));
         // 設定需要申請的Task有哪些及各task的Signer
-        supervisorService.setSupervisor(variables,bpmIsmsL410DTO.getAppEmpid(),userInfo);
+        supervisorService.setSupervisor(variables,bpmIsmsL410DTO.getFilEmpid(),userInfo);
         HashMap<String, String> signerIds = new HashMap<>();
 
         Arrays.stream(ROLE_IDS).forEach(s -> {
@@ -205,7 +205,7 @@ public class BpmIsmsL410ServiceNew implements BpmIsmsService {
 
         if(!bpmIsmsL410.isEmpty()) return bpmIsmsL410Repository.findByFormId(formId).get(0);
 
-        return null;
+        return Map.of();
     }
 
     @Override
@@ -242,33 +242,33 @@ public class BpmIsmsL410ServiceNew implements BpmIsmsService {
 
 enum SysSignerEnum {
 
-    HrSys("HrSysSigner", "BPM_PR_Operator"),
-    AdSys("AdSysSigner", "BPM_IPT_Operator"),
-    OdSys("OdSysSigner", "BPM_SEC_Operator"),
-    MeetingRoom("MeetingRoomSigner", "BPM_SEC_Operator"),
-    EmailSys("EmailSysSigner","BPM_IPT_Operator"),
-    WebSite("WebSiteSigner","BPM_IPT_Operator"),
-    PccPis("PccPisSigner","BPM_IPT_Operator"),
-    EngAndPrjInfoSys("EngAndPrjInfoSysSigner","BPM_IPT_Operator"),
-    RevSys("RevSysSigner","BPM_IPT_Operator"),
-    BidSys("BidSysSigner","BPM_IPT_Operator"),
-    RecSys("RecSysSigner","BPM_IPT_Operator"),
-    OtherSys1("OtherSys1Signer","BPM_IPT_Operator"),
-    OtherSys2("OtherSys2Signer","BPM_IPT_Operator"),
-    OtherSys3("OtherSys3Signer","BPM_IPT_Operator");
+    HR_SYS("HrSysSigner", "BPM_PR_Operator"),
+    AD_SYS("AdSysSigner", "BPM_IPT_Operator"),
+    OD_SYS("OdSysSigner", "BPM_SEC_Operator"),
+    MEETING_ROOM("MeetingRoomSigner", "BPM_SEC_Operator"),
+    EMAIL_SYS("EmailSysSigner","BPM_IPT_Operator"),
+    WEB_SITE("WebSiteSigner","BPM_IPT_Operator"),
+    PCC_PIS("PccPisSigner","BPM_IPT_Operator"),
+    ENG_AND_PRJ_INFO_SYS("EngAndPrjInfoSysSigner","BPM_IPT_Operator"),
+    REV_SYS("RevSysSigner","BPM_IPT_Operator"),
+    BID_SYS("BidSysSigner","BPM_IPT_Operator"),
+    REC_SYS("RecSysSigner","BPM_IPT_Operator"),
+    OTHER_SYS_1("OtherSys1Signer","BPM_IPT_Operator"),
+    OTHER_SYS_2("OtherSys2Signer","BPM_IPT_Operator"),
+    OTHER_SYS_3("OtherSys3Signer","BPM_IPT_Operator");
 
     private final String signer;
-    private final String sinerUnit;
+    private final String signerUnit;
 
-    SysSignerEnum(String signer, String sinerUnit) {
+    SysSignerEnum(String signer, String signerUnit) {
         this.signer = signer;
-        this.sinerUnit = sinerUnit;
+        this.signerUnit = signerUnit;
     }
 
     public static String getSinerUnitBySigner(String signer) {
         for (SysSignerEnum sysSignerEnum : SysSignerEnum.values()) {
             if (sysSignerEnum.signer.equals(signer)) {
-                return sysSignerEnum.sinerUnit;
+                return sysSignerEnum.signerUnit;
             }
         }
         return null;
