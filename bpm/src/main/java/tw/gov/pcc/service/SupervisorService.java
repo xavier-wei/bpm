@@ -6,7 +6,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 import tw.gov.pcc.domain.User;
 import tw.gov.pcc.repository.SupervisorRepository;
-import tw.gov.pcc.service.dto.BpmIsmsL410DTO;
 
 import java.util.List;
 import java.util.Map;
@@ -31,8 +30,8 @@ public class SupervisorService {
     }
 
 
-    public void setSupervisor(Map<String, Object> variables, String appEmpId, User user) {
-        List<Map<String, Object>> maps = supervisorRepository.executeQuery(user.getOrgId(), appEmpId);
+    public void setSupervisor(Map<String, Object> variables, String id, User user) {
+        List<Map<String, Object>> maps = supervisorRepository.executeQuery(user.getOrgId(), id);
         // 三種情況 POSNAME為科員、科長、處長(或更高階主管情形)
         Map<String, Object> positionData;
         try {
@@ -43,15 +42,15 @@ public class SupervisorService {
         }
         log.info("申請者職稱：{}", positionData.get(POSNAME));
 
-        String sectionChief = null;
-        String director = null;
+        String sectionChief;
+        String director;
 
         if ("處長".equals(positionData.get(F1_POSNAME)) || "主任".equals(positionData.get(F1_POSNAME)) || "副處長".equals(positionData.get(F1_POSNAME))) {
             // 查到第一層長官為以上三種，表示自己為科長級或副處長級或室級成員
             sectionChief = NO_SIGN;
-            director = "副處長".equals(positionData.get(F1_POSNAME)) ? (String) positionData.get(F2_ACCOUNT) : (String) positionData.get(F1_ACCOUNT);
+            director = "副處長".equals(positionData.get(F1_POSNAME)) ? (String) positionData.get(F2_ACCOUNT) : NO_SIGN;
 
-        } else if ("科長".equals(positionData.get(F1_POSNAME)) || null == positionData.get(F1_POSNAME)) {
+        } else if ("科長".equals(positionData.get(F1_POSNAME)) || (null == positionData.get(F1_POSNAME)&&!"處長".equals(positionData.get(POSNAME)))) {
             sectionChief = (null == positionData.get(F1_POSNAME)) ? NO_SIGN : (String) positionData.get(F1_ACCOUNT);
             director = (String) (("副處長".equals(positionData.get(F2_POSNAME))) ? positionData.get(F3_ACCOUNT) : positionData.get(F2_ACCOUNT));
 
@@ -66,30 +65,5 @@ public class SupervisorService {
         if (NO_SIGN.equals(director)) variables.put(DIRECTOR + DECISION, "1");
     }
 
-    public void setSupervisor(Map<String, Object> variables, BpmIsmsL410DTO bpmIsmsL410DTO) {
-        // 確認申請人單位職位
 
-//    private void setIfNotInfoGroup(String sectionChief, String director,Map<String, Object> positionData) {
-//        if ("處長".equals(positionData.get(F1_POSNAME)) || "主任".equals(positionData.get(F1_POSNAME))|| "副處長".equals(positionData.get(F1_POSNAME))) {
-//            // 查到第一層長官為以上三種，表示自己為科長級或副處長級或室級成員
-//            sectionChief = NO_SIGN;
-//            director = "副處長".equals(positionData.get(F1_POSNAME)) ? (String) positionData.get(F2_ACCOUNT) : (String) positionData.get(F1_ACCOUNT);
-//
-//        }else if ("科長".equals(positionData.get(F1_POSNAME)) || null == positionData.get(F1_POSNAME)) {
-//            sectionChief = (null == positionData.get(F1_POSNAME)) ? NO_SIGN : (String) positionData.get(F1_ACCOUNT);
-//            director = (String) (("副處長".equals(positionData.get(F2_POSNAME))) ? positionData.get(F3_ACCOUNT) : positionData.get(F2_ACCOUNT));
-//
-//        }else {
-//            sectionChief = NO_SIGN;
-//            director = NO_SIGN;
-//        }
-//    }
-//    private void setIfInfoGroup(String sectionChief, String director,Map<String, Object> positionData) {
-//        List<Map<String, Object>> maps = supervisorRepository.executeQueryInfoGroup();
-//        sectionChief = (null == positionData.get(F1_POSNAME)) ? NO_SIGN : (String) positionData.get(F1_ACCOUNT);
-//
-//        director = maps.get(0).get("PECARD") ==null? NO_SIGN :(String) maps.get(0).get("PECARD");
-//
-//    }
-    }
 }
