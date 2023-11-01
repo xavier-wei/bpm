@@ -4,7 +4,12 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestTemplate;
 import tw.gov.pcc.eip.dao.*;
 import tw.gov.pcc.eip.domain.*;
 import tw.gov.pcc.eip.tableau.cases.TableauDataCase;
@@ -47,6 +52,9 @@ public class TableauService {
 
     @Autowired
     private EipcodeDao eipcodeDao;
+
+    @Autowired
+    private RestTemplate restTemplate;
 
 
     public List<TableauDataCase> findTableauDataByUser(String userId) throws IOException {
@@ -137,67 +145,45 @@ public class TableauService {
         return resultList;
     }
 
-
+    /**
+     * 用RestTemplate取得TICKET
+     */
     public Map<String, String> getTrustedTicket() {
         //取得儀錶板連線ip、username
         List<Eipcode> opt = eipcodeDao.findByCodeKind("TABLEAU");
         AtomicReference<String> wgserver = new AtomicReference<>("");
         AtomicReference<String> username = new AtomicReference<>("");
-        opt.forEach(Eipcode->{
-            if(Eipcode.getCodeno().equals("ip")){
+        opt.forEach(Eipcode -> {
+            if (Eipcode.getCodeno().equals("ip")) {
                 wgserver.set(Eipcode.getCodename());
-            }
-            else if(Eipcode.getCodeno().equals("username")){
+            } else if (Eipcode.getCodeno().equals("username")) {
                 username.set(Eipcode.getCodename());
             }
         });
-        log.info("tableau 連線資訊, wgserver: {}",wgserver);
-        log.info("username 連線資訊, username: {}",username);
-        Map<String, String> resultMap = new HashMap<>();
-        OutputStreamWriter out = null;
-        BufferedReader in = null;
+        log.info("tableau 連線資訊, wgserver: {}", wgserver);
+        log.info("username 連線資訊, username: {}", username);
+
+        Map<String, String> res = new HashMap<>();
+        StringBuilder reqUrl = new StringBuilder();
         try {
-            // TODO: 2023/8/2  wgserver要改成定義在properties檔?
-//            String wgserver = "http://223.200.84.115";
-            StringBuilder reqUrl = new StringBuilder();
-            reqUrl.append(URLEncoder.encode("username", "UTF-8"));
-            reqUrl.append("=");
-            // TODO: 2023/8/2  username: admin要改成定義在properties檔?
-            reqUrl.append(URLEncoder.encode(String.valueOf(username), "UTF-8"));
-            URL url = new URL(wgserver + "/trusted");
-            URLConnection conn = url.openConnection();
-            conn.setDoOutput(true);
-            out = new OutputStreamWriter(conn.getOutputStream());
-            out.write(reqUrl.toString());
-            out.flush();
-            StringBuilder rsp = new StringBuilder();
-            in = new BufferedReader(
-                    new InputStreamReader(conn.getInputStream()));
-            String line;
-            while ((line = in.readLine()) != null) {
-                rsp.append(line);
-            }
-            resultMap.put("ticket", rsp.toString());
-//            resultMap.put("targeturl", tableauComponent.getWebTarget());
-            return resultMap;
+            reqUrl.append("username=").append(username);
+            String url = wgserver + "/trusted";
+            final HttpHeaders headers = new HttpHeaders();
+            headers.set("Content-Type", "application/x-www-form-urlencoded;charset=UTF-8");
+            final HttpEntity requestEntity = new HttpEntity(reqUrl.toString(), headers);
+            log.debug("check url :{}", url);
+            log.debug("check body :{}", reqUrl);
+            ResponseEntity<String> result = restTemplate.exchange(url, HttpMethod.POST, requestEntity, String.class);
+            String ticket = result.getBody();
+            res.put("ticket", ticket);
+//            res.put("server", this.tableauWgserver);
+            return res;
         } catch (Exception e) {
-            log.error(e.getMessage());
-            resultMap.put("ticket", "Exception occurred");
-//            resultMap.put("targeturl", tableauComponent.getWebTarget());
-            return resultMap;
-        } finally {
-            try {
-                if (in != null)
-                    in.close();
-                if (out != null)
-                    out.close();
-            } catch (IOException e) {
-                log.error(e.getMessage());
-            }
+            e.printStackTrace();
+            res.put("ticket", "Exception occurred");
         }
-
+        return res;
     }
-
 
     /**
      * 將 圖片路徑 轉 base64String
