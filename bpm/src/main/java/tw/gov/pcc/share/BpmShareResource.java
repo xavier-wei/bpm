@@ -44,30 +44,24 @@ public class BpmShareResource {
 
     @GetMapping("/bpmUnitOptions")
     public List<Eipcode> unitOptions() {
-
-        List<Eipcode> unitList = eipcodeDao.findByCodekindScodekindOrderByCodeno("REGISQUAL", "U");
-
-        log.info("BpmShareResource.java - unitOptions - 30 :: " + unitList);
-
-        return unitList;
+        return eipcodeDao.findByCodekindScodekindOrderByCodeno("REGISQUAL", "U");
     }
 
     @GetMapping("/bpmDeptsOptions")
     public List<Depts> deptsOptions() {
-
-        List<Depts> deptsList = deptsDao.getEip01wDepts();
-
-        log.info("BpmShareResource.java - unitOptions - 30 :: " + deptsList);
-
-        return deptsList;
+        return deptsDao.getEip01wDepts();
     }
 
     @GetMapping("/peunitOptions/{id}")
     public List<Map<String, Object>> peunitOptions(@PathVariable String id) {
 
-        List<Map<String, Object>> peunitOptions = bpmIsmsAdditionalRepository.peunitOptions(id);
-
         List<Map<String, Object>> peunitOptionsConvert = new ArrayList<>();
+
+        //先去一般差勤撈資料，沒有就去測試用差勤撈，目前只有IVV帳號在一般差勤會找不到
+        List<Map<String, Object>> peunitOptions = bpmIsmsAdditionalRepository.peunitOptions(id);
+        if (peunitOptions.isEmpty()) {
+            peunitOptions = bpmIsmsAdditionalRepository.peunitOptionsForTest(id);
+        }
 
         peunitOptions.forEach(data -> {
             peunitOptionsConvert.add(new MapUtils().getNewMap(data));

@@ -83,14 +83,14 @@
                                   :item="$v.appName">
                 <!--姓名(中文) : -->
                 <b-form-input v-model="$v.appName.$model"
-                              :disabled="form.isSubmit === '1' || userData.userId !== $v.filEmpid.$model || userData.userId !== $v.appEmpid.$model  || formStatusRef === FormStatusEnum.READONLY"/>
+                              :disabled="form.isSubmit === '1'  || formStatusRef !== FormStatusEnum.MODIFY"/>
               </i-form-group-check>
 
               <i-form-group-check label-star class="col-sm-5" label-cols="5" content-cols="7" :label="`單位別 ：`"
                                   :item="$v.appUnit">
                 <!--單位別 : -->
                 <b-form-select v-model="$v.appUnit.$model" :options="bpmDeptsOptions"
-                               :disabled="form.isSubmit === '1' || userData.userId !== $v.filEmpid.$model || userData.userId !== $v.appEmpid.$model  || formStatusRef === FormStatusEnum.READONLY">
+                               :disabled="form.isSubmit === '1'  || formStatusRef !== FormStatusEnum.MODIFY">
                   <template #first>
                     <b-form-select-option value="null" disabled>請選擇</b-form-select-option>
                   </template>
@@ -104,7 +104,7 @@
                                   :item="$v.appEngName">
                 <!--姓名(英文) : -->
                 <b-form-input v-model="$v.appEngName.$model"
-                              :disabled="form.isSubmit === '1' || userData.userId !== $v.filEmpid.$model || userData.userId !== $v.appEmpid.$model  || formStatusRef === FormStatusEnum.READONLY"/>
+                              :disabled="form.isSubmit === '1'   || formStatusRef !== FormStatusEnum.MODIFY"/>
               </i-form-group-check>
 
 
@@ -112,7 +112,7 @@
                                   :item="$v.position">
                 <!--職稱 : -->
                 <b-form-input v-model="$v.position.$model"
-                              :disabled="form.isSubmit === '1' || userData.userId !== $v.filEmpid.$model || userData.userId !== $v.appEmpid.$model  || formStatusRef === FormStatusEnum.READONLY"/>
+                              :disabled="form.isSubmit === '1'   || formStatusRef !== FormStatusEnum.MODIFY"/>
               </i-form-group-check>
             </b-form-row>
 
@@ -122,14 +122,14 @@
                                   :item="$v.appEmpid">
                 <!--員工編號 : -->
                 <b-form-input v-model="$v.appEmpid.$model"
-                              :disabled="form.isSubmit === '1' || userData.userId !== $v.filEmpid.$model || userData.userId !== $v.appEmpid.$model  || formStatusRef === FormStatusEnum.READONLY"/>
+                              :disabled="form.isSubmit === '1'   || formStatusRef !== FormStatusEnum.MODIFY"/>
               </i-form-group-check>
 
               <i-form-group-check class="col-sm-5" label-cols="5" content-cols="7" :label="'分機 ：'"
                                   :item="$v.extNum">
                 <!--分機 : -->
                 <b-form-input v-model="$v.extNum.$model"
-                              :disabled="form.isSubmit === '1' || userData.userId !== $v.filEmpid.$model || userData.userId !== $v.appEmpid.$model  || formStatusRef === FormStatusEnum.READONLY"/>
+                              :disabled="form.isSubmit === '1'   || formStatusRef !== FormStatusEnum.MODIFY"/>
               </i-form-group-check>
 
             </b-form-row>
@@ -150,7 +150,7 @@
 
                   <!--申請事由-->
                   <b-form-radio-group v-model="$v.appReason.$model"
-                                      :disabled="form.isSubmit === '1' || userData.userId !== $v.filEmpid.$model || userData.userId !== $v.appEmpid.$model  || formStatusRef === FormStatusEnum.READONLY">
+                                      :disabled="form.isSubmit === '1'   || formStatusRef !== FormStatusEnum.MODIFY">
                     <b-form-radio value="1">
                       <div style="height: 34px;">新進</div>
                     </b-form-radio>
@@ -181,14 +181,14 @@
 
                   <!--生效日期checkbox : isEnableDate-->
                   <b-form-checkbox v-model="$v.isEnableDate.$model" value="1" unchecked-value="0"
-                                   :disabled="form.isSubmit === '1' || userData.userId !== $v.filEmpid.$model || userData.userId !== $v.appEmpid.$model  || formStatusRef === FormStatusEnum.READONLY">
+                                   :disabled="form.isSubmit === '1'   || formStatusRef !== FormStatusEnum.MODIFY">
                     生效日期 :
                   </b-form-checkbox>
                   <!--生效日期 : enableDate-->
                   <i-date-picker
                     placeholder="yyy/MM/dd"
                     v-model="$v.enableDate.$model"
-                    :disabled="form.isSubmit === '1' || $v.isEnableDate.$model !== '1' || userData.userId !== $v.filEmpid.$model || userData.userId !== $v.appEmpid.$model  ||  formStatusRef === FormStatusEnum.READONLY"
+                    :disabled="form.isSubmit === '1' || $v.isEnableDate.$model !== '1'   ||  formStatusRef !== FormStatusEnum.MODIFY"
                     lazy
                     trim
                   ></i-date-picker>
@@ -205,12 +205,12 @@
                 >
                   <!--其他 checkbox : isOther-->
                   <b-form-checkbox v-model="$v.isOther.$model" value="1" unchecked-value="0"
-                                   :disabled="form.isSubmit === '1' || userData.userId !== $v.filEmpid.$model || userData.userId !== $v.appEmpid.$model  || formStatusRef === FormStatusEnum.READONLY">
+                                   :disabled="form.isSubmit === '1'   || formStatusRef !== FormStatusEnum.MODIFY">
                     其他 :
                   </b-form-checkbox>
                   <!--其他說明 : otherReason-->
                   <b-form-input v-model="$v.otherReason.$model"
-                                :disabled="form.isSubmit === '1' || userData.userId !== $v.filEmpid.$model || userData.userId !== $v.appEmpid.$model  || formStatusRef === FormStatusEnum.READONLY"/>
+                                :disabled="form.isSubmit === '1'   || formStatusRef !== FormStatusEnum.MODIFY"/>
                   <div class="text-danger text1" v-if="$v.otherReason.$model === '' && $v.isOther.$model === '1'">
                     請輸入值
                   </div>
@@ -239,7 +239,7 @@
 
                 <template #cell(checkbox)="row">
                   <b-form-checkbox :value="'1'" :unchecked-value="'0'" v-model="row.item.checkbox"
-                                   :disabled="form.isSubmit === '1' || formStatusRef === FormStatusEnum.READONLY"
+                                   :disabled="form.isSubmit === '1' || formStatusRef !== FormStatusEnum.MODIFY"
                                    @change="resetCheckboxValue(row.item)"/>
                 </template>
 
@@ -249,10 +249,10 @@
                   <div v-if="row.item.applyVersion == '0'">
                     <div>系統名稱 :</div>
                     <b-form-input v-model="row.item.otherSys" maxlength="200"
-                                  :disabled="form.isSubmit === '1' || formStatusRef === FormStatusEnum.READONLY"></b-form-input>
+                                  :disabled="form.isSubmit === '1' || formStatusRef !== FormStatusEnum.MODIFY"></b-form-input>
                     <div>帳號 :</div>
                     <b-form-input v-model="row.item.otherSysAccount" maxlength="200"
-                                  :disabled="form.isSubmit === '1' || formStatusRef === FormStatusEnum.READONLY"></b-form-input>
+                                  :disabled="form.isSubmit === '1' || formStatusRef !== FormStatusEnum.MODIFY"></b-form-input>
                   </div>
 
                   <div v-else-if="row.item.applyVersion === '1'">
@@ -264,14 +264,18 @@
                     <span v-if=" row.item.isColon === '1'"> : </span>
 
                     <b-form-input
-                      v-if="row.item.systemApply === '1' ||  row.item.systemApply === '6'"
+                      v-if="row.item.systemApply === '1'
+                      ||  row.item.systemApply === '6'||
+                      row.item.systemApply === '8'||
+                      row.item.systemApply === '9'||
+                      row.item.systemApply === '10'"
                       maxlength="200" v-model="row.item.systemApplyInput"
-                      :disabled="form.isSubmit === '1' || formStatusRef === FormStatusEnum.READONLY">
+                      :disabled="form.isSubmit === '1' || formStatusRef !== FormStatusEnum.MODIFY">
                     </b-form-input>
                     <b-form-input
                       v-else
                       maxlength="200" v-model="row.item.systemApplyInput"
-                      :disabled="userData.deptId !== row.item.admUnit || taskDataRef.taskName !== row.item.systemApplyName || row.item.checkbox !== '1' || formStatusRef === FormStatusEnum.READONLY">
+                      :disabled="userData.deptId !== row.item.admUnit || taskDataRef.taskName !== row.item.systemApplyName || row.item.checkbox !== '1' || formStatusRef !== FormStatusEnum.VERIFY">
                     </b-form-input>
 
                     <span v-if="row.item.systemApply === '4'">@mail.pcc.gov.tw</span>
@@ -281,12 +285,12 @@
                     {{ row.item.systemApplyName }}
                     <span v-if=" row.item.isColon === '1'"> : </span>
                     <b-form-checkbox-group v-model="$v.applyItem.$model" :options="options.type"
-                                           :disabled="form.isSubmit === '1' || formStatusRef === FormStatusEnum.READONLY"/>
+                                           :disabled="form.isSubmit === '1' || formStatusRef !== FormStatusEnum.MODIFY"/>
                   </div>
 
                   <div v-else-if="row.item.applyVersion === '4'">
                     <b-form-checkbox-group v-model="$v.webSiteList.$model" :options="options.webSite"
-                                           :disabled="form.isSubmit === '1' || formStatusRef === FormStatusEnum.READONLY"/>
+                                           :disabled="form.isSubmit === '1' || formStatusRef !== FormStatusEnum.MODIFY"/>
                   </div>
 
                 </template>
@@ -296,7 +300,7 @@
 
                   <div v-if="row.item.permissionsVersion == '0'">
                     <b-form-radio-group v-model="row.item.sys" @change="resetValue(row.item)"
-                                        :disabled="form.isSubmit === '1' || formStatusRef === FormStatusEnum.READONLY">
+                                        :disabled="form.isSubmit === '1' || formStatusRef !== FormStatusEnum.MODIFY">
                       <b-form-radio class="col-12" value="1">
                         <div>新增</div>
                       </b-form-radio>
@@ -311,7 +315,7 @@
                         <b-input-group>
                           <div>異動 :　</div>
                           <b-form-input maxlength="200" v-model="row.item.sysChange"
-                                        :disabled="form.isSubmit === '1' || row.item.sys !== '4' || formStatusRef === FormStatusEnum.READONLY"/>
+                                        :disabled="form.isSubmit === '1' || row.item.sys !== '4' || formStatusRef !== FormStatusEnum.MODIFY"/>
                         </b-input-group>
                       </b-form-radio>
                     </b-form-radio-group>
@@ -319,7 +323,7 @@
 
                   <div v-if="row.item.permissionsVersion == '1'">
                     <b-form-radio-group v-model="row.item.sys" @change="resetValue(row.item)"
-                                        :disabled="form.isSubmit === '1' || formStatusRef === FormStatusEnum.READONLY">
+                                        :disabled="form.isSubmit === '1' || formStatusRef !== FormStatusEnum.MODIFY">
                       <b-form-radio class="col-12" value="1">
                         <div>新增</div>
                       </b-form-radio>
@@ -330,7 +334,7 @@
                         <b-input-group>
                           <div>異動 :　</div>
                           <b-form-input maxlength="200" v-model="row.item.sysChange"
-                                        :disabled="form.isSubmit === '1' || row.item.sys !== '3'|| formStatusRef === FormStatusEnum.READONLY"/>
+                                        :disabled="form.isSubmit === '1' || row.item.sys !== '3'|| formStatusRef !== FormStatusEnum.MODIFY"/>
                         </b-input-group>
                       </b-form-radio>
                     </b-form-radio-group>
@@ -338,7 +342,7 @@
 
                   <div v-if="row.item.permissionsVersion == '2'">
                     <b-form-radio-group v-model="row.item.sys" @change="resetValue(row.item)"
-                                        :disabled="form.isSubmit === '1' || formStatusRef === FormStatusEnum.READONLY">
+                                        :disabled="form.isSubmit === '1' || formStatusRef !== FormStatusEnum.MODIFY">
                       <b-form-radio class="col-12" value="1">
                         <div>新增人員</div>
                       </b-form-radio>
@@ -359,7 +363,7 @@
                         <b-input-group>
                           <div>異動 :　</div>
                           <b-form-input maxlength="200" v-model="row.item.sysChange"
-                                        :disabled="form.isSubmit === '1' || row.item.sys !== '5' || formStatusRef === FormStatusEnum.READONLY"/>
+                                        :disabled="form.isSubmit === '1' || row.item.sys !== '5' || formStatusRef !== FormStatusEnum.MODIFY"/>
                         </b-input-group>
                       </b-form-radio>
                     </b-form-radio-group>
@@ -367,18 +371,18 @@
 
                   <div v-if="row.item.permissionsVersion == '3'">
                     <b-form-radio-group v-model="row.item.sys" @change="resetValue(row.item)"
-                                        :disabled="form.isSubmit === '1' || formStatusRef === FormStatusEnum.READONLY">
+                                        :disabled="form.isSubmit === '1' || formStatusRef !== FormStatusEnum.MODIFY">
                       <b-form-radio class="col-12" value="1">
                         <div>新增</div>
                         <b-input-group>
                           <div>1.　</div>
                           <b-form-input maxlength="200" v-model="row.item.emailApply1"
-                                        :disabled="form.isSubmit === '1' || row.item.sys !== '1' || formStatusRef === FormStatusEnum.READONLY"/>
+                                        :disabled="form.isSubmit === '1' || row.item.sys !== '1' || formStatusRef !== FormStatusEnum.MODIFY"/>
                         </b-input-group>
                         <b-input-group>
                           <div>2.　</div>
                           <b-form-input maxlength="200" v-model="row.item.emailApply2"
-                                        :disabled="form.isSubmit === '1' || row.item.sys !== '1' || formStatusRef === FormStatusEnum.READONLY"/>
+                                        :disabled="form.isSubmit === '1' || row.item.sys !== '1' || formStatusRef !== FormStatusEnum.MODIFY"/>
                         </b-input-group>
                       </b-form-radio>
 
@@ -392,7 +396,7 @@
                         <b-input-group>
                           <div>異動 :　</div>
                           <b-form-input maxlength="200" v-model="row.item.sysChange"
-                                        :disabled="form.isSubmit === '1' || row.item.sys !== '3' || formStatusRef === FormStatusEnum.READONLY"/>
+                                        :disabled="form.isSubmit === '1' || row.item.sys !== '3' || formStatusRef !== FormStatusEnum.MODIFY"/>
                         </b-input-group>
                       </b-form-radio>
                     </b-form-radio-group>
@@ -400,7 +404,7 @@
 
                   <div v-if="row.item.permissionsVersion == '4'">
                     <b-form-radio-group v-model="row.item.sys" @change="resetValue(row.item)"
-                                        :disabled="form.isSubmit === '1' || formStatusRef === FormStatusEnum.READONLY">
+                                        :disabled="form.isSubmit === '1' || formStatusRef !== FormStatusEnum.MODIFY">
                       <b-form-radio class="col-12" value="1">
                         <div>新增</div>
                       </b-form-radio>
@@ -411,21 +415,21 @@
 
                       <div class="ml-1">
                         <b-form-checkbox value="1" unchecked-value="0" v-model="row.item.isUnitAdm"
-                                         :disabled="form.isSubmit === '1' || row.item.sys !== '2' || formStatusRef === FormStatusEnum.READONLY">
+                                         :disabled="form.isSubmit === '1' || row.item.sys !== '2' || formStatusRef !== FormStatusEnum.MODIFY">
                           部門管理者
                         </b-form-checkbox>
 
                         <b-form-checkbox value="1" unchecked-value="0" v-model="row.item.isUnitDataMgr"
-                                         :disabled="form.isSubmit === '1' || row.item.sys !== '2' || formStatusRef === FormStatusEnum.READONLY">
+                                         :disabled="form.isSubmit === '1' || row.item.sys !== '2' || formStatusRef !== FormStatusEnum.MODIFY">
                           部門資料維護者
                         </b-form-checkbox>
 
                         <b-form-checkbox value="1" unchecked-value="0" v-model="row.item.isWebSiteOther"
-                                         :disabled="form.isSubmit === '1' || row.item.sys !== '2' || formStatusRef === FormStatusEnum.READONLY">
+                                         :disabled="form.isSubmit === '1' || row.item.sys !== '2' || formStatusRef !== FormStatusEnum.MODIFY">
                           其他 :　
                         </b-form-checkbox>
                         <b-form-input maxlength="200" v-model="row.item.otherRemark"
-                                      :disabled="form.isSubmit === '1' || row.item.isWebSiteOther !== '1' || formStatusRef === FormStatusEnum.READONLY"/>
+                                      :disabled="form.isSubmit === '1' || row.item.isWebSiteOther !== '1' || formStatusRef !== FormStatusEnum.MODIFY"/>
                       </div>
 
                       <b-form-radio class="col-12" value="3">
@@ -437,29 +441,20 @@
 
                 <!--管理單位-->
                 <template #cell(managementUnit)="row">
-
-                  <!--                      <b-form-select :options="bpmDeptsOptions" v-model="row.item.admUnit"-->
-                  <!--                                     :disabled="userData.deptId !== row.item.admUnit ||taskDataRef.taskName !== row.item.systemApplyName || row.item.checkbox !== '1'  || formStatusRef === FormStatusEnum.READONLY">-->
-
-                  <!--                        <template #first>-->
-                  <!--                          <b-form-select-option value="null" disabled>請選擇</b-form-select-option>-->
-                  <!--                        </template>-->
-                  <!--                      </b-form-select>-->
-
                   <div v-if="!!row.item.admUnit" v-model="row.item.admUnit">
                     {{ changeDealWithUnit(row.item.admUnit, bpmDeptsOptions) }}
                   </div>
-
                 </template>
 
                 <!--處理情形及生效日期-->
                 <template #cell(lastWork)="row">
                   <b-form-input maxlength="200" v-model="row.item.admStatus"
-                                :disabled="userData.deptId !== row.item.admUnit || taskDataRef.taskName.replace('加簽-', '') !== row.item.systemApplyName || row.item.checkbox !== '1'  || formStatusRef === FormStatusEnum.READONLY"/>
+                                :disabled="userData.deptId !== row.item.admUnit || taskDataRef.taskName.replace('加簽-', '') !== row.item.systemApplyName ||
+                                row.item.checkbox !== '1'  || formStatusRef !== FormStatusEnum.VERIFY"/>
                   <div class="text-danger text1 mx-1"
                        v-if="userData.deptId === row.item.admUnit &&
-                       taskDataRef.taskName.replace('加簽-', '') ===
-                       row.item.systemApplyName && row.item.checkbox === '1'  &&
+                       taskDataRef.taskName.replace('加簽-', '') === row.item.systemApplyName &&
+                       row.item.checkbox === '1'  &&
                        formStatusRef !== FormStatusEnum.READONLY &&
                        row.item.admStatus === ''">
                     請輸入值
@@ -469,7 +464,10 @@
                     lazy
                     trim
                     v-model="row.item.admEnableDate"
-                    :disabled="userData.deptId !== row.item.admUnit || taskDataRef.taskName.replace('加簽-', '') !== row.item.systemApplyName || row.item.checkbox !== '1'  || formStatusRef === FormStatusEnum.READONLY"
+                    :disabled="userData.deptId !== row.item.admUnit ||
+                    taskDataRef.taskName.replace('加簽-', '') !== row.item.systemApplyName ||
+                    row.item.checkbox !== '1'  ||
+                    formStatusRef !== FormStatusEnum.VERIFY"
                   ></i-date-picker>
                   <div class="text-danger text1 mx-1"
                        v-if="userData.deptId === row.item.admUnit &&
@@ -484,7 +482,8 @@
                 <!--處理人員-->
                 <template #cell(reviewStaffName)="row">
                   <b-form-input maxlength="200" v-model="row.item.admName"
-                                :disabled=" userData.deptId !== row.item.admUnit ||taskDataRef.taskName.replace('加簽-', '') !== row.item.systemApplyName || row.item.checkbox !== '1'  || formStatusRef === FormStatusEnum.READONLY"/>
+                                :disabled=" userData.deptId !== row.item.admUnit ||taskDataRef.taskName.replace('加簽-', '') !== row.item.systemApplyName ||
+                                row.item.checkbox !== '1'  || formStatusRef !== FormStatusEnum.VERIFY"/>
                   <div class="text-danger text1 mx-1"
                        v-if="userData.deptId === row.item.admUnit &&
                        taskDataRef.taskName.replace('加簽-', '') === row.item.systemApplyName &&
@@ -653,6 +652,11 @@ export default {
       type: Boolean,
       default: false,
     },
+    query: {
+      type: String,
+      required: false,
+      default: '1',
+    },
   },
   components: {
     'i-form-group-check': IFormGroupCheck,
@@ -678,6 +682,7 @@ export default {
     const $bvModal = useBvModal();
     const notificationService = useNotification();
     const signatureBmodel = ref(null);
+    const queryRef = toRef(props, 'query');
     let fileDataId = reactive({
       fileId: ''
     });
@@ -968,7 +973,6 @@ export default {
           })
           table.data = data
           if (formData.processInstanceId !== null && formData.processInstanceId !== undefined) {
-            // filePathData.filePathName = 'http://localhost:9973/pic?processId=' + formData.processInstanceId;
             handleQueryFlowChart(formData.processInstanceId);
           }
 
@@ -1036,7 +1040,7 @@ export default {
                 reviewStart(isSubmit, false);
               } else {
                 $bvModal.msgBoxOk('表單更新完畢');
-                navigateByNameAndParams('pending', {});
+                navigateByNameAndParams('pending', {isReload: false, isNotKeepAlive: true,query:queryRef.value});
               }
             })
             .catch(notificationErrorHandler(notificationService));
@@ -1112,10 +1116,10 @@ export default {
           .then(({data}) => {
             if (item === '1') {
               $bvModal.msgBoxOk('表單儲存完畢');
-              navigateByNameAndParams('pending', {isReload: false, isNotKeepAlive: true});
+              navigateByNameAndParams('pending', {isReload: false, isNotKeepAlive: true,query:queryRef.value});
             } else {
               $bvModal.msgBoxOk('表單審核完畢');
-              navigateByNameAndParams('pending', {isReload: false, isNotKeepAlive: true});
+              navigateByNameAndParams('pending', {isReload: false, isNotKeepAlive: true,query:queryRef.value});
             }
 
           })
@@ -1143,14 +1147,14 @@ export default {
         axios.post(`/process/deleteProcessInstance`, request)
           .then(({data}) => {
             $bvModal.msgBoxOk('表單流程撤銷完畢');
-            handleBack({isReload: true, isNotKeepAlive: false});
+            handleBack({isReload: false, isNotKeepAlive: false,query:queryRef.value});
           })
           .catch(notificationErrorHandler(notificationService))
       }
     }
 
     function toQueryView() {
-      handleBack({isReload: true, isNotKeepAlive: true});
+      handleBack({isReload: true, isNotKeepAlive: true,query:queryRef.value});
     }
 
     const getItem = (item: string) => {
