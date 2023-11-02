@@ -70,11 +70,17 @@ public class BpmIsmsL410ServiceNew implements BpmIsmsService {
     public void saveBpm(UUID uuid, String processInstanceId, TaskDTO taskDTO, List<BpmUploadFileDTO> dto, List<MultipartFile> appendixFiles) {
 
         BpmIsmsL410DTO bpmIsmsL410DTO =  DTO_HOLDER.get(uuid);
-        //取得表單最後的流水號
-        String lastFormId = !bpmIsmsL410Repository.getMaxFormId().isEmpty() ? bpmIsmsL410Repository.getMaxFormId().get(0).getFormId() : null;
-        String formId = bpmIsmsL410DTO.getFormName() + "-" + new SeqNumber().getNewSeq(lastFormId);
+        String formId;
+        if (bpmIsmsL410DTO.getFormId()==null||bpmIsmsL410DTO.getFormId().isEmpty()) {
+            String lastFormId = !bpmIsmsL410Repository.getMaxFormId().isEmpty() ? bpmIsmsL410Repository.getMaxFormId().get(0).getFormId() : null;
+            formId = bpmIsmsL410DTO.getFormName() + "-" + new SeqNumber().getNewSeq(lastFormId);
+            bpmIsmsL410DTO.setFormId(formId);
 
-        bpmIsmsL410DTO.setFormId(formId);
+        }else {
+            formId = bpmIsmsL410DTO.getFormId();
+        }
+        //取得表單最後的流水號
+
 
 //        存入table
         bpmIsmsL410DTO.setProcessInstanceId(processInstanceId);
@@ -91,7 +97,7 @@ public class BpmIsmsL410ServiceNew implements BpmIsmsService {
         //儲存照片
         if (appendixFiles != null) {
             for (int i = 0; i < appendixFiles.size(); i++) {
-                dto.get(i).setFormId(bpmIsmsL410DTO.getFormName() + "-" + new SeqNumber().getNewSeq(lastFormId));
+                dto.get(i).setFormId(formId);
                 dto.get(i).setFileName(appendixFiles.get(i).getName());
                 try {
                     bpmUploadFileService.bpmUploadFile(bpmUploadFileMapper.toEntity(dto.get(i)), appendixFiles.get(i));
