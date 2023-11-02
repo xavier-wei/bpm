@@ -85,7 +85,7 @@
                       <!--申請人員工編號 : appEmpid-->
                       <b-form-input v-model="$v.appEmpid.$model"
                                     :disabled="formStatusRef === FormStatusEnum.READONLY  || isEdit"/>
-                      <b-button class="ml-2" v-show="formStatusRef === FormStatusEnum.MODIFY  || isEdit" variant="outline-dark" @click="showErrandModel()">差勤資訊</b-button>
+                      <b-button class="ml-2" v-show="formStatusRef === FormStatusEnum.MODIFY  && isEdit" variant="outline-dark" @click="showErrandModel()">差勤資訊</b-button>
                     </b-input-group>
 
                   </i-form-group-check>
@@ -496,7 +496,6 @@ const signerList = () => import('@/components/signerList.vue');
 
 export default {
   name: 'l414Edit',
-  methods: {changeDirections},
   props: {
     formId: {
       type: String,
@@ -524,6 +523,11 @@ export default {
       type: Boolean,
       default: false,
     },
+    query: {
+      type: String,
+      required: false,
+      default: '1',
+    },
   },
   components: {
     'i-form-group-check': IFormGroupCheck,
@@ -544,6 +548,7 @@ export default {
     const isSignatureRef = toRef(props, 'isSignature');
     const processInstanceStatusRef = toRef(props, 'processInstanceStatus');
     const isCancelRef = toRef(props, 'isCancel');
+    const queryRef = toRef(props, 'query');
     const tabIndex = ref(0);
     const dual1 = ref(null);
     const dual2 = ref(null);
@@ -657,7 +662,6 @@ export default {
         .then(({data}) => {
           if (!data) return;
           if (data.processInstanceId !== null && data.processInstanceId !== undefined) {
-            // filePathData.filePathName = 'http://localhost:9973/pic?processId=' + data.processInstanceId;
             handleQueryFlowChart(data.processInstanceId);
           }
 
@@ -725,7 +729,7 @@ export default {
                 reviewStart(isSubmit, false);
               } else {
                 $bvModal.msgBoxOk('表單更新完畢');
-                navigateByNameAndParams('pending', {});
+                navigateByNameAndParams('pending', {isReload: false, isNotKeepAlive: true,query:queryRef.value});
               }
 
             })
@@ -829,10 +833,10 @@ export default {
           .then(({data}) => {
             if (item === '1') {
               $bvModal.msgBoxOk('表單儲存完畢');
-              navigateByNameAndParams('pending', {isReload: false, isNotKeepAlive: true});
+              navigateByNameAndParams('pending', {isReload: false, isNotKeepAlive: true,query:queryRef.value,});
             } else {
               $bvModal.msgBoxOk('表單審核完畢');
-              navigateByNameAndParams('pending', {isReload: false, isNotKeepAlive: true});
+              navigateByNameAndParams('pending', {isReload: false, isNotKeepAlive: true,query:queryRef.value,});
             }
 
           })
@@ -910,14 +914,14 @@ export default {
         axios.post(`/process/deleteProcessInstance`, request)
           .then(({data}) => {
             $bvModal.msgBoxOk('表單流程撤銷完畢');
-            handleBack({isReload: true, isNotKeepAlive: false});
+            handleBack({isReload: true, isNotKeepAlive: false,query:queryRef.value,});
           })
           .catch(notificationErrorHandler(notificationService))
       }
     }
 
     function toQueryView() {
-      handleBack({isReload: true, isNotKeepAlive: false});
+      handleBack({isReload: true, isNotKeepAlive: false,query:queryRef.value,});
     }
 
     function showModel() {

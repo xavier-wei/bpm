@@ -129,6 +129,44 @@ public interface BpmIsmsAdditionalRepository extends JpaRepository<BpmIsmsAdditi
     List<Map<String, Object>> peunitOptions(@Param("pecard") String pecard);
 
 
+    @Query(value = "  SELECT *  " +
+        " FROM [view_cpape05m_forTest]  " +
+        " where 1=1  " +
+        "   and [PEORG] = '360000000G'  " +
+        "   and PELEVDATE = ''  " +
+        "   and PEUNIT != '600037'  " +
+        "   and PEUNIT in (  " +
+        "     SELECT [unit_id]  " + //使用職位ID，取得單位ID
+        "     FROM [view_oup_unit_forTest]  " +
+        "     where uhead_pos_id in (  " +
+        "         SELECT [posid]  " + //使用員工編號，取得職位ID
+        "         FROM [position_forTest] P  " +
+        "                  left join [view_cpape05m_forTest] C on P.id = C.PEIDNO  " +
+        "         where C.PECARD =  :pecard " +
+        "         UNION ALL  " +
+        "         SELECT [posid] FROM [position_forTest]  " +
+        "         WHERE [fid] in (  " +
+        "             SELECT [posid]  " +
+        "             FROM [position_forTest] P  " +
+        "                      left join [view_cpape05m_forTest] C on P.id = C.PEIDNO  " +
+        "             where C.PECARD = :pecard  " +
+        "         )  " +
+        "         UNION ALL  " +
+        "         SELECT [posid] FROM [position_forTest]  " +
+        "         WHERE [fid] in (  " +
+        "             SELECT [posid] FROM [position_forTest]  " +
+        "             WHERE [fid] in (  " +
+        "                 SELECT [posid]  " +
+        "                 FROM [position_forTest] P  " +
+        "                          left join [view_cpape05m_forTest] C on P.id = C.PEIDNO  " +
+        "                 where C.PECARD = :pecard  " +
+        "             )  " +
+        "         )  " +
+        "     )  " +
+        " )  " +
+        " order by PENAME     ", nativeQuery = true)
+    List<Map<String, Object>> peunitOptionsForTest(@Param("pecard") String pecard);
+
     @Query(value = " SELECT * FROM [eip].[dbo].[view_cpape05m] " +
         " WHERE 1=1 " +
         " AND [PEORG] = '360000000G' " +

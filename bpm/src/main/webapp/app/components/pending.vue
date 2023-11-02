@@ -115,7 +115,7 @@
 
 <script lang="ts">
 import axios from 'axios';
-import {ref, reactive, defineComponent, onActivated} from '@vue/composition-api';
+import {ref, reactive, defineComponent, onActivated, toRef} from '@vue/composition-api';
 import IDatePicker from '../shared/i-date-picker/i-date-picker.vue';
 import ITable from '../shared/i-table/i-table.vue';
 import IFormGroupCheck from '../shared/form/i-form-group-check.vue';
@@ -134,16 +134,25 @@ import {superiorFilter} from "@/shared/word/superiorFilter";
 export default defineComponent({
   name: 'pending',
   methods: {changeSubject, configRoleToBpmIpt},
+  props: {
+    query: {
+      type: String,
+      required: false,
+      default: '1',
+    },
+  },
   components: {
     IDatePicker,
     ITable,
     IFormGroupCheck,
   },
-  setup() {
+  setup(props) {
     const userData = ref(useGetters(['getUserData']).getUserData).value;
     const iTable = ref(null);
     const queryStatus = ref(false);
     const notificationService = useNotification();
+    const queryProp = toRef(props, 'query');
+    const query = ref('');
 
     enum FormStatusEnum {
       CREATE = '新增',
@@ -153,9 +162,12 @@ export default defineComponent({
     }
 
     onActivated(() => {
-      toQuery();
+      if (queryProp.value === '2') {
+        toSubordinateQuery();
+      }else {
+        toQuery();
+      }
     });
-
 
     function notBeforePublicDateStart(date: Date) {
       if (form.dateStart) return date < new Date(form.dateStart);
@@ -241,6 +253,7 @@ export default defineComponent({
 
     const toQuery = () => {
       table.data = undefined;
+      query.value = '1';
       const params = new FormData();
       params.append('bpmFormQueryDto', new Blob([JSON.stringify(form)], {type: 'application/json'}));
       params.append('isNotify', new Blob([JSON.stringify(false)], {type: 'application/json'}));
@@ -264,7 +277,7 @@ export default defineComponent({
 
     const toSubordinateQuery = () => {
       table.data = undefined;
-
+      query.value = '2';
       const params = new FormData();
       params.append('bpmFormQueryDto', new Blob([JSON.stringify(form)], {type: 'application/json'}));
       params.append('isNotify', new Blob([JSON.stringify(false)], {type: 'application/json'}));
@@ -306,6 +319,7 @@ export default defineComponent({
           isNotKeepAlive: false,
           isSignature: false,
           isCancel:true,
+          query:query.value,
         });
       } else {
         navigateByNameAndParams(prefix + 'Edit', {
@@ -313,7 +327,8 @@ export default defineComponent({
           taskData: taskData,
           formStatus: FormStatusEnum.VERIFY,
           isNotKeepAlive: false,
-          isSignature: item.taskName.substring(0, 2) !== '加簽'
+          isSignature: item.taskName.substring(0, 2) !== '加簽',
+          query:query.value,
         });
       }
     }

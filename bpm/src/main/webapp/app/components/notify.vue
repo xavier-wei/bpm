@@ -138,7 +138,7 @@
 
 <script lang="ts">
 import axios from 'axios';
-import {ref, reactive, defineComponent, onMounted} from '@vue/composition-api';
+import {ref, reactive, defineComponent, onMounted,onActivated} from '@vue/composition-api';
 import IDatePicker from '../shared/i-date-picker/i-date-picker.vue';
 import ITable from '../shared/i-table/i-table.vue';
 import IFormGroupCheck from '../shared/form/i-form-group-check.vue';
@@ -175,6 +175,11 @@ export default defineComponent({
     onMounted(() => {
       peunitOptions();
     });
+
+    onActivated(() => {
+      toQuery();
+    });
+
 
     enum FormStatusEnum {
       CREATE = '新增',
@@ -302,6 +307,7 @@ export default defineComponent({
         {value: '0', text: '處理中'},
         {value: '1', text: '處理過'},
         {value: '2', text: '補件'},
+        {value: '3', text: '撤銷'},
       ],
       formCase: [
         {value: 'L410', text: 'L410-共用系統使用者帳號申請單'},
