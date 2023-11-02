@@ -22,6 +22,7 @@ import tw.gov.pcc.repository.BpmIsmsAdditionalRepository;
 import tw.gov.pcc.repository.BpmIsmsL410Repository;
 import tw.gov.pcc.service.BpmIsmsService;
 import tw.gov.pcc.service.BpmSignStatusService;
+import tw.gov.pcc.service.BpmSignerListService;
 import tw.gov.pcc.service.SubordinateTaskService;
 import tw.gov.pcc.service.dto.*;
 import tw.gov.pcc.service.mapper.BpmIsmsL410Mapper;
@@ -60,10 +61,11 @@ public class IsmsProcessResource {
     private final BpmIsmsAdditionalRepository bpmIsmsAdditionalRepository;
     private final BpmIsmsL410Mapper bpmIsmsL410Mapper;
     private final BpmIsmsL410Repository bpmIsmsL410Repository;
-
+    private final BpmSignerListService bpmSignerListService;
     private final SubordinateTaskService subordinateTaskService;
 
-    public IsmsProcessResource(ApplicationContext applicationContext, HttpSession httpSession, BpmSignStatusService bpmSignStatusService, BpmSignStatusMapper bpmSignStatusMapper, BpmIsmsAdditionalRepository bpmIsmsAdditionalRepository, BpmIsmsL410Mapper bpmIsmsL410Mapper, BpmIsmsL410Repository bpmIsmsL410Repository, SubordinateTaskService subordinateTaskService, EipcodeDaoImpl eipcodeDao) {
+
+    public IsmsProcessResource(ApplicationContext applicationContext, HttpSession httpSession, BpmSignStatusService bpmSignStatusService, BpmSignStatusMapper bpmSignStatusMapper, BpmIsmsAdditionalRepository bpmIsmsAdditionalRepository, BpmIsmsL410Mapper bpmIsmsL410Mapper, BpmIsmsL410Repository bpmIsmsL410Repository, SubordinateTaskService subordinateTaskService, EipcodeDaoImpl eipcodeDao, BpmSignerListService bpmSignerListService) {
         this.applicationContext = applicationContext;
         this.httpSession = httpSession;
         this.bpmSignStatusService = bpmSignStatusService;
@@ -73,6 +75,7 @@ public class IsmsProcessResource {
         this.bpmIsmsL410Repository = bpmIsmsL410Repository;
         this.subordinateTaskService = subordinateTaskService;
         this.token = eipcodeDao.findByCodeKindOrderByScodeno("BPM_TOKEN").get(0).getCodename();
+        this.bpmSignerListService = bpmSignerListService;
     }
 
     @PostMapping(path = "/start/{key}", consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
@@ -143,6 +146,56 @@ public class IsmsProcessResource {
 
         return service.saveBpmByPatch(form.get(key), dto, appendixFiles);
     }
+
+    // 僅有L410可打這支API，其他不要打，欸出歹事
+    @PostMapping(path = "/edit/{key}", consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
+    public ResponseEntity<String> editProcess(
+        @PathVariable String key,
+        @Valid @RequestPart("form") HashMap<String, String> form,
+        @Valid @RequestPart(name = "fileDto", required = false) List<BpmUploadFileDTO> dto,
+        @RequestPart(name = "appendixFiles", required = false) List<MultipartFile> appendixFiles
+       ) {
+        BpmIsmsL410DTO bpmIsmsL410DTO = gson.fromJson(form.get(key),BpmIsmsL410DTO.class);
+        User userInfo = getUserInfo();
+
+        ProcessReqDTO processReqDTO = new ProcessReqDTO();
+        HashMap<String, Object> variables = new HashMap<>();
+        BpmIsmsService service = (BpmIsmsService) applicationContext.getBean(Objects.requireNonNull(BpmIsmsServiceBeanNameEnum.getServiceBeanNameByKey(key)));
+        UUID uuid = service.setVariables(variables, form.get(key), userInfo);
+        processReqDTO.setFormName(key);
+        processReqDTO.setVariables(variables);
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+        HttpEntity<String> requestEntity = new HttpEntity<>(gson.toJson(processReqDTO), headers);
+        ResponseEntity<String> exchange = restTemplate.exchange(flowableProcessUrl + "/startProcess", HttpMethod.POST, requestEntity, String.class);
+        String processInstanceId;
+        TaskDTO taskDTO;
+        if (exchange.getStatusCodeValue() == 200) {
+            taskDTO = gson.fromJson(exchange.getBody(), TaskDTO.class);
+            processInstanceId = taskDTO.getProcessInstanceId();
+        } else {
+            log.error("flowableProcess - startProcess - 90 :: {} ", "flowableConnectionError");
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("流程引擎連線異常，請聯絡管理員");
+        }
+        try {
+            bpmSignerListService.deleteAllByFormId(bpmIsmsL410DTO.getFormId());
+            service.saveBpm(uuid, processInstanceId, taskDTO, dto, appendixFiles);
+            deleteProcessWhenSaveBpmFailed(bpmIsmsL410DTO.getProcessInstanceId());
+        } catch (ResponseStatusException e) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
+        } catch (Exception e) {
+            log.error("BpmSaveError - startProcess - 90 :: {} ", "BpmSaveError");
+            // 如果BPM寫入失敗，通知flowable原流程撤銷
+            deleteProcessWhenSaveBpmFailed(processInstanceId);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("表單寫入失敗，流程已取消，請稍候再試");
+        }
+        log.info("IsmsProcessResource.java - start - 102 :: " + processInstanceId);
+        return ResponseEntity.ok(processInstanceId);
+
+
+    }
+
+
 
     @PostMapping("/completeTask/{formId}")
     public ResponseEntity<String> completeTask(@RequestBody CompleteReqDTO completeReqDTO, @PathVariable String formId) {
