@@ -1,19 +1,17 @@
 package tw.gov.pcc.flowable.rest;
 
 
-import com.google.gson.Gson;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.*;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.client.RestTemplate;
-import tw.gov.pcc.flowable.config.BpmSetting;
+import org.springframework.web.server.ResponseStatusException;
 import tw.gov.pcc.flowable.domain.ProcessReq;
 import tw.gov.pcc.flowable.domain.ProcessRes;
 import tw.gov.pcc.flowable.service.EipCodeService;
 import tw.gov.pcc.flowable.service.ProcessFlowService;
 import tw.gov.pcc.flowable.service.dto.CompleteReqDTO;
-import tw.gov.pcc.flowable.service.dto.EndEventDTO;
 import tw.gov.pcc.flowable.service.dto.ProcessReqDTO;
 import tw.gov.pcc.flowable.service.dto.TaskDTO;
 
@@ -79,23 +77,25 @@ public class ProcessResource {
     }
 
     @PostMapping("/deleteProcess")
-    public String deleteProcess(@RequestBody Map<String, String> deleteRequest) {
+    public ResponseEntity<String> deleteProcess(@RequestBody Map<String, String> deleteRequest) {
+        String deleteProcessLog = "--deleteProcess : ";
+        // 刪除流程 區分兩種情況，bpm寫入失敗後刪除，或主動撤銷
         String token = eipCodeService.findCodeName("BPM_TOKEN");
         if (token.equals(deleteRequest.get("token"))) {
             String processInstanceId = deleteRequest.get("processInstanceId");
-            TaskDTO taskDTO = service.querySingleTask(processInstanceId);
-            EndEventDTO endEventDTO = new EndEventDTO(processInstanceId, token, taskDTO.getFormName(), "2");
-            service.deleteProcessInstance(processInstanceId);
-            HttpHeaders headers = new HttpHeaders();
-            headers.setContentType(MediaType.APPLICATION_JSON);
-            Gson gson = new Gson();
-            HttpEntity<String> requestEntity = new HttpEntity<>(gson.toJson(endEventDTO), headers);
-            RestTemplate restTemplate = new RestTemplate();
-            ResponseEntity<String> exchange = restTemplate.exchange(BpmSetting.getUrl() + "/bpm/api/process/receiveEndEvent", HttpMethod.DELETE, requestEntity, String.class);
-            return "Delete process instance: " + exchange.getStatusCodeValue();
-        } else {
-            return "Bad request";
+            try {
+
+                TaskDTO taskDTO = service.querySingleTask(processInstanceId);
+                service.deleteProcessInstance(processInstanceId);
+            } catch (Exception e) {
+                log.error("");
+                throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "刪除失敗");
+            }
+            log.info(deleteProcessLog + "processInstance: {} 已刪除", processInstanceId);
+            return ResponseEntity.ok().body("刪除完成");
         }
+        log.warn(deleteProcessLog + "token不符或不存在，使用者可能使用API測試工具試圖刪除流程");
+        throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
     }
 
     @PostMapping("/getAllSubordinateTask")
@@ -106,8 +106,8 @@ public class ProcessResource {
         }
         return taskDTOS;
     }
-    // 測試時期快速完成用API
 
+    // 測試時期快速完成用API
     @RequestMapping("/completeTaskTest/{pId}/{tId}")
     public String completeTest(@PathVariable String pId, @PathVariable String tId) {
         service.completeTask(pId, tId);
