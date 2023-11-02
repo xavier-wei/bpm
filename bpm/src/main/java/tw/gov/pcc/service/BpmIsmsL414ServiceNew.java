@@ -116,6 +116,12 @@ public class BpmIsmsL414ServiceNew implements BpmIsmsService {
     }
 
     @Override
+    public HashMap<String, Object> saveBpmByPatch(HashMap<String, Object> variables, String form, List<BpmUploadFileDTO> dto, List<MultipartFile> appendixFiles, User userInfo) {
+        return null;
+    }
+
+
+    @Override
     public UUID setVariables(HashMap<String, Object> variables, String form, User userInfo) {
         BpmIsmsL414DTO bpmIsmsL414DTO = gson.fromJson(form, BpmIsmsL414DTO.class);
         UUID uuid = UUID.randomUUID();

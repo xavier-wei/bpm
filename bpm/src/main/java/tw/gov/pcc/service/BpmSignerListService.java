@@ -1,6 +1,7 @@
 package tw.gov.pcc.service;
 
 import org.springframework.http.HttpStatus;
+import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 import tw.gov.pcc.domain.BpmIsmsSignerOrder;
@@ -18,11 +19,13 @@ import java.util.stream.Collectors;
 
 @Service
 public class BpmSignerListService {
+    private final NamedParameterJdbcTemplate namedParameterJdbcTemplate;
     private final BpmSignerListRepository bpmSignerListRepository;
     private final UserRepository userRepository;
     private final BpmIsmsSignerOrderRepository bpmIsmsSignerOrderRepository;
 
-    public BpmSignerListService(BpmSignerListRepository bpmSignerListRepository, UserRepository userRepository, BpmIsmsSignerOrderRepository bpmIsmsSignerOrderRepository) {
+    public BpmSignerListService(NamedParameterJdbcTemplate namedParameterJdbcTemplate, BpmSignerListRepository bpmSignerListRepository, UserRepository userRepository, BpmIsmsSignerOrderRepository bpmIsmsSignerOrderRepository) {
+        this.namedParameterJdbcTemplate = namedParameterJdbcTemplate;
         this.bpmSignerListRepository = bpmSignerListRepository;
         this.userRepository = userRepository;
         this.bpmIsmsSignerOrderRepository = bpmIsmsSignerOrderRepository;
@@ -65,5 +68,11 @@ public class BpmSignerListService {
         bpmSignerListRepository.saveAll(bpmSignerLists);
     }
 
+    public int deleteAllByFormId(String id) {
+
+        String deleteAllByIdSQL = "DELETE FROM BPM_SIGNER_LIST WHERE FORM_ID = :id";
+
+        return namedParameterJdbcTemplate.update(deleteAllByIdSQL, Map.of("id", id));
+    }
 
 }

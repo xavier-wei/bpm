@@ -138,8 +138,7 @@ public class IsmsProcessResource {
         @Valid @RequestPart("form") HashMap<String, String> form,
         @Valid @RequestPart(name = "fileDto", required = false) List<BpmUploadFileDTO> dto,
         @RequestPart(name = "appendixFiles", required = false) List<MultipartFile> appendixFiles) throws IOException {
-        log.info("ProcessL414Resource.java - start - 60 :: " + dto);
-        log.info("ProcessL414Resource.java - start - 61 :: " + appendixFiles);
+
         BpmIsmsService service = (BpmIsmsService) applicationContext.getBean(Objects.requireNonNull(BpmIsmsServiceBeanNameEnum.getServiceBeanNameByKey(key)));
 
         return service.saveBpmByPatch(form.get(key), dto, appendixFiles);

@@ -1,6 +1,5 @@
 package tw.gov.pcc.flowable.service;
 
-import lombok.extern.slf4j.Slf4j;
 import org.flowable.engine.HistoryService;
 import org.flowable.engine.RuntimeService;
 import org.flowable.engine.TaskService;
@@ -179,6 +178,11 @@ public class ProcessFlowService {
         return newTaskDTO;
     }
 
+    public void changeVariables(Map<String, Object> variables, String processInstanceId) {
+        ProcessInstance processInstance = runtimeService.createProcessInstanceQuery().processInstanceId(processInstanceId).singleResult();
+        runtimeService.setVariables(processInstanceId, variables);
+
+    }
     private List<TaskDTO> getHistoricTaskDTO(String id, List<String> historicInstanceIds) {
 
         // createHistoricTaskInstanceQuery 為查出自己已處理過之任務，並非整個流程實體已完成
@@ -197,4 +201,6 @@ public class ProcessFlowService {
                 .map(TaskDTO::new)
                 .collect(Collectors.toList());
     }
+
+
 }

@@ -1013,6 +1013,8 @@ export default {
           const formData = new FormData();
 
           form.l410Variables = l410Variables;
+          console.log(form.l410Variables)
+          console.log('form',form)
           let body = {
             "L410": JSON.stringify(form)
           }
@@ -1028,7 +1030,7 @@ export default {
           }
 
           axios
-            .patch(`/process/patch/L410`, formData, headers)
+            .post(`/process/edit/L410`, formData, headers)
             .then(({data}) => {
               if (isSubmit === '1') {
                 reviewStart(isSubmit, false);

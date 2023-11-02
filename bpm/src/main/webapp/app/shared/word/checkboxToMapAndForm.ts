@@ -1,4 +1,3 @@
-
 //把l410畫面有打勾的checkbox 轉成後端需要的Map跟Form
 export function checkboxToMapAndForm(data: any, form: any, variables: any): any {
 
@@ -15,6 +14,12 @@ export function checkboxToMapAndForm(data: any, form: any, variables: any): any 
     let arrData = Array.from(mapData);
     variables.push(Object.fromEntries(arrData))
   } else if (data.systemApplyName === '人事差勤系統') {
+    form.isHrSys = '0'
+    form.hrSys = null
+    form.hrSysChange = null
+    form.hrSysStatus = null
+    form.hrSysEnableDate = null
+    form.hrSysAdmName = null
     let mapData = new Map<string, object>();
     mapData.set('isHrSys', null)
     let arrData = Array.from(mapData);
@@ -36,6 +41,14 @@ export function checkboxToMapAndForm(data: any, form: any, variables: any): any 
     let arrData = Array.from(mapData);
     variables.push(Object.fromEntries(arrData))
   } else if (data.systemApplyName === 'AD帳號') {
+    form.isAdSys = '0'
+    form.adAccount = null
+    form.adSys = null
+    form.adSysChange = null
+    form.adSysStatus = null
+    form.adSysEnableDate = null
+    form.adSysAdmName = null
+
     let mapData = new Map<string, object>();
     mapData.set('isAdSys', null)
     let arrData = Array.from(mapData);
@@ -58,6 +71,12 @@ export function checkboxToMapAndForm(data: any, form: any, variables: any): any 
     let arrData = Array.from(mapData);
     variables.push(Object.fromEntries(arrData))
   } else if (data.systemApplyName === '會議室管理系統管理權限') {
+    form.isMeetingRoom = '0'
+    form.meetingRoom = null
+    form.meetingRoomChange = null
+    form.meetingRoomStatus = null
+    form.meetingRoomEnableDate = null
+    form.meetingRoomAdmName = null
     let mapData = new Map<string, object>();
     mapData.set('isMeetingRoom', null)
     let arrData = Array.from(mapData);
@@ -85,6 +104,13 @@ export function checkboxToMapAndForm(data: any, form: any, variables: any): any 
     let arrData = Array.from(mapData);
     variables.push(Object.fromEntries(arrData))
   } else if (data.systemApplyName === '公文管理系統角色') {
+    form.isOdSys = '0'
+    form.odSysRole = null;
+    form.odSys = null
+    form.odSysOther = null
+    form.odSysStatus = null
+    form.odSysEnableDate = null
+    form.odSysAdmName = null
     let mapData = new Map<string, object>();
     mapData.set('isOdSys', null)
     let arrData = Array.from(mapData);
@@ -110,6 +136,15 @@ export function checkboxToMapAndForm(data: any, form: any, variables: any): any 
     let arrData = Array.from(mapData);
     variables.push(Object.fromEntries(arrData))
   } else if (data.systemApplyName === '電子郵件帳號') {
+    form.isEmailSys = '0'
+    form.emailSysAccount = null
+    form.emailSys = null
+    form.emailApply1 = null
+    form.emailApply2 = null
+    form.emailSysChange = null
+    form.emailSysStatus = null
+    form.emailSysEnableDate = null
+    form.emailSysAdmName = null
     let mapData = new Map<string, object>();
     mapData.set('isEmailSys', null)
     let arrData = Array.from(mapData);
@@ -119,31 +154,34 @@ export function checkboxToMapAndForm(data: any, form: any, variables: any): any 
   //只有 全球資訊網 要用includes() 去判斷 ， 資料庫完整是 全球資訊網 (https://www.pcc.gov.tw)
   //怕會遇到網址變更或是少了空白，導致isWebSite不會存進map裡面
   if (data.checkbox === '1' && data.systemApplyName.includes('全球資訊網')) {
-    // if (form.webSiteList.length >= 1) {
-      // form.webSiteList.forEach(i => {
-      //   if (i === '0') {
-      //
-      //   } else if (i === '1') {
-      //     form.isPccHome = '1'
-      //   }
-      // })
-      form.isWebSite = '1'
-      form.isPccWww = '1'
-      form.webSite = data.sys
-      form.isUnitAdm = data.isUnitAdm
-      form.isUnitDataMgr = data.isUnitDataMgr
-      form.isWebSiteOther = data.isWebSiteOther
-      form.webSiteOther = data.otherRemark
-      form.webSiteAdmUnit = data.admUnit
-      form.webSiteStatus = data.admStatus
-      form.webSiteEnableDate = data.admEnableDate
-      form.webSiteAdmName = data.admName
-      let mapData = new Map<string, object>();
-      mapData.set('isWebSite', data)
-      let arrData = Array.from(mapData);
-      variables.push(Object.fromEntries(arrData))
+    form.isWebSite = '1'
+    form.isPccWww = '1'
+    form.webSite = data.sys
+    form.isUnitAdm = data.isUnitAdm
+    form.isUnitDataMgr = data.isUnitDataMgr
+    form.isWebSiteOther = data.isWebSiteOther
+    form.webSiteOther = data.otherRemark
+    form.webSiteAdmUnit = data.admUnit
+    form.webSiteStatus = data.admStatus
+    form.webSiteEnableDate = data.admEnableDate
+    form.webSiteAdmName = data.admName
+    let mapData = new Map<string, object>();
+    mapData.set('isWebSite', data)
+    let arrData = Array.from(mapData);
+    variables.push(Object.fromEntries(arrData))
     // }
   } else if (data.systemApplyName.includes('全球資訊網')) {
+    form.isWebSite = '0'
+    form.isPccWww = '0'
+    form.webSite = null
+    form.isUnitAdm = null
+    form.isUnitDataMgr = null
+    form.isWebSiteOther = null
+    form.webSiteOther = null
+    form.webSiteStatus = null
+    form.webSiteEnableDate = null
+    form.webSiteAdmName = null
+
     let mapData = new Map<string, object>();
     mapData.set('isWebSite', null)
     let arrData = Array.from(mapData);
@@ -166,34 +204,18 @@ export function checkboxToMapAndForm(data: any, form: any, variables: any): any 
     let arrData = Array.from(mapData);
     variables.push(Object.fromEntries(arrData))
   } else if (data.systemApplyName === '政府電子採購網') {
+    form.isPccPis = '0'
+    form.pccPisAccount = null
+    form.pccPis = null
+    form.pccPisChange = null
+    form.pccPisStatus = null
+    form.pccPisEnableDate = null
+    form.pccPisAdmName = null
     let mapData = new Map<string, object>();
     mapData.set('isPccPis', null)
     let arrData = Array.from(mapData);
     variables.push(Object.fromEntries(arrData))
   }
-
-
-  // if (data.checkbox === '1' && data.systemApplyName === '技師與工程技術顧問公司管理資訊系統') {
-  //
-  //   form.isEngAndPrjInfoSys = '1'
-  //   form.engAndPrjInfoSysAccount = data.systemApplyInput
-  //   form.engAndPrjInfoSys = data.sys
-  //   form.engAndPrjInfoSysChange = data.sysChange
-  //   form.engAndPrjInfoSysAdmUnit = data.admUnit
-  //   form.engAndPrjInfoSysStatus = data.admStatus
-  //   form.engAndPrjInfoSysEnableDate = data.admEnableDate
-  //   form.engAndPrjInfoSysAdmName = data.admName
-  //
-  //   let mapData = new Map<string, object>();
-  //   mapData.set('isEngAndPrjInfoSys', data)
-  //   let arrData = Array.from(mapData);
-  //   variables.push(Object.fromEntries(arrData))
-  // } else if (data.systemApplyName === '技師與工程技術顧問公司管理資訊系統') {
-  //   let mapData = new Map<string, object>();
-  //   mapData.set('isEngAndPrjInfoSys', null)
-  //   let arrData = Array.from(mapData);
-  //   variables.push(Object.fromEntries(arrData))
-  // }
 
   if (data.checkbox === '1' && data.systemApplyName === '公共工程案件審議資訊系統') {
 
@@ -211,6 +233,13 @@ export function checkboxToMapAndForm(data: any, form: any, variables: any): any 
     let arrData = Array.from(mapData);
     variables.push(Object.fromEntries(arrData))
   } else if (data.systemApplyName === '公共工程案件審議資訊系統') {
+    form.isRevSys = '0'
+    form.revSysAccount = null
+    form.revSys = null
+    form.revSysChange = null
+    form.revSysStatus = null
+    form.revSysEnableDate = null
+    form.revSysAdmName = null
     let mapData = new Map<string, object>();
     mapData.set('isRevSys', null)
     let arrData = Array.from(mapData);
@@ -234,6 +263,13 @@ export function checkboxToMapAndForm(data: any, form: any, variables: any): any 
     let arrData = Array.from(mapData);
     variables.push(Object.fromEntries(arrData))
   } else if (data.systemApplyName === '災後復建工程經費審議及執行資訊系統') {
+    form.isRecSys = '0'
+    form.recSysAccount = null
+    form.recSys = null
+    form.recSysChange = null
+    form.recSysStatus = null
+    form.recSysEnableDate = null
+    form.recSysAdmName = null
     let mapData = new Map<string, object>();
     mapData.set('isRecSys', null)
     let arrData = Array.from(mapData);
@@ -257,6 +293,13 @@ export function checkboxToMapAndForm(data: any, form: any, variables: any): any 
     let arrData = Array.from(mapData);
     variables.push(Object.fromEntries(arrData))
   } else if (data.systemApplyName === '公共工程標案管理系統') {
+    form.isBidSys = '0'
+    form.bidSysAccount = null
+    form.bidSys = null
+    form.bidSysChange = null
+    form.bidSysStatus = null
+    form.bidSysEnableDate = null
+    form.bidSysAdmName = null
     let mapData = new Map<string, object>();
     mapData.set('isBidSys', null)
     let arrData = Array.from(mapData);
@@ -280,6 +323,14 @@ export function checkboxToMapAndForm(data: any, form: any, variables: any): any 
     let arrData = Array.from(mapData);
     variables.push(Object.fromEntries(arrData))
   } else if (data.systemApplyName === '本會其他資通系統1') {
+    form.isOtherSys1 = '0'
+    form.otherSys1ServerName = null
+    form.otherSys1Account = null
+    form.otherSys1 = null
+    form.otherSys1Change = null
+    form.otherSys1Status = null
+    form.otherSys1EnableDate = null
+    form.otherSys1AdmName = null
     let mapData = new Map<string, object>();
     mapData.set('isOtherSys1', null)
     let arrData = Array.from(mapData);
@@ -304,6 +355,14 @@ export function checkboxToMapAndForm(data: any, form: any, variables: any): any 
     let arrData = Array.from(mapData);
     variables.push(Object.fromEntries(arrData))
   } else if (data.systemApplyName === '本會其他資通系統2') {
+    form.isOtherSys2 = '0'
+    form.otherSys2ServerName = null
+    form.otherSys2Account = null
+    form.otherSys2 = null
+    form.otherSys2Change = null
+    form.otherSys2Status = null
+    form.otherSys2EnableDate = null
+    form.otherSys2AdmName = null
     let mapData = new Map<string, object>();
     mapData.set('isOtherSys2', null)
     let arrData = Array.from(mapData);
@@ -327,6 +386,14 @@ export function checkboxToMapAndForm(data: any, form: any, variables: any): any 
     let arrData = Array.from(mapData);
     variables.push(Object.fromEntries(arrData))
   } else if (data.systemApplyName === '本會其他資通系統3') {
+    form.isOtherSys3 = '0'
+    form.otherSys3ServerName = null
+    form.otherSys3Account = null
+    form.otherSys3 = null
+    form.otherSys3Change = null
+    form.otherSys3Status = null
+    form.otherSys3EnableDate = null
+    form.otherSys3AdmName = null
     let mapData = new Map<string, object>();
     mapData.set('isOtherSys3', null)
     let arrData = Array.from(mapData);

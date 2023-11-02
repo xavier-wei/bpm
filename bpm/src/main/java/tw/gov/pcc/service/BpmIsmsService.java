@@ -20,12 +20,16 @@ public interface BpmIsmsService {
     void saveBpmByPatch(String form);
 
     String saveBpmByPatch(String form, List<BpmUploadFileDTO> dto, List<MultipartFile> appendixFiles);
+
+    HashMap<String, Object> saveBpmByPatch(HashMap<String, Object> variables, String form, List<BpmUploadFileDTO> dto, List<MultipartFile> appendixFiles,User userInfo);
+
     UUID setVariables(HashMap<String, Object> variables, String form, User user);
 
-    Map<String,Object> getBpm(String formId);
+    Map<String, Object> getBpm(String formId);
 
     void endForm(EndEventDTO endEventDTO);
 
     void saveBpmByPatchToIsSubmit(String processInstanceId);
+
     void cancel(String processInstanceId);
 }

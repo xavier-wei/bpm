@@ -12,6 +12,7 @@ import tw.gov.pcc.flowable.domain.ProcessRes;
 import tw.gov.pcc.flowable.service.EipCodeService;
 import tw.gov.pcc.flowable.service.ProcessFlowService;
 import tw.gov.pcc.flowable.service.dto.CompleteReqDTO;
+import tw.gov.pcc.flowable.service.dto.EditVariablesDTO;
 import tw.gov.pcc.flowable.service.dto.ProcessReqDTO;
 import tw.gov.pcc.flowable.service.dto.TaskDTO;
 
@@ -107,11 +108,20 @@ public class ProcessResource {
         return taskDTOS;
     }
 
+    @RequestMapping("/editVariables")
+    public ResponseEntity<String> editVariables(@RequestBody EditVariablesDTO editVariablesDTO) {
+
+        service.changeVariables(editVariablesDTO.getVariable(), editVariablesDTO.getProcessInstanceId());
+        return ResponseEntity.ok("OK");
+    }
+
+
     // 測試時期快速完成用API
     @RequestMapping("/completeTaskTest/{pId}/{tId}")
     public String completeTest(@PathVariable String pId, @PathVariable String tId) {
         service.completeTask(pId, tId);
         return "成功";
     }
+
 
 }

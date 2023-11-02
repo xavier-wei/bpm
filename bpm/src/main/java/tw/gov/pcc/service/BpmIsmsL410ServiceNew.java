@@ -1,11 +1,14 @@
 package tw.gov.pcc.service;
 
 import com.google.gson.Gson;
+import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.server.ResponseStatusException;
 import tw.gov.pcc.domain.BpmIsmsL410;
 import tw.gov.pcc.domain.User;
 import tw.gov.pcc.domain.UserRole;
@@ -123,16 +126,38 @@ public class BpmIsmsL410ServiceNew implements BpmIsmsService {
 
     @Override
     public String saveBpmByPatch(String form, List<BpmUploadFileDTO> dto, List<MultipartFile> appendixFiles) {
+        // 取得dto (包含修改過的值)
+        return null;
+    }
+
+    @Override
+    public HashMap<String, Object> saveBpmByPatch(HashMap<String, Object> variables, String form, List<BpmUploadFileDTO> dto, List<MultipartFile> appendixFiles,User userInfo) {
+        // 取得dto (包含修改過的值)
         BpmIsmsL410DTO bpmIsmsL410DTO = gson.fromJson(form, BpmIsmsL410DTO.class);
+        variables.put("processInstanceId", bpmIsmsL410DTO.getProcessInstanceId());
+        // 設定更新時間及角色
         bpmIsmsL410DTO.setUpdateTime(Timestamp.valueOf(LocalDateTime.now()));
         bpmIsmsL410DTO.setUpdateUser(bpmIsmsL410DTO.getFilName());
         String formId = bpmIsmsL410DTO.getFormId();
 
+        supervisorService.setSupervisor(variables,bpmIsmsL410DTO.getFilEmpid(),userInfo);
+
+        // 設定取得所有簽核者的Id
+        HashMap<String, String> signerIdsHashMap = getSignerIdsHashMap(variables);
+        // 設定需要申請的Task有哪些及各task的Signer
+        setSys(variables, bpmIsmsL410DTO,signerIdsHashMap);
+
+
+        int i = bpmSignerListService.deleteAllByFormId(formId);
+        if (i == 0) {
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+        bpmSignerListService.saveBpmSignerList(variables, formId);
+
         //儲存照片
         bpmUploadFileService.savePhoto(dto, appendixFiles, formId);
-
-        return gson.toJson(bpmIsmsL410Mapper.toDto(bpmIsmsL410Repository.save(bpmIsmsL410Mapper.toEntity(bpmIsmsL410DTO))));
-
+        gson.toJson(bpmIsmsL410Mapper.toDto(bpmIsmsL410Repository.save(bpmIsmsL410Mapper.toEntity(bpmIsmsL410DTO))));
+        return variables;
     }
 
     @Override
@@ -140,27 +165,32 @@ public class BpmIsmsL410ServiceNew implements BpmIsmsService {
         BpmIsmsL410DTO bpmIsmsL410DTO = gson.fromJson(form, BpmIsmsL410DTO.class);
         UUID uuid = UUID.randomUUID();
         DTO_HOLDER.put(uuid, bpmIsmsL410DTO);
-        variables.put("applier", bpmIsmsL410DTO.getAppEmpid());
+        variables.put("applier", bpmIsmsL410DTO.getFilEmpid());
         variables.put("isSubmit", bpmIsmsL410DTO.getIsSubmit());
         // 填入上級
-        List<UserRole> userRoles = userRoleRepository.findByRoleIdIn(List.of(ROLE_IDS));
-        // 設定需要申請的Task有哪些及各task的Signer
         supervisorService.setSupervisor(variables,bpmIsmsL410DTO.getFilEmpid(),userInfo);
-        HashMap<String, String> signerIds = new HashMap<>();
+        HashMap<String, String> signerIdsHashMap = getSignerIdsHashMap(variables);
+        // 設定需要申請的Task有哪些及各task的Signer
+        setSys(variables, bpmIsmsL410DTO,signerIdsHashMap);
+        VARIABLES_HOLDER.put(uuid, variables);
+        DTO_HOLDER.put(uuid, bpmIsmsL410DTO);
 
+        return uuid;
+    }
+
+    @NotNull
+    private HashMap<String, String> getSignerIdsHashMap(HashMap<String, Object> variables) {
+        // 設定取得所有簽核者的Id
+        HashMap<String, String> signerIds = new HashMap<>();
+        List<UserRole> userRoles = userRoleRepository.findByRoleIdIn(List.of(ROLE_IDS));
         Arrays.stream(ROLE_IDS).forEach(s -> {
             List<String> userIds = userRoles.stream().filter(userRole -> userRole.getRoleId().equals(s)).map(UserRole::getUserId).collect(Collectors.toList());
             signerIds.put(s, String.join(",", userIds));
         });
         variables.put("infoGroup", signerIds.get("BPM_IPT_Operator"));
         variables.put("seniorTechSpecialist", signerIds.get("BPM_IPT_Mgr"));
-        setSys(variables, bpmIsmsL410DTO,signerIds);
-        log.info("--------variable isWebSite={}",variables.get("isWebSite"));
-
-        VARIABLES_HOLDER.put(uuid, variables);
-        DTO_HOLDER.put(uuid, bpmIsmsL410DTO);
-
-        return uuid;
+        // BPM_IPT_Operator 資推小組承辦人、 BPM_IPT_Mgr 簡任技正/科長 、 BPM_PR_Operator 人事室、BPM_SEC_Operator 秘書處
+        return signerIds;
     }
 
 
