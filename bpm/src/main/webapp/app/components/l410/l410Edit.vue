@@ -1019,6 +1019,7 @@ export default {
           form.l410Variables = l410Variables;
           console.log(form.l410Variables)
           console.log('form',form)
+
           let body = {
             "L410": JSON.stringify(form)
           }
@@ -1037,7 +1038,9 @@ export default {
             .post(`/process/edit/L410`, formData, headers)
             .then(({data}) => {
               if (isSubmit === '1') {
-                reviewStart(isSubmit, false);
+                $bvModal.msgBoxOk('表單已送出');
+                navigateByNameAndParams('pending', {isReload: false, isNotKeepAlive: true,query:queryRef.value});
+                // reviewStart(isSubmit, false);
               } else {
                 $bvModal.msgBoxOk('表單更新完畢');
                 navigateByNameAndParams('pending', {isReload: false, isNotKeepAlive: true,query:queryRef.value});
