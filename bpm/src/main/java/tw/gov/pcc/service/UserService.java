@@ -34,8 +34,9 @@ public class UserService {
 
     public User getUserInfo(String userId) {
         User user = userRepository.findByUserId(userId);
+        // 正式員工登入用
         Optional<Cpape05m> cpape05m = cpape05mRepository.findByPecard(userId);
-
+        // IVV或資拓測試帳號用
         Optional<Cpape05mForTest> cpape05mForTest;
         String title;
         if (cpape05m.isEmpty()) {

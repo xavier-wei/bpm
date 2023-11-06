@@ -72,6 +72,8 @@ public class User implements Serializable {
     @Transient
     private String userRole;
 
+    @Transient
+    private String departName;
 
     public String getUserId() {
         return userId;
@@ -241,11 +243,19 @@ public class User implements Serializable {
         this.userRole = userRole;
     }
 
+    public String getDepartName() {
+        return departName;
+    }
+
+    public void setDepartName(String departName) {
+        this.departName = departName;
+    }
+
     @Override
     public String toString() {
         return "User{" +
             "userId='" + userId + '\'' +
-            ", acntIsValid=" + acntIsValid +
+            ", acntIsValid='" + acntIsValid + '\'' +
             ", createTimestamp=" + createTimestamp +
             ", createUserId='" + createUserId + '\'' +
             ", deptId='" + deptId + '\'' +
@@ -265,6 +275,7 @@ public class User implements Serializable {
             ", orgId='" + orgId + '\'' +
             ", titleName='" + titleName + '\'' +
             ", userRole='" + userRole + '\'' +
+            ", departName='" + departName + '\'' +
             '}';
     }
 }
