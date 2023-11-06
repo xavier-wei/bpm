@@ -3,6 +3,7 @@ package tw.gov.pcc.service;
 import org.springframework.http.HttpStatus;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 import tw.gov.pcc.domain.BpmIsmsSignerOrder;
 import tw.gov.pcc.domain.BpmSignerList;
@@ -68,6 +69,7 @@ public class BpmSignerListService {
         bpmSignerListRepository.saveAll(bpmSignerLists);
     }
 
+    @Transactional
     public int deleteAllByFormId(String id) {
 
         String deleteAllByIdSQL = "DELETE FROM BPM_SIGNER_LIST WHERE FORM_ID = :id";

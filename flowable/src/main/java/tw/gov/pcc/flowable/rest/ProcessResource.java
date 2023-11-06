@@ -85,11 +85,10 @@ public class ProcessResource {
         if (token.equals(deleteRequest.get("token"))) {
             String processInstanceId = deleteRequest.get("processInstanceId");
             try {
-
-                TaskDTO taskDTO = service.querySingleTask(processInstanceId);
                 service.deleteProcessInstance(processInstanceId);
             } catch (Exception e) {
-                log.error("");
+                e.printStackTrace();
+                log.error(e.getMessage());
                 throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "刪除失敗");
             }
             log.info(deleteProcessLog + "processInstance: {} 已刪除", processInstanceId);
