@@ -16,7 +16,7 @@ import java.util.Map;
 public class Bpm01w010Controller {
 
     public static final String CASE_KEY = "_bpm01w020Controller_caseData";
-    private final String MAPPING_PATH = "/Bpm01w010_enter.action";
+    private static final String MAPPING_PATH = "/Bpm01w010_enter.action";
     private static final String MAIN_PAGE = "/bpm/Bpm01w010";//主頁
     private final UserBean userData;
     private final AESEncryptionService aesEncryptionService;
@@ -29,8 +29,8 @@ public class Bpm01w010Controller {
     @RequestMapping(MAPPING_PATH)
     public ModelAndView l410(HttpServletRequest request) {
 
-        boolean isBpmLogin=Boolean.valueOf(request.getParameter("bpm"));
-        String token = null;
+        boolean isBpmLogin=Boolean.parseBoolean(request.getParameter("bpm"));
+        String token;
         try {
             token = aesEncryptionService.encrypt(userData.getUserId());
         } catch (Exception e) {

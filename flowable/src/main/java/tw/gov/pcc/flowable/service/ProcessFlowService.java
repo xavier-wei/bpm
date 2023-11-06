@@ -52,44 +52,36 @@ public class ProcessFlowService {
     }
 
     // for completing task
-
     public ProcessRes completeTask(String processInstanceId, String taskId, Map<String, Object> variables) {
         Task task = taskService.createTaskQuery().processInstanceId(processInstanceId).taskId(taskId).singleResult();
         if (task.getId() != null) {
             taskService.complete(task.getId(), variables);
-            if ("applierConfirm".equals(task.getTaskDefinitionKey())) {
-                Map<String, Object> variables2 = runtimeService.getVariables(processInstanceId);
-                String processKey = task.getProcessDefinitionId().split(":")[0];
-                jumpIfSupervisor(processKey, variables2, processInstanceId);
-            }
+            applierComfirnAndJumpSign(processInstanceId, task);
             return new ProcessRes(SIGNATURE_STATUS[0], MESSAGE[0]);
         }
         return new ProcessRes(SIGNATURE_STATUS[1], MESSAGE[1]);
+    }
+
+    private void applierComfirnAndJumpSign(String processInstanceId, Task task) {
+        if ("applierConfirm".equals(task.getTaskDefinitionKey())) {
+            Map<String, Object> variables2 = runtimeService.getVariables(processInstanceId);
+            String processKey = task.getProcessDefinitionId().split(":")[0];
+            jumpIfSupervisor(processKey, variables2, processInstanceId);
+        }
     }
 
     public ProcessRes completeTask(String processInstanceId, String taskId) {
         Task task = taskService.createTaskQuery().processInstanceId(processInstanceId).taskId(taskId).singleResult();
         if (task.getId() != null) {
             taskService.complete(task.getId());
-            if ("applierConfirm".equals(task.getTaskDefinitionKey())) {
-                Map<String, Object> variables = runtimeService.getVariables(processInstanceId);
-                String processKey = task.getProcessDefinitionId().split(":")[0];
-                jumpIfSupervisor(processKey, variables, processInstanceId);
-
-            }
+            applierComfirnAndJumpSign(processInstanceId, task);
             return new ProcessRes(SIGNATURE_STATUS[0], MESSAGE[0]);
         }
         return new ProcessRes(SIGNATURE_STATUS[1], MESSAGE[1]);
     }
 
-    // query single task by processInstanceId
 
-    public TaskDTO querySingleTask(String processInstanceId) {
-        Task task = taskService.createTaskQuery().processInstanceId(processInstanceId).singleResult();
-        return new TaskDTO(task);
-    }
     // query task
-
     public List<TaskDTO> queryProcessingTask(String id) {
 
         // 查出所有加簽任務
@@ -178,11 +170,6 @@ public class ProcessFlowService {
         return newTaskDTO;
     }
 
-    public void changeVariables(Map<String, Object> variables, String processInstanceId) {
-        ProcessInstance processInstance = runtimeService.createProcessInstanceQuery().processInstanceId(processInstanceId).singleResult();
-        runtimeService.setVariables(processInstanceId, variables);
-
-    }
     private List<TaskDTO> getHistoricTaskDTO(String id, List<String> historicInstanceIds) {
 
         // createHistoricTaskInstanceQuery 為查出自己已處理過之任務，並非整個流程實體已完成
