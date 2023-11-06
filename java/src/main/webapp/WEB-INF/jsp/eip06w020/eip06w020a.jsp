@@ -14,11 +14,11 @@
         <tags:fieldset>
             <form:form id="eip06w020Form" name="eip06w020Form" modelAttribute="${caseKey}" method="POST">
                 <tags:form-row>
-                    <div class="col-md-3 d-flex">
+                    <div class="col-md-4 d-flex">
                         <form:label cssClass="col-form-label star" path="meetingName">會議名稱：</form:label>
                         <form:input path="meetingName" cssClass="form-control" size="21" maxlength="100"/>
                     </div>
-                    <div class="col-md-3 d-flex">
+                    <div class="col-md-4 d-flex">
                          <form:label cssClass="col-form-label star" path="chairman">主持人：</form:label>
                          <form:input path="chairman" cssClass="form-control" size="9" maxlength="15"/>
                     </div>
@@ -28,7 +28,7 @@
                     </div>
                 </tags:form-row>
                 <tags:form-row>
-                    <div class="col-md-3 d-flex">
+                    <div class="col-md-4 d-flex">
                         <form:label cssClass="col-form-label star" path="meetingdt">會議日期：</form:label>
 <%--                        <form:input path="meetingdt" cssClass="form-control" type="date"/>--%>
                         <form:input id="meetingdt"  name="meetingdt"  path="meetingdt" cssClass="form-control num_only dateTW" size="8" maxlength="7" />
@@ -47,7 +47,7 @@
                     </div>
                 </tags:form-row>
                 <tags:form-row>
-                    <div class="col-md-3 d-flex">
+                    <div class="col-md-4 d-flex">
                         <form:label cssClass="col-form-label star" path="roomId">場地：</form:label>
                         <form:select path="roomId" cssClass="form-control selector" disabled="true" >
 <%--                            <c:forEach items="${caseData.roomIdList}" var="item">--%>

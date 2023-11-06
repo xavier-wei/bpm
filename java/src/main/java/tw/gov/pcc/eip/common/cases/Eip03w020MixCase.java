@@ -54,7 +54,8 @@ public class Eip03w020MixCase implements Serializable {
     private String supDept; //回應部門
     private String supUser; //回應人員
     private String supDt; //回應時間
-    private String currentDept;
+    private String currentDept;  //存取登入者科室
+    private String currentRoot; // 存取登入者根部門
     private String usersCodes; // 選取指定填報人員代碼
     private String deptCodes;  // 選取指定填報單位代碼
 

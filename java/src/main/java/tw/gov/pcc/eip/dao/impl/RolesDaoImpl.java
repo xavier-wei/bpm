@@ -12,6 +12,7 @@ import tw.gov.pcc.common.annotation.DaoTable;
 import tw.gov.pcc.common.framework.dao.BaseDao;
 import tw.gov.pcc.eip.dao.Role_aclDao;
 import tw.gov.pcc.eip.dao.RolesDao;
+import tw.gov.pcc.eip.domain.Depts;
 import tw.gov.pcc.eip.domain.Role_acl;
 import tw.gov.pcc.eip.domain.Roles;
 import tw.gov.pcc.eip.domain.Users;
@@ -104,6 +105,35 @@ public class RolesDaoImpl extends BaseDao<Roles> implements RolesDao {
     public int deleteByKey(Roles roles) {
         return getNamedParameterJdbcTemplate().update(" DELETE FROM " + TABLE_NAME +
                         " WHERE ROLE_ID = :role_id  ",
+                new BeanPropertySqlParameterSource(roles));
+    }
+    
+    /**
+     * 根據key更新資料
+     *
+     * @param roles 更新條件
+     * @return 異動筆數
+     */
+    @Override
+    public int updateByKey(Roles roles) {
+        return getNamedParameterJdbcTemplate().update(" UPDATE " + TABLE_NAME + " SET " +
+        		" ROLE_DESC = :role_desc, CREATE_USER_ID = :create_user_id, CREATE_TIMESTAMP = :create_timestamp, MODIFY_USER_ID = :modify_user_id, "
+        		+ " MODIFY_TIMESTAMP = :modify_timestamp "
+        		+ " WHERE ROLE_ID = :role_id ",
+                new BeanPropertySqlParameterSource(roles));
+    }
+    
+    /**
+     * 根據role_id更新role_desc
+     *
+     * @param roles 更新條件
+     * @return 異動筆數
+     */
+    @Override
+    public int updateDescByRoleId(Roles roles) {
+        return getNamedParameterJdbcTemplate().update(" UPDATE " + TABLE_NAME + " SET " +
+        		" ROLE_DESC = :role_desc, MODIFY_USER_ID = :modify_user_id, MODIFY_TIMESTAMP = :modify_timestamp "
+        		+ " WHERE ROLE_ID = :role_id ",
                 new BeanPropertySqlParameterSource(roles));
     }
     

@@ -46,6 +46,7 @@ public class Eip0aw010Service {
     private final Eip0aw050Service eip0aw050Service;
     private final Eip0aw060Service eip0aw060Service;
     private final Eip0aw070Service eip0aw070Service;
+    private final Eip0aw080Service eip0aw080Service;
     private final UserBean userData;
     private final EipcodeDao eipcodeDao;
     private final WEBITR_View_flowDao viewFlowDao;
@@ -53,9 +54,10 @@ public class Eip0aw010Service {
     public void syncFromLdapAndItr() {
         eip0aw060Service.replaceAllView_cpape05m();
         eip0aw070Service.replaceAllPosition();
+        eip0aw080Service.replaceAllView_oup_unit();
         eip0aw020Service.insertUsersFromLdap();
         eip0aw030Service.updateAllUsersFromView_cpape05m();
-        eip0aw040Service.updateAllDeptsFromView_out_unit();
+        eip0aw040Service.updateAllDeptsFromView_oup_unit();
         eip0aw050Service.updateAllTitleFromView_cpape05m();
     }
 

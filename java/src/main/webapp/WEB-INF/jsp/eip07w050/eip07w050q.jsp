@@ -18,6 +18,7 @@
 
 <jsp:attribute name="contents">
 		<form:form id="eip07w050Form" name="eip07w050Form" modelAttribute="${caseKey}" method="POST">
+		<form:input path="hidden"/>
   		 	<fieldset>
   		 		<legend>查詢條件</legend>
 	            <tags:form-row>
@@ -90,7 +91,7 @@
 <jsp:attribute name="footers">
 <script>
         $(function() {
-
+        	$("#hidden").hide();
             $('#btnConfirm').click(function() {
                 if($('#applydateStart').val()==''){
                 	showAlert('申請日期(起)為必需輸入');

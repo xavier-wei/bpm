@@ -37,5 +37,5 @@ public class Eip07w050Case implements Serializable {
 	@RequiredString(label = "同意/不同意", groups = {Update.class})
 	private String agree;
 	private String apply_date;
-	
+	private String hidden;//增加一個hidden欄位，不要一進來就foucus在日曆，讓日曆跳出來
 }

@@ -126,5 +126,5 @@ public class Eip08w040Case implements Serializable {
     private Integer book_cnt;
     private String seqno;
     private Integer withhold_cnt;
-    
+    private String hidden;//增加一個hidden欄位，不要一進來就foucus在日曆，讓日曆跳出來
 }

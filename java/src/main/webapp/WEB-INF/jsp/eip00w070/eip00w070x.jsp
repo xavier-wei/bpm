@@ -22,10 +22,17 @@
             <div class="col-6 col-md-6">
 				<form:form id="eip00w070Form" name="eip00w070Form" modelAttribute="${caseKey}" method="POST">
 					<tags:form-row>
-						<tags:text-item label="角色代號"><c:out value="${caseData.role_id}"/></tags:text-item>
+						<form:label path="role_id" cssClass="col-form-label">角色代號：</form:label>
+						<div class="col-6 col-md form-inline">
+							<c:out value="${caseData.role_id}"/>
+						</div>
 	                </tags:form-row>
 	                <tags:form-row>
-						<tags:text-item label="角色說明"><c:out value="${caseData.role_desc}"/></tags:text-item>
+	                 <form:label path="role_desc" cssClass="col-form-label">角色說明：</form:label>
+	                    <div class="col-6 col-md form-inline">
+                            <form:textarea path="role_desc" cssClass="form-control eng_num_only" size="20"
+                                           maxlength="20"/>
+                        </div>
 	                </tags:form-row>
 	                <form:hidden path="item_id"/>
 	                <form:hidden path="item_name"/>

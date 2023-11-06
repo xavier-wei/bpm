@@ -19,6 +19,7 @@
 <jsp:attribute name="contents">
     <tags:fieldset>
 		<form:form id="eip07w070Form" name="eip07w070Form" modelAttribute="${caseKey}" method="POST">
+		<form:input path="hidden"/>
             <tags:form-row>
             	<form:label cssClass="col-form-label star" path="using_date_s">用車日期：</form:label>
                 <div class="col-12 col-md d-flex align-items-center">
@@ -60,7 +61,7 @@
 <jsp:attribute name="footers">
 <script>
         $(function() {
-
+        	$("#hidden").hide();
             $('#btnSearch').click(function() {
                 if($('#using_date_s').val()==''){
                 	showAlert('用車日期(起)為必需輸入');

@@ -235,34 +235,71 @@ public class MeetingCodeDaoImpl extends BaseDao<MeetingCode> implements MeetingC
     public List<MeetingCode> findValidRoominclBookedByDtandUsing(String meetingId, String meetingDt, String using) {
         StringBuilder sql = new StringBuilder();
 
-        sql.append("  SELECT a.itemid,");
-        sql.append("         a.itemname");
-        sql.append("    FROM meetingcode a");
-        sql.append("   WHERE a.itemtyp = 'F'");
-        //判斷是否為同一筆會議 相同就列出該會議室
-        sql.append("     AND (EXISTS (SELECT b.roomid");
-        sql.append("                    FROM meeting b");
-        sql.append("                   WHERE b.meetingid = :meetingId");
-        sql.append("                     AND a.itemid = b.roomid");
-        sql.append("                     AND b.meetingdt = :meetingDt");
-        sql.append("                     AND b.using = :using) OR");
-        //判斷相同日期時間MEETING是否已存在且
-        sql.append("          (NOT EXISTS(");
-        sql.append("                       (SELECT c.roomid");
-        sql.append("                          FROM meeting c");
-        sql.append("                         WHERE c.meetingdt = :meetingDt");
-        sql.append("                           AND a.itemid = c.roomid");
-        sql.append("                           AND (SELECT dbo.ufn_check(c.using, :using) AS rtn) = 'Y')");
-        sql.append("                         UNION");
-        //ROOMISABLE沒有該間會議室或ROOMISABLE有該會議室且在可預約時段內
-        sql.append("                       (SELECT e.itemid");
-        sql.append("                          FROM roomisable e");
-        sql.append("                         WHERE e.itemid = a.itemid");
-        sql.append("                           AND e.isabledate = :meetingDt");
-        sql.append("                           AND (SELECT dbo.ufn_check(e.isabletime, :using) AS rtn) = 'Y')");
-        sql.append("                     )");
-        sql.append("           )");
-        sql.append("           )");
+//        sql.append("  SELECT a.itemid,");
+//        sql.append("         a.itemname");
+//        sql.append("    FROM meetingcode a");
+//        sql.append("   WHERE a.itemtyp = 'F'");
+//        //判斷是否為同一筆會議 相同就列出該會議室
+//        sql.append("     AND (EXISTS (SELECT b.roomid");
+//        sql.append("                    FROM meeting b");
+//        sql.append("                   WHERE b.meetingid = :meetingId");
+//        sql.append("                     AND a.itemid = b.roomid");
+//        sql.append("                     AND b.meetingdt = :meetingDt");
+//        sql.append("                     AND b.using = :using) OR");
+//        //判斷相同日期時間MEETING是否已存在且
+//        sql.append("          (NOT EXISTS(");
+//        sql.append("                       (SELECT c.roomid");
+//        sql.append("                          FROM meeting c");
+//        sql.append("                         WHERE c.meetingdt = :meetingDt");
+//        sql.append("                           AND a.itemid = c.roomid");
+//        sql.append("                           AND (SELECT dbo.ufn_check(c.using, :using) AS rtn) = 'Y')");
+//        sql.append("                         UNION");
+//        //ROOMISABLE沒有該間會議室或ROOMISABLE有該會議室且在可預約時段內
+//        sql.append("                       (SELECT e.itemid");
+//        sql.append("                          FROM roomisable e");
+//        sql.append("                         WHERE e.itemid = a.itemid");
+//        sql.append("                           AND e.isabledate = :meetingDt");
+//        sql.append("                           AND (SELECT dbo.ufn_check(e.isabletime, :using) AS rtn) = 'Y')");
+//        sql.append("                     )");
+//        sql.append("           )");
+//        sql.append("           )");
+
+
+        //test
+
+        sql.append("    SELECT itemID, ");
+        sql.append("           MAX(itemName) as itemName, ");
+        sql.append("           MAX(orders) as orders ");
+        sql.append("      FROM ( ");
+        sql.append("            SELECT m.ROOMID as itemID, ");
+        sql.append("                   (SELECT ITEMNAME FROM MEETINGCODE WHERE ITEMID = m.ROOMID) as itemName, ");
+        sql.append("                   '00' as orders ");
+        sql.append("              FROM MEETING m ");
+        sql.append("             WHERE MEETINGID = :meetingId ");
+        sql.append("               AND MEETINGDT = :meetingDt ");
+        sql.append("               AND USING = :using ");
+        sql.append("             UNION ");
+        sql.append("            SELECT mc.ITEMID as itemID, ");
+        sql.append("                   mc.ITEMNAME as itemName, ");
+        sql.append("                   RIGHT(mc.ITEMID, 2) as orders ");
+        sql.append("              FROM MEETINGCODE mc ");
+        sql.append("             WHERE ITEMTYP = 'F' ");
+        //確認已預約的會議是否有重疊時段
+        sql.append("               AND NOT exists (SELECT ROOMID ");
+        sql.append("                                 FROM (SELECT * FROM MEETING WHERE MEETINGID <> :meetingId ) MEETINGEXC "); //子查詢排除掉本次查詢會議室
+        sql.append("                                WHERE MEETINGDT = :meetingDt ");
+        sql.append("                                  AND STATUS = 'A' ");
+        sql.append("                                  AND (SELECT dbo.UFN_CHECK(USING, :using) AS RTN) = 'Y' ");
+        sql.append("                                  AND ROOMID = mc.ITEMID ");
+        sql.append("                                ) ");
+        //確認禁用時間是否有重疊時段
+        sql.append("               AND NOT exists(SELECT ITEMID ");
+        sql.append("                                FROM ROOMISABLE ");
+        sql.append("                               WHERE ITEMID = mc.ITEMID ");
+        sql.append("                                 AND ISABLEDATE = :meetingDt ");
+        sql.append("                                 AND (SELECT dbo.UFN_CHECK(ISABLETIME, :using) AS RTN) = 'Y') ");
+        sql.append("                                ) AS subquery ");
+        sql.append("  GROUP BY itemID order by orders ");
 
         Map<String, Object> params = new HashMap<>();
         params.put("meetingId", meetingId);

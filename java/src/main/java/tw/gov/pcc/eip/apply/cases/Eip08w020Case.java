@@ -127,5 +127,6 @@ public class Eip08w020Case implements Serializable {
 	private String oriApply_dept;//用來保留畫面上原始dept
 	private String processStatus;
 	private String SelectType;
+	private String hidden;//增加一個hidden欄位，不要一進來就foucus在日曆，讓日曆跳出來
 	
 }

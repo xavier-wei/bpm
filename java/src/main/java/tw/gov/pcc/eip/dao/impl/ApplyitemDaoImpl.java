@@ -110,7 +110,7 @@ public class ApplyitemDaoImpl extends BaseDao<Applyitem> implements ApplyitemDao
         	sql.append(" and  apply_date = :apply_date ");
         }
         
-        sql.append(" order by applyno ");
+        sql.append(" order by applyno desc ");
         
         SqlParameterSource params = new MapSqlParameterSource("apply_user", apply_user)
         		.addValue("apply_dept", apply_dept).addValue("apply_date", apply_date);

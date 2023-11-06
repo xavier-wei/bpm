@@ -62,8 +62,20 @@
     <!-- ] -->
 
     <filter>
+        <filter-name>KeycloakWrapperFilter</filter-name>
+        <filter-class>tw.gov.pcc.common.filter.KeycloakWrapperFilter</filter-class>
+        <async-supported>true</async-supported>
+    </filter>
+
+    <filter-mapping>
+        <filter-name>KeycloakWrapperFilter</filter-name>
+        <url-pattern>*.action</url-pattern>
+    </filter-mapping>
+
+    <filter>
         <filter-name>Keycloak Filter</filter-name>
         <filter-class>org.keycloak.adapters.servlet.KeycloakOIDCFilter</filter-class>
+        <async-supported>true</async-supported>
         <init-param>
             <param-name>keycloak.config.skipPattern</param-name>
             <param-value>^/(unauthorized.jsp|redirect.jsp).*</param-value>

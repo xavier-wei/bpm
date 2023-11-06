@@ -26,4 +26,8 @@ public interface RolesDao {
 
 	public List<Roles> selectListLikeRoleid(String role_id);
 
+	public int updateByKey(Roles roles);
+
+	public int updateDescByRoleId(Roles roles);
+
 }

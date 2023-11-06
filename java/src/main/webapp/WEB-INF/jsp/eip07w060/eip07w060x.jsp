@@ -127,9 +127,9 @@
 	                </div>
             	</c:if>
             	<c:if test = "${caseData.carType == 'Y' && caseData.btmk == 'Y'}">
-            		 <form:label path="carbooking.using_date" cssClass="col-form-label">用車日期：</form:label>
+            		 <form:label path="carbooking.using_date" cssClass="col-form-label star">用車日期：</form:label>
 	                 <div class="col-12 col-md-6">
-	                	<form:input path="carbooking.using_date" cssClass="add form-control dateTW num_only usingdate" size="7" maxlength="7" onchange="usingdatechange()"/>
+	                	<form:input id="usingDate" path="carbooking.using_date" cssClass="add form-control dateTW num_only usingdate" size="9" maxlength="7" onchange="usingdatechange()"/>
 	                 </div>
             	</c:if>
             </tags:form-row>
@@ -413,10 +413,10 @@
 						<table class="table">
 							<thead data-orderable="true">
 								<tr>
-									<th class="text-center" width=20%>出場公里數</th>
-									<th class="text-center" width=20%>回場公里數</th>
-									<th class="text-center" width=20%>行駛公里數</th>
-									<th class="text-center" width=20%>耗油公里數</th>
+									<th class="text-center" width=20%><span style="color: red;">*</span>出場公里數</th>
+									<th class="text-center" width=20%><span style="color: red;">*</span>回場公里數</th>
+									<th class="text-center" width=20%><span style="color: red;">*</span>行駛公里數</th>
+									<th class="text-center" width=20%><span style="color: red;">*</span>耗油公里數</th>
 								</tr>
 							</thead>
 						    <tbody>

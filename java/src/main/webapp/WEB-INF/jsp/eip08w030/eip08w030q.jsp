@@ -16,6 +16,7 @@
 <jsp:attribute name="contents">
     <tags:fieldset>
 		<form:form id="eip08w030Form" name="eip08w030Form" modelAttribute="${caseKey}" method="POST">
+		<form:input path="hidden"/>
             <tags:form-row>
             	<form:label cssClass="col-form-label star" path="applydateStart">申請日期：</form:label>
                 <div class="col-12 col-md d-flex align-items-center">
@@ -32,7 +33,7 @@
 <jsp:attribute name="footers">
 <script>
         $(function() {
-
+			$("#hidden").hide();
             $('#btnConfirm').click(function() {
                 if($('#applydateStart').val()==''){
                 	showAlert('申請日期(起)為必需輸入');

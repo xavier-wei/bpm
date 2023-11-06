@@ -243,7 +243,7 @@
 <jsp:attribute name="footers">
 <script>
         $(function() {
-        
+        	$("#hidden").hide();
             let config = getDataTablesConfig();
             var table = $("#qryListTable,#dataList,#notHandleListTable").DataTable(config);
             

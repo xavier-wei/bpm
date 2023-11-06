@@ -194,7 +194,6 @@ public class Eip07w040Case implements Serializable {
 	private List<Eip07w040Case> insterList;
 	
 	private String approve_using;
-	
 	private String approve_using_time_s;
 	private String approve_using_time_e;
 	private String approve_using_timeStr;

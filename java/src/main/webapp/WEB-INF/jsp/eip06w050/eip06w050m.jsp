@@ -109,7 +109,7 @@ $(function(){
             timeout: 100000
         }).done(function(data) {
             if (data.itemIdIsUse === "N") {
-                showAlert("參數使用中，無法刪除");
+                showAlert("使用中，無法刪除");
                 $('#footer .prog.infoword').text('')
                 return;
             } else {

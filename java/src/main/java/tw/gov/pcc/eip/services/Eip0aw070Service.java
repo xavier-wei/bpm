@@ -11,7 +11,7 @@ import tw.gov.pcc.eip.util.ObjectUtility;
 import java.util.concurrent.atomic.AtomicInteger;
 
 /**
- * cape.dbo.posit TO eip.dbo.view_cpape05m
+ * cape.dbo.position TO eip.dbo.position
  *
  * @author swho
  */

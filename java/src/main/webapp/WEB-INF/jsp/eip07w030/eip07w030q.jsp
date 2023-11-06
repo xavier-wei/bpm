@@ -18,6 +18,7 @@
 
 <jsp:attribute name="contents">
 	<form:form id="eip07w030Form" name="eip07w030Form" modelAttribute="${caseKey}" method="POST">
+	<form:input path="hidden"/>
     <fieldset>
     <legend>查詢條件</legend>
 		    <tags:form-row>
@@ -91,7 +92,7 @@
 
         
         $(function() {
-        	
+        	$("#hidden").hide();
             let config = getDataTablesConfig();
             var table = $("#qryListTable").DataTable(config);
 

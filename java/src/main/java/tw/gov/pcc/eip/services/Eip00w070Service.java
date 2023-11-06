@@ -187,6 +187,9 @@ public class Eip00w070Service {
     	this.insertRoleAcl(eipadm0w070Case.getSelectedIdlist(), SYS_ID, eipadm0w070Case.getRole_id(), userData.getDeptId(), userData.getUserId(), nowldt);
 
 		orgUsersList.forEach(x -> deleteUnauthorizedTabListByUserId(x.getUser_id()));
+		
+		//更新角色描述
+		this.updateRoles(eipadm0w070Case.getRole_id(), eipadm0w070Case.getRole_desc());
     }
 	
 	private List<Users> getUsersByRole(String roleId) {
@@ -246,6 +249,13 @@ public class Eip00w070Service {
 		    		                	 roleacl.setCreate_timestamp(nowldt);
 		    		                	 role_aclDao.insert(roleacl);
     	                            });
+    }
+    
+    private void updateRoles(String role_id,String role_desc) {
+    	Roles roles = new Roles();
+    	roles.setRole_id(role_id);
+    	roles.setRole_desc(role_desc);
+    	rolesDao.updateDescByRoleId(roles);
     }
     
     private void deleteRoleAclByRoleid(String role_id) {

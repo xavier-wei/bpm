@@ -201,7 +201,7 @@ public class Eip06w050Service extends OnlineRegService {
     public String deleteClass(Eip06w050Case caseData) {
         int itemId=meetingCodeDao.findItemIdByMeetingItem(caseData.getItemId());
         if (itemId == 1) {
-            log.debug("參數使用中，無法刪除");
+            log.debug("使用中，無法刪除");
             return "N";
         }else{
             meetingCodeDao.deleteData(caseData.getItemId());

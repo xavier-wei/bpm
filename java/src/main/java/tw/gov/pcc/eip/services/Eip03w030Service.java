@@ -18,6 +18,8 @@ import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import static org.apache.commons.lang3.ObjectUtils.isNotEmpty;
+
 /**
  * 重要列管事項_解除列管
  * @author 2201009
@@ -178,7 +180,7 @@ public class Eip03w030Service {
             if (list.get(0).getRptDept() != null){
                 rptDeptNameList = deptsDao.findNameByMultiID(Arrays.stream(list.get(0).getRptDept().split(";")).collect(Collectors.toList()));
             }
-            if (list.get(0).getRptUser() != null){
+            if (list.get(0).getRptUser() != null && !list.get(0).getRptUser().equals("")){
                 rptUserNameList = usersDao.findNameByMultiID(Arrays.stream(list.get(0).getRptUser().split(";")).collect(Collectors.toList()));
             }
 
@@ -261,10 +263,63 @@ public class Eip03w030Service {
                     } else {
 //                    依據狀態決定通知對象及內文：
 //                    不同意解列：使用004文，通知該列管對象(KEEPTRKDTL.TRKOBJ)。
-//                    全案結案(即第1點的所有列管對象均已完成者)：使用005文，通知列管事項建立人員(KEEPTRKMST.CREUSER)。
-                        List<String> receiverIDList = new ArrayList<>();
-                        receiverIDList.add(newKtd.getTrkObj());
-                        sendMail(receiverIDList, "004", ktd);
+
+//                        有指定填報人員： rptUser
+//                        指定填報人員 rptUser
+//                        無指定填報人員rptUser，有指定填報單位 rptDept：
+//                        指定填報單位(主處室/科室)之聯絡窗口
+//                        填報人員/單位均未指定：
+//                        主處室聯絡窗口
+                        List<Users> emailList = new ArrayList<>();
+                        List<String> sentDept = new ArrayList<>(); //已寄通知部門
+                        Map<String, String> rptDeptEmail = eipcodeDao.getCodeNameList(
+                                        Arrays.stream(newKtd.getRptDept().split(";"))
+                                                .collect(Collectors.toList()))
+                                .stream()
+                                .collect(Collectors.toMap(Eipcode::getCodeno, Eipcode::getCodename));; //指定填報單位 + email
+
+                        if (newKtd.getRptUser() != null && !newKtd.getRptUser().equals("")){ //有指定填報人員
+                            emailList = usersDao.getEmailList(Arrays.stream(newKtd.getRptUser().split(";"))
+                                    .collect(Collectors.toList()));
+                            for (Users users : emailList) {
+                                log.debug("發送郵件至:" + users.getEmail());
+                                List<Eipcode> content = eipcodeDao.findByCodeKindScodeno("TRKMAILMSG", "004");
+                                String trkObj = deptsDao.findByPk(ktd.getTrkObj()).getDept_name();
+                                String subject = content.get(0).getCodename().replace("@TrkId@", ktd.getTrkID())
+                                        .replace("@TrkObj@", trkObj);
+
+                                String mailMsg = content.get(1).getCodename().replaceAll("@TrkId@", ktd.getTrkID())
+                                        .replace("@TrkObj@", trkObj);
+
+                                mailService.sendEmailNow(subject, users.getEmail(), mailMsg);
+                                sentDept.add(users.getDept_id());
+                            }
+                            //去除掉該員隸屬部門 避免重複寄信
+                            for (String sent: sentDept) {
+                                rptDeptEmail.remove(sent);
+                            }
+                        }
+
+                        // 無指定填報人員rptUser，有指定填報單位 rptDept
+                        if(rptDeptEmail.size() > 0) {
+                            for (String dept : rptDeptEmail.keySet()) {
+                                log.debug("發送郵件至:" + dept);
+                                List<Eipcode> content = eipcodeDao.findByCodeKindScodeno("TRKMAILMSG", "004");
+                                String subject = content.get(0).getCodename().replace("@TrkId@", ktd.getTrkID())
+                                        .replace("@TrkObj@", dept);
+                                String mailMsg = content.get(1).getCodename().replaceAll("@TrkId@", ktd.getTrkID())
+                                        .replace("@TrkObj@", dept);
+                                mailService.sendEmailNow(subject, rptDeptEmail.get(dept), mailMsg);
+                            }
+                        }
+
+                        // 填報人員/單位均未指定： 主處室聯絡窗口
+                        if((newKtd.getRptUser() == null || newKtd.getRptUser().equals(""))
+                             && (newKtd.getRptDept() == null || newKtd.getRptDept().equals(""))){
+                             List<String> receiverIDList = new ArrayList<>();
+                             receiverIDList.add(newKtd.getTrkObj());
+                             sendMail(receiverIDList, "004", ktd);
+                        }
                     }
                 }
             }

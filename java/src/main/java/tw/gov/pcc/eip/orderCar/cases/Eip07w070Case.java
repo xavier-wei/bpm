@@ -54,4 +54,5 @@ public class Eip07w070Case implements Serializable {
 	}
 	
 	private List<CarBase>carnoList;
+	private String hidden;//增加一個hidden欄位，不要一進來就foucus在日曆，讓日曆跳出來
 }

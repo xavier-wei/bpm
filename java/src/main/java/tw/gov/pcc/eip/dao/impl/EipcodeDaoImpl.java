@@ -284,9 +284,8 @@ public class EipcodeDaoImpl extends BaseDao<Eipcode> implements EipcodeDao {
 
     @Override
     public List<Eipcode> getCodeNameList(List<String> deptIDList) {
-
         StringBuilder sql = new StringBuilder();
-        sql.append(" SELECT codename ");
+        sql.append(" SELECT codeno, codename ");
         sql.append("   FROM " + TABLE_NAME + " T ");
         sql.append("  WHERE codekind = 'TRKOBJ_CONTACTOR' ");
         sql.append("    AND codeno IN (:deptIDList) ");

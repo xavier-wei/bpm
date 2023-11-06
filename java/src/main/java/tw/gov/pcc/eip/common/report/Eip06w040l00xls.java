@@ -2,6 +2,7 @@ package tw.gov.pcc.eip.common.report;
 
 import com.iisigroup.easyreport.pdf.exception.ReportException;
 import com.iisigroup.easyreport.xls.XlsReport;
+import org.apache.poi.hssf.usermodel.HSSFHeader;
 import org.apache.poi.hssf.usermodel.HSSFPrintSetup;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.ss.util.CellRangeAddress;
@@ -140,7 +141,11 @@ public class Eip06w040l00xls extends XlsReport {
         row0.getSheet().addMergedRegion(new CellRangeAddress(0, 0, 0, 7));
         row0.setHeightInPoints(20f);
         int dayOfWeek = DateUtility.getDayOfWeek(meetingdt, false) ;
-        setCellValue(row0, 0, formatChineseDate + " " + "星期" + "日一二三四五六".charAt(dayOfWeek) + " " + "會議活動", titleStyle);  //112年11月3日 星期五 會議活動
+
+        HSSFHeader xhd = (HSSFHeader)sheet.getHeader();
+        xhd.setCenter(HSSFHeader.font("標楷體", "regular") +
+                HSSFHeader.fontSize((short) 14) + HSSFHeader.startBold() + formatChineseDate + " " + "星期" + "日一二三四五六".charAt(dayOfWeek) + " " + "會議活動" +
+                HSSFHeader.endBold());
 
         // 報表資料標題
         Row row1 = createRow(sheet, 1, cellAmountSheet, alignCenterTitle);

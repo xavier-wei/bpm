@@ -108,9 +108,10 @@ public class Eip08w030Case implements Serializable {
 	 */
 	@RequiredString(label = "同意/不同意", groups = {Update.class})
 	private String agree;
-	
 	private String unit;
 	
 	private List<String>applynoList;
+	private String hidden;//解決一進來畫面就跳出日曆的問題
+    
 
 }

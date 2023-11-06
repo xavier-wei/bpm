@@ -187,6 +187,7 @@ public class Eip03w020Service {
             Map<String,String> innerMap = new HashMap<>();
             innerMap.put("trkID", list.get(0).getTrkID());      //列管事項編號
             innerMap.put("trkObj", list.get(0).getTrkObj());     //列管對象 (處室)
+            innerMap.put("trkObjRoot", deptsDao.findByPk(list.get(0).getTrkObj()).getDept_id_p());     //列管對象 (處室)
             innerMap.put("trkObjName", deptsDao.findByPk(list.get(0).getTrkObj()).getDept_name());     //列管對象 (處室)
             innerMap.put("prcSts", eipcodeDao.findByCodeKindCodeNo("TRKPRCSTS", list.get(0).getPrcSts()).get().getCodename());    //處理狀態：1-待處理 2-待解列 3-已解列
             innerMap.put("stDt", list.get(0).getStDt());   //列管起日
@@ -205,7 +206,7 @@ public class Eip03w020Service {
             if (list.get(0).getRptDept() != null){
                 rptDeptNameList = deptsDao.findNameByMultiID(Arrays.stream(list.get(0).getRptDept().split(";")).collect(Collectors.toList()));
             }
-            if (list.get(0).getRptUser() != null){
+            if (list.get(0).getRptUser() != null && !list.get(0).getRptUser().equals("")){
                 rptUserNameList = usersDao.findNameByMultiID(Arrays.stream(list.get(0).getRptUser().split(";")).collect(Collectors.toList()));
             }
             StringBuilder rptDeptName = new StringBuilder();
@@ -248,6 +249,7 @@ public class Eip03w020Service {
         });
 
         mixCase.setCurrentDept(userData.getDeptId());
+        mixCase.setCurrentRoot(deptsDao.findByPk(userData.getDeptId()).getDept_id_p());
         mixCase.setDoubleMap(doubleMap);
     }
 

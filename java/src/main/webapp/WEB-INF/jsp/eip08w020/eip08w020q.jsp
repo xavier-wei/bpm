@@ -20,6 +20,7 @@
     <fieldset>
 	<legend>申請條件</legend>
 		<form:form id="eip08w020Form" name="eip08w020Form" modelAttribute="${caseKey}" method="POST">
+            <form:input path="hidden"/>
             <tags:form-row>
             	<form:label cssClass="col-form-label apply_user" path="apply_user">申請人：</form:label>
                 <div class="col-12 col-md">
@@ -46,7 +47,7 @@
 <jsp:attribute name="footers">
 <script>
         $(function() {
-        	
+        	$("#hidden").hide();
             $('#btnConfirm').click(function() {
            		$('#eip08w020Form').attr('action', '<c:url value="/Eip08w020_add.action" />').submit();
             });

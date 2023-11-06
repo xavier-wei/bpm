@@ -8,7 +8,7 @@ import tw.gov.pcc.common.annotation.DaoTable;
 import tw.gov.pcc.common.annotation.SkipLog;
 import tw.gov.pcc.common.framework.dao.ItrBaseDao;
 import tw.gov.pcc.eip.dao.WEBITR_View_flowDao;
-import tw.gov.pcc.eip.dao.WEBITR_View_out_unitDao;
+import tw.gov.pcc.eip.dao.WEBITR_View_oup_unitDao;
 import tw.gov.pcc.eip.domain.View_oup_unit;
 
 /**
@@ -16,7 +16,7 @@ import tw.gov.pcc.eip.domain.View_oup_unit;
  */
 @DaoTable(WEBITR_View_flowDao.TABLE_NAME)
 @Repository
-public class WEBITR_View_out_unitDaoImpl extends ItrBaseDao<View_oup_unit> implements WEBITR_View_out_unitDao {
+public class WEBITR_View_oup_unitDaoImpl extends ItrBaseDao<View_oup_unit> implements WEBITR_View_oup_unitDao {
 
   /**
    * 根據key選取資料(底層用)

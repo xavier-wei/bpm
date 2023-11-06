@@ -14,7 +14,7 @@
         <tags:fieldset>
             <form:form id="eip06w030Form" name="eip06w030Form" modelAttribute="${caseKey}" method="POST">
                 <tags:form-row>
-                    <div class="col-md-3 d-flex">
+                    <div class="col-md-5 d-flex">
                         <form:label cssClass="col-form-label star" path="meetingName">會議名稱：</form:label>
                         <form:input path="meetingName" cssClass="form-control" size="21"/>
                     </div>
@@ -28,7 +28,7 @@
                     </div>
                 </tags:form-row>
                 <tags:form-row>
-                    <div class="col-md d-flex"></div>
+                    <div class="col-md-5 d-flex"></div>
                     <div class="col-md-6 d-flex">
                         <form:label cssClass="col-form-label star" path="meetingBegin">會議時間：</form:label>
                         <form:select path="meetingBegin" cssClass="form-control selector">
@@ -44,7 +44,7 @@
                     <div class="col-md d-flex"></div>
                 </tags:form-row>
                 <tags:form-row>
-                    <div class="col-md-3 d-flex">
+                    <div class="col-md-5 d-flex">
                         <form:label cssClass="col-form-label star" path="roomId">場地：</form:label>
                         <form:select path="roomId" cssClass="form-control selector" >
                             <form:option value="">請選擇會議場地</form:option>

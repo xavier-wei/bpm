@@ -13,7 +13,7 @@
         <tags:fieldset>
             <form:form id="eip06w010Form" name="eip06w010Form" modelAttribute="${caseKey}" method="POST">
                 <tags:form-row>
-                    <div class="col-md d-flex">
+                    <div class="col-md-5 d-flex">
                         <form:label cssClass="col-form-label" path="meetingName">會議名稱：</form:label>
                         <form:input path="meetingName" cssClass="form-control" size="9"/>
                     </div>
@@ -27,9 +27,9 @@
                     </div>
                 </tags:form-row>
                 <tags:form-row>
-                    <div class="col-md-4 d-flex">
+                    <div class="col-md-5 d-flex">
                         <form:label cssClass="col-form-label" path="meetingdtBegin">會議日期：</form:label>
-                        <form:input path="meetingdtBegin" cssClass="form-control d-inline-block dateTW cdate" size="13" placeholder="開始日期(民國年)" maxlength="7"/>
+                        <form:input path="meetingdtBegin" cssClass="form-control d-inline-block dateTW cdate" size="9" placeholder="開始日期(民國年)" maxlength="7"/>
                         <span class="input-group-text px-1">~</span>
                         <form:input path="meetingdtEnd" cssClass="form-control d-inline-block dateTW cdate" size="13" placeholder="結束日期(民國年)" maxlength="7"/>
                     </div>

@@ -227,15 +227,19 @@ public class Eip06w010Controller extends BaseController {
         //初始化會議場地下拉選單
         Map<String, String> meetingRoomMap = new LinkedHashMap<>();
 //        先將原本預定會議室放進map後再放其餘的(當會議室條件一樣時才可以加入)
-        if(DateUtility.changeDateTypeToChineseDate(meetingDt.replaceAll("/","")).equals(DateUtility.changeDateTypeToChineseDate(mt.getMeetingdt())) &&
-           meetingBegin.equals(mt.getMeetingBegin()) &&
-           meetingEnd.equals(mt.getMeetingEnd())){
-            meetingRoomMap.put(mt.getRoomId(), mt.getRoomId()+'-'+meetingCodeDao.selectDataByItemId(mt.getRoomId()).get(0).getItemName());
-        }
+//        if(DateUtility.changeDateTypeToChineseDate(meetingDt.replaceAll("/","")).equals(DateUtility.changeDateTypeToChineseDate(mt.getMeetingdt())) &&
+//           meetingBegin.equals(mt.getMeetingBegin()) &&
+//           meetingEnd.equals(mt.getMeetingEnd())){
+//            meetingRoomMap.put(mt.getRoomId(), mt.getRoomId()+'-'+meetingCodeDao.selectDataByItemId(mt.getRoomId()).get(0).getItemName());
+//        }
         // 使用stream和collect過濾不重複的RoomId，然後塞入meetingRoomMap中
+//        roomList.stream()
+//                .map(MeetingCode::getItemId) // 取得RoomId
+//                .distinct() // 過濾出不重複的RoomId
+//                .forEach(roomId -> meetingRoomMap.put(roomId, roomId + '-' + meetingCodeDao.selectDataByItemId(roomId).get(0).getItemName()));
+
         roomList.stream()
                 .map(MeetingCode::getItemId) // 取得RoomId
-                .distinct() // 過濾出不重複的RoomId
                 .forEach(roomId -> meetingRoomMap.put(roomId, roomId + '-' + meetingCodeDao.selectDataByItemId(roomId).get(0).getItemName()));
 
         caseData.setMeetingRoomCombobox(meetingRoomMap);
