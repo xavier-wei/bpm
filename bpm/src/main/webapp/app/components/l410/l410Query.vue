@@ -28,7 +28,7 @@
       <div class="text-center pt-5">
         <b-button class="ml-2" style="background-color: #17a2b8" @click="toL410Apply()"> 新增</b-button>
         <b-button class="ml-2" style="background-color: #17a2b8" @click="toQuery()">查詢</b-button>
-        <b-button class="ml-2" style="background-color: #17a2b8" @click="reset()">清除</b-button>
+        <b-button class="ml-2" style="background-color: #17a2b8" @click="toReset()">清除</b-button>
       </div>
     </div>
 
@@ -259,6 +259,11 @@ export default defineComponent({
       return description.replace(/\n/g, '<br>');
     }
 
+    function toReset() {
+      reset();
+      table.data = [];
+    }
+
     return {
       $v,
       form,
@@ -273,7 +278,8 @@ export default defineComponent({
       toL410Apply,
       formatToString,
       queryStatus,
-      formatDescription
+      formatDescription,
+      toReset,
     };
   },
 });

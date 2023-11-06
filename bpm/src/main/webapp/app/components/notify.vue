@@ -110,7 +110,7 @@
 
       <div class="text-center pt-5">
         <b-button class="ml-2" style="background-color: #17a2b8" @click="toQuery()">查詢</b-button>
-        <b-button class="ml-2" style="background-color: #17a2b8" @click="reset()">清除</b-button>
+        <b-button class="ml-2" style="background-color: #17a2b8" @click="toReset()">清除</b-button>
       </div>
     </div>
 
@@ -373,6 +373,11 @@ export default defineComponent({
         .catch(notificationErrorHandler(notificationService))
     }
 
+    function toReset() {
+      reset();
+      table.data = [];
+    }
+
     return {
       $v,
       form,
@@ -389,7 +394,8 @@ export default defineComponent({
       toEdit,
       queryStatus,
       bpmDeptsOptions,
-      changeDealWithUnit
+      changeDealWithUnit,
+      toReset
     };
   },
 });
