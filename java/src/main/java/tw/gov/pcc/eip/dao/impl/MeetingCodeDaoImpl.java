@@ -234,42 +234,10 @@ public class MeetingCodeDaoImpl extends BaseDao<MeetingCode> implements MeetingC
     @Override
     public List<MeetingCode> findValidRoominclBookedByDtandUsing(String meetingId, String meetingDt, String using) {
         StringBuilder sql = new StringBuilder();
-
-//        sql.append("  SELECT a.itemid,");
-//        sql.append("         a.itemname");
-//        sql.append("    FROM meetingcode a");
-//        sql.append("   WHERE a.itemtyp = 'F'");
-//        //判斷是否為同一筆會議 相同就列出該會議室
-//        sql.append("     AND (EXISTS (SELECT b.roomid");
-//        sql.append("                    FROM meeting b");
-//        sql.append("                   WHERE b.meetingid = :meetingId");
-//        sql.append("                     AND a.itemid = b.roomid");
-//        sql.append("                     AND b.meetingdt = :meetingDt");
-//        sql.append("                     AND b.using = :using) OR");
-//        //判斷相同日期時間MEETING是否已存在且
-//        sql.append("          (NOT EXISTS(");
-//        sql.append("                       (SELECT c.roomid");
-//        sql.append("                          FROM meeting c");
-//        sql.append("                         WHERE c.meetingdt = :meetingDt");
-//        sql.append("                           AND a.itemid = c.roomid");
-//        sql.append("                           AND (SELECT dbo.ufn_check(c.using, :using) AS rtn) = 'Y')");
-//        sql.append("                         UNION");
-//        //ROOMISABLE沒有該間會議室或ROOMISABLE有該會議室且在可預約時段內
-//        sql.append("                       (SELECT e.itemid");
-//        sql.append("                          FROM roomisable e");
-//        sql.append("                         WHERE e.itemid = a.itemid");
-//        sql.append("                           AND e.isabledate = :meetingDt");
-//        sql.append("                           AND (SELECT dbo.ufn_check(e.isabletime, :using) AS rtn) = 'Y')");
-//        sql.append("                     )");
-//        sql.append("           )");
-//        sql.append("           )");
-
-
-        //test
-
+        
         sql.append("    SELECT itemID, ");
         sql.append("           MAX(itemName) as itemName, ");
-        sql.append("           MAX(orders) as orders ");
+        sql.append("           MIN(orders) as orders ");
         sql.append("      FROM ( ");
         sql.append("            SELECT m.ROOMID as itemID, ");
         sql.append("                   (SELECT ITEMNAME FROM MEETINGCODE WHERE ITEMID = m.ROOMID) as itemName, ");

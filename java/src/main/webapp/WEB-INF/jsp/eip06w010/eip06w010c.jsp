@@ -356,6 +356,9 @@
             type: 'POST',
             contentType : 'application/json',
             data: JSON.stringify(data),
+            cache:false,
+            ifModified :true ,
+            async:false,
             success: function (data){
                 $("#roomId").html("");
                 var meetingRoomCombobox = JSON.stringify(data.meetingRoomCombobox);
