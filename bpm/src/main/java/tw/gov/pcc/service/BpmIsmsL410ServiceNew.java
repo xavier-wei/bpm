@@ -81,7 +81,6 @@ public class BpmIsmsL410ServiceNew implements BpmIsmsService {
         }
         //取得表單最後的流水號
 
-
 //        存入table
         bpmIsmsL410DTO.setProcessInstanceId(processInstanceId);
         bpmIsmsL410DTO.setProcessInstanceStatus("0");
@@ -95,17 +94,7 @@ public class BpmIsmsL410ServiceNew implements BpmIsmsService {
         bpmIsmsL410Repository.save(bpmIsmsL410);
 
         //儲存照片
-        if (appendixFiles != null) {
-            for (int i = 0; i < appendixFiles.size(); i++) {
-                dto.get(i).setFormId(formId);
-                dto.get(i).setFileName(appendixFiles.get(i).getName());
-                try {
-                    bpmUploadFileService.bpmUploadFile(bpmUploadFileMapper.toEntity(dto.get(i)), appendixFiles.get(i));
-                } catch (IOException e) {
-                    throw new RuntimeException(e);
-                }
-            }
-        }
+        bpmUploadFileService.savePhoto(dto, appendixFiles, formId);
 
         // 如果申請者選擇直接送出則跑下面這段完成申請者確認
         if ("1".equals(bpmIsmsL410DTO.getIsSubmit())) {
@@ -262,6 +251,22 @@ public class BpmIsmsL410ServiceNew implements BpmIsmsService {
     }
 
     private void savePhoto(List<BpmUploadFileDTO> dto, List<MultipartFile> appendixFiles, String formId) {
+        if (appendixFiles != null) {
+            for (int i = 0; i < appendixFiles.size(); i++) {
+                dto.get(i).setFormId(formId);
+                dto.get(i).setFileName(appendixFiles.get(i).getName());
+                try {
+                    bpmUploadFileService.bpmUploadFile(bpmUploadFileMapper.toEntity(dto.get(i)), appendixFiles.get(i));
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
+                }
+            }
+        }
+    }
+
+    @Override
+    public void saveAppendixFiles( List<MultipartFile> appendixFiles,List<BpmUploadFileDTO> dto,String formId) {
+        //儲存照片
         if (appendixFiles != null) {
             for (int i = 0; i < appendixFiles.size(); i++) {
                 dto.get(i).setFormId(formId);

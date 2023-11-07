@@ -152,8 +152,8 @@ public class IsmsProcessResource {
         @Valid @RequestPart("form") HashMap<String, String> form,
         @Valid @RequestPart(name = "fileDto", required = false) List<BpmUploadFileDTO> dto,
         @RequestPart(name = "appendixFiles", required = false) List<MultipartFile> appendixFiles
-       ) {
-        BpmIsmsL410DTO bpmIsmsL410DTO = gson.fromJson(form.get(key),BpmIsmsL410DTO.class);
+    ) {
+        BpmIsmsL410DTO bpmIsmsL410DTO = gson.fromJson(form.get(key), BpmIsmsL410DTO.class);
         User userInfo = getUserInfo();
 
         ProcessReqDTO processReqDTO = new ProcessReqDTO();
@@ -193,13 +193,19 @@ public class IsmsProcessResource {
     }
 
 
-
-    @PostMapping("/completeTask/{formId}")
-    public ResponseEntity<String> completeTask(@RequestBody CompleteReqDTO completeReqDTO, @PathVariable String formId) {
+    @PostMapping(path = "/completeTask/{formId}", consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
+    public ResponseEntity<String> completeTask(
+        @RequestPart("completeReqDTO") CompleteReqDTO completeReqDTO,
+        @PathVariable String formId,
+        @Valid @RequestPart(name = "fileDto", required = false) List<BpmUploadFileDTO> dto,
+        @RequestPart(name = "appendixFiles", required = false) List<MultipartFile> appendixFiles) {
         log.info("ProcessL414Resource.java - completeTask - 183 :: " + completeReqDTO);
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
         HttpEntity<String> requestEntity = new HttpEntity<>(gson.toJson(completeReqDTO), headers);
+
+        log.info("IsmsProcessResource.java - completeTask - 208 :: " + dto);
+        log.info("IsmsProcessResource.java - completeTask - 209 :: " + appendixFiles);
 
         //判斷是否是資推或機房的，如果是就去更新資料
         if (Objects.equals(completeReqDTO.getIpt(), true)) {
@@ -217,6 +223,13 @@ public class IsmsProcessResource {
             service.saveBpmByPatchToIsSubmit(completeReqDTO.getProcessInstanceId());
         }
 
+        //簽核過程或加簽時，都有需要讓簽核人員可以上傳檔案。
+        if (appendixFiles != null) {
+            int i = formId.indexOf("-");
+            String key = formId.substring(0, i);
+            BpmIsmsService service = (BpmIsmsService) applicationContext.getBean(Objects.requireNonNull(BpmIsmsServiceBeanNameEnum.getServiceBeanNameByKey(key)));
+            service.saveAppendixFiles( appendixFiles,dto, formId);
+        }
 
         ResponseEntity<String> exchange = restTemplate.exchange(flowableProcessUrl + "/completeTask", HttpMethod.POST, requestEntity, String.class);
         if (exchange.getStatusCodeValue() == 200) {
@@ -303,7 +316,6 @@ public class IsmsProcessResource {
 
         return Collections.emptyList();
     }
-
 
 
     @PostMapping("/queryProcessingTaskNumbers")
