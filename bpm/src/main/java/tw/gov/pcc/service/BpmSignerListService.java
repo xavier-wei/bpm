@@ -41,7 +41,7 @@ public class BpmSignerListService {
             .filter(key -> !key.equals("applier")) // 過濾申請者
             .filter(key -> !variables.get(key).equals("NO_SIGN")) // 過濾無須簽核之欄位
             .filter(key -> SinerTaskEnum.getNameByTask(key) != null) // 過濾不在定義中的taskName
-            .forEach(key -> userTaskMap.put(key, (String) variables.get(key))); // 將留下的task key及任務名稱放入userTaskMap
+            .forEach(key -> userTaskMap.put(key, (String) variables.get(key))); // 將有查到的任務名稱放入key，該任務名稱在variable拿到的value應該會是一組ids
 
         // 最終要存取的簽核人員名單
         List<BpmSignerList> bpmSignerLists = new ArrayList<>();
@@ -49,17 +49,21 @@ public class BpmSignerListService {
         //取得各表單簽核排序依據
         List<BpmIsmsSignerOrder> bpmIsmsSignerOrders = bpmIsmsSignerOrderRepository.findByBpmIsmsFormOrderBySortAsc(formId.split("-")[0]);
 
+        // 將taskname 及 排序分別放入key 、 value
         Map<String, Integer> sortMap = new HashMap<>();
         bpmIsmsSignerOrders.forEach(bpmIsmsSignerOrder -> sortMap.put(bpmIsmsSignerOrder.getTaskName(), bpmIsmsSignerOrder.getSort()));
+
         userTaskMap.keySet().forEach(key -> {
-            String ids = userTaskMap.get(key);
 
+            String ids = userTaskMap.get(key); //利用keyName取得ids 範例：單人："1121" 、 多人："1121，1122"
+
+            // 將ids splits後至user表中分別查出其個人資訊
             Optional<List<User>> optionalUsers = userRepository.findByUserIdIn(List.of(ids.split(",")));
-            List<User> users = optionalUsers.orElse(List.of());
-            if (users.isEmpty()) {
-                throw new ResponseStatusException(HttpStatus.BAD_REQUEST, key + "人員未於Users table建檔，請洽管理人員");
-            }
 
+            // 如果沒查到東西給空List，然後拋例外(不太可能沒查到，但預防萬一)
+            List<User> users = optionalUsers.orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, key + "人員未於Users table建檔，請洽管理人員"));
+
+            // 將上述資訊製成 BpmSignerList並放入List
             users.forEach(user -> {
                 BpmSignerList bpmSignerList = new BpmSignerList();
                 bpmSignerList.setFormId(formId);
@@ -73,6 +77,7 @@ public class BpmSignerListService {
             });
         });
 
+        // 存進資料庫
         bpmSignerListRepository.saveAll(bpmSignerLists);
     }
 
