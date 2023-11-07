@@ -814,7 +814,9 @@ export default {
           }
         }
 
-        let body = {
+        const formData = new FormData();
+
+        let completeReqDTO = {
           signer: userData.userName,
           signerId: userData.userId,
           signUnit: userData.deptId,
@@ -828,8 +830,18 @@ export default {
           ipt: configRoleToBpmIpt(userData.userRole) || configRoleToBpmCrOperator(userData.userRole),
         };
 
+        formData.append('completeReqDTO', new Blob([JSON.stringify(completeReqDTO)], {type: 'application/json'}));
+
+        //判斷appendix頁面傳過來的file
+        if (JSON.stringify(appendixData.value) !== '[]') {
+          for (let i in appendixData.value) {
+            formData.append('appendixFiles', appendixData.value[i].file[0]);
+          }
+          formData.append('fileDto', new Blob([JSON.stringify(appendixData.value)], {type: 'application/json'}));
+        }
+
         axios
-          .post(`/process/completeTask/${form.formId}`, body)
+          .post(`/process/completeTask/${form.formId}`, formData, headers)
           .then(({data}) => {
             if (item === '1') {
               $bvModal.msgBoxOk('表單儲存完畢');

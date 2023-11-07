@@ -17,6 +17,7 @@ import tw.gov.pcc.service.mapper.BpmIsmsAdditionalMapper;
 import tw.gov.pcc.service.mapper.BpmSignStatusMapper;
 import tw.gov.pcc.utils.SeqNumber;
 
+import java.io.IOException;
 import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
@@ -51,8 +52,6 @@ public class BpmIsmsAdditionalService implements BpmIsmsService{
     @Transactional(rollbackFor = SQLException.class)
     public void saveBpm(UUID uuid, String processInstanceId, TaskDTO taskDTO, List<BpmUploadFileDTO> dto, List<MultipartFile> appendixFiles) {
         BpmIsmsAdditionalDTO bpmIsmsAdditionalDTO = DTO_HOLDER.get(uuid);
-
-        //todo:考慮看看要不要加在這邊
 
         String lastFormId = !bpmIsmsAdditionalRepository.getMaxFormId().isEmpty() ? bpmIsmsAdditionalRepository.getMaxFormId().get(0).getFormId() : null;
         String formId = taskDTO.getFormName() + "-" + new SeqNumber().getNewSeq(lastFormId);
@@ -111,7 +110,11 @@ public class BpmIsmsAdditionalService implements BpmIsmsService{
     @Override
     public void cancel(String formId) {
     }
+
     @Override
     public void saveBpmByPatchToIsSubmit(String formId) {
     }
+
+    @Override
+    public void saveAppendixFiles( List<MultipartFile> appendixFiles,List<BpmUploadFileDTO> dto,String formId) {}
 }

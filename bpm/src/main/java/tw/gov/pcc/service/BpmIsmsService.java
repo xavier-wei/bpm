@@ -32,4 +32,6 @@ public interface BpmIsmsService {
     void saveBpmByPatchToIsSubmit(String processInstanceId);
 
     void cancel(String processInstanceId);
+
+    void saveAppendixFiles(List<MultipartFile> appendixFiles,List<BpmUploadFileDTO> dto, String formId);
 }

@@ -177,14 +177,11 @@ export default {
       } else if (formStatusRef.value === FormStatusEnum.READONLY) {
         doReadonly();
         readAppendix.value = true;
-      } else if (formStatusRef.value === FormStatusEnum.MODIFY) {
+      } else if (formStatusRef.value === FormStatusEnum.MODIFY || formStatusRef.value === FormStatusEnum.VERIFY) {
         applyAppendix.value = true;
         readAppendix.value = true;
         doQuery();
         doReadonly();
-      } else if (formStatusRef.value === FormStatusEnum.VERIFY) {
-        doReadonly();
-        readAppendix.value = true;
       }
     });
 
@@ -379,7 +376,6 @@ export default {
     }
 
     watch(appendixData, () => {
-
         appendixDataList.value = []
         appendixData.appendix.forEach(i => {
           if (i.file !== undefined) {
@@ -405,14 +401,11 @@ export default {
         } else if (formStatusRef.value === FormStatusEnum.READONLY) {
           doReadonly();
           readAppendix.value = true;
-        } else if (formStatusRef.value === FormStatusEnum.MODIFY) {
+        } else if (formStatusRef.value === FormStatusEnum.MODIFY || formStatusRef.value === FormStatusEnum.VERIFY) {
           applyAppendix.value = true;
           readAppendix.value = true;
           doQuery();
           doReadonly();
-        } else if (formStatusRef.value === FormStatusEnum.VERIFY) {
-          doReadonly();
-          readAppendix.value = true;
         }
       },
       {immediate: true}

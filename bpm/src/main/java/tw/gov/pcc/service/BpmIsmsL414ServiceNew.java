@@ -19,6 +19,7 @@ import tw.gov.pcc.service.dto.TaskDTO;
 import tw.gov.pcc.service.mapper.BpmIsmsL414Mapper;
 import tw.gov.pcc.utils.SeqNumber;
 
+import java.io.IOException;
 import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
@@ -186,4 +187,9 @@ public class BpmIsmsL414ServiceNew implements BpmIsmsService {
         bpmIsmsL414Repository.save(bpmIsmsL414);
     }
 
+    @Override
+    public void saveAppendixFiles(List<MultipartFile> appendixFiles,List<BpmUploadFileDTO> dto, String formId) {
+          //儲存照片
+        bpmUploadFileService.savePhoto(dto, appendixFiles, formId);
+    }
 }
