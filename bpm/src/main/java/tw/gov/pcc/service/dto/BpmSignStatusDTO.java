@@ -2,6 +2,9 @@ package tw.gov.pcc.service.dto;
 
 import java.io.Serializable;
 import java.sql.Timestamp;
+import java.time.LocalDateTime;
+import java.util.Iterator;
+import java.util.Set;
 import java.util.UUID;
 
 public class BpmSignStatusDTO implements Serializable {
@@ -44,6 +47,29 @@ public class BpmSignStatusDTO implements Serializable {
         this.opinion = opinion;
         this.directions = directions;
         this.signingDatetime = signingDatetime;
+    }
+
+    public BpmSignStatusDTO(CompleteReqDTO completeReqDTO, String formId) {
+        BpmSignStatusDTO bpmSignStatusDTO = new BpmSignStatusDTO();
+        this.formId = formId;
+        this.processInstanceId = completeReqDTO.getProcessInstanceId();
+        this.taskId = completeReqDTO.getTaskId();
+        this.taskName = completeReqDTO.getTaskName();
+        this.signerId = completeReqDTO.getSignerId();
+        this.signer = completeReqDTO.getSigner();
+        this.signUnit = completeReqDTO.getSignUnit();
+        this.opinion = completeReqDTO.getOpinion();
+        this.directions = completeReqDTO.getDirections();
+        this.signingDatetime = Timestamp.valueOf(LocalDateTime.now());
+        if (completeReqDTO.getVariables().isEmpty()) {
+            this.signResult = "1";
+        } else {
+            Set<String> strings = completeReqDTO.getVariables().keySet();
+            Iterator<String> iterator = strings.iterator();
+            if (iterator.hasNext()) {
+                this.signResult=(String) completeReqDTO.getVariables().get(iterator.next());
+            }
+        }
     }
 
     public UUID getUuid() {
