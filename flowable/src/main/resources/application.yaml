@@ -1,10 +1,6 @@
-
 spring:
-  application:
-    name: flowable
   profiles:
     active: '@flowable.profiles.active@'
 
 logging:
-  file:
-    name: ./${spring.application.name}-${local.date}.log
+  config: classpath:logback.xml
