@@ -32,19 +32,26 @@ public class BpmSignerListService {
         this.bpmIsmsSignerOrderRepository = bpmIsmsSignerOrderRepository;
     }
 
-    public void saveBpmSignerList(Map<String, Object> variables,String formId) throws ResponseStatusException{
+    public void saveBpmSignerList(Map<String, Object> variables, String formId) throws ResponseStatusException {
 
         HashMap<String, String> userTaskMap = new HashMap<>();
+
         variables.keySet()
             .stream()
-            .filter(key -> !key.equals("applier") && !variables.get(key).equals("NO_SIGN") && SinerTaskEnum.getNameByTask(key) != null)
-            .forEach(key-> userTaskMap.put(key, (String) variables.get(key)));
+            .filter(key -> !key.equals("applier")) // 過濾申請者
+            .filter(key -> !variables.get(key).equals("NO_SIGN")) // 過濾無須簽核之欄位
+            .filter(key -> SinerTaskEnum.getNameByTask(key) != null) // 過濾不在定義中的taskName
+            .forEach(key -> userTaskMap.put(key, (String) variables.get(key))); // 將留下的task key及任務名稱放入userTaskMap
 
+        // 最終要存取的簽核人員名單
         List<BpmSignerList> bpmSignerLists = new ArrayList<>();
+
+        //取得各表單簽核排序依據
         List<BpmIsmsSignerOrder> bpmIsmsSignerOrders = bpmIsmsSignerOrderRepository.findByBpmIsmsFormOrderBySortAsc(formId.split("-")[0]);
+
         Map<String, Integer> sortMap = new HashMap<>();
         bpmIsmsSignerOrders.forEach(bpmIsmsSignerOrder -> sortMap.put(bpmIsmsSignerOrder.getTaskName(), bpmIsmsSignerOrder.getSort()));
-        userTaskMap.keySet().forEach(key->{
+        userTaskMap.keySet().forEach(key -> {
             String ids = userTaskMap.get(key);
 
             Optional<List<User>> optionalUsers = userRepository.findByUserIdIn(List.of(ids.split(",")));
