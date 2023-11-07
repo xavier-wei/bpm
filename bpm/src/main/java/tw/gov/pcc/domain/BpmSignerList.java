@@ -28,6 +28,10 @@ public class BpmSignerList {
     private Integer sort;
     @Column(name = "CREATE_TIME")
     private Timestamp createTime;
+
+    public BpmSignerList() {
+    }
+
     public String getFormId() {
         return formId;
     }

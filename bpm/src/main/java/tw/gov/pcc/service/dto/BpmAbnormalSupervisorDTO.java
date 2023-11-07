@@ -1,56 +1,21 @@
-package tw.gov.pcc.domain;
+package tw.gov.pcc.service.dto;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.Table;
-import java.io.Serializable;
-
-@Entity
-@Table(schema = "dbo",name = "BPM_ABNORMAL_SUPERVISOR")
-public class BpmAbnormalSupervisor implements Serializable {
-
-    @Id
-    @Column(name = "PECARD")
+public class BpmAbnormalSupervisorDTO {
     private String pecard;
-    @Column(name = "UNIT_NAME")
     private String unitName;
-    @Column(name = "PENAME")
     private String pename;
-    @Column(name = "POSNAME")
     private String posname;
-    @Column(name = "F1_UNIT_NAME")
     private String f1UnitName;
-    @Column(name = "F1_ACCOUNT")
     private String f1Account;
-    @Column(name = "F1_PENAME")
     private String f1Pename;
-    @Column(name = "F1_POSNAME")
     private String f1Posname;
-    @Column(name = "F2_UNIT_NAME")
     private String f2UnitName;
-    @Column(name = "F2_ACCOUNT")
     private String f2Account;
-    @Column(name = "F2_PENAME")
     private String f2Pename;
-    @Column(name = "F2_POSNAME")
     private String f2Posname;
-    @Column(name = "F3_ACCOUNT")
     private String f3Account;
-    @Column(name = "F3_PENAME")
     private String f3Pename;
-    @Column(name = "F3_POSNAME")
     private String f3Posname;
-
-
-
-    public String getUnitName() {
-        return unitName;
-    }
-
-    public void setUnitName(String unitName) {
-        this.unitName = unitName;
-    }
 
     public String getPecard() {
         return pecard;
@@ -58,6 +23,14 @@ public class BpmAbnormalSupervisor implements Serializable {
 
     public void setPecard(String pecard) {
         this.pecard = pecard;
+    }
+
+    public String getUnitName() {
+        return unitName;
+    }
+
+    public void setUnitName(String unitName) {
+        this.unitName = unitName;
     }
 
     public String getPename() {
@@ -83,8 +56,6 @@ public class BpmAbnormalSupervisor implements Serializable {
     public void setF1UnitName(String f1UnitName) {
         this.f1UnitName = f1UnitName;
     }
-
-
 
     public String getF1Account() {
         return f1Account;
@@ -118,8 +89,6 @@ public class BpmAbnormalSupervisor implements Serializable {
         this.f2UnitName = f2UnitName;
     }
 
-
-
     public String getF2Account() {
         return f2Account;
     }
@@ -143,7 +112,6 @@ public class BpmAbnormalSupervisor implements Serializable {
     public void setF2Posname(String f2Posname) {
         this.f2Posname = f2Posname;
     }
-
 
     public String getF3Account() {
         return f3Account;
@@ -171,9 +139,9 @@ public class BpmAbnormalSupervisor implements Serializable {
 
     @Override
     public String toString() {
-        return "BpmAbnormalSupervisor{" +
+        return "BpmAbnormalSupervisorDTO{" +
+            "pecard='" + pecard + '\'' +
             ", unitName='" + unitName + '\'' +
-            ", pecard='" + pecard + '\'' +
             ", pename='" + pename + '\'' +
             ", posname='" + posname + '\'' +
             ", f1UnitName='" + f1UnitName + '\'' +
