@@ -56,7 +56,7 @@ public class SubordinateRepository {
             "  and PEUNIT != '600037' " +
             "  and PEUNIT in ( " +
             "    SELECT [unit_id] " +
-            "    FROM [view_oup_unit_forTest] " +
+            "    FROM [view_oup_unit_others] " +
             "    where uhead_pos_id in ( " +
             "        SELECT [posid] " +
             "        FROM [position_others] P " +

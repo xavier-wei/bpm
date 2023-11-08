@@ -136,7 +136,7 @@ public interface BpmIsmsAdditionalRepository extends JpaRepository<BpmIsmsAdditi
         "   and PEUNIT != '600037'  " +
         "   and PEUNIT in (  " +
         "     SELECT [unit_id]  " + //使用職位ID，取得單位ID
-        "     FROM [view_oup_unit_forTest]  " +
+        "     FROM [view_oup_unit_others]  " +
         "     where uhead_pos_id in (  " +
         "         SELECT [posid]  " + //使用員工編號，取得職位ID
         "         FROM [position_others] P  " +
