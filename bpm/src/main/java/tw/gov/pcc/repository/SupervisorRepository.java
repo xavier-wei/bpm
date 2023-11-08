@@ -62,14 +62,14 @@ public class SupervisorRepository {
             "     ,F3.PECARD F3_ACCOUNT " +
             "     ,F3.PENAME F3_PENAME " +
             "     ,P4.POSNAME F3_POSNAME " +
-            "FROM [eip].[dbo].[VIEW_CPAPE05M_FORTEST] A " +
-            "         LEFT JOIN POSITION_FORTEST P1 ON  A.PEIDNO =  P1.ID " +
-            "         LEFT JOIN POSITION_FORTEST P2 ON  P1.FID =  P2.POSID " +
-            "         LEFT JOIN [VIEW_CPAPE05M_FORTEST] F1 ON F1.PEIDNO = P2.ID " +
-            "         LEFT JOIN POSITION_FORTEST P3 ON  P2.FID =  P3.POSID " +
-            "         LEFT JOIN [VIEW_CPAPE05M_FORTEST] F2 ON F2.PEIDNO = P3.ID " +
-            "         LEFT JOIN POSITION_FORTEST P4 ON  P3.FID =  P4.POSID " +
-            "         LEFT JOIN [VIEW_CPAPE05M_FORTEST] F3 ON F3.PEIDNO = P4.ID " +
+            "FROM [eip].[dbo].[VIEW_CPAPE05M_OTHERS] A " +
+            "         LEFT JOIN POSITION_OTHERS P1 ON  A.PEIDNO =  P1.ID " +
+            "         LEFT JOIN POSITION_OTHERS P2 ON  P1.FID =  P2.POSID " +
+            "         LEFT JOIN [VIEW_CPAPE05M_OTHERS] F1 ON F1.PEIDNO = P2.ID " +
+            "         LEFT JOIN POSITION_OTHERS P3 ON  P2.FID =  P3.POSID " +
+            "         LEFT JOIN [VIEW_CPAPE05M_OTHERS] F2 ON F2.PEIDNO = P3.ID " +
+            "         LEFT JOIN POSITION_OTHERS P4 ON  P3.FID =  P4.POSID " +
+            "         LEFT JOIN [VIEW_CPAPE05M_OTHERS] F3 ON F3.PEIDNO = P4.ID " +
             "WHERE 1=1" +
             "  AND A.[PEORG] = ? " +
             "  AND A.PECARD = ? ";

@@ -4,7 +4,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
-import tw.gov.pcc.domain.BpmSignerList;
 import tw.gov.pcc.domain.entity.BpmIsmsAdditional;
 import tw.gov.pcc.repository.custom.BpmIsmsAdditionalRepositoryCustom;
 
@@ -130,7 +129,7 @@ public interface BpmIsmsAdditionalRepository extends JpaRepository<BpmIsmsAdditi
 
 
     @Query(value = "  SELECT *  " +
-        " FROM [view_cpape05m_forTest]  " +
+        " FROM [view_cpape05m_others]  " +
         " where 1=1  " +
         "   and [PEORG] = '360000000G'  " +
         "   and PELEVDATE = ''  " +
@@ -140,25 +139,25 @@ public interface BpmIsmsAdditionalRepository extends JpaRepository<BpmIsmsAdditi
         "     FROM [view_oup_unit_forTest]  " +
         "     where uhead_pos_id in (  " +
         "         SELECT [posid]  " + //使用員工編號，取得職位ID
-        "         FROM [position_forTest] P  " +
-        "                  left join [view_cpape05m_forTest] C on P.id = C.PEIDNO  " +
+        "         FROM [position_others] P  " +
+        "                  left join [view_cpape05m_others] C on P.id = C.PEIDNO  " +
         "         where C.PECARD =  :pecard " +
         "         UNION ALL  " +
-        "         SELECT [posid] FROM [position_forTest]  " +
+        "         SELECT [posid] FROM [position_others]  " +
         "         WHERE [fid] in (  " +
         "             SELECT [posid]  " +
-        "             FROM [position_forTest] P  " +
-        "                      left join [view_cpape05m_forTest] C on P.id = C.PEIDNO  " +
+        "             FROM [position_others] P  " +
+        "                      left join [view_cpape05m_others] C on P.id = C.PEIDNO  " +
         "             where C.PECARD = :pecard  " +
         "         )  " +
         "         UNION ALL  " +
-        "         SELECT [posid] FROM [position_forTest]  " +
+        "         SELECT [posid] FROM [position_others]  " +
         "         WHERE [fid] in (  " +
-        "             SELECT [posid] FROM [position_forTest]  " +
+        "             SELECT [posid] FROM [position_others]  " +
         "             WHERE [fid] in (  " +
         "                 SELECT [posid]  " +
-        "                 FROM [position_forTest] P  " +
-        "                          left join [view_cpape05m_forTest] C on P.id = C.PEIDNO  " +
+        "                 FROM [position_others] P  " +
+        "                          left join [view_cpape05m_others] C on P.id = C.PEIDNO  " +
         "                 where C.PECARD = :pecard  " +
         "             )  " +
         "         )  " +

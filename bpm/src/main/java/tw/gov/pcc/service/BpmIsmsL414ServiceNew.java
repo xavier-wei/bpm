@@ -10,6 +10,7 @@ import org.springframework.web.server.ResponseStatusException;
 import tw.gov.pcc.domain.BpmIsmsL414;
 import tw.gov.pcc.domain.User;
 import tw.gov.pcc.domain.UserRole;
+import tw.gov.pcc.domain.entity.BpmSignStatus;
 import tw.gov.pcc.repository.BpmIsmsL414Repository;
 import tw.gov.pcc.repository.UserRoleRepository;
 import tw.gov.pcc.service.dto.BpmIsmsL414DTO;
@@ -19,7 +20,6 @@ import tw.gov.pcc.service.dto.TaskDTO;
 import tw.gov.pcc.service.mapper.BpmIsmsL414Mapper;
 import tw.gov.pcc.utils.SeqNumber;
 
-import java.io.IOException;
 import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
@@ -185,6 +185,19 @@ public class BpmIsmsL414ServiceNew implements BpmIsmsService {
         bpmIsmsL414.setProcessInstanceStatus("3");
         bpmIsmsL414.setUpdateTime(Timestamp.valueOf(LocalDateTime.now()));
         bpmIsmsL414Repository.save(bpmIsmsL414);
+        saveSignStatus(bpmIsmsL414);
+    }
+
+    private void saveSignStatus(BpmIsmsL414 bpmIsmsL414) {
+        BpmSignStatus bpmSignStatus = new BpmSignStatus();
+        bpmSignStatus.setFormId(bpmIsmsL414.getFormId());
+        bpmSignStatus.setTaskId("cancel process");
+        bpmSignStatus.setTaskName("cancel process");
+        bpmSignStatus.setProcessInstanceId(bpmIsmsL414.getProcessInstanceId());
+        bpmSignStatus.setSignerId(bpmIsmsL414.getAppEmpid());
+        bpmSignStatus.setSignUnit(bpmIsmsL414.getAppUnit());
+        bpmSignStatus.setSigner(bpmIsmsL414.getAppName());
+        bpmSignStatusService.saveBpmSignStatus(bpmSignStatus, bpmIsmsL414.getFormId());
     }
 
     @Override

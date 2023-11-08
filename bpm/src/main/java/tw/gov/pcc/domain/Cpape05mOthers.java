@@ -4,8 +4,8 @@ import javax.persistence.*;
 import java.io.Serializable;
 
 @Entity
-@Table(name = "VIEW_CPAPE05M_FORTEST")
-public class Cpape05mForTest implements Serializable {
+@Table(name = "VIEW_CPAPE05M_OTHERS")
+public class Cpape05mOthers implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

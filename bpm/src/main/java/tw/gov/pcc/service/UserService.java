@@ -2,7 +2,7 @@ package tw.gov.pcc.service;
 
 import org.springframework.stereotype.Service;
 import tw.gov.pcc.domain.Cpape05m;
-import tw.gov.pcc.domain.Cpape05mForTest;
+import tw.gov.pcc.domain.Cpape05mOthers;
 import tw.gov.pcc.domain.User;
 import tw.gov.pcc.domain.UserRole;
 import tw.gov.pcc.repository.Cpape05mForTestRepository;
@@ -37,11 +37,11 @@ public class UserService {
         // 正式員工登入用
         Optional<Cpape05m> cpape05m = cpape05mRepository.findByPecard(userId);
         // IVV或資拓測試帳號用
-        Optional<Cpape05mForTest> cpape05mForTest;
+        Optional<Cpape05mOthers> cpape05mOthers;
         String title;
         if (cpape05m.isEmpty()) {
-            cpape05mForTest = cpape05mForTestRepository.findByPecard(userId);
-            title = cpape05mForTest.get() == null ? "無職稱" : cpape05mForTest.get().getTitle();
+            cpape05mOthers = cpape05mForTestRepository.findByPecard(userId);
+            title = cpape05mOthers.isPresent() ?  cpape05mOthers.get().getTitle(): "無職稱";
             user.setTitleName(title);
         } else {
             title = (cpape05m.get().getTitle() == null || cpape05m.get().getTitle().isEmpty()) ? "無職稱" : cpape05m.get().getTitle();

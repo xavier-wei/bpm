@@ -12,6 +12,7 @@ import org.springframework.web.server.ResponseStatusException;
 import tw.gov.pcc.domain.BpmIsmsL410;
 import tw.gov.pcc.domain.User;
 import tw.gov.pcc.domain.UserRole;
+import tw.gov.pcc.domain.entity.BpmSignStatus;
 import tw.gov.pcc.repository.BpmIsmsL410Repository;
 import tw.gov.pcc.repository.UserRoleRepository;
 import tw.gov.pcc.service.dto.BpmIsmsL410DTO;
@@ -248,6 +249,19 @@ public class BpmIsmsL410ServiceNew implements BpmIsmsService {
         bpmIsmsL410.setProcessInstanceStatus("3");
         bpmIsmsL410.setUpdateTime(Timestamp.valueOf(LocalDateTime.now()));
         bpmIsmsL410Repository.save(bpmIsmsL410);
+        saveSignStatus(bpmIsmsL410);
+    }
+
+    private void saveSignStatus(BpmIsmsL410 bpmIsmsL410) {
+        BpmSignStatus bpmSignStatus = new BpmSignStatus();
+        bpmSignStatus.setFormId(bpmIsmsL410.getFormId());
+        bpmSignStatus.setTaskId("cancel process");
+        bpmSignStatus.setTaskName("cancel process");
+        bpmSignStatus.setProcessInstanceId(bpmIsmsL410.getProcessInstanceId());
+        bpmSignStatus.setSignerId(bpmIsmsL410.getAppEmpid());
+        bpmSignStatus.setSignUnit(bpmIsmsL410.getAppUnit());
+        bpmSignStatus.setSigner(bpmIsmsL410.getAppName());
+        bpmSignStatusService.saveBpmSignStatus(bpmSignStatus, bpmIsmsL410.getFormId());
     }
 
     private void savePhoto(List<BpmUploadFileDTO> dto, List<MultipartFile> appendixFiles, String formId) {
