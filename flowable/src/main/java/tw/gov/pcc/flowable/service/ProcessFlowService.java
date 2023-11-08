@@ -1,5 +1,6 @@
 package tw.gov.pcc.flowable.service;
 
+import lombok.extern.slf4j.Slf4j;
 import org.flowable.engine.HistoryService;
 import org.flowable.engine.RuntimeService;
 import org.flowable.engine.TaskService;
@@ -19,11 +20,11 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 @Service
+@Slf4j
 public class ProcessFlowService {
     private static final Integer[] SIGNATURE_STATUS = {1, 0};
     private static final String[] MESSAGE = {"完成", "無此簽核任務"};
     private final RuntimeService runtimeService;
-
     private final TaskService taskService;
     private final HistoryService historyService;
 
@@ -81,9 +82,8 @@ public class ProcessFlowService {
     }
 
 
-    // query task
+    // query自己未處理的任務(但扣除加簽中的)
     public List<TaskDTO> queryProcessingTask(String id) {
-
         // 查出所有加簽任務
         List<ProcessInstance> additionalProcesses = runtimeService.createProcessInstanceQuery().processDefinitionKey("AdditionalProcess").list();
         // 查出所有加簽任務的主流程任務id
@@ -108,7 +108,7 @@ public class ProcessFlowService {
     }
 
     public Integer queryProcessingTaskNumbers(String id) {
-
+        log.info("Id: {} query pending tasks numbers",id);
         return queryProcessingTask(id).size();
     }
 
