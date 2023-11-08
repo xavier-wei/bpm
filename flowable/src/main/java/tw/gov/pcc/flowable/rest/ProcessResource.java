@@ -43,8 +43,8 @@ public class ProcessResource {
 
             return ResponseEntity.ok(taskDTO);
         }
-
-        return ResponseEntity.badRequest().body(null);
+        log.warn("--startProcess： 申請表單 與現有表單名稱不符");
+        throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
     }
 
     @PostMapping("/queryProcessingTask")
@@ -78,7 +78,7 @@ public class ProcessResource {
 
     @PostMapping("/deleteProcess")
     public ResponseEntity<String> deleteProcess(@RequestBody Map<String, String> deleteRequest) {
-        String deleteProcessLog = "--deleteProcess : ";
+        String deleteProcessLog = "--deleteProcess : {} 要求刪除";
         // 刪除流程 區分兩種情況，bpm寫入失敗後刪除，或主動撤銷
         String token = eipCodeService.findCodeName("BPM_TOKEN");
         if (token.equals(deleteRequest.get("token"))) {
@@ -86,14 +86,13 @@ public class ProcessResource {
             try {
                 service.deleteProcessInstance(processInstanceId);
             } catch (Exception e) {
-                e.printStackTrace();
                 log.error(e.getMessage());
                 throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "刪除失敗");
             }
             log.info(deleteProcessLog + "processInstance: {} 已刪除", processInstanceId);
             return ResponseEntity.ok().body("刪除完成");
         }
-        log.warn(deleteProcessLog + "token不符或不存在，使用者可能使用API測試工具試圖刪除流程");
+        log.warn(deleteProcessLog + "使用者可能使用API測試工具試圖刪除流程");
         throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
     }
 

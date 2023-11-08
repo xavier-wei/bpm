@@ -148,26 +148,28 @@ public class ProcessFlowService {
         List<String> historicInstanceIds = new ArrayList<>();
         // 取得已處理過的任務實體，並將其Id放入processInstanceIds
         List<TaskDTO> histoicTaskDTO = getHistoricTaskDTO(id, historicInstanceIds);
-
-        // 藉由已處理過任務實體ID找出自己已處理但是還未完成之任務
-        List<Task> tasks = taskService.createTaskQuery().processInstanceIdIn(historicInstanceIds).list();
-        List<String> processingInstanceIds = new ArrayList<>();
-        // 因為複數處理人無法使用getAssignee直接取得，所以必須先至IdentityLink table取得後放入，再轉成taskDTO (處理中)
-        List<TaskDTO> processingTaskDTO = tasks
-                .stream()
-                .map(task -> {
-                    if (task.getAssignee() == null) {
-                        List<String> candidateUsers = taskService.getIdentityLinksForTask(task.getId()).stream().map(IdentityLinkInfo::getUserId).collect(Collectors.toList());
-                        task.setAssignee(String.join(",", candidateUsers));
-                    }
-                    processingInstanceIds.add(task.getProcessInstanceId());
-                    return new TaskDTO(task);
-                })
-                .collect(Collectors.toList());
-        // 如果任務仍未完成則把歷史任務中重複的過濾掉
-        List<TaskDTO> newTaskDTO = histoicTaskDTO.stream().filter(taskDTO -> !processingInstanceIds.contains(taskDTO.getProcessInstanceId())).collect(Collectors.toList());
-        newTaskDTO.addAll(processingTaskDTO);
-        return newTaskDTO;
+        if(!historicInstanceIds.isEmpty()) {
+            // 藉由已處理過任務實體ID找出自己已處理但是還未完成之任務
+            List<Task> tasks = taskService.createTaskQuery().processInstanceIdIn(historicInstanceIds).list();
+            List<String> processingInstanceIds = new ArrayList<>();
+            // 因為複數處理人無法使用getAssignee直接取得，所以必須先至IdentityLink table取得後放入，再轉成taskDTO (處理中)
+            List<TaskDTO> processingTaskDTO = tasks
+                    .stream()
+                    .map(task -> {
+                        if (task.getAssignee() == null) {
+                            List<String> candidateUsers = taskService.getIdentityLinksForTask(task.getId()).stream().map(IdentityLinkInfo::getUserId).collect(Collectors.toList());
+                            task.setAssignee(String.join(",", candidateUsers));
+                        }
+                        processingInstanceIds.add(task.getProcessInstanceId());
+                        return new TaskDTO(task);
+                    })
+                    .collect(Collectors.toList());
+            // 如果任務仍未完成則把歷史任務中重複的過濾掉
+            List<TaskDTO> newTaskDTO = histoicTaskDTO.stream().filter(taskDTO -> !processingInstanceIds.contains(taskDTO.getProcessInstanceId())).collect(Collectors.toList());
+            newTaskDTO.addAll(processingTaskDTO);
+            return newTaskDTO;
+        }
+        return List.of();
     }
 
     private List<TaskDTO> getHistoricTaskDTO(String id, List<String> historicInstanceIds) {
