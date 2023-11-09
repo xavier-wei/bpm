@@ -80,7 +80,7 @@
                   <b-input-group>
                     <!--申請人員工編號 : appEmpid-->
                     <b-form-input v-model="$v.appEmpid.$model"/>
-                    <b-button class="ml-2"  variant="outline-dark" @click="showModel()">差勤資訊</b-button>
+                    <b-button class="ml-2"  variant="outline-dark" @click="showModel()">選擇人員</b-button>
                   </b-input-group>
                 </i-form-group-check>
 

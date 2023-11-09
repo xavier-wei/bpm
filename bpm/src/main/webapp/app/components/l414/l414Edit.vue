@@ -85,7 +85,7 @@
                       <!--申請人員工編號 : appEmpid-->
                       <b-form-input v-model="$v.appEmpid.$model"
                                     :disabled="formStatusRef === FormStatusEnum.READONLY  || isEdit"/>
-                      <b-button class="ml-2" v-show="formStatusRef === FormStatusEnum.MODIFY  && isEdit" variant="outline-dark" @click="showErrandModel()">差勤資訊</b-button>
+                      <b-button class="ml-2" v-show="formStatusRef === FormStatusEnum.MODIFY  && isEdit" variant="outline-dark" @click="showErrandModel()">選擇人員</b-button>
                     </b-input-group>
 
                   </i-form-group-check>

@@ -33,20 +33,22 @@ public class ProcessResource {
 
     private final EipCodeService eipCodeService;
 
+
+    // 流程啟動
     @RequestMapping("/startProcess")
     public ResponseEntity<TaskDTO> startProcess(@Valid @RequestBody ProcessReqDTO processReqDTO) {
-
+        String startLog = "--startProcess:： {}";
         ProcessReq processReq = new ProcessReq(processReqDTO);
         if (processReq.getProcessKey() != null) {
 
             TaskDTO taskDTO = service.startProcess(processReq.getProcessKey(), processReq.getVariables());
-
             return ResponseEntity.ok(taskDTO);
         }
-        log.warn("--startProcess： 申請表單 與現有表單名稱不符");
+        log.warn(startLog, "No match form");
         throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
     }
 
+    // 查詢所有待處理之任務，但不包含加簽出去的
     @PostMapping("/queryProcessingTask")
     public ResponseEntity<List<TaskDTO>> queryProcessingTask(@RequestBody String id) {
 
@@ -55,7 +57,9 @@ public class ProcessResource {
 
     @PostMapping("/queryProcessingTaskNumbers")
     public ResponseEntity<Integer> queryProcessingTaskNumbers(@RequestBody String id) {
-        return ResponseEntity.ok().body(service.queryProcessingTaskNumbers(id));
+        Integer i = service.queryProcessingTaskNumbers(id);
+        log.info("Number of pending cases: {}",i);
+        return ResponseEntity.ok().body(i);
     }
 
     @PostMapping("/queryProcessingAllTask")
@@ -63,6 +67,8 @@ public class ProcessResource {
         return ResponseEntity.ok().body(service.queryProcessingAllTask(id));
     }
 
+
+    // 表單查詢用
     @PostMapping("/getAllTask")
     public List<TaskDTO> getAllTask(@RequestBody String id) {
         return service.queryList(id);
@@ -78,7 +84,7 @@ public class ProcessResource {
 
     @PostMapping("/deleteProcess")
     public ResponseEntity<String> deleteProcess(@RequestBody Map<String, String> deleteRequest) {
-        String deleteProcessLog = "--deleteProcess : {} 要求刪除";
+        String deleteProcessLog = "--deleteProcess : {} ";
         // 刪除流程 區分兩種情況，bpm寫入失敗後刪除，或主動撤銷
         String token = eipCodeService.findCodeName("BPM_TOKEN");
         if (token.equals(deleteRequest.get("token"))) {
@@ -89,10 +95,10 @@ public class ProcessResource {
                 log.error(e.getMessage());
                 throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "刪除失敗");
             }
-            log.info(deleteProcessLog + "processInstance: {} 已刪除", processInstanceId);
+            log.info(deleteProcessLog, processInstanceId + "刪除完成");
             return ResponseEntity.ok().body("刪除完成");
         }
-        log.warn(deleteProcessLog + "使用者可能使用API測試工具試圖刪除流程");
+        log.warn(deleteProcessLog, "使用者可能使用API測試工具試圖刪除流程");
         throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
     }
 
@@ -104,8 +110,6 @@ public class ProcessResource {
         }
         return taskDTOS;
     }
-
-
 
 
     // 測試時期快速完成用API

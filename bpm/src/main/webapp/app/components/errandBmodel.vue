@@ -150,7 +150,7 @@ export default {
     const dialogIsVisible = reactive({
       step: false,
     });
-    const title = '差勤資訊';
+    const title = '差勤人員';
     const formDefault = {
       chooseId: '', //選擇差勤的userId
       chooseName: '', //選擇差勤的user名稱

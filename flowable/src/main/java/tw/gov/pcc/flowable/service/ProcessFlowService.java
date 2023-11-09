@@ -7,7 +7,9 @@ import org.flowable.engine.TaskService;
 import org.flowable.engine.runtime.ProcessInstance;
 import org.flowable.identitylink.api.IdentityLinkInfo;
 import org.flowable.task.api.Task;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 import tw.gov.pcc.flowable.domain.ProcessRes;
 import tw.gov.pcc.flowable.domain.SupervisorSignerEnum;
 import tw.gov.pcc.flowable.service.dto.TaskDTO;
@@ -34,18 +36,28 @@ public class ProcessFlowService {
         this.historyService = historyService;
     }
 
-    // 開啟流程，並且在isSubmit為"1"的狀態，直接跳過申請者確認進到下個步驟，若為temp則需進行確認
+    // 開啟流程，並且在isSubmit為"1"的狀態，直接跳過申請者確認進到下個步驟，若為0或其他任何值則需進行確認
     public TaskDTO startProcess(String processKey, Map<String, Object> variables) {
+        String startProcessLog = "--startProcess : {} ";
+
+        // 流程啟動
         ProcessInstance processInstance = runtimeService.startProcessInstanceByKey(processKey, variables);
+        // 取得申請者確認之task，並轉成taskDTO，若未來不需要申請者確認的欄位，則這邊邏輯必須改寫
         Task task = taskService.createTaskQuery()
                 .taskCandidateOrAssigned((String) variables.get("applier"))
                 .processInstanceId(processInstance.getId()).singleResult();
         TaskDTO taskDTO = new TaskDTO(task);
-
+        log.info(startProcessLog, processInstance.getProcessInstanceId() + " started");
+        /* 如果isSubmit為1，則申請者不再確認，接著第一審核者及第二審核者若為NO_SIGN，亦不需簽核
+         * 第一審核者、第二審核者跳過規則：
+         * 1. 連兩個跳過 OK
+         * 2. 跳過第一審核者，僅須第二審核者簽核 OK
+         * 3. 第一審核者須簽核，但無第二審核者 不OK <== 因為邏輯為連續判斷，所以遇此情況，請直接把第一審核者放入第二審核者同，第 2.
+         */
         if ("1".equals(variables.get("isSubmit"))) {
             taskService.complete(task.getId());
             String processInstanceId = processInstance.getId();
-            jumpIfSupervisor(processKey, variables, processInstanceId);
+            skipIfSupervisorNoSign(processKey, variables, processInstanceId);
         }
 
         return taskDTO;
@@ -54,36 +66,51 @@ public class ProcessFlowService {
 
     // for completing task
     public ProcessRes completeTask(String processInstanceId, String taskId, Map<String, Object> variables) {
+        String completeTaskLog = "--completeTask : {} ";
+        // 先確認須完成的task是否存在
         Task task = taskService.createTaskQuery().processInstanceId(processInstanceId).taskId(taskId).singleResult();
         if (task.getId() != null) {
             taskService.complete(task.getId(), variables);
-            applierComfirnAndJumpSign(processInstanceId, task);
+            // 辨識是否為申請人確認
+            applierConfirmAndSkipSign(processInstanceId, task);
+            log.info(completeTaskLog, task.getId() + " complete");
             return new ProcessRes(SIGNATURE_STATUS[0], MESSAGE[0]);
         }
-        return new ProcessRes(SIGNATURE_STATUS[1], MESSAGE[1]);
+        log.info(completeTaskLog, "Task not found");
+        throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "任務或流程不存在，可能已由其他處理人處理完成，請F5刷新");
     }
 
-    private void applierComfirnAndJumpSign(String processInstanceId, Task task) {
-        if ("applierConfirm".equals(task.getTaskDefinitionKey())) {
-            Map<String, Object> variables2 = runtimeService.getVariables(processInstanceId);
-            String processKey = task.getProcessDefinitionId().split(":")[0];
-            jumpIfSupervisor(processKey, variables2, processInstanceId);
-        }
-    }
 
+    // for completing task
     public ProcessRes completeTask(String processInstanceId, String taskId) {
+        String completeTaskLog = "--completeTask : {} ";
         Task task = taskService.createTaskQuery().processInstanceId(processInstanceId).taskId(taskId).singleResult();
         if (task.getId() != null) {
             taskService.complete(task.getId());
-            applierComfirnAndJumpSign(processInstanceId, task);
+            // 辨識是否為申請人確認
+            applierConfirmAndSkipSign(processInstanceId, task);
+            log.info(completeTaskLog, task.getId() + " complete");
             return new ProcessRes(SIGNATURE_STATUS[0], MESSAGE[0]);
         }
-        return new ProcessRes(SIGNATURE_STATUS[1], MESSAGE[1]);
+        log.info(completeTaskLog, "Task not found");
+        throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "任務或流程不存在，可能已由其他處理人處理完成，請F5刷新");
     }
 
+    /*
+     * 如果是暫存後確認則必須設定整個流程的variables並判斷是否需要跳過第一、第二簽核者
+     */
+    private void applierConfirmAndSkipSign(String processInstanceId, Task task) {
+        if ("applierConfirm".equals(task.getTaskDefinitionKey())) {
+            Map<String, Object> variables2 = runtimeService.getVariables(processInstanceId);
+            String processKey = task.getProcessDefinitionId().split(":")[0];
+            skipIfSupervisorNoSign(processKey, variables2, processInstanceId);
+        }
+    }
 
     // query自己未處理的任務(但扣除加簽中的)
     public List<TaskDTO> queryProcessingTask(String id) {
+        log.info("Id: {} query pending tasks", id);
+
         // 查出所有加簽任務
         List<ProcessInstance> additionalProcesses = runtimeService.createProcessInstanceQuery().processDefinitionKey("AdditionalProcess").list();
         // 查出所有加簽任務的主流程任務id
@@ -108,7 +135,7 @@ public class ProcessFlowService {
     }
 
     public Integer queryProcessingTaskNumbers(String id) {
-        log.info("Id: {} query pending tasks numbers",id);
+        log.info("Id: {} query pending tasks numbers", id);
         return queryProcessingTask(id).size();
     }
 
@@ -122,13 +149,19 @@ public class ProcessFlowService {
                 .map(TaskDTO::new)
                 .collect(Collectors.toList());
     }
-    // delete processInstance
 
+    // delete processInstance
     public void deleteProcessInstance(String processInstanceId) {
         runtimeService.deleteProcessInstance(processInstanceId, "delete");
     }
 
-    private void jumpIfSupervisor(String processKey, Map<String, Object> variables, String processInstanceId) {
+    /*
+     * 第一審核者、第二審核者跳過規則：
+     * 1. 連兩個跳過 OK
+     * 2. 跳過第一審核者，僅須第二審核者簽核 OK
+     * 3. 第一審核者須簽核，但無第二審核者 不OK <== 因為邏輯為連續判斷，所以遇此情況，請直接把第一審核者放入第二審核者同，第 2.
+     */
+    private void skipIfSupervisorNoSign(String processKey, Map<String, Object> variables, String processInstanceId) {
         String[] supervisors = SupervisorSignerEnum.getSupervisors(processKey);
         if (supervisors != null) {
             Arrays.stream(supervisors)
@@ -143,12 +176,15 @@ public class ProcessFlowService {
         }
     }
 
+    /*
+     * 查詢自己已處理過的所有任務，但不包含處理中的任務
+     */
     public List<TaskDTO> queryList(String id) {
 
         List<String> historicInstanceIds = new ArrayList<>();
         // 取得已處理過的任務實體，並將其Id放入processInstanceIds
         List<TaskDTO> histoicTaskDTO = getHistoricTaskDTO(id, historicInstanceIds);
-        if(!historicInstanceIds.isEmpty()) {
+        if (!historicInstanceIds.isEmpty()) {
             // 藉由已處理過任務實體ID找出自己已處理但是還未完成之任務
             List<Task> tasks = taskService.createTaskQuery().processInstanceIdIn(historicInstanceIds).list();
             List<String> processingInstanceIds = new ArrayList<>();
@@ -175,11 +211,11 @@ public class ProcessFlowService {
     private List<TaskDTO> getHistoricTaskDTO(String id, List<String> historicInstanceIds) {
 
         // createHistoricTaskInstanceQuery 為查出自己已處理過之任務，並非整個流程實體已完成
-        return Stream
-                .concat(
-                        historyService.createHistoricTaskInstanceQuery().taskCandidateUser(id).list().stream(),
-                        historyService.createHistoricTaskInstanceQuery().taskAssignee(id).list().stream()
-                )
+        return Stream.concat
+                        (
+                                historyService.createHistoricTaskInstanceQuery().taskCandidateUser(id).list().stream(),
+                                historyService.createHistoricTaskInstanceQuery().taskAssignee(id).list().stream()
+                        )
                 .filter(taskInstance -> {
                     if (!historicInstanceIds.contains(taskInstance.getProcessInstanceId())) {
                         historicInstanceIds.add(taskInstance.getProcessInstanceId());
