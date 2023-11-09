@@ -4,7 +4,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
-import tw.gov.pcc.domain.BpmAbnormalSupervisor;
+import tw.gov.pcc.domain.BpmSpecialSupervisor;
 import tw.gov.pcc.domain.User;
 import tw.gov.pcc.repository.BpmSupervisorRepository;
 import tw.gov.pcc.repository.SupervisorRepository;
@@ -28,12 +28,12 @@ public class SupervisorService {
     private final SupervisorRepository supervisorRepository;
     private final BpmSupervisorRepository bpmSupervisorRepository;
 
-    private final BpmAbnormalSupervisorService bpmAbnormalSupervisorService;
+    private final BpmSpecialSupervisorService bpmSpecialSupervisorService;
 
-    public SupervisorService(SupervisorRepository supervisorRepository, BpmSupervisorRepository bpmSupervisorRepository, BpmAbnormalSupervisorService bpmAbnormalSupervisorService) {
+    public SupervisorService(SupervisorRepository supervisorRepository, BpmSupervisorRepository bpmSupervisorRepository, BpmSpecialSupervisorService bpmSpecialSupervisorService) {
         this.supervisorRepository = supervisorRepository;
         this.bpmSupervisorRepository = bpmSupervisorRepository;
-        this.bpmAbnormalSupervisorService = bpmAbnormalSupervisorService;
+        this.bpmSpecialSupervisorService = bpmSpecialSupervisorService;
     }
 
 
@@ -44,12 +44,12 @@ public class SupervisorService {
         String director;
 
         // 查詢此人是否為特例
-        BpmAbnormalSupervisor bpmAbnormalSupervisor = bpmAbnormalSupervisorService.findById(id).orElse(null);
-        if (bpmAbnormalSupervisor != null) {
+        BpmSpecialSupervisor bpmSpecialSupervisor = bpmSpecialSupervisorService.findById(id).orElse(null);
+        if (bpmSpecialSupervisor != null) {
 
             log.info("申請者為特例，id: {}", id);
-            sectionChief = bpmAbnormalSupervisor.getF1Account();
-            director = bpmAbnormalSupervisor.getF2Account();
+            sectionChief = bpmSpecialSupervisor.getF1Account();
+            director = bpmSpecialSupervisor.getF2Account();
         } else {
 
             List<Map<String, Object>> maps = supervisorRepository.executeQuery(user.getOrgId(), id);
