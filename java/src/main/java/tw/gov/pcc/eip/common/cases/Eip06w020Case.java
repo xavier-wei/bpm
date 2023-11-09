@@ -38,6 +38,7 @@ public class Eip06w020Case implements Serializable {
     private String meetingEnd; //會議結束時間
     @MinValue(groups={Sequence.Second.class}, label = "開會人數", value = 1, message = "開會人數需大於1位" )
     private int meetingQty; //會議人數
+    @RequiredString(groups={Sequence.First.class}, label = "會議場地")
     private String roomId; //會議室編號
     private String itemId; //物品編號
     private String foodId; //餐點編號
@@ -93,6 +94,7 @@ public class Eip06w020Case implements Serializable {
         }
         return true;
     }
+
 
     @Data
     @NoArgsConstructor

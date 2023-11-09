@@ -67,9 +67,9 @@
                             <form:option value="6">六</form:option>
                             <form:option value="7">日</form:option>
                         </form:select>
-                        <form:input path="periodStart" cssClass="form-control dateTW" size="8" maxlength="9" />
+                        <form:input path="periodStart" cssClass="form-control num_only dateTW" size="8" maxlength="7" />
                         <span class="pt-2 mx-1">~</span>
-                        <form:input path="periodEnd" cssClass="form-control dateTW" size="8" maxlength="9" />
+                        <form:input path="periodEnd" cssClass="form-control num_only dateTW" size="8" maxlength="7" />
                     </div>
                 </tags:form-row>
 
@@ -101,69 +101,77 @@
 </jsp:attribute>
 <jsp:attribute name="footers">
 <script>
-    $('#btnSave').click(function(){
-        // 送出時需解除disabled為false，才有作用
-        $('#periodEnd').prop('disabled', false);
-        $('#eip06w060Form').attr('action', '<c:url value="/Eip06w060_save.action" />').submit();
+    $(function() {
+        //設定今天日期前無法選擇
+        var maxDate = new Date();
+        maxDate.setDate(maxDate.getDate())
+        let $dateTW = $(".dateTW");
+        $dateTW.datepicker("setStartDate", new Date());
     })
 
-    $('#btnReply').click(function(){
-        $('#eip06w060Form').attr('action', '<c:url value="/Eip06w060_partisable.action" />').submit();
-    })
+        $('#btnSave').click(function () {
+            // 送出時需解除disabled為false，才有作用
+            $('#periodEnd').prop('disabled', false);
+            $('#eip06w060Form').attr('action', '<c:url value="/Eip06w060_save.action" />').submit();
+        })
 
-    $('#repeat, #dateWeekMonth').change(function () {
+        $('#btnReply').click(function () {
+            $('#eip06w060Form').attr('action', '<c:url value="/Eip06w060_partisable.action" />').submit();
+        })
+
+        $('#repeat, #dateWeekMonth').change(function () {
+            let repeat = $('#repeat').val();
+            let dateWeekMonth = $('#dateWeekMonth').val();
+
+            if (repeat === 'false') {
+                $('#dateWeekMonth').prop('disabled', true);
+                $('#week').prop('disabled', true);
+                $('#day').prop('disabled', true);
+                $('#periodEnd_OUTSIDE').prop('disabled', true);
+            } else {
+                $('#dateWeekMonth').prop('disabled', false);
+                if (dateWeekMonth === 'date') {
+                    console.log(repeat, dateWeekMonth);
+                    $('#week').prop('disabled', true);
+                    $('#day').prop('disabled', true);
+                    $('#periodEnd_OUTSIDE').prop('disabled', false);
+                } else if (dateWeekMonth === 'week') {
+                    $('#week').prop('disabled', true);
+                    $('#day').prop('disabled', false);
+                    $('#periodEnd_OUTSIDE').prop('disabled', false);
+                } else if (dateWeekMonth === 'month') {
+                    $('#week').prop('disabled', false);
+                    $('#day').prop('disabled', false);
+                    $('#periodEnd_OUTSIDE').prop('disabled', false);
+                }
+            }
+        })
+
         let repeat = $('#repeat').val();
         let dateWeekMonth = $('#dateWeekMonth').val();
-
-        if(repeat === 'false'){
+        if (repeat === 'false') {
             $('#dateWeekMonth').prop('disabled', true);
             $('#week').prop('disabled', true);
             $('#day').prop('disabled', true);
+            // 如使用dateTW樣式，disabled效果呈現，#XXX_OUTSIDE，作用
             $('#periodEnd_OUTSIDE').prop('disabled', true);
-        }else {
+            $('#periodEnd').prop('disabled', true);
+        } else {
             $('#dateWeekMonth').prop('disabled', false);
-            if(dateWeekMonth === 'date'){
-                console.log(repeat, dateWeekMonth);
+            if (dateWeekMonth === 'date') {
                 $('#week').prop('disabled', true);
                 $('#day').prop('disabled', true);
                 $('#periodEnd_OUTSIDE').prop('disabled', false);
-            }else if(dateWeekMonth === 'week'){
+            } else if (dateWeekMonth === 'week') {
                 $('#week').prop('disabled', true);
                 $('#day').prop('disabled', false);
                 $('#periodEnd_OUTSIDE').prop('disabled', false);
-            }else if (dateWeekMonth === 'month'){
+            } else if (dateWeekMonth === 'month') {
                 $('#week').prop('disabled', false);
                 $('#day').prop('disabled', false);
                 $('#periodEnd_OUTSIDE').prop('disabled', false);
             }
         }
-    })
-
-    let repeat = $('#repeat').val();
-    let dateWeekMonth = $('#dateWeekMonth').val();
-    if(repeat === 'false'){
-        $('#dateWeekMonth').prop('disabled', true);
-        $('#week').prop('disabled', true);
-        $('#day').prop('disabled', true);
-        // 如使用dateTW樣式，disabled效果呈現，#XXX_OUTSIDE，作用
-        $('#periodEnd_OUTSIDE').prop('disabled', true);
-        $('#periodEnd').prop('disabled', true);
-    }else {
-        $('#dateWeekMonth').prop('disabled', false);
-        if(dateWeekMonth === 'date'){
-            $('#week').prop('disabled', true);
-            $('#day').prop('disabled', true);
-            $('#periodEnd_OUTSIDE').prop('disabled', false);
-        }else if(dateWeekMonth === 'week'){
-            $('#week').prop('disabled', true);
-            $('#day').prop('disabled', false);
-            $('#periodEnd_OUTSIDE').prop('disabled', false);
-        }else if (dateWeekMonth === 'month'){
-            $('#week').prop('disabled', false);
-            $('#day').prop('disabled', false);
-            $('#periodEnd_OUTSIDE').prop('disabled', false);
-        }
-    }
 </script>
 </jsp:attribute>
 </tags:layout>

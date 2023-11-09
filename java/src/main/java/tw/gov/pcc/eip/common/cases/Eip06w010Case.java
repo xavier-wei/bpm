@@ -45,6 +45,7 @@ public class Eip06w010Case implements Serializable {
     private int qty; //會議人數
     private LocalDateTime applydt; //申請日期
     private String itemName; //回傳會議室名稱
+    @RequiredString(groups={Eip06w010Case.Sequence.First.class}, label = "會議場地")
     private String roomId; //會議室編號
     private String itemId; //物品編號
     private String foodId; //餐點編號

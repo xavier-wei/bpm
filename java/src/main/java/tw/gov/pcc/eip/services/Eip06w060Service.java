@@ -110,6 +110,14 @@ public class Eip06w060Service extends OnlineRegService {
         roomIsableDao.deleteSingleData(caseData.getItemNo());
     }
 
+    /**
+     * 刪除 已過期禁用時間
+     * @param caseData
+     */
+    public void deletePastClass(Eip06w060Case caseData) {
+        roomIsableDao.deletePastData(caseData.getItemId());
+    }
+
 
     /**
      * 初始化時間 開始選單
