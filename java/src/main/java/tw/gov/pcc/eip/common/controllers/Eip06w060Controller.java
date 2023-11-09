@@ -78,6 +78,7 @@ public class Eip06w060Controller extends BaseController {
     public String partisable(@ModelAttribute(CASE_KEY) Eip06w060Case caseData) {
         try {
             log.debug("部分禁用 會議室管理");
+            eip06w060Service.deletePastClass(caseData);
             eip06w060Service.getRoomIsableList(caseData);
         } catch (Exception e) {
             log.error(ExceptionUtility.getStackTrace(e));
@@ -112,6 +113,7 @@ public class Eip06w060Controller extends BaseController {
             return QUERY_PAGE;
         }
         //重新取得狀態
+        eip06w060Service.deletePastClass(caseData);
         eip06w060Service.getRoomIsableList(caseData);
         return QUERY_PAGE;
     }
@@ -150,6 +152,7 @@ public class Eip06w060Controller extends BaseController {
             }
             setSystemMessage(getSaveSuccessMessage());
             //重新取得狀態
+            eip06w060Service.deletePastClass(caseData);
             eip06w060Service.getRoomIsableList(caseData);
         } catch (Exception e){
             log.error(ExceptionUtility.getStackTrace(e));

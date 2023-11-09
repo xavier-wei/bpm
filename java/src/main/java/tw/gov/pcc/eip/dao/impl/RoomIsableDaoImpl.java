@@ -102,6 +102,23 @@ public class RoomIsableDaoImpl extends BaseDao<RoomIsable> implements RoomIsable
     }
 
     @Override
+    public int deletePastData(String itemid) {
+        String sql=new StringBuilder()
+                .append(" DELETE T FROM " + TABLE_NAME + " T ")
+                .append(" WHERE  T.isabledate < convert(varchar, getdate(), 112)")
+                .append(" AND    T.itemid = :itemid").toString();
+
+        Map<String, Object> params=new HashMap<>();
+        params.put("itemid", itemid);
+        return getNamedParameterJdbcTemplate().update(sql, params);
+    }
+
+
+
+
+
+
+    @Override
     public List<RoomIsable> selectDataByItemId(String itemId){
         StringBuilder sql = new StringBuilder();
         sql.append(" SELECT ");

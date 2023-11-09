@@ -16,6 +16,8 @@ public interface RoomIsableDao {
 
 	public int deleteSingleData(String itemNo);
 
+	public int deletePastData(String itemId);
+
 	/**
 	 * 查詢 部分啟用會議室
 	 * @param itemId
@@ -30,6 +32,7 @@ public interface RoomIsableDao {
 	 * @return
 	 */
 	public List<RoomIsable> selectItemIdByDate(String itemId, String isableDate);
+
 
 
 }

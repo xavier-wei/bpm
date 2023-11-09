@@ -7,7 +7,7 @@
 <tags:layout>
     <jsp:attribute name="buttons">
     <!-- 選擇頁 -->
-        <tags:button id="btnPrint">列印<i class="fas fa-cog"></i></tags:button>
+        <tags:button id="btnPrint">列印<i class="fas fa-print"></i></tags:button>
         <tags:button id="btnClear">清除<i class="fas fa-eraser"></i></tags:button>
     </jsp:attribute>
     <jsp:attribute name="contents">

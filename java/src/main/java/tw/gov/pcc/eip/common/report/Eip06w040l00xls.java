@@ -137,9 +137,9 @@ public class Eip06w040l00xls extends XlsReport {
         printSetup.setPaperSize(HSSFPrintSetup.A4_PAPERSIZE);
 
         // 建立表頭
-        Row row0 = createRow(sheet, 0, cellAmountSheet, titleStyle);
-        row0.getSheet().addMergedRegion(new CellRangeAddress(0, 0, 0, 7));
-        row0.setHeightInPoints(20f);
+//        Row row0 = createRow(sheet, 0, cellAmountSheet, titleStyle);
+//        row0.getSheet().addMergedRegion(new CellRangeAddress(0, 0, 0, 7));
+//        row0.setHeightInPoints(20f);
         int dayOfWeek = DateUtility.getDayOfWeek(meetingdt, false) ;
 
         HSSFHeader xhd = (HSSFHeader)sheet.getHeader();
@@ -148,8 +148,8 @@ public class Eip06w040l00xls extends XlsReport {
                 HSSFHeader.endBold());
 
         // 報表資料標題
-        Row row1 = createRow(sheet, 1, cellAmountSheet, alignCenterTitle);
-        row1.setHeightInPoints(20f);
+        Row row0 = createRow(sheet, 0, cellAmountSheet, alignCenterTitle);
+        row0.setHeightInPoints(20f);
         setColumnWidth(sheet, 0, 20);
         setColumnWidth(sheet, 1, 8);
         setColumnWidth(sheet, 2, 20);
@@ -159,20 +159,23 @@ public class Eip06w040l00xls extends XlsReport {
         setColumnWidth(sheet, 6, 18);
         setColumnWidth(sheet, 7, 18);
 
-        setCellValue(row1, 0, "地點", alignCenterTitle);
-        setCellValue(row1, 1, "時間", alignCenterTitle);
-        setCellValue(row1, 2, "會議名稱", alignCenterTitle);
-        setCellValue(row1, 3, "主持人", alignCenterTitle);
-        setCellValue(row1, 4, "承辦單位", alignCenterTitle);
-        setCellValue(row1, 5, "人數", alignCenterTitle);
-        setCellValue(row1, 6, "餐點", alignCenterTitle);
-        setCellValue(row1, 7, "設備", alignCenterTitle);
+        setCellValue(row0, 0, "地點", alignCenterTitle);
+        setCellValue(row0, 1, "時間", alignCenterTitle);
+        setCellValue(row0, 2, "會議名稱", alignCenterTitle);
+        setCellValue(row0, 3, "主持人", alignCenterTitle);
+        setCellValue(row0, 4, "承辦單位", alignCenterTitle);
+        setCellValue(row0, 5, "人數", alignCenterTitle);
+        setCellValue(row0, 6, "餐點", alignCenterTitle);
+        setCellValue(row0, 7, "設備", alignCenterTitle);
+
+        // 設定列印時重複顯示表頭
+        sheet.setRepeatingRows(new CellRangeAddress(0, 0, 0, 7));
 
         // 資料 list 內容
         // 依照不同會議室分群
         Map<String, List<Eip06w040Report>> roomMap = list.stream()
                 .collect(Collectors.groupingBy(Eip06w040Report::getRoomName, LinkedHashMap::new, Collectors.toList()));
-        int rowCount = 2;
+        int rowCount = 1;
 //        int index = 1;
         for(List<Eip06w040Report> details: roomMap.values()) {
             Row row = createRow(sheet, rowCount, cellAmountSheet, alignLeft);
