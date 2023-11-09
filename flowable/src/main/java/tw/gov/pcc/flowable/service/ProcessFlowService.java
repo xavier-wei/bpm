@@ -161,7 +161,7 @@ public class ProcessFlowService {
      */
     private void skipIfSupervisorNoSign(String processKey, Map<String, Object> variables, String processInstanceId) {
         String[] supervisors = SupervisorSignerEnum.getSupervisors(processKey);
-        if (supervisors != null) {
+        if (supervisors.length > 0) {
             Arrays.stream(supervisors)
                     .filter(supervisor -> "NO_SIGN".equals(variables.get(supervisor)))
                     .forEach(supervisor -> {

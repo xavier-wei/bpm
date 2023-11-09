@@ -18,7 +18,7 @@ public enum SupervisorSignerEnum {
                 return supervisorSignerEnum.supervisors;
             }
         }
-        return null;
+        return new String[0];
 
     }
 

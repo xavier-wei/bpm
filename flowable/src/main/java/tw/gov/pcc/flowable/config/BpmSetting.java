@@ -1,7 +1,11 @@
 package tw.gov.pcc.flowable.config;
 
+import lombok.Getter;
+
 public class BpmSetting {
+    @Getter
     private static String url=null;
+    @Getter
     private static String token = null;
 
     private BpmSetting() {
@@ -15,11 +19,4 @@ public class BpmSetting {
         BpmSetting.token = token;
     }
 
-    public static String getUrl() {
-        return url;
-    }
-
-    public static String getToken() {
-        return token;
-    }
 }
