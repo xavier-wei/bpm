@@ -109,7 +109,6 @@ public class ProcessFlowService {
 
     // query自己未處理的任務(但扣除加簽中的)
     public List<TaskDTO> queryProcessingTask(String id) {
-        log.info("Id: {} query pending tasks", id);
 
         // 查出所有加簽任務
         List<ProcessInstance> additionalProcesses = runtimeService.createProcessInstanceQuery().processDefinitionKey("AdditionalProcess").list();
@@ -135,7 +134,6 @@ public class ProcessFlowService {
     }
 
     public Integer queryProcessingTaskNumbers(String id) {
-        log.info("Id: {} query pending tasks numbers", id);
         return queryProcessingTask(id).size();
     }
 
