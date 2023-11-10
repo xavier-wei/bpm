@@ -294,7 +294,7 @@ public class IsmsProcessResource {
     }
 
     @RequestMapping("/queryTask")
-    public List<Map<String, Object>> queryTask(@Valid @RequestPart(required = false) BpmFormQueryDto bpmFormQueryDto) {
+    public List<Map<String, Object>> queryTask(@RequestBody BpmFormQueryDto bpmFormQueryDto) {
         User userInfo = getUserInfo();
         log.info("ProcessL414Resource.java - queryTask - 193 :: " + userInfo.getUserId());
         log.info("ProcessL414Resource.java - queryTask - 194 :: " + bpmFormQueryDto);
@@ -372,7 +372,7 @@ public class IsmsProcessResource {
 
 
     @RequestMapping("/notify/queryTask")
-    public List<Map<String, Object>> notifyQueryTask(@Valid @RequestPart(required = false) BpmFormQueryDto bpmFormQueryDto) {
+    public List<Map<String, Object>> notifyQueryTask(@RequestBody BpmFormQueryDto bpmFormQueryDto) {
         User userInfo = getUserInfo();
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);

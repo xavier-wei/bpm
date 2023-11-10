@@ -321,9 +321,12 @@ export default defineComponent({
 
     const toQuery = () => {
       table.data = undefined;
-      const params = new FormData();
-      params.append('bpmFormQueryDto', new Blob([JSON.stringify(form)], {type: 'application/json'}));
-      axios.post(`/process/notify/queryTask`, params).then(({data}) => {
+      // const params = new FormData();
+      // params.append('bpmFormQueryDto', new Blob([JSON.stringify(form)], {type: 'application/json'}));
+      const body = {
+        bpmFormQueryDto: form,
+      };
+      axios.post(`/process/notify/queryTask`, body).then(({data}) => {
         queryStatus.value = true;
         table.data = [];
         if (data.length <= 0) return;
