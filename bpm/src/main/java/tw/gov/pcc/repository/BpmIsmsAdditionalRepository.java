@@ -182,6 +182,6 @@ public interface BpmIsmsAdditionalRepository extends JpaRepository<BpmIsmsAdditi
         @Param("selectTitle") String selectTitle);
 
 
-    Optional<BpmIsmsAdditional> findFirstByMainFormId(String mainFormId);
+    Optional<BpmIsmsAdditional> findFirstByMainFormIdAndProcessInstanceStatus(String mainFormId,String processInstanceStatus);
 
 }

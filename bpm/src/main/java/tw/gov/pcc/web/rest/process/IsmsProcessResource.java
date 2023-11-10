@@ -337,13 +337,14 @@ public class IsmsProcessResource {
         log.info("ProcessL414Resource.java - deleteProcessInstance - 206 :: " + request.getProcessInstanceId());
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
+
         HashMap<String, String> deleteRequest = new HashMap<>();
         deleteRequest.put(PROCESS_INSTANCE_ID, request.getProcessInstanceId());
         deleteRequest.put("token", token);
 
         // 查看是否此任務在加簽中，若是，則把加簽的processInstance也一併刪除
         bpmIsmsAdditionalRepository
-            .findFirstByMainFormId(request.getProcessInstanceId())
+            .findFirstByMainFormIdAndProcessInstanceStatus(request.getProcessInstanceId(),"0")
             .ifPresent(bpmIsmsAdditional -> {
                 deleteRequest.put("additionalProcessInstanceId", bpmIsmsAdditional.getProcessInstanceId());
             });
@@ -351,10 +352,7 @@ public class IsmsProcessResource {
         HttpEntity<String> requestEntity = new HttpEntity<>(gson.toJson(deleteRequest), headers);
         restTemplate.exchange(flowableProcessUrl + "/deleteProcess", HttpMethod.POST, requestEntity, String.class);
         BpmIsmsService service = (BpmIsmsService) applicationContext.getBean(Objects.requireNonNull(BpmIsmsServiceBeanNameEnum.getServiceBeanNameByKey(request.getKey())));
-        bpmIsmsAdditionalRepository.findFirstByMainFormId(request.getProcessInstanceId())
-            .ifPresent(bpmIsmsAdditional -> {
 
-            });
         //註銷流程後，需要把表單內的ProcessInstanceStatus改成3,來判斷此表單已註銷
         service.cancel(request.getProcessInstanceId());
     }
