@@ -57,7 +57,7 @@ public class ProcessResource {
 
     @PostMapping("/queryProcessingTaskNumbers")
     public ResponseEntity<Integer> queryProcessingTaskNumbers(@RequestBody String id) {
-        Integer i = service.queryProcessingTaskNumbers(id);
+        Integer i = service.queryProcessingTaskNumbers(id) == null ? 0 : service.queryProcessingTaskNumbers(id);
         log.info("Number of pending cases: {}",i);
         return ResponseEntity.ok().body(i);
     }
