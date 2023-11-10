@@ -228,7 +228,7 @@ public class IsmsProcessResource {
             int i = formId.indexOf("-");
             String key = formId.substring(0, i);
             BpmIsmsService service = (BpmIsmsService) applicationContext.getBean(Objects.requireNonNull(BpmIsmsServiceBeanNameEnum.getServiceBeanNameByKey(key)));
-            service.saveAppendixFiles( appendixFiles,dto, formId);
+            service.saveAppendixFiles(appendixFiles, dto, formId);
         }
 
         ResponseEntity<String> exchange = restTemplate.exchange(flowableProcessUrl + "/completeTask", HttpMethod.POST, requestEntity, String.class);
@@ -333,19 +333,30 @@ public class IsmsProcessResource {
     }
 
     @RequestMapping("/deleteProcessInstance")
-    public void deleteProcessInstance(@RequestBody ProcessInstanceIdRequestDTO Request) {
-        log.info("ProcessL414Resource.java - deleteProcessInstance - 206 :: " + Request.getProcessInstanceId());
+    public void deleteProcessInstance(@RequestBody ProcessInstanceIdRequestDTO request) {
+        log.info("ProcessL414Resource.java - deleteProcessInstance - 206 :: " + request.getProcessInstanceId());
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
         HashMap<String, String> deleteRequest = new HashMap<>();
-        deleteRequest.put(PROCESS_INSTANCE_ID, Request.getProcessInstanceId());
+        deleteRequest.put(PROCESS_INSTANCE_ID, request.getProcessInstanceId());
         deleteRequest.put("token", token);
+
+        // 查看是否此任務在加簽中，若是，則把加簽的processInstance也一併刪除
+        bpmIsmsAdditionalRepository
+            .findFirstByMainFormId(request.getProcessInstanceId())
+            .ifPresent(bpmIsmsAdditional -> {
+                deleteRequest.put("additionalProcessInstanceId", bpmIsmsAdditional.getProcessInstanceId());
+            });
+
         HttpEntity<String> requestEntity = new HttpEntity<>(gson.toJson(deleteRequest), headers);
         restTemplate.exchange(flowableProcessUrl + "/deleteProcess", HttpMethod.POST, requestEntity, String.class);
-        BpmIsmsService service = (BpmIsmsService) applicationContext.getBean(Objects.requireNonNull(BpmIsmsServiceBeanNameEnum.getServiceBeanNameByKey(Request.getKey())));
+        BpmIsmsService service = (BpmIsmsService) applicationContext.getBean(Objects.requireNonNull(BpmIsmsServiceBeanNameEnum.getServiceBeanNameByKey(request.getKey())));
+        bpmIsmsAdditionalRepository.findFirstByMainFormId(request.getProcessInstanceId())
+            .ifPresent(bpmIsmsAdditional -> {
 
+            });
         //註銷流程後，需要把表單內的ProcessInstanceStatus改成3,來判斷此表單已註銷
-        service.cancel(Request.getProcessInstanceId());
+        service.cancel(request.getProcessInstanceId());
     }
 
     @PostMapping("/getAllSubordinateTask")
