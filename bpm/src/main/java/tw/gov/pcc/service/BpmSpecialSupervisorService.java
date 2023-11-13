@@ -15,6 +15,7 @@ public class BpmSpecialSupervisorService {
 
     private final BpmSpecialSupervisorRepository bpmSpecialSupervisorRepository;
     private final BpmSpecialSupervisorMapper bpmSpecialSupervisorMapper;
+
     public BpmSpecialSupervisorService(BpmSpecialSupervisorRepository bpmSpecialSupervisorRepository, BpmSpecialSupervisorMapper bpmSpecialSupervisorMapper) {
         this.bpmSpecialSupervisorRepository = bpmSpecialSupervisorRepository;
         this.bpmSpecialSupervisorMapper = bpmSpecialSupervisorMapper;
@@ -29,12 +30,14 @@ public class BpmSpecialSupervisorService {
     public void save(BpmSpecialSupervisorDTO bpmSpecialSupervisorDTO) {
         bpmSpecialSupervisorRepository.save(bpmSpecialSupervisorMapper.toEntity(bpmSpecialSupervisorDTO));
     }
+
     @Transactional
     public void saveAll(List<BpmSpecialSupervisorDTO> bpmSpecialSupervisorDTOS) {
         bpmSpecialSupervisorRepository.saveAll(bpmSpecialSupervisorMapper.toEntity(bpmSpecialSupervisorDTOS));
 
     }
 
+    @Transactional
     public void delete(String id) {
         bpmSpecialSupervisorRepository.deleteById(id);
     }

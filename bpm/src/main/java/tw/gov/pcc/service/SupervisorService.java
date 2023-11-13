@@ -86,11 +86,5 @@ public class SupervisorService {
 
     }
 
-    // 利用申請者職稱及單位查出其上級簽核者
-//    public void setSupervisor(Map<String, Object> variables, String id, User user,String appTitle) {
-//
-//
-//        bpmSupervisorRepository.findById(new BpmSupervisorPrimayKey());
-//    }
 
 }

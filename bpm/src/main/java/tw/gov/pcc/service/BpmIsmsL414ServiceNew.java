@@ -29,7 +29,7 @@ import java.util.stream.Collectors;
 @Service("L414Service")
 public class BpmIsmsL414ServiceNew implements BpmIsmsService {
     private static final String REVIEWER = "BPM_CR_Reviewer";
-    private final String[] ROLE_IDS = {"BPM_IPT_Operator", "BPM_IPT_Mgr", "BPM_CR_Operator", REVIEWER,"BPM_CR_Mgr"};
+    private static final String[] ROLE_IDS = {"BPM_IPT_Operator", "BPM_IPT_Mgr", "BPM_CR_Operator", REVIEWER,"BPM_CR_Mgr"};
     private final Logger log = LoggerFactory.getLogger(BpmIsmsL414ServiceNew.class);
     private static final HashMap<UUID, BpmIsmsL414DTO> DTO_HOLDER = new HashMap<>();
     private static final HashMap<UUID, Map<String, Object>> VARIABLES_HOLDER = new HashMap<>();
@@ -118,7 +118,7 @@ public class BpmIsmsL414ServiceNew implements BpmIsmsService {
 
     @Override
     public HashMap<String, Object> saveBpmByPatch(HashMap<String, Object> variables, String form, List<BpmUploadFileDTO> dto, List<MultipartFile> appendixFiles, User userInfo) {
-        return null;
+        return new HashMap<>();
     }
 
 
@@ -141,6 +141,7 @@ public class BpmIsmsL414ServiceNew implements BpmIsmsService {
 
             signerIds.put(s, String.join(",", userIds));
         });
+
         variables.put("infoGroup", signerIds.get("BPM_IPT_Operator"));
         variables.put("seniorTechSpecialist", signerIds.get("BPM_IPT_Mgr"));
         variables.put("serverRoomOperator", signerIds.get("BPM_CR_Operator"));

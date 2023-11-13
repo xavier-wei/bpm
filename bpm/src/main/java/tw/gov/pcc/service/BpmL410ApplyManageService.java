@@ -1,9 +1,5 @@
 package tw.gov.pcc.service;
 
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Optional;
-import java.util.stream.Collectors;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -12,6 +8,10 @@ import tw.gov.pcc.domain.BpmL410ApplyManage;
 import tw.gov.pcc.repository.BpmL410ApplyManageRepository;
 import tw.gov.pcc.service.dto.BpmL410ApplyManageDTO;
 import tw.gov.pcc.service.mapper.BpmL410ApplyManageMapper;
+
+import java.util.LinkedList;
+import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * Service Implementation for managing {@link BpmL410ApplyManage}.
