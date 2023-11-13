@@ -1,6 +1,7 @@
 package tw.gov.pcc.utils;
 
 public class SeqTemp {
+
     private static String l414Seq = null;
     private static String l410Seq=null;
 

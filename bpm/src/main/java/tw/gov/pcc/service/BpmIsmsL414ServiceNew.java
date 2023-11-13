@@ -56,7 +56,7 @@ public class BpmIsmsL414ServiceNew implements BpmIsmsService {
 
     @Override
     @Transactional(rollbackFor = SQLException.class)
-    public void saveBpm(UUID uuid, String processInstanceId, TaskDTO taskDTO, List<BpmUploadFileDTO> dto, List<MultipartFile> appendixFiles) throws ResponseStatusException {
+    public synchronized void saveBpm(UUID uuid, String processInstanceId, TaskDTO taskDTO, List<BpmUploadFileDTO> dto, List<MultipartFile> appendixFiles) throws ResponseStatusException {
         BpmIsmsL414DTO bpmIsmsL414DTO = DTO_HOLDER.get(uuid);
 
         //取得表單最後的流水號
@@ -72,9 +72,10 @@ public class BpmIsmsL414ServiceNew implements BpmIsmsService {
         bpmIsmsL414DTO.setCreateUser(bpmIsmsL414DTO.getFilName());
 
         log.debug("Request to save EipBpmIsmsL414 : {}", bpmIsmsL414DTO);
-        BpmIsmsL414 bpmIsmsL414 = bpmIsmsL414Mapper.toEntity(bpmIsmsL414DTO);
 
         // 儲存表單
+        BpmIsmsL414 bpmIsmsL414 = bpmIsmsL414Mapper.toEntity(bpmIsmsL414DTO);
+
         bpmSignerListService.saveBpmSignerList(VARIABLES_HOLDER.get(uuid), formId);
 
         bpmIsmsL414Repository.save(bpmIsmsL414);
