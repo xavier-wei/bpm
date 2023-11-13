@@ -22,6 +22,7 @@ import tw.gov.pcc.service.dto.TaskDTO;
 import tw.gov.pcc.service.mapper.BpmIsmsL410Mapper;
 import tw.gov.pcc.service.mapper.BpmUploadFileMapper;
 import tw.gov.pcc.utils.SeqNumber;
+import tw.gov.pcc.utils.SeqTemp;
 
 import java.io.IOException;
 import java.sql.SQLException;
@@ -34,7 +35,7 @@ import java.util.stream.Collectors;
 public class BpmIsmsL410ServiceNew implements BpmIsmsService {
 
     // BPM_IPT_Operator 資推小組承辦人、 BPM_IPT_Mgr 簡任技正/科長 、 BPM_PR_Operator 人事室、BPM_SEC_Operator 秘書處
-    static final String BPM_IPT_OPERATOR ="BPM_IPT_Operator";
+    static final String BPM_IPT_OPERATOR = "BPM_IPT_Operator";
     private static final String[] ROLE_IDS = {BPM_IPT_OPERATOR, "BPM_IPT_Mgr", "BPM_PR_Operator", "BPM_SEC_Operator"};
 
     private final Logger log = LoggerFactory.getLogger(BpmIsmsL410ServiceNew.class);
@@ -74,13 +75,17 @@ public class BpmIsmsL410ServiceNew implements BpmIsmsService {
         BpmIsmsL410DTO bpmIsmsL410DTO = DTO_HOLDER.get(uuid);
         String formId;
         if (bpmIsmsL410DTO.getFormId() == null || bpmIsmsL410DTO.getFormId().isEmpty()) {
-            String lastFormId = !bpmIsmsL410Repository.getMaxFormId().isEmpty() ? bpmIsmsL410Repository.getMaxFormId().get(0).getFormId() : null;
+            //取得表單最後的流水號
+            String lastFormId = SeqTemp.getL410Seq();
             formId = bpmIsmsL410DTO.getFormName() + "-" + new SeqNumber().getNewSeq(lastFormId);
-            bpmIsmsL410DTO.setFormId(formId);
+            SeqTemp.setL410Seq(formId);
+//            lastFormId = !bpmIsmsL410Repository.getMaxFormId().isEmpty() ? bpmIsmsL410Repository.getMaxFormId().get(0).getFormId() : null;
+//            formId = bpmIsmsL410DTO.getFormName() + "-" + new SeqNumber().getNewSeq(lastFormId);
 
         } else {
             formId = bpmIsmsL410DTO.getFormId();
         }
+        bpmIsmsL410DTO.setFormId(formId);
         //取得表單最後的流水號
 
 //        存入table
