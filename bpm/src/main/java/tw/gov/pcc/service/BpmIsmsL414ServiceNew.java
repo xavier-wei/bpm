@@ -188,6 +188,17 @@ public class BpmIsmsL414ServiceNew implements BpmIsmsService {
         bpmIsmsL414Repository.save(bpmIsmsL414);
         saveSignStatus(bpmIsmsL414);
     }
+    @Override
+    public void saveAppendixFiles(List<MultipartFile> appendixFiles,List<BpmUploadFileDTO> dto, String formId) {
+        //儲存照片
+        bpmUploadFileService.savePhoto(dto, appendixFiles, formId);
+    }
+
+    @Override
+    public void removeHolder(UUID uuid) {
+        DTO_HOLDER.remove(uuid);
+        VARIABLES_HOLDER.remove(uuid);
+    }
 
     private void saveSignStatus(BpmIsmsL414 bpmIsmsL414) {
         BpmSignStatus bpmSignStatus = new BpmSignStatus();
@@ -201,9 +212,5 @@ public class BpmIsmsL414ServiceNew implements BpmIsmsService {
         bpmSignStatusService.saveBpmSignStatus(bpmSignStatus, bpmIsmsL414.getFormId());
     }
 
-    @Override
-    public void saveAppendixFiles(List<MultipartFile> appendixFiles,List<BpmUploadFileDTO> dto, String formId) {
-          //儲存照片
-        bpmUploadFileService.savePhoto(dto, appendixFiles, formId);
-    }
+
 }

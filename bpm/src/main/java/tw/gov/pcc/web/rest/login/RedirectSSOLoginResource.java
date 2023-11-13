@@ -1,4 +1,4 @@
-package tw.gov.pcc.web.rest.loginBpm;
+package tw.gov.pcc.web.rest.login;
 
 import com.google.gson.Gson;
 import org.slf4j.Logger;
@@ -30,13 +30,17 @@ public class RedirectSSOLoginResource {
         this.userService = userService;
     }
 
+    /*
+     * 因為是使用Iframe鑲嵌BPM，所以兩邊實際上沒有關係，也無法共用cookies，所以必須利用這隻當作BPM登入的依據
+     * 且為了避免快取，必須第一步就先把session清掉，不清就會抓到上個人的...
+     */
     @RequestMapping("/api/loginBpm")
     public ModelAndView redirectSSOLogin(
         @RequestParam("referer") String referer,
         @RequestParam("path") String path,
         @RequestParam("token") String token, HttpServletResponse response) {
         session.invalidate();
-        String id;
+        String id; // 藉由傳來的AES加密資訊解出登入者的id登入
         try {
             id = AESDecryption.decrypt(token);
         } catch (Exception e) {
@@ -46,11 +50,13 @@ public class RedirectSSOLoginResource {
 
         User userInfo = userService.getUserInfo(id);
         log.info("User {} 登入bpm系統", userInfo);
-        session.removeAttribute(USER_INFO);
+        session.removeAttribute(USER_INFO); // 避免問題再清一次
         session.setAttribute(USER_INFO, userInfo);
+        // referer基本上會是EIP的domain網址，path則是對方從EIP那邊哪個頁面導過來的就直接導回去
         String redirect = "redirect:" + referer + "/eip" + path;
         response.setHeader("isBpmLogin", "true");
         return new ModelAndView(redirect).addObject("bpm", "true");
+
     }
 
 

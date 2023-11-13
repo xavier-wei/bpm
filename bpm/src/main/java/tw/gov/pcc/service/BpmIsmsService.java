@@ -34,4 +34,6 @@ public interface BpmIsmsService {
     void cancel(String processInstanceId);
 
     void saveAppendixFiles(List<MultipartFile> appendixFiles,List<BpmUploadFileDTO> dto, String formId);
+
+    void removeHolder(UUID uuid);
 }

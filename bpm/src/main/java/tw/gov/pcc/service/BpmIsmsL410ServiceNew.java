@@ -280,6 +280,12 @@ public class BpmIsmsL410ServiceNew implements BpmIsmsService {
     }
 
     @Override
+    public void removeHolder(UUID uuid) {
+        DTO_HOLDER.remove(uuid);
+        VARIABLES_HOLDER.remove(uuid);
+    }
+
+    @Override
     public void saveAppendixFiles(List<MultipartFile> appendixFiles, List<BpmUploadFileDTO> dto, String formId) {
         //儲存照片
         if (appendixFiles != null) {

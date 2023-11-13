@@ -73,6 +73,7 @@ public class BpmSignerListService {
 
     }
 
+    // 將上述資訊製成 BpmSignerList並放入List
     @NotNull
     private static BpmSignerList getBpmSignerList(String formId, String key, User user, String ids, List<User> users, Map<String, Integer> sortMap) {
         BpmSignerList bpmSignerList = new BpmSignerList();
