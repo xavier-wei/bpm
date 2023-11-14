@@ -160,7 +160,7 @@ public class BpmIsmsL410ServiceNew implements BpmIsmsService {
     }
 
     @Override
-    public UUID setVariables(HashMap<String, Object> variables, String form, User userInfo) {
+    public synchronized UUID setVariables(HashMap<String, Object> variables, String form, User userInfo) {
         BpmIsmsL410DTO bpmIsmsL410DTO = gson.fromJson(form, BpmIsmsL410DTO.class);
         UUID uuid = UUID.randomUUID();
         DTO_HOLDER.put(uuid, bpmIsmsL410DTO);
