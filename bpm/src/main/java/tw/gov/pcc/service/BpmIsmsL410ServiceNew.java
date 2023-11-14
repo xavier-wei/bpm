@@ -22,7 +22,6 @@ import tw.gov.pcc.service.dto.TaskDTO;
 import tw.gov.pcc.service.mapper.BpmIsmsL410Mapper;
 import tw.gov.pcc.service.mapper.BpmUploadFileMapper;
 import tw.gov.pcc.utils.SeqNumber;
-import tw.gov.pcc.utils.SeqTemp;
 
 import java.io.IOException;
 import java.sql.SQLException;
@@ -70,17 +69,15 @@ public class BpmIsmsL410ServiceNew implements BpmIsmsService {
 
     @Override
     @Transactional(rollbackFor = SQLException.class)
-    public void saveBpm(UUID uuid, String processInstanceId, TaskDTO taskDTO, List<BpmUploadFileDTO> dto, List<MultipartFile> appendixFiles) {
+    public synchronized void saveBpm(UUID uuid, String processInstanceId, TaskDTO taskDTO, List<BpmUploadFileDTO> dto, List<MultipartFile> appendixFiles) {
 
         BpmIsmsL410DTO bpmIsmsL410DTO = DTO_HOLDER.get(uuid);
         String formId;
         if (bpmIsmsL410DTO.getFormId() == null || bpmIsmsL410DTO.getFormId().isEmpty()) {
+            List<BpmIsmsL410> maxFormId = bpmIsmsL410Repository.getMaxFormId();
             //取得表單最後的流水號
-            String lastFormId = SeqTemp.getL410Seq();
+            String lastFormId = !maxFormId.isEmpty() ? maxFormId.get(0).getFormId() : null;
             formId = bpmIsmsL410DTO.getFormName() + "-" + new SeqNumber().getNewSeq(lastFormId);
-            SeqTemp.setL410Seq(formId);
-//            lastFormId = !bpmIsmsL410Repository.getMaxFormId().isEmpty() ? bpmIsmsL410Repository.getMaxFormId().get(0).getFormId() : null;
-//            formId = bpmIsmsL410DTO.getFormName() + "-" + new SeqNumber().getNewSeq(lastFormId);
 
         } else {
             formId = bpmIsmsL410DTO.getFormId();

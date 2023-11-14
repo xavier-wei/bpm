@@ -19,7 +19,6 @@ import tw.gov.pcc.service.dto.EndEventDTO;
 import tw.gov.pcc.service.dto.TaskDTO;
 import tw.gov.pcc.service.mapper.BpmIsmsL414Mapper;
 import tw.gov.pcc.utils.SeqNumber;
-import tw.gov.pcc.utils.SeqTemp;
 
 import java.sql.SQLException;
 import java.sql.Timestamp;
@@ -30,7 +29,7 @@ import java.util.stream.Collectors;
 @Service("L414Service")
 public class BpmIsmsL414ServiceNew implements BpmIsmsService {
     private static final String REVIEWER = "BPM_CR_Reviewer";
-    private static final String[] ROLE_IDS = {"BPM_IPT_Operator", "BPM_IPT_Mgr", "BPM_CR_Operator", REVIEWER,"BPM_CR_Mgr"};
+    private static final String[] ROLE_IDS = {"BPM_IPT_Operator", "BPM_IPT_Mgr", "BPM_CR_Operator", REVIEWER, "BPM_CR_Mgr"};
 
     private final Logger log = LoggerFactory.getLogger(BpmIsmsL414ServiceNew.class);
     private static final HashMap<UUID, BpmIsmsL414DTO> DTO_HOLDER = new HashMap<>();
@@ -58,11 +57,10 @@ public class BpmIsmsL414ServiceNew implements BpmIsmsService {
     @Transactional(rollbackFor = SQLException.class)
     public synchronized void saveBpm(UUID uuid, String processInstanceId, TaskDTO taskDTO, List<BpmUploadFileDTO> dto, List<MultipartFile> appendixFiles) throws ResponseStatusException {
         BpmIsmsL414DTO bpmIsmsL414DTO = DTO_HOLDER.get(uuid);
-
+        List<BpmIsmsL414> maxFormId = bpmIsmsL414Repository.getMaxFormId();
         //取得表單最後的流水號
-        String lastFormId = SeqTemp.getL414Seq();
+        String lastFormId = !maxFormId.isEmpty() ? maxFormId.get(0).getFormId() : null;
         String formId = bpmIsmsL414DTO.getFormName() + "-" + new SeqNumber().getNewSeq(lastFormId);
-        SeqTemp.setL414Seq(formId);
         bpmIsmsL414DTO.setFormId(formId);
         bpmIsmsL414DTO.setProcessInstanceId(processInstanceId);
         bpmIsmsL414DTO.setProcessInstanceStatus("0");
@@ -183,6 +181,7 @@ public class BpmIsmsL414ServiceNew implements BpmIsmsService {
         bpmIsmsL414.setUpdateTime(Timestamp.valueOf(LocalDateTime.now()));
         bpmIsmsL414Repository.save(bpmIsmsL414);
     }
+
     @Override
     public void cancel(String processInstanceId) {
         BpmIsmsL414 bpmIsmsL414 = bpmIsmsL414Repository.findFirstByProcessInstanceId(processInstanceId);
@@ -191,8 +190,9 @@ public class BpmIsmsL414ServiceNew implements BpmIsmsService {
         bpmIsmsL414Repository.save(bpmIsmsL414);
         saveSignStatus(bpmIsmsL414);
     }
+
     @Override
-    public void saveAppendixFiles(List<MultipartFile> appendixFiles,List<BpmUploadFileDTO> dto, String formId) {
+    public void saveAppendixFiles(List<MultipartFile> appendixFiles, List<BpmUploadFileDTO> dto, String formId) {
         //儲存照片
         bpmUploadFileService.savePhoto(dto, appendixFiles, formId);
     }
