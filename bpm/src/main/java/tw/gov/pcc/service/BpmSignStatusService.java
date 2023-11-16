@@ -56,6 +56,7 @@ public class BpmSignStatusService {
         bpmSignStatusRepository.save(bpmSignStatus);
     }
 
+
     public void saveBpmSignStatus(BpmIsmsAdditionalDTO bpmIsmsAdditionalDTO) {
         User user = getUserInfo();
         BpmSignStatusDTO bpmSignStatusDTO = new BpmSignStatusDTO();
@@ -77,7 +78,7 @@ public class BpmSignStatusService {
     // ID用不到，純粹用來overload方法
     public void saveBpmSignStatus(BpmSignStatus bpmSignStatus,String Id) {
 
-        bpmSignStatus.setSignResult("99");
+        bpmSignStatus.setSignResult("9");
         bpmSignStatus.setDirections("申請者");
         bpmSignStatus.setOpinion("(撤銷)");
         bpmSignStatus.setSigningDatetime(Timestamp.from(Instant.now()));

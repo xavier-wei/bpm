@@ -62,8 +62,7 @@ public class IsmsProcessResource {
     private final BpmSignerListService bpmSignerListService;
     private final SubordinateTaskService subordinateTaskService;
 
-    public IsmsProcessResource(ApplicationContext applicationContext, HttpSession httpSession, BpmSignStatusService bpmSignStatusService, BpmSignStatusMapper bpmSignStatusMapper, BpmIsmsAdditionalRepository bpmIsmsAdditionalRepository, BpmIsmsL410Mapper bpmIsmsL410Mapper, BpmIsmsL410Repository bpmIsmsL410Repository, SubordinateTaskService subordinateTaskService, EipcodeDaoImpl eipcodeDao, BpmSignerListService bpmSignerListService) {
-        this.applicationContext = applicationContext;
+    public IsmsProcessResource(HttpSession httpSession, BpmSignStatusService bpmSignStatusService, BpmSignStatusMapper bpmSignStatusMapper, BpmIsmsAdditionalRepository bpmIsmsAdditionalRepository, BpmIsmsL410Mapper bpmIsmsL410Mapper, BpmIsmsL410Repository bpmIsmsL410Repository, SubordinateTaskService subordinateTaskService, EipcodeDaoImpl eipcodeDao, BpmSignerListService bpmSignerListService, ApplicationContext applicationContext) {
         this.httpSession = httpSession;
         this.bpmSignStatusService = bpmSignStatusService;
         this.bpmSignStatusMapper = bpmSignStatusMapper;
@@ -73,6 +72,7 @@ public class IsmsProcessResource {
         this.subordinateTaskService = subordinateTaskService;
         this.token = eipcodeDao.findByCodeKindOrderByScodeno("BPM_TOKEN").get(0).getCodename();
         this.bpmSignerListService = bpmSignerListService;
+        this.applicationContext = applicationContext;
     }
 
     @PostMapping(path = "/start/{key}", consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
@@ -88,29 +88,43 @@ public class IsmsProcessResource {
         log.info("IsmsProcessResource.java - start - 73 :: " + dto);
         log.info("IsmsProcessResource.java - start - 74 :: " + appendixFiles);
         // 取得存在HttpSession的user資訊
-        User userInfo = getUserInfo();
+        User userInfo = getUserInfo(); // 取得存在HttpSession的user資訊
 
-//        // 產生要送給流程引擎的request dto
+        // 產生要送給流程引擎的request dto
         ProcessReqDTO processReqDTO = new ProcessReqDTO();
+        // 產生要送給流程引擎的variables(解析成流程定義的各種參數用)
         HashMap<String, Object> variables = new HashMap<>();
+        // 由前端傳來的key，取得對應的service
         BpmIsmsService service = (BpmIsmsService) applicationContext.getBean(Objects.requireNonNull(BpmIsmsServiceBeanNameEnum.getServiceBeanNameByKey(key)));
+
+        // 產生一個UUID，用來當作key，存放在DTO_HOLDER裡，等待流程引擎回傳task dto時，再取出來用
         UUID uuid = service.setVariables(variables, form.get(key), userInfo);
+
         processReqDTO.setFormName(key);
         processReqDTO.setVariables(variables);
+
+        // 送出request dto
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
         HttpEntity<String> requestEntity = new HttpEntity<>(gson.toJson(processReqDTO), headers);
         ResponseEntity<String> exchange = restTemplate.exchange(flowableProcessUrl + "/startProcess", HttpMethod.POST, requestEntity, String.class);
+
         String processInstanceId;
         TaskDTO taskDTO;
+
+        // 如果流程引擎回傳200，代表成功，取得task dto
         if (exchange.getStatusCodeValue() == 200) {
             taskDTO = gson.fromJson(exchange.getBody(), TaskDTO.class);
             processInstanceId = taskDTO.getProcessInstanceId();
         } else {
             log.error("flowableProcess - startProcess - 90 :: {} ", "flowableConnectionError");
+            // 如果流程引擎回傳非200，代表連線異常，通知前端，並刪除DTO_HOLDER(VARIABLE_HOLDER)裡的資料
+            service.removeHolder(uuid);
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("流程引擎連線異常，請聯絡管理員");
+
         }
 
+        // 如果流程引擎回傳200，代表成功，將表單資料存入資料庫
         try {
 
             if (!Objects.equals(bpmIsmsL410DTO, null)) {
@@ -125,6 +139,8 @@ public class IsmsProcessResource {
             log.error("BpmSaveError - startProcess - 90 :: {} ", "BpmSaveError");
             // 如果BPM寫入失敗，通知flowable原流程撤銷
             deleteProcessWhenSaveBpmFailed(processInstanceId);
+            // 刪除DTO_HOLDER(VARIABLE_HOLDER)裡的資料
+            service.removeHolder(uuid);
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("表單寫入失敗，流程已取消，請稍候再試");
         }
         log.info("IsmsProcessResource.java - start - 102 :: " + processInstanceId);
@@ -135,7 +151,7 @@ public class IsmsProcessResource {
     @PatchMapping(path = "/patch/{key}", consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
     public String patch(
         @PathVariable String key,
-        @Valid @RequestPart("form") HashMap<String, String> form,
+        @Valid @RequestPart("form") Map<String, String> form,
         @Valid @RequestPart(name = "fileDto", required = false) List<BpmUploadFileDTO> dto,
         @RequestPart(name = "appendixFiles", required = false) List<MultipartFile> appendixFiles) throws IOException {
 
@@ -149,7 +165,7 @@ public class IsmsProcessResource {
     @PostMapping(path = "/edit/{key}", consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
     public ResponseEntity<String> editProcess(
         @PathVariable String key,
-        @Valid @RequestPart("form") HashMap<String, String> form,
+        @Valid @RequestPart("form") Map<String, String> form,
         @Valid @RequestPart(name = "fileDto", required = false) List<BpmUploadFileDTO> dto,
         @RequestPart(name = "appendixFiles", required = false) List<MultipartFile> appendixFiles
     ) {
@@ -193,6 +209,10 @@ public class IsmsProcessResource {
     }
 
 
+    /*
+     * @param formId 流程實例ID
+     * @param CompleteReqDTO 完成任務的request dto
+     */
     @PostMapping(path = "/completeTask/{formId}", consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
     public ResponseEntity<String> completeTask(
         @RequestPart("completeReqDTO") CompleteReqDTO completeReqDTO,
@@ -215,7 +235,7 @@ public class IsmsProcessResource {
             service.saveBpmByPatch(completeReqDTO.getForm().get(key));
         }
 
-        //判斷variables裡的value，2代表前端送補件過來，需要把表單的IS_SUBMIT改回0 補件的人才能編輯
+        // 判斷variables裡的value，2代表前端送補件過來，需要把表單的IS_SUBMIT改回0 補件的人才能編輯
         if (completeReqDTO.getVariables() != null && completeReqDTO.getVariables().containsValue("2")) {
             int i = formId.indexOf("-");
             String key = formId.substring(0, i);
@@ -223,15 +243,18 @@ public class IsmsProcessResource {
             service.saveBpmByPatchToIsSubmit(completeReqDTO.getProcessInstanceId());
         }
 
-        //簽核過程或加簽時，都有需要讓簽核人員可以上傳檔案。
+        // 簽核過程或加簽時，都有需要讓簽核人員可以上傳檔案。
         if (appendixFiles != null) {
             int i = formId.indexOf("-");
             String key = formId.substring(0, i);
             BpmIsmsService service = (BpmIsmsService) applicationContext.getBean(Objects.requireNonNull(BpmIsmsServiceBeanNameEnum.getServiceBeanNameByKey(key)));
-            service.saveAppendixFiles( appendixFiles,dto, formId);
+            service.saveAppendixFiles(appendixFiles, dto, formId);
         }
 
+        // 送出request dto
         ResponseEntity<String> exchange = restTemplate.exchange(flowableProcessUrl + "/completeTask", HttpMethod.POST, requestEntity, String.class);
+
+        // 如果流程引擎回傳200，代表成功，將簽核狀態存入資料庫
         if (exchange.getStatusCodeValue() == 200) {
             BpmSignStatus bpmSignStatus = bpmSignStatusMapper.toEntity(new BpmSignStatusDTO(completeReqDTO, formId));
             bpmSignStatusService.saveBpmSignStatus(bpmSignStatus);
@@ -252,7 +275,7 @@ public class IsmsProcessResource {
         }
         log.warn("ProcessL414Resource.java - receiveEndEvent - 203 ::{} ", "流程發生意外終止");
 
-//        throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR,"流程發生意外終止");
+        throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "流程發生意外終止");
     }
 
 
@@ -294,7 +317,7 @@ public class IsmsProcessResource {
     }
 
     @RequestMapping("/queryTask")
-    public List<Map<String, Object>> queryTask(@Valid @RequestPart(required = false) BpmFormQueryDto bpmFormQueryDto) {
+    public List<Map<String, Object>> queryTask(@RequestBody BpmFormQueryDto bpmFormQueryDto) {
         User userInfo = getUserInfo();
         log.info("ProcessL414Resource.java - queryTask - 193 :: " + userInfo.getUserId());
         log.info("ProcessL414Resource.java - queryTask - 194 :: " + bpmFormQueryDto);
@@ -327,25 +350,34 @@ public class IsmsProcessResource {
         ResponseEntity<String> exchange = restTemplate.exchange(flowableProcessUrl + "/queryProcessingTaskNumbers", HttpMethod.POST, requestEntity, String.class);
 
         if (exchange.getStatusCodeValue() == 200) {
-            return Integer.parseInt(exchange.getBody());
+            return Integer.parseInt(Objects.requireNonNull(exchange.getBody()));
         }
         return 0;
     }
 
     @RequestMapping("/deleteProcessInstance")
-    public void deleteProcessInstance(@RequestBody ProcessInstanceIdRequestDTO Request) {
-        log.info("ProcessL414Resource.java - deleteProcessInstance - 206 :: " + Request.getProcessInstanceId());
+    public void deleteProcessInstance(@RequestBody ProcessInstanceIdRequestDTO request) {
+        log.info("ProcessL414Resource.java - deleteProcessInstance - 206 :: " + request.getProcessInstanceId());
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
+
         HashMap<String, String> deleteRequest = new HashMap<>();
-        deleteRequest.put(PROCESS_INSTANCE_ID, Request.getProcessInstanceId());
+        deleteRequest.put(PROCESS_INSTANCE_ID, request.getProcessInstanceId());
         deleteRequest.put("token", token);
+
+        // 查看是否此任務在加簽中，若是，則把加簽的processInstance也一併刪除
+        bpmIsmsAdditionalRepository
+            .findFirstByMainFormIdAndProcessInstanceStatus(request.getProcessInstanceId(), "0")
+            .ifPresent(bpmIsmsAdditional ->
+                deleteRequest.put("additionalProcessInstanceId", bpmIsmsAdditional.getProcessInstanceId())
+            );
+
         HttpEntity<String> requestEntity = new HttpEntity<>(gson.toJson(deleteRequest), headers);
         restTemplate.exchange(flowableProcessUrl + "/deleteProcess", HttpMethod.POST, requestEntity, String.class);
-        BpmIsmsService service = (BpmIsmsService) applicationContext.getBean(Objects.requireNonNull(BpmIsmsServiceBeanNameEnum.getServiceBeanNameByKey(Request.getKey())));
+        BpmIsmsService service = (BpmIsmsService) applicationContext.getBean(Objects.requireNonNull(BpmIsmsServiceBeanNameEnum.getServiceBeanNameByKey(request.getKey())));
 
         //註銷流程後，需要把表單內的ProcessInstanceStatus改成3,來判斷此表單已註銷
-        service.cancel(Request.getProcessInstanceId());
+        service.cancel(request.getProcessInstanceId());
     }
 
     @PostMapping("/getAllSubordinateTask")
@@ -372,7 +404,7 @@ public class IsmsProcessResource {
 
 
     @RequestMapping("/notify/queryTask")
-    public List<Map<String, Object>> notifyQueryTask(@Valid @RequestPart(required = false) BpmFormQueryDto bpmFormQueryDto) {
+    public List<Map<String, Object>> notifyQueryTask(@RequestBody BpmFormQueryDto bpmFormQueryDto) {
         User userInfo = getUserInfo();
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);

@@ -10,6 +10,7 @@ import tw.gov.pcc.repository.custom.BpmIsmsAdditionalRepositoryCustom;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 @Repository
 public interface BpmIsmsAdditionalRepository extends JpaRepository<BpmIsmsAdditional, String>, BpmIsmsAdditionalRepositoryCustom {
@@ -179,5 +180,8 @@ public interface BpmIsmsAdditionalRepository extends JpaRepository<BpmIsmsAdditi
         @Param("selectName") String selectName,
         @Param("selectUnit") String selectUnit,
         @Param("selectTitle") String selectTitle);
+
+
+    Optional<BpmIsmsAdditional> findFirstByMainFormIdAndProcessInstanceStatus(String mainFormId,String processInstanceStatus);
 
 }

@@ -57,7 +57,7 @@ public class ProcessResource {
 
     @PostMapping("/queryProcessingTaskNumbers")
     public ResponseEntity<Integer> queryProcessingTaskNumbers(@RequestBody String id) {
-        Integer i = service.queryProcessingTaskNumbers(id);
+        Integer i = service.queryProcessingTaskNumbers(id) == null ? 0 : service.queryProcessingTaskNumbers(id);
         log.info("Number of pending cases: {}",i);
         return ResponseEntity.ok().body(i);
     }
@@ -89,8 +89,12 @@ public class ProcessResource {
         String token = eipCodeService.findCodeName("BPM_TOKEN");
         if (token.equals(deleteRequest.get("token"))) {
             String processInstanceId = deleteRequest.get("processInstanceId");
+            String additionalProcessInstanceId = deleteRequest.get("additionalProcessInstanceId");
             try {
                 service.deleteProcessInstance(processInstanceId);
+                if(additionalProcessInstanceId != null){
+                    service.deleteProcessInstance(additionalProcessInstanceId);
+                }
             } catch (Exception e) {
                 log.error(e.getMessage());
                 throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "刪除失敗");

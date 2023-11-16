@@ -34,11 +34,12 @@ import java.util.stream.Collectors;
 public class BpmIsmsL410ServiceNew implements BpmIsmsService {
 
     // BPM_IPT_Operator 資推小組承辦人、 BPM_IPT_Mgr 簡任技正/科長 、 BPM_PR_Operator 人事室、BPM_SEC_Operator 秘書處
-    private final String[] ROLE_IDS = {"BPM_IPT_Operator", "BPM_IPT_Mgr", "BPM_PR_Operator", "BPM_SEC_Operator"};
+    static final String BPM_IPT_OPERATOR = "BPM_IPT_Operator";
+    private static final String[] ROLE_IDS = {BPM_IPT_OPERATOR, "BPM_IPT_Mgr", "BPM_PR_Operator", "BPM_SEC_Operator"};
 
     private final Logger log = LoggerFactory.getLogger(BpmIsmsL410ServiceNew.class);
     private static final HashMap<UUID, BpmIsmsL410DTO> DTO_HOLDER = new HashMap<>();
-    private static final HashMap<UUID,Map<String,Object>> VARIABLES_HOLDER = new HashMap<>();
+    private static final HashMap<UUID, Map<String, Object>> VARIABLES_HOLDER = new HashMap<>();
     private final Gson gson = new Gson();
 
     private final BpmIsmsL410Repository bpmIsmsL410Repository;
@@ -68,18 +69,20 @@ public class BpmIsmsL410ServiceNew implements BpmIsmsService {
 
     @Override
     @Transactional(rollbackFor = SQLException.class)
-    public void saveBpm(UUID uuid, String processInstanceId, TaskDTO taskDTO, List<BpmUploadFileDTO> dto, List<MultipartFile> appendixFiles) {
+    public synchronized void saveBpm(UUID uuid, String processInstanceId, TaskDTO taskDTO, List<BpmUploadFileDTO> dto, List<MultipartFile> appendixFiles) {
 
-        BpmIsmsL410DTO bpmIsmsL410DTO =  DTO_HOLDER.get(uuid);
+        BpmIsmsL410DTO bpmIsmsL410DTO = DTO_HOLDER.get(uuid);
         String formId;
-        if (bpmIsmsL410DTO.getFormId()==null||bpmIsmsL410DTO.getFormId().isEmpty()) {
-            String lastFormId = !bpmIsmsL410Repository.getMaxFormId().isEmpty() ? bpmIsmsL410Repository.getMaxFormId().get(0).getFormId() : null;
+        if (bpmIsmsL410DTO.getFormId() == null || bpmIsmsL410DTO.getFormId().isEmpty()) {
+            List<BpmIsmsL410> maxFormId = bpmIsmsL410Repository.getMaxFormId();
+            //取得表單最後的流水號
+            String lastFormId = !maxFormId.isEmpty() ? maxFormId.get(0).getFormId() : null;
             formId = bpmIsmsL410DTO.getFormName() + "-" + new SeqNumber().getNewSeq(lastFormId);
-            bpmIsmsL410DTO.setFormId(formId);
 
-        }else {
+        } else {
             formId = bpmIsmsL410DTO.getFormId();
         }
+        bpmIsmsL410DTO.setFormId(formId);
         //取得表單最後的流水號
 
 //        存入table
@@ -89,7 +92,7 @@ public class BpmIsmsL410ServiceNew implements BpmIsmsService {
         bpmIsmsL410DTO.setUpdateUser(bpmIsmsL410DTO.getFilName());
         bpmIsmsL410DTO.setCreateTime(Timestamp.valueOf(LocalDateTime.now()));
         bpmIsmsL410DTO.setCreateUser(bpmIsmsL410DTO.getFilName());
-        log.info("BpmIsmsL410ServiceNew.java - saveBpm - 71 :: " + bpmIsmsL410DTO );
+        log.info("BpmIsmsL410ServiceNew.java - saveBpm - 71 :: " + bpmIsmsL410DTO);
         BpmIsmsL410 bpmIsmsL410 = bpmIsmsL410Mapper.toEntity(bpmIsmsL410DTO);
 
         bpmIsmsL410Repository.save(bpmIsmsL410);
@@ -127,7 +130,7 @@ public class BpmIsmsL410ServiceNew implements BpmIsmsService {
     }
 
     @Override
-    public HashMap<String, Object> saveBpmByPatch(HashMap<String, Object> variables, String form, List<BpmUploadFileDTO> dto, List<MultipartFile> appendixFiles,User userInfo) {
+    public HashMap<String, Object> saveBpmByPatch(HashMap<String, Object> variables, String form, List<BpmUploadFileDTO> dto, List<MultipartFile> appendixFiles, User userInfo) {
         // 取得dto (包含修改過的值)
         BpmIsmsL410DTO bpmIsmsL410DTO = gson.fromJson(form, BpmIsmsL410DTO.class);
         variables.put("processInstanceId", bpmIsmsL410DTO.getProcessInstanceId());
@@ -136,12 +139,12 @@ public class BpmIsmsL410ServiceNew implements BpmIsmsService {
         bpmIsmsL410DTO.setUpdateUser(bpmIsmsL410DTO.getFilName());
         String formId = bpmIsmsL410DTO.getFormId();
 
-        supervisorService.setSupervisor(variables,bpmIsmsL410DTO.getFilEmpid(),userInfo);
+        supervisorService.setSupervisor(variables, bpmIsmsL410DTO.getFilEmpid(), userInfo);
 
         // 設定取得所有簽核者的Id
         HashMap<String, String> signerIdsHashMap = getSignerIdsHashMap(variables);
         // 設定需要申請的Task有哪些及各task的Signer
-        setSys(variables, bpmIsmsL410DTO,signerIdsHashMap);
+        setSys(variables, bpmIsmsL410DTO, signerIdsHashMap);
 
 
         int i = bpmSignerListService.deleteAllByFormId(formId);
@@ -157,17 +160,17 @@ public class BpmIsmsL410ServiceNew implements BpmIsmsService {
     }
 
     @Override
-    public UUID setVariables(HashMap<String, Object> variables, String form, User userInfo) {
+    public synchronized UUID setVariables(HashMap<String, Object> variables, String form, User userInfo) {
         BpmIsmsL410DTO bpmIsmsL410DTO = gson.fromJson(form, BpmIsmsL410DTO.class);
         UUID uuid = UUID.randomUUID();
         DTO_HOLDER.put(uuid, bpmIsmsL410DTO);
         variables.put("applier", bpmIsmsL410DTO.getFilEmpid());
         variables.put("isSubmit", bpmIsmsL410DTO.getIsSubmit());
         // 填入上級
-        supervisorService.setSupervisor(variables,bpmIsmsL410DTO.getFilEmpid(),userInfo);
+        supervisorService.setSupervisor(variables, bpmIsmsL410DTO.getFilEmpid(), userInfo);
         HashMap<String, String> signerIdsHashMap = getSignerIdsHashMap(variables);
         // 設定需要申請的Task有哪些及各task的Signer
-        setSys(variables, bpmIsmsL410DTO,signerIdsHashMap);
+        setSys(variables, bpmIsmsL410DTO, signerIdsHashMap);
         VARIABLES_HOLDER.put(uuid, variables);
         DTO_HOLDER.put(uuid, bpmIsmsL410DTO);
 
@@ -183,7 +186,7 @@ public class BpmIsmsL410ServiceNew implements BpmIsmsService {
             List<String> userIds = userRoles.stream().filter(userRole -> userRole.getRoleId().equals(s)).map(UserRole::getUserId).collect(Collectors.toList());
             signerIds.put(s, String.join(",", userIds));
         });
-        variables.put("infoGroup", signerIds.get("BPM_IPT_Operator"));
+        variables.put("infoGroup", signerIds.get(BPM_IPT_OPERATOR));
         variables.put("seniorTechSpecialist", signerIds.get("BPM_IPT_Mgr"));
         // BPM_IPT_Operator 資推小組承辦人、 BPM_IPT_Mgr 簡任技正/科長 、 BPM_PR_Operator 人事室、BPM_SEC_Operator 秘書處
         return signerIds;
@@ -191,26 +194,26 @@ public class BpmIsmsL410ServiceNew implements BpmIsmsService {
 
 
     // 設定需要申請的Task及各task的Signer
-    private static void setSys(HashMap<String, Object> variables, BpmIsmsL410DTO bpmIsmsL410DTO,HashMap<String, String> signerIds ) {
+    private static void setSys(HashMap<String, Object> variables, BpmIsmsL410DTO bpmIsmsL410DTO, HashMap<String, String> signerIds) {
         HashMap<String, Object> sysNameMap = new HashMap<>();
 
-        bpmIsmsL410DTO.getL410Variables().forEach(s-> s.keySet().forEach(sysName->sysNameMap.put(sysName,s.get(sysName))));
-        sysNameMap.keySet().forEach(sysName->{
-            if (sysNameMap.get(sysName)==null) {
+        bpmIsmsL410DTO.getL410Variables().forEach(s -> s.keySet().forEach(sysName -> sysNameMap.put(sysName, s.get(sysName))));
+        sysNameMap.keySet().forEach(sysName -> {
+            if (sysNameMap.get(sysName) == null) {
                 variables.put(sysName, "0");
-            }else {
+            } else {
                 variables.put(sysName, "1");
             }
         });
         HashMap<String, String> signerMapTemp = new HashMap<>();
         variables.keySet()
             .stream()
-            .filter(s-> s.startsWith("is")&& !"isSubmit".equals(s))
-            .filter(s->"1".equals(variables.get(s)))
-            .forEach(s->{
+            .filter(s -> s.startsWith("is") && !"isSubmit".equals(s))
+            .filter(s -> "1".equals(variables.get(s)))
+            .forEach(s -> {
                 String siner = s.replaceFirst("is", "") + "Signer";
                 signerMapTemp.put(siner, signerIds.get(SysSignerEnum.getSinerUnitBySigner(siner)));
-        });
+            });
         signerMapTemp.keySet().forEach(s -> variables.put(s, signerMapTemp.get(s)));
         signerMapTemp.clear();
 
@@ -227,9 +230,9 @@ public class BpmIsmsL410ServiceNew implements BpmIsmsService {
     @Override
     public Map<String, Object> getBpm(String formId) {
 
-        List<Map<String,Object>> bpmIsmsL410 =  bpmIsmsL410Repository.findByFormId(formId);
+        List<Map<String, Object>> bpmIsmsL410 = bpmIsmsL410Repository.findByFormId(formId);
 
-        if(!bpmIsmsL410.isEmpty()) return bpmIsmsL410Repository.findByFormId(formId).get(0);
+        if (!bpmIsmsL410.isEmpty()) return bpmIsmsL410Repository.findByFormId(formId).get(0);
 
         return Map.of();
     }
@@ -279,7 +282,13 @@ public class BpmIsmsL410ServiceNew implements BpmIsmsService {
     }
 
     @Override
-    public void saveAppendixFiles( List<MultipartFile> appendixFiles,List<BpmUploadFileDTO> dto,String formId) {
+    public void removeHolder(UUID uuid) {
+        DTO_HOLDER.remove(uuid);
+        VARIABLES_HOLDER.remove(uuid);
+    }
+
+    @Override
+    public void saveAppendixFiles(List<MultipartFile> appendixFiles, List<BpmUploadFileDTO> dto, String formId) {
         //儲存照片
         if (appendixFiles != null) {
             for (int i = 0; i < appendixFiles.size(); i++) {
@@ -298,19 +307,19 @@ public class BpmIsmsL410ServiceNew implements BpmIsmsService {
 enum SysSignerEnum {
 
     HR_SYS("HrSysSigner", "BPM_PR_Operator"),
-    AD_SYS("AdSysSigner", "BPM_IPT_Operator"),
+    AD_SYS("AdSysSigner", BpmIsmsL410ServiceNew.BPM_IPT_OPERATOR),
     OD_SYS("OdSysSigner", "BPM_SEC_Operator"),
     MEETING_ROOM("MeetingRoomSigner", "BPM_SEC_Operator"),
-    EMAIL_SYS("EmailSysSigner","BPM_IPT_Operator"),
-    WEB_SITE("WebSiteSigner","BPM_IPT_Operator"),
-    PCC_PIS("PccPisSigner","BPM_IPT_Operator"),
-    ENG_AND_PRJ_INFO_SYS("EngAndPrjInfoSysSigner","BPM_IPT_Operator"),
-    REV_SYS("RevSysSigner","BPM_IPT_Operator"),
-    BID_SYS("BidSysSigner","BPM_IPT_Operator"),
-    REC_SYS("RecSysSigner","BPM_IPT_Operator"),
-    OTHER_SYS_1("OtherSys1Signer","BPM_IPT_Operator"),
-    OTHER_SYS_2("OtherSys2Signer","BPM_IPT_Operator"),
-    OTHER_SYS_3("OtherSys3Signer","BPM_IPT_Operator");
+    EMAIL_SYS("EmailSysSigner", BpmIsmsL410ServiceNew.BPM_IPT_OPERATOR),
+    WEB_SITE("WebSiteSigner", BpmIsmsL410ServiceNew.BPM_IPT_OPERATOR),
+    PCC_PIS("PccPisSigner", BpmIsmsL410ServiceNew.BPM_IPT_OPERATOR),
+    ENG_AND_PRJ_INFO_SYS("EngAndPrjInfoSysSigner", BpmIsmsL410ServiceNew.BPM_IPT_OPERATOR),
+    REV_SYS("RevSysSigner", BpmIsmsL410ServiceNew.BPM_IPT_OPERATOR),
+    BID_SYS("BidSysSigner", BpmIsmsL410ServiceNew.BPM_IPT_OPERATOR),
+    REC_SYS("RecSysSigner", BpmIsmsL410ServiceNew.BPM_IPT_OPERATOR),
+    OTHER_SYS_1("OtherSys1Signer", BpmIsmsL410ServiceNew.BPM_IPT_OPERATOR),
+    OTHER_SYS_2("OtherSys2Signer", BpmIsmsL410ServiceNew.BPM_IPT_OPERATOR),
+    OTHER_SYS_3("OtherSys3Signer", BpmIsmsL410ServiceNew.BPM_IPT_OPERATOR);
 
     private final String signer;
     private final String signerUnit;
@@ -328,7 +337,6 @@ enum SysSignerEnum {
         }
         return null;
     }
-
 
 
 }

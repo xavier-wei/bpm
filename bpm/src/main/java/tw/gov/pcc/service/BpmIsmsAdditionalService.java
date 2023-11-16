@@ -17,7 +17,6 @@ import tw.gov.pcc.service.mapper.BpmIsmsAdditionalMapper;
 import tw.gov.pcc.service.mapper.BpmSignStatusMapper;
 import tw.gov.pcc.utils.SeqNumber;
 
-import java.io.IOException;
 import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
@@ -113,6 +112,11 @@ public class BpmIsmsAdditionalService implements BpmIsmsService{
 
     @Override
     public void saveBpmByPatchToIsSubmit(String formId) {
+    }
+
+    @Override
+    public void removeHolder(UUID uuid) {
+        DTO_HOLDER.remove(uuid);
     }
 
     @Override

@@ -1,6 +1,6 @@
 package tw.gov.pcc.service.dto;
 
-public class BpmAbnormalSupervisorDTO {
+public class BpmSpecialSupervisorDTO {
     private String pecard;
     private String unitName;
     private String pename;
@@ -139,7 +139,7 @@ public class BpmAbnormalSupervisorDTO {
 
     @Override
     public String toString() {
-        return "BpmAbnormalSupervisorDTO{" +
+        return "BpmSpecialSupervisorDTO{" +
             "pecard='" + pecard + '\'' +
             ", unitName='" + unitName + '\'' +
             ", pename='" + pename + '\'' +

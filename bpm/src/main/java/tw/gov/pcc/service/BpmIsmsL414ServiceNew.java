@@ -29,7 +29,8 @@ import java.util.stream.Collectors;
 @Service("L414Service")
 public class BpmIsmsL414ServiceNew implements BpmIsmsService {
     private static final String REVIEWER = "BPM_CR_Reviewer";
-    private final String[] ROLE_IDS = {"BPM_IPT_Operator", "BPM_IPT_Mgr", "BPM_CR_Operator", REVIEWER,"BPM_CR_Mgr"};
+    private static final String[] ROLE_IDS = {"BPM_IPT_Operator", "BPM_IPT_Mgr", "BPM_CR_Operator", REVIEWER, "BPM_CR_Mgr"};
+
     private final Logger log = LoggerFactory.getLogger(BpmIsmsL414ServiceNew.class);
     private static final HashMap<UUID, BpmIsmsL414DTO> DTO_HOLDER = new HashMap<>();
     private static final HashMap<UUID, Map<String, Object>> VARIABLES_HOLDER = new HashMap<>();
@@ -54,13 +55,12 @@ public class BpmIsmsL414ServiceNew implements BpmIsmsService {
 
     @Override
     @Transactional(rollbackFor = SQLException.class)
-    public void saveBpm(UUID uuid, String processInstanceId, TaskDTO taskDTO, List<BpmUploadFileDTO> dto, List<MultipartFile> appendixFiles) throws ResponseStatusException {
+    public synchronized void saveBpm(UUID uuid, String processInstanceId, TaskDTO taskDTO, List<BpmUploadFileDTO> dto, List<MultipartFile> appendixFiles) throws ResponseStatusException {
         BpmIsmsL414DTO bpmIsmsL414DTO = DTO_HOLDER.get(uuid);
-
+        List<BpmIsmsL414> maxFormId = bpmIsmsL414Repository.getMaxFormId();
         //取得表單最後的流水號
-        String lastFormId = !bpmIsmsL414Repository.getMaxFormId().isEmpty() ? bpmIsmsL414Repository.getMaxFormId().get(0).getFormId() : null;
+        String lastFormId = !maxFormId.isEmpty() ? maxFormId.get(0).getFormId() : null;
         String formId = bpmIsmsL414DTO.getFormName() + "-" + new SeqNumber().getNewSeq(lastFormId);
-
         bpmIsmsL414DTO.setFormId(formId);
         bpmIsmsL414DTO.setProcessInstanceId(processInstanceId);
         bpmIsmsL414DTO.setProcessInstanceStatus("0");
@@ -70,9 +70,10 @@ public class BpmIsmsL414ServiceNew implements BpmIsmsService {
         bpmIsmsL414DTO.setCreateUser(bpmIsmsL414DTO.getFilName());
 
         log.debug("Request to save EipBpmIsmsL414 : {}", bpmIsmsL414DTO);
-        BpmIsmsL414 bpmIsmsL414 = bpmIsmsL414Mapper.toEntity(bpmIsmsL414DTO);
 
         // 儲存表單
+        BpmIsmsL414 bpmIsmsL414 = bpmIsmsL414Mapper.toEntity(bpmIsmsL414DTO);
+
         bpmSignerListService.saveBpmSignerList(VARIABLES_HOLDER.get(uuid), formId);
 
         bpmIsmsL414Repository.save(bpmIsmsL414);
@@ -118,7 +119,7 @@ public class BpmIsmsL414ServiceNew implements BpmIsmsService {
 
     @Override
     public HashMap<String, Object> saveBpmByPatch(HashMap<String, Object> variables, String form, List<BpmUploadFileDTO> dto, List<MultipartFile> appendixFiles, User userInfo) {
-        return null;
+        return new HashMap<>();
     }
 
 
@@ -141,6 +142,7 @@ public class BpmIsmsL414ServiceNew implements BpmIsmsService {
 
             signerIds.put(s, String.join(",", userIds));
         });
+
         variables.put("infoGroup", signerIds.get("BPM_IPT_Operator"));
         variables.put("seniorTechSpecialist", signerIds.get("BPM_IPT_Mgr"));
         variables.put("serverRoomOperator", signerIds.get("BPM_CR_Operator"));
@@ -179,6 +181,7 @@ public class BpmIsmsL414ServiceNew implements BpmIsmsService {
         bpmIsmsL414.setUpdateTime(Timestamp.valueOf(LocalDateTime.now()));
         bpmIsmsL414Repository.save(bpmIsmsL414);
     }
+
     @Override
     public void cancel(String processInstanceId) {
         BpmIsmsL414 bpmIsmsL414 = bpmIsmsL414Repository.findFirstByProcessInstanceId(processInstanceId);
@@ -186,6 +189,18 @@ public class BpmIsmsL414ServiceNew implements BpmIsmsService {
         bpmIsmsL414.setUpdateTime(Timestamp.valueOf(LocalDateTime.now()));
         bpmIsmsL414Repository.save(bpmIsmsL414);
         saveSignStatus(bpmIsmsL414);
+    }
+
+    @Override
+    public void saveAppendixFiles(List<MultipartFile> appendixFiles, List<BpmUploadFileDTO> dto, String formId) {
+        //儲存照片
+        bpmUploadFileService.savePhoto(dto, appendixFiles, formId);
+    }
+
+    @Override
+    public void removeHolder(UUID uuid) {
+        DTO_HOLDER.remove(uuid);
+        VARIABLES_HOLDER.remove(uuid);
     }
 
     private void saveSignStatus(BpmIsmsL414 bpmIsmsL414) {
@@ -200,9 +215,5 @@ public class BpmIsmsL414ServiceNew implements BpmIsmsService {
         bpmSignStatusService.saveBpmSignStatus(bpmSignStatus, bpmIsmsL414.getFormId());
     }
 
-    @Override
-    public void saveAppendixFiles(List<MultipartFile> appendixFiles,List<BpmUploadFileDTO> dto, String formId) {
-          //儲存照片
-        bpmUploadFileService.savePhoto(dto, appendixFiles, formId);
-    }
+
 }

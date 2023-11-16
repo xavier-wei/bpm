@@ -254,10 +254,13 @@ export default defineComponent({
     const toQuery = () => {
       table.data = undefined;
       query.value = '1';
-      const params = new FormData();
-      params.append('bpmFormQueryDto', new Blob([JSON.stringify(form)], {type: 'application/json'}));
-      params.append('isNotify', new Blob([JSON.stringify(false)], {type: 'application/json'}));
-      axios.post(`/process/queryTask`, params).then(({data}) => {
+      // const params = new FormData();
+      // params.append('bpmFormQueryDto', new Blob([JSON.stringify(form)], {type: 'application/json'}));
+      // params.append('isNotify', new Blob([JSON.stringify(false)], {type: 'application/json'}));
+      const body = {
+        bpmFormQueryDto: form,
+      };
+      axios.post(`/process/queryTask`, body).then(({data}) => {
         queryStatus.value = true;
         table.data = [];
         if (data.length <= 0) return;
@@ -279,9 +282,12 @@ export default defineComponent({
       table.data = undefined;
       query.value = '2';
       const params = new FormData();
-      params.append('bpmFormQueryDto', new Blob([JSON.stringify(form)], {type: 'application/json'}));
-      params.append('isNotify', new Blob([JSON.stringify(false)], {type: 'application/json'}));
-      axios.post(`/process/getAllSubordinateTask`, params).then(({data}) => {
+      // params.append('bpmFormQueryDto', new Blob([JSON.stringify(form)], {type: 'application/json'}));
+      // params.append('isNotify', new Blob([JSON.stringify(false)], {type: 'application/json'}));
+      const body = {
+        bpmFormQueryDto: form,
+      };
+      axios.post(`/process/getAllSubordinateTask`, body).then(({data}) => {
         queryStatus.value = true;
         table.data = [];
         if (data.length <= 0) return;

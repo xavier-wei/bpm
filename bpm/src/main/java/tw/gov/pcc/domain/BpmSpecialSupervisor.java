@@ -7,8 +7,8 @@ import javax.persistence.Table;
 import java.io.Serializable;
 
 @Entity
-@Table(schema = "dbo",name = "BPM_ABNORMAL_SUPERVISOR")
-public class BpmAbnormalSupervisor implements Serializable {
+@Table(schema = "dbo",name = "BPM_SPECIAL_SUPERVISOR")
+public class BpmSpecialSupervisor implements Serializable {
 
     @Id
     @Column(name = "PECARD")
@@ -171,7 +171,7 @@ public class BpmAbnormalSupervisor implements Serializable {
 
     @Override
     public String toString() {
-        return "BpmAbnormalSupervisor{" +
+        return "BpmSpecialSupervisor{" +
             ", unitName='" + unitName + '\'' +
             ", pecard='" + pecard + '\'' +
             ", pename='" + pename + '\'' +

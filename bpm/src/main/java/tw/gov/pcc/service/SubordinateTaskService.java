@@ -18,7 +18,7 @@ public class SubordinateTaskService {
         return subordinateRepository
             .executeQuery(pecard)
             .stream()
-            .map(e -> (String)e.get("PECARD"))
+            .map(e -> (String) e.get("PECARD"))
             .collect(Collectors.toList());
     }
 
