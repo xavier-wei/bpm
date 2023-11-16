@@ -97,4 +97,4 @@ jhipster:
 
 # application:
 flowable:
-  url: http://192.168.1.191:9973/process
+  url: http://192.168.2.91:9973/process
