@@ -61,6 +61,8 @@ public class Eip07w030Service {
 				data.setUsing_time_s(car.getUsing_time_s());
 				data.setUsing_time_e(car.getUsing_time_e());
 				data.setApply_memo(car.getApply_memo());
+				data.setNum_of_people(car.getNum_of_people());
+				data.setDestination(car.getDestination());
 				Eipcode eipcode = new Eipcode();
 				eipcode.setCodekind("CARPROCESSSTATUS");
 				eipcode.setCodeno(car.getCarprocess_status());

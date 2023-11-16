@@ -153,7 +153,7 @@ public class Eip03w020Service {
         mixCase.setAllStDt(km.getAllStDt()); //全案列管日期
         mixCase.setClsDt(km.getClsDt()); //結案日期
         mixCase.setCreDept(deptsDao.findByPk(km.getCreDept()).getDept_name());
-        mixCase.setCreUser(usersDao.selectByKey(km.getCreUser()).getUser_name());
+        mixCase.setCreUser(getUserName(km.getCreUser()));
 //        mixCase.setCreDt(km.getCreDt() == null? "": km.getCreDt().format(fmt).replaceAll("-",""));
         String creDt = DateUtility.parseLocalDateTimeToChineseDateTime(km.getCreDt(),true);
         creDt = DateUtility.formatChineseDateTimeString(creDt,false);
@@ -161,7 +161,7 @@ public class Eip03w020Service {
 //        mixCase.setUpdDt(km.getUpdDt() == null? "": km.getUpdDt().format(fmt).replaceAll("-",""));
         if (km.getUpdDt() != null){
             mixCase.setUpdDept(deptsDao.findByPk(km.getUpdDept()).getDept_name());
-            mixCase.setUpdUser(usersDao.selectByKey(km.getUpdUser()).getUser_name());
+            mixCase.setUpdUser(getUserName(km.getUpdUser()));
             String updDt = DateUtility.parseLocalDateTimeToChineseDateTime(km.getUpdDt(),true);
             updDt = DateUtility.formatChineseDateTimeString(updDt,false);
             mixCase.setUpdDt(updDt);
@@ -225,7 +225,7 @@ public class Eip03w020Service {
 
             innerMap.put("rptDeptName", rptDeptName.toString());   //指定填報單位
             innerMap.put("rptUserName", rptUserName.toString());    //指定填報人員
-            innerMap.put("rptUpdUser", list.get(0).getRptUpdUser() != null? usersDao.selectByKey(list.get(0).getRptUpdUser()).getUser_name() : ""); //填報更新人員
+            innerMap.put("rptUpdUser", list.get(0).getRptUpdUser() != null? getUserName(list.get(0).getRptUpdUser()) : ""); //填報更新人員
             String rptUpdDt = DateUtility.parseLocalDateTimeToChineseDateTime(list.get(0).getRptUpdDt(), true);
             if(StringUtils.isNotBlank(rptUpdDt)){
                 rptUpdDt = rptUpdDt.substring(0,3) + "/" + rptUpdDt.substring(3,5) + "/" + rptUpdDt.substring(5,7) + "  " + rptUpdDt.substring(7,9) + ":" + rptUpdDt.substring(9,11) + ":" + rptUpdDt.substring(11);
@@ -235,7 +235,7 @@ public class Eip03w020Service {
             innerMap.put("supCont", list.get(0).getSupCont());    //回應內容
             innerMap.put("supAgree", list.get(0).getSupAgree());   //是否同意解列(Y/N)
             innerMap.put("supDept", list.get(0).getSupDept() != null? deptsDao.findByPk(list.get(0).getSupDept()).getDept_name():"");    //回應人員所屬部門
-            innerMap.put("supUser", list.get(0).getSupUser()!= null? usersDao.selectByKey(list.get(0).getSupUser()).getUser_name():"");    //回應人員
+            innerMap.put("supUser", list.get(0).getSupUser()!= null? getUserName(list.get(0).getSupUser()):"");    //回應人員
 
             String supDt = DateUtility.parseLocalDateTimeToChineseDateTime(list.get(0).getSupDt(), true);
             if(StringUtils.isNotBlank(supDt)){
@@ -275,9 +275,13 @@ public class Eip03w020Service {
                     keepTrkDtlDao.updateForApplyProgress(ktd);
 
                     // 若為要求解列(即KeepTrkDtl.RptAskEnd=Y者)，須通知解列人員
+                    //1108 申請解列時，改通知KEEPTRKMST.CREUSER」
                     if(innerMap.get("rptAskEnd").equals("Y")){
                         List<String> receiverIDList = new ArrayList<>();
-                        receiverIDList.add("AGREEMAN");
+                        KeepTrkMst ktm = new KeepTrkMst();
+                        ktm.setTrkID(ktd.getTrkID());
+                        ktm = keepTrkMstDao.selectDataByPrimaryKey(ktm);
+                        receiverIDList.add(ktm.getCreUser());
                         sendMail(receiverIDList, "003", ktd);
                     }
                 }
@@ -286,15 +290,8 @@ public class Eip03w020Service {
 
     //取得相關部門email後寄發
     public void sendMail(List<String> receiverIDList, String trkStatus, KeepTrkDtl ktd ){
-        List<Eipcode> codeNameList = eipcodeDao.getCodeNameList(receiverIDList);
-        List<String> newCodeNameList = new ArrayList<>();
-        for (Eipcode eipcode : codeNameList){
-            if (eipcode.getCodename() != null){
-                newCodeNameList.addAll(Arrays.asList(eipcode.getCodename().split(",")));
-            }
-        }
-        if (newCodeNameList.size() > 0){
-            List<Users> emailList = usersDao.getEmailList(newCodeNameList);
+        if (receiverIDList.size() > 0){
+            List<Users> emailList = usersDao.getEmailList(receiverIDList);
             for (Users users : emailList) {
                 log.debug("發送郵件至:" + users.getEmail());
                 List<Eipcode> content = eipcodeDao.findByCodeKindScodeno("TRKMAILMSG", trkStatus);
@@ -308,5 +305,15 @@ public class Eip03w020Service {
                 mailService.sendEmailNow(subject, users.getEmail(), mailMsg);
             }
         }
+    }
+
+    /**
+     * userDao 依userCode查詢userName
+     * 查詢成功返回userName 若無則返回員工代碼
+     * @param userCode
+     * @return
+     */
+    public String getUserName (String userCode){
+        return usersDao.selectByKey(userCode) == null? userCode : usersDao.selectByKey(userCode).getUser_name();
     }
 }

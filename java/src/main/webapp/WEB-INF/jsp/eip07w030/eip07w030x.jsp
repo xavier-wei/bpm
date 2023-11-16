@@ -45,7 +45,8 @@
                             <th class="align-middle"  style="width: 10%">派車單號</th>
                             <th style="width: 10%">申請人<br>申請單位</th>
                             <th style="width: 20%">用車日期<br>用車時間起迄</th>
-                            <th class="align-middle"  style="width: 40%">用車事由</th>
+
+                            <th class="align-middle"  style="width: 30%">用車事由</th>
                             <th class="align-middle"  style="width: 10%">表單狀態</th>
                         </thead>
                         <c:forEach items="${caseData.dataList}" var="item" varStatus="status">

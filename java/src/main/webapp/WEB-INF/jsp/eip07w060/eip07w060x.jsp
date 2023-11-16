@@ -416,7 +416,7 @@
 									<th class="text-center" width=20%><span style="color: red;">*</span>出場公里數</th>
 									<th class="text-center" width=20%><span style="color: red;">*</span>回場公里數</th>
 									<th class="text-center" width=20%><span style="color: red;">*</span>行駛公里數</th>
-									<th class="text-center" width=20%><span style="color: red;">*</span>耗油公里數</th>
+									<th class="text-center" width=20%>耗油公升數</th>
 								</tr>
 							</thead>
 						    <tbody>

@@ -3,10 +3,10 @@ package tw.gov.pcc.eip.dao.impl;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.stereotype.Repository;
+import org.springframework.util.CollectionUtils;
 
 import tw.gov.pcc.common.annotation.DaoTable;
 import tw.gov.pcc.common.framework.dao.BaseDao;
@@ -105,8 +105,9 @@ public class MsgdepositdirDaoImpl extends BaseDao<Msgdepositdir> implements Msgd
         Map<String, Object> params = new HashMap<>();
         params.put("attr", attr);
         params.put("deptId", deptId);
-        return Optional.ofNullable(getNamedParameterJdbcTemplate().query(sql.toString(), params,
-                BeanPropertyRowMapper.newInstance(Msgdepositdir.class)).get(0)).orElse(null);
+        List<Msgdepositdir> list = getNamedParameterJdbcTemplate().query(sql.toString(), params,
+                BeanPropertyRowMapper.newInstance(Msgdepositdir.class));
+        return CollectionUtils.isEmpty(list) ? null : list.get(0);
     }
 
 }

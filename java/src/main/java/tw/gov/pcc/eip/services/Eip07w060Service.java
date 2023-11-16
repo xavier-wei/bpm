@@ -179,9 +179,6 @@ public class Eip07w060Service {
 			if(StringUtils.isBlank(caseData.getMilage())) {
 				bindingResult.reject(null, "行駛公里數為必填欄位");
 			}
-			if(StringUtils.isBlank(caseData.getGasUsed())) {
-				bindingResult.reject(null, "耗油公里數為必填欄位");
-			}
 			String timeResult = validStartEndTimeList(caseData.getStartH(), caseData.getStartM(), caseData.getEndH(), caseData.getEndM());
 			if("1".equals(timeResult)) {
 				bindingResult.reject(null, "開出時間及到達時間為必填欄位");

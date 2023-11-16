@@ -50,14 +50,16 @@
 				<table id="qryListTable" class="table">
 					<thead data-orderable="true">
 						<tr>
-						<th style="width: 5%">全選<input type="checkbox" id="dataListTabcheckAllP" name="dataListTabcheckAllP"></th>
-						<th style="width: 8%">派車單號</th>
+						<th style="width: 4%">全選<input type="checkbox" id="dataListTabcheckAllP" name="dataListTabcheckAllP"></th>
+						<th style="width: 6%">派車單號</th>
 						<th style="width: 10%">申請人</th>
 						<th style="width: 10%">申請單位</th>
-						<th style="width: 5%">用車日期</th>
+						<th style="width: 4%">用車日期</th>
 						<th style="width: 5%">申請用車時間起迄</th>
-						<th style="width: 20%">用車事由</th>
-						<th style="width: 8%">表單狀態</th>
+						<th style="width: 8%">目的地</th>
+                        <th style="width: 5%">用車人數</th>
+						<th style="width: 14%">用車事由</th>
+						<th style="width: 5%">表單狀態</th>
 						</tr>
 					</thead>
 					<tbody>
@@ -71,6 +73,8 @@
 							<td><func:dept deptid="${item.apply_dept}"/></td>
 							<td><func:minguo value="${item.using_date}"/></td>
 							<td><func:timeconvert value="${item.using_time_s}"/>~<func:timeconvert value="${item.using_time_e}"/></td>
+							<td><c:out value="${item.destination}"/></td>
+							<td><c:out value="${item.num_of_people}"/></td>
 							<td class="text-left">
 								<span class="ellipsisStr">
 								<c:out value="${item.apply_memo}"/>
