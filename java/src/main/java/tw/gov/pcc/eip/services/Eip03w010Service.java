@@ -215,7 +215,7 @@ public class Eip03w010Service {
 //        caseData.setCreUser(ktm.getCreUser());
 //        caseData.setCreDept(ktm.getCreDept());
         caseData.setCreDept(deptsDao.findByPk(ktm.getCreDept()).getDept_name());
-        caseData.setCreUser(usersDao.selectByKey(ktm.getCreUser()).getUser_name());
+        caseData.setCreUser(getUserName(ktm.getCreUser()));
         String creDt = DateUtility.parseLocalDateTimeToChineseDateTime(ktm.getCreDt(),true);
         creDt = DateUtility.formatChineseDateTimeString(creDt,false);
         caseData.setCreDt(creDt);
@@ -224,7 +224,7 @@ public class Eip03w010Service {
 //        caseData.setUpdUser(ktm.getUpdUser() != null? usersDao.selectByKey(ktm.getUpdUser()).getUser_name() : "");
 //        caseData.setUpdDept(ktm.getUpdDept() != null? deptsDao.findByPk(ktm.getUpdDept()).getDept_name() : "");
         if(ktm.getUpdUser() != null && !ktm.getUpdUser().equals("")){
-            caseData.setUpdUser(usersDao.selectByKey(ktm.getUpdUser()).getUser_name());
+            caseData.setUpdUser(getUserName(ktm.getUpdUser()));
         }
         if(ktm.getUpdDept() != null && !ktm.getUpdDept().equals("")){
             caseData.setUpdDept(deptsDao.findByPk(ktm.getUpdDept()).getDept_name());
@@ -388,7 +388,7 @@ public class Eip03w010Service {
 //        mixCase.setCreDept(km.getCreDept());
 //        mixCase.setCreUser(km.getCreUser());
         mixCase.setCreDept(deptsDao.findByPk(km.getCreDept()).getDept_name());
-        mixCase.setCreUser(usersDao.selectByKey(km.getCreUser()).getUser_name());
+        mixCase.setCreUser(getUserName(km.getCreUser()));
 //        mixCase.setCreDt(km.getCreDt() == null? "": km.getCreDt().format(fmt).replaceAll("-",""));
         String creDt = DateUtility.parseLocalDateTimeToChineseDateTime(km.getCreDt(),true);
         creDt = DateUtility.formatChineseDateTimeString(creDt,false);
@@ -399,7 +399,7 @@ public class Eip03w010Service {
             mixCase.setUpdDept(deptsDao.findByPk(km.getUpdDept()).getDept_name());
         }
         if(km.getUpdUser() != null && !km.getUpdUser().equals("")){
-            mixCase.setUpdUser(usersDao.selectByKey(km.getUpdUser()).getUser_name());
+            mixCase.setUpdUser(getUserName(km.getUpdUser()));
         }
         //        mixCase.setUpdDt(km.getUpdDt() == null? "": km.getUpdDt().format(fmt).replaceAll("-",""));
         String updDt = DateUtility.parseLocalDateTimeToChineseDateTime(km.getUpdDt(),true);
@@ -443,7 +443,7 @@ public class Eip03w010Service {
             innerMap.put("rptAskEnd", StringUtils.equals(list.get(0).getRptAskEnd(), "Y")? "是" : "否");  //是否要求解列(Y/N)
             innerMap.put("rptDept", list.get(0).getRptDept());   //指定填報單位
             innerMap.put("rptUser", list.get(0).getRptUser());    //指定填報人員
-            innerMap.put("rptUpdUser", list.get(0).getRptUpdUser() != null? usersDao.selectByKey(list.get(0).getRptUpdUser()).getUser_name() : ""); //填報更新人員
+            innerMap.put("rptUpdUser", list.get(0).getRptUpdUser() != null? getUserName(list.get(0).getRptUpdUser()) : ""); //填報更新人員
             List<Depts> rptDeptNameList = new ArrayList<>();
             List<Users> rptUserNameList = new ArrayList<>();
             if (list.get(0).getRptDept() != null){
@@ -478,7 +478,7 @@ public class Eip03w010Service {
             innerMap.put("supCont", list.get(0).getSupCont());    //回應內容
             innerMap.put("supAgree", list.get(0).getSupAgree());   //是否同意解列(Y/N)
             innerMap.put("supDept", list.get(0).getSupDept() != null? deptsDao.findByPk(list.get(0).getSupDept()).getDept_name():"");    //回應人員所屬部門
-            innerMap.put("supUser", list.get(0).getSupUser() != null? usersDao.selectByKey(list.get(0).getSupUser()).getUser_name():"");    //回應人員
+            innerMap.put("supUser", list.get(0).getSupUser() != null? getUserName(list.get(0).getSupUser()):"");    //回應人員
 
             String supDt = DateUtility.parseLocalDateTimeToChineseDateTime(list.get(0).getSupDt(), true);
             if(StringUtils.isNotBlank(supDt)){
@@ -605,5 +605,15 @@ public class Eip03w010Service {
         caseData.setStDt("");
         caseData.setEndDt("");
         caseData.setKeepTrkDtlList(newKeepTrkDtlList);
+    }
+
+    /**
+     * userDao 依userCode查詢userName
+     * 查詢成功返回userName 若無則返回員工代碼
+     * @param userCode
+     * @return
+     */
+    public String getUserName (String userCode){
+        return usersDao.selectByKey(userCode) == null? userCode : usersDao.selectByKey(userCode).getUser_name();
     }
 }
