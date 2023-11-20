@@ -134,7 +134,7 @@ public class BpmIsmsL414ServiceNew implements BpmIsmsService {
         // 填入上級
 
         List<UserRole> userRoles = userRoleRepository.findByRoleIdIn(List.of(ROLE_IDS));
-        supervisorService.setSupervisor(variables, bpmIsmsL414DTO.getAppEmpid(), userInfo);
+        supervisorService.setSupervisor(variables, bpmIsmsL414DTO.getAppEmpid());
 
         HashMap<String, String> signerIds = new HashMap<>();
         Arrays.stream(ROLE_IDS).forEach(s -> {

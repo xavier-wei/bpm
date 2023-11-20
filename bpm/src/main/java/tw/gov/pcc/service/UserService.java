@@ -5,7 +5,7 @@ import tw.gov.pcc.domain.Cpape05m;
 import tw.gov.pcc.domain.Cpape05mOthers;
 import tw.gov.pcc.domain.User;
 import tw.gov.pcc.domain.UserRole;
-import tw.gov.pcc.repository.Cpape05mForTestRepository;
+import tw.gov.pcc.repository.Cpape05mOthersRepository;
 import tw.gov.pcc.repository.Cpape05mRepository;
 import tw.gov.pcc.repository.UserRepository;
 import tw.gov.pcc.repository.UserRoleRepository;
@@ -20,14 +20,14 @@ public class UserService {
     private final UserRepository userRepository;
     private final Cpape05mRepository cpape05mRepository;
 
-    private final Cpape05mForTestRepository cpape05mForTestRepository;
+    private final Cpape05mOthersRepository cpape05MOthersRepository;
     private final UserRoleRepository userRoleRepository;
 
 
-    public UserService(UserRepository userRepository, Cpape05mRepository cpape05mRepository, Cpape05mForTestRepository cpape05mForTestRepository, UserRoleRepository userRoleRepository) {
+    public UserService(UserRepository userRepository, Cpape05mRepository cpape05mRepository, Cpape05mOthersRepository cpape05MOthersRepository, UserRoleRepository userRoleRepository) {
         this.userRepository = userRepository;
         this.cpape05mRepository = cpape05mRepository;
-        this.cpape05mForTestRepository = cpape05mForTestRepository;
+        this.cpape05MOthersRepository = cpape05MOthersRepository;
         this.userRoleRepository = userRoleRepository;
     }
 
@@ -40,7 +40,7 @@ public class UserService {
         Optional<Cpape05mOthers> cpape05mOthers;
         String title;
         if (cpape05m.isEmpty()) {
-            cpape05mOthers = cpape05mForTestRepository.findByPecard(userId);
+            cpape05mOthers = cpape05MOthersRepository.findByPecard(userId);
             title = cpape05mOthers.isPresent() ?  cpape05mOthers.get().getTitle(): "無職稱";
             user.setTitleName(title);
         } else {

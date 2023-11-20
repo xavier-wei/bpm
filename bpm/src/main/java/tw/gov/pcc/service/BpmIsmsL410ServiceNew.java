@@ -139,7 +139,7 @@ public class BpmIsmsL410ServiceNew implements BpmIsmsService {
         bpmIsmsL410DTO.setUpdateUser(bpmIsmsL410DTO.getFilName());
         String formId = bpmIsmsL410DTO.getFormId();
 
-        supervisorService.setSupervisor(variables, bpmIsmsL410DTO.getFilEmpid(), userInfo);
+        supervisorService.setSupervisor(variables, bpmIsmsL410DTO.getFilEmpid());
 
         // 設定取得所有簽核者的Id
         HashMap<String, String> signerIdsHashMap = getSignerIdsHashMap(variables);
@@ -167,7 +167,7 @@ public class BpmIsmsL410ServiceNew implements BpmIsmsService {
         variables.put("applier", bpmIsmsL410DTO.getFilEmpid());
         variables.put("isSubmit", bpmIsmsL410DTO.getIsSubmit());
         // 填入上級
-        supervisorService.setSupervisor(variables, bpmIsmsL410DTO.getFilEmpid(), userInfo);
+        supervisorService.setSupervisor(variables, bpmIsmsL410DTO.getFilEmpid());
         HashMap<String, String> signerIdsHashMap = getSignerIdsHashMap(variables);
         // 設定需要申請的Task有哪些及各task的Signer
         setSys(variables, bpmIsmsL410DTO, signerIdsHashMap);

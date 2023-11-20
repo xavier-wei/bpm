@@ -282,7 +282,7 @@ public class IsmsProcessResource {
     /**
      * Delete processInstance when Bpm insert failed
      *
-     * @param processInstanceId the id of the prcocessInstance.
+     * @param processInstanceId the id of the processInstance.
      */
     public void deleteProcessWhenSaveBpmFailed(String processInstanceId) {
         log.info("ProcessL414Resource.java - deleteProcessWhenSaveBpmFailed - 206 :: " + processInstanceId);

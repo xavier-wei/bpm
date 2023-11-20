@@ -5,7 +5,7 @@ import tw.gov.pcc.domain.Cpape05mOthers;
 
 import java.util.Optional;
 
-public interface Cpape05mForTestRepository extends JpaRepository<Cpape05mOthers,String> {
+public interface Cpape05mOthersRepository extends JpaRepository<Cpape05mOthers,String> {
     Optional<Cpape05mOthers> findByPecard(String userId);
 
 }

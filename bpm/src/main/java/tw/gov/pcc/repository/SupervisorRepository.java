@@ -10,6 +10,8 @@ import java.util.Map;
 @Repository
 public class SupervisorRepository {
     private final JdbcTemplate jdbcTemplate;
+    private final NamedParameterJdbcTemplate namedParameterJdbcTemplate;
+
     private static final String FIND_SUPERVISOR =
         "SELECT A.[UNIT_NAME] " +
             "     ,A.[PEIDNO] " +
@@ -42,7 +44,7 @@ public class SupervisorRepository {
             "  AND A.[PEORG] = ? " +
             "  AND A.PECARD = ? ";
 
-    private static final String FIND_SUPERVISOR_TEST =
+    private static final String FIND_SUPERVISOR_OTHERS =
         "SELECT A.[UNIT_NAME] " +
             "     ,A.[PEIDNO] " +
             "     ,A.[PECARD] " +
@@ -80,16 +82,24 @@ public class SupervisorRepository {
             "  where depart = '600038' " +
             "  and posname = '技正')";
 
+    private static final String FIND_SUPERVISOR_RULE_MODEL =
+        "SELECT PECARD FROM VIEW_CPAPE05M " +
+            "WHERE PEIDNO = (SELECT TOP 1 ID FROM POSITION WHERE DEPART = :DEPART AND POSNAME = :POSNAME)";
+    private static final String FIND_SUPERVISOR_RULE_MODEL_OTHERS =
+        "SELECT PECARD FROM VIEW_CPAPE05M_OTHERS " +
+            "WHERE PEIDNO = (SELECT TOP 1 ID FROM POSITION_OTHERS WHERE DEPART = :DEPART AND POSNAME = :POSNAME)";
+
 
     public SupervisorRepository(JdbcTemplate jdbcTemplate, NamedParameterJdbcTemplate namedParameterJdbcTemplate) {
         this.jdbcTemplate = jdbcTemplate;
+        this.namedParameterJdbcTemplate = namedParameterJdbcTemplate;
     }
 
 
     public List<Map<String, Object>> executeQuery(String orgId, String userId) {
         List<Map<String, Object>> supervisors = jdbcTemplate.queryForList(FIND_SUPERVISOR, orgId, userId);
         if (supervisors.isEmpty()) {
-            supervisors = jdbcTemplate.queryForList(FIND_SUPERVISOR_TEST, orgId, userId);
+            supervisors = jdbcTemplate.queryForList(FIND_SUPERVISOR_OTHERS, orgId, userId);
         }
         return supervisors;
     }
@@ -97,5 +107,22 @@ public class SupervisorRepository {
     public List<Map<String, Object>> executeQueryInfoGroup() {
         return jdbcTemplate.queryForList(FIND_SPECILIST);
     }
+
+    public String executeQueryRuleModel(String depart, String posname) {
+
+        List<Map<String, Object>> maps = namedParameterJdbcTemplate.queryForList(FIND_SUPERVISOR_RULE_MODEL, Map.of("DEPART", depart, "POSNAME", posname));
+
+        if (maps.isEmpty()) {
+            maps = namedParameterJdbcTemplate.queryForList(FIND_SUPERVISOR_RULE_MODEL_OTHERS, Map.of("DEPART", depart, "POSNAME", posname));
+        }
+
+        if (maps.isEmpty()) {
+            return null;
+        } else {
+            return (String) maps.get(0).get("PECARD");
+        }
+
+    }
+
 
 }
