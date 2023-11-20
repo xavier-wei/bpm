@@ -92,44 +92,35 @@ public class SupervisorService {
      * @Return void
      */
     public void setSupervisor(Map<String, Object> variables, String id) {
-
-
-        String sectionChief;
-        String director;
-
         // 查詢此人是否為特例
         BpmSpecialSupervisor bpmSpecialSupervisor = bpmSpecialSupervisorService.findById(id).orElse(null);
         if (bpmSpecialSupervisor != null) {
 
             log.info("申請者為特例，id: {}", id);
-            sectionChief = bpmSpecialSupervisor.getF1Account();
-            director = bpmSpecialSupervisor.getF2Account();
-        } else {
 
-            // 查詢申請者的資料
-            User applierUserInfo = userService.getUserInfo(id);
-
-            // 依申請者的單位職稱查出應簽核的長官
-            Optional<BpmSupervisor> bpmSupervisorOptional =
-                bpmSupervisorRepository.findById(new BpmSupervisorPrimayKey(applierUserInfo.getDeptId(), applierUserInfo.getTitleName()));
-
-            // 分別查出第一層長官與第二層長官
-            if (bpmSupervisorOptional.isPresent()) {
-                BpmSupervisor bpmSupervisor = bpmSupervisorOptional.get();
-                sectionChief = getPecard(bpmSupervisor.getFirstLayerUnit(), bpmSupervisor.getFirstLayerSupervisor());
-                director = getPecard(bpmSupervisor.getSecondLayerUnit(), bpmSupervisor.getSecondLayerSupervisor());
-            } else {
-                sectionChief = NO_SIGN;
-                director = NO_SIGN;
-            }
-
+            setVariables(variables, bpmSpecialSupervisor.getF1Account(), bpmSpecialSupervisor.getF2Account());
+            return;
         }
 
-        variables.put(SECTION_CHIEF, sectionChief);
-        variables.put(DIRECTOR, director);
+        // 查詢申請者的資料
+        User applierUserInfo = userService.getUserInfo(id);
+
+        // 依申請者的單位職稱查出應簽核的長官單位及職稱
+        Optional<BpmSupervisor> bpmSupervisorOptional = bpmSupervisorRepository.findById(new BpmSupervisorPrimayKey(applierUserInfo.getDeptId(), applierUserInfo.getTitleName()));
+        // 設置簽核者
+        bpmSupervisorOptional
+            .ifPresent(bpmSupervisor ->
+            setVariables(variables, getPecard(bpmSupervisor.getFirstLayerUnit(), bpmSupervisor.getFirstLayerSupervisor()), getPecard(bpmSupervisor.getSecondLayerUnit(), bpmSupervisor.getSecondLayerSupervisor()))
+        );
+    }
+
+
+
+    private static void setVariables(Map<String, Object> variables, String sectionChief, String director) {
+        variables.put(SECTION_CHIEF, sectionChief == null ? NO_SIGN : sectionChief);
+        variables.put(DIRECTOR, director == null ? NO_SIGN : director);
         if (NO_SIGN.equals(sectionChief)) variables.put(SECTION_CHIEF + DECISION, "1");
         if (NO_SIGN.equals(director)) variables.put(DIRECTOR + DECISION, "1");
-
     }
 
     /*
