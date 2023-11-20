@@ -98,7 +98,7 @@ public class SupervisorService {
 
             log.info("申請者為特例，id: {}", id);
 
-            setVariables(variables, bpmSpecialSupervisor.getF1Account(), bpmSpecialSupervisor.getF2Account());
+            setSigner(variables, bpmSpecialSupervisor.getF1Account(), bpmSpecialSupervisor.getF2Account());
             return;
         }
 
@@ -110,13 +110,13 @@ public class SupervisorService {
         // 設置簽核者
         bpmSupervisorOptional
             .ifPresent(bpmSupervisor ->
-            setVariables(variables, getPecard(bpmSupervisor.getFirstLayerUnit(), bpmSupervisor.getFirstLayerSupervisor()), getPecard(bpmSupervisor.getSecondLayerUnit(), bpmSupervisor.getSecondLayerSupervisor()))
+            setSigner(variables, getPecard(bpmSupervisor.getFirstLayerUnit(), bpmSupervisor.getFirstLayerSupervisor()), getPecard(bpmSupervisor.getSecondLayerUnit(), bpmSupervisor.getSecondLayerSupervisor()))
         );
     }
 
 
 
-    private static void setVariables(Map<String, Object> variables, String sectionChief, String director) {
+    private static void setSigner(Map<String, Object> variables, String sectionChief, String director) {
         variables.put(SECTION_CHIEF, sectionChief == null ? NO_SIGN : sectionChief);
         variables.put(DIRECTOR, director == null ? NO_SIGN : director);
         if (NO_SIGN.equals(sectionChief)) variables.put(SECTION_CHIEF + DECISION, "1");
