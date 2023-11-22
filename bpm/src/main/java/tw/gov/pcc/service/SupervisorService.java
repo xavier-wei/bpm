@@ -95,9 +95,7 @@ public class SupervisorService {
         // 查詢此人是否為特例
         BpmSpecialSupervisor bpmSpecialSupervisor = bpmSpecialSupervisorService.findById(id).orElse(null);
         if (bpmSpecialSupervisor != null) {
-
             log.info("申請者為特例，id: {}", id);
-
             setSigner(variables, bpmSpecialSupervisor.getF1Account(), bpmSpecialSupervisor.getF2Account());
             return;
         }
@@ -108,10 +106,9 @@ public class SupervisorService {
         // 依申請者的單位職稱查出應簽核的長官單位及職稱
         Optional<BpmSupervisor> bpmSupervisorOptional = bpmSupervisorRepository.findById(new BpmSupervisorPrimayKey(applierUserInfo.getDeptId(), applierUserInfo.getTitleName()));
         // 設置簽核者
-        bpmSupervisorOptional
-            .ifPresent(bpmSupervisor ->
-            setSigner(variables, getPecard(bpmSupervisor.getFirstLayerUnit(), bpmSupervisor.getFirstLayerSupervisor()), getPecard(bpmSupervisor.getSecondLayerUnit(), bpmSupervisor.getSecondLayerSupervisor()))
-        );
+        bpmSupervisorOptional.ifPresent(bpmSupervisor ->
+            setSigner(variables, getPecard(bpmSupervisor.getFirstLayerUnit(), bpmSupervisor.getFirstLayerSupervisor()), getPecard(bpmSupervisor.getSecondLayerUnit(), bpmSupervisor.getSecondLayerSupervisor())));
+
     }
 
 
