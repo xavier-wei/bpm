@@ -34,8 +34,9 @@ import {trim as _trim, size as _size, keys as _keys, cloneDeep as _cloneDeep, cl
 
 import '../content/scss/global.scss';
 import '../content/scss/vendor.scss';
-// import BpmUnitOptionsService from "@/shared/config/service/bpm-unit-options.service";
+// import BpmTitleOptionsService from "@/shared/config/service/bpm-unit-options.service";
 import BpmDeptsOptionsService from "@/shared/config/service/bpm-depts-options.service";
+import BpmTitleOptionsService from "@/shared/config/service/bpm-title-options.service";
 
 import {notificationErrorHandler} from "@/shared/http/http-response-helper";
 import {useNotification} from "@/shared/notification";
@@ -66,9 +67,9 @@ const store = config.initVueXStore(Vue);
 axios.defaults.baseURL = '/bpm/api';
 const loginService = new LoginService();
 const accountService = new AccountService(store, router);
-// new BpmUnitOptionsService(store);
 new BpmDeptsOptionsService(store);
 new BpmUserDataService(store);
+new BpmTitleOptionsService(store);
 const serviceUrlList: string[] = ['/login', '/service/', '/home'];
 //透過hashMap處理上下一頁的props
 const paramMap = {};

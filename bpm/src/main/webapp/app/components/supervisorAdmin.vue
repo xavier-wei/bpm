@@ -1,0 +1,510 @@
+<template>
+  <div>
+    <div>
+      <div style="background-color: #b0ded4; padding-top: 10px">
+        <b-row class="d-flex">
+          <p class="ml-4" style="color: white">表單簽核上級管理</p>
+        </b-row>
+      </div>
+    </div>
+
+    <div class="card-body clo-12" style="background-color: #d3ede8">
+      <b-form-row>
+        <i-form-group-check
+          class="col-sm-4 mb-0"
+          label-cols-md="4"
+          content-cols-md="8"
+          label-align-md="right"
+          :label="'職稱：'"
+          :item="$v.title"
+        >
+          <b-form-select v-model="$v.title.$model" :options="bpmTitleOptions">
+            <template #first>
+              <option value="">請選擇</option>
+            </template>
+          </b-form-select>
+        </i-form-group-check>
+
+      </b-form-row>
+
+      <div class="text-center pt-5">
+        <b-button class="ml-2" style="background-color: #17a2b8; color: white" @click="toggleButton">
+          {{ buttonText }}
+        </b-button>
+        <b-button class="ml-2" style="background-color: #17a2b8" @click="toQuery()">查詢</b-button>
+        <b-button class="ml-2" style="background-color: #17a2b8" @click="toReset()">清除</b-button>
+      </div>
+    </div>
+
+    <div class="card-body clo-12" style="background-color: #d3ede8" v-show="newDataStatus">
+      <b-form-row>
+        <i-form-group-check
+          class="col-sm-4 mb-0"
+          label-cols-md="4"
+          content-cols-md="8"
+          label-align-md="right"
+          :label="'申請者單位：'"
+          :item="$v.appUnit"
+        >
+          <b-form-select v-model="$v.appUnit.$model" :options="bpmDeptsOptions">
+            <template #first>
+              <option value="">請選擇</option>
+            </template>
+          </b-form-select>
+        </i-form-group-check>
+
+        <i-form-group-check
+          class="col-sm-4 mb-0"
+          label-cols-md="4"
+          content-cols-md="8"
+          label-align-md="right"
+          :label="'申請者職稱：'"
+          :item="$v.appTitle"
+        >
+          <b-form-select v-model="$v.appTitle.$model" :options="bpmTitleOptions">
+            <template #first>
+              <option value="">請選擇</option>
+            </template>
+          </b-form-select>
+        </i-form-group-check>
+      </b-form-row>
+
+      <b-form-row>
+        <i-form-group-check
+          class="col-sm-4 mb-0"
+          label-cols-md="4"
+          content-cols-md="8"
+          label-align-md="right"
+          :label="'第一層上級單位：'"
+          :item="$v.firstLayerUnit"
+        >
+          <b-form-select v-model="$v.firstLayerUnit.$model" :options="bpmDeptsOptions">
+            <template #first>
+              <option value="">請選擇</option>
+            </template>
+          </b-form-select>
+        </i-form-group-check>
+
+        <i-form-group-check
+          class="col-sm-4 mb-0"
+          label-cols-md="4"
+          content-cols-md="8"
+          label-align-md="right"
+          :label="'第一層上級職稱：'"
+          :item="$v.firstLayerSupervisor"
+        >
+          <b-form-select v-model="$v.firstLayerSupervisor.$model" :options="bpmTitleOptions">
+            <template #first>
+              <option value="">請選擇</option>
+            </template>
+          </b-form-select>
+        </i-form-group-check>
+      </b-form-row>
+
+      <b-form-row>
+        <i-form-group-check
+          class="col-sm-4 mb-0"
+          label-cols-md="4"
+          content-cols-md="8"
+          label-align-md="right"
+          :label="'第二層上級單位：'"
+          :item="$v.secondLayerUnit"
+        >
+          <b-form-select v-model="$v.secondLayerUnit.$model" :options="bpmDeptsOptions">
+            <template #first>
+              <option value="">請選擇</option>
+            </template>
+          </b-form-select>
+        </i-form-group-check>
+
+        <i-form-group-check
+          class="col-sm-4 mb-0"
+          label-cols-md="4"
+          content-cols-md="8"
+          label-align-md="right"
+          :label="'第二層上級職稱：'"
+          :item="$v.secondLayerSupervisor"
+        >
+          <b-form-select v-model="$v.secondLayerSupervisor.$model" :options="bpmTitleOptions">
+            <template #first>
+              <option value="">請選擇</option>
+            </template>
+          </b-form-select>
+        </i-form-group-check>
+      </b-form-row>
+
+      <b-container class="mt-3">
+        <b-row class="justify-content-center">
+          <b-button class="ml-2" style="background-color: #17a2b8; color: white"
+                    @click="submitForm()">送出
+          </b-button>
+          <b-button class="ml-2" style="background-color: #17a2b8; color: white"
+                    @click="reset()">清除
+          </b-button>
+        </b-row>
+      </b-container>
+    </div>
+
+    <i-table
+      ref="iTable"
+      stacked="sm"
+      striped
+      class="test-table table-sm table-hover"
+      :itemsUndefinedBehavior="'loading'"
+      :items="table.data"
+      :fields="table.fields"
+      :totalItems="table.totalItems"
+      :is-server-side-paging="false"
+      :hideNo="true"
+      v-show="queryStatus"
+    >
+      <template #cell(appUnit)="row">
+        <div v-if="formStatus === FormStatusEnum.MODIFY && row.item.isEdit === 'Y' ">
+          <b-form-select v-model="row.item.appUnit" :options="bpmDeptsOptions">
+            <template #first>
+              <option value="">請選擇</option>
+            </template>
+          </b-form-select>
+        </div>
+        <div v-else>
+          {{ changeDealWithUnit(row.item.appUnit, bpmDeptsOptions) }}
+        </div>
+      </template>
+
+      <template #cell(appTitle)="row">
+        <div v-if="formStatus === FormStatusEnum.MODIFY && row.item.isEdit === 'Y'">
+          <b-form-select v-model="row.item.appTitle" :options="bpmTitleOptions">
+            <template #first>
+              <option value="">請選擇</option>
+            </template>
+          </b-form-select>
+        </div>
+        <div v-else>
+          {{ changeDealWithUnit(row.item.appTitle, bpmTitleOptions) }}
+        </div>
+      </template>
+
+      <template #cell(firstLayerUnit)="row">
+        <div v-if="formStatus === FormStatusEnum.MODIFY && row.item.isEdit === 'Y'">
+          <b-form-select v-model="row.item.firstLayerUnit" :options="bpmDeptsOptions">
+            <template #first>
+              <option value="">請選擇</option>
+            </template>
+          </b-form-select>
+        </div>
+        <div v-else>
+          {{ changeDealWithUnit(row.item.firstLayerUnit, bpmDeptsOptions) }}
+        </div>
+      </template>
+
+      <template #cell(firstLayerSupervisor)="row">
+        <div v-if="formStatus === FormStatusEnum.MODIFY && row.item.isEdit === 'Y'">
+          <b-form-select v-model="row.item.firstLayerSupervisor" :options="bpmTitleOptions">
+            <template #first>
+              <option value="">請選擇</option>
+            </template>
+          </b-form-select>
+        </div>
+        <div v-else>
+          {{ changeDealWithUnit(row.item.firstLayerSupervisor, bpmTitleOptions) }}
+        </div>
+      </template>
+
+      <template #cell(secondLayerUnit)="row">
+        <div v-if="formStatus === FormStatusEnum.MODIFY && row.item.isEdit === 'Y'">
+          <b-form-select v-model="row.item.secondLayerUnit" :options="bpmDeptsOptions">
+            <template #first>
+              <option value="">請選擇</option>
+            </template>
+          </b-form-select>
+        </div>
+        <div v-else>
+          {{ changeDealWithUnit(row.item.secondLayerUnit, bpmDeptsOptions) }}
+        </div>
+      </template>
+
+      <template #cell(secondLayerSupervisor)="row">
+        <div v-if="formStatus === FormStatusEnum.MODIFY && row.item.isEdit === 'Y'">
+          <b-form-select v-model="row.item.secondLayerSupervisor" :options="bpmTitleOptions">
+            <template #first>
+              <option value="">請選擇</option>
+            </template>
+          </b-form-select>
+        </div>
+        <div v-else>
+          {{ changeDealWithUnit(row.item.secondLayerSupervisor, bpmTitleOptions) }}
+        </div>
+      </template>
+
+      <template #cell(action)="row">
+        <b-button class="ml-2" style="background-color: #17a2b8; color: white" variant="outline-secondary"
+                  v-show="formStatus === FormStatusEnum.READONLY" @click="changeEdit(row.item)">編輯
+        </b-button>
+        <b-input-group>
+          <b-button class="ml-2" style="background-color: #17a2b8; color: white" variant="outline-secondary"
+                    v-show="formStatus === FormStatusEnum.MODIFY && row.item.isEdit === 'Y'"
+                    @click="toEdit(row.item) ">送出
+          </b-button>
+          <b-button class="ml-2" style="background-color: #17a2b8; color: white" variant="outline-secondary"
+                    v-show="formStatus === FormStatusEnum.MODIFY && row.item.isEdit === 'Y'"
+                    @click="cancelEdit(row.item) ">取消
+          </b-button>
+        </b-input-group>
+      </template>
+    </i-table>
+
+  </div>
+</template>
+
+<script lang="ts">
+import {reactive, onMounted, ref,watch} from '@vue/composition-api';
+import axios from "axios";
+import {notificationErrorHandler} from "@/shared/http/http-response-helper";
+import {useNotification} from "@/shared/notification";
+import {useGetters} from "@u3u/vue-hooks";
+import IFormGroupCheck from '../shared/form/i-form-group-check.vue';
+import {useValidation, validateState} from '@/shared/form';
+import ITable from '@/shared/i-table/i-table.vue';
+import {changeDealWithUnit} from "@/shared/word/directions";
+import {useBvModal} from "@/shared/modal";
+
+
+export default {
+  name: "supervisorAdmin",
+  components: {
+    IFormGroupCheck,
+    ITable,
+  },
+  setup() {
+    const notificationService = useNotification();
+    const queryStatus = ref(false);
+    const newDataStatus = ref(false);
+    const iTable = ref(null);
+    const bpmTitleOptions = ref(useGetters(['getBpmTitleOptions']).getBpmTitleOptions).value;
+    const bpmDeptsOptions = ref(useGetters(['getBpmDeptsOptions']).getBpmDeptsOptions).value;
+    const $bvModal = useBvModal();
+    const formStatus = ref('')
+    const isAdding = ref(true);
+    const buttonText = ref('新增');
+
+    enum FormStatusEnum {
+      CREATE = '新增',
+      MODIFY = '編輯',
+      READONLY = '檢視',
+      VERIFY = '簽核'
+    }
+
+    const formDefault = {
+      title: '', //職稱
+      appUnit: '', //申請者單位
+      appTitle: '', //申請者職稱
+      firstLayerUnit: '', //第一層上級單位
+      firstLayerSupervisor: '', //第一層上級職稱
+      secondLayerUnit: '', //第二層上級單位
+      secondLayerSupervisor: '', //第二層上級職稱
+    };
+
+    const form = reactive(Object.assign({}, formDefault));
+
+    // 表單物件驗證規則
+    const rules = ref({
+      title: {},
+      appUnit: {},
+      appTitle: {},
+      firstLayerUnit: {},
+      firstLayerSupervisor: {},
+      secondLayerUnit: {},
+      secondLayerSupervisor: {},
+    });
+
+    const {$v, checkValidity, reset} = useValidation(rules, form, formDefault);
+
+    const table = reactive({
+      fields: [
+        {
+          key: 'appUnit',
+          label: '申請者單位',
+          sortable: false,
+          thClass: 'text-center',
+          tdClass: 'text-center align-middle',
+          formatter: value => (value == undefined ? '' : changeDealWithUnit(value, bpmDeptsOptions)),
+        },
+        {
+          key: 'appTitle',
+          label: '申請者職稱',
+          sortable: false,
+          thClass: 'text-center',
+          tdClass: 'text-center align-middle',
+        },
+        {
+          key: 'firstLayerUnit',
+          label: '第一層上級單位',
+          sortable: false,
+          thClass: 'text-center',
+          tdClass: 'text-center align-middle',
+          formatter: value => (value == undefined ? '' : changeDealWithUnit(value, bpmDeptsOptions)),
+        },
+        {
+          key: 'firstLayerSupervisor',
+          label: '第一層上級職稱',
+          sortable: false,
+          thClass: 'text-center',
+          tdClass: 'text-center align-middle',
+        },
+        {
+          key: 'secondLayerUnit',
+          label: '第二層上級單位',
+          sortable: false,
+          thClass: 'text-center',
+          tdClass: 'text-center align-middle',
+          formatter: value => (value == undefined ? '' : changeDealWithUnit(value, bpmDeptsOptions)),
+        },
+        {
+          key: 'secondLayerSupervisor',
+          label: '第二層上級職稱',
+          sortable: false,
+          thClass: 'text-center',
+          tdClass: 'text-center align-middle',
+        },
+        {
+          key: 'action',
+          label: '動作',
+          sortable: false,
+          thClass: 'text-center',
+          tdClass: 'text-center align-middle',
+        },
+      ],
+      data: [],
+      totalItems: 0,
+    });
+
+    const toQuery = () => {
+      newDataStatus.value = false;
+      isAdding.value = true;
+      buttonText.value = '新增'
+      formStatus.value = FormStatusEnum.READONLY
+      table.data = undefined;
+      const params = new URLSearchParams()
+      params.append('title', form.title)
+      axios
+        .get(`/eip/supervisorAdmin?${params.toString()}`)
+        .then(({data}) => {
+          queryStatus.value = true;
+          table.data = [];
+          if (iTable.value) iTable.value.state.pagination.currentPage = 1;
+          if (data.length < 1) return;
+          table.data = data
+        })
+        .catch(notificationErrorHandler(notificationService));
+    }
+
+    async function submitForm() {
+      const isValid = await checkValidity();
+      if (isValid) {
+        if(form.appUnit == ''|| form.appTitle== '') return await $bvModal.msgBoxConfirm('申請者單位、申請者職稱 不可為空');
+
+        const isOK = await $bvModal.msgBoxConfirm('是否確認送出內容？');
+        if (isOK) {
+          let body = {
+            appUnit: form.appUnit,
+            appTitle: form.appTitle,
+            firstLayerUnit: form.firstLayerUnit != '' ? form.appTitle : null,
+            firstLayerSupervisor: form.firstLayerSupervisor != '' ? form.firstLayerSupervisor : null,
+            secondLayerUnit: form.secondLayerUnit != '' ? form.secondLayerUnit : null,
+            secondLayerSupervisor: form.secondLayerSupervisor != '' ? form.secondLayerSupervisor : null,
+            thirdLayerUnit: null,
+            thirdLayerSupervisor: null
+          }
+          axios
+            .patch(`/eip/save/supervisorAdmin`, body)
+            .then(({data}) => {
+              $bvModal.msgBoxOk('表單新增完畢');
+              reset();
+              toQuery();
+            })
+            .catch(notificationErrorHandler(notificationService));
+        }
+      }
+    }
+
+    function changeEdit(item) {
+      item.isEdit = 'Y'
+      formStatus.value = FormStatusEnum.MODIFY
+    }
+    function cancelEdit(item) {
+      item.isEdit = 'N'
+      formStatus.value = FormStatusEnum.READONLY
+    }
+
+    async function toEdit(item) {
+      if(form.appUnit == ''|| form.appTitle== '') return await $bvModal.msgBoxConfirm('申請者單位、申請者職稱 不可為空');
+      const isOK = await $bvModal.msgBoxConfirm('是否確認送出修改內容？');
+      if (isOK) {
+        let body = {
+          appUnit: item.appUnit,
+          appTitle: item.appTitle,
+          firstLayerUnit: item.firstLayerUnit,
+          firstLayerSupervisor: item.firstLayerSupervisor,
+          secondLayerUnit: item.secondLayerUnit,
+          secondLayerSupervisor: item.secondLayerSupervisor,
+          thirdLayerUnit: null,
+          thirdLayerSupervisor: null
+        }
+
+        axios
+          .patch(`/eip/save/supervisorAdmin`, body)
+          .then(({data}) => {
+            $bvModal.msgBoxOk('表單修改完畢');
+            item.isEdit = 'N'
+            formStatus.value = FormStatusEnum.READONLY
+            reset();
+            toQuery();
+          })
+          .catch(notificationErrorHandler(notificationService));
+      }
+    }
+
+    const toggleButton = () => {
+      isAdding.value = !isAdding.value;
+    };
+
+    function toReset() {
+      reset();
+      table.data = [];
+    }
+
+    watch(isAdding, () => {
+      buttonText.value = isAdding.value ? '新增' : '取消';
+      newDataStatus.value = !isAdding.value;
+    });
+
+    return {
+      $v,
+      checkValidity,
+      toQuery,
+      toReset,
+      bpmTitleOptions,
+      queryStatus,
+      table,
+      iTable,
+      toEdit,
+      FormStatusEnum,
+      formStatus,
+      changeDealWithUnit,
+      bpmDeptsOptions,
+      submitForm,
+      changeEdit,
+      reset,
+      cancelEdit,
+      newDataStatus,
+      isAdding,
+      toggleButton,
+      buttonText,
+    }
+  }
+}
+</script>
+
+<style scoped>
+
+</style>

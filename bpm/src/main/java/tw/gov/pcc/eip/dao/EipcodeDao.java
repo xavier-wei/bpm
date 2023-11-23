@@ -28,4 +28,7 @@ public interface EipcodeDao {
      */
     List<Eipcode> findByCodekindScodekindOrderByCodeno(String codekind, String scodekind);
 
+    public List<Eipcode> findByCodeKind(String codeKind);
+
+
 }

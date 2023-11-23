@@ -1,5 +1,6 @@
 package tw.gov.pcc.service;
 
+import com.google.gson.Gson;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import tw.gov.pcc.domain.BpmSpecialSupervisor;
@@ -10,6 +11,7 @@ import tw.gov.pcc.repository.BpmSupervisorRepository;
 import tw.gov.pcc.repository.SupervisorRepository;
 
 import java.util.Map;
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -29,6 +31,7 @@ public class SupervisorService {
     private final SupervisorRepository supervisorRepository;
     private final BpmSupervisorRepository bpmSupervisorRepository;
     private final BpmSpecialSupervisorService bpmSpecialSupervisorService;
+    private final Gson gson = new Gson();
 
     public SupervisorService(UserService userService, SupervisorRepository supervisorRepository, BpmSupervisorRepository bpmSupervisorRepository, BpmSpecialSupervisorService bpmSpecialSupervisorService) {
         this.userService = userService;
@@ -130,6 +133,14 @@ public class SupervisorService {
             return NO_SIGN;
         }
         return supervisorRepository.executeQueryRuleModel(unit, titleName) == null ? NO_SIGN : supervisorRepository.executeQueryRuleModel(unit, titleName);
+    }
+
+    public List<BpmSupervisor> getSupervisor(String title) {
+        return bpmSupervisorRepository.findAllByTitle(title);
+    }
+
+    public String patchSupervisor(BpmSupervisor bpmSupervisor) {
+        return gson.toJson(bpmSupervisorRepository.save(bpmSupervisor));
     }
 
 }

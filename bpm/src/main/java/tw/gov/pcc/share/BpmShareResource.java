@@ -99,4 +99,8 @@ public class BpmShareResource {
         return userRepository.findByAcntIsValid("Y");
     }
 
+    @GetMapping("/findTitleIdList")
+    public List<Eipcode> findTitleIdList() {
+        return eipcodeDao.findByCodeKind("TITLE");
+    }
 }
