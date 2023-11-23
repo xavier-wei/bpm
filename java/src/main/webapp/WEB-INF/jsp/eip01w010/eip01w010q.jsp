@@ -236,7 +236,7 @@
                             'fseq': fseq
                         },
                         timeout: 100000,
-                        success: function(content) {
+                        success: function(${"content"}) {
                             if (content == '') {
                                 showAlert('查無資料!');
                             } else {

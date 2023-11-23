@@ -130,7 +130,7 @@
         });
     }
 
-    function edit(json) {
+    function edit(${"json"}) {
         nullValue($('#item_id'), json.item_id);
         nullValue($('#item_name'), json.item_name);
         nullValue($('#hyperlink'), json.hyperlink);

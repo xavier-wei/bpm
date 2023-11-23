@@ -265,7 +265,7 @@
             type: 'POST',
             contentType : 'application/json',
             data: JSON.stringify(data),
-            success: function (data){
+            success: function (${"data"}){
                 data = JSON.stringify(data);
                 // [{"B01-擴音":"1","B02-單槍":"1"},{"A01-茶水":"20","A02-水果":"20"}]
                 let selectedItemIdMap = data.split("},{")[0].replace("[","");

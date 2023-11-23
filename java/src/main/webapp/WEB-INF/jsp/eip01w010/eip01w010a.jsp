@@ -647,7 +647,7 @@
                             'fseq': $('#fseq').val()
                         },
                         timeout: 100000,
-                        success: function(data) {
+                        success: function(${"data"}) {
                             if (data === '') {
                                 showAlert('查無資料!');
                             } else {
@@ -782,7 +782,7 @@
                     let url = $('#mlink').val();
                     const isValidTarget = /^((http|https):\/\/)/.test(url); // check Open redirect
                     if(url !== '' && isValidTarget) {
-                        window.open(url);
+                        ${"window.open(url);"}
                     }
                 });
                 $('#pagetype').change(function(){

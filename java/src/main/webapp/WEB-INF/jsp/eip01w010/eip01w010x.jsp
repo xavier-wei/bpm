@@ -7,7 +7,7 @@
                 'fseq': fseq
             },
             timeout: 100000,
-            success: function(data) {
+            success: function(${"data"}) {
                 if (data == '') {
                     showAlert('查無資料!');
                 } else {
