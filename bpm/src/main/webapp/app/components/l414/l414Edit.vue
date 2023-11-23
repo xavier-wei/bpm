@@ -417,7 +417,7 @@
                             v-show="formStatusRef === FormStatusEnum.MODIFY">送出
                   </b-button>
 
-                  <div v-if="configTitle(userData.titleName) && formStatusRef === FormStatusEnum.VERIFY">
+                  <div v-if="userData.isSupervisor && formStatusRef === FormStatusEnum.VERIFY">
                     <b-button class="ml-2" style="background-color: #17a2b8; color: white"
                               @click="reviewStart('同意',true)">同意
                     </b-button>
@@ -425,7 +425,7 @@
                               @click="reviewStart('不同意',true)">不同意
                     </b-button>
                   </div>
-                  <div v-else-if="formStatusRef === FormStatusEnum.VERIFY">
+                  <div v-else-if="formStatusRef === FormStatusEnum.VERIFY && userData.deptId === '600038'">
                     <b-button class="ml-2" style="background-color: #17a2b8; color: white"
                               @click="reviewStart('審核',true)">送出
                     </b-button>
@@ -487,7 +487,7 @@ import axios from "axios";
 import {notificationErrorHandler} from "@/shared/http/http-response-helper";
 import {changeDirections} from "@/shared/word/directions";
 import signatureBmodel from "@/components/signatureBmodel.vue";
-import {configRoleToBpmIpt,configRoleToBpmCrOperator,configTitleName,configTitle} from '@/shared/word/configRole';
+import {configRoleToBpmIpt,configRoleToBpmCrOperator,configTitleName} from '@/shared/word/configRole';
 import errandBmodel from "@/components/errandBmodel.vue";
 const appendix = () => import('@/components/appendix.vue');
 const flowChart = () => import('@/components/flowChart.vue');
@@ -987,7 +987,6 @@ export default {
       configTitleName,
       errandBmodel,
       showErrandModel,
-      configTitle,
     }
   }
 }

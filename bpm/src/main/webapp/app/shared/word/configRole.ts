@@ -54,21 +54,6 @@ export function configTitleName(title: any): any {
   return result;
 }
 
-//判斷title是否是顯示同意不同意按鈕
-export function configTitle(title: any): any {
-  let shouldBreak = false;
-  let result = false;
-  _forEach(title.split(','), f => {
-    if (f === '科長' || f === '處長') {
-      shouldBreak = true;
-      result = true;
-    }
-    if (shouldBreak) {
-      return false;
-    }
-  })
-  return result;
-}
 
 
 
