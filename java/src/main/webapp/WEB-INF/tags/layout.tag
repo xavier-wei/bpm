@@ -25,7 +25,7 @@
             var antiClickjack = document.getElementById("antiClickjack");
             antiClickjack.parentNode.removeChild(antiClickjack);
         } else {
-            top.location = self.location;
+            ${"top.location = self.location;"}
         }
     </script>
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
