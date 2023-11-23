@@ -257,13 +257,13 @@
 </template>
 
 <script lang="ts">
-import {reactive, onMounted, ref,watch} from '@vue/composition-api';
+import {reactive, ref, watch} from '@vue/composition-api';
 import axios from "axios";
 import {notificationErrorHandler} from "@/shared/http/http-response-helper";
 import {useNotification} from "@/shared/notification";
 import {useGetters} from "@u3u/vue-hooks";
 import IFormGroupCheck from '../shared/form/i-form-group-check.vue';
-import {useValidation, validateState} from '@/shared/form';
+import {useValidation} from '@/shared/form';
 import ITable from '@/shared/i-table/i-table.vue';
 import {changeDealWithUnit} from "@/shared/word/directions";
 import {useBvModal} from "@/shared/modal";
@@ -401,7 +401,7 @@ export default {
     async function submitForm() {
       const isValid = await checkValidity();
       if (isValid) {
-        if(form.appUnit == ''|| form.appTitle== '') return await $bvModal.msgBoxConfirm('申請者單位、申請者職稱 不可為空');
+        if (form.appUnit == '' || form.appTitle == '') return await $bvModal.msgBoxConfirm('申請者單位、申請者職稱 不可為空');
 
         const isOK = await $bvModal.msgBoxConfirm('是否確認送出內容？');
         if (isOK) {
@@ -427,17 +427,8 @@ export default {
       }
     }
 
-    function changeEdit(item) {
-      item.isEdit = 'Y'
-      formStatus.value = FormStatusEnum.MODIFY
-    }
-    function cancelEdit(item) {
-      item.isEdit = 'N'
-      formStatus.value = FormStatusEnum.READONLY
-    }
-
     async function toEdit(item) {
-      if(form.appUnit == ''|| form.appTitle== '') return await $bvModal.msgBoxConfirm('申請者單位、申請者職稱 不可為空');
+      if (form.appUnit == '' || form.appTitle == '') return await $bvModal.msgBoxConfirm('申請者單位、申請者職稱 不可為空');
       const isOK = await $bvModal.msgBoxConfirm('是否確認送出修改內容？');
       if (isOK) {
         let body = {
@@ -464,19 +455,35 @@ export default {
       }
     }
 
+
+    //切換編輯模式
+    function changeEdit(item) {
+      item.isEdit = 'Y'
+      formStatus.value = FormStatusEnum.MODIFY
+    }
+
+    //取消編輯模式
+    function cancelEdit(item) {
+      item.isEdit = 'N'
+      formStatus.value = FormStatusEnum.READONLY
+    }
+
+    //切換新增 取消
     const toggleButton = () => {
       isAdding.value = !isAdding.value;
     };
+
+
+    //切換新增 取消
+    watch(isAdding, () => {
+      buttonText.value = isAdding.value ? '新增' : '取消';
+      newDataStatus.value = !isAdding.value;
+    });
 
     function toReset() {
       reset();
       table.data = [];
     }
-
-    watch(isAdding, () => {
-      buttonText.value = isAdding.value ? '新增' : '取消';
-      newDataStatus.value = !isAdding.value;
-    });
 
     return {
       $v,

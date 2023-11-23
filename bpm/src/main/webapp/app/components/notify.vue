@@ -319,12 +319,11 @@ export default defineComponent({
       peunitOptions: [],
     });
 
+    //一般查詢
     const toQuery = () => {
       table.data = undefined;
-      // const params = new FormData();
-      // params.append('bpmFormQueryDto', new Blob([JSON.stringify(form)], {type: 'application/json'}));
       const body = {
-        bpmFormQueryDto: form,
+        ...form,
       };
       axios.post(`/process/notify/queryTask`, body).then(({data}) => {
         queryStatus.value = true;
@@ -347,6 +346,7 @@ export default defineComponent({
       }).catch(notificationErrorHandler(notificationService));
     };
 
+    //判斷要導頁去哪
     function toEdit(item) {
       let taskData = {
         processInstanceId: item.processInstanceId,
@@ -366,6 +366,7 @@ export default defineComponent({
       });
     }
 
+    //申請者的下拉選單，科級以上的人選單內才會有資料
     function peunitOptions() {
       axios.get(`/eip/peunitOptions/${userData.empId}`)
         .then(({data}) => {
@@ -376,6 +377,7 @@ export default defineComponent({
         .catch(notificationErrorHandler(notificationService))
     }
 
+    //重製form所有資料、iTable清空
     function toReset() {
       reset();
       table.data = [];

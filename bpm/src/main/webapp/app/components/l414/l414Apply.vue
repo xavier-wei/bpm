@@ -583,11 +583,11 @@ export default {
         }
       });
     }
-
+    //b-tab分頁用
     const changeTabIndex = (index: number) => {
       tabIndex.value = index;
     };
-
+    //b-tab分頁用
     const activeTab = (index: number) => {
       return tabIndex.value === index;
     };
