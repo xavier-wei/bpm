@@ -12,12 +12,12 @@ public class BpmSpecialSupervisor implements Serializable {
 
     @Id
     @Column(name = "PECARD")
-    private String pecard;
-    @Column(name = "UNIT_NAME")
+    private String pecard; //員工編號
+    @Column(name = "UNIT_NAME")//單位名稱
     private String unitName;
-    @Column(name = "PENAME")
+    @Column(name = "PENAME")//姓名
     private String pename;
-    @Column(name = "POSNAME")
+    @Column(name = "POSNAME")//職稱
     private String posname;
     @Column(name = "F1_UNIT_NAME")
     private String f1UnitName;
@@ -41,7 +41,6 @@ public class BpmSpecialSupervisor implements Serializable {
     private String f3Pename;
     @Column(name = "F3_POSNAME")
     private String f3Posname;
-
 
 
     public String getUnitName() {
@@ -84,8 +83,6 @@ public class BpmSpecialSupervisor implements Serializable {
         this.f1UnitName = f1UnitName;
     }
 
-
-
     public String getF1Account() {
         return f1Account;
     }
@@ -118,8 +115,6 @@ public class BpmSpecialSupervisor implements Serializable {
         this.f2UnitName = f2UnitName;
     }
 
-
-
     public String getF2Account() {
         return f2Account;
     }
@@ -143,7 +138,6 @@ public class BpmSpecialSupervisor implements Serializable {
     public void setF2Posname(String f2Posname) {
         this.f2Posname = f2Posname;
     }
-
 
     public String getF3Account() {
         return f3Account;

@@ -84,5 +84,19 @@ public class EipcodeDaoImpl extends BaseDao<Eipcode> implements EipcodeDao {
 				BeanPropertyRowMapper.newInstance(Eipcode.class));
 	}
 
+    @Override
+    @SkipLog
+    public List<Eipcode> findByCodeKind(String codeKind) {
+
+        StringBuilder sql = new StringBuilder();
+        sql.append(" SELECT ");
+        sql.append(ALL_COLUMNS_SQL);
+        sql.append(" FROM " + TABLE_NAME + " T where T.CODEKIND = :codekind order by codeno");
+
+        SqlParameterSource params = new MapSqlParameterSource("codekind", codeKind);
+
+        return getNamedParameterJdbcTemplate()
+            .query(sql.toString(), params,BeanPropertyRowMapper.newInstance(Eipcode.class));
+    }
 
 }

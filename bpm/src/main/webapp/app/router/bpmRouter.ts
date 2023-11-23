@@ -9,6 +9,8 @@ const breadcrumb =() => import('../core/menu/breadcrumb.vue');
 const l414Edit =() => import('@/components/l414/l414Edit.vue');
 const l410Edit =() => import('@/components/l410/l410Edit.vue');
 const errandBmodel =() => import('@/components/errandBmodel.vue');
+const setSupervisor =() => import('@/components/setSupervisor.vue');
+const supervisorAdmin =() => import('@/components/supervisorAdmin.vue');
 
 export default [
   {
@@ -84,15 +86,6 @@ export default [
     props: true,
   },
   {
-    path: '/signerList',
-    name: 'signerList',
-    component: signerList,
-    meta: {
-      functionId: 'signerList',
-    },
-    props: true,
-  },
-  {
     path: '/userSys',
     name: 'userSys',
     component: userSys,
@@ -107,6 +100,24 @@ export default [
     component: errandBmodel,
     meta: {
       functionId: 'errandBmodel',
+    },
+    props: true,
+  },
+  {
+    path: '/setSupervisor',
+    name: 'setSupervisor',
+    component: setSupervisor,
+    meta: {
+      functionId: 'setSupervisor',
+    },
+    props: true,
+  },
+  {
+    path: '/supervisorAdmin',
+    name: 'supervisorAdmin',
+    component: supervisorAdmin,
+    meta: {
+      functionId: 'supervisorAdmin',
     },
     props: true,
   },
