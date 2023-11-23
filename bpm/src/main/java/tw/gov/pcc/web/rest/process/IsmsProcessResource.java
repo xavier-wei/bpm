@@ -381,7 +381,7 @@ public class IsmsProcessResource {
     }
 
     @PostMapping("/getAllSubordinateTask")
-    public List<Map<String, Object>> getAllSubordinateTask(@Valid @RequestPart(required = false) BpmFormQueryDto bpmFormQueryDto) {
+    public List<Map<String, Object>> getAllSubordinateTask(@Valid @RequestBody(required = false) BpmFormQueryDto bpmFormQueryDto) {
         User user = getUserInfo();
         String titleName = user.getTitleName();
         if ("處長".equals(titleName) || "副處長".equals(titleName) || "主任".equals(titleName)) {
