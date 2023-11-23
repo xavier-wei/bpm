@@ -54,7 +54,7 @@ public class UserService {
             List<String> roles = userRoles.stream().map(UserRole::getRoleId).collect(Collectors.toList());
             user.setUserRole(String.join(",", roles));
         }
-        user.setSupervisor(BpmCache.supervisorJudgeSet.contains(user.getTitleName()));
+        user.setSupervisor(BpmCache.getSupervisorJudgeSet().contains(user.getTitleName()));
 
         return user;
     }

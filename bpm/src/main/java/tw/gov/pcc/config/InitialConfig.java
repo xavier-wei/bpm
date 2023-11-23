@@ -44,17 +44,19 @@ public class InitialConfig implements CommandLineRunner {
         ParameterUtil.setAesKey(eipcodeDao.findByCodeKindOrderByScodeno(bpmAes).get(0).getCodename());
         ParameterUtil.setBpmCipher(eipcodeDao.findByCodeKindOrderByScodeno(bpmCipher).get(0).getCodename());
     }
+
     private void initBpmSupervisor() {
         Map<BpmSupervisorPrimayKey, BpmSupervisor> collect = bpmSupervisorRepository
             .findAll()
             .stream()
             .collect(Collectors.toMap(e -> new BpmSupervisorPrimayKey(e.getAppUnit(), e.getAppTitle()), e -> e));
-        BpmCache.bpmSupervisorHashMap.putAll(collect);
+        BpmCache.getBpmSupervisorHashMap().putAll(collect);
 
         Set<String> title = new HashSet<>();
-        collect.values().stream().forEach(e->title.add(e.getFirstLayerSupervisor()));
-        collect.values().stream().forEach(e->title.add(e.getSecondLayerSupervisor()));
+        collect.values().forEach(e -> title.add(e.getFirstLayerSupervisor()));
+        collect.values().forEach(e -> title.add(e.getSecondLayerSupervisor()));
         Set<String> stringStream = title.stream().filter(Objects::nonNull).collect(Collectors.toSet());
-        BpmCache.supervisorJudgeSet.addAll(stringStream);
+        BpmCache.getSupervisorJudgeSet().addAll(stringStream);
+
     }
 }
