@@ -281,9 +281,6 @@ export default defineComponent({
     const toSubordinateQuery = () => {
       table.data = undefined;
       query.value = '2';
-      const params = new FormData();
-      // params.append('bpmFormQueryDto', new Blob([JSON.stringify(form)], {type: 'application/json'}));
-      // params.append('isNotify', new Blob([JSON.stringify(false)], {type: 'application/json'}));
       const body = {
         bpmFormQueryDto: form,
       };
