@@ -75,6 +75,17 @@ public class User implements Serializable {
     @Transient
     private String departName;
 
+    @Transient
+    private boolean isSupervisor;
+
+    public boolean isSupervisor() {
+        return isSupervisor;
+    }
+
+    public void setSupervisor(boolean supervisor) {
+        isSupervisor = supervisor;
+    }
+
     public String getUserId() {
         return userId;
     }

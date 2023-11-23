@@ -1,6 +1,7 @@
 package tw.gov.pcc.service;
 
 import org.springframework.stereotype.Service;
+import tw.gov.pcc.cache.BpmCache;
 import tw.gov.pcc.domain.Cpape05m;
 import tw.gov.pcc.domain.Cpape05mOthers;
 import tw.gov.pcc.domain.User;
@@ -53,6 +54,8 @@ public class UserService {
             List<String> roles = userRoles.stream().map(UserRole::getRoleId).collect(Collectors.toList());
             user.setUserRole(String.join(",", roles));
         }
+        user.setSupervisor(BpmCache.supervisorJudgeSet.contains(user.getTitleName()));
+
         return user;
     }
 
