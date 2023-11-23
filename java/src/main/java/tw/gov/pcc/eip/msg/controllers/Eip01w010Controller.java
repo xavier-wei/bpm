@@ -309,7 +309,7 @@ public class Eip01w010Controller extends BaseController {
      */
     @RequestMapping("/Eip01w010_getDetail.action")
     @ResponseBody
-    public Eip01w010Case.preView getDetail(@RequestParam("fseq") String fseq) {
+    public String getDetail(@RequestParam("fseq") String fseq) {
         log.debug("導向 Eip01w010_getDetail 訊息上稿 預覽查詢");
         return ObjectUtility.normalizeObject(eip01w010Service.query(fseq));
     }

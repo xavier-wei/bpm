@@ -72,7 +72,7 @@
                     <tbody>
                         <c:forEach items="${caseData.orList}" var="item" varStatus="status">
                             <tr>
-                                <td class="text-center align-middle"><form:checkbox path="orformnoList[${status.index}]" data-status="${item.statusVal}" value="${item.orformno}"/></td>
+                                <td class="text-center align-middle"><form:checkbox path="orformnoList" data-status="${item.statusVal}" value="${item.orformno}"/></td>
                                 <td class="text-center align-middle"><c:out value="${status.index+1}" /></td>
                                 <td class="text-left align-middle"><c:out value="${item.orcname}" /></td>
                                 <td class="text-left align-middle"><c:out value="${item.topicname}" /></td>

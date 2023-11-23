@@ -387,8 +387,8 @@ public class Eip03w010Service {
         mixCase.setClsDt(km.getClsDt()); //結案日期
 //        mixCase.setCreDept(km.getCreDept());
 //        mixCase.setCreUser(km.getCreUser());
-        mixCase.setCreDept(deptsDao.findByPk(km.getCreDept()).getDept_name());
-        mixCase.setCreUser(getUserName(km.getCreUser()));
+        mixCase.setCreDept(km.getCreDept() != null? deptsDao.findByPk(km.getCreDept()).getDept_name() : "");
+        mixCase.setCreUser(km.getCreUser() != null? getUserName(km.getCreUser()) : "");
 //        mixCase.setCreDt(km.getCreDt() == null? "": km.getCreDt().format(fmt).replaceAll("-",""));
         String creDt = DateUtility.parseLocalDateTimeToChineseDateTime(km.getCreDt(),true);
         creDt = DateUtility.formatChineseDateTimeString(creDt,false);

@@ -37,7 +37,7 @@
                     <tbody>
                         <c:forEach items="${caseData.orcList}" var="item" varStatus="status">
                             <tr>
-                                <td class="text-center align-middle"><form:checkbox path="orccodeList[${status.index}]" data-starting="${item.starting}" value="${item.orccode}"/></td>
+                                <td class="text-center align-middle"><form:checkbox path="orccodeList" data-starting="${item.starting}" value="${item.orccode}"/></td>
                                 <td class="text-center align-middle"><c:out value="${status.index+1}" /></td>
                                 <td class="text-left align-middle"><c:out value="${item.orcname}" /></td>
                                 <td class="text-center align-middle"><c:out value="${item.iscourse}" /></td>

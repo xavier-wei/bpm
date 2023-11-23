@@ -15,7 +15,7 @@ import java.util.List;
 public class Eip04w010Case implements Serializable {
     private static final long serialVersionUID = 453987072098821016L;
 
-    private List<String>orccodeList;//畫面所選表單編號列表
+    private String orccodeList;//畫面所選表單編號列表
     private Long orccode;
     @RequiredString(label = "分類名稱")
     public String orcname;

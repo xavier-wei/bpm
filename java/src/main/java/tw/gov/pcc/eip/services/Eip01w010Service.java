@@ -20,12 +20,16 @@ import java.util.stream.Collectors;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.owasp.encoder.Encode;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.multipart.MultipartFile;
+
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 import lombok.extern.slf4j.Slf4j;
 import tw.gov.pcc.eip.dao.DeptsDao;
@@ -79,6 +83,7 @@ public class Eip01w010Service {
             .withChronology(MinguoChronology.INSTANCE).withLocale(Locale.TAIWAN);
     DateTimeFormatter minguoDateformatter = DateTimeFormatter.ofPattern("yyy/MM/dd")
             .withChronology(MinguoChronology.INSTANCE).withLocale(Locale.TAIWAN);
+    private static ObjectMapper objectMapper = new ObjectMapper();
 
     /**
      * 初始化下拉選單
@@ -820,7 +825,7 @@ public class Eip01w010Service {
      * @param fseq
      * @return
      */
-    public Eip01w010Case.preView query(String fseq) {
+    public String query(String fseq) {
         Msgdata m = msgdataDao.findbyfseq(fseq);
         if (m != null) {
             Eip01w010Case.preView detail = new Eip01w010Case.preView();
@@ -845,9 +850,16 @@ public class Eip01w010Service {
                         (n, o) -> n, LinkedHashMap::new)));
             }
             detail.setPagetype(m.getPagetype());
-            return detail;
+            String encodestr = "";
+            try {
+                encodestr = Encode.forHtml(objectMapper.writeValueAsString(detail)); // check XSS
+            } catch (JsonProcessingException e1) {
+                log.error("訊息上稿 - 取得預覽資料明細 : 處理物件轉字串 失敗!");
+                e1.printStackTrace();
+            }
+            return encodestr;
         }
-        return null;
+        return "";
     }
 
     /**

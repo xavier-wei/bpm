@@ -81,8 +81,6 @@ public class Eip05w020Service extends OpinionSurveyService{
             return osCase;
         }).collect(Collectors.toList());
         caseData.setOsList(list);
-        //清除自動回填
-        caseData.setOsformnoList(new ArrayList<>());
     }
 
     /**
@@ -943,9 +941,10 @@ public class Eip05w020Service extends OpinionSurveyService{
      */
     public void deleteCheckedForm(Eip05w020Case caseData, String delType) {
         if ("F".equals(delType)) {
-            osformdataDao.deleteByOsformnoList(caseData.getOsformnoList());
-            osquestionDao.deleteByOsformnoList(caseData.getOsformnoList());
-            ositemDao.deleteByOsformnoList(caseData.getOsformnoList());
+            List<String> osformnoList = Arrays.asList(caseData.getOsformnoList().split(","));
+            osformdataDao.deleteByOsformnoList(osformnoList);
+            osquestionDao.deleteByOsformnoList(osformnoList);
+            ositemDao.deleteByOsformnoList(osformnoList);
         } else if ("P".equals(delType)) {
             List<Osquestion>osquestions = osquestionDao.getQuestionsByOsformnoAndSectitleseq(caseData.getOsformno(), caseData.getSectitleseqList());
             osquestionDao.deleteByOsformnoAndSectitleseqList(caseData.getOsformno(), caseData.getSectitleseqList());

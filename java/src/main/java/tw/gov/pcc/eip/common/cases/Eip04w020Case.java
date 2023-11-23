@@ -32,7 +32,7 @@ public class Eip04w020Case implements Serializable {
 
     private String qEndMonth;
 
-    private List<String>orformnoList;//畫面所選表單編號列表
+    private String orformnoList;//畫面所選表單編號列表
 
     private String selectAction;
 

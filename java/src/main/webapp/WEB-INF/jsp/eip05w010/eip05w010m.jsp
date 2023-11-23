@@ -36,7 +36,7 @@
                     <tbody>
                         <c:forEach items="${caseData.oscList}" var="item" varStatus="status">
                             <tr>
-                                <td class="text-center align-middle"><form:checkbox path="osccodeList[${status.index}]" data-starting="${item.starting}" value="${item.osccode}"/></td>
+                                <td class="text-center align-middle"><form:checkbox path="osccodeList" data-starting="${item.starting}" value="${item.osccode}"/></td>
                                 <td class="text-center align-middle"><c:out value="${status.index+1}" /></td>
                                 <td class="text-left align-middle"><c:out value="${item.oscname}" /></td>
                                 <td class="text-center align-middle"><c:out value="${item.upddt}" /></td>

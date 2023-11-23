@@ -93,8 +93,8 @@ public class Eip04w010Service extends OnlineRegService {
      * @param caseData
      */
     public void deleteClass(Eip04w010Case caseData) {
-        List<String>orccodeList = caseData.getOrccodeList().stream().filter(StringUtils::isNotBlank).collect(Collectors.toList());
-        for (String orccode:orccodeList) {
+        String[] orccodeArray = caseData.getOrccodeList().split(",");
+        for (String orccode : orccodeArray) {
             orclassDao.deleteData(Long.parseLong(orccode));
         }
     }

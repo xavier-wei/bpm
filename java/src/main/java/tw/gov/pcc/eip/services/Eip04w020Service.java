@@ -191,8 +191,6 @@ public class Eip04w020Service extends OnlineRegService {
             return orCase;
         }).collect(Collectors.toList());
         caseData.setOrList(list);
-        //清除自動回填
-        caseData.setOrformnoList(new ArrayList<>());
     }
 
     /**
@@ -403,7 +401,8 @@ public class Eip04w020Service extends OnlineRegService {
      * @param caseData
      */
     public void deleteCheckedForm(Eip04w020Case caseData) {
-        orformdataDao.deleteCheckedForm(caseData.getOrformnoList());
+        List<String> orformnoList = Arrays.asList(caseData.getOrformnoList().split(","));
+        orformdataDao.deleteCheckedForm(orformnoList);
     }
 
     /**
@@ -411,9 +410,8 @@ public class Eip04w020Service extends OnlineRegService {
      * @param caseData
      */
     public void putCheckedForm(Eip04w020Case caseData) {
-        orformdataDao.updateStatus(caseData.getOrformnoList(), "P");
-        //清除自動回填
-        caseData.setOrformnoList(new ArrayList<>());
+        List<String> orformnoList = Arrays.asList(caseData.getOrformnoList().split(","));
+        orformdataDao.updateStatus(orformnoList, "P");
     }
 
     /**
@@ -421,9 +419,8 @@ public class Eip04w020Service extends OnlineRegService {
      * @param caseData
      */
     public void disabledCheckedForm(Eip04w020Case caseData) {
-        orformdataDao.updateStatus(caseData.getOrformnoList(), "D");
-        //清除自動回填
-        caseData.setOrformnoList(new ArrayList<>());
+        List<String> orformnoList = Arrays.asList(caseData.getOrformnoList().split(","));
+        orformdataDao.updateStatus(orformnoList, "D");
     }
 
     /**

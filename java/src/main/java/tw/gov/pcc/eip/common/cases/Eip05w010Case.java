@@ -15,7 +15,7 @@ import java.util.List;
 public class Eip05w010Case implements Serializable {
     private static final long serialVersionUID = 74386991231014363L;
 
-    private List<String>osccodeList;//畫面所選表單編號列表
+    private String osccodeList;//畫面所選表單編號列表
     private String osccode;
     @RequiredString(label = "分類名稱")
     public String oscname;

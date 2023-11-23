@@ -20,7 +20,7 @@
                     </div>
                     <div class="col-md-4 d-flex">
                          <form:label cssClass="col-form-label star" path="chairman">主持人：</form:label>
-                         <form:input path="chairman" cssClass="form-control" size="9" maxlength="15"/>
+                         <form:input path="chairman" cssClass="form-control" size="9" maxlength="30"/>
                     </div>
                     <div class="col-md-3">
                          <form:label cssClass="col-form-label" path="organizerId">申請人：</form:label>

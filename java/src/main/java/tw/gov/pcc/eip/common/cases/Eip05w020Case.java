@@ -14,7 +14,7 @@ import java.util.*;
 public class Eip05w020Case implements Serializable {
     private static final long serialVersionUID = 12835339304543359L;
 
-    private List<String>osformnoList;//畫面所選表單編號列表
+    private String osformnoList;//畫面所選表單編號列表
 
     private List<String>sectitleseqList;//畫面所選部分標題序號列表(部分列表)
 

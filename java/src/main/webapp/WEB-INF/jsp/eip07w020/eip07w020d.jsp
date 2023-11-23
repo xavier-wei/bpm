@@ -221,14 +221,15 @@
                                                 <c:out value='${fn:substring(caseData.detailsList[0].approve_using_time_s, 0,2)}'/>:<c:out value='${fn:substring(caseData.detailsList[0].approve_using_time_s, 2,-1)}'/>
                                                 -<c:out value='${fn:substring(caseData.detailsList[0].approve_using_time_e, 0,2)}'/>:<c:out value='${fn:substring(caseData.detailsList[0].approve_using_time_e, 2,-1)}'/>
                                             </label>
-											<form:label cssClass="col-form-label " style="color: red" path="lable">(實際用車時間依核定時間為主)</form:label>
 										</c:if>
-                                        <c:if test="${caseData.detailsList[0].using eq caseData.detailsList[0].approve_using}">
+
+										<c:if test="${caseData.detailsList[0].using eq caseData.detailsList[0].approve_using}">
 											<label class="col-form-label text-left col-3" >
                                                 <c:out value='${fn:substring(caseData.detailsList[0].approve_using_time_s, 0,2)}'/>:<c:out value='${fn:substring(caseData.detailsList[0].approve_using_time_s, 2,-1)}'/>
                                                 -<c:out value='${fn:substring(caseData.detailsList[0].approve_using_time_e, 0,2)}'/>:<c:out value='${fn:substring(caseData.detailsList[0].approve_using_time_e, 2,-1)}'/>
                                             </label>
 										</c:if>
+										<form:label cssClass="col-form-label "  path="lable">(實際用車時間依核定時間為主)</form:label>
 									</div>
 							</tags:form-row>
 					</c:if>

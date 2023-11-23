@@ -72,7 +72,7 @@
 	                        	<form:input type="number" path="allData[${numstatus.index}].book_cnt" cssClass="book_cnt form-control num_only" readOnly="true"/>
 	                        	<form:hidden path="allData[${numstatus.index}].withhold_cnt" class="withhold_cnt"/>
 	                        	</td>
-	                        	<td><form:input type="number" path="allData[${numstatus.index}].apply_cnt" cssClass="apply_cnt form-control num_only"/></td>
+	                        	<td><form:input path="allData[${numstatus.index}].apply_cnt" cssClass="apply_cnt form-control num_only" maxlength="4"/></td>
 	                        	<td><form:input path="allData[${numstatus.index}].unit"  cssClass="unit form-control" maxlength="4"/></td>
 	                        </tr>
                         </tbody>

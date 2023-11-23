@@ -236,10 +236,12 @@
                             'fseq': fseq
                         },
                         timeout: 100000,
-                        success: function(data) {
-                            if (data == '') {
+                        success: function(content) {
+                            if (content == '') {
                                 showAlert('查無資料!');
                             } else {
+                                var jsonStr = content.replace(/&#34;/g, '\"');
+                                let data = JSON.parse(jsonStr);
                                 var fileList = '';
                                 var bodyContent = '';
                                 $.each(data.file, function(i, e) {

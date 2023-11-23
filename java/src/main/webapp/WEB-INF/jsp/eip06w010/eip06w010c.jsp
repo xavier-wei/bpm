@@ -21,7 +21,7 @@
                     </div>
                     <div class="col-md-3 d-flex">
                          <form:label cssClass="col-form-label star" path="chairman">主持人：</form:label>
-                         <form:input path="chairman" cssClass="form-control" size="9" maxlength="15"/>
+                         <form:input path="chairman" cssClass="form-control" size="9" maxlength="30"/>
                     </div>
                     <div class="col-md-3">
                          <form:label cssClass="col-form-label" path="organizerId">申請人：</form:label>
@@ -297,7 +297,8 @@
                     '<td  id="itemContent" style="display: none;">' +  selectedId + '</td>'+
                     '<td>' + buildDeleteItemButton(rowCount).prop('outerHTML') + '</td>'+
                     '</tr>';
-                $('#itemTable > tbody').append(rowHtml);
+                // $('#itemTable > tbody').append(rowHtml);
+                $('#itemTable > tbody').append(decodeURI(encodeURI(rowHtml)));
             }
         }
     }
@@ -322,7 +323,7 @@
                     '<td>' + buildQtyCol(rowCount, selectedQty).prop('outerHTML') + '</td>'+
                     '<td>' + buildDeleteFoodButton(rowCount).prop('outerHTML') + '</span>'+
                     '</tr>';
-                $('#foodTable > tbody').append(rowHtml);
+                $('#foodTable > tbody').append(decodeURI(encodeURI(rowHtml)));
             }
         }
     }
@@ -421,7 +422,7 @@
                 '<td  id="itemContent" style="display: none;">' +  selectedId + '</td>'+
                 '<td>' + buildDeleteItemButton(rowCount).prop('outerHTML') + '</td>'+
             '</tr>';
-        $('#itemTable > tbody').append(rowHtml);
+        $('#itemTable > tbody').append(decodeURI(encodeURI(rowHtml)));
     }
     //新增會議物品資料行-刪除按鍵
     function buildDeleteItemButton(index) {
@@ -475,7 +476,7 @@
                 '<td>' + buildQtyCol(rowCount, $('#meetingQty').val()).prop('outerHTML') + '</td>'+
                 '<td>' + buildDeleteFoodButton(rowCount).prop('outerHTML') + '</span>'+
             '</tr>';
-        $('#foodTable > tbody').append(rowHtml);
+        $('#foodTable > tbody').append(decodeURI(encodeURI(rowHtml)));
     }
     //新增會議餐點資料行-數量欄位
     function buildQtyCol(index, qty) {

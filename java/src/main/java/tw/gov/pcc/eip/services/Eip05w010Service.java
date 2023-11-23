@@ -12,6 +12,7 @@ import tw.gov.pcc.eip.domain.Osclass;
 import tw.gov.pcc.eip.framework.domain.UserBean;
 
 import java.time.LocalDateTime;
+import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -85,8 +86,8 @@ public class Eip05w010Service extends OpinionSurveyService{
      * @param caseData
      */
     public void deleteClass(Eip05w010Case caseData) {
-        List<String>osccodeList = caseData.getOsccodeList().stream().filter(StringUtils::isNotBlank).collect(Collectors.toList());
-        for (String osccode:osccodeList) {
+        String[] osccodeArray = caseData.getOsccodeList().split(",");
+        for (String osccode:osccodeArray) {
             osclassDao.deleteData(Integer.valueOf(osccode));
         }
     }

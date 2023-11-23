@@ -780,7 +780,8 @@
                 // 測試連結
                 $('#btnLink').click(function(){
                     let url = $('#mlink').val();
-                    if(url !== '') {
+                    const isValidTarget = /^((http|https):\/\/)/.test(url); // check Open redirect
+                    if(url !== '' && isValidTarget) {
                         window.open(url);
                     }
                 });
