@@ -425,7 +425,7 @@
                               @click="reviewStart('不同意',true)">不同意
                     </b-button>
                   </div>
-                  <div v-else-if="formStatusRef === FormStatusEnum.VERIFY && userData.deptId === '600038'">
+                  <div v-else-if="formStatusRef === FormStatusEnum.VERIFY">
                     <b-button class="ml-2" style="background-color: #17a2b8; color: white"
                               @click="reviewStart('審核',true)">送出
                     </b-button>
@@ -742,7 +742,7 @@ export default {
 
       let isOK = true;
       if (i === true) {
-        //判斷審核腳色是否為資推或是機房的，正常都是走下面，資推或是機房的才會用上面去判斷(資推或是機房的審核要看畫面的form.agreeType去決定是否同意)
+        //判斷審核腳色是否為資推或是機房的，正常都是走else裡，資推或是機房的才會用上面if去判斷(資推或是機房的審核要看畫面的form.agreeType去決定是否同意)
         if (configRoleToBpmIpt(userData.userRole) || configRoleToBpmCrOperator(userData.userRole)) {
           isOK = await $bvModal.msgBoxConfirm('是否送出' + getAgreeType(form.agreeType) + '?');
         } else {
@@ -790,7 +790,7 @@ export default {
         if (taskDataRef.value.decisionRole !== null) {
           let mapData = new Map<string, string>();
 
-          //判斷審核腳色是否為資推或是機房的，正常都是走下面，資推或是機房的才會用上面去判斷(資推或是機房的審核要看畫面的form.agreeType去決定是否同意)
+          //判斷審核腳色是否為資推或是機房的，正常都是走else裡，資推或是機房的才會用上面if去判斷(資推或是機房的審核要看畫面的form.agreeType去決定是否同意)
           if (configRoleToBpmIpt(userData.userRole) || configRoleToBpmCrOperator(userData.userRole)) {
             mapData.set(taskDataRef.value.decisionRole, getItem(getAgreeType(form.agreeType)))
           } else {

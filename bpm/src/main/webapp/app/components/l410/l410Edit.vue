@@ -546,7 +546,7 @@
                             @click="reviewStart('不同意',true)">不同意
                   </b-button>
                 </div>
-                <div v-else-if="formStatusRef === FormStatusEnum.VERIFY && userData.deptId === '600038'">
+                <div v-else-if="formStatusRef === FormStatusEnum.VERIFY">
                   <b-button class="ml-2" style="background-color: #17a2b8; color: white"
                             @click="reviewStart('審核',true)">送出
                   </b-button>

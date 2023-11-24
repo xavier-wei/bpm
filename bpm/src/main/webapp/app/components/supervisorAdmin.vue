@@ -15,7 +15,7 @@
           label-cols-md="4"
           content-cols-md="8"
           label-align-md="right"
-          :label="'職稱：'"
+          :label="'申請者職稱：'"
           :item="$v.title"
         >
           <b-form-select v-model="$v.title.$model" :options="bpmTitleOptions">

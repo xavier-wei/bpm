@@ -89,10 +89,20 @@ public class SupervisorService {
         return supervisorRepository.executeQueryRuleModel(unit, titleName) == null ? NO_SIGN : supervisorRepository.executeQueryRuleModel(unit, titleName);
     }
 
-    public List<BpmSupervisor> getSupervisor(String title) {
+    /**
+     * 查詢 表單簽核上級管理
+     * @param title 申請者職稱
+     * @Return List<BpmSupervisor> 表單簽核上級管理
+     */
+    public List<BpmSupervisor> supervisorAdmin(String title) {
         return bpmSupervisorRepository.findAllByTitle(title);
     }
 
+    /**
+     * 新增跟編輯 表單簽核上級管理
+     * @param bpmSupervisor 表單簽核上級管理
+     * @Return String 表單簽核上級管理
+     */
     public String patchSupervisor(BpmSupervisor bpmSupervisor) {
         BpmSupervisorPrimayKey bpmSupervisorPrimayKey = new BpmSupervisorPrimayKey(bpmSupervisor.getAppUnit(), bpmSupervisor.getAppTitle());
         BpmCache.getBpmSupervisorHashMap().put(bpmSupervisorPrimayKey, bpmSupervisor);

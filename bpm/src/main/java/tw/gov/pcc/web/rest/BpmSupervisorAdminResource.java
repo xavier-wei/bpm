@@ -22,11 +22,13 @@ public class BpmSupervisorAdminResource {
         this.supervisorService = supervisorService;
     }
 
-
+    /**
+     *
+     */
     @GetMapping("/supervisorAdmin")
-    public List<BpmSupervisor> getSupervisor(@RequestParam(required = false) String title) {
+    public List<BpmSupervisor> supervisorAdmin(@RequestParam(required = false) String title) {
         log.info("BpmSupervisorAdminResource.java - getSupervisor - 28 :: " + title);
-        return supervisorService.getSupervisor(title);
+        return supervisorService.supervisorAdmin(title);
     }
 
     @PatchMapping("/save/supervisorAdmin")
