@@ -288,11 +288,6 @@
                                            :disabled="form.isSubmit === '1' || formStatusRef !== FormStatusEnum.MODIFY"/>
                   </div>
 
-                  <div v-else-if="row.item.applyVersion === '4'">
-                    <b-form-checkbox-group v-model="$v.webSiteList.$model" :options="options.webSite"
-                                           :disabled="form.isSubmit === '1' || formStatusRef !== FormStatusEnum.MODIFY"/>
-                  </div>
-
                 </template>
 
                 <!--處理權限-->
@@ -539,6 +534,7 @@
                 </b-button>
 
                 <div v-if="userData.isSupervisor && formStatusRef === FormStatusEnum.VERIFY">
+                  <!--除了申請者的上級會有同意跟不同意，其餘只會有送出按鈕-->
                   <b-button class="ml-2" style="background-color: #17a2b8; color: white"
                             @click="reviewStart('同意',true)">同意
                   </b-button>
@@ -621,9 +617,6 @@ const flowChart = () => import('@/components/flowChart.vue');
 
 export default {
   name: "l410Edit",
-  methods: {
-    checkboxToMapAndForm
-  },
   props: {
     formId: {
       type: String,
@@ -667,25 +660,58 @@ export default {
     signerList,
   },
   setup(props) {
+    //照片預設物件
     let appendixData = reactive({});
+
+    //進入表單的模式
     const formStatusRef = toRef(props, 'formStatus');
+
+    //L410的form表單
     const l410Data = ref({});
+
+    //接收父層傳過來的formId
     const formIdProp = toRef(props, 'formId');
+
+    //傳進來的taskData{processInstanceId、taskId、taskName、decisionRole、additional}
     const taskDataRef = toRef(props, 'taskData');
+
+    //顯示加簽按鈕判斷
     const isSignatureRef = toRef(props, 'isSignature');
+
+    //傳進來的表單處理狀態 0處理中 1已完成 2註銷
     const processInstanceStatusRef = toRef(props, 'processInstanceStatus');
+
+    //單位下拉選單資訊
     const bpmDeptsOptions = ref(useGetters(['getBpmDeptsOptions']).getBpmDeptsOptions).value;
+
+    //登入者資訊
     const userData = ref(useGetters(['getUserData']).getUserData).value;
+
+    //顯示撤銷按鈕判斷
     const isCancelRef = toRef(props, 'isCancel');
+
+    //判斷頁面審核單位是否跟登入者單位一樣，一致就去後端更新資料
     let iptData = ref(false);
     const $bvModal = useBvModal();
     const notificationService = useNotification();
+
+    //加簽的彈出視窗
     const signatureBmodel = ref(null);
+
+    //接待處理來的狀態，一般查詢:1 下屬表單查詢:2 ，返回待處理時在帶這個參數過去，讓待處理的onActivated()知道要查哪個function
     const queryRef = toRef(props, 'query');
+
+    //用formId查詢表單的附件
     let fileDataId = reactive({
       fileId: ''
     });
-
+    //分頁預設值
+    const tabIndex = ref(0);
+    //流程圖預設物件
+    const filePathData = reactive({
+      filePathName: '',
+    });
+    //處理意見物件
     let opinion = reactive({
       opinionData: ''
     });
@@ -696,6 +722,12 @@ export default {
       READONLY = '檢視',
       VERIFY = '簽核'
     }
+
+    const headers = {
+      headers: {
+        'Content-Type': 'multipart/form-data',
+      },
+    };
 
     const formDefault = {
       formId: '',//表單編號
@@ -839,7 +871,6 @@ export default {
       taskId: '',  //任務ID
       opinion: '',  //審核的處理意見
       applyItem: [],
-      webSiteList: [],
       l410Variables: {},
       formName: 'L410',
     };
@@ -863,20 +894,16 @@ export default {
       isOther: {},
       otherReason: {},
       applyItem: {},
-      webSiteList: {},
       opinion: {},
     };
-    const {$v, checkValidity, reset} = useValidation(rules, form, formDefault);
 
-    const filePathData = reactive({
-      filePathName: '',
-    });
+    const {$v, checkValidity, reset} = useValidation(rules, form, formDefault);
 
     const table = reactive({
       fields: [
         {
           key: 'checkbox',
-          label: '全選',
+          label: '',
           sortable: false,
           thClass: 'text-center',
           tdClass: 'text-center align-middle',
@@ -937,12 +964,9 @@ export default {
         {value: '7', text: '繕打人員'},
         {value: '8', text: '檔案歸檔'},
       ],
-      webSite: [
-        {value: '0', text: '全球資訊網 (https://www.pcc.gov.tw)'},
-        // {value: '1', text: '會內資訊網站請先至home.pcc.gov.tw「帳號登入」點選「註冊」，填寫個人基本資料'},
-      ],
     });
 
+    //根據傳來的formId去後端查出哪個表單
     function handleQuery() {
       l410Data.value = {};
       axios
@@ -955,12 +979,7 @@ export default {
         .catch(notificationErrorHandler(notificationService));
     }
 
-    const headers = {
-      headers: {
-        'Content-Type': 'multipart/form-data',
-      },
-    };
-
+    //根據表單內容轉成畫面的checkbox
     function templateQuery(formData) {
       table.data = [];
 
@@ -987,6 +1006,7 @@ export default {
         .catch(notificationErrorHandler(notificationService));
     }
 
+    //查出流程圖
     function handleQueryFlowChart(processInstanceId) {
       axios
         .get(`/process/flowImage/${processInstanceId}`)
@@ -996,7 +1016,7 @@ export default {
         .catch(notificationErrorHandler(notificationService));
     }
 
-
+    //送出申請  狀態: 暫存0 申請1
     async function submitForm(isSubmit) {
 
       let l410Variables = [];
@@ -1016,8 +1036,6 @@ export default {
           const formData = new FormData();
 
           form.l410Variables = l410Variables;
-          console.log(form.l410Variables)
-          console.log('form',form)
 
           let body = {
             "L410": JSON.stringify(form)
@@ -1052,6 +1070,7 @@ export default {
       }
     }
 
+    //根據畫面點選的按送出，同意 不同意 審核(除了申請者的上級會有同意跟不同意，其餘只會有送出按鈕) 補件
     async function reviewStart(item, i) {
       let variables = {};
       let l410Variables = [];
@@ -1081,6 +1100,7 @@ export default {
           }
         }));
 
+        //用後端傳來的taskDataRef組出送審需要的variables
         if (taskDataRef.value.decisionRole !== null) {
           let mapData = new Map<string, string>();
           mapData.set(taskDataRef.value.decisionRole, getItem(item))
@@ -1091,6 +1111,7 @@ export default {
         form.opinion = opinion.opinionData
         let opinionData = '';
 
+        //依照畫面組出審核的處理意見
         if (form.opinion !== '') {
           opinionData = '(意見)' + form.opinion;
         } else {
@@ -1114,7 +1135,6 @@ export default {
           ipt: iptData.value
         };
 
-
         formData.append('completeReqDTO', new Blob([JSON.stringify(completeReqDTO)], {type: 'application/json'}));
 
         //判斷appendix頁面傳過來的file
@@ -1124,8 +1144,6 @@ export default {
           }
           formData.append('fileDto', new Blob([JSON.stringify(appendixData.value)], {type: 'application/json'}));
         }
-
-        console.log('formData',formData)
 
         axios
           .post(`/process/completeTask/${form.formId}`, formData, headers)
@@ -1137,22 +1155,22 @@ export default {
               $bvModal.msgBoxOk('表單審核完畢');
               navigateByNameAndParams('pending', {isReload: false, isNotKeepAlive: true,query:queryRef.value});
             }
-
           })
           .catch(notificationErrorHandler(notificationService));
       }
     }
 
-    const tabIndex = ref(0);
 
+    //b-tab分頁用
     const changeTabIndex = (index: number) => {
       tabIndex.value = index;
     };
-
+    //b-tab分頁用
     const activeTab = (index: number) => {
       return tabIndex.value === index;
     };
 
+    //撤銷表單
     async function toCancel() {
       let isOK = await $bvModal.msgBoxConfirm('是否撤銷表單?');
       if (isOK) {
@@ -1169,6 +1187,7 @@ export default {
       }
     }
 
+    //返回上一頁
     function toQueryView() {
       handleBack({isReload: true, isNotKeepAlive: true,query:queryRef.value});
     }
@@ -1188,6 +1207,7 @@ export default {
       }
     };
 
+    //切換處理權限欄位時清除已填資料
     function resetValue(data) {
       data.emailApply1 = null;
       data.emailApply2 = null;
@@ -1198,6 +1218,7 @@ export default {
       data.otherRemark = null;
     }
 
+    //取消已選申請項目時，清空申請項目欄位跟處理權限欄位內的所有值
     function resetCheckboxValue(data) {
       if (data.checkbox === '0') {
         data.otherSys = null;
@@ -1214,12 +1235,10 @@ export default {
         if (data.systemApply === '2') {
           form.applyItem = [];
         }
-        if (data.systemApply === '5') {
-          form.webSiteList = [];
-        }
       }
     }
 
+    //開啟加簽的彈出視窗
     function showModel() {
       signatureBmodel.value.isShowDia(true);
     }

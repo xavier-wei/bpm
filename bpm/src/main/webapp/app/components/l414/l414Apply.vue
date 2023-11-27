@@ -80,7 +80,7 @@
                   <b-input-group>
                     <!--申請人員工編號 : appEmpid-->
                     <b-form-input v-model="$v.appEmpid.$model"/>
-                    <b-button class="ml-2"  variant="outline-dark" @click="showModel()">選擇人員</b-button>
+                    <b-button class="ml-2"  variant="outline-dark" @click="showErrandModel()">選擇人員</b-button>
                   </b-input-group>
                 </i-form-group-check>
 
@@ -154,7 +154,7 @@
                   >
                     <!--啟用期間類別 : selecteEdateType-->
                     <b-form-radio-group v-model="$v.selecteEdateType.$model" @change="changeSelecteEdateType">
-                      <b-form-radio value="1">
+                      <b-form-radio value="1" style="margin-top: 30px">
                         <!--啟用期間開始時間 : sdate 、啟用期間結束時間 : edate-->
                         <i-dual-date-picker
                           :disabled="$v.selecteEdateType.$model !== '1'"
@@ -169,7 +169,7 @@
                         <span class="d-inline col-7">職務異動止</span>
                       </b-form-radio>
                       <b-form-radio value="3">
-                        <div class="m-1 col-12" style="height: 34px">永久使用(僅電腦機房可勾選)</div>
+                        <div class="m-1 col-12" style="height: 5px">永久使用(僅電腦機房可勾選)</div>
                       </b-form-radio>
                     </b-form-radio-group>
                   </i-form-group-check>
@@ -407,6 +407,7 @@
       </b-tabs>
     </b-card-body>
 
+    <!--申請人選擇器-->
     <errandBmodel ref="errandBmodel" :formData="form"></errandBmodel>
   </div>
 </template>
@@ -414,7 +415,7 @@
 <script lang="ts">
 
 import IDualDatePicker from '@/shared/i-date-picker/i-dual-date-picker.vue';
-import {reactive, ref, toRef, watch, onMounted} from '@vue/composition-api';
+import {reactive, ref, toRef} from '@vue/composition-api';
 import {useValidation, validateState} from '@/shared/form';
 import IFormGroupCheck from '@/shared/form/i-form-group-check.vue';
 import {required} from '@/shared/validators';
@@ -427,7 +428,6 @@ import {useGetters} from '@u3u/vue-hooks';
 import {navigateByNameAndParams} from "@/router/router";
 import {handleBack} from '@/router/router';
 import errandBmodel from "@/components/errandBmodel.vue";
-
 const appendix = () => import('@/components/appendix.vue');
 const flowChart = () => import('@/components/flowChart.vue');
 
@@ -448,24 +448,43 @@ export default {
     errandBmodel,
   },
   setup(props) {
+    //登入者資訊
     const userData = ref(useGetters(['getUserData']).getUserData).value
+
+    //單位下拉選單資訊
     const bpmDeptsOptions = ref(useGetters(['getBpmDeptsOptions']).getBpmDeptsOptions).value;
+
+    //進入表單的模式
     const formStatusRef = toRef(props, 'formStatus');
+
+    //分頁預設值
     const tabIndex = ref(0);
     const dual1 = ref(null);
     const dual2 = ref(null);
     const notificationService = useNotification();
     const $bvModal = useBvModal();
+
+    //申請人選擇器
     const errandBmodel = ref(null);
+
+    //流程圖預設物件,這裡要預設參數防止出現前端檢查錯誤
     const filePathData = reactive({
       filePathName: '',
     });
 
-
+    //附件上傳預設物件,這裡要預設參數防止出現前端檢查錯誤
     let appendixData = reactive({});
+
+    //用formId查詢表單的附件，這裡要預設參數防止出現前端檢查錯誤
     let fileDataId = reactive({
       fileId: ''
     });
+
+    const headers = {
+      headers: {
+        'Content-Type': 'multipart/form-data',
+      },
+    };
 
     const formDefault = {
       formId: '', //表單編號
@@ -539,12 +558,7 @@ export default {
     };
     const {$v, checkValidity, reset} = useValidation(rules, form, formDefault);
 
-    const headers = {
-      headers: {
-        'Content-Type': 'multipart/form-data',
-      },
-    };
-
+    //送出申請  狀態: 暫存0 申請1
     async function submitForm(isSubmit) {
       checkValidity().then((isValid: boolean) => {
         if (isValid) {
@@ -592,15 +606,18 @@ export default {
       return tabIndex.value === index;
     };
 
+    //返回上一頁
     function toQueryView() {
       handleBack({isReload: false, isNotKeepAlive: true});
     }
 
+    //使用時段 切換時清空已填資料
     function changeEnableTime() {
       form.workingTime = '';
       form.otherEnableTime = '';
     }
 
+    //啟用期間、停用期間  切換時清空已填資料
     function changeSelecteEdateType() {
       form.sdate = null;
       form.edate = null;
@@ -608,7 +625,8 @@ export default {
       form.delEnableDate = null;
     }
 
-    function showModel() {
+    //開啟申請人選擇器
+    function showErrandModel() {
       errandBmodel.value.isShowDia(true);
     }
 
@@ -633,7 +651,7 @@ export default {
       changeEnableTime,
       changeSelecteEdateType,
       errandBmodel,
-      showModel,
+      showErrandModel,
     }
   }
 }

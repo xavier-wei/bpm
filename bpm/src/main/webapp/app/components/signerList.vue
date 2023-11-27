@@ -6,11 +6,11 @@
       <div class="m-2">
         <P> 簽核流程資訊： </P>
 
-        <b-table  :items="signerListTable.data" :fields="signerListTable.fields" bordered responsive="sm">
+        <b-table :items="signerListTable.data" :fields="signerListTable.fields" bordered responsive="sm">
 
           <template #cell(idAndName)="row">
             <template v-for="(staffList, index) in row.item.empIds">
-              <p >
+              <p>
                 員工編號: {{ staffList }}
                 <span v-if="row.item.empNames && row.item.empNames[index]"> 姓名: {{ row.item.empNames[index] }}</span>
               </p>
@@ -21,7 +21,7 @@
       </div>
 
       <div class="m-2">
-        <b-table  :items="signStatusTable.data" :fields="signStatusTable.fields" bordered responsive="sm">
+        <b-table :items="signStatusTable.data" :fields="signStatusTable.fields" bordered responsive="sm">
           <template #cell(situation)="row">
             <div v-if="row.item.taskName === '申請人確認'">
               申請
@@ -93,12 +93,22 @@ export default {
     },
   },
   setup(props) {
-
+    //單位下拉選單資訊
     const bpmDeptsOptions = ref(useGetters(['getBpmDeptsOptions']).getBpmDeptsOptions).value;
+
+    //接收父層傳過來的formId
     const formIdProp = toRef(props, 'formId');
+
+    //接收父層傳過來的表單的模式
     const formStatusRef = toRef(props, 'formStatus');
+
+    //傳進來的表單處理狀態 0處理中 1已完成 2註銷
     const processInstanceStatusRef = toRef(props, 'processInstanceStatus');
+
+    //接收父層傳過來的處理意見物件
     const opinionProp = reactive(props.opinion);
+
+    //暫存所有簽核流程資訊，在查完後端後會把所有data整理完附值給signerListTable，在給畫面的 b-table
     const signerList = ref([]);
 
     const notificationService = useNotification();
@@ -174,6 +184,7 @@ export default {
       totalItems: undefined,
     });
 
+    //取得指定表單的表單簽核紀錄
     function getBpmSignStatus(id) {
 
       signStatusTable.data = [];
@@ -200,6 +211,7 @@ export default {
         .catch(notificationErrorHandler(notificationService));
     }
 
+    //取得指定表單的簽核者清單
     function getFindByBpmSignerList(id) {
 
       signerList.value = [];
@@ -226,7 +238,7 @@ export default {
         .catch(notificationErrorHandler(notificationService));
     }
 
-
+    //監聽父層傳來的formId，有變就會去後端取資料給前端
     watch(formIdProp, (value) => {
         getBpmSignStatus(value);
         getFindByBpmSignerList(value);
@@ -249,7 +261,7 @@ export default {
 }
 </script>
 
-<style >
+<style>
 .table-bordered thead th, .table-bordered thead td {
   border-bottom-width: 2px;
   background-color: #b0ded4;

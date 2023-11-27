@@ -147,9 +147,14 @@ export default defineComponent({
     IFormGroupCheck,
   },
   setup(props) {
+    //登入者資訊
     const userData = ref(useGetters(['getUserData']).getUserData).value;
+
     const iTable = ref(null);
+
+    //是否顯示iTable
     const queryStatus = ref(false);
+
     const notificationService = useNotification();
     const queryProp = toRef(props, 'query');
     //用來判斷當前頁面是一般查詢還是下屬表單查詢，防止每次去Edit頁在回來時只會停留在一般查詢
@@ -337,7 +342,7 @@ export default defineComponent({
       }
     }
 
-    //重製form所有資料、iTable清空
+    //重置form所有資料、iTable清空
     function toReset() {
       reset();
       table.data = [];

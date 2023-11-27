@@ -466,7 +466,9 @@
         </b-tabs>
       </b-card-body>
     </div>
+    <!--加簽的彈出視窗-->
     <signatureBmodel ref="signatureBmodel" :formData="form" :taskData="taskDataRef"></signatureBmodel>
+    <!--申請人選擇器的彈出視窗-->
     <errandBmodel ref="errandBmodel" :formData="form"></errandBmodel>
   </div>
 </template>
@@ -475,7 +477,7 @@
 
 
 import IDualDatePicker from '@/shared/i-date-picker/i-dual-date-picker.vue';
-import {reactive, ref, toRef, watch, onActivated} from '@vue/composition-api';
+import {reactive, ref, toRef, watch} from '@vue/composition-api';
 import {useValidation, validateState} from '@/shared/form';
 import IFormGroupCheck from '@/shared/form/i-form-group-check.vue';
 import IDatePicker from '@/shared/i-date-picker/i-date-picker.vue';
@@ -539,25 +541,52 @@ export default {
     errandBmodel
   },
   setup(props) {
+    //登入者資訊
     const userData = ref(useGetters(['getUserData']).getUserData).value;
+
+    //單位下拉選單資訊
     const bpmDeptsOptions = ref(useGetters(['getBpmDeptsOptions']).getBpmDeptsOptions).value;
+
+    //接收父層傳過來的formId
     const formIdProp = toRef(props, 'formId');
+
+    //進入表單的模式
     const formStatusRef = toRef(props, 'formStatus');
+
+    //傳進來的taskData{processInstanceId、taskId、taskName、decisionRole、additional}
     const taskDataRef = toRef(props, 'taskData');
+
+    //顯示加簽按鈕判斷
     const isSignatureRef = toRef(props, 'isSignature');
+
+    //傳進來的表單處理狀態 0處理中 1已完成 2註銷
     const processInstanceStatusRef = toRef(props, 'processInstanceStatus');
+
+    //顯示撤銷按鈕判斷
     const isCancelRef = toRef(props, 'isCancel');
+
+    //接待處理來的狀態，一般查詢:1 下屬表單查詢:2 ，返回待處理時在帶這個參數過去，讓待處理的onActivated()知道要查哪個function
     const queryRef = toRef(props, 'query');
+
+    //分頁預設值
     const tabIndex = ref(0);
     const dual1 = ref(null);
     const dual2 = ref(null);
+
+    //判斷暫存還是已送出申請(畫面開啟編輯 需要登入者跟申請者一致 且isSubmit是0)
     const isEdit = ref(false);
     const notificationService = useNotification();
     const $bvModal = useBvModal();
+
+    //加簽的彈出視窗
     const signatureBmodel = ref(null);
+
+    //流程圖預設物件
     const filePathData = reactive({
       filePathName: '',
     });
+
+    //申請人選擇器
     const errandBmodel = ref(null);
     enum FormStatusEnum {
       CREATE = '新增',
@@ -566,11 +595,15 @@ export default {
       VERIFY = '簽核'
     }
 
+    //附件上傳預設物件
     let appendixData = reactive({});
+
+    //用formId查詢表單的附件
     let fileDataId = reactive({
       fileId: ''
     });
 
+    //處理意見物件
     let opinion = reactive({
       opinionData: ''
     });
@@ -654,6 +687,7 @@ export default {
     };
     const {$v, checkValidity, reset} = useValidation(rules, form, formDefault);
 
+    //根據傳來的formId去後端查出哪個表單
     function handleQuery() {
 
       axios
@@ -674,7 +708,7 @@ export default {
           //用現在表單編號直接給file模組去自動取值
           fileDataId.fileId = data.formId;
 
-          //判斷暫存還是以送出申請(畫面開啟編輯 需要登入者跟申請者一致 且isSubmit是0)
+          //判斷暫存還是已送出申請(畫面開啟編輯 需要登入者跟申請者一致 且isSubmit是0)
           isEdit.value = userData.userName !== data.appName || data.isSubmit !== '0'
 
           Object.assign(formDefault, data);
@@ -685,6 +719,7 @@ export default {
 
     }
 
+    //查出流程圖
     function handleQueryFlowChart(processInstanceId) {
       axios
         .get(`/process/flowImage/${processInstanceId}`)
@@ -700,6 +735,7 @@ export default {
       },
     };
 
+    //送出申請  狀態: 暫存0 申請1
     async function submitForm(isSubmit) {
 
       $bvModal.msgBoxConfirm('是否確認送出修改內容?').then((isOK: boolean) => {
@@ -738,6 +774,7 @@ export default {
       });
     }
 
+    //根據畫面點選的按送出，同意 不同意 審核(除了申請者的上級會有同意跟不同意，其餘只會有送出按鈕) 補件
     async function reviewStart(item, i) {
 
       let isOK = true;
@@ -805,6 +842,7 @@ export default {
 
         let opinionData = '';
 
+        //依照畫面組出審核的處理意見
         if (form.opinion !== '') {
           opinionData = '(意見)' + form.opinion;
         } else {
@@ -855,8 +893,14 @@ export default {
       }
     }
 
+    //b-tab分頁用
     const changeTabIndex = (index: number) => {
       tabIndex.value = index;
+    };
+
+    //b-tab分頁用
+    const activeTab = (index: number) => {
+      return tabIndex.value === index;
     };
 
     const getItem = (item: string) => {
@@ -893,11 +937,13 @@ export default {
       }
     };
 
+    //使用時段 切換時清空已填資料
     function changeEnableTime() {
       form.workingTime = '';
       form.otherEnableTime = '';
     }
 
+    //啟用期間、停用期間  切換時清空已填資料
     function changeSelecteEdateType() {
       form.sdate = null;
       form.edate = null;
@@ -905,16 +951,14 @@ export default {
       form.delEnableDate = null;
     }
 
+    //處理意見 切換時清空已填資料
     function changeAgreeType() {
       form.scheduleDate = null;
       form.partialAgreeReason = '';
       form.notAgreeReason = '';
     }
 
-    const activeTab = (index: number) => {
-      return tabIndex.value === index;
-    };
-
+    //撤銷表單
     async function toCancel() {
       let isOK = await $bvModal.msgBoxConfirm('是否撤銷表單?');
       if (isOK) {
@@ -931,14 +975,17 @@ export default {
       }
     }
 
+    //返回上一頁
     function toQueryView() {
       handleBack({isReload: true, isNotKeepAlive: false,query:queryRef.value,});
     }
 
+    //開啟加簽的彈出視窗
     function showModel() {
       signatureBmodel.value.isShowDia(true);
     }
 
+    //開啟申請人選擇器
     function showErrandModel() {
       errandBmodel.value.isShowDia(true);
     }

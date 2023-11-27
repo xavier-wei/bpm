@@ -49,15 +49,15 @@
       </template>
 
       <template v-slot:cell(appName)="row">
-        <span v-html="formatDescription(row.item.appName)"></span>
+        <span v-html="row.item.appName"></span>
       </template>
 
       <template v-slot:cell(filName)="row">
-        <span v-html="formatDescription(row.item.filName)"></span>
+        <span v-html="row.item.filName"></span>
       </template>
 
       <template v-slot:cell(needNarrative)="row">
-        <span v-html="formatDescription(row.item.needNarrative)"></span>
+        <span v-html="row.item.needNarrative"></span>
       </template>
 
     </i-table>
@@ -77,9 +77,7 @@ import {useNotification} from "@/shared/notification";
 import {newformatDate} from '@/shared/date/minguo-calendar-utils';
 import {useGetters} from "@u3u/vue-hooks";
 import {changeDealWithUnit} from "@/shared/word/directions";
-import {configRoleToBpmIpt} from '@/shared/word/configRole';
-import {applicationReasonUnit, appNameUnit, filNameUnit, needNarrativeUnit} from "@/shared/word/iTable-convert-unit";
-import {changeProject} from "@/shared/word/project-conversion";
+import { appNameUnit, filNameUnit, needNarrativeUnit} from "@/shared/word/iTable-convert-unit";
 
 export default {
   name: 'l414Query',
@@ -92,7 +90,6 @@ export default {
     const iTable = ref(null);
     const queryStatus = ref(false);
     const notificationService = useNotification();
-    const userData = ref(useGetters(['getUserData']).getUserData).value;
     const bpmDeptsOptions = ref(useGetters(['getBpmDeptsOptions']).getBpmDeptsOptions).value;
 
     enum FormStatusEnum {
@@ -104,7 +101,6 @@ export default {
 
     const formDefault = {
       word: '', //關鍵字
-      number: '0', //版號
     };
 
     const form = reactive(Object.assign({}, formDefault));
@@ -112,7 +108,6 @@ export default {
     // 表單物件驗證規則
     const rules = ref({
       word: {},
-      number: {},
     });
 
     const {$v, checkValidity, reset} = useValidation(rules, form, formDefault);
@@ -196,24 +191,15 @@ export default {
       totalItems: 0,
     });
 
-    // 下拉選單選項
-    const queryOptions = reactive({
-      number: [
-        {value: '0', text: '1_0_2'},
-        {value: '1', text: '1_0_1'},
-        {value: '2', text: '1_0_0'},
-      ],
-    });
-
     onActivated(() => {
       toQuery();
     });
 
+    //查詢L414所有已完成的表單
     const toQuery = () => {
       table.data = undefined;
       const params = new URLSearchParams()
       params.append('word', form.word)
-      // params.append('number', form.number)
       params.append('processInstanceStatus', '1')
 
       axios.get(`/eip/eip-bpm-isms-l414/findByWord?${params.toString()}`)
@@ -234,6 +220,7 @@ export default {
         .catch(notificationErrorHandler(notificationService))
     };
 
+    //新增表單
     const toL414Apply = () => {
       navigateByNameAndParams('l414Apply', {
         formStatus: FormStatusEnum.CREATE,
@@ -241,6 +228,7 @@ export default {
       });
     };
 
+    //判斷要導頁去哪
     const toEdit = (item) => {
       let taskData = {
         processInstanceId: '',
@@ -259,10 +247,6 @@ export default {
       });
     };
 
-    function formatDescription(description) {
-      return description.replace(/\n/g, '<br>');
-    }
-
     function toReset() {
       reset();
       table.data = [];
@@ -276,12 +260,10 @@ export default {
       toQuery,
       reset,
       table,
-      queryOptions,
       iTable,
       toL414Apply,
       toEdit,
       queryStatus,
-      formatDescription,
       toReset,
     };
   },
