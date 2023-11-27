@@ -377,7 +377,7 @@ export default defineComponent({
         .catch(notificationErrorHandler(notificationService))
     }
 
-    //重製form所有資料、iTable清空
+    //重置form所有資料、iTable清空
     function toReset() {
       reset();
       table.data = [];

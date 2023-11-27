@@ -120,7 +120,7 @@ import {onMounted, reactive, ref, toRef, watch} from "@vue/composition-api";
 import {FileModel} from "@/shared/model/bpm/fileModel";
 import {formatToString} from "@/shared/date/minguo-calendar-utils";
 import {useGetters} from "@u3u/vue-hooks";
-import axios, {AxiosResponse} from 'axios';
+import axios from 'axios';
 import {notificationErrorHandler} from "@/shared/http/http-response-helper";
 import {useNotification} from "@/shared/notification";
 import {downloadFile} from "@/shared/formatter/common";
@@ -152,14 +152,31 @@ export default {
   },
   setup(props) {
     const iTable = ref(null);
+
+    //接收父層傳來的空物件
     let filePathNameProp = reactive(props.vData);
-    let fileDataIdProp = reactive(props.fileDataId);
-    const formStatusRef = toRef(props, 'formStatus');
-    const userData = ref(useGetters(['getUserData']).getUserData).value;
+
+    //暫存畫面上的所有附件
     let appendixDataList = ref([]);
+
+    //接收父層傳來的formId,再去後端查詢
+    let fileDataIdProp = reactive(props.fileDataId);
+
+    //進入表單的模式
+    const formStatusRef = toRef(props, 'formStatus');
+
+    //登入者資訊
+    const userData = ref(useGetters(['getUserData']).getUserData).value;
+
     const notificationService = useNotification();
+
+    //附件是pdf的，用它來傳給IPdfViewer
     const pdfViewer = ref(null);
+
+    //是否顯示 新增附件功能
     const applyAppendix = ref(false);
+
+    //是否顯示 查看附件功能
     const readAppendix = ref(false);
     const $bvModal = useBvModal();
 
@@ -171,12 +188,17 @@ export default {
     }
 
     onMounted(() => {
+      //表單的模式是CREATE，只會顯示新增的元件
       if (formStatusRef.value === FormStatusEnum.CREATE) {
         applyAppendix.value = true;
         doQuery();
+
+        //表單的模式是READONLY，只會顯示查看當前表單的所有附件
       } else if (formStatusRef.value === FormStatusEnum.READONLY) {
         doReadonly();
         readAppendix.value = true;
+
+        //表單的模式是MODIFY或VERIFY，新增元件跟查看元件都會顯示
       } else if (formStatusRef.value === FormStatusEnum.MODIFY || formStatusRef.value === FormStatusEnum.VERIFY) {
         applyAppendix.value = true;
         readAppendix.value = true;
@@ -282,6 +304,7 @@ export default {
       totalItems: undefined,
     });
 
+    //新增元件用的，會把所有參數清空、預設一條新增附件給畫面
     function doQuery() {
       appendixData.appendix = [];
       // 給畫面的[新增附件:]預設值
@@ -292,6 +315,7 @@ export default {
       appendixData.appendix.push(fileModel);
     }
 
+    //用父層傳來的formId去後端查詢表單有的所有附件
     function doReadonly() {
       table.data = undefined;
       table.data = [];
@@ -308,10 +332,12 @@ export default {
       }
     }
 
+    //刪除指定的那一條附件
     function removeAnnouncement(index: number) {
       appendixData.appendix.splice(index, 1);
     }
 
+    //新增一條附件
     function addAnnouncement() {
       let fileModel = new FileModel()
       fileModel.updateTime = new Date();
@@ -320,12 +346,13 @@ export default {
       appendixData.appendix.push(fileModel);
     }
 
+    //選擇要上傳的附件
     async function upload(e, index, data) {
       data.file = e.target.files[0];
       data.fileSize = (e.target.files[0].size / 1024).toFixed(1)
     }
 
-
+    //清空所有附件並直接給一條新的預設附件
     function reset() {
       appendixData.appendix = [];
       appendixDataList.value = []
@@ -337,6 +364,7 @@ export default {
       appendixData.appendix.push(fileModel);
     }
 
+    //下載附件或直接用IPdfViewer開啟pdf
     function downloadBpmFile(item) {
       axios
         .get('/eip/bpm-upload-files/downloadFile/' + item.id, {responseType: 'blob'})
@@ -363,6 +391,7 @@ export default {
         .catch(notificationErrorHandler(notificationService));
     }
 
+    //刪除所點選的附件檔案
     async function deleteFile(id) {
       const isOK = await $bvModal.msgBoxConfirm('是否刪除檔案？');
       if (isOK) {
@@ -375,12 +404,13 @@ export default {
       }
     }
 
+    //先監聽初始的appendixData，如果有新增了附件就把它放進appendixDataList
     watch(appendixData, () => {
-        appendixDataList.value = []
+        appendixDataList.value = [];
         appendixData.appendix.forEach(i => {
           if (i.file !== undefined) {
             if (i.file.length > 0) {
-              appendixDataList.value.push(i)
+              appendixDataList.value.push(i);
             }
           }
         })
@@ -388,12 +418,14 @@ export default {
       {immediate: true}
     )
 
+    //appendixDataList如果有值，就把appendixDataList指定給filePathNameProp 傳給父層
     watch(appendixDataList, () => {
         Object.assign(filePathNameProp, appendixDataList)
       },
       {immediate: true}
     )
 
+    //監聽所有props內的物件，根據父層傳的模式，顯示不同的畫面
     watch(props, newValue => {
         if (formStatusRef.value === FormStatusEnum.CREATE) {
           applyAppendix.value = true;

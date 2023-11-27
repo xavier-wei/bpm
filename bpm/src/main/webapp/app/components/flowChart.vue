@@ -35,6 +35,8 @@ export default {
     },
   },
   setup(props) {
+
+    //接收父層傳來的base64，直接傳給畫面的 <img>
     const filePathNameProp = reactive(props.filePathName);
     const scale = ref(1); // 初始化縮放比例
     const drag = ref(false);

@@ -46,26 +46,25 @@
       v-show="queryStatus"
     >
       <template #cell(formId)="row">
-        <!-- <b-button variant="link" class="ml-2" style="background-color: #17a2b8" @click="toEdit(row)">{{ roq.item.number }}</b-button> -->
         <b-button variant="link" style="color: blue" @click="toEdit(row.item)"
         ><u>{{ row.item.formId }}</u></b-button
         >
       </template>
 
       <template v-slot:cell(appName)="row">
-        <span v-html="formatDescription(row.item.appName)"></span>
+        <span v-html="row.item.appName"></span>
       </template>
 
       <template v-slot:cell(filName)="row">
-        <span v-html="formatDescription(row.item.filName)"></span>
+        <span v-html="row.item.filName"></span>
       </template>
 
       <template v-slot:cell(applicationReason)="row">
-        <span v-html="formatDescription(row.item.applicationReason)"></span>
+        <span v-html="row.item.applicationReason"></span>
       </template>
 
       <template v-slot:cell(systemItem)="row">
-        <span v-html="formatDescription(row.item.systemItem)"></span>
+        <span v-html="row.item.systemItem"></span>
       </template>
 
     </i-table>
@@ -79,7 +78,6 @@ import IDatePicker from '../../shared/i-date-picker/i-date-picker.vue';
 import ITable from '../../shared/i-table/i-table.vue';
 import IFormGroupCheck from '../../shared/form/i-form-group-check.vue';
 import {useValidation, validateState} from '@/shared/form';
-import {useBvModal} from '@/shared/modal';
 import {navigateByNameAndParams} from '@/router/router';
 import {useGetters} from '@u3u/vue-hooks';
 import {formatToString, newformatDate} from "@/shared/date/minguo-calendar-utils";
@@ -91,7 +89,6 @@ import {applicationReasonUnit,appNameUnit,filNameUnit} from "@/shared/word/iTabl
 
 export default defineComponent({
   name: 'l410Query',
-  methods: {changeProject},
   components: {
     IDatePicker,
     ITable,
@@ -99,10 +96,10 @@ export default defineComponent({
   },
   setup() {
     const iTable = ref(null);
-    const $bvModal = useBvModal();
+    //是否顯示iTable
     const queryStatus = ref(false);
     const notificationService = useNotification();
-    const userData = ref(useGetters(['getUserData']).getUserData).value;
+    //單位下拉選單資訊
     const bpmDeptsOptions = ref(useGetters(['getBpmDeptsOptions']).getBpmDeptsOptions).value;
 
     enum FormStatusEnum {
@@ -114,7 +111,6 @@ export default defineComponent({
 
     const formDefault = {
       word: '', //關鍵字
-      number: '1', //版號
     };
 
     const form = reactive(Object.assign({}, formDefault));
@@ -122,7 +118,6 @@ export default defineComponent({
     // 表單物件驗證規則
     const rules = ref({
       word: {},
-      number: {},
     });
 
     const {$v, checkValidity, reset} = useValidation(rules, form, formDefault);
@@ -192,21 +187,11 @@ export default defineComponent({
       totalItems: 0,
     });
 
-
-    // 下拉選單選項
-    const queryOptions = reactive({
-      number: [
-        {value: '0', text: '1_0_2'},
-        {value: '1', text: '1_0_1'},
-        {value: '2', text: '1_0_0'},
-      ],
-    });
-
+    //查詢L410所有已完成的表單
     const toQuery = () => {
       table.data = undefined;
       const params = new URLSearchParams()
       params.append('word', form.word)
-      // params.append('number', form.number)
       params.append('processInstanceStatus', '1')
 
       axios.get(`/eip/eip-bpm-isms-l410/findByWord?${params.toString()}`)
@@ -229,6 +214,7 @@ export default defineComponent({
         .catch(notificationErrorHandler(notificationService))
     };
 
+    //判斷要導頁去哪
     function toEdit(item) {
       let taskData = {
         processInstanceId: '',
@@ -248,16 +234,13 @@ export default defineComponent({
 
     }
 
+    //新增表單
     const toL410Apply = () => {
       navigateByNameAndParams('l410Apply', {
         formStatus: FormStatusEnum.CREATE,
         isNotKeepAlive: true
       });
     };
-
-    function  formatDescription(description) {
-      return description.replace(/\n/g, '<br>');
-    }
 
     function toReset() {
       reset();
@@ -272,13 +255,11 @@ export default defineComponent({
       toQuery,
       reset,
       table,
-      queryOptions,
       iTable,
       toEdit,
       toL410Apply,
       formatToString,
       queryStatus,
-      formatDescription,
       toReset,
     };
   },

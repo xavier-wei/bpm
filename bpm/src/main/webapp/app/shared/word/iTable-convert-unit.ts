@@ -44,14 +44,14 @@ export function applicationReasonUnit(data) {
   let reason = '';
 
   if (data.appReason === '1') {
-    reason += '新進 , ' + '\n';
+    reason += '新進 , ' + '<br>';
   } else if (data.appReason === '2') {
-    reason += '離職 , ' + '\n';
+    reason += '離職 , ' + '<br>';
   } else if (data.appReason === '3') {
-    reason += '職務異動 , ' + '\n';
+    reason += '職務異動 , ' + '<br>';
   }
   if (data.isEnableDate === '1') {
-    reason += '生效日期： ' + formatToString(new Date(data.enableDate), '/') + '\n';
+    reason += '生效日期： ' + formatToString(new Date(data.enableDate), '/') + '<br>';
   }
   if (data.isOther === '1') {
     reason += '其他理由： ' + data.otherReason
@@ -69,7 +69,7 @@ export function appNameUnit(data) {
   }
 
   if (!!data.appEmpid) {
-    appName += '\n' + '(' + data.appEmpid + ')';
+    appName += '<br>' + '(' + data.appEmpid + ')';
   }
 
   return appName;
@@ -84,7 +84,7 @@ export function filNameUnit(data) {
   }
 
   if (!!data.filEmpid) {
-    filName += '\n' + '(' + data.filEmpid + ')';
+    filName += '<br>' + '(' + data.filEmpid + ')';
   }
 
   return filName;
@@ -97,14 +97,14 @@ export function needNarrativeUnit(data) {
 
   if (!!data.sourceIp) {
 
-    needNarrative += '來源IP： ' + data.sourceIp + ',' + '\n';
+    needNarrative += '來源IP： ' + data.sourceIp + ',' + '<br>';
   }
   if (!!data.targetIp) {
 
-    needNarrative += '目的IP： ' + data.targetIp + ',' + '\n';
+    needNarrative += '目的IP： ' + data.targetIp + ',' + '<br>';
   }
   if (!!data.port) {
-    needNarrative += '使用協定(Port)： ' + data.port + ',' + '\n';
+    needNarrative += '使用協定(Port)： ' + data.port + ',' + '<br>';
   }
 
   let tcpAndUdp = '';
@@ -117,26 +117,14 @@ export function needNarrativeUnit(data) {
   }
 
   if (tcpAndUdp !== '') {
-    needNarrative += '傳輸模式： ' + tcpAndUdp.substring(0, tcpAndUdp.length - 1) + ',' + '\n';
+    needNarrative += '傳輸模式： ' + tcpAndUdp.substring(0, tcpAndUdp.length - 1) + ',' + '<br>';
   }
 
   if (!!data.instructions) {
-    needNarrative += '用途說明： ' + data.instructions + ',' + '\n';
+    needNarrative += '用途說明： ' + data.instructions + ',' + '<br>';
   }
 
-  let inputText = '';
-
-  //取倒數第二個字元
-  const secondToLastIndex = needNarrative.length - 2;
-
-  //去除整個needNarrative倒數第二個 ,
-  if (secondToLastIndex >= 0 && needNarrative.charAt(secondToLastIndex) === ',') {
-    inputText = needNarrative.slice(0, secondToLastIndex) + needNarrative.slice(secondToLastIndex + 1);
-  } else {
-    inputText = needNarrative;
-  }
-
-  return inputText;
+  return needNarrative.substring(0, needNarrative.length - 5);
 }
 
 

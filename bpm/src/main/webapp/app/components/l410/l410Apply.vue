@@ -43,7 +43,7 @@
             </b-form-row>
 
             <b-form-row>
-              <p class="test1">申請者資訊</p>
+              <p class="text1">申請者資訊</p>
             </b-form-row>
 
             <b-form-row>
@@ -71,7 +71,7 @@
             </b-form-row>
 
             <b-form-row>
-              <p class="test1">一、個人基本資料：</p>
+              <p class="text1">一、個人基本資料：</p>
             </b-form-row>
 
             <b-form-row>
@@ -126,7 +126,7 @@
             </b-form-row>
 
             <b-form-row>
-              <p class="test1">二、 <span class="text-danger">*</span>申請事由：</p>
+              <p class="text1">二、 <span class="text-danger">*</span>申請事由：</p>
             </b-form-row>
 
             <b-form-row>
@@ -210,7 +210,7 @@
             <hr/>
 
             <b-form-row>
-              <p class="test1">三、系統申請/異動/停用項目：</p>
+              <p class="text1">三、系統申請/異動/停用項目：</p>
             </b-form-row>
 
 
@@ -233,18 +233,18 @@
                 <!--申請項目-->
                 <template #cell(applyItem)="row">
 
-                  <div v-if="row.item.applyVersion == '0'">
+                  <div v-if="row.item.applyVersion === '0'">
                     <div>系統名稱 :</div>
                     <b-form-input v-model="row.item.otherSys" maxlength="200"></b-form-input>
                     <div>帳號 :</div>
                     <b-form-input v-model="row.item.otherSysAccount" maxlength="200"></b-form-input>
                   </div>
 
-                  <div v-else-if="row.item.applyVersion == '1'">
+                  <div v-else-if="row.item.applyVersion === '1'">
                     {{ row.item.systemApplyName }}
                   </div>
 
-                  <div v-else-if="row.item.applyVersion == '2'">
+                  <div v-else-if="row.item.applyVersion === '2'">
                     {{ row.item.systemApplyName }}
                     <span v-if=" row.item.isColon === '1'"> : </span>
                     <b-form-input
@@ -254,15 +254,11 @@
                     <span v-if="row.item.systemApply === '4'">@mail.pcc.gov.tw</span>
                   </div>
 
-                  <div v-else-if="row.item.applyVersion == '3'">
+                  <div v-else-if="row.item.applyVersion === '3'">
                     {{ row.item.systemApplyName }}
                     <span v-if=" row.item.isColon === '1'"> : </span>
                     <b-form-checkbox-group v-model="$v.applyItem.$model" :options="options.type"/>
                   </div>
-
-<!--                  <div v-else-if="row.item.applyVersion == '4'">-->
-<!--                    <b-form-checkbox-group v-model="$v.webSiteList.$model" :options="options.webSite"/>-->
-<!--                  </div>-->
 
                 </template>
 
@@ -501,7 +497,7 @@
 
 
 import IDualDatePicker from '@/shared/i-date-picker/i-dual-date-picker.vue';
-import {onMounted, reactive, ref, Ref, toRef, watch} from '@vue/composition-api';
+import {onMounted, reactive, ref, toRef} from '@vue/composition-api';
 import {useValidation, validateState} from '@/shared/form';
 import IFormGroupCheck from '@/shared/form/i-form-group-check.vue';
 import {required} from '@/shared/validators';
@@ -512,16 +508,12 @@ import axios from "axios";
 import {notificationErrorHandler} from "@/shared/http/http-response-helper";
 import {useNotification} from "@/shared/notification";
 import {useGetters} from "@u3u/vue-hooks";
-import {changeDirections} from "@/shared/word/directions";
 import {checkboxToMapAndForm} from "@/shared/word/checkboxToMapAndForm";
 
 const appendix = () => import('@/components/appendix.vue');
 const flowChart = () => import('@/components/flowChart.vue');
 export default {
   name: "l410Apply",
-  methods: {
-    checkboxToMapAndForm
-  },
   props: {
     formStatus: {
       type: String,
@@ -536,15 +528,48 @@ export default {
     flowChart,
   },
   setup(props) {
-    let appendixData = reactive({});
+
+    //用formId查詢表單的附件，這裡要預設參數防止出現前端檢查錯誤
     let fileDataId = reactive({
       fileId: ''
     });
+    //登入者資訊
     const userData = ref(useGetters(['getUserData']).getUserData).value
-    const formStatusRef = toRef(props, 'formStatus');
+    //單位下拉選單資訊
     const bpmDeptsOptions = ref(useGetters(['getBpmDeptsOptions']).getBpmDeptsOptions).value;
+    //進入表單的模式
+    const formStatusRef = toRef(props, 'formStatus');
     const $bvModal = useBvModal();
     const notificationService = useNotification();
+    //分頁預設值
+    const tabIndex = ref(0);
+    //附件上傳預設物件,這裡要預設參數防止出現前端檢查錯誤
+    let appendixData = reactive({});
+    //流程圖預設物件,這裡要預設參數防止出現前端檢查錯誤
+    const filePathData = reactive({
+      filePathName: '',
+    });
+
+    const options = reactive({
+      type: [
+        {value: '0', text: '主管'},
+        {value: '1', text: '副主管'},
+        {value: '2', text: '科長'},
+        {value: '3', text: '承辦人'},
+        {value: '4', text: '登記桌'},
+        {value: '5', text: '總收文'},
+        {value: '6', text: '總發文'},
+        {value: '7', text: '繕打人員'},
+        {value: '8', text: '檔案歸檔'},
+      ],
+    });
+
+    const headers = {
+      headers: {
+        'Content-Type': 'multipart/form-data',
+      },
+    };
+
     const formDefault = {
       formId: '',//表單編號
       applyDate: new Date(new Date().getFullYear(), new Date().getMonth(), new Date().getDate(), new Date().getHours(), new Date().getMinutes(), new Date().getSeconds(), new Date().getMilliseconds()),//	申請日期
@@ -560,7 +585,7 @@ export default {
       position: userData.titleName != null ? userData.titleName : '',//	職稱
       appReason: '1',//	申請事由 1.新進 2.離職 3.職務異動
       isEnableDate: '1',//	是否有生效日期
-      enableDate: new Date(new Date().getFullYear(), new Date().getMonth(), new Date().getDate(), 0,0,0,0),//	生效日期
+      enableDate: new Date(new Date().getFullYear(), new Date().getMonth(), new Date().getDate(), 0, 0, 0, 0),//	生效日期
       isOther: '0',//	其他
       otherReason: '',//	其他說明
       isHrSys: '0',
@@ -683,7 +708,6 @@ export default {
       otherSys3EnableDate: null,
       otherSys3AdmName: '',
       applyItem: [],
-      webSiteList: [],
       l410Variables: {},
       formName: 'L410',
     };
@@ -707,19 +731,14 @@ export default {
       isOther: {},
       otherReason: {},
       applyItem: {},
-      webSiteList: {},
     };
     const {$v, checkValidity, reset} = useValidation(rules, form, formDefault);
-
-    const filePathData = reactive({
-      filePathName: '',
-    });
 
     const table = reactive({
       fields: [
         {
           key: 'checkbox',
-          label: '全選',
+          label: '',
           sortable: false,
           thClass: 'text-center',
           tdClass: 'text-center align-middle',
@@ -772,6 +791,7 @@ export default {
       handleQuery();
     });
 
+    //查詢L410申請項目管理
     function handleQuery() {
       table.data = [];
       axios
@@ -782,31 +802,7 @@ export default {
         .catch(notificationErrorHandler(notificationService));
     }
 
-    const options = reactive({
-      type: [
-        {value: '0', text: '主管'},
-        {value: '1', text: '副主管'},
-        {value: '2', text: '科長'},
-        {value: '3', text: '承辦人'},
-        {value: '4', text: '登記桌'},
-        {value: '5', text: '總收文'},
-        {value: '6', text: '總發文'},
-        {value: '7', text: '繕打人員'},
-        {value: '8', text: '檔案歸檔'},
-      ],
-      webSite: [
-        {value: '0', text: '全球資訊網 (https://www.pcc.gov.tw)'},
-        // {value: '1', text: '會內資訊網站請先至home.pcc.gov.tw「帳號登入」點選「註冊」，填寫個人基本資料'},
-      ],
-    });
-
-    const headers = {
-      headers: {
-        'Content-Type': 'multipart/form-data',
-      },
-    };
-
-
+    //送出申請  狀態: 暫存0 申請1
     async function submitForm(isSubmit) {
       let l410Variables = [];
       form.isSubmit = isSubmit;
@@ -847,8 +843,6 @@ export default {
       }
     }
 
-    const tabIndex = ref(0);
-
     //b-tab分頁用
     const changeTabIndex = (index: number) => {
       tabIndex.value = index;
@@ -858,10 +852,12 @@ export default {
       return tabIndex.value === index;
     };
 
+    //返回上一頁
     function toQueryView() {
       handleBack({isReload: false, isNotKeepAlive: true});
     }
 
+    //切換處理權限欄位時清除已填資料
     function resetValue(data) {
       data.emailApply1 = null;
       data.emailApply2 = null;
@@ -872,6 +868,7 @@ export default {
       data.otherRemark = null;
     }
 
+    //取消已選申請項目時，清空申請項目欄位跟處理權限欄位內的所有值
     function resetCheckboxValue(data) {
       if (data.checkbox === '0') {
         data.otherSys = null;
@@ -887,9 +884,6 @@ export default {
         data.otherRemark = null;
         if (data.systemApply === '2') {
           form.applyItem = [];
-        }
-        if (data.systemApply === '5') {
-          form.webSiteList = [];
         }
       }
     }
@@ -911,7 +905,6 @@ export default {
         data.otherRemark = null;
       })
       form.applyItem = [];
-      form.webSiteList = [];
     }
 
 
@@ -942,7 +935,7 @@ export default {
 
 <style>
 
-.test1 {
+.text1 {
   font-family: 'Arial Negreta', 'Arial';
   font-weight: 700;
   font-style: normal;

@@ -122,9 +122,6 @@ import IDatePicker from "@/shared/i-date-picker/i-date-picker";
 import ITable from '@/shared/i-table/i-table';
 import IFormGroupCheck from '@/shared/form/i-form-group-check';
 import {useGetters} from "@u3u/vue-hooks";
-import {useBvModal} from "@/shared/modal";
-import {navigateByNameAndParams} from "@/router/router";
-import { Pagination } from "@/shared/pagination.model";
 
 export default {
   name: "errandBmodel",
@@ -141,9 +138,12 @@ export default {
   },
   setup(props) {
 
+    //接收與傳送值給父層
     const formDataProp = reactive(props.formData);
+    //單位下拉選單資訊
     const bpmDeptsOptions = ref(useGetters(['getBpmDeptsOptions']).getBpmDeptsOptions).value;
     const iTable = ref(null);
+    //是否顯示iTable
     const queryStatus = ref(false);
     const notificationService = useNotification();
     // 區塊是否顯示
@@ -227,6 +227,7 @@ export default {
       totalItems: 0,
     });
 
+    //從差勤撈出符合  PEUNIT != '600037'  PEORG = '360000000G'  PELEVDATE = '' 的所有人
     function signatureOptions() {
       table.data = [];
       const params = new URLSearchParams()
@@ -245,16 +246,19 @@ export default {
         .catch(notificationErrorHandler(notificationService))
     }
 
+    //關閉申請人選擇器
     function closeModal() {
       reset();
       dialogIsVisible.step = false;
     }
 
+    //從父層呼叫此function，用來開啟申請人選擇器
     async function isShowDia(isVisible) {
       await signatureOptions();
       dialogIsVisible.step = isVisible;
     }
 
+    //把從子層選到的資訊用formDataProp傳給父層
     function choose(i) {
       reset();
       dialogIsVisible.step = false;

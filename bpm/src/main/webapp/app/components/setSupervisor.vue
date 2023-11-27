@@ -402,14 +402,28 @@ export default {
   },
   setup() {
     const notificationService = useNotification();
+
+    //是否顯示iTable
     const queryStatus = ref(false);
+
+    //是否顯示新增的模板
     const newDataStatus = ref(false);
     const iTable = ref(null);
+
+    //職稱下拉選單資訊
     const bpmTitleOptions = ref(useGetters(['getBpmTitleOptions']).getBpmTitleOptions).value;
+
+    //單位下拉選單資訊
     const bpmDeptsOptions = ref(useGetters(['getBpmDeptsOptions']).getBpmDeptsOptions).value;
     const $bvModal = useBvModal();
-    const formStatus = ref('')
+
+    //用來切換畫面上要顯示哪個區塊的模板
+    const formStatus = ref('');
+
+    //切換新增 取消
     const isAdding = ref(true);
+
+    //切換畫面上的新增按鈕要顯示 新增還是取消
     const buttonText = ref('新增');
 
     enum FormStatusEnum {
@@ -558,6 +572,7 @@ export default {
       totalItems: 0,
     });
 
+    //查詢所有表單特例管理
     const toQuery = () => {
       newDataStatus.value = false;
       isAdding.value = true;
@@ -578,6 +593,7 @@ export default {
         .catch(notificationErrorHandler(notificationService));
     }
 
+    //新增表單特例管理
     async function submitForm() {
       const isValid = await checkValidity();
       if (isValid) {
@@ -614,6 +630,7 @@ export default {
       }
     }
 
+    //編輯表單特例管理
     async function toEdit(item) {
       if (item.pecard == '' || item.unitName == '' || item.pename == '' || item.posname == '') return await $bvModal.msgBoxConfirm('申請者資訊 不可為空');
 
@@ -683,17 +700,17 @@ export default {
       }
     }
 
+    //清空畫面的所有值,清空iTable
+    function toReset() {
+      reset();
+      table.data = [];
+    }
 
     //切換新增 取消
     watch(isAdding, () => {
       buttonText.value = isAdding.value ? '新增' : '取消';
       newDataStatus.value = !isAdding.value;
     });
-
-    function toReset() {
-      reset();
-      table.data = [];
-    }
 
     return {
       $v,
