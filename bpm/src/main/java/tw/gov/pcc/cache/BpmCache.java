@@ -11,9 +11,9 @@ import java.util.Set;
 
 public class BpmCache {
     @Getter
-    private static Map<BpmSupervisorPrimayKey, BpmSupervisor> bpmSupervisorHashMap = new HashMap<>();
+    private static final Map<BpmSupervisorPrimayKey, BpmSupervisor> bpmSupervisorHashMap = new HashMap<>();
     @Getter
-    private static Set<String> supervisorJudgeSet = new HashSet<>();
+    private static final Set<String> supervisorJudgeSet = new HashSet<>();
     private BpmCache() {
     }
 
