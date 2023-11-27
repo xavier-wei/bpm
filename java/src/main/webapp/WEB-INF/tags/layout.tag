@@ -112,7 +112,8 @@
 					</a>
 				</div>
                 <div class="col-md-2 top_3 bpm_title_status">
-                    <a href="<c:url value='/Bpm01w030_enter.action' />">
+                    <a href="">
+<%--                    <a href="<c:url value='/Bpm01w030_enter.action' />">--%>
                         <img src="./images/top_icon3.png" alt="" class="d-inline-block align-middle">
                         <div class="d-inline-block align-middle text-center">
                             <div class="bpm_title_01">待處理表單</div>
@@ -332,24 +333,24 @@
 		});
 	}
    
-    getPendingBpm()
-    function getPendingBpm() {
-        // $('#bpm_pending').text(10);
-        $.ajax({
-            url: '<c:url value="/Common_getPendingBpm.action"/>',
-            type: "GET",
-            dataType: "json",
-            cache: false,
-            data: {'p': new Date().getTime()},
-            contentType: "application/json",
-            success: function (data) {
-                $('#bpm_pending').text(data);
-            },
-            error: function (xhr, ajaxOptions, thrownError) {
-                console.log(xhr.status + " " + thrownError);
-            }
-        });
-    }
+    <%--getPendingBpm()--%>
+    <%--function getPendingBpm() {--%>
+    <%--    // $('#bpm_pending').text(10);--%>
+    <%--    $.ajax({--%>
+    <%--        url: '<c:url value="/Common_getPendingBpm.action"/>',--%>
+    <%--        type: "GET",--%>
+    <%--        dataType: "json",--%>
+    <%--        cache: false,--%>
+    <%--        data: {'p': new Date().getTime()},--%>
+    <%--        contentType: "application/json",--%>
+    <%--        success: function (data) {--%>
+    <%--            $('#bpm_pending').text(data);--%>
+    <%--        },--%>
+    <%--        error: function (xhr, ajaxOptions, thrownError) {--%>
+    <%--            console.log(xhr.status + " " + thrownError);--%>
+    <%--        }--%>
+    <%--    });--%>
+    <%--}--%>
 
 </script>
 <jsp:invoke fragment="footers"/>
