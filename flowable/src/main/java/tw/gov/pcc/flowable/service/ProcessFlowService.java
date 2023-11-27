@@ -36,6 +36,12 @@ public class ProcessFlowService {
         this.historyService = historyService;
     }
 
+    /**
+     * 啟動流程，並回傳task
+     * @param processKey 流程啟動金鑰
+     * @param variables 流程變數
+     * @return TaskDTO
+     */
     // 開啟流程，並且在isSubmit為"1"的狀態，直接跳過申請者確認進到下個步驟，若為0或其他任何值則需進行確認
     public TaskDTO startProcess(String processKey, Map<String, Object> variables) {
         String startProcessLog = "--startProcess : {} ";
@@ -64,6 +70,13 @@ public class ProcessFlowService {
 
     }
 
+    /**
+     * 完成任務 包含新增流程變數
+     * @param processInstanceId 流程實體id
+     * @param taskId 任務id
+     * @param variables 流程變數
+     * @return ProcessRes
+     */
     // for completing task
     public ProcessRes completeTask(String processInstanceId, String taskId, Map<String, Object> variables) {
         String completeTaskLog = "--completeTask : {} ";
@@ -81,6 +94,12 @@ public class ProcessFlowService {
     }
 
 
+    /**
+     * 完成任務 包含新增流程變數
+     * @param processInstanceId 流程實體id
+     * @param taskId 任務id
+     * @return ProcessRes
+     */
     // for completing task
     public ProcessRes completeTask(String processInstanceId, String taskId) {
         String completeTaskLog = "--completeTask : {} ";
@@ -96,18 +115,12 @@ public class ProcessFlowService {
         throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "任務或流程不存在，可能已由其他處理人處理完成，請F5刷新");
     }
 
-    /*
-     * 如果是暫存後確認則必須設定整個流程的variables並判斷是否需要跳過第一、第二簽核者
-     */
-    private void applierConfirmAndSkipSign(String processInstanceId, Task task) {
-        if ("applierConfirm".equals(task.getTaskDefinitionKey())) {
-            Map<String, Object> variables2 = runtimeService.getVariables(processInstanceId);
-            String processKey = task.getProcessDefinitionId().split(":")[0];
-            skipIfSupervisorNoSign(processKey, variables2, processInstanceId);
-        }
-    }
 
-    // query自己未處理的任務(但扣除加簽中的)
+    /**
+     *  查詢自己未處理的任務(但扣除加簽中的)
+     * @param id 使用者id
+     * @return List<TaskDTO> 任務DTO
+     */
     public List<TaskDTO> queryProcessingTask(String id) {
 
         // 查出所有加簽任務
@@ -133,6 +146,11 @@ public class ProcessFlowService {
                 ).collect(Collectors.toList());
     }
 
+    /**
+     * 查詢自己未處理的任務數量(但扣除加簽中的)
+     * @param id 使用者id
+     * @return Integer 任務數量
+     */
     public Integer queryProcessingTaskNumbers(String id) {
         return queryProcessingTask(id).size();
     }
@@ -154,10 +172,17 @@ public class ProcessFlowService {
     }
 
     /*
+
+     */
+
+    /**
      * 第一審核者、第二審核者跳過規則：
      * 1. 連兩個跳過 OK
      * 2. 跳過第一審核者，僅須第二審核者簽核 OK
      * 3. 第一審核者須簽核，但無第二審核者 不OK <== 因為邏輯為連續判斷，所以遇此情況，請直接把第一審核者放入第二審核者同，第 2.
+     * @param processKey 流程啟動金鑰
+     * @param variables 流程變數
+     * @param processInstanceId 流程實體id
      */
     private void skipIfSupervisorNoSign(String processKey, Map<String, Object> variables, String processInstanceId) {
         String[] supervisors = SupervisorSignerEnum.getSupervisors(processKey);
@@ -174,8 +199,10 @@ public class ProcessFlowService {
         }
     }
 
-    /*
+    /**
      * 查詢自己已處理過的所有任務，但不包含處理中的任務
+     * @param id 使用者id
+     * @return List<TaskDTO> 任務DTO
      */
     public List<TaskDTO> queryList(String id) {
 
@@ -206,6 +233,12 @@ public class ProcessFlowService {
         return List.of();
     }
 
+    /**
+     * 查詢自己已處理過的所有任務數量，但不包含處理中的任務
+     * @param id 使用者id
+     * @param historicInstanceIds 歷史流程實體id
+     * @return List<TaskDTO> 任務DTO
+     */
     private List<TaskDTO> getHistoricTaskDTO(String id, List<String> historicInstanceIds) {
 
         // createHistoricTaskInstanceQuery 為查出自己已處理過之任務，並非整個流程實體已完成
@@ -225,5 +258,15 @@ public class ProcessFlowService {
                 .collect(Collectors.toList());
     }
 
+    /*
+     * 如果是暫存後確認則必須設定整個流程的variables並判斷是否需要跳過第一、第二簽核者
+     */
+    private void applierConfirmAndSkipSign(String processInstanceId, Task task) {
+        if ("applierConfirm".equals(task.getTaskDefinitionKey())) {
+            Map<String, Object> variables2 = runtimeService.getVariables(processInstanceId);
+            String processKey = task.getProcessDefinitionId().split(":")[0];
+            skipIfSupervisorNoSign(processKey, variables2, processInstanceId);
+        }
+    }
 
 }

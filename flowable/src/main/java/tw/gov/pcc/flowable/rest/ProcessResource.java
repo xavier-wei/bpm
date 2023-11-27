@@ -35,6 +35,12 @@ public class ProcessResource {
 
 
     // 流程啟動
+
+    /**
+     *  1. 依據表單key啟動流程
+     * @param processReqDTO 流程請求DTO
+     * @return 任務DTO
+     */
     @RequestMapping("/startProcess")
     public ResponseEntity<TaskDTO> startProcess(@Valid @RequestBody ProcessReqDTO processReqDTO) {
         String startLog = "--startProcess:： {}";

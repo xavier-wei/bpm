@@ -48,7 +48,7 @@ public class BpmSignerListService {
         // 取得各表單簽核排序依據
         List<BpmIsmsSignerOrder> bpmIsmsSignerOrders = bpmIsmsSignerOrderRepository.findByBpmIsmsFormOrderBySortAsc(formId.split("-")[0]);
 
-        // 將taskname 及 排序分別放入key 、 value
+        // 將taskName 及 排序分別放入key 、 value
         Map<String, Integer> sortMap = bpmIsmsSignerOrders
             .stream()
             .collect(toMap(BpmIsmsSignerOrder::getTaskName, BpmIsmsSignerOrder::getSort));

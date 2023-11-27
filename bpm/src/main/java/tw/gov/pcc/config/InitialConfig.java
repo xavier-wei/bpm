@@ -36,6 +36,9 @@ public class InitialConfig implements CommandLineRunner {
         log.info("init bpm supervisor success");
     }
 
+    /*
+     * init bpm config
+     */
     private void initBpmConfig() {
         String bpmToken = "BPM_TOKEN";
         String bpmAes = "BPM_AES";
@@ -46,12 +49,14 @@ public class InitialConfig implements CommandLineRunner {
     }
 
     private void initBpmSupervisor() {
+        // init bpm supervisor
         Map<BpmSupervisorPrimayKey, BpmSupervisor> collect = bpmSupervisorRepository
             .findAll()
             .stream()
             .collect(Collectors.toMap(e -> new BpmSupervisorPrimayKey(e.getAppUnit(), e.getAppTitle()), e -> e));
         BpmCache.getBpmSupervisorHashMap().putAll(collect);
 
+        // init supervisor judge set
         Set<String> title = new HashSet<>();
         collect.values().forEach(e -> title.add(e.getFirstLayerSupervisor()));
         collect.values().forEach(e -> title.add(e.getSecondLayerSupervisor()));

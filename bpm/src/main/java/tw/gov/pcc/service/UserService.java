@@ -33,6 +33,12 @@ public class UserService {
     }
 
 
+    /**
+     * 取得使用者資訊
+     *
+     * @param userId 使用者id
+     * @return User
+     */
     public User getUserInfo(String userId) {
         User user = userRepository.findByUserId(userId);
         // 正式員工登入用

@@ -40,7 +40,8 @@ public class SupervisorService {
         this.bpmSupervisorRepository = bpmSupervisorRepository;
         this.bpmSpecialSupervisorService = bpmSpecialSupervisorService;
     }
-    /*
+
+    /**
      * @param variables 流程變數
      * @param id 申請者id (L410情況為填寫者的員工編號，因為有可能幫新進人員申請)
      * @Return void
@@ -69,7 +70,12 @@ public class SupervisorService {
     }
 
 
-
+    /**
+     *
+     * @param variables 流程變數
+     * @param sectionChief 科長
+     * @param director 單位主管
+     */
     private static void setSigner(Map<String, Object> variables, String sectionChief, String director) {
         variables.put(SECTION_CHIEF, sectionChief == null ? NO_SIGN : sectionChief);
         variables.put(DIRECTOR, director == null ? NO_SIGN : director);
@@ -77,7 +83,7 @@ public class SupervisorService {
         if (NO_SIGN.equals(director)) variables.put(DIRECTOR + DECISION, "1");
     }
 
-    /*
+    /**
      * @param unit 單位ID
      * @param titleName 職稱
      * @Return String 簽核者的員工編號
