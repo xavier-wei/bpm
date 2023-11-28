@@ -211,19 +211,21 @@ export default {
 
     //單位下拉選單資訊
     const bpmDeptsOptions = ref(useGetters(['getBpmDeptsOptions']).getBpmDeptsOptions).value;
-    const iTable = ref(null);
 
     //是否顯示iTable
     const queryStatus = ref(false);
 
     //l410進來加簽時，需要傳給後端的物件
     const l410Form = ref({});
-    const $bvModal = useBvModal();
-    const notificationService = useNotification();
+
     // 區塊是否顯示
     const dialogIsVisible = reactive({
       step: false,
     });
+
+    const iTable = ref(null);
+    const $bvModal = useBvModal();
+    const notificationService = useNotification();
     const title = '加簽人員清單';
 
     const formDefault = {

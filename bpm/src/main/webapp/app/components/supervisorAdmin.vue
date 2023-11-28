@@ -276,21 +276,18 @@ export default {
     ITable,
   },
   setup() {
-    const notificationService = useNotification();
 
     //是否顯示iTable
     const queryStatus = ref(false);
 
     //是否顯示新增的模板
     const newDataStatus = ref(false);
-    const iTable = ref(null);
 
     //職稱下拉選單資訊
     const bpmTitleOptions = ref(useGetters(['getBpmTitleOptions']).getBpmTitleOptions).value;
 
     //單位下拉選單資訊
     const bpmDeptsOptions = ref(useGetters(['getBpmDeptsOptions']).getBpmDeptsOptions).value;
-    const $bvModal = useBvModal();
 
     //用來切換畫面上要顯示哪個區塊的模板
     const formStatus = ref('')
@@ -300,6 +297,10 @@ export default {
 
     //切換畫面上的新增按鈕要顯示 新增還是取消
     const buttonText = ref('新增');
+
+    const iTable = ref(null);
+    const $bvModal = useBvModal();
+    const notificationService = useNotification();
 
     enum FormStatusEnum {
       CREATE = '新增',

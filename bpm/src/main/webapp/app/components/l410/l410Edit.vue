@@ -692,8 +692,6 @@ export default {
 
     //判斷頁面審核單位是否跟登入者單位一樣，一致就去後端更新資料
     let iptData = ref(false);
-    const $bvModal = useBvModal();
-    const notificationService = useNotification();
 
     //加簽的彈出視窗
     const signatureBmodel = ref(null);
@@ -705,16 +703,22 @@ export default {
     let fileDataId = reactive({
       fileId: ''
     });
+
     //分頁預設值
     const tabIndex = ref(0);
+
     //流程圖預設物件
     const filePathData = reactive({
       filePathName: '',
     });
+
     //處理意見物件
     let opinion = reactive({
       opinionData: ''
     });
+
+    const $bvModal = useBvModal();
+    const notificationService = useNotification();
 
     enum FormStatusEnum {
       CREATE = '新增',

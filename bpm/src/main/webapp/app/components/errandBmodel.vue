@@ -142,14 +142,14 @@ export default {
     const formDataProp = reactive(props.formData);
     //單位下拉選單資訊
     const bpmDeptsOptions = ref(useGetters(['getBpmDeptsOptions']).getBpmDeptsOptions).value;
-    const iTable = ref(null);
     //是否顯示iTable
     const queryStatus = ref(false);
-    const notificationService = useNotification();
     // 區塊是否顯示
     const dialogIsVisible = reactive({
       step: false,
     });
+    const iTable = ref(null);
+    const notificationService = useNotification();
     const title = '差勤人員';
     const formDefault = {
       chooseId: '', //選擇差勤的userId

@@ -95,12 +95,15 @@ export default defineComponent({
     IFormGroupCheck,
   },
   setup() {
-    const iTable = ref(null);
+
     //是否顯示iTable
     const queryStatus = ref(false);
-    const notificationService = useNotification();
+
     //單位下拉選單資訊
     const bpmDeptsOptions = ref(useGetters(['getBpmDeptsOptions']).getBpmDeptsOptions).value;
+
+    const iTable = ref(null);
+    const notificationService = useNotification();
 
     enum FormStatusEnum {
       CREATE = '新增',

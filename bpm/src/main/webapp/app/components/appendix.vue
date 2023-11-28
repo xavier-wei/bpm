@@ -168,8 +168,6 @@ export default {
     //登入者資訊
     const userData = ref(useGetters(['getUserData']).getUserData).value;
 
-    const notificationService = useNotification();
-
     //附件是pdf的，用它來傳給IPdfViewer
     const pdfViewer = ref(null);
 
@@ -178,6 +176,8 @@ export default {
 
     //是否顯示 查看附件功能
     const readAppendix = ref(false);
+
+    const notificationService = useNotification();
     const $bvModal = useBvModal();
 
     enum FormStatusEnum {

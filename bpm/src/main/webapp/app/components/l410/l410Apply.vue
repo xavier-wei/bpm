@@ -533,22 +533,29 @@ export default {
     let fileDataId = reactive({
       fileId: ''
     });
+
     //登入者資訊
-    const userData = ref(useGetters(['getUserData']).getUserData).value
+    const userData = ref(useGetters(['getUserData']).getUserData).value;
+
     //單位下拉選單資訊
     const bpmDeptsOptions = ref(useGetters(['getBpmDeptsOptions']).getBpmDeptsOptions).value;
+
     //進入表單的模式
     const formStatusRef = toRef(props, 'formStatus');
-    const $bvModal = useBvModal();
-    const notificationService = useNotification();
+
     //分頁預設值
     const tabIndex = ref(0);
+
     //附件上傳預設物件,這裡要預設參數防止出現前端檢查錯誤
     let appendixData = reactive({});
+
     //流程圖預設物件,這裡要預設參數防止出現前端檢查錯誤
     const filePathData = reactive({
       filePathName: '',
     });
+
+    const $bvModal = useBvModal();
+    const notificationService = useNotification();
 
     const options = reactive({
       type: [
@@ -812,6 +819,7 @@ export default {
         const isOK = await $bvModal.msgBoxConfirm('是否確認送出修改內容？');
 
         if (isOK) {
+          //把l410畫面有打勾的checkbox 轉成後端需要的Map跟Form
           await Promise.all(table.data.map(data => checkboxToMapAndForm(data, form, l410Variables)));
           form.l410Variables = l410Variables;
           let body = {
