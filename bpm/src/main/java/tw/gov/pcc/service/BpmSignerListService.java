@@ -6,7 +6,7 @@ import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
-import tw.gov.pcc.domain.BpmIsmsSignerOrder;
+import tw.gov.pcc.cache.BpmCache;
 import tw.gov.pcc.domain.BpmSignerList;
 import tw.gov.pcc.domain.SinerTaskEnum;
 import tw.gov.pcc.domain.User;
@@ -16,7 +16,8 @@ import tw.gov.pcc.repository.UserRepository;
 
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
-import java.util.*;
+import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 import static java.util.stream.Collectors.toMap;
@@ -37,7 +38,7 @@ public class BpmSignerListService {
 
     public void saveBpmSignerList(Map<String, Object> variables, String formId) throws ResponseStatusException {
 
-        // 取得任務名稱及簽核者ids的對應，如果暫存後申請任務有增減，應該要來檢查這段
+        // 取得任務名稱及簽核者ids的對應，如果暫存後申請任務有增減，應該要來檢查這段， 如果有需要也可把filter都合併，拆開純粹為了好維護
         Map<String, String> userTaskMap = variables.keySet()
             .stream()
             .filter(key -> !key.equals("applier")) // 過濾申請者
@@ -46,12 +47,12 @@ public class BpmSignerListService {
             .collect(toMap(key -> key, key -> (String) variables.get(key))); // values應為使用者ids
 
         // 取得各表單簽核排序依據
-        List<BpmIsmsSignerOrder> bpmIsmsSignerOrders = bpmIsmsSignerOrderRepository.findByBpmIsmsFormOrderBySortAsc(formId.split("-")[0]);
+//        List<BpmIsmsSignerOrder> bpmIsmsSignerOrders = bpmIsmsSignerOrderRepository.findByBpmIsmsFormOrderBySortAsc(formId.split("-")[0]);
 
         // 將taskName 及 排序分別放入key 、 value
-        Map<String, Integer> sortMap = bpmIsmsSignerOrders
-            .stream()
-            .collect(toMap(BpmIsmsSignerOrder::getTaskName, BpmIsmsSignerOrder::getSort));
+        Map<String, Integer> sortMap = BpmCache.getBpmIsmsSignerOrderMap().get(formId.split("-")[0]);
+//            .stream()
+//            .collect(toMap(BpmIsmsSignerOrder::getTaskName, BpmIsmsSignerOrder::getSort));
         // 最終要存取的簽核人員名單
         List<BpmSignerList> bpmSignerLists =
             userTaskMap.keySet()
