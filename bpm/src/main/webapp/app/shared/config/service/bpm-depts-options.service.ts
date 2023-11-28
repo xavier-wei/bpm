@@ -6,22 +6,6 @@ export default class BpmDeptsOptionsService {
     this.getBpmDeptsOptions();
   }
 
-  // private getBpmDeptsOptions() {
-  //   //  bpmErrandOptions
-  //   this.store.dispatch('eipDeptsDataPromise', new Promise(resolve => {
-  //     axios
-  //       .get('/eip/bpmDeptsOptions')
-  //       .then(res => {
-  //         resolve(res.data);
-  //         this.store.dispatch('eipDeptsData', res.data);
-  //         useStore().value.commit('setBpmDeptsOptions', res.data.map(item => {
-  //           return {value: item.dept_id, text: item.dept_name};
-  //         }));
-  //       })
-  //       .catch(err => console.log(err));
-  //   }));
-  // }
-
   private async getBpmDeptsOptions() {
     try {
       const response = await axios.get('/eip/bpmDeptsOptions');
