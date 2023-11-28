@@ -570,13 +570,9 @@ export default {
 
     //分頁預設值
     const tabIndex = ref(0);
-    const dual1 = ref(null);
-    const dual2 = ref(null);
 
     //判斷暫存還是已送出申請(畫面開啟編輯 需要登入者跟申請者一致 且isSubmit是0)
     const isEdit = ref(false);
-    const notificationService = useNotification();
-    const $bvModal = useBvModal();
 
     //加簽的彈出視窗
     const signatureBmodel = ref(null);
@@ -588,12 +584,6 @@ export default {
 
     //申請人選擇器
     const errandBmodel = ref(null);
-    enum FormStatusEnum {
-      CREATE = '新增',
-      MODIFY = '編輯',
-      READONLY = '檢視',
-      VERIFY = '簽核'
-    }
 
     //附件上傳預設物件
     let appendixData = reactive({});
@@ -607,6 +597,21 @@ export default {
     let opinion = reactive({
       opinionData: ''
     });
+
+    //啟用期間結束時間 <i-dual-date-picker> 需要接收的參數
+    const dual1 = ref(null);
+
+    //啟用期間開始時間 <i-dual-date-picker> 需要接收的參數
+    const dual2 = ref(null);
+
+    const notificationService = useNotification();
+    const $bvModal = useBvModal();
+    enum FormStatusEnum {
+      CREATE = '新增',
+      MODIFY = '編輯',
+      READONLY = '檢視',
+      VERIFY = '簽核'
+    }
 
     const formDefault = {
       formId: '', //表單編號

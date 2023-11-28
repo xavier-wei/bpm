@@ -150,15 +150,18 @@ export default defineComponent({
     //登入者資訊
     const userData = ref(useGetters(['getUserData']).getUserData).value;
 
-    const iTable = ref(null);
 
     //是否顯示iTable
     const queryStatus = ref(false);
 
-    const notificationService = useNotification();
+    //當返回此頁面時,檢查props.query帶了神魔參數,1是一般查詢 2是下屬查詢
     const queryProp = toRef(props, 'query');
+
     //用來判斷當前頁面是一般查詢還是下屬表單查詢，防止每次去Edit頁在回來時只會停留在一般查詢
     const query = ref('');
+
+    const iTable = ref(null);
+    const notificationService = useNotification();
 
     enum FormStatusEnum {
       CREATE = '新增',

@@ -459,10 +459,6 @@ export default {
 
     //分頁預設值
     const tabIndex = ref(0);
-    const dual1 = ref(null);
-    const dual2 = ref(null);
-    const notificationService = useNotification();
-    const $bvModal = useBvModal();
 
     //申請人選擇器
     const errandBmodel = ref(null);
@@ -479,6 +475,9 @@ export default {
     let fileDataId = reactive({
       fileId: ''
     });
+
+    const notificationService = useNotification();
+    const $bvModal = useBvModal();
 
     const headers = {
       headers: {
@@ -638,8 +637,8 @@ export default {
       submitForm,
       changeTabIndex,
       activeTab,
-      dual1,
-      dual2,
+      // dual1,
+      // dual2,
       filePathData,
       userData,
       appendixData,

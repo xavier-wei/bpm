@@ -95,16 +95,10 @@
           :dual1="$v.dateStart"
           :dual2="$v.dateEnd"
         >
-          <b-input-group>
-            <i-date-picker v-model="$v.dateStart.$model" placeholder="yyy/MM/dd"
-                           :disabled-date="notAfterPublicDateEnd"></i-date-picker>
-            <b-input-group-text>至</b-input-group-text>
-            <i-date-picker
-              v-model="$v.dateEnd.$model"
-              placeholder="yyy/MM/dd"
-              :disabled-date="notBeforePublicDateStart"
-            ></i-date-picker>
-          </b-input-group>
+          <i-dual-date-picker
+            :dual1.sync="$v.dateStart.$model"
+            :dual2.sync="$v.dateEnd.$model"
+          />
         </i-form-group-check>
       </b-form-row>
 
@@ -126,7 +120,6 @@
       :is-server-side-paging="false"
       v-show="queryStatus"
     >
-
 
       <template #cell(action)="row">
         <b-button class="ml-2" style="background-color: #17a2b8" @click="toEdit(row.item)">檢視</b-button>
@@ -152,25 +145,34 @@ import {changeDealWithUnit} from "@/shared/word/directions";
 import {currentProcessingUnit} from "@/shared/word/iTable-convert-unit";
 import {navigateByNameAndParams} from "@/router/router";
 import userSys from "@/components/userSys.vue";
-
+import IDualDatePicker from '@/shared/i-date-picker/i-dual-date-picker.vue';
 
 export default defineComponent({
   name: 'notify',
-  methods: {changeFormId, changeSubject},
+  methods: { changeSubject},
   components: {
     IDatePicker,
     ITable,
     IFormGroupCheck,
-    'user-sys': userSys
+    'user-sys': userSys,
+    IDualDatePicker
   },
   setup() {
+
+    //取得所有ACNT_IS_VALID=Y 的使用者
     const userAllData = ref(useGetters(['getUserAllData']).getUserAllData)
-    const bpmDeptsOptions = ref(useGetters(['getBpmDeptsOptions']).getBpmDeptsOptions).value;
-    const iTable = ref(null);
-    const stepVisible = ref(true);
-    const queryStatus = ref(false);
-    const notificationService = useNotification();
+
+    //登入者資訊
     const userData = ref(useGetters(['getUserData']).getUserData).value;
+
+    //單位下拉選單資訊
+    const bpmDeptsOptions = ref(useGetters(['getBpmDeptsOptions']).getBpmDeptsOptions).value;
+
+    //是否顯示iTable
+    const queryStatus = ref(false);
+
+    const iTable = ref(null);
+    const notificationService = useNotification();
 
     onMounted(() => {
       peunitOptions();
@@ -180,20 +182,11 @@ export default defineComponent({
       toQuery();
     });
 
-
     enum FormStatusEnum {
       CREATE = '新增',
       MODIFY = '編輯',
       READONLY = '檢視',
       VERIFY = '簽核'
-    }
-
-    function notBeforePublicDateStart(date: Date) {
-      if (form.dateStart) return date < new Date(form.dateStart);
-    }
-
-    function notAfterPublicDateEnd(date: Date) {
-      if (form.dateEnd) return date > new Date(form.dateEnd);
     }
 
     const formDefault = {
@@ -388,19 +381,16 @@ export default defineComponent({
       form,
       checkValidity,
       validateState,
-      stepVisible,
       toQuery,
       reset,
       table,
       queryOptions,
       iTable,
-      notBeforePublicDateStart,
-      notAfterPublicDateEnd,
       toEdit,
       queryStatus,
       bpmDeptsOptions,
       changeDealWithUnit,
-      toReset
+      toReset,
     };
   },
 });
