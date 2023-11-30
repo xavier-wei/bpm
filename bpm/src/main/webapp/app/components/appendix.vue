@@ -25,6 +25,7 @@
 
             <b-form-file
               v-model="row.item.file"
+              :accept="'.jpg,.jpeg,.png,.gif,.pdf,.doc,.docx,.odt,.xls,.xlsx,.ods'"
               trim
               multiple
               browse-text="選擇檔案"
@@ -45,7 +46,7 @@
           </template>
           <template #cell(fileDescription)="row">
             <b-form-input v-model="row.item.fileDescription" maxlength="200"
-                          :disabled="row.item.file === undefined"></b-form-input>
+                          :disabled="row.item.file === undefined || (Array.isArray(row.item.file) && row.item.file.length < 1)"></b-form-input>
           </template>
 
           <template #cell(action)="row">
@@ -55,10 +56,10 @@
             </b-button>
             <b-button class="submitFormBon" @click="addAnnouncement"
                       v-if="row.index == appendixData.appendix.length - 1"
-                      :disabled="row.item.file === undefined">新增
+                      :disabled="row.item.file === undefined || (Array.isArray(row.item.file) && row.item.file.length < 1)">新增
             </b-button>
-
           </template>
+
 
         </i-table>
 
@@ -207,7 +208,7 @@ export default {
       }
     });
 
-    const appendixData: { appendix: FileModel[], fields: any ,totalItems: any} = reactive({
+    const appendixData: { appendix: FileModel[], fields: any, totalItems: any } = reactive({
       appendix: [],
       totalItems: 0,
       fields: [
@@ -280,7 +281,7 @@ export default {
         },
         {
           key: 'fileSize',
-          label: '大小',
+          label: '大小(KB)',
           sortable: false,
           thClass: 'text-center',
           tdClass: 'text-center align-middle ',
@@ -348,14 +349,40 @@ export default {
 
     //選擇要上傳的附件
     async function upload(e, index, data) {
+
+      // 設定最大檔案大小，單位為 KB，根據需要更改這個值
+      const maxSize = 1024;
+
+      const file = e.target.files[0];
+
+      // 檢查檔案是否存在
+      if (!file) {
+        return;
+      }
+      // 檢查檔案大小
+      const fileSizeKB = file.size / 1024;
+      if (fileSizeKB > maxSize) {
+        await $bvModal.msgBoxConfirm('檔案大小超過限制');
+        // 清空文件輸入的值
+        e.target.value = null;
+        //初始化畫面的所有欄位值
+        data.file = null;
+        data.fileSize  = null;
+        data.fileDescription  = undefined;
+        data.updateTime = new Date();
+        data.createTime = new Date();
+        data.authorName = userData.userName != null ? userData.userName : '';
+        return;
+      }
+
       data.file = e.target.files[0];
-      data.fileSize = (e.target.files[0].size / 1024).toFixed(1)
+      data.fileSize = (e.target.files[0].size / 1024).toFixed(1);
     }
 
     //清空所有附件並直接給一條新的預設附件
     function reset() {
       appendixData.appendix = [];
-      appendixDataList.value = []
+      appendixDataList.value = [];
       // 給畫面的[新增附件:]預設值
       let fileModel = new FileModel()
       fileModel.updateTime = new Date();

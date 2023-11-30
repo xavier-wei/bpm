@@ -132,9 +132,9 @@
 <script lang="ts">
 import axios from 'axios';
 import {ref, reactive, defineComponent, onMounted,onActivated} from '@vue/composition-api';
-import IDatePicker from '../shared/i-date-picker/i-date-picker.vue';
-import ITable from '../shared/i-table/i-table.vue';
-import IFormGroupCheck from '../shared/form/i-form-group-check.vue';
+import IDatePicker from '@/shared/i-date-picker/i-date-picker.vue';
+import ITable from '@/shared/i-table/i-table.vue';
+import IFormGroupCheck from '@/shared/form/i-form-group-check.vue';
 import {useValidation, validateState} from '@/shared/form';
 import {useGetters} from '@u3u/vue-hooks';
 import {notificationErrorHandler} from "@/shared/http/http-response-helper";
