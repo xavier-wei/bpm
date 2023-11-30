@@ -65,7 +65,7 @@ public class Eip07w020Service {
        insterData.setApplyId(applyId);
         //取using  48位元
         String endTime =conversionTime(insterData.getEndH(), insterData.getEndM(),"E");
-        String using= timeConversionService.to48binary(conversionTime(insterData.getStarH(), insterData.getStarM(),"S"),conversionTime(insterData.getEndH(), insterData.getEndM(),"M"));
+        String using= timeConversionService.to48binaryForMeeting(conversionTime(insterData.getStarH(), insterData.getStarM(),"S"),conversionTime(insterData.getEndH(), insterData.getEndM(),"M"));
         if ("2330".equals(endTime)){
             using=StringUtils.substring(using,0,47)+"0";
         }
@@ -269,7 +269,7 @@ public class Eip07w020Service {
 
     private void getEntTime(CarBooking changeData, CarBooking oldData) {
         String endTime =conversionTime(changeData.getEndH(), changeData.getEndM(),"E");
-        String using= timeConversionService.to48binary(conversionTime(changeData.getStarH(), changeData.getStarM(),"S"),conversionTime(changeData.getEndH(), changeData.getEndM(),"E"));
+        String using= timeConversionService.to48binaryForMeeting(conversionTime(changeData.getStarH(), changeData.getStarM(),"S"),conversionTime(changeData.getEndH(), changeData.getEndM(),"E"));
         if ("2330".equals(endTime)){
             using= StringUtils.substring(using,0,47)+"0";
         }
