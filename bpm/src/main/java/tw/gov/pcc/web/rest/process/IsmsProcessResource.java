@@ -21,14 +21,13 @@ import tw.gov.pcc.domain.entity.BpmSignStatus;
 import tw.gov.pcc.eip.impl.EipcodeDaoImpl;
 import tw.gov.pcc.repository.BpmIsmsAdditionalRepository;
 import tw.gov.pcc.repository.BpmIsmsL410Repository;
-import tw.gov.pcc.service.BpmIsmsService;
-import tw.gov.pcc.service.BpmSignStatusService;
-import tw.gov.pcc.service.BpmSignerListService;
-import tw.gov.pcc.service.SubordinateTaskService;
+import tw.gov.pcc.service.*;
 import tw.gov.pcc.service.dto.*;
 import tw.gov.pcc.service.mapper.BpmIsmsL410Mapper;
 import tw.gov.pcc.service.mapper.BpmSignStatusMapper;
+import tw.gov.pcc.utils.CommonUtils;
 import tw.gov.pcc.utils.MapUtils;
+import tw.gov.pcc.web.rest.io.FileMediaType;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
@@ -62,6 +61,19 @@ public class IsmsProcessResource {
     private final BpmSignerListService bpmSignerListService;
     private final SubordinateTaskService subordinateTaskService;
 
+    private final String[] fileTypeLimit = {
+        FileMediaType.IMAGE_JPEG_VALUE,
+        FileMediaType.IMAGE_PNG_VALUE,
+        FileMediaType.IMAGE_GIF_VALUE,
+        FileMediaType.APPLICATION_PDF_VALUE,
+        FileMediaType.APPLICATION_DOC_VALUE,
+        FileMediaType.APPLICATION_DOCX_VALUE,
+        FileMediaType.APPLICATION_ODT_VALUE,
+        FileMediaType.APPLICATION_XLS_VALUE,
+        FileMediaType.APPLICATION_XLSX_VALUE,
+        FileMediaType.APPLICATION_ODS_VALUE,
+    };
+
     public IsmsProcessResource(HttpSession httpSession, BpmSignStatusService bpmSignStatusService, BpmSignStatusMapper bpmSignStatusMapper, BpmIsmsAdditionalRepository bpmIsmsAdditionalRepository, BpmIsmsL410Mapper bpmIsmsL410Mapper, BpmIsmsL410Repository bpmIsmsL410Repository, SubordinateTaskService subordinateTaskService, EipcodeDaoImpl eipcodeDao, BpmSignerListService bpmSignerListService, ApplicationContext applicationContext) {
         this.httpSession = httpSession;
         this.bpmSignStatusService = bpmSignStatusService;
@@ -87,6 +99,14 @@ public class IsmsProcessResource {
         log.info("IsmsProcessResource.java - start - 72 :: " + key);
         log.info("IsmsProcessResource.java - start - 73 :: " + dto);
         log.info("IsmsProcessResource.java - start - 74 :: " + appendixFiles);
+
+        //驗證上傳檔案的大小與格式
+        if (!Objects.equals(appendixFiles,null)) {
+            for (MultipartFile file : appendixFiles) {
+                CommonUtils.checkFile(file,  1024 * 1024, fileTypeLimit);
+            }
+        }
+
         // 取得存在HttpSession的user資訊
         User userInfo = getUserInfo(); // 取得存在HttpSession的user資訊
 
@@ -153,7 +173,14 @@ public class IsmsProcessResource {
         @PathVariable String key,
         @Valid @RequestPart("form") Map<String, String> form,
         @Valid @RequestPart(name = "fileDto", required = false) List<BpmUploadFileDTO> dto,
-        @RequestPart(name = "appendixFiles", required = false) List<MultipartFile> appendixFiles) throws IOException {
+        @RequestPart(name = "appendixFiles", required = false) List<MultipartFile> appendixFiles)  {
+
+        //驗證上傳檔案的大小與格式
+        if (!Objects.equals(appendixFiles,null)) {
+            for (MultipartFile file : appendixFiles) {
+                CommonUtils.checkFile(file,  1024 * 1024, fileTypeLimit);
+            }
+        }
 
         BpmIsmsService service = (BpmIsmsService) applicationContext.getBean(Objects.requireNonNull(BpmIsmsServiceBeanNameEnum.getServiceBeanNameByKey(key)));
 
@@ -169,6 +196,13 @@ public class IsmsProcessResource {
         @Valid @RequestPart(name = "fileDto", required = false) List<BpmUploadFileDTO> dto,
         @RequestPart(name = "appendixFiles", required = false) List<MultipartFile> appendixFiles
     ) {
+        //驗證上傳檔案的大小與格式
+        if (!Objects.equals(appendixFiles,null)) {
+            for (MultipartFile file : appendixFiles) {
+                CommonUtils.checkFile(file,  1024 * 1024, fileTypeLimit);
+            }
+        }
+
         BpmIsmsL410DTO bpmIsmsL410DTO = gson.fromJson(form.get(key), BpmIsmsL410DTO.class);
         User userInfo = getUserInfo();
 
@@ -219,13 +253,17 @@ public class IsmsProcessResource {
         @PathVariable String formId,
         @Valid @RequestPart(name = "fileDto", required = false) List<BpmUploadFileDTO> dto,
         @RequestPart(name = "appendixFiles", required = false) List<MultipartFile> appendixFiles) {
-        log.info("ProcessL414Resource.java - completeTask - 183 :: " + completeReqDTO);
+
+        //驗證上傳檔案的大小與格式
+        if (!Objects.equals(appendixFiles,null)) {
+            for (MultipartFile file : appendixFiles) {
+                CommonUtils.checkFile(file,  1024 * 1024, fileTypeLimit);
+            }
+        }
+
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
         HttpEntity<String> requestEntity = new HttpEntity<>(gson.toJson(completeReqDTO), headers);
-
-        log.info("IsmsProcessResource.java - completeTask - 208 :: " + dto);
-        log.info("IsmsProcessResource.java - completeTask - 209 :: " + appendixFiles);
 
         //判斷是否是資推或機房的，如果是就去更新資料
         if (Objects.equals(completeReqDTO.getIpt(), true)) {

@@ -717,6 +717,7 @@ public class StringUtility {
      * @param line 補滿行數
      **/
     public static String getFormatStringBlockWithLine(String str, int width, int line) {
+        str = StringUtils.defaultString(str);
         StringBuffer sb = new StringBuffer();
         AtomicInteger index = new AtomicInteger();
         AtomicInteger lineIndex = new AtomicInteger();

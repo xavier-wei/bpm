@@ -491,6 +491,7 @@ import {changeDirections} from "@/shared/word/directions";
 import signatureBmodel from "@/components/signatureBmodel.vue";
 import {configRoleToBpmIpt,configRoleToBpmCrOperator,configTitleName} from '@/shared/word/configRole';
 import errandBmodel from "@/components/errandBmodel.vue";
+
 const appendix = () => import('@/components/appendix.vue');
 const flowChart = () => import('@/components/flowChart.vue');
 const signerList = () => import('@/components/signerList.vue');

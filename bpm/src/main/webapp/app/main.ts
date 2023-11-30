@@ -15,15 +15,6 @@ import * as bootstrapVueConfig from './shared/config/config-bootstrap-vue';
 import JhiItemCountComponent from './shared/jhi-item-count.vue';
 import JhiSortIndicatorComponent from './shared/sort/jhi-sort-indicator.vue';
 import InfiniteLoading from 'vue-infinite-loading';
-import HealthService from './admin/health/health.service';
-import MetricsService from './admin/metrics/metrics.service';
-import LogsService from './admin/logs/logs.service';
-import ConfigurationService from '@/admin/configuration/configuration.service';
-import ActivateService from './account/activate/activate.service';
-import RegisterService from './account/register/register.service';
-import UserManagementService from './admin/user-management/user-management.service';
-import LoginService from './account/login.service';
-import AccountService from './account/account.service';
 import AlertService from './shared/alert/alert.service';
 import VueCompositionAPI from '@vue/composition-api'
 import Hooks, {useStore} from '@u3u/vue-hooks'
@@ -65,8 +56,6 @@ Vue.component('jhi-sort-indicator', JhiSortIndicatorComponent);
 Vue.component('infinite-loading', InfiniteLoading);
 const store = config.initVueXStore(Vue);
 axios.defaults.baseURL = '/bpm/api';
-const loginService = new LoginService();
-const accountService = new AccountService(store, router);
 new BpmDeptsOptionsService(store);
 new BpmUserDataService(store);
 new BpmTitleOptionsService(store);
@@ -75,18 +64,7 @@ const serviceUrlList: string[] = ['/login', '/service/', '/home'];
 const paramMap = {};
 
 router.beforeEach(async (to, from, next) => {
-  if (!to.matched.length) {
-    next('/not-found');
-  } else if (to.meta && to.meta.authorities && to.meta.authorities.length > 0) {
-    accountService.hasAnyAuthorityAndCheckAuth(to.meta.authorities).then(value => {
-      if (!value) {
-        sessionStorage.setItem('requested-url', to.fullPath);
-        next('/forbidden');
-      } else {
-        next();
-      }
-    });
-  } else {
+
     // no authorities, so just proceed
     const routeData = {
       fromPath: from.path,
@@ -96,12 +74,11 @@ router.beforeEach(async (to, from, next) => {
       isNotKeepAlive: Boolean(to.params.isNotKeepAlive),
     };
     store.commit('setRouteData', routeData);
-    accountService.currentFunctionId = '';
     routeGuard(to, from, next);
     to.meta.title = '工程會EIP_表單流程管理';
     document.title = to.meta.title;
     next();
-  }
+
 
 });
 
@@ -121,7 +98,6 @@ function routeGuard(to, from, next) {
     store.commit('addKeepAlivePage', from.name);
   }
 
-  accountService.currentFunctionId = to.meta.functionId;
 
 }
 
@@ -147,17 +123,9 @@ const vue = new Vue({
   template: '<App/>',
   router,
   provide: {
-    loginService: () => loginService,
-    activateService: () => new ActivateService(),
-    registerService: () => new RegisterService(),
-    userManagementService: () => new UserManagementService(),
-    healthService: () => new HealthService(),
-    configurationService: () => new ConfigurationService(),
-    logsService: () => new LogsService(),
-    metricsService: () => new MetricsService(),
+
     menuService: () => new MenuService,
     // jhipster-needle-add-entity-service-to-main - JHipster will import entities services here
-    accountService: () => accountService,
     alertService: () => new AlertService(),
   },
   store,
@@ -172,7 +140,6 @@ setupAxiosInterceptors(
       store.commit('logout');
       if (!url.endsWith('api/account') && !url.endsWith('api/authenticate')) {
         // Ask for a new authentication
-        loginService.openLogin(vue);
         return;
       }
     }

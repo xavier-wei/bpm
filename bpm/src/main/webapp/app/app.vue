@@ -26,7 +26,7 @@
 import Ribbon from '../app/core/ribbon/ribbon.vue';
 import JhiFooter from '../app/core/jhi-footer/jhi-footer.vue';
 import JhiNavbar from '../app/core/jhi-navbar/jhi-navbar.vue';
-import LoginForm from '../app/account/login-form/login-form.vue';
+
 // import Home from '@/components/home.vue';
 import {computed, nextTick, onMounted, provide, reactive, ref, watch, inject} from '@vue/composition-api';
 import {BButton, BIcon, BSidebar, BvModal, BRow, BFormSelect, BFormSelectOption} from 'bootstrap-vue';
@@ -46,7 +46,6 @@ export default {
   components: {
     ribbon: Ribbon,
     'jhi-navbar': JhiNavbar,
-    'login-form': LoginForm,
     'jhi-footer': JhiFooter,
     // Breadcrumb,
     BlockUi,

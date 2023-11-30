@@ -134,7 +134,7 @@ public class Eip07w020Controller extends BaseController {
             eip07w020Service.getSelectList(caseData);
             eip07w020Service.getTimeList(caseData);
         }catch (Exception e){
-            log.error("新增失敗，原因:{}", ExceptionUtility.getStackTrace(e));
+            log.error("新增查詢失敗，原因:{}", ExceptionUtility.getStackTrace(e));
             setSystemMessage(getSaveFailMessage());
             return QUERY_PAGE;
         }
@@ -160,6 +160,7 @@ public class Eip07w020Controller extends BaseController {
             setSystemMessage(getSaveSuccessMessage()+"_派車單號:"+caseData.getApplyId());
             caseData.setInsterList(new ArrayList<>());
         }catch (Exception e){
+            log.error("新增失敗，原因:{}", ExceptionUtility.getStackTrace(e));
             setSystemMessage(getSaveFailMessage());
             return ADD_PAGE;
         }

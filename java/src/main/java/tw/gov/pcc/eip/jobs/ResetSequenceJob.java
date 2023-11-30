@@ -30,12 +30,44 @@ public class ResetSequenceJob extends QuartzJob {
 	protected void handler(JobExecutionContext context) throws JobExecutionException {
 		log.info("ResetSequenceJob start....");
 		try {
-			applyitemDao.updateSequence();
-			carBookingDao.updateSequence();
-			roitemDao.updateSequence();
+			handlerCarBook();
+			handlerApplyitem();
+			handlerRoitem();
 		} catch (Exception e) {
 			log.error("ResetSequenceJob Exception:}}", ExceptionUtility.getStackTrace(e));
 		}
+
 		log.info("ResetSequenceJob end....");
+	}
+
+	protected void handlerApplyitem() {
+		log.info("ResetSequenceJob start....");
+		try {
+			applyitemDao.updateSequence();
+
+		} catch (Exception e) {
+			log.error("applyitemSequenceJob Exception:}}", ExceptionUtility.getStackTrace(e));
+		}
+
+		log.info("applyitemSequenceJob end....");
+	}
+	protected void handlerCarBook()  {
+		log.info("ResetSequenceJob start....");
+		try {
+			carBookingDao.updateSequence();
+		} catch (Exception e) {
+			log.error("carBookSequenceJob Exception:}}", ExceptionUtility.getStackTrace(e));
+		}
+		log.info("carBookSequenceJob end....");
+	}
+
+	protected void handlerRoitem()  {
+		log.info("ResetSequenceJob start....");
+		try {
+			roitemDao.updateSequence();
+		} catch (Exception e) {
+			log.error("roitemSequenceJob Exception:}}", ExceptionUtility.getStackTrace(e));
+		}
+		log.info("roitemSequenceJob end....");
 	}
 }

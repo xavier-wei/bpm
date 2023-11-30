@@ -68,30 +68,6 @@
                 ></b-form-input>
               </b-input-group>
             </b-form-group>
-
-
-<!--                        <i-form-group-check class="col-4 mb-0" label-cols="5" content-cols="7" :label="`姓名：`"-->
-<!--                                :item="$v.selectName">-->
-<!--              &lt;!&ndash;姓名 :　&ndash;&gt;-->
-<!--              <b-form-input v-model="$v.selectName.$model"/>-->
-<!--            </i-form-group-check>-->
-
-<!--            <i-form-group-check class="col-4" label-cols="5" content-cols="7" :label="`單位：`"-->
-<!--                                :item="$v.selectUnit">-->
-<!--              &lt;!&ndash;單位名稱&ndash;&gt;-->
-<!--              <b-form-select v-model="$v.selectUnit.$model" :options="bpmDeptsOptions">-->
-<!--                <template #first>-->
-<!--                  <b-form-select-option value="" disabled>請選擇</b-form-select-option>-->
-<!--                </template>-->
-<!--              </b-form-select>-->
-<!--            </i-form-group-check>-->
-
-<!--            <i-form-group-check class="col-4" label-cols="5" content-cols="7" :label="`職稱：`"-->
-<!--                                :item="$v.selectTitle">-->
-<!--              &lt;!&ndash;姓名 :　&ndash;&gt;-->
-<!--              <b-form-input v-model="$v.selectTitle.$model"/>-->
-<!--            </i-form-group-check>-->
-
           </b-form-row>
 
           <b-container class="mt-3">
@@ -174,9 +150,9 @@ import {changeDealWithUnit} from "@/shared/word/directions";
 import axios from "axios";
 import {notificationErrorHandler} from "@/shared/http/http-response-helper";
 import {useNotification} from "@/shared/notification";
-import IDatePicker from "@/shared/i-date-picker/i-date-picker";
-import ITable from '@/shared/i-table/i-table';
-import IFormGroupCheck from '@/shared/form/i-form-group-check';
+import IDatePicker from "@/shared/i-date-picker/i-date-picker.vue";
+import ITable from '@/shared/i-table/i-table.vue';
+import IFormGroupCheck from '@/shared/form/i-form-group-check.vue';
 import {useGetters} from "@u3u/vue-hooks";
 import {useBvModal} from "@/shared/modal";
 import {navigateByNameAndParams} from "@/router/router";

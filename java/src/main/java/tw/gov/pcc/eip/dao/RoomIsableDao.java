@@ -1,4 +1,5 @@
 package tw.gov.pcc.eip.dao;
+import tw.gov.pcc.eip.common.cases.Eip06w060Case;
 import tw.gov.pcc.eip.domain.RoomIsable;
 import java.util.List;
 
@@ -12,11 +13,12 @@ public interface RoomIsableDao {
 	public List<RoomIsable> selectAllData();
 	public int insertData(RoomIsable data);
 	public int updateData(RoomIsable data);
-	public int deleteData(String itemId);
+	public int deleteData(Eip06w060Case caseData);
 
-	public int deleteSingleData(String itemNo);
+	public int deleteSingleData(String itemno);
+	public int deleteSingleData(Eip06w060Case caseData);
 
-	public int deletePastData(String itemId);
+	public int deletePastData(Eip06w060Case caseData);
 
 	/**
 	 * 查詢 部分啟用會議室

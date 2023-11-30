@@ -2,7 +2,7 @@
   "compilerOptions": {
     "baseUrl": "src/main/webapp/app",
     "outDir": "target/out-tsc/dist",
-    "target": "es5",
+    "target": "es2019",
     "esModuleInterop": true,
     "allowSyntheticDefaultImports": true,
     "module": "esnext",
@@ -10,7 +10,7 @@
     "sourceMap": true,
     "emitDecoratorMetadata": true,
     "experimentalDecorators": true,
-    "lib": ["es7", "dom"],
+    "lib": ["es2019","es7", "dom"],
     "paths": {
       "@/*": ["*"]
     },

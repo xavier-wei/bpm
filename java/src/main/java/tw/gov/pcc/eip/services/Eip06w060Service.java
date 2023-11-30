@@ -99,7 +99,7 @@ public class Eip06w060Service extends OnlineRegService {
      * @param caseData
      */
     public void deleteClass(Eip06w060Case caseData) {
-        roomIsableDao.deleteData(caseData.getItemId());
+        roomIsableDao.deleteData(caseData);
     }
 
     /**
@@ -107,7 +107,7 @@ public class Eip06w060Service extends OnlineRegService {
      * @param caseData
      */
     public void deleteSingleClass(Eip06w060Case caseData) {
-        roomIsableDao.deleteSingleData(caseData.getItemNo());
+        roomIsableDao.deleteSingleData(caseData);
     }
 
     /**
@@ -115,7 +115,7 @@ public class Eip06w060Service extends OnlineRegService {
      * @param caseData
      */
     public void deletePastClass(Eip06w060Case caseData) {
-        roomIsableDao.deletePastData(caseData.getItemId());
+        roomIsableDao.deletePastData(caseData);
     }
 
 
@@ -220,6 +220,7 @@ public class Eip06w060Service extends OnlineRegService {
         LocalDate periodEndObject = LocalDate.parse(periodEnd, format);
         LocalDate date = periodStartObject;
         for (; !date.isAfter(periodEndObject); date=date.plusDays(1)) {//為了改變同一個LocalDate物件，否則會new一個新的
+            insertRoomIsableData(caseData, date.format(format));
         }
     }
 
