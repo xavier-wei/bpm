@@ -12,8 +12,6 @@ import tw.gov.pcc.eip.common.cases.Eip06w010Case;
 import tw.gov.pcc.eip.dao.MeetingDao;
 import tw.gov.pcc.eip.domain.Eip06w040Report;
 import tw.gov.pcc.eip.domain.Meeting;
-import tw.gov.pcc.eip.domain.MeetingCode;
-import tw.gov.pcc.eip.domain.MeetingItemAndMeetingCode;
 
 import java.util.HashMap;
 import java.util.List;
@@ -253,5 +251,30 @@ public class MeetingDaoImpl extends BaseDao<Meeting> implements MeetingDao{
         SqlParameterSource params = new MapSqlParameterSource("dateList", dateList).addValue("using", using).addValue("roomId", roomId);
         return getNamedParameterJdbcTemplate().query(sql.toString(), params,
                 BeanPropertyRowMapper.newInstance(Meeting.class));
+    }
+
+    @Override
+    public List<Meeting> findDueMeeting(String dueDate) {
+
+        StringBuilder sql = new StringBuilder();
+        sql.append("    SELECT ");
+        sql.append(ALL_COLUMNS_SQL);
+        sql.append("      FROM MEETING T ");
+        sql.append("     WHERE T.MEETINGDT  <= :dueDate ");
+
+        SqlParameterSource params = new MapSqlParameterSource("dueDate", dueDate);
+        return getNamedParameterJdbcTemplate().query(sql.toString(), params,
+                BeanPropertyRowMapper.newInstance(Meeting.class));
+    }
+
+
+    @Override
+    public void deleteDataByMeetingId(List<Integer> meetingId) {
+        StringBuilder sql = new StringBuilder();
+        sql.append("    DELETE FROM MEETING  ");
+        sql.append("     WHERE MEETINGID in (:meetingId) ");
+
+        SqlParameterSource params = new MapSqlParameterSource("meetingId", meetingId);
+        getNamedParameterJdbcTemplate().update(sql.toString(), params);
     }
 }

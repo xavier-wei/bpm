@@ -1,6 +1,7 @@
 package tw.gov.pcc.eip.services;
 
 import java.io.ByteArrayOutputStream;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.collections.CollectionUtils;
@@ -48,7 +49,20 @@ public class Eip07w070Service {
 		cb.setUsing_date_e(caseData.getUsing_date_e());
 		List<CarBooking> list = carBookingDao.getEip07w070ReportData(cb,caseData.getOrderCondition());
 		if(CollectionUtils.isNotEmpty(list)) {
-			caseData.setDataList(list);
+			List<Eip07w070Case> dataList = new ArrayList<>();
+			for(CarBooking car : list) {
+				Eip07w070Case data = new Eip07w070Case();
+				data.setUsingdate(car.getUsing_date());
+				data.setApprove_using_time_s(car.getApprove_using_time_s().substring(0,2)+"："+car.getApprove_using_time_s().substring(2,4));//核定用車時間起  
+				data.setApprove_using_time_e(car.getApprove_using_time_e().substring(0,2)+"："+car.getApprove_using_time_e().substring(2,4));//核定用車時間迄  
+				data.setCarno(car.getCarno1()+"-"+car.getCarno2());//車牌號碼            
+				data.setName(car.getName());//駕駛人姓名 
+				data.setApply_memo(car.getApply_memo());//用車事由               
+				data.setDestination(car.getDestination());//目的地               
+				data.setApplyid(car.getApplyid());//派車單號
+				dataList.add(data);
+			}
+			caseData.setDataList(dataList);
 		}else {
 			caseData.setDataList(null);
 		}

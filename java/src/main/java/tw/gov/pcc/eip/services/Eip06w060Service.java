@@ -182,26 +182,29 @@ public class Eip06w060Service extends OnlineRegService {
 
         //判斷重複頻率(日.週.月)
         if(caseData.getDateWeekMonth().equals("date")) {
-            dateList = getBeginAndEndDateBetween(periodStart, periodEnd);
+            getBeginAndEndDateBetween(caseData, periodStart, periodEnd);
         } else if (caseData.getDateWeekMonth().equals("week")) {
-            dateList = getDayOfWeekWithinDateInterval(periodStart, periodEnd, day);
+            getDayOfWeekWithinDateInterval(caseData, periodStart, periodEnd, day);
         } else if (caseData.getDateWeekMonth().equals("month")) {
-            dateList = getDayOfWeekAndMonthWithinDateInterval(periodStart, periodEnd, week, day);
+            getDayOfWeekAndMonthWithinDateInterval(caseData, periodStart, periodEnd, week, day);
         }
+    }
 
-        if(dateList != null){
-            for(String date: dateList) {
-                RoomIsable roomIsable = new RoomIsable();
-                roomIsable.setItemId(caseData.getItemId());
-                roomIsable.setItemName(caseData.getItemName());
-                roomIsable.setIsableDate(date);
-                roomIsable.setMeetingBegin(caseData.getMeetingBegin());
-                roomIsable.setMeetingEnd(caseData.getMeetingEnd());
-                String isAbleTime = timeConversionService.to48binary_isAble(caseData.getMeetingBegin(), caseData.getMeetingEnd());
-                roomIsable.setIsableTime(isAbleTime);
-                roomIsableDao.insertData(roomIsable);
-            }
-        }
+    /**
+     * 批次新增
+     * @param caseData
+     * @param formattedDate
+     */
+    private void insertRoomIsableData(Eip06w060Case caseData, String formattedDate) {
+        RoomIsable roomIsable = new RoomIsable();
+        roomIsable.setItemId(caseData.getItemId());
+        roomIsable.setItemName(caseData.getItemName());
+        roomIsable.setIsableDate(formattedDate);
+        roomIsable.setMeetingBegin(caseData.getMeetingBegin());
+        roomIsable.setMeetingEnd(caseData.getMeetingEnd());
+        String isAbleTime = timeConversionService.to48binary_isAble(caseData.getMeetingBegin(), caseData.getMeetingEnd());
+        roomIsable.setIsableTime(isAbleTime);
+        roomIsableDao.insertData(roomIsable);
     }
 
     /**
@@ -210,16 +213,14 @@ public class Eip06w060Service extends OnlineRegService {
      * @param periodEnd
      * @return
      */
-    public static List<String> getBeginAndEndDateBetween(String periodStart, String periodEnd) throws ParseException {
+    public void getBeginAndEndDateBetween(Eip06w060Case caseData, String periodStart, String periodEnd) throws ParseException {
         DateTimeFormatter format = DateTimeFormatter.ofPattern("yyyyMMdd");
         List<String> list = new ArrayList<>();
         LocalDate periodStartObject = LocalDate.parse(periodStart, format);
         LocalDate periodEndObject = LocalDate.parse(periodEnd, format);
         LocalDate date = periodStartObject;
         for (; !date.isAfter(periodEndObject); date=date.plusDays(1)) {//為了改變同一個LocalDate物件，否則會new一個新的
-            list.add(date.format(format)); // 將 LocalDate 型態轉為 String
         }
-        return list;
     }
 
     /**
@@ -229,18 +230,17 @@ public class Eip06w060Service extends OnlineRegService {
      * @param day
      * @return
      */
-    public static List<String> getDayOfWeekWithinDateInterval(String periodStart, String periodEnd, int day) throws ParseException {
+    public void getDayOfWeekWithinDateInterval(Eip06w060Case caseData, String periodStart, String periodEnd, int day) throws ParseException {
         DateTimeFormatter format = DateTimeFormatter.ofPattern("yyyyMMdd");
         List<String> list = new ArrayList<>();
         LocalDate periodStartObject = LocalDate.parse(periodStart, format);
         LocalDate periodEndObject = LocalDate.parse(periodEnd, format);
 
         //找出第一個符合的星期
-        LocalDate firstDay = periodStartObject.with(TemporalAdjusters.next(DayOfWeek.of(day)));
-        for (; !firstDay.isAfter(periodEndObject); firstDay = firstDay.plusWeeks(1)) {//為了改變同一個LocalDate物件，否則會new一個新的
-            list.add(firstDay.format(format)); // 將LocalDate型態轉為String
+        LocalDate date = periodStartObject.with(TemporalAdjusters.next(DayOfWeek.of(day)));
+        for (; !date.isAfter(periodEndObject); date = date.plusWeeks(1)) {//為了改變同一個LocalDate物件，否則會new一個新的
+            insertRoomIsableData(caseData, date.format(format));
         }
-        return list;
     }
 
     /**
@@ -251,21 +251,17 @@ public class Eip06w060Service extends OnlineRegService {
      * @param  day
      * @return
      */
-
-    public static List<String> getDayOfWeekAndMonthWithinDateInterval(String periodStart, String periodEnd, int week, int day)  throws ParseException {
+    public void getDayOfWeekAndMonthWithinDateInterval(Eip06w060Case caseData, String periodStart, String periodEnd, int week, int day)  throws ParseException {
         DateTimeFormatter format = DateTimeFormatter.ofPattern("yyyyMMdd");
         List<String> list = new ArrayList<>();
         LocalDate periodStartObject = LocalDate.parse(periodStart, format);
         LocalDate periodEndObject = LocalDate.parse(periodEnd, format);
-        
-        while (!periodStartObject.isAfter(periodEndObject)) {
-            LocalDate date = periodStartObject.with(TemporalAdjusters.dayOfWeekInMonth(week, DayOfWeek.of(day)));
-            if(periodStartObject.equals(date)){
-                list.add(periodStartObject.format(format));//將LocalDate 型態轉為String
-            }
-            periodStartObject=periodStartObject.plusDays(1);
-        }
-        return list;
+          for (; !periodStartObject.isAfter(periodEndObject); periodStartObject = periodStartObject.plusDays(1)) {
+              LocalDate date = periodStartObject.with(TemporalAdjusters.dayOfWeekInMonth(week, DayOfWeek.of(day)));
+              if (periodStartObject.equals(date)) {
+                  insertRoomIsableData(caseData, date.format(format));
+              }
+          }
     }
 
 

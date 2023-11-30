@@ -73,7 +73,7 @@ public class DeleteLogBeforeAdvice {
                                 }
                             }
                         } catch (NoSuchMethodException nsme) {
-                            log.info("{} 沒有定義 {}()，無法紀錄 MMAPLOG", pointcut.getTarget().getClass().getName(), UpdateLogAroundAdvice.DAO_GET_DATA_BY_PKEY_METHOD);
+                            log.debug("{} 沒有定義 {}()，無法紀錄 MMAPLOG", pointcut.getTarget().getClass().getName(), UpdateLogAroundAdvice.DAO_GET_DATA_BY_PKEY_METHOD);
                         }
                     }
                 } else {
@@ -92,7 +92,7 @@ public class DeleteLogBeforeAdvice {
                             }
                         } catch (NoSuchMethodException nsme) {
                             // CHECKSTYLE.OFF: LineLength - Much more readable than wrap line
-                            log.info("{} 沒有定義 {}( {} )，無法紀錄 MMAPLOG", pointcut.getTarget().getClass().getName(), UpdateLogAroundAdvice.DAO_GET_DATA_BY_PKEY_METHOD, args[0].getClass().getName());
+                            log.debug("{} 沒有定義 {}( {} )，無法紀錄 MMAPLOG", pointcut.getTarget().getClass().getName(), UpdateLogAroundAdvice.DAO_GET_DATA_BY_PKEY_METHOD, args[0].getClass().getName());
                         }
                     }
                     // CHECKSTYLE.ON: LineLength
@@ -109,7 +109,7 @@ public class DeleteLogBeforeAdvice {
         try {
             baseDao = SpringHelper.getBeanById(daoBeanId);
         } catch (Exception ignored) {
-            log.error("執行{}，查無 Bean {}！ {}", o.getSimpleName(), baseDao, ExceptionUtility.getStackTrace(ignored));
+            log.debug("執行{}，查無 Bean {}！ {}", o.getSimpleName(), baseDao, ExceptionUtility.getStackTrace(ignored));
         }
         return baseDao;
     }

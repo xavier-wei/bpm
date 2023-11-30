@@ -124,18 +124,23 @@ public class Eip08w060Service {
 	 */
 	public ByteArrayOutputStream print(Eip08w060Case caseData) throws Exception {
 		//檢核是否已加入"以下空白"
-	if (!"以下空白".equals(caseData.getEip08w060CaseList().get(caseData.getEip08w060CaseList().size()-1).getItem())){
-		List<Eip08w060Case>dataList=caseData.getEip08w060CaseList();
-		Eip08w060Case data=new Eip08w060Case();
-		data.setItem("以下空白");
-		dataList.add(data);
-		caseData.setEip08w060CaseList(dataList);
-	}
-
+		//1.判斷最後一項是否為"以下空白"
+		//2.判斷size是否小於4
+		if (!"以下空白".equals(caseData.getEip08w060CaseList().get(caseData.getEip08w060CaseList().size()-1).getItem())&&caseData.getEip08w060CaseList().size()<5){
+			List<Eip08w060Case>dataList=caseData.getEip08w060CaseList();
+			Eip08w060Case data=new Eip08w060Case();
+			data.setItem("以下空白");
+			dataList.add(data);
+			caseData.setEip08w060CaseList(dataList);
+		}
 		Eip08w060l00 pdf = new Eip08w060l00();
 		pdf.createEip08w060DataPdf(caseData);
 		List<Eip08w060Case> oldData =  caseData.getEip08w060CaseList();
-		oldData.remove(oldData.size()-1);//移除"以下空白"
+		//移除以下空白
+		//最後一項為以下空白
+		if ("以下空白".equals(caseData.getEip08w060CaseList().get(caseData.getEip08w060CaseList().size()-1).getItem())) {
+			oldData.remove(oldData.size() - 1);//移除"以下空白"
+		}
 		caseData.setEip08w060CaseList(oldData);
 		return pdf.getOutputStream();
 	};

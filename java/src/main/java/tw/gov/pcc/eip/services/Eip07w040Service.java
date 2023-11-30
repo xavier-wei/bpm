@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import org.apache.commons.collections.CollectionUtils;
@@ -69,12 +70,16 @@ public class Eip07w040Service {
 		List<CarBooking> Reconfime_mk2List = new ArrayList<>();
 		
 		handledList = carBookingDao.handledDataForEip07w040(caseData,"default");
+		setHandedListAndReconfime_mk2List(handledList);
 		caseData.setHandledList(handledList);
 		
 		notHandleList = carBookingDao.notHandledDataForEip07w040(caseData,"default");
+		setnotHandedList(notHandleList);
 		caseData.setNotHandleList(notHandleList);
 		
+		
 		Reconfime_mk2List = carBookingDao.selectByReconfime_mk2ForEip07w040(caseData,"default");
+		setHandedListAndReconfime_mk2List(Reconfime_mk2List);
 		caseData.setReconfime_mk2List(Reconfime_mk2List);
 		
 		int lastDay = DateUtility.lastDay(DateUtility.getNowWestDate(),false);
@@ -84,6 +89,37 @@ public class Eip07w040Service {
 		caseData.setUsing_time_eStrForTable3(DateUtility.getNowChineseYearMonth()+String.valueOf(lastDay));
 	}
 	
+    public void setHandedListAndReconfime_mk2List(List<CarBooking>handledList) {
+    	if(CollectionUtils.isNotEmpty(handledList)) {
+    		for(CarBooking data : handledList) {
+    			Users userData = usersDao.selectByKey(data.getApply_user());
+    			data.setApply_user(userData.getUser_name());
+    			Depts deptData = deptsDao.findByPk(data.getApply_dept());
+    			data.setApply_dept(deptData.getDept_name());
+    			data.setApprove_using_time_s(data.getApprove_using_time_s().substring(0,2)+":"+data.getApprove_using_time_s().substring(2,4));
+    			data.setApprove_using_time_e(data.getApprove_using_time_e().substring(0,2)+":"+data.getApprove_using_time_e().substring(2,4));
+    		}
+    	}
+    }
+	
+    public void setnotHandedList(List<CarBooking>notHandleList) {
+    	if(CollectionUtils.isNotEmpty(notHandleList)) {  		
+    		for(CarBooking data : notHandleList) {
+    			Users userData = usersDao.selectByKey(data.getApply_user());
+    			data.setApply_user(userData.getUser_name());
+    			Depts deptData = deptsDao.findByPk(data.getApply_dept());
+    			data.setApply_dept(deptData.getDept_name());
+    			data.setUsing_time_s(data.getUsing_time_s().substring(0,2)+":"+data.getUsing_time_s().substring(2,4));
+    			data.setUsing_time_e(data.getUsing_time_e().substring(0,2)+":"+data.getUsing_time_e().substring(2,4));
+    			Optional<Eipcode> eipcode = eipcodeDao.findByCodeKindCodeNo("CARPROCESSSTATUS", data.getCarprocess_status());
+    			data.setCarprocess_status(data.getCarprocess_status()+"-"+eipcode.get().getCodename());
+    			if(Integer.valueOf(data.getUsing_date())<Integer.valueOf(data.getCre_datetime().substring(0,8))) {
+    				data.setFillmk("Y");
+    			}
+    		}
+    	}
+    }
+    
 	/**
 	 * 依照申請日期、用車日期起迄搜尋審核資料
 	 *		將資料分類為 1.待處理派車案件：notHandleList(carprocessstatus=2)
@@ -97,18 +133,22 @@ public class Eip07w040Service {
 		
 		if("1".equals(caseData.getCarprocess_status())) {
 			notHandleList = carBookingDao.notHandledDataForEip07w040(caseData,"condition");
+			setnotHandedList(notHandleList);
 		} else if("2".equals(caseData.getCarprocess_status())) {
 			handledList = carBookingDao.handledDataForEip07w040(caseData,"condition");
+			setHandedListAndReconfime_mk2List(handledList);
 			caseData.setUsing_time_sStrForTable2(caseData.getUsing_time_s());
 			caseData.setUsing_time_eStrForTable2(caseData.getUsing_time_e());
 		} else if("3".equals(caseData.getCarprocess_status())) {
 			Reconfime_mk2List = carBookingDao.selectByReconfime_mk2ForEip07w040(caseData,"Y");
 			caseData.setUsing_time_sStrForTable3(caseData.getUsing_time_s());
 			caseData.setUsing_time_eStrForTable3(caseData.getUsing_time_e());
+			setHandedListAndReconfime_mk2List(Reconfime_mk2List);
 		} else if("4".equals(caseData.getCarprocess_status())) {
 			Reconfime_mk2List = carBookingDao.selectByReconfime_mk2ForEip07w040(caseData,"N");
 			caseData.setUsing_time_sStrForTable3(caseData.getUsing_time_s());
 			caseData.setUsing_time_eStrForTable3(caseData.getUsing_time_e());
+			setHandedListAndReconfime_mk2List(Reconfime_mk2List);
 		}
 		
 		if(!"2".equals(caseData.getCarprocess_status())){
@@ -490,4 +530,5 @@ public class Eip07w040Service {
             return time;
         }
     }
+
 }

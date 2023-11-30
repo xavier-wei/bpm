@@ -77,7 +77,7 @@ public class UpdateLogAroundAdvice {
                                     }
                                 }
                             } catch (NoSuchMethodException nsme) {
-                                log.info("{} 沒有定義 {}()，無法紀錄 MMAPLOG", pjp.getTarget().getClass().getName(), DAO_GET_DATA_BY_PKEY_METHOD);
+                                log.debug("{} 沒有定義 {}()，無法紀錄 MMAPLOG", pjp.getTarget().getClass().getName(), DAO_GET_DATA_BY_PKEY_METHOD);
                             }
                         }
                     } else {
@@ -89,7 +89,7 @@ public class UpdateLogAroundAdvice {
                                 daoMethod = getSelectOneMethod(targetDao.getClass(), argClass);
                                 beforeObj = daoMethod.invoke(targetDao, args);
                             } catch (NoSuchMethodException nsme) {
-                                log.info("{} 沒有定義 {}( {} )，無法紀錄 MMAPLOG", pjp.getTarget().getClass().getName(), DAO_GET_DATA_BY_PKEY_METHOD, args[0].getClass().getName());
+                                log.debug("{} 沒有定義 {}( {} )，無法紀錄 MMAPLOG", pjp.getTarget().getClass().getName(), DAO_GET_DATA_BY_PKEY_METHOD, args[0].getClass().getName());
                             }
                         }
                     }
@@ -118,7 +118,7 @@ public class UpdateLogAroundAdvice {
                                 FrameworkLogUtil.doUpdateListLog(beforeList, afterList);
                             }
                         } catch (Exception nsme) {
-                            log.info("{} 沒有定義 {}()，無法紀錄 MMAPLOG", pjp.getTarget().getClass().getName(), DAO_GET_DATA_BY_PKEY_METHOD);
+                            log.debug("{} 沒有定義 {}()，無法紀錄 MMAPLOG", pjp.getTarget().getClass().getName(), DAO_GET_DATA_BY_PKEY_METHOD);
                         }
                     }
                 } else {
@@ -130,7 +130,7 @@ public class UpdateLogAroundAdvice {
                                 FrameworkLogUtil.doUpdateLog(beforeObj, afterObj);
                             }
                         } catch (Exception nsme) {
-                            log.info("{} 沒有定義 {}( {} )，無法紀錄 MMAPLOG", pjp.getTarget().getClass().getName(), DAO_GET_DATA_BY_PKEY_METHOD, args[0].getClass().getName());
+                            log.debug("{} 沒有定義 {}( {} )，無法紀錄 MMAPLOG", pjp.getTarget().getClass().getName(), DAO_GET_DATA_BY_PKEY_METHOD, args[0].getClass().getName());
                         }
                     }
                 }
@@ -147,7 +147,7 @@ public class UpdateLogAroundAdvice {
         try {
             baseDao = SpringHelper.getBeanById(daoBeanId);
         } catch (Exception ignored) {
-            log.error("執行{}，查無 Bean {} ！", o.getSimpleName(), baseDao);
+            log.debug("執行{}，查無 Bean {} ！", o.getSimpleName(), baseDao);
         }
         return baseDao;
     }

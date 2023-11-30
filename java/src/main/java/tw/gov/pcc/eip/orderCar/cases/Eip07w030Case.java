@@ -40,5 +40,6 @@ public class Eip07w030Case implements Serializable {
 	private String hidden;//增加一個hidden欄位，不要一進來就foucus在日曆，讓日曆跳出來
 	private String destination;//目的地
 	private String num_of_people;//人數
+	private String fillmk;//補單註記
 	
 }

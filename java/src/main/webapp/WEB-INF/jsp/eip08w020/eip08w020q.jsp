@@ -18,25 +18,32 @@
 
 <jsp:attribute name="contents">
     <fieldset>
-	<legend>申請條件</legend>
+	<legend>查詢條件</legend>
 		<form:form id="eip08w020Form" name="eip08w020Form" modelAttribute="${caseKey}" method="POST">
             <form:input path="hidden"/>
             <tags:form-row>
-            	<form:label cssClass="col-form-label apply_user" path="apply_user">申請人：</form:label>
+            	<form:label cssClass="col-form-label apply_user star" path="apply_user">申請人：</form:label>
                 <div class="col-12 col-md">
                     <form:input path="apply_user" cssClass="add form-control star" disabled="true"/>
                 </div>
             </tags:form-row>
             <tags:form-row>
-            	<form:label cssClass="col-form-label apply_dept" path="apply_dept">申請單位：</form:label>
+            	<form:label cssClass="col-form-label apply_dept star" path="apply_dept">申請單位：</form:label>
                 <div class="col-12 col-md">
                     <form:input path="apply_dept" cssClass="add form-control" disabled="true"/>
                 </div>
             </tags:form-row>
             <tags:form-row>
-            	<form:label cssClass="col-form-label apply_date" path="apply_date">申請日期：</form:label>
+            	<form:label cssClass="col-form-label applydateStart" path="applydateStart">申請日期：</form:label>
+                <div class="col-12 col-md d-flex align-items-center">
+                    <form:input path="applydateStart" cssClass="add form-control dateTW cdate" />~
+                    <form:input path="applydateEnd" cssClass="add form-control dateTW cdate" />
+                </div>
+            </tags:form-row>
+            <tags:form-row>
+            	<form:label cssClass="col-form-label itemnoStr" path="itemnoStr">品名：</form:label>
                 <div class="col-12 col-md">
-                    <form:input path="apply_date" cssClass="add form-control dateTW cdate" maxlength="7"/>
+                    <form:input path="itemnoStr" cssClass="add form-control" maxlength="20"/>
                 </div>
             </tags:form-row>
             <form:hidden path="oriApply_user"/>

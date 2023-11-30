@@ -26,6 +26,7 @@ import tw.gov.pcc.eip.framework.spring.annotation.SkipCSRFVerify;
 import tw.gov.pcc.eip.framework.spring.controllers.BaseController;
 import tw.gov.pcc.eip.services.Eip08w020Service;
 import tw.gov.pcc.eip.util.BeanUtility;
+import tw.gov.pcc.eip.util.DateUtility;
 import tw.gov.pcc.eip.util.ExceptionUtility;
 import tw.gov.pcc.eip.util.ObjectUtility;
 
@@ -72,6 +73,7 @@ public class Eip08w020Controller extends BaseController {
 		caseData.setApply_user(userData.getUserName());// 申請人
 		caseData.setOriApply_dept(userData.getDeptId());
 		caseData.setOriApply_user(userData.getUserId());
+		caseData.setApplydateEnd(DateUtility.getNowChineseDate());
 		return new ModelAndView(QUERY_PAGE);
 	}
 	
@@ -83,6 +85,7 @@ public class Eip08w020Controller extends BaseController {
 		caseData.setApply_user(userData.getUserName());// 申請人
 		caseData.setOriApply_dept(userData.getDeptId());
 		caseData.setOriApply_user(userData.getUserId());
+		caseData.setApplydateEnd(DateUtility.getNowChineseDate());
 	}
 
 	/**

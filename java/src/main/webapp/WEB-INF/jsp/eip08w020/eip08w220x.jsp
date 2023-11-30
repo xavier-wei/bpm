@@ -16,7 +16,16 @@
             <tags:form-row>
             	<div class="col-4 col-md-4">申請人：<c:out value="${caseData.apply_user}"/></div>
             	<div class="col-4 col-md-4">申請單位：<c:out value="${caseData.apply_dept}"/></div>
-            	<div class="col-4 col-md-4">申請日期：<func:minguo value="${caseData.apply_date}" pattern="yyy/MM/dd"/></div>
+            	<div class="col-4 col-md-4 d-flex">
+            	申請日期：
+            	<c:if test ="${empty caseData.applydateStart}">
+            		<div style="margin-right:80px"></div>
+            	</c:if>
+            	<func:minguo value = "${caseData.applydateStart}"  pattern="yyy/MM/dd"/>~
+                <func:minguo value = "${caseData.applydateEnd}"  pattern="yyy/MM/dd"/>
+                </div>
+                
+                
             </tags:form-row>
             <tags:form-row>
           	 <div class="table-responsive mt-2">	 
@@ -26,8 +35,9 @@
                             <th style="width: 10%">序號</th>
                             <th style="width: 10%">領物單號</th>
                             <th style="width: 10%">申請日期</th>
-                            <th style="width: 50%">申請用途</th>
+                            <th style="width: 40%">申請用途</th>
                             <th style="width: 10%">表單狀態</th>
+                            <th style="width: 10%">審核人員</th>
                             <th style="width: 10%">明細</th>
                          </tr>
                         </thead>
@@ -39,6 +49,7 @@
                         	<td><func:minguo value = "${item.apply_date}"  pattern="yyy/MM/dd"/></td>
                         	<td class="text-left"><c:out value="${item.apply_memo}"/></td>
                         	<td><c:out value="${item.process_status}"/></td>
+                        	<td><c:out value="${item.reconfirm_user}"/></td>
                         	<td>
 	                        	<tags:button cssClass="btnDetail" value="${item.applyno}">
 									明細

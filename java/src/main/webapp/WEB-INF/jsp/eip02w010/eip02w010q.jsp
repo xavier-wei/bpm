@@ -103,40 +103,31 @@
                         <c:forEach items="${caseData.qryList}" var="item" varStatus="status">
                             <tr data-seq="${status.index + 1 }">
                                 <td class="text-center">
-                                    <form:checkbox path="qryList[${status.index}].user_id" 
-                                    value="${status.index + 1 }" />
+                                    <input type="checkbox" value="${status.index + 1 }">
                                 </td>
                                 <td class="text-left">
                                     <c:out value="${item.user_id}" />
-                                    <form:hidden path="qryList[${status.index}].user_id" />
                                 </td>
                                 <td class="text-left">
                                     <c:out value="${item.user_name}" />
-                                    <form:hidden path="qryList[${status.index}].user_name" />
                                 </td>
                                 <td class="text-left">
                                     <c:out value="${item.ename}" />
-                                    <form:hidden path="qryList[${status.index}].ename" />
                                 </td>
                                 <td class="text-left">
                                     <c:out value="${item.dept_name}" />
-                                    <form:hidden path="qryList[${status.index}].dept_name" />
                                 </td>
                                 <td class="text-left">
                                     <c:out value="${item.titlename}" />
-                                    <form:hidden path="qryList[${status.index}].titlename" />
                                 </td>
                                 <td class="text-left">
                                     <c:out value="${item.email}" />
-                                    <form:hidden path="qryList[${status.index}].email" />
                                 </td>
                                 <td class="text-left">
                                     <c:out value="${item.tel1}" />
-                                    <form:hidden path="qryList[${status.index}].tel1" />
                                 </td>
                                 <td class="text-left">
                                     <c:out value="${item.tel2}" />
-                                    <form:hidden path="qryList[${status.index}].tel2" />
                                 </td>
                             </tr>
                         </c:forEach>

@@ -90,18 +90,19 @@ public class Eip0aw020Service {
 
     public List<Users> transLdapToUsers() {
         LdapParams ldapParams = initLdapParams();
-        Hashtable<String, String> HashEnv = new Hashtable<>();
-        HashEnv.put(Context.SECURITY_AUTHENTICATION, "simple");
-        HashEnv.put(Context.SECURITY_PRINCIPAL, ldapParams.getBindAccount());
-        HashEnv.put(Context.SECURITY_CREDENTIALS, ldapParams.getBindPassword());
-        HashEnv.put(Context.INITIAL_CONTEXT_FACTORY, "com.sun.jndi.ldap.LdapCtxFactory");
-        HashEnv.put("com.sun.jndi.ldap.connect.timeout", "3000");
-        HashEnv.put(Context.PROVIDER_URL, ldapParams.getUrl());
+        Hashtable<String, String> hashEnv = new Hashtable<>();
+        hashEnv.put(Context.SECURITY_AUTHENTICATION, "simple");
+        hashEnv.put(Context.SECURITY_PRINCIPAL, ldapParams.getBindAccount());
+        hashEnv.put(Context.SECURITY_CREDENTIALS, ldapParams.getBindPassword());
+        hashEnv.put(Context.INITIAL_CONTEXT_FACTORY, "com.sun.jndi.ldap.LdapCtxFactory");
+        hashEnv.put("com.sun.jndi.ldap.connect.timeout", "3000");
+        hashEnv.put(Context.PROVIDER_URL, ldapParams.getUrl());
+        hashEnv.put(Context.REFERRAL, "ignore");
 
         List<Users> usersList = new ArrayList<>();
         DirContext ctx = null;
         try {
-            ctx = new InitialDirContext(HashEnv);
+            ctx = new InitialDirContext(hashEnv);
             SearchControls searchControls = new SearchControls();
             searchControls.setSearchScope(SearchControls.SUBTREE_SCOPE);
             searchControls.setReturningAttributes(Arrays.stream(LdapAttributes.values()).map(Enum::name).toArray(String[]::new));

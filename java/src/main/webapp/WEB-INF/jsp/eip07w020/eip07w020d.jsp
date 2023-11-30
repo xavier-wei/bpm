@@ -24,6 +24,11 @@
     	刪除<i class="fas fa-trash-alt"></i>
       </tags:button>
 
+	<tags:button id="btnBack">
+    	回上一頁<i class="fas fa-reply"></i>
+	</tags:button>
+
+
 	  <tags:button id="btnClearn">
     	回主畫面<i class="fas fa-reply"></i>
       </tags:button>
@@ -214,7 +219,7 @@
 					</tags:form-row>
 					<c:if test="${not empty caseData.detailsList[0].approve_using_time_s}">
 							<tags:form-row>
-									<div   class="col-md-6 d-flex" >
+									<div   class="col-md-12 d-flex" >
 										<form:label cssClass="col-form-label " path="lable">核定用車時間：</form:label>
 										<c:if test="${caseData.detailsList[0].using ne caseData.detailsList[0].approve_using}">
 											<label class="col-form-label text-left col-3" style="color: red">
@@ -429,6 +434,10 @@
 				showConfirm('確定要刪除資料？', () => {
 					$('#eip07w020Form').attr('action', '<c:url value="/Eip07w020_delete.action" />').submit();
 				});
+			});
+
+			$('#btnBack').click(function() {
+				$('#eip07w020Form').attr('action', '<c:url value="/Eip07w020_quary.action" />').submit();
 			});
 
 			function controlDiv(){//控制[申請相關資料]及[車輛相關資料]

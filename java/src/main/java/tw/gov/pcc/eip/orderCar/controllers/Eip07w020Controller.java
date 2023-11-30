@@ -150,7 +150,7 @@ public class Eip07w020Controller extends BaseController {
     public String inster(@ModelAttribute(CASE_KEY) Eip07w020Case caseData, BindingResult result)  {
         log.debug("導向 Eip07w020_addPage 派車預約暨派車新增");
 
-            eip07w020Validator.eip07w020AValidate(caseData.getInsterList().get(0),result);
+            eip07w020Validator.eip07w020AValidate(caseData.getInsterList().get(0),caseData.getWorkTy(),result);
 
         if (result.hasErrors()) {
             return ADD_PAGE;

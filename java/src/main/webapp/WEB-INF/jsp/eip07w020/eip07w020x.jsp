@@ -100,6 +100,7 @@
 					<th class="text-center align-middle">用車時間</th>
 					<th class="text-center align-middle">用車事由</th>
 					<th class="text-center align-middle">表單狀態</th>
+					<th class="text-center align-middle">補單註記</th>
 					<th class="text-center align-middle"></th>
 
 				</tr>
@@ -128,6 +129,13 @@
 									</td>
 									<td id="processStaus" class="text-left">
 										<c:out value='${item.processStaus}'/>-<c:out value='${item.processStausNm}'/>
+									</td>
+									<td id="additionalColumn" class="text-center">
+										<c:choose>
+											<c:when test="${item.applyDate gt item.useDate}">
+												Y
+											</c:when>
+										</c:choose>
 									</td>
 									<td class="text-left" >
 										<tags:button onclick="detailReport('${item.applyId}')"  >明細<i class="fas fa-file-alt"></i></tags:button>

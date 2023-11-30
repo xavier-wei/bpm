@@ -189,52 +189,6 @@ public class Eip06w030Service {
         return meetingDao.findExistedMeeting(newDatelist, using, roomId);
     }
 
-//    /**
-//     * 新增會議
-//     * @param caseData
-//     * @return
-//     */
-//    public void saveMeeting(Eip06w030Case caseData){
-//        Meeting meeting = new Meeting();
-//        String using = timeConversionService.to48binaryForMeeting(caseData.getMeetingBegin(), caseData.getMeetingEnd());
-//        int maxNum = meetingDao.findMaxMeetingId().getMeetingId() + 1;
-//        meeting.setMeetingId(maxNum);
-//        meeting.setMeetingName(caseData.getMeetingName());
-//        meeting.setChairman(caseData.getChairman());
-//        meeting.setOrganizerId(userData.getUserId());
-//        meeting.setMeetingdt(DateUtility.changeDateTypeToWestDate(caseData.getPeriodStart()));
-//        meeting.setMeetingBegin(caseData.getMeetingBegin());
-//        meeting.setMeetingEnd(caseData.getMeetingEnd());
-//        meeting.setRoomId(caseData.getRoomId());
-//        meeting.setQty(caseData.getMeetingQty());
-//        meeting.setApplydt(LocalDateTime.now());
-//        meeting.setUsing(using);
-//        meetingDao.insertData(meeting);
-//
-//        if(caseData.getItemIds().size()>0){
-//            for(Object obj : caseData.getItemIds()){
-//                MeetingItem mtItem = new MeetingItem();
-//                mtItem.setMeetingId(maxNum);
-//                mtItem.setItemId(obj.toString());
-//                mtItem.setQty(1);
-//                meetingItemDao.insertData(mtItem);
-//            }
-//        }
-//
-//        if(caseData.getFoodId_Qty().size()>1){
-//            for(int i = 0 ; i < caseData.getFoodId_Qty().size() ; i++){
-//                MeetingItem mtItem = new MeetingItem();
-//                String foodId = caseData.getFoodId_Qty().get(i).toString().split(":")[1].replace("\"","");
-//                int foodIdQty = Integer.parseInt(caseData.getFoodId_Qty().get(i+1).toString().split(":")[1].replace("\"","").replace("}","").replace("]",""));
-//                mtItem.setMeetingId(maxNum);
-//                mtItem.setItemId(foodId);
-//                mtItem.setQty(foodIdQty);
-//                meetingItemDao.insertData(mtItem);
-//                i++;
-//            }
-//        }
-//    }
-
     /**
      * 新增多個會議
      * @param caseData

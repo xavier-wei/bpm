@@ -60,5 +60,11 @@ public interface DeptsDao {
 	public List<Depts> findByLikeDeptname(String dept_name);
 
 	public List<Depts> findByLikeDeptid(String dept_id);
+	
+	/**
+	 * 若登入者部門代號為上層管理者，則要把下層的部門一起撈出來(用於審核)
+	 * 判斷dept_id = dept_id_p
+	 * */
+	public List<Depts> findAllDeptId(String dept_id);
 
 }

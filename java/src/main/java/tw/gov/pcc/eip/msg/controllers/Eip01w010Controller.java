@@ -77,6 +77,19 @@ public class Eip01w010Controller extends BaseController {
     }
 
     /**
+     * 透過ajax 依畫面選擇的部門 查詢使用者
+     * 
+     * @param deptid 部門
+     * @return
+     */
+    @RequestMapping("/Eip01w010_getUsersData.action")
+    @ResponseBody
+    public Map<String, String> getUsersData(@RequestParam("deptid") String deptid) {
+        log.info("透過ajax 依畫面選擇的部門 查詢使用者選單");
+        return ObjectUtility.normalizeObject(eip01w010Service.getUsers(deptid));
+    }
+
+    /**
      * 新增按鈕
      * 
      * @param caseData
@@ -217,7 +230,7 @@ public class Eip01w010Controller extends BaseController {
         log.debug("導向 Eip01w010_enter 訊息上稿 上稿按鈕");
         eip01w010Service.initOptions(caseData);
         if (result.hasErrors()) {
-            return new ModelAndView(MAIN_PAGE);
+            return queryList(caseData);
         }
         try {
             eip01w010Service.updStatus(caseData, "1");
@@ -246,7 +259,7 @@ public class Eip01w010Controller extends BaseController {
         eip01w010Service.initOptions(caseData);
         String returnPage = "".equals(caseData.getFseq()) ? MAIN_PAGE : EDIT_PAGE;
         if (result.hasErrors()) {
-            return new ModelAndView(returnPage);
+            return queryList(caseData);
         }
         try {
             eip01w010Service.updStatus(caseData, "X"); // 邏輯註銷

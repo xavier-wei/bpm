@@ -41,15 +41,20 @@ public class MailHelper {
         Properties props = mailSender.getJavaMailProperties();
         props.put("mail.transport.protocol", "smtp");
         props.put("mail.smtp.auth", "true");
-        props.put("mail.smtp.starttls.enable", "true");
-        props.put("mail.smtp.starttls.required", "true");
         props.put("mail.debug", "true");
 
         try {
             eipcodeDao.findByCodeKind("SYS_SMTP")
-                    .forEach(x -> BeanUtility.setBeanProperty(mailSender,
-                            ObjectUtility.normalizeObject(StringUtils.lowerCase(x.getScodekind())),
-                            ObjectUtility.normalizeObject(x.getCodename())));
+                    .forEach(x -> {
+                        //全轉小寫也試一次
+                        BeanUtility.setBeanProperty(mailSender,
+                                ObjectUtility.normalizeObject(StringUtils.lowerCase(x.getScodekind())),
+                                ObjectUtility.normalizeObject(x.getCodename()));
+                        //原始大小
+                        BeanUtility.setBeanProperty(mailSender,
+                                ObjectUtility.normalizeObject(x.getScodekind()),
+                                ObjectUtility.normalizeObject(x.getCodename()));
+                    });
         } catch (Exception e) {
             log.error("MailHelper 初始化失敗 {}", ExceptionUtility.getStackTrace(e));
         }

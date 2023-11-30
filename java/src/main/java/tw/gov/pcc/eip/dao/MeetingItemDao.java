@@ -42,4 +42,11 @@ public interface MeetingItemDao {
      */
     public List<MeetingItemAndMeetingCode> selectDataByMeetingId(String meetingId, String itemTyp);
 
+    /**
+     * 依MeetingIdItemID刪除會議細項
+     * @param meetingId
+     * @return
+     */
+    public void deleteDataByMeetingId(List<Integer> meetingId);
+
 }

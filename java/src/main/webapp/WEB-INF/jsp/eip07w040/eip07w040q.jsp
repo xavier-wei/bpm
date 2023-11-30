@@ -61,33 +61,33 @@
 	                            <th style="width: 15%">申請單位</th>
 	                            <th style="width: 10%">申請用車日期</th>
 	                            <th style="width: 10%">申請用車時間起迄</th>
-	                            <th style="width: 30%">用車事由</th>
+	                            <th style="width: 24%">用車事由</th>
 	                            <th style="width: 10%">表單狀態</th>
-	                            <th style="width: 10%">明細</th>
+	                            <th style="width: 8%">補單註記</th>
+	                            <th style="width: 8%">明細</th>
                         	</tr>
                         </thead>
                         <c:forEach items="${caseData.notHandleList}" var="item" varStatus="status">
                         <tbody><tr>
                         	<td><c:out value="${status.index+1}"/></td>
-                        	<td><func:username userid="${item.apply_user}"/>
+                        	<td><c:out value="${item.apply_user}"/>
                         	</td>
                         	<td>
-                        		<func:dept deptid="${item.apply_dept}"/>
+                        		<c:out value="${item.apply_dept}"/>
                         	</td>
                         	<td><func:minguo value="${item.using_date}"/></td>
                         	<td>
-	                        	<func:timeconvert value="${item.using_time_s}"/>~
-	                        	<func:timeconvert value="${item.using_time_e}"/>
+	                        	<c:out value="${item.using_time_s}"/>~
+	                        	<c:out value="${item.using_time_e}"/>
                         	</td>
                         	<td class="text-left">
 							<span class="ellipsisStr">
 		                 		<c:out value="${item.apply_memo}"/>
 		                 	</span>
                         	</td>
-                        	<td>
-                        	${item.carprocess_status}-
-                        	<func:code codekind = 'CARPROCESSSTATUS' codeno = '${item.carprocess_status}' />
+                        	<td>${item.carprocess_status}
                         	</td>
+                        	<td><c:out value="${item.fillmk}"/></td>
                         	<td>
                         		<tags:button cssClass="btnDetail" value="${item.applyid}">
 									明細<i class="fas fa-file-alt"></i>
@@ -132,22 +132,22 @@
                       	</c:if>
                       	</td>
                       	<td><c:out value="${item.applyid}"/></td>
-                      	<td><func:username userid="${item.apply_user}"/>
+                      	<td><c:out value="${item.apply_user}"/>
                       	</td>
                       	<td>
-                      		<func:dept deptid="${item.apply_dept}"/>
+                      		<c:out value="${item.apply_dept}"/>
                       	</td>
                       	<td><func:minguo value="${item.using_date}"/></td>
                       	<td>
                     	    <c:choose>
-                      		<c:when test="${ item.using ne item.approve_using}">
+                      		<c:when test="${item.using ne item.approve_using}">
                       			<font color="red">
-                      			<func:timeconvert value="${item.approve_using_time_s}"/>~
-                       		<func:timeconvert value="${item.approve_using_time_e}"/></font>
+                      			<c:out value="${item.approve_using_time_s}"/>~
+                       			<c:out value="${item.approve_using_time_e}"/></font>
 	                       	</c:when>
 	                       	<c:otherwise>
-	                        	<func:timeconvert value="${item.approve_using_time_s}"/>~
-	                        	<func:timeconvert value="${item.approve_using_time_e}"/>
+	                        	<c:out value="${item.approve_using_time_s}"/>~
+	                        	<c:out value="${item.approve_using_time_e}"/>
 	                       	</c:otherwise>
 	                       	</c:choose>                      	
                       	</td>
@@ -206,15 +206,15 @@
                       <c:forEach items="${caseData.reconfime_mk2List}" var="item" varStatus="status">
                       <tr>
                       	<td><c:out value="${item.applyid}"/></td>
-                      	<td><func:username userid="${item.apply_user}"/>
+                      	<td><c:out value="${item.apply_user}"/>
                       	</td>
                       	<td>
-                      		<func:dept deptid="${item.apply_dept}"/>
+                      		<c:out value="${item.apply_dept}"/>
                       	</td>
                       	<td><func:minguo value="${item.using_date}"/></td>
                       	<td>
                       	<c:if test="${not empty item.approve_using_time_s and not empty item.approve_using_time_e}">
-                       		<func:timeconvert value="${item.approve_using_time_s}"/>~<func:timeconvert value="${item.approve_using_time_e}"/>
+                       		<c:out value="${item.approve_using_time_s}"/>~<c:out value="${item.approve_using_time_e}"/>
                       	</c:if>
                       	</td>
                         <td class="text-left">

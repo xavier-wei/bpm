@@ -106,8 +106,7 @@ public class Eip07w040Controller extends BaseController {
 			setSystemMessage("查詢失敗");
 			return new ModelAndView(QUERY_PAGE);
 		}
-		
-		return new ModelAndView(DETAIL_PAGE);
+			return new ModelAndView(DETAIL_PAGE);
 	}
 	
 	

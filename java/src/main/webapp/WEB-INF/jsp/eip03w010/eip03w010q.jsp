@@ -40,9 +40,7 @@
                         <form:label cssClass="col-form-label" path="trkSts">列管狀態：</form:label>
                         <form:select path="trkSts" cssClass="form-control selector">
                             <form:option name="" value="">全部</form:option>
-                            <c:forEach items="${caseData.trkStsList}" var="item">
-                                <form:option name="${item.codeno }" value="${item.codeno }">${item.codename }</form:option>
-                            </c:forEach>
+                            <form:options items="${caseData.trkStsCombobox}" />
                         </form:select>
                     </div>
                 </tags:form-row>

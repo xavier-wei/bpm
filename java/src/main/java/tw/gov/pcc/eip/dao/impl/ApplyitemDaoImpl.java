@@ -95,25 +95,39 @@ public class ApplyitemDaoImpl extends BaseDao<Applyitem> implements ApplyitemDao
 
 
 	@Override
-	public List<Applyitem> selectByApplyUserAndApply_deptAndapplyDate(String apply_user, String apply_dept,
-			String apply_date) {
+	public List<Applyitem> selectByApplyUserAndApply_deptAndapplyDate(String apply_user,String apply_dept,String applydateStart,String applydateEnd,String itemnoStr) {
         StringBuilder sql=new StringBuilder();
-        sql.append(" SELECT  * ");
+        Map<String, String> params = new HashMap<>();
+
+        sql.append(" SELECT   distinct applyno ,apply_date,apply_memo,process_status,reconfirm_user ");
         sql.append(" FROM " + TABLE_NAME + " WHERE    ");
-        sql.append(" apply_user = :apply_user  and seqno ='1' ");
+        sql.append(" apply_user = :apply_user ");
         
-        if(StringUtils.isNoneEmpty(apply_dept)) {
-        	sql.append(" and  apply_dept = :apply_dept ");
+        if(StringUtils.isNotEmpty(apply_dept)) {
+        	sql.append(" and  apply_dept =  :apply_dept ");
         }
         
-        if(StringUtils.isNoneEmpty(apply_date)) {
-        	sql.append(" and  apply_date = :apply_date ");
+        if(StringUtils.isNotEmpty(applydateStart) && StringUtils.isNotEmpty(applydateEnd)) {
+        	sql.append(" and  apply_date between :applydateStart  and :applydateEnd ");
+            params.put("applydateStart", applydateStart);
+            params.put("applydateEnd", applydateEnd);
+        } else if(StringUtils.isNotEmpty(applydateStart) && StringUtils.isEmpty(applydateEnd)){
+        	sql.append(" and  apply_date between :applydateStart  and :applydateEnd ");
+            params.put("applydateStart", applydateStart);
+            params.put("applydateEnd", DateUtility.getNowWestDate());
+        }
+        
+        if(StringUtils.isNotEmpty(itemnoStr)) {
+        	sql.append("and itemno in (select itemno from APPLYITEM a WHERE a.ITEMNO in (select itemno from ITEMCODE where itemname like :itemnoStr)) ");
+        	
+        	params.put("itemnoStr", "%"+itemnoStr.trim()+"%");
         }
         
         sql.append(" order by applyno desc ");
         
-        SqlParameterSource params = new MapSqlParameterSource("apply_user", apply_user)
-        		.addValue("apply_dept", apply_dept).addValue("apply_date", apply_date);
+        
+        params.put("apply_user", apply_user);
+        params.put("apply_dept", apply_dept );
 
         List<Applyitem> list = getNamedParameterJdbcTemplate().query(sql.toString(), params,
                 BeanPropertyRowMapper.newInstance(Applyitem.class));
@@ -139,15 +153,15 @@ public class ApplyitemDaoImpl extends BaseDao<Applyitem> implements ApplyitemDao
 
 
 	@Override
-	public List<Applyitem> selectByApply_dateAndProcess_status(String apply_dateStart, String apply_dateEnd,String process_status,String apply_dept) {
+	public List<Applyitem> selectByApply_dateAndProcess_status(String apply_dateStart, String apply_dateEnd,String process_status,List<String> apply_dept) {
         StringBuilder sql=new StringBuilder();
         sql.append(" SELECT  * ");
         sql.append(" FROM " + TABLE_NAME + " WHERE    ");
         sql.append(" apply_date >= :apply_dateStart ");
         sql.append(" And apply_date <= :apply_dateEnd ");
         sql.append(" And process_status= :process_status ");
-        if(StringUtils.isNotBlank(apply_dept)) {        	
-        	sql.append(" And apply_dept = :apply_dept ");
+        if(CollectionUtils.isNotEmpty(apply_dept)) {        	
+        	sql.append(" And apply_dept in (:apply_dept) ");
         }
         sql.append(" And seqno = '1' order by applyno");
         

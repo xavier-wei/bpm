@@ -33,7 +33,7 @@ public interface CarBookingDao {
      * @param type eip07w050：秘書處主管核派作業-carprocess_status in ('3','4')
      * 
      **/ 
-    List<CarBooking> selectByApplydate(String applydateStart, String applydateEnd, String type, String apply_dept);
+    List<CarBooking> selectByApplydate(String applydateStart, String applydateEnd, String type, List<String> apply_dept);
     
     /**
      * 用申請單號查詢資料

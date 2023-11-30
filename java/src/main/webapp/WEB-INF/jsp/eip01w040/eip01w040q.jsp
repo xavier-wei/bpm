@@ -57,15 +57,12 @@
                                         </td>
                                         <td class="text-left">
                                             <c:out value="${item.subject}" />
-                                            <form:hidden path="qryList[${status.index}].subject" />
                                         </td>
                                         <td class="text-center">
                                             <c:out value="${item.upddt}" />
-                                            <form:hidden path="qryList[${status.index}].upddt" />
                                         </td>
                                         <td class="text-center" data-fseq="${item.fseq}">
                                             <tags:button id="btnDetail">明細</tags:button>
-                                            <form:hidden path="qryList[${status.index}].fseq" />
                                         </td>
                                     </tr>
                                 </c:forEach>

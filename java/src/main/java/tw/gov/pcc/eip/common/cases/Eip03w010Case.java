@@ -38,7 +38,9 @@ public class Eip03w010Case implements Serializable {
     private String cnt_wait;  //待解列
     private String cnt_done; //已解列
     private List<Eip03w010Case> keepTrkMstList = new ArrayList<>();
-    private List<Eipcode> trkStsList = new ArrayList<>();
+//    private List<Eipcode> trkStsList = new ArrayList<>();
+
+
     public String mode;
     public String selectedTrkID;
 //    新增頁
@@ -46,6 +48,7 @@ public class Eip03w010Case implements Serializable {
     private String creUser; //建立人員
     private String creDt; //建立時間
     private String trkObj; //列管對象
+    private Map<String, String> trkStsCombobox;
     private Map<String, String> trkObjCombobox; //列管對象下拉選單
     private Map<String, String> trkFromCombobox; //交辦來源下拉選單
     private String otherTrkFrom; //其他交辦來源
@@ -74,7 +77,7 @@ public class Eip03w010Case implements Serializable {
         this.cnt_wait = "";
         this.cnt_done = "";
         this.keepTrkMstList.clear();
-        this.trkStsList.clear();
+        this.trkStsCombobox.clear();
         this.creDept = "";
         this.creUser = "";
         this.creDt = null;

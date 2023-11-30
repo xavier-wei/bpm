@@ -26,11 +26,11 @@ public interface ApplyitemDao {
     
     Applyitem getApplyno();
     
-    List<Applyitem> selectByApplyUserAndApply_deptAndapplyDate(String apply_user,String apply_dept,String apply_date);
+    List<Applyitem> selectByApplyUserAndApply_deptAndapplyDate(String apply_user,String apply_dept,String applydateStart,String applydateEnd,String itemnoStr);
 
     List<Applyitem> selectByApplyno(String applyno);
     
-    List<Applyitem> selectByApply_dateAndProcess_status(String apply_dateStart, String apply_dateEnd,String process_status,String apply_dept);
+    List<Applyitem> selectByApply_dateAndProcess_status(String apply_dateStart, String apply_dateEnd,String process_status,List<String> apply_dept);
 
     List<Applyitem> selectReconfirm_mkNData(List<String>applynos);
     

@@ -3,6 +3,7 @@ package tw.gov.pcc.eip.services;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -12,10 +13,12 @@ import org.springframework.stereotype.Service;
 import tw.gov.pcc.eip.dao.CarBookingDao;
 import tw.gov.pcc.eip.dao.DeptsDao;
 import tw.gov.pcc.eip.dao.EipcodeDao;
+import tw.gov.pcc.eip.dao.User_auth_deptDao;
 import tw.gov.pcc.eip.dao.UsersDao;
 import tw.gov.pcc.eip.domain.CarBooking;
 import tw.gov.pcc.eip.domain.Depts;
 import tw.gov.pcc.eip.domain.Eipcode;
+import tw.gov.pcc.eip.domain.User_auth_dept;
 import tw.gov.pcc.eip.domain.Users;
 import tw.gov.pcc.eip.framework.domain.UserBean;
 import tw.gov.pcc.eip.orderCar.cases.Eip07w030Case;
@@ -41,6 +44,8 @@ public class Eip07w030Service {
     private UsersDao usersDao;
     @Autowired
     private DeptsDao deptsDao;
+    @Autowired
+    private User_auth_deptDao user_auth_deptDao;
 	
 	/**
 	 * 依照申請日期起迄搜尋審核資料
@@ -48,8 +53,18 @@ public class Eip07w030Service {
 	 * @param caseData
 	 */
 	public void getData(Eip07w030Case caseData) throws Exception {
+		//2023.11.28
+		//1.除自己部門外，審核者若為上層單位，則要可以看到下層單位提出的申請
+		List<String>dept = deptsDao.findAllDeptId(userData.getDeptId()).stream().map(e->e.getDept_id()).collect(Collectors.toList());
+		//2.提供部分使用者可以跨部門審核用，若有值，則表示該使用者還要同時審核到別部門的資料。
+		List<User_auth_dept>otherdept = user_auth_deptDao.selectByUser_id(userData.getUserId());
+		if(CollectionUtils.isNotEmpty(otherdept)){
+			for(User_auth_dept de : otherdept) {
+				dept.add(de.getDept_id());
+			}
+		}
 		List<CarBooking> list = carBookingDao.selectByApplydate(caseData.getApplydateStart(),
-				caseData.getApplydateEnd(),"eip07w030",userData.getDeptId());
+				caseData.getApplydateEnd(),"eip07w030",dept);
 		List<Eip07w030Case> dataList = new ArrayList<>();
 		if (CollectionUtils.isNotEmpty(list)) {
 			for (CarBooking car : list) {
@@ -68,6 +83,9 @@ public class Eip07w030Service {
 				eipcode.setCodeno(car.getCarprocess_status());
 				Eipcode code = eipcodeDao.selectDataByPrimaryKey(eipcode);
 				data.setCarprocess_status(code.getCodeno() + "-" + code.getCodename());
+				if(Integer.valueOf(car.getUsing_date())<Integer.valueOf(car.getCre_datetime().substring(0,8))) {
+					data.setFillmk("Y");
+				}
 				dataList.add(data);
 			}
 		}

@@ -55,4 +55,18 @@ public interface MeetingDao {
     public List<Meeting> findExistedMeeting(List<String> dateList, String using, String roomId);
 
 
+    /**
+     * 依會議日期查詢所有會議
+     * @param dueDate
+     * @return
+     */
+    public List<Meeting> findDueMeeting(String dueDate);
+
+    /**
+     * 依MeetingIdItemID刪除會議細項
+     * @param meetingId
+     * @return
+     */
+    public void deleteDataByMeetingId(List<Integer> meetingId);
+
 }

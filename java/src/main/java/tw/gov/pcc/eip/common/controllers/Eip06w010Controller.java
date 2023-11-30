@@ -65,6 +65,12 @@ public class Eip06w010Controller extends BaseController {
     @RequestMapping("/Eip06w010_enter.action")
     public String enter() {
         log.debug("導向會會議室查詢/維護作業");
+        log.info("DeleteDueMeeting start....");
+        try {
+            eip06w010Service.deleteDueMeeting();
+        }catch (Exception e){
+            log.info("DeleteDueMeeting failed....");
+        }
         return QUERY_PAGE;
     }
 
@@ -75,6 +81,12 @@ public class Eip06w010Controller extends BaseController {
     @RequestMapping("/Eip06w011_enter.action")
     public String enterAdmin() {
         log.debug("導向會議室查詢/維護作業(管理員)");
+        log.info("DeleteDueMeeting start....");
+        try {
+            eip06w010Service.deleteDueMeeting();
+        }catch (Exception e){
+            log.info("DeleteDueMeeting failed....");
+        }
         return QUERY_ADMIN_PAGE;
     }
 

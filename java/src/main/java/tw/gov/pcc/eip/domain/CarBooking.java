@@ -395,4 +395,5 @@ public class CarBooking implements Serializable {
     private String apply_deptStr;//eip07w040y
     
     private String usingTimeList;//eip07w040用於畫面顯示今日該車輛已派出的時間
+    private String fillmk;//補單註記
 }

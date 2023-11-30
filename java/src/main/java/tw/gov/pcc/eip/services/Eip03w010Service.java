@@ -37,7 +37,6 @@ public class Eip03w010Service {
 
     @Autowired
     private KeepTrkMstDao keepTrkMstDao;
-
     @Autowired
     private KeepTrkDtlDao keepTrkDtlDao;
     @Autowired
@@ -52,22 +51,20 @@ public class Eip03w010Service {
     private MailService mailService;
     public void initDataList(Eip03w010Case caseData) {
         List<Eip03w010Case> keepTrkMstList = keepTrkMstDao.selectByColumns(null,null,null,null, null);
-        List<Eipcode> trkStsList = eipcodeDao.findByCodeKind("TRKSTS");
 
-        // 替換 trkSts 為中文字
+        Map<String, String> trkStsMap =  eipcodeDao.findByCodeKind("TRKSTS").stream()
+                .collect(Collectors.toMap(Eipcode::getCodeno, Eipcode::getCodename));
+                // 替換 trkSts 為中文字
         keepTrkMstList.forEach( a-> {
-            trkStsList.forEach( b-> {
-                if(a.getTrkSts().equals(b.getCodeno())){
-                    a.setTrkSts(b.getCodename());
+                a.setTrkSts(trkStsMap.get(a.getTrkSts()));
+                if (a.getTrkCont() != null){
+                    a.setTrkCont(a.getTrkCont().replaceAll("\r\n", "<br>"));
                 }
-            });
-            if (a.getTrkCont() != null){
-                a.setTrkCont(a.getTrkCont().replaceAll("\r\n", "<br>"));
-            }
-            String cnAllStDt = DateUtility.changeDateTypeToChineseDate(a.getAllStDt());
-            a.setAllStDt(cnAllStDt.substring(0,3) + "/" + cnAllStDt.substring(3,5) + "/" + cnAllStDt.substring(5));
+                String cnAllStDt = DateUtility.changeDateTypeToChineseDate(a.getAllStDt());
+                a.setAllStDt(cnAllStDt.substring(0,3) + "/" + cnAllStDt.substring(3,5) + "/" + cnAllStDt.substring(5));
         });
-        caseData.setTrkStsList(trkStsList);
+
+        caseData.setTrkStsCombobox(trkStsMap);
         caseData.setKeepTrkMstList(keepTrkMstList);
     }
 
@@ -82,15 +79,13 @@ public class Eip03w010Service {
         caseData.setAllStDtEnd(caseData.getAllStDtEnd() != null ? DateUtility.changeDateTypeToWestDate(caseData.getAllStDtEnd()) : "");
         List<Eip03w010Case> resultList = keepTrkMstDao.selectByColumns(caseData.getTrkID(),caseData.getTrkCont(),caseData.getAllStDtSt(),
                                                                        caseData.getAllStDtEnd(), caseData.getTrkSts());
-        List<Eipcode> trkStsList = eipcodeDao.findByCodeKind("TRKSTS");
+        Map<String, String> trkStsMap =  eipcodeDao.findByCodeKind("TRKSTS").stream()
+                .collect(Collectors.toMap(Eipcode::getCodeno, Eipcode::getCodename));
+        // 替換 trkSts 為中文字
 
         // 替換 trkSts 為中文字
         resultList.forEach( a-> {
-            trkStsList.forEach( b-> {
-                if(a.getTrkSts().equals(b.getCodeno())){
-                    a.setTrkSts(b.getCodename());
-                }
-            });
+            a.setTrkSts(trkStsMap.get(a.getTrkSts()));
             if (a.getTrkCont() != null){
                 a.setTrkCont(a.getTrkCont().replaceAll("\r\n", "<br>"));
             }
@@ -104,7 +99,7 @@ public class Eip03w010Service {
             caseData.setAllStDtEnd(DateUtility.changeDateTypeToChineseDate(caseData.getAllStDtEnd()));
         }
         caseData.setKeepTrkMstList(resultList);
-        caseData.setTrkStsList(trkStsList);
+        caseData.setTrkStsCombobox(trkStsMap);
     }
 
     /**
@@ -212,17 +207,11 @@ public class Eip03w010Service {
         }
         caseData.setTrkFromCombobox(newTkFromCombobox);
         caseData.setAllStDt(DateUtility.changeDateTypeToChineseDate(ktm.getAllStDt()));
-//        caseData.setCreUser(ktm.getCreUser());
-//        caseData.setCreDept(ktm.getCreDept());
         caseData.setCreDept(deptsDao.findByPk(ktm.getCreDept()).getDept_name());
         caseData.setCreUser(getUserName(ktm.getCreUser()));
         String creDt = DateUtility.parseLocalDateTimeToChineseDateTime(ktm.getCreDt(),true);
         creDt = DateUtility.formatChineseDateTimeString(creDt,false);
         caseData.setCreDt(creDt);
-//        caseData.setUpdUser(ktm.getUpdUser());
-//        caseData.setUpdDept(ktm.getUpdDept());
-//        caseData.setUpdUser(ktm.getUpdUser() != null? usersDao.selectByKey(ktm.getUpdUser()).getUser_name() : "");
-//        caseData.setUpdDept(ktm.getUpdDept() != null? deptsDao.findByPk(ktm.getUpdDept()).getDept_name() : "");
         if(ktm.getUpdUser() != null && !ktm.getUpdUser().equals("")){
             caseData.setUpdUser(getUserName(ktm.getUpdUser()));
         }
@@ -249,7 +238,6 @@ public class Eip03w010Service {
         caseData.setTrkObjCombobox(trkObjMap);
 
         keepTrkDtlList.forEach(a -> {
-//            a.setTrkObj(a.getTrkObj() + "-" + String.valueOf(eipcodeDao.findByCodeKindCodeNo("TRKOBJ",a.getTrkObj()).get().getCodename()));
             a.setTrkObj(a.getTrkObj() + "-" + deptsDao.findByPk(a.getTrkObj()).getDept_name());
             a.setPrcSts(String.valueOf(eipcodeDao.findByCodeKindCodeNo("TRKPRCSTS",a.getPrcSts()).get().getCodename()));
             a.setStDt(DateUtility.changeDateTypeToChineseDate(a.getStDt()));

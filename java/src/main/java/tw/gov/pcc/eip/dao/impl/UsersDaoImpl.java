@@ -188,12 +188,13 @@ public class UsersDaoImpl extends BaseDao<Users> implements UsersDao {
         sql.append("    AND A.DEPT_ID = B.DEPT_ID ");
         sql.append("    AND A.TITLE_ID = C.CODENO ");
         sql.append("    AND A.ORG_ID = D.CODENO ");
-        sql.append("    AND A.DEPT_ID = ISNULL(:dept_id, A.DEPT_ID) ");
+        sql.append("    AND A.DEPT_ID in (SELECT DEPT_ID FROM DEPTS WHERE DEPT_ID_P = ISNULL(:dept_id, A.DEPT_ID) or DEPT_ID = ISNULL(:dept_id, A.DEPT_ID)) ");
         sql.append("    AND A.TITLE_ID = ISNULL(:titlename, A.TITLE_ID) ");
         sql.append("    AND A.USER_NAME LIKE '%' + ISNULL(:user_name, A.USER_NAME) + '%' ");
         sql.append("    AND A.USER_ID = ISNULL(:user_id, A.USER_ID) ");
         sql.append("    AND A.EMAIL LIKE ISNULL(:ename, A.EMAIL) + '%' ");
         sql.append("    AND A.EMAIL LIKE '%' + ISNULL(:email, A.EMAIL) + '%' ");
+        sql.append("  ORDER BY DEPT_ID, TITLE_ID ");
         Map<String, Object> params = new HashMap<>();
         params.put("dept_id", dept_id);
         params.put("user_name", user_name);
@@ -331,6 +332,18 @@ public class UsersDaoImpl extends BaseDao<Users> implements UsersDao {
         params.put("user_name", user_name);
         params.put("deptidList", deptidList);
 
+        return getNamedParameterJdbcTemplate().query(sql.toString(), params,
+                BeanPropertyRowMapper.newInstance(Users.class));
+    }
+
+    @Override
+    public List<Users> getDeptUsers(String deptId) {
+        StringBuilder sql = new StringBuilder();
+        sql.append(" select user_id, USER_NAME from users");
+        sql.append(" where DEPT_ID = :deptId ");
+        sql.append(" and ACNT_IS_VALID = 'Y' ");
+        Map<String, Object> params = new HashMap<>();
+        params.put("deptId", deptId);
         return getNamedParameterJdbcTemplate().query(sql.toString(), params,
                 BeanPropertyRowMapper.newInstance(Users.class));
     }

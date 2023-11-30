@@ -25,11 +25,13 @@
             <tags:form-row>
             	<div class="col-4 col-md-4">領物單號：PL<c:out value="${caseData.applyno}"/></div>
             	<div class="col-4 col-md-4">表單狀態：<c:out value="${caseData.detailList[0].process_status }"/></div>
+            	<div class="col-4 col-md-4">審核人員：<c:out value="${caseData.detailList[0].reconfirm_user }"/></div>
             </tags:form-row>
             <tags:form-row>
-            	<div class="col-4 col-md-4">申請人：<c:out value="${caseData.apply_user}"/></div>
-            	<div class="col-4 col-md-4">申請單位：<c:out value="${caseData.apply_dept}"/></div>
-            	<div class="col-4 col-md-4">申請日期：<func:minguo value="${caseData.apply_date}" pattern="yyy/MM/dd"/></div>
+            	<div class="col-4 col-md-4">申請人：<c:out value="${caseData.detailList[0].apply_user}"/></div>
+            	<div class="col-4 col-md-4">申請單位：<c:out value="${caseData.detailList[0].apply_dept}"/></div>
+            	<div class="col-4 col-md-4">申請日期：<func:minguo value="${caseData.detailList[0].apply_date}" pattern="yyy/MM/dd"/>
+            	</div>
             </tags:form-row>
             <tags:form-row>
             	備註 : 主管未複核前才可刪除領物單

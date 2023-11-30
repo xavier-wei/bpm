@@ -40,7 +40,7 @@ public class Eip07w050Service {
 	 */
 	public void getData(Eip07w050Case caseData) throws Exception {
 		List<CarBooking> list = carBookingDao.selectByApplydate(caseData.getApplydateStart(),
-				caseData.getApplydateEnd(), "eip07w050","");
+				caseData.getApplydateEnd(), "eip07w050",null);
 		List<Eip07w050Case> dataList = new ArrayList<>();
 		if (CollectionUtils.isNotEmpty(list)) {
 			for (CarBooking car : list) {

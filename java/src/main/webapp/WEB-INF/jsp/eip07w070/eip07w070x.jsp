@@ -36,19 +36,23 @@
 	                    <th class="align-middle" style="width: 10%">車牌號碼</th>
 	                    <th class="align-middle" style="width: 10%">駕駛人姓名</th>
 	                    <th class="align-middle"  style="width: 25%">用車事由</th>
-	                    <th class="align-middle"  style="width: 25%">目的地</th>
+	                    <th class="align-middle"  style="width: 20%">目的地</th>
 	                    <th class="align-middle"  style="width: 10%">派車單號</th>
+	                    <th class="align-middle"  style="width: 5%">補單註記</th>
 	                </thead>
 	                <tbody>
 	                <c:forEach items="${caseData.dataList}" var="item" varStatus="status">
 	                 	<tr>
-	                 		<td><func:minguo value="${item.using_date}"/></td>
-	                 		<td><func:timeconvert value="${item.approve_using_time_s}"/>~<func:timeconvert value="${item.approve_using_time_e}"/></td>
-	                 		<td><c:out value="${item.carno1}"/>-<c:out value="${item.carno2}"/></td>
+	                 		<td><func:minguo value="${item.usingdate}"/></td>
+	                 		<td><c:out value="${item.approve_using_time_s}"/>~<c:out value="${item.approve_using_time_e}"/></td>
+	                 		<td><c:out value="${item.carno}"/></td>
 	                 		<td><c:out value="${item.name}"/></td>
 	                 		<td class="text-left"><span class="ellipsisStr"><c:out value="${item.apply_memo}"/></span></td>
 	                 		<td class="text-left"><c:out value="${item.destination}"/></td>
 	                 		<td><c:out value="${item.applyid}"/></td>
+	                 		<td>
+	                 			<c:out value="${item.fillmk}"/>
+	                 		</td>
 	                 	</tr>
 	                </c:forEach>
 	                </tbody>
@@ -68,17 +72,19 @@
 	                    <th class="align-middle"  style="width: 25%">用車事由</th>
 	                    <th class="align-middle"  style="width: 25%">目的地</th>
 	                    <th class="align-middle"  style="width: 10%">派車單號</th>
+	                    <th class="align-middle"  style="width: 10%">補單註記</th>
 	                </thead>
 	                <tbody>
 	                <c:forEach items="${caseData.dataList}" var="item" varStatus="status">
 	                 	<tr>
-	                 		<td><func:minguo value="${item.using_date}"/></td>
-	                 		<td><func:timeconvert value="${item.approve_using_time_s}"/>~<func:timeconvert value="${item.approve_using_time_e}"/></td>
-	                 		<td><c:out value="${item.carno1}"/>-<c:out value="${item.carno2}"/></td>
+	                 		<td><func:minguo value="${item.usingdate}"/></td>
+	                 		<td><c:out value="${item.approve_using_time_s}"/>~<c:out value="${item.approve_using_time_e}"/></td>
+	                 		<td><c:out value="${item.carno}"/></td>
 	                 		<td><c:out value="${item.name}"/></td>
 	                 		<td class="text-left"><span class="ellipsisStr"><c:out value="${item.apply_memo}"/></span></td>
 	                 		<td class="text-left"><c:out value="${item.destination}"/></td>
 	                 		<td><c:out value="${item.applyid}"/></td>
+	                 		<td><c:out value="${item.fillmk}"/></td>
 	                 	</tr>
                      </c:forEach>
 	                </tbody>

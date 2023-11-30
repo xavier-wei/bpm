@@ -192,7 +192,7 @@
                         </c:choose>
                     </div>
                 </tags:form-row>
-                <tags:form-row>
+                <tags:form-row cssClass="locatearea-row">
                     <form:label cssClass="col-form-label" path="locatearea">顯示位置：</form:label>
                     <div class="col-sm-6 d-flex my-auto">
                         <c:forEach var="item" items="${caseData.locateareas}" varStatus="status">
@@ -217,7 +217,7 @@
                         </c:forEach>
                     </div>
                 </tags:form-row>
-                <tags:form-row>
+                <tags:form-row cssClass="issearch-row">
                     <div class="col-3 col-md d-flex align-items-center">
                         <form:label cssClass="col-form-label star" path="issearch">是否提供外部查詢：</form:label>
                         <label class="mb-0 d-flex" style="margin-left:0px;">
@@ -230,7 +230,7 @@
                         </label>
                     </div>
                 </tags:form-row>
-                <tags:form-row>
+                <tags:form-row cssClass="showorder-row">
                     <form:label cssClass="col-form-label star" path="showorder">顯示順序：</form:label>
                     <div class="col-sm-6">
                         <form:input path="showorder" cssClass="form-control num_eng_only" size="2" maxlength="2" />
@@ -249,7 +249,7 @@
                         </label>
                     </div>
                 </tags:form-row>
-                <tags:form-row>
+                <tags:form-row cssClass="isfront-row">
                     <div class="col-3 col-md d-flex align-items-center">
                         <form:label cssClass="col-form-label" path="isfront">前台是否顯示：</form:label>
                         <label class="mb-0 d-flex" style="margin-left:0px;">
@@ -382,11 +382,6 @@
                     <form:label cssClass="col-form-label star" path="contactperson">聯絡人：</form:label>
                     <div class="col-sm-6">
                         <form:select path="contactperson" cssClass="form-control">
-                            <c:forEach var="item" items="${caseData.contactpersons}" varStatus="status">
-                                <form:option value="${item.codeno}">
-                                    <c:out value="${item.codename}" />
-                                </form:option>
-                            </c:forEach>
                         </form:select>
                         <%-- <form:input path="contactperson" cssClass="form-control" size="10" maxlength="10" /> --%>
                     </div>
@@ -776,6 +771,7 @@
                     } else {
                         $('.indir-row').hide();
                     }
+                    $('.locatearea-row, .issearch-row, .showorder-row, .isfront-row').hide();
                 }
                 // 測試連結
                 $('#btnLink').click(function(){
@@ -834,6 +830,32 @@
                         }
                     });
                 }
+                function getUsersOptions(selectValue) {
+                    $.ajax({
+                        type: "POST",
+                        url: '<c:url value="/Eip01w010_getUsersData.action" />',
+                        data: {
+                            'deptid': selectValue
+                        },
+                        timeout: 100000,
+                        success: function(data) {
+                            if (data != null) {
+                                $.each(data, function(i, e) {
+                                    $('#contactperson').append("<option value='" + i +
+                                        "'>" + e + "</option>");
+                                });
+                            }
+                            let reportNo = '<c:out value="${caseData.contactperson}"/>';
+                            if (reportNo !== '') {
+                                $("#contactperson option[value=" + reportNo + "]").prop(
+                                    'selected', 'selected');
+                            }
+                        },
+                        error: function(e) {
+                            showAlert("取得資料發生錯誤");
+                        }
+                    });
+                }
                 // 屬性下拉選單 連動 1.訊息類別下拉選單 2.樹
                 $('#attributype').on('change', function() {
                     var selectValue = $(this).val();
@@ -849,8 +871,15 @@
                         $('.indir-row').hide();
                     }
                 });
+                $('#contactunit').on('change', function(){
+                    var selectValue = $(this).val();
+                    $('#contactperson').empty();
+                	getUsersOptions(selectValue);
+                });
                 var attribute = $('#attributype').val();
                 getMsgtypeOptions(attribute);
+                var contactunit = $('#contactunit').val();
+                getUsersOptions(contactunit);
                 getAllNode(attribute, true);
                 // 選擇檔案
                 $("#files").on("change", function() {

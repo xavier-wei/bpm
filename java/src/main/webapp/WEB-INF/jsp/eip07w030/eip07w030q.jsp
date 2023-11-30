@@ -58,8 +58,9 @@
 						<th style="width: 5%">申請用車時間起迄</th>
 						<th style="width: 8%">目的地</th>
                         <th style="width: 5%">用車人數</th>
-						<th style="width: 14%">用車事由</th>
+						<th style="width: 9%">用車事由</th>
 						<th style="width: 5%">表單狀態</th>
+						<th style="width: 5%">補單註記</th>
 						</tr>
 					</thead>
 					<tbody>
@@ -81,6 +82,7 @@
 								</span>
 							</td>
 							<td><c:out value="${item.carprocess_status}"/></td>
+							<td><c:out value="${item.fillmk}"/></td>
 						</tr>
 						</c:forEach>
 					</tbody>

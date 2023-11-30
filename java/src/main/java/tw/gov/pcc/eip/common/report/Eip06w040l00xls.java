@@ -2,10 +2,10 @@ package tw.gov.pcc.eip.common.report;
 
 import com.iisigroup.easyreport.pdf.exception.ReportException;
 import com.iisigroup.easyreport.xls.XlsReport;
-import org.apache.poi.hssf.usermodel.HSSFHeader;
-import org.apache.poi.hssf.usermodel.HSSFPrintSetup;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.ss.util.CellRangeAddress;
+import org.apache.poi.xssf.usermodel.XSSFPrintSetup;
+import org.apache.poi.xssf.usermodel.extensions.XSSFHeaderFooter;
 import tw.gov.pcc.eip.domain.Eip06w040Report;
 import tw.gov.pcc.eip.util.DateUtility;
 
@@ -43,7 +43,7 @@ public class Eip06w040l00xls extends XlsReport {
     private static final short borderWidth = 1;
 
     public Eip06w040l00xls() throws ReportException {
-        super(false);
+        super(true);
     }
     
     {
@@ -132,20 +132,15 @@ public class Eip06w040l00xls extends XlsReport {
         // 設定列印格式
         String formatChineseDate = DateUtility.formatChineseDateString(meetingdt, true);
         this.sheet = createSheet(formatChineseDate);
-        PrintSetup printSetup = sheet.getPrintSetup();
+        XSSFPrintSetup printSetup = (XSSFPrintSetup) sheet.getPrintSetup();
         printSetup.setLandscape(true);
-        printSetup.setPaperSize(HSSFPrintSetup.A4_PAPERSIZE);
+        printSetup.setPaperSize(XSSFPrintSetup.A4_PAPERSIZE);
 
-        // 建立表頭
-//        Row row0 = createRow(sheet, 0, cellAmountSheet, titleStyle);
-//        row0.getSheet().addMergedRegion(new CellRangeAddress(0, 0, 0, 7));
-//        row0.setHeightInPoints(20f);
         int dayOfWeek = DateUtility.getDayOfWeek(meetingdt, false) ;
 
-        HSSFHeader xhd = (HSSFHeader)sheet.getHeader();
-        xhd.setCenter(HSSFHeader.font("標楷體", "regular") +
-                HSSFHeader.fontSize((short) 14) + HSSFHeader.startBold() + formatChineseDate + " " + "星期" + "日一二三四五六".charAt(dayOfWeek) + " " + "會議活動" +
-                HSSFHeader.endBold());
+
+        XSSFHeaderFooter xhd = (XSSFHeaderFooter) sheet.getHeader();
+        xhd.setCenter("&\"" + "標楷體" + ",粗體\" &14&K000000" + formatChineseDate + " " + "星期" + "日一二三四五六".charAt(dayOfWeek) + " " + "會議活動");
 
         // 報表資料標題
         Row row0 = createRow(sheet, 0, cellAmountSheet, alignCenterTitle);

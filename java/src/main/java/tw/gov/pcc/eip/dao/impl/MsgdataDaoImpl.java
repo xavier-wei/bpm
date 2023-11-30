@@ -176,7 +176,7 @@ public class MsgdataDaoImpl extends BaseDao<Msgdata> implements MsgdataDao {
         sql.append("                   AND (CASE WHEN TRIM(D.AVAILABLEDEP) = '00' ");
         sql.append("                             THEN :deptId ELSE TRIM(D.AVAILABLEDEP) ");
         sql.append("                        END) = :deptId)");
-        sql.append("  ORDER BY A.SHOWORDER, RELEASEDT DESC ");
+        sql.append("  ORDER BY ISTOP,RELEASEDT DESC ");
         Map<String, Object> params = new HashMap<>();
         params.put("deptId", deptId);
         params.put("msgtype", msgtype);
@@ -233,7 +233,7 @@ public class MsgdataDaoImpl extends BaseDao<Msgdata> implements MsgdataDao {
         sql.append("    AND C.INDIR = :path ");
         sql.append("    AND C.STATUS = '4' ");
         sql.append("    AND C.ATTRIBUTYPE = '4' ");
-        sql.append("  ORDER BY C.SHOWORDER, C.CREATDT DESC; ");
+        sql.append("  ORDER BY C.ISTOP, C.CREATDT DESC; ");
         Map<String, Object> params = new HashMap<>();
         params.put("dept", dept);
         params.put("path", path);
@@ -259,7 +259,7 @@ public class MsgdataDaoImpl extends BaseDao<Msgdata> implements MsgdataDao {
         sql.append("    AND C.ATTRIBUTYPE = '4' ");
         sql.append("    AND (C.SUBJECT LIKE '%' + :keyword + '%' ");
         sql.append("     OR C.MCONTENT LIKE '%' + :keyword + '%') ");
-        sql.append("  ORDER BY C.SHOWORDER, C.CREATDT DESC; ");
+        sql.append("  ORDER BY C.ISTOP, C.CREATDT DESC; ");
         Map<String, Object> params = new HashMap<>();
         params.put("dept", dept);
         params.put("keyword", keyword);
@@ -283,7 +283,7 @@ public class MsgdataDaoImpl extends BaseDao<Msgdata> implements MsgdataDao {
         sql.append("                   AND A.ATTRIBUTYPE = '5' ");
         sql.append("                   AND (CASE WHEN TRIM(B.AVAILABLEDEP) = '00' THEN :dept ELSE TRIM(B.AVAILABLEDEP) END) = :dept ");
         sql.append("  ) ");
-        sql.append(" ORDER BY A.SHOWORDER, RELEASEDT DESC ");
+        sql.append(" ORDER BY A.ISTOP, RELEASEDT DESC ");
         Map<String, Object> params = new HashMap<>();
         params.put("dept", dept);
         return getNamedParameterJdbcTemplate().query(sql.toString(), params,

@@ -2,6 +2,7 @@ package tw.gov.pcc.eip.services;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,10 +13,12 @@ import tw.gov.pcc.eip.dao.ApplyitemDao;
 import tw.gov.pcc.eip.dao.DeptsDao;
 import tw.gov.pcc.eip.dao.ItemcodeDao;
 import tw.gov.pcc.eip.dao.ItemcodeuDao;
+import tw.gov.pcc.eip.dao.User_auth_deptDao;
 import tw.gov.pcc.eip.dao.UsersDao;
 import tw.gov.pcc.eip.domain.Applyitem;
 import tw.gov.pcc.eip.domain.Depts;
 import tw.gov.pcc.eip.domain.Itemcode;
+import tw.gov.pcc.eip.domain.User_auth_dept;
 import tw.gov.pcc.eip.domain.Users;
 import tw.gov.pcc.eip.framework.domain.UserBean;
 import tw.gov.pcc.eip.util.DateUtility;
@@ -49,6 +52,9 @@ public class Eip08w030Service {
 	
 	@Autowired
 	private UsersDao usersDao;
+	
+    @Autowired
+    private User_auth_deptDao user_auth_deptDao;
 
 	private static final String PROCESS_STATUS_AGREE = "2";
 	private static final String PROCESS_STATUS_DISAGREE = "9";
@@ -62,8 +68,18 @@ public class Eip08w030Service {
 	 * 
 	 */
 	public void getCaseData(Eip08w030Case caseData,UserBean userData) {
+		//2023.11.28
+		//1.除自己部門外，審核者若為上層單位，則要可以看到下層單位提出的申請
+		List<String>dept = deptsDao.findAllDeptId(userData.getDeptId()).stream().map(e->e.getDept_id()).collect(Collectors.toList());
+		//2.提供部分使用者可以跨部門審核用，若有值，則表示該使用者還要同時審核到別部門的資料。
+		List<User_auth_dept>otherdept = user_auth_deptDao.selectByUser_id(userData.getUserId());
+		if(CollectionUtils.isNotEmpty(otherdept)){
+			for(User_auth_dept de : otherdept) {
+				dept.add(de.getDept_id());
+			}
+		}
 		List<Applyitem> list = applyitemDao.selectByApply_dateAndProcess_status(caseData.getApplydateStart(),
-				caseData.getApplydateEnd(), "1",userData.getDeptId());
+				caseData.getApplydateEnd(), "1",dept);
 		List<Eip08w030Case> dataList = new ArrayList<>();
 		if (CollectionUtils.isNotEmpty(list)) {
 			for (Applyitem item : list) {

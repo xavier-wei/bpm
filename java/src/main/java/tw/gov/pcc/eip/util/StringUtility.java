@@ -20,6 +20,7 @@ import com.lowagie.text.pdf.BaseFont;
 public class StringUtility {
     private static final org.slf4j.Logger log = org.slf4j.LoggerFactory.getLogger(StringUtility.class);
     private static final int PAD_LIMIT = 8192;
+    public static final String NON_BREAKING_SPACE = "\u00A0";
     private static final String MADE_WORD_REPLACE_STAR = "＊";
 
     /**
@@ -122,6 +123,9 @@ public class StringUtility {
      */
     public static int stringRealLength(String str) {
         if (str == null) return 0;
+        if(str.equals(NON_BREAKING_SPACE)){
+            return 1;
+        }
         if (StringUtils.containsIgnoreCase(System.getProperties().getProperty("os.name"), "windows")) {
             // 中文 Windows 平台預設 I/O 編碼為 MS950, 因此呼叫 "中文".getBytes().length 傳回的長度為 4
             return str.getBytes().length;
@@ -703,6 +707,58 @@ public class StringUtility {
                     }
                 });
         return sb.toString();
+    }
+
+
+    /**
+     * 傳入一個字串和數字和行數，中文文字算長度2，其他英數符號算長度1，超過長度則截斷塞入換行符號，若行數不足補空白行
+     * @param str 輸入連續文字
+     * @param width 固定寬度，半形1全形2，不會超出
+     * @param line 補滿行數
+     **/
+    public static String getFormatStringBlockWithLine(String str, int width, int line) {
+        StringBuffer sb = new StringBuffer();
+        AtomicInteger index = new AtomicInteger();
+        AtomicInteger lineIndex = new AtomicInteger();
+        Arrays.stream(str.split(""))
+                .forEach(x -> {
+                    int length = index.addAndGet(getRealLength(x));
+                    if (length == width) {
+                        sb.append(x);
+                        sb.append("\n");
+                        index.set(0);
+                        lineIndex.incrementAndGet();
+                    }else if(length > width){
+                        sb.append("\n");
+                        sb.append(x);
+                        index.set(getRealLength(x));
+                        lineIndex.incrementAndGet();
+                    }else{
+                        sb.append(x);
+                    }
+                });
+        if (lineIndex.get() < line) {
+            IntStream.range(0, line - lineIndex.get())
+                    .forEach(r -> sb.append("\n"));
+        }
+        return sb.toString();
+    }
+
+    /**
+     * 修正過的長度檢查
+     * @param str
+     * @return
+     */
+    public static int getRealLength(String str) {
+        int length = 0;
+        for (int i = 0; i < str.length(); i++) {
+            if (str.charAt(i) < 256) {
+                length++;
+            } else {
+                length += 2;
+            }
+        }
+        return length;
     }
 
 }

@@ -17,6 +17,7 @@
 </jsp:attribute>
 
 	<jsp:attribute name="contents">
+
     <tags:fieldset legend="請填寫預約內容">
 		<form:form id="eip07w020Form" name="eip07w020Form" modelAttribute="${caseKey}" method="POST">
 
@@ -107,6 +108,7 @@
 			<tags:form-note>
                 實際用車時間依核定時間為主
             </tags:form-note>
+			<form:hidden id="workTy" path="workTy" />
 	  </form:form>
     </tags:fieldset>
 </jsp:attribute>
@@ -114,6 +116,7 @@
 <script>
 
         $(function() {
+			var workTy=$("#workTy").val();
             $('#btnSelect').click(function() {
 				$('#eip07w020Form').attr('action', '<c:url value="/Eip07w020_inster.action" />').submit();
             });
@@ -125,6 +128,13 @@
 			$('input[id=processTy]:radio').change(function(e) {
 				controlBt();
 			});
+			if (workTy=='R'){
+				$("#main>fieldset>legend").html("請填寫補單內容")
+				$('#btnSelect').text("確認補單")
+			}else {
+				$("#main>fieldset>legend").html("請填寫預約內容")
+				$('#btnSelect').text("確認預約")
+			}
          });
 
 

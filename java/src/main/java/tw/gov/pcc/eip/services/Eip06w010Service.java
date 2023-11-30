@@ -65,14 +65,13 @@ public class Eip06w010Service {
         caseData.setMeetingdtBegin(now);
         List<Eip06w010Case> resultList = meetingDao.selectDataByColumns(caseData);
         caseData.setMeetingdtBegin("");
+        Map<String, String> userMap =  usersDao.selectAll().stream()
+                .collect(Collectors.toMap(Users::getUser_id, Users::getUser_name));
+
         resultList.forEach(a->{
-            if(a.getOrganizerId().equals(userData.getUserId())){
-                a.setEditable(true);
-            }else {
-                a.setEditable(false);
-            }
+            a.setEditable(a.getOrganizerId().equals(userData.getUserId()));
             a.setOrderFood(a.getOrderNum()>0);
-            a.setOrganizerId(usersDao.selectByKey(a.getOrganizerId()).getUser_name());
+            a.setOrganizerId(userMap.get(a.getOrganizerId()));
         });
 
         caseData.setResultList(resultList.stream().map(Eip06w010Case::new).collect(Collectors.toList()));
@@ -142,19 +141,18 @@ public class Eip06w010Service {
         List<Users> usersList = usersDao.findUserIDByUserName(caseData.getOrganizerId());
         List<String> userIdList = new ArrayList<>();
         for (Users users : usersList) {
-            userIdList.add(users.getUser_id().toString());
+            userIdList.add(users.getUser_id());
         }
         caseData.setUserIdList(userIdList);
 
+        Map<String, String> userMap =  usersDao.selectAll().stream()
+                .collect(Collectors.toMap(Users::getUser_id, Users::getUser_name));
+
         List<Eip06w010Case> resultList = meetingDao.selectDataByColumns(caseData);
         resultList.forEach(a->{
-            if(a.getOrganizerId().equals(userData.getUserId())){
-                a.setEditable(true);
-            }else {
-                a.setEditable(false);
-            }
+            a.setEditable(a.getOrganizerId().equals(userData.getUserId()));
             a.setOrderFood(a.getOrderNum()>0);
-            a.setOrganizerId(usersDao.selectByKey(a.getOrganizerId()).getUser_name());
+            a.setOrganizerId(userMap.get(a.getOrganizerId()));
         });
 
         caseData.setResultList(resultList.stream().map(Eip06w010Case::new).collect(Collectors.toList()));
@@ -348,20 +346,22 @@ public class Eip06w010Service {
         /** 顯示順序 */
         ms.setShoworder("0"); // 1~99，數字愈小，優先序愈高-  (順序怎麼定義)
         /** 是否置頂 */
-//        ms.setIstop("2"); // 1:是 2:否
+        ms.setIstop("2"); // 1:是 2:否
         /** 前台是否顯示 */
 //        ms.setIsfront("1"); // 1:是 2:否
         /** 主旨/連結網址 */
-        ms.setSubject("會議室取消通知");
+        /* 依照11/29郵件，修改會議室公告優先順序及主旨 */
+//        會議室取消通知主題加上日期、時間、會議室名稱。
+        ms.setSubject(DateUtility.changeDateTypeToChineseDate(meeting.getMeetingdt()) + " " + meeting.getMeetingBegin()  + " " + meetingCodeDao.findByPK(meeting.getRoomId()).getItemName() + "取消通知");
 
 //        原訂於112年4月12日預約使用十樓第一會議室舉辦之全民督工111年執行績效考核會議，因故取消改場地之登記使用，原登記使用人，
 //        若仍有使用場地之需求，請重新辦理預約手續。(公告至:112/4/13)
 
         String meetingChgDt = DateUtility.changeDateTypeToChineseDate(meeting.getMeetingdt()).substring(0,3) + "年" +
-                             meeting.getMeetingdt().substring(4,6) + "月" +
-                             meeting.getMeetingdt().substring(6) + "日";
+                              meeting.getMeetingdt().substring(4,6) + "月" +
+                              meeting.getMeetingdt().substring(6) + "日";
 
-        LocalDate endAnnounceLocalDt = LocalDate.parse(meeting.getMeetingdt().substring(0,4) + "-" + meeting.getMeetingdt().substring(4,6) + "-" + meeting.getMeetingdt().substring(6));
+        LocalDate endAnnounceLocalDt = LocalDate.parse(meeting.getMeetingdt().substring(0,4) + "-" + meeting.getMeetingdt().substring(4,6) + "-" + meeting.getMeetingdt().substring(6)).plusDays(1);
         DateTimeFormatter fmt = DateTimeFormatter.ofPattern("yyyy-MM-dd");
         String endAnnounceDt = DateUtility.changeDateTypeToChineseDate(endAnnounceLocalDt.format(fmt).replaceAll("-",""));
 
@@ -430,8 +430,23 @@ public class Eip06w010Service {
         List<MeetingCode> foodIdList = meetingCodeDao.selectDataByItemType("A");
         //排除已選項目
         foodIdList = foodIdList.stream()
-                .filter(food -> selectFoodList.stream().noneMatch(selectFood -> selectFood.getItemId().equals(food.getItemId())))
-                .collect(Collectors.toList());
+                                .filter(food -> selectFoodList.stream().noneMatch(selectFood -> selectFood.getItemId().equals(food.getItemId())))
+                                .collect(Collectors.toList());
         caseData.setFoodIdList(foodIdList.stream().map(Eip06w010Case.Eip06w010OptionCase::new).collect(Collectors.toList()));
+    }
+
+    // 20231128 刪除超過366d會議
+    public void deleteDueMeeting (){
+        LocalDate date = LocalDate.now().minusDays(366);
+        DateTimeFormatter formatter = DateTimeFormatter.BASIC_ISO_DATE;
+        String dueDate = date.format(formatter);
+
+        List<Meeting> dueMeeting = meetingDao.findDueMeeting(dueDate);
+        List<Integer> dueMeetingID;
+        if(dueMeeting.size() > 0){
+            dueMeetingID =  dueMeeting.stream().map(Meeting::getMeetingId).collect(Collectors.toList());
+            meetingDao.deleteDataByMeetingId(dueMeetingID);
+            meetingItemDao.deleteDataByMeetingId(dueMeetingID);
+        }
     }
 }

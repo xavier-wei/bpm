@@ -10,7 +10,6 @@ import com.lowagie.text.DocumentException;
 import com.lowagie.text.PageSize;
 import com.lowagie.text.pdf.PdfPTable;
 
-import tw.gov.pcc.eip.domain.CarBooking;
 import tw.gov.pcc.eip.framework.report.PdfReportBase;
 import tw.gov.pcc.eip.orderCar.cases.Eip07w070Case;
 import tw.gov.pcc.eip.util.DateUtility;
@@ -37,7 +36,7 @@ public class Eip07w070l00 extends PdfReportBase {
         return new Document(PageSize.A4, 20, 20, 20, 20);
     }
         
-    public PdfPTable addHeader(Eip07w070Case caseData,CarBooking item) throws DocumentException {
+    public PdfPTable addHeader(Eip07w070Case caseData,Eip07w070Case item) throws DocumentException {
 		document.newPage();
 		PdfPTable table = new PdfPTable(100);
 		table.setWidthPercentage(100f);
@@ -59,12 +58,12 @@ public class Eip07w070l00 extends PdfReportBase {
 		if("2".equals(caseData.getOrderCondition())){
 			addCell(table, 100, 1, "派車記錄表(依車牌號碼排序)" , titleFontSize, 0, CENTER);
 			addCell(table, 100, 1, "用車日期："+DateUtility.formatChineseDateString(caseData.getUsing_date_s(),false) +"至"+DateUtility.formatChineseDateString(caseData.getUsing_date_e(),false) , subTitleFontSizeMid, 0, CENTER);
-			addCell(table, 100, 1, "車牌號碼："+item.getCarno1()+"-"+item.getCarno2()+"，駕駛人："+item.getName() , subTitleFontSizeMid, 0, CENTER);
+			addCell(table, 100, 1, "車牌號碼："+item.getCarno()+"，駕駛人："+item.getName() , subTitleFontSizeMid, 0, CENTER);
 			addCellAssignVAlignmentAndAllPadding(table, 12, 1, "用車日期", subTitleFontSizeMid, 1, CENTER, MIDDLE, 0, 3);
 			addCellAssignVAlignmentAndAllPadding(table, 16, 1, "核定用車時間", subTitleFontSizeMid, 1, CENTER, MIDDLE, 0, 3);
-			addCellAssignVAlignmentAndAllPadding(table, 28, 1, "用車事由", subTitleFontSizeMid, 1, CENTER, MIDDLE, 0, 3);
+			addCellAssignVAlignmentAndAllPadding(table, 18, 1, "用車事由", subTitleFontSizeMid, 1, CENTER, MIDDLE, 0, 3);
 			addCellAssignVAlignmentAndAllPadding(table, 26, 1, "目的地", subTitleFontSizeMid, 1, CENTER, MIDDLE, 0, 3);
-			addCellAssignVAlignmentAndAllPadding(table, 18, 1, "派車單號", subTitleFontSizeMid, 1, CENTER, MIDDLE, 0, 3);
+			addCellAssignVAlignmentAndAllPadding(table, 28, 1, "派車單號", subTitleFontSizeMid, 1, CENTER, MIDDLE, 0, 3);
 		}
         return table;
     }
@@ -74,22 +73,22 @@ public class Eip07w070l00 extends PdfReportBase {
      * @param vo
      * @throws Exception
      */
-    public void addDataRow(CarBooking item,Eip07w070Case caseData) throws Exception  {
+    public void addDataRow(Eip07w070Case item,Eip07w070Case caseData) throws Exception  {
     	if("1".equals(caseData.getOrderCondition())){
             addCellAssignVAlignmentAndAllPadding(table, 18, 1, item.getApplyid(), subTitleFontSizeMid, 1, CENTER, MIDDLE, 0, 3);
-            addCellAssignVAlignmentAndAllPadding(table, 12, 1, DateUtility.formatChineseDateString(DateUtility.changeDateType(item.getUsing_date()) ,false), subTitleFontSizeMid, 1, CENTER, MIDDLE, 0, 3);
+            addCellAssignVAlignmentAndAllPadding(table, 12, 1, DateUtility.formatChineseDateString(DateUtility.changeDateType(item.getUsingdate()) ,false), subTitleFontSizeMid, 1, CENTER, MIDDLE, 0, 3);
             addCellAssignVAlignmentAndAllPadding(table, 16, 1,
-            		convertTime(item.getApprove_using_time_s())
-            		+"~"+convertTime(item.getApprove_using_time_e()), subTitleFontSizeMid, 1, CENTER, MIDDLE, 0, 3);
-            addCellAssignVAlignmentAndAllPadding(table, 10, 1, item.getCarno1()+"-"+item.getCarno2(), subTitleFontSizeMid, 1, CENTER, MIDDLE, 0, 3);
+            		item.getApprove_using_time_s()
+            		+"~"+item.getApprove_using_time_e(), subTitleFontSizeMid, 1, CENTER, MIDDLE, 0, 3);
+            addCellAssignVAlignmentAndAllPadding(table, 10, 1, item.getCarno(), subTitleFontSizeMid, 1, CENTER, MIDDLE, 0, 3);
             addCellAssignVAlignmentAndAllPadding(table, 12, 1, item.getName(), subTitleFontSizeMid, 1, CENTER, MIDDLE, 0, 3);
             addCellAssignVAlignmentAndAllPadding(table, 32, 1, item.getApply_memo(), subTitleFontSizeMid, 1, LEFT, MIDDLE, 0, 3);
     	}
     	
     	if("2".equals(caseData.getOrderCondition())){
-            addCellAssignVAlignmentAndAllPadding(table, 12, 1, DateUtility.formatChineseDateString(DateUtility.changeDateType(item.getUsing_date()) ,false), subTitleFontSizeMid, 1, CENTER, MIDDLE, 0, 3);
-            addCellAssignVAlignmentAndAllPadding(table, 16, 1, convertTime(item.getApprove_using_time_s())
-            		+"~"+convertTime(item.getApprove_using_time_e()), subTitleFontSizeMid, 1, CENTER, MIDDLE, 0, 3);
+            addCellAssignVAlignmentAndAllPadding(table, 12, 1, DateUtility.formatChineseDateString(DateUtility.changeDateType(item.getUsingdate()) ,false), subTitleFontSizeMid, 1, CENTER, MIDDLE, 0, 3);
+            addCellAssignVAlignmentAndAllPadding(table, 16, 1, item.getApprove_using_time_s()
+            		+"~"+item.getApprove_using_time_e(), subTitleFontSizeMid, 1, CENTER, MIDDLE, 0, 3);
             addCellAssignVAlignmentAndAllPadding(table, 28, 1, item.getApply_memo(), subTitleFontSizeMid, 1, LEFT, MIDDLE, 0, 3);
             addCellAssignVAlignmentAndAllPadding(table, 26, 1, item.getDestination(), subTitleFontSizeMid, 1, LEFT, MIDDLE, 0, 3);
             addCellAssignVAlignmentAndAllPadding(table, 18, 1, item.getApplyid(), subTitleFontSizeMid, 1, CENTER, MIDDLE, 0, 3);
@@ -104,7 +103,7 @@ public class Eip07w070l00 extends PdfReportBase {
 
                 if("1".equals(caseData.getOrderCondition())) {                	
                 	for(int i=1; i<=caseData.getDataList().size(); i++) {
-                		CarBooking item = caseData.getDataList().get(i-1);
+                		Eip07w070Case item = caseData.getDataList().get(i-1);
                 		if(i==1) {
                 			table = addHeader(caseData,item);
                 		}
@@ -120,7 +119,7 @@ public class Eip07w070l00 extends PdfReportBase {
                 if("2".equals(caseData.getOrderCondition())) {
                 	String carno = "";
                 	for(int i=1; i<=caseData.getDataList().size(); i++) {
-                		CarBooking item = caseData.getDataList().get(i-1);
+                		Eip07w070Case item = caseData.getDataList().get(i-1);
                 		if(i==1) {
                 			carno = item.getCarno1()+item.getCarno2();
                 			table = addHeader(caseData,item);
@@ -146,8 +145,4 @@ public class Eip07w070l00 extends PdfReportBase {
         }
     }
 
-    private String convertTime(String time) {
-    	String str = time.toString().substring(0,2)+":"+time.toString().substring(2,4);
-    	return str;
-    }
 }

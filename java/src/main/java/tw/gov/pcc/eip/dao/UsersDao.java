@@ -80,4 +80,12 @@ public interface UsersDao {
     public List<Users> getEmailList(List<String> codeNameList);
 
 	public List<Users> selectDataByLikeUserIdOrLikeNameAndEqualDeptid(String user_id, String user_name,List<String> deptidList);
+
+    /**
+     * 依部門id查詢使用者
+     * 
+     * @param deptId
+     * @return
+     */
+    public List<Users> getDeptUsers(String deptId);
 }

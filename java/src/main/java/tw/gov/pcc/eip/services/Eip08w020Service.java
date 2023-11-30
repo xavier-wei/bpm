@@ -15,9 +15,12 @@ import tw.gov.pcc.eip.dao.DeptsDao;
 import tw.gov.pcc.eip.dao.EipcodeDao;
 import tw.gov.pcc.eip.dao.ItemcodeDao;
 import tw.gov.pcc.eip.dao.ItemcodeuDao;
+import tw.gov.pcc.eip.dao.UsersDao;
 import tw.gov.pcc.eip.domain.Applyitem;
+import tw.gov.pcc.eip.domain.Depts;
 import tw.gov.pcc.eip.domain.Eipcode;
 import tw.gov.pcc.eip.domain.Itemcode;
+import tw.gov.pcc.eip.domain.Users;
 import tw.gov.pcc.eip.framework.domain.UserBean;
 import tw.gov.pcc.eip.util.DateUtility;
 
@@ -51,6 +54,9 @@ public class Eip08w020Service{
 	
 	@Autowired
 	private DeptsDao deptsDao;
+	
+	@Autowired
+	private UsersDao usersDao;
 
 	/**
 	 * 設定申請頁面資料
@@ -152,8 +158,11 @@ public class Eip08w020Service{
 	 * @return 
 	 */
 	public void getApplyItem(Eip08w020Case caseData) throws Exception{
-		List<Applyitem>list = applyitemDao.selectByApplyUserAndApply_deptAndapplyDate(caseData.getOriApply_user(), caseData.getOriApply_dept(), 
-				StringUtils.isNotEmpty(caseData.getApply_date())? DateUtility.changeDateType(caseData.getApply_date()) : "");
+		
+		List<Applyitem>list = applyitemDao.selectByApplyUserAndApply_deptAndapplyDate(caseData.getOriApply_user(), userData.getDeptId(), 
+				StringUtils.isNotEmpty(caseData.getApplydateStart())? DateUtility.changeDateType(caseData.getApplydateStart()) : "",
+						StringUtils.isNotEmpty(caseData.getApplydateEnd())? DateUtility.changeDateType(caseData.getApplydateEnd()) : "",caseData.getItemnoStr()	
+				);
 
 		if(CollectionUtils.isNotEmpty(list)){			
 			list.stream().map(
@@ -163,6 +172,11 @@ public class Eip08w020Service{
 						code.setCodeno(e.getProcess_status());
 						Eipcode process_status_nm = eipcodeDao.selectDataByPrimaryKey(code);
 						e.setProcess_status(e.getProcess_status()+"-" + process_status_nm.getCodename());
+						if(StringUtils.isNotEmpty(e.getReconfirm_user())) {							
+							Users user = usersDao.selectByKey(e.getReconfirm_user());
+							e.setReconfirm_user(user.getUser_name());
+						}
+						
 						return e;
 					}).collect(Collectors.toList());
 			caseData.setApplyitemList(list);
@@ -194,6 +208,22 @@ public class Eip08w020Service{
 				Eipcode process_status_nm = eipcodeDao.selectDataByPrimaryKey(code);
 				data.setProcess_status(item.getProcess_status() +"-"+ process_status_nm.getCodename());
 				data.setApprove_cnt(item.getApprove_cnt() == null? 0 : item.getApprove_cnt());
+
+				if(StringUtils.isNotEmpty(item.getReconfirm_user())) {
+					Users reconfirm_user = usersDao.selectByKey(item.getReconfirm_user());
+					data.setReconfirm_user(reconfirm_user.getUser_name());
+				} else {
+					data.setReconfirm_user("");
+				}
+				
+				data.setApply_date(item.getApply_date());
+				
+				Depts dept = deptsDao.findByPk(item.getApply_dept());
+				data.setApply_dept(dept.getDept_name());
+				
+				Users user = usersDao.selectByKey(item.getApply_user());
+				data.setApply_user(user.getUser_name());
+				
 				dataList.add(data);
 			}
 		}

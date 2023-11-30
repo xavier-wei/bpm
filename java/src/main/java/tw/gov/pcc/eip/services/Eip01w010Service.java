@@ -198,6 +198,18 @@ public class Eip01w010Service {
     }
 
     /**
+     * 依畫面選擇部門 查詢使用者
+     * 
+     * @param dept
+     * @return
+     */
+    public Map<String, String> getUsers(String dept) {
+        Map<String, String> map = usersDao.getDeptUsers(dept).stream()
+                .collect(Collectors.toMap(Users::getUser_id, Users::getUser_name));
+        return ObjectUtility.normalizeObject(map);
+    }
+
+    /**
      * 填入欄位預設值
      * 
      * @param caseData
@@ -449,7 +461,7 @@ public class Eip01w010Service {
         m.setStatus(caseData.getStatus()); // 狀態
         m.setAttributype(caseData.getAttributype()); // 屬性
         m.setMsgtype(caseData.getMsgtype()); // 訊息類別
-        m.setLocatearea(caseData.getLocatearea()); // 顯示位置
+//        m.setLocatearea(caseData.getLocatearea()); // 顯示位置
 
         String ava = caseData.getAvailabledep(); // 分眾
         if (StringUtils.isNotBlank(ava)) {
@@ -461,9 +473,9 @@ public class Eip01w010Service {
                 msgavaildepDao.insert(a);
             }
         }
-        m.setIssearch(caseData.getIssearch()); // 是否提供外部查詢
-        m.setShoworder(caseData.getShoworder()); // 顯示順序
-        m.setIstop(caseData.getIstop()); // 是否置頂
+//        m.setIssearch(caseData.getIssearch()); // 是否提供外部查詢
+//        m.setShoworder(caseData.getShoworder()); // 顯示順序
+//        m.setIstop(caseData.getIstop()); // 是否置頂
         m.setIsfront(caseData.getIsfront()); // 前台是否顯示
         m.setSubject(caseData.getSubject()); // 主旨/連結網址
         m.setMcontent("A".equals(caseData.getPagetype()) ? caseData.getMcontent() : caseData.getMlink()); // 內文
@@ -589,7 +601,7 @@ public class Eip01w010Service {
         m.setStatus(caseData.getStatus()); // 狀態
         m.setAttributype(caseData.getAttributype()); // 屬性
         m.setMsgtype(caseData.getMsgtype()); // 訊息類別
-        m.setLocatearea(caseData.getLocatearea()); // 顯示位置
+//        m.setLocatearea(caseData.getLocatearea()); // 顯示位置
 
         String ava = caseData.getAvailabledep(); // 分眾
         if (StringUtils.isNotBlank(ava)) {
@@ -604,10 +616,10 @@ public class Eip01w010Service {
                 msgavaildepDao.insert(a);
             }
         }
-        m.setIssearch(caseData.getIssearch()); // 是否提供外部查詢
-        m.setShoworder(caseData.getShoworder()); // 顯示順序
+//        m.setIssearch(caseData.getIssearch()); // 是否提供外部查詢
+//        m.setShoworder(caseData.getShoworder()); // 顯示順序
         m.setIstop(caseData.getIstop()); // 是否置頂
-        m.setIsfront(caseData.getIsfront()); // 前台是否顯示
+//        m.setIsfront(caseData.getIsfront()); // 前台是否顯示
         m.setSubject(caseData.getSubject()); // 主旨/連結網址
         if ("B".equals(caseData.getPagetype())) {
             m.setMcontent(caseData.getMlink()); // 內文
@@ -664,42 +676,60 @@ public class Eip01w010Service {
      */
     public void updStatus(Eip01w010Case caseData, String status) {
         List<String> fseqs = null;
-        if ("".equals(caseData.getFseq())) { // 列表頁 批次修改狀態
-            List<Eip01w010Case.Detail> qry = caseData.getQueryList();
-            fseqs = qry.stream().filter(f -> f.isCheck()).map(m -> m.getFseq())
-                    .collect(Collectors.toCollection(ArrayList::new));
+        if ("".equals(caseData.getFseq()) && StringUtils.isNotBlank(caseData.getFseqs())) { // 列表頁 批次修改狀態
+            String[] fseqstr = caseData.getFseqs().split(",");
+            fseqs = Arrays.asList(fseqstr);
         } else { // 明細頁
             fseqs = Arrays.asList(caseData.getFseq());
         }
         if (!"X".equals(status)) {
             // 更新
-            msgdataDao.updateStatus(fseqs, status);
+            updateStatus(fseqs, status);
         } else {
             // 實體刪除
-            String dir = eipCodeDao.findByCodeKindCodeNo("FILEDIR", "1").get().getCodename() + File.separator; // 檔案所在資料夾
-            fseqs.stream().forEach(f -> {
-                Msgdata data = new Msgdata();
-                data.setFseq(f);
-                msgdataDao.delete(data); // 刪文章
-                Msgavaildep dep = new Msgavaildep();
-                dep.setFseq(f);
-                msgavaildepDao.delete(dep); // 刪分眾
-                List<Msgdeposit> files = msgdepositDao.findbyfseq(Arrays.asList(f));
-                files.stream().forEach(origin -> {
-                    File file = new File(dir + origin.getRealfilename());
-                    file.delete();
-                    Msgdeposit m = new Msgdeposit();
-                    m.setFseq(origin.getFseq());
-                    m.setSeq(origin.getSeq());
-                    msgdepositDao.delete(m); // 刪附檔
-                });
-            });
+            deleteData(fseqs);
         }
         // 返回
         getQueryList(caseData);
         caseData.setKeep((caseData.getQueryList() != null && caseData.getQueryList().size() == 1) ? true : false);
         caseData.setStatus(status);
         caseData.setStatusText(changeStatusText(status, true));
+    }
+
+    /**
+     * 更新狀態
+     * 
+     * @param fseqs
+     * @param status
+     */
+    private void updateStatus(List<String> fseqs, String status) {
+        msgdataDao.updateStatus(fseqs, status);
+    }
+
+    /**
+     * 刪除
+     * 
+     * @param fseqs
+     */
+    private void deleteData(List<String> fseqs) {
+        String dir = eipCodeDao.findByCodeKindCodeNo("FILEDIR", "1").get().getCodename() + File.separator; // 檔案所在資料夾
+        fseqs.stream().forEach(f -> {
+            Msgdata data = new Msgdata();
+            data.setFseq(f);
+            msgdataDao.delete(data); // 刪文章
+            Msgavaildep dep = new Msgavaildep();
+            dep.setFseq(f);
+            msgavaildepDao.delete(dep); // 刪分眾
+            List<Msgdeposit> files = msgdepositDao.findbyfseq(Arrays.asList(f));
+            files.stream().forEach(origin -> {
+                File file = new File(dir + origin.getRealfilename());
+                file.delete();
+                Msgdeposit m = new Msgdeposit();
+                m.setFseq(origin.getFseq());
+                m.setSeq(origin.getSeq());
+                msgdepositDao.delete(m); // 刪附檔
+            });
+        });
     }
 
     private String changeStatusText(String status, boolean addNum) {

@@ -29,7 +29,11 @@ public class Eip0aw011Controller {
     @ResponseBody
     public Eip0aw010Case getEip0aw010Case(HttpSession httpSession) {
         Eip0aw010Case eip0aw011Case = ObjectUtility.normalizeObject(eip0aw010Service.getEip0aw011Case());
-        httpSession.setAttribute(CASE_KEY, eip0aw011Case);
+        try {
+            httpSession.setAttribute(CASE_KEY, eip0aw011Case);
+        } catch (Exception e) {
+            log.debug("eip0aw011Case {}" , e.getMessage());
+        }
         return eip0aw011Case;
     }
 

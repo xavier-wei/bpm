@@ -122,20 +122,20 @@ public class CarBookingDaoImpl extends BaseDao<CarBooking> implements CarBooking
 
 	@Override
 	public List<CarBooking> selectByApplydate(String applydateStart, String applydateEnd, String type,
-			String apply_dept) {
+			List<String> apply_dept) {
 		StringBuilder sql = new StringBuilder();
 
 		sql.append(" Select * from CAR_BOOKING ");
 		sql.append(" Where apply_date between :applydateStart and :applydateEnd");
 
 		if ("eip07w030".equals(type)) {
-			sql.append(" And CARProcess_status in ('1','U') and apply_dept = :apply_dept ");
+			sql.append(" And CARProcess_status in ('1','U') and apply_dept in (:apply_dept) ");
 		} else if ("eip07w050".equals(type)) {
 			sql.append(" And CARProcess_status in ('3','4','6','7','F') ");
 			sql.append(" And reconfirm_mk2 is null ");
 		}
 
-		Map<String, String> map = new HashMap<>();
+		Map<String, Object> map = new HashMap<>();
 
 		if (StringUtils.isNotBlank(applydateStart)) {
 			map.put("applydateStart", DateUtility.changeDateType(applydateStart));

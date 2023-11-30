@@ -61,6 +61,7 @@ public class Eip07w030Controller extends BaseController {
 		log.debug("導向 Eip07w030Case_enter 派車預約審核作業");
 		Eip07w030Case newCase = new Eip07w030Case();
 		BeanUtility.copyProperties(caseData, newCase);// 進來時清除caseData
+		caseData.setApplydateStart(DateUtility.getNowChineseYearMonth() + "01");
 		String deptid = deptsDao.findByPk(userData.getDeptId()).getDept_name();
 		caseData.setApply_dept(deptid);
 		try {

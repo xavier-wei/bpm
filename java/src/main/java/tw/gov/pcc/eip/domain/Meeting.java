@@ -2,13 +2,11 @@ package tw.gov.pcc.eip.domain;
 
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.apache.poi.hssf.record.pivottable.StreamIDRecord;
 import tw.gov.pcc.common.annotation.LogField;
 import tw.gov.pcc.common.annotation.PkeyField;
 import tw.gov.pcc.common.annotation.Table;
 
 import java.io.Serializable;
-import java.sql.Timestamp;
 import java.time.LocalDateTime;
 
 /**

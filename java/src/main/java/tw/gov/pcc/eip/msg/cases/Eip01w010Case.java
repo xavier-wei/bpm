@@ -65,10 +65,8 @@ public class Eip01w010Case implements Serializable {
     @RequiredString(label = "分眾", groups = { Update.class })
     private String availabledep; // *分眾
 
-    @RequiredString(label = "是否提供外部查詢", groups = { Update.class })
     private String issearch; // *是否提供外部查詢 1:是 2:否
 
-    @RequiredString(label = "顯示順序", groups = { Update.class })
     private String showorder; // *顯示順序 1~99，數字愈小，優先序愈高
 
     private String istop; // 是否置頂 1:是 2:否
@@ -125,6 +123,7 @@ public class Eip01w010Case implements Serializable {
     private String upddt; // 更新時間：(執行更新時間)
 
     private boolean checkAll = false; // 全選
+    private String fseqs;
 
     /** 新增,修改 畫面選單用 */
     @Data
@@ -224,7 +223,7 @@ public class Eip01w010Case implements Serializable {
         if ("I".equals(mode) || "D".equals(mode)) {
             return true;
         }
-        if (queryList != null && queryList.stream().filter(Eip01w010Case.Detail::isCheck).findAny().isPresent()) {
+        if (!StringUtils.isEmpty(fseqs)) {
             return true;
         }
         return false;

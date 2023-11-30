@@ -90,6 +90,7 @@
                 <form:hidden path="keep" />
                 <form:hidden path="seq" />
                 <form:hidden path="pageNum" />
+                <form:hidden path="fseqs" />
             </tags:fieldset>
             <c:if test="${(caseData.mode == 'Q' || caseData.mode == 'D' ) && not empty caseData.queryList }">
                 <tags:fieldset legend="查詢結果">
@@ -98,7 +99,7 @@
                             <thead>
                                 <tr>
                                     <th data-orderable="false">
-                                        <form:checkbox path="checkAll" />全選
+                                        <input type="checkbox" value="${caseData.checkAll }" id="checkAll" name="checkAll" >全選
                                     </th>
                                     <th class="text-center">項次</th>
                                     <th class="text-center">頁面型態</th>
@@ -117,50 +118,37 @@
                                         <td class="text-center">
                                             <c:choose>
                                                 <c:when test="${item.status != '4' }">
-                                                    <form:checkbox path="queryList[${status.index}].check"
-                                                        value="${item.check }" cssClass="checkedgreen" />
+                                                    <input type="checkbox" value="${item.fseq }">
                                                 </c:when>
                                                 <c:otherwise>
-                                                    <form:checkbox path="queryList[${status.index}].check"
-                                                        value="${item.check }" checked="checked" disabled="true"
-                                                        cssClass="checkedgreen" />
+                                                    <input type="checkbox" value="${item.fseq }" checked="checked" disabled="true">
                                                 </c:otherwise>
                                             </c:choose>
                                         </td>
                                         <td class="text-center">
                                             <c:out value="${item.fseq}" />
-                                            <form:hidden path="queryList[${status.index}].fseq" />
                                         </td>
                                         <td class="text-center">
                                             <c:out value="${item.pagetype}" />
-                                            <form:hidden path="queryList[${status.index}].pagetype" />
                                         </td>
                                         <td class="text-left">
                                             <c:out value="${item.subject}" />
-                                            <form:hidden path="queryList[${status.index}].subject" />
                                         </td>
                                         <td class="text-center">
                                             <c:out value="${item.isfront}" />
-                                            <form:hidden path="queryList[${status.index}].isfront" />
                                         </td>
                                         <td class="text-center">
                                             <c:out value="${item.attributypeText}" />
-                                            <form:hidden path="queryList[${status.index}].attributypeText" />
                                         </td>
                                         <td class="text-center">
                                             <func:minguo value="${item.releasedt}" /><br>
                                             <func:minguo value="${item.offtime}" />
-                                            <form:hidden path="queryList[${status.index}].releasedt" />
-                                            <form:hidden path="queryList[${status.index}].offtime" />
                                         </td>
                                         <td class="text-center">
                                             <c:out value="${item.statusText}" />
-                                            <form:hidden path="queryList[${status.index}].status" />
-                                            <form:hidden path="queryList[${status.index}].statusText" />
                                         </td>
                                         <td class="text-left">
                                             <c:out value="${item.creatname}" />
-                                            <form:hidden path="queryList[${status.index}].creatname" />
                                         </td>
                                         <td class="text-center" data-fseq="${item.fseq}">
                                             <tags:button id="btnDetail">修改</tags:button>
@@ -276,6 +264,12 @@
                 });
                 // 上稿
                 $('#btnUpload').click(function() {
+                	var str = '';
+                	$.each($('input:checkbox:checked:not([name="checkAll"]):not(:disabled)'), function (i, e) {
+                		str += e.value + ',';
+                	});
+                	$('#fseqs').val(str.substr(0, str.length -1));
+                	$('#pageNum').val($('.paginate_input').val()); // 紀錄當前頁碼
                     $('#eip01w010Form').attr('action', '<c:url value="/Eip01w010_btnup.action" />')
                         .submit();
                 });

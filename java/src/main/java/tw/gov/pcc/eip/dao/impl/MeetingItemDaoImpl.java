@@ -15,8 +15,6 @@ import tw.gov.pcc.eip.domain.MeetingItemAndMeetingCode;
 import java.util.HashMap;
 import java.util.List;
 
-import static tw.gov.pcc.eip.dao.MeetingItemDao.TABLE_NAME;
-
 @DaoTable(MeetingDao.TABLE_NAME)
 @Repository
 public class MeetingItemDaoImpl extends BaseDao<MeetingItem> implements MeetingItemDao {
@@ -111,5 +109,15 @@ public class MeetingItemDaoImpl extends BaseDao<MeetingItem> implements MeetingI
 
         return getNamedParameterJdbcTemplate().query(sql.toString(), params,
                 BeanPropertyRowMapper.newInstance(MeetingItemAndMeetingCode.class));
+    }
+
+    @Override
+    public void deleteDataByMeetingId(List<Integer> meetingId) {
+        StringBuilder sql = new StringBuilder();
+        sql.append("    DELETE FROM MEETINGITEM ");
+        sql.append("     WHERE MEETINGID in (:meetingId) ");
+
+        SqlParameterSource params = new MapSqlParameterSource("meetingId", meetingId);
+        getNamedParameterJdbcTemplate().update(sql.toString(), params);
     }
 }

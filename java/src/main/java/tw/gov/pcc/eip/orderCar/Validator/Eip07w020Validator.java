@@ -81,7 +81,7 @@ public class Eip07w020Validator implements Validator {
 
 	}
 
-	public void eip07w020AValidate(Eip07w020Case validate, Errors errors) {
+	public void eip07w020AValidate(Eip07w020Case validate,String workTy ,Errors errors) {
 
 		if (StringUtils.isBlank(validate.getUseCarMemo())) {
 			errors.reject(null, "用車事由必需輸入");
@@ -108,9 +108,18 @@ public class Eip07w020Validator implements Validator {
 		if (timeSart.compareTo(timeEnd)>0){
 			errors.reject(null, "用車時間起始時間不可小於結束時間");
 		}
-		if (DateUtility.asDate(DateUtility.calDay(DateUtil.getNowChineseDate(), 0),false).after(DateUtility.asDate(validate.getUseDate(),false))){
-			errors.reject(null, "用車日期需大於等於系統日期");
+
+		//判斷是該作業是"A"新增或"R"補單
+		if ("A".equals(workTy)){
+			if (DateUtility.asDate(DateUtility.calDay(DateUtil.getNowChineseDate(), 0),false).after(DateUtility.asDate(validate.getUseDate(),false))){
+				errors.reject(null, "用車日期需大於等於系統日期");
+			}
+		}else {
+			if (DateUtility.asDate(DateUtility.calDay(validate.getUseDate(), 1),false).after(DateUtility.asDate(DateUtil.getNowChineseDate(),false))){
+				errors.reject(null, "補單案件，用車日期只允許登打小於系統日期");
+			}
 		}
+
 		}catch (Exception E){
 
 		}

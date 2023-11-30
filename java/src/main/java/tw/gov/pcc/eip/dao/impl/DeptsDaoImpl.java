@@ -198,4 +198,30 @@ public class DeptsDaoImpl extends BaseDao<Depts> implements DeptsDao {
                 BeanPropertyRowMapper.newInstance(Depts.class));
         return list;
     }
+
+	@Override
+	public List<Depts> findAllDeptId(String dept_id) {
+		StringBuffer sb = new StringBuffer();
+		sb.append(" WITH DeptHierarchy AS ( ");
+		sb.append("		    SELECT * ");
+		sb.append("		    FROM depts ");
+		sb.append("		    WHERE dept_id = :dept_id ");
+		sb.append("		    UNION ALL ");
+
+		sb.append("		    SELECT  d.* ");
+		sb.append("		    FROM depts d ");
+		sb.append("		    INNER JOIN DeptHierarchy dh ON d.dept_id_p = dh.dept_id and d.DEPT_ID  != d.DEPT_ID_P  ");
+		sb.append("		) ");
+		sb.append("		select dept_id from depts x where x.DEPT_ID  in ( ");
+		sb.append("		SELECT  dept_id ");
+		sb.append("		FROM DeptHierarchy  ) ");
+		
+		 Map<String, String> params = new HashMap<>();
+		 params.put("dept_id", dept_id);
+		
+        List<Depts> list = getNamedParameterJdbcTemplate().query(sb.toString(), params,
+                BeanPropertyRowMapper.newInstance(Depts.class));
+
+        return CollectionUtils.isEmpty(list) ? null : list;
+	}
 }

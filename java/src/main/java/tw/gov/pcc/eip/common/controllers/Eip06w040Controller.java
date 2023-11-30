@@ -71,7 +71,7 @@ public class Eip06w040Controller extends BaseController {
                 return new ModelAndView(QUERY_PAGE);
             }
 
-            String filename = "會議室活動_" + caseData.getMeetingdt() + ".xls";
+            String filename = "會議室活動_" + caseData.getMeetingdt() + ".xlsx";
             return new ModelAndView(new FileOutputView(baos, filename, FileOutputView.EXCEL_FILE));
         } catch (Exception e) {
             log.error("會議室活動報表 - 下載 - " + ExceptionUtility.getStackTrace(e));

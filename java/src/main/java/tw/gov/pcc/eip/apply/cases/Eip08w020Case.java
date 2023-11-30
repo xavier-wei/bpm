@@ -32,6 +32,16 @@ public class Eip08w020Case implements Serializable {
 	private String apply_user;
 
 	/**
+	 * 申請日期(起)
+	 */
+	private String applydateStart;
+	
+	/**
+	 * 申請日期(迄)
+	 */
+	private String applydateEnd;
+	
+	/**
 	 * 申請日期
 	 */
 	private String apply_date;
@@ -128,5 +138,7 @@ public class Eip08w020Case implements Serializable {
 	private String processStatus;
 	private String SelectType;
 	private String hidden;//增加一個hidden欄位，不要一進來就foucus在日曆，讓日曆跳出來
+	
+	private String itemnoStr;//用於查詢畫面,查詢品名用
 	
 }

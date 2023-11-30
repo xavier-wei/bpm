@@ -33,11 +33,8 @@ public class Eip06w040Service {
     @Autowired
     UsersDao usersDao;
     @Autowired
-    private MeetingCodeDao meetingCodeDao;
-    @Autowired
     private MeetingDao meetingDao;
-    @Autowired
-    private MeetingItemDao meetingItemDao;
+
 
     public Eip06w040Case print(Eip06w040Case caseData) {
         caseData.setBaos(getEip06w040xls(caseData));

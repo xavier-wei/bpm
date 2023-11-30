@@ -29,6 +29,8 @@
 					<form:radiobutton id="workTy" cssClass="checkedgreen" value="A" path="workTy"/>新增預約
 					&nbsp;&nbsp;&nbsp;
 					<form:radiobutton id="workTy" cssClass="checkedgreen" value="Q" path="workTy"/>查詢派車結果
+					&nbsp;&nbsp;&nbsp;
+					<form:radiobutton id="workTy" cssClass="checkedgreen" value="R" path="workTy"/>補單
 				</div>
 			</tags:form-row>
 			<div id="applyData">
@@ -94,6 +96,7 @@
 <script>
 
         $(function() {
+			var today=$("#applyDate").val();
 			controlBt();
             $('#btnSelect').click(function() {
 				$('#eip07w020Form').attr('action', '<c:url value="/Eip07w020_quary.action" />').submit();
@@ -118,13 +121,19 @@
 			function controlBt(){
 				var workTy=$("input[id=workTy]:checked").val();
 				var isSecretarial=$("#isSecretarial").val();
-				if(workTy == 'A'){
+				if(workTy == 'A'||workTy=='R'){
 					$("#A").show();
 					$("#Q").hide();
 					$("#btnAdd").show();
 					$("#btnSelect").hide();
 					$("#main>fieldset>legend").html("新增條件")
 					$("#applyData").show();
+					// if(workTy=='R'){
+					// 	// $("#applyDate_OUTSIDE").val(today);
+					// 	$("#applyDate_OUTSIDE").prop("disabled", true);
+					// }else {
+					// 	$("#applyDate_OUTSIDE").prop("disabled", false);
+					// }
 				} else {
 					$("#Q").show();
 					$("#A").hide();

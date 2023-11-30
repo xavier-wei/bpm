@@ -155,7 +155,7 @@ public class Eip0aw010Service {
                     .get(apiParams.getRes())), "0"));
         } catch (Exception e) {
             apiResult.setCnt("0");
-            log.error("SYS_API 呼叫{} 傳回{} 錯誤 {}", ObjectUtility.normalizeObject(apiParams), Objects.toString(response, StringUtils.EMPTY), ExceptionUtility.getStackTrace(e));
+            log.error("SYS_API 呼叫{} 傳回{} 錯誤", ObjectUtility.normalizeObject(apiParams), Objects.toString(response, StringUtils.EMPTY));
         }
         return apiResult;
     }
