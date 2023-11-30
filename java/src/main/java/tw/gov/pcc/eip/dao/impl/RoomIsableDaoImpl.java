@@ -7,6 +7,7 @@ import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.stereotype.Repository;
 import tw.gov.pcc.common.annotation.DaoTable;
 import tw.gov.pcc.common.framework.dao.BaseDao;
+import tw.gov.pcc.eip.common.cases.Eip06w060Case;
 import tw.gov.pcc.eip.dao.RoomIsableDao;
 import tw.gov.pcc.eip.domain.MeetingCode;
 import tw.gov.pcc.eip.domain.RoomIsable;
@@ -79,8 +80,9 @@ public class RoomIsableDaoImpl extends BaseDao<RoomIsable> implements RoomIsable
         return updateByPK(data);
     }
 
-    @Override
-    public int deleteData(String itemid) {
+    public int deleteData(Eip06w060Case caseData) {
+        String itemid = caseData.getItemId();
+
         String sql=new StringBuilder()
                 .append(" DELETE T FROM " + TABLE_NAME + " T ")
                 .append(" WHERE  T.ITEMID = :itemid" ).toString();
@@ -89,6 +91,21 @@ public class RoomIsableDaoImpl extends BaseDao<RoomIsable> implements RoomIsable
         params.put("itemid", itemid);
         return getNamedParameterJdbcTemplate().update(sql, params);
     }
+
+    @Override
+    public int deleteSingleData(Eip06w060Case caseData) {
+        String itemno = caseData.getItemNo();
+
+        String sql=new StringBuilder()
+                .append(" DELETE T FROM " + TABLE_NAME + " T ")
+                .append(" WHERE  T.itemno = :itemno").toString();
+
+        Map<String, Object> params=new HashMap<>();
+        params.put("itemno", itemno);
+        return getNamedParameterJdbcTemplate().update(sql, params);
+    }
+
+
 
     @Override
     public int deleteSingleData(String itemno) {
@@ -102,7 +119,8 @@ public class RoomIsableDaoImpl extends BaseDao<RoomIsable> implements RoomIsable
     }
 
     @Override
-    public int deletePastData(String itemid) {
+    public int deletePastData(Eip06w060Case caseData) {
+        String itemid = caseData.getItemId();
         String sql=new StringBuilder()
                 .append(" DELETE T FROM " + TABLE_NAME + " T ")
                 .append(" WHERE  T.isabledate < convert(varchar, getdate(), 112)")
