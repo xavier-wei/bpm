@@ -24,6 +24,7 @@ import java.nio.file.Paths;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
  * index頁面，tableau儀錶板顯示
@@ -92,19 +93,7 @@ public class TableauService {
 //            dashboardList = tableauDashboardInfoDao.selectByDashboardFigId(figIdList);
 //        }
         log.info("使用者應顯示的儀表板為:{}", dashboardList.toString());
-        String tableauFolderPathPrefix = "";
-        String env = System.getenv("spring.profiles.active");
-        if ("dev".equals(env)) {
-            log.info("環境為==dev==");
-            tableauFolderPathPrefix = "D:/";
-        } else {
-            log.info("環境為==prod==");
-            //取得儀錶板截圖資料夾位置
-            Optional<Eipcode> opt = eipcodeDao.findByCodeKindCodeNo("TABLEAU", "folder");
-            if (opt.isPresent()) {
-                tableauFolderPathPrefix = opt.get().getCodename();
-            }
-        }
+        String tableauFolderPathPrefix =   getTableauFolderPathPrefix();
         log.info("tableauFolderPathPrefix:{}", tableauFolderPathPrefix);
         for (TableauDashboardInfo dashboard : dashboardList) {
             TableauDataCase tableauDataCase = new TableauDataCase();
@@ -192,6 +181,40 @@ public class TableauService {
         Path path = Paths.get(imagePath);
         return Base64.encodeBase64String(Files.readAllBytes(path));
     }
+
+
+    /**
+     * MENU跳轉TABLEAU用，在個人儀表板導轉頁面顯示圖片
+     */
+    public TableauDataCase getTableauPicture(String tableauId) throws IOException {
+        String tableauFolderPathPrefix = getTableauFolderPathPrefix();
+        List<TableauDashboardInfo> dashboardList = tableauDashboardInfoDao.selectByDashboardFigId(Stream.of(tableauId).collect(Collectors.toList()));
+        TableauDataCase tableauDataCase = new TableauDataCase();
+        if (!dashboardList.isEmpty()) {
+            String path = dashboardList.get(0).getDashboard_fig_folder().replaceAll("/", "\\" + File.separator) + File.separator + dashboardList.get(0).getDashboard_fig_file_nm();
+            tableauDataCase.setImageBase64String(getImageBase64String(tableauFolderPathPrefix.replaceAll("/", "\\" + File.separator) + path));
+            return tableauDataCase;
+        }
+        return tableauDataCase;
+    }
+
+    private String getTableauFolderPathPrefix() {
+        String env = System.getenv("spring.profiles.active");
+        if ("dev".equals(env)) {
+            log.info("環境為==dev==");
+            return "D:/";
+        } else {
+            log.info("環境為==prod==");
+            //取得儀錶板截圖資料夾位置
+            Optional<Eipcode> opt = eipcodeDao.findByCodeKindCodeNo("TABLEAU", "folder");
+            if (opt.isPresent()) {
+                return opt.get().getCodename();
+            }
+        }
+        return "";
+    }
+
+
 
 
 }

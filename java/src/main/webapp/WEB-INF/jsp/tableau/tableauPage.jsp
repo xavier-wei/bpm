@@ -4,11 +4,13 @@
 <tags:layout>
 <jsp:attribute name="contents">
     <div>個人儀表板</div>
+    <div id="imgDiv"></div>
 </jsp:attribute>
 <jsp:attribute name="footers">
 <script>
         // let ticket = '';
         $(async function () {
+            getTableauPicture()
             let ticket = await getTicket();
             console.log("ticket",ticket)
             if(ticket!==''){
@@ -88,7 +90,7 @@
                         foundImage.tableauNewUrl = foundImage.tableauUrl.replace("#", "trusted/" + ticket);
                         console.log(foundImage.tableauNewUrl);
                         window.open(foundImage.tableauNewUrl, "_blank");
-                        window.history.back();
+                        // window.history.back();
                     } else {
                         alert('找不到對應的儀錶板網址');
                     }
@@ -96,6 +98,47 @@
                     alert(error.message || '發生錯誤');
                 }
             }
+        }
+
+        //取得儀錶板圖片
+        function getTableauPicture() {
+            const path = window.location.pathname; // URL，如 "/tableau_enter.action/BID_01_02.action"
+            const parts = path.split('/');
+            const tableauId = parts[parts.length - 1].replace(".action",""); //BID_01_02
+            var data = {};
+            data["dashboardFigId"] = tableauId;
+            $.ajax({
+                url: '<c:url value="/Common_getTableauPicture.action" />',
+                type: 'POST',
+                contentType : "application/json",
+                data : JSON.stringify(data),
+                success: function(response) {
+                    if (response) {
+                        if(response.length!=0){
+                            createImage(response)
+                        }else{
+                            console.log("查無儀表板")
+                        }
+                    }
+                },
+                error: function(error) {
+                    console.error(error);
+                }
+            });
+        }
+
+        function createImage(imageData){
+            const imgDiv = document.getElementById("imgDiv");
+            console.log("imgDiv",imgDiv)
+            const img = document.createElement("img");
+            const base64String = imageData.imageBase64String;
+            console.log("base64String",base64String)
+            img.src = "data:image/png;base64," + base64String;
+            img.style.borderRadius = "10px";
+            img.style.maxWidth = "100%";
+            img.style.maxHeight = "100%";
+            img.alt = "儀錶板";
+            imgDiv.appendChild(img);
         }
 
         
