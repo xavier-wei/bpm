@@ -116,9 +116,9 @@
 <script lang="ts">
 import axios from 'axios';
 import {ref, reactive, defineComponent, onActivated, toRef} from '@vue/composition-api';
-import IDatePicker from '../shared/i-date-picker/i-date-picker.vue';
-import ITable from '../shared/i-table/i-table.vue';
-import IFormGroupCheck from '../shared/form/i-form-group-check.vue';
+import IDatePicker from '@/shared/i-date-picker/i-date-picker.vue';
+import ITable from '@/shared/i-table/i-table.vue';
+import IFormGroupCheck from '@/shared/form/i-form-group-check.vue';
 import {useValidation, validateState} from '@/shared/form';
 import {required} from '@/shared/validators';
 import {notificationErrorHandler} from "@/shared/http/http-response-helper";
@@ -126,7 +126,7 @@ import {useNotification} from "@/shared/notification";
 import {newformatDate} from "@/shared/date/minguo-calendar-utils";
 import {changeSubject} from "@/shared/word/change-word-utils";
 import {configRoleToBpmIpt} from "@/shared/word/configRole";
-import {dayjs, useGetters} from "@u3u/vue-hooks";
+import {useGetters} from "@u3u/vue-hooks";
 import {navigateByNameAndParams} from "@/router/router";
 import {superiorFilter} from "@/shared/word/superiorFilter";
 
@@ -149,7 +149,6 @@ export default defineComponent({
   setup(props) {
     //登入者資訊
     const userData = ref(useGetters(['getUserData']).getUserData).value;
-
 
     //是否顯示iTable
     const queryStatus = ref(false);

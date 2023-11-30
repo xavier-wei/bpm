@@ -262,7 +262,7 @@ import axios from "axios";
 import {notificationErrorHandler} from "@/shared/http/http-response-helper";
 import {useNotification} from "@/shared/notification";
 import {useGetters} from "@u3u/vue-hooks";
-import IFormGroupCheck from '../shared/form/i-form-group-check.vue';
+import IFormGroupCheck from '@/shared/form/i-form-group-check.vue';
 import {useValidation} from '@/shared/form';
 import ITable from '@/shared/i-table/i-table.vue';
 import {changeDealWithUnit} from "@/shared/word/directions";

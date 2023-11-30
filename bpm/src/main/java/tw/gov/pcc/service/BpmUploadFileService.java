@@ -4,6 +4,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.SystemUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -11,7 +12,9 @@ import tw.gov.pcc.domain.BpmUploadFile;
 import tw.gov.pcc.repository.BpmUploadFileRepository;
 import tw.gov.pcc.service.dto.BpmUploadFileDTO;
 import tw.gov.pcc.service.mapper.BpmUploadFileMapper;
+import tw.gov.pcc.utils.CommonUtils;
 import tw.gov.pcc.web.rest.errors.BadRequestAlertException;
+import tw.gov.pcc.web.rest.io.FileMediaType;
 
 import java.io.File;
 import java.io.IOException;
@@ -39,7 +42,6 @@ public class BpmUploadFileService {
     private final BpmUploadFileRepository bpmUploadFileRepository;
 
     private final BpmUploadFileMapper bpmUploadFileMapper;
-
     public BpmUploadFileService(BpmUploadFileRepository bpmUploadFileRepository, BpmUploadFileMapper bpmUploadFileMapper) {
         this.bpmUploadFileRepository = bpmUploadFileRepository;
         this.bpmUploadFileMapper = bpmUploadFileMapper;
