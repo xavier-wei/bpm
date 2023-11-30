@@ -1,4 +1,5 @@
 //把l410畫面有打勾的checkbox 轉成後端需要的Map跟Form
+// import {Object} from 'typescript/lib/lib.es2019.object.d.ts';
 export function checkboxToMapAndForm(data: any, form: any, variables: any): any {
 
   if (data.checkbox === '1' && data.systemApplyName === '人事差勤系統') {
@@ -12,7 +13,7 @@ export function checkboxToMapAndForm(data: any, form: any, variables: any): any 
     let mapData = new Map<string, object>();
     mapData.set('isHrSys', data)
     let arrData = Array.from(mapData);
-    variables.push(Object.fromEntries(arrData))
+    variables.push(Object.fromEntries(arrData));
   } else if (data.systemApplyName === '人事差勤系統') {
     form.isHrSys = '0'
     form.hrSys = null
