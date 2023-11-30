@@ -1,6 +1,4 @@
 import { Component, Inject, Vue } from 'vue-property-decorator';
-import LoginService from '@/account/login.service';
-import AccountService from '@/account/account.service';
 
 import EntitiesMenu from '@/entities/entities-menu.vue';
 
@@ -11,9 +9,7 @@ import EntitiesMenu from '@/entities/entities-menu.vue';
 })
 export default class JhiNavbar extends Vue {
   @Inject('loginService')
-  private loginService: () => LoginService;
 
-  @Inject('accountService') private accountService: () => AccountService;
   public version = 'v' + VERSION;
   private currentLanguage = this.$store.getters.currentLanguage;
   private languages: any = this.$store.getters.languages;
@@ -39,7 +35,6 @@ export default class JhiNavbar extends Vue {
   }
 
   public openLogin(): void {
-    this.loginService().openLogin((<any>this).$root);
   }
 
   public get authenticated(): boolean {
@@ -47,13 +42,7 @@ export default class JhiNavbar extends Vue {
   }
 
   public hasAnyAuthority(authorities: any): boolean {
-    this.accountService()
-      .hasAnyAuthorityAndCheckAuth(authorities)
-      .then(value => {
-        if (this.hasAnyAuthorityValues[authorities] !== value) {
-          this.hasAnyAuthorityValues = { ...this.hasAnyAuthorityValues, [authorities]: value };
-        }
-      });
+
     return this.hasAnyAuthorityValues[authorities] ?? false;
   }
 
