@@ -45,8 +45,7 @@ public class Eip07w020Service {
     @Autowired
     private  MailService mailService;
 
-    String sysDateTime = DateUtil.getNowWestDateTime(true);
-    String sysDate = sysDateTime.substring(0, 8);
+
 
 
     private boolean userroleIsExist(String userid) {
@@ -60,6 +59,8 @@ public class Eip07w020Service {
      * @param insterData
      */
     public void addReserve(Eip07w020Case insterData,Eip07w020Case caseData) throws Exception{
+        String sysDateTime = DateUtil.getNowWestDateTime(true);
+        String sysDate = sysDateTime.substring(0, 8);
         String applyId="DC"+sysDate+String.format("%3s", carBookingDao.getApplyCarnoSeq()).replace(' ', '0');
        insterData.setApplyId(applyId);
         //取using  48位元
@@ -169,6 +170,8 @@ public class Eip07w020Service {
      * @param updateData
      */
     public void updateCarBooking( CarBooking updateData)throws Exception {
+        String sysDateTime = DateUtil.getNowWestDateTime(true);
+        String sysDate = sysDateTime.substring(0, 8);
         updateData.setUsing_time_s(updateData.getStarH()+updateData.getStarM());
         updateData.setUsing_time_e(updateData.getEndH()+updateData.getEndM());
         updateData.setApply_date(DateUtility.changeDateType(updateData.getApply_date()));
