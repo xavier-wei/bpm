@@ -35,6 +35,7 @@
     <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate"/>
     <meta http-equiv="Pragma" content="no-cache"/>
     <meta http-equiv="Expires" content="0"/>
+    <link rel="icon" href="./images/favicon.ico" />
     <link rel="stylesheet" href="<c:url value='/css/web-fonts-with-css/css/fontawesome-all.css' />"/>
     <link rel="stylesheet" href="<c:url value='/css/bootstrap.min.css' />"/>
     <link rel="stylesheet" href="<c:url value='/css/bootstrap-select.min.css' />"/>
