@@ -83,8 +83,8 @@ public class Eip07w040Service {
 		caseData.setReconfime_mk2List(Reconfime_mk2List);
 		
 		int lastDay = DateUtility.lastDay(DateUtility.getNowWestDate(),false);
-		caseData.setUsing_time_sStrForTable2(DateUtility.getNowChineseYearMonth()+"01");
-		caseData.setUsing_time_eStrForTable2(DateUtility.getNowChineseYearMonth()+String.valueOf(lastDay));
+		caseData.setUsing_time_sStrForTable2(DateUtility.getNowChineseDate());
+		caseData.setUsing_time_eStrForTable2(DateUtility.calDay(DateUtility.getNowChineseDate(),14) );
 		caseData.setUsing_time_sStrForTable3(DateUtility.getNowChineseYearMonth()+"01");
 		caseData.setUsing_time_eStrForTable3(DateUtility.getNowChineseYearMonth()+String.valueOf(lastDay));
 	}
@@ -190,11 +190,20 @@ public class Eip07w040Service {
 
 		caseData.setCarBookingDetailData(carBookingDetailData);//案件明細資料		
 		
-		caseData.setStarH(carBookingDetailData.getUsing_time_s().substring(0,2));
-		caseData.setStarM(carBookingDetailData.getUsing_time_s().substring(2,4));
 		
-		caseData.setEndH(carBookingDetailData.getUsing_time_e().substring(0,2));
-		caseData.setEndM(carBookingDetailData.getUsing_time_e().substring(2,4));
+		if(StringUtils.isNotEmpty(carBookingDetailData.getApprove_using_time_s()) && StringUtils.isNotEmpty(carBookingDetailData.getApprove_using_time_e())) {
+			caseData.setStarH(carBookingDetailData.getApprove_using_time_s().substring(0,2));
+			caseData.setStarM(carBookingDetailData.getApprove_using_time_s().substring(2,4));
+			
+			caseData.setEndH(carBookingDetailData.getApprove_using_time_e().substring(0,2));
+			caseData.setEndM(carBookingDetailData.getApprove_using_time_e().substring(2,4));
+		}else { //2023.11.30若已經做過改派他車，則保留原始的核定用車時間起訖。			
+			caseData.setStarH(carBookingDetailData.getUsing_time_s().substring(0,2));
+			caseData.setStarM(carBookingDetailData.getUsing_time_s().substring(2,4));
+			
+			caseData.setEndH(carBookingDetailData.getUsing_time_e().substring(0,2));
+			caseData.setEndM(carBookingDetailData.getUsing_time_e().substring(2,4));
+		}
 		
 		
 		if("eip07w040x".equals(enterpage)) {
@@ -221,7 +230,7 @@ public class Eip07w040Service {
 		cb.setUsing_date(caseData.getUsing_date());
 		List<CarBooking> list = carBookingDao.getDataByCarnoAndUsing_date(cb);
 		
-        String approveUsing= timeConversionService.to48binary(conversionTime(caseData.getStarH(), caseData.getStarM(),"S"),conversionTime(caseData.getEndH(), caseData.getEndM(),"M"));
+        String approveUsing= timeConversionService.to48binaryForMeeting(conversionTime(caseData.getStarH(), caseData.getStarM(),"S"),conversionTime(caseData.getEndH(), caseData.getEndM(),"M"));
         if ("2330".equals(caseData.getApprove_using_time_e())){
         	approveUsing=StringUtils.substring(approveUsing,0,47)+"0";
         }
@@ -234,9 +243,7 @@ public class Eip07w040Service {
 				CarBooking check = carBookingDao.checkTime(caseData.getApprove_using(),carbooking.getUsing_rec());
 				if("Y".equals(check.getUsing())) {
 					caseData.setTimeMK("Y");//顯示該用車時間已有人預約
-				} else {
-					caseData.setTimeMK("N");
-				}
+				} 
 				
 				String[] usingTime = timeConversionService.timeStringToBeginEndTime(carbooking.getUsing_rec());
 				carbooking.setUsing_time_s(usingTime[0]);
@@ -531,4 +538,30 @@ public class Eip07w040Service {
         }
     }
 
+	public void changeCarData(Eip07w040Case caseData) {
+		
+		CarBooking carBooking = carBookingDao.selectByApplyId(caseData.getApplyid());
+		carBooking.setCarprocess_status("2");
+		carBooking.setUpd_datetime(DateUtility.getNowWestDateTime(true));
+		carBooking.setUpd_user(userData.getUserId());
+		carBooking.setName("");
+		carBooking.setCellphone("");
+		carBooking.setCartype("");
+		carBooking.setCarcolor("");
+		carBooking.setCombine_mk("");
+		carBooking.setCombine_applyid("");
+		carBooking.setCombine_reason("");
+		carBooking.setCellphone("");
+		carBooking.setCarno1("");
+		carBooking.setCarno2("");
+		carBooking.setCartype("");
+		carBooking.setCarcolor("");
+		carBooking.setPrint_mk("");;
+		carBookingDao.updateByKey(carBooking);
+		
+		Car_booking_rec rec = new Car_booking_rec();
+		rec.setApplyid(caseData.getApplyid());
+		car_booking_recDao.deleteByKey(rec);
+
+	}
 }

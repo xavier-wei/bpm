@@ -15,7 +15,6 @@ public interface RoomIsableDao {
 	public int updateData(RoomIsable data);
 	public int deleteData(Eip06w060Case caseData);
 
-	public int deleteSingleData(String itemno);
 	public int deleteSingleData(Eip06w060Case caseData);
 
 	public int deletePastData(Eip06w060Case caseData);

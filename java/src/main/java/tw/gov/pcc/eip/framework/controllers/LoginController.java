@@ -5,6 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.keycloak.KeycloakSecurityContext;
+import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
@@ -27,6 +28,7 @@ import tw.gov.pcc.eip.msg.controllers.Eip01w040Controller;
 import tw.gov.pcc.eip.services.Eip01w040Service;
 import tw.gov.pcc.eip.tableau.cases.TableauDataCase;
 import tw.gov.pcc.eip.tableau.controllers.TableauController;
+import tw.gov.pcc.eip.tableau.service.TableauService;
 import tw.gov.pcc.eip.util.BeanUtility;
 import tw.gov.pcc.eip.util.DateUtility;
 import tw.gov.pcc.eip.util.ExceptionUtility;
@@ -34,11 +36,9 @@ import tw.gov.pcc.eip.util.ObjectUtility;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
+import java.io.IOException;
 import java.math.BigDecimal;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -65,6 +65,7 @@ public class LoginController extends BaseController {
     private final Eip01w030Controller eip01w030Controller;
     private final Eip01w040Controller eip01w040Controller;
     private final TableauController tableauController;
+    private final TableauService tableauService;
 
 
     private static Comparator<Eip01wPopCase> getEip01wPopCaseComparator(DatatableCase<Eip01wPopCase> datatableCase) {
@@ -293,5 +294,15 @@ public class LoginController extends BaseController {
     @ResponseBody
     public List<TableauDataCase> getAllTableauData( ) {
         return tableauController.getAllTableauData();
+    }
+
+
+    /**
+     * 取得儀錶板圖片
+     */
+    @RequestMapping(path = "/Common_getTableauPicture.action", produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
+    @ResponseBody
+    public TableauDataCase getTableauPicture(@RequestBody TableauDataCase caseData) throws IOException {
+        return tableauService.getTableauPicture(caseData.getDashboardFigId());
     }
 }

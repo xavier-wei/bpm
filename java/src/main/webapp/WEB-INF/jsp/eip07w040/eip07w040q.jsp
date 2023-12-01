@@ -115,11 +115,12 @@
                             <th class="align-middle" style="width: 10%">申請單位</th>
                             <th class="align-middle" style="width: 7%">用車日期</th>
                             <th class="align-middle" style="width: 8%">核定用車時間起迄</th>
-                            <th class="align-middle" style="width: 18%">用車事由</th>
-                            <th class="align-middle" style="width: 7%">已列印派車單註記</th>
+                            <th class="align-middle" style="width: 11%">用車事由</th>
+                            <th class="align-middle" style="width: 6%">已列印派車單註記</th>
                             <th class="align-middle" style="width: 8%">車號</th>
                             <th class="align-middle" style="width: 7%">補印</th>
-                            <th class="align-middle" style="width: 13%">臨時取消</th>
+                            <th class="align-middle" style="width: 8%">臨時取消</th>
+                            <th class="align-middle" style="width: 10%">改派他車</th>
                         </tr>
                        </thead>
                       <tbody>
@@ -165,15 +166,29 @@
                       	<td>
                       	<c:if test="${item.print_mk eq 'Y'}">
                       		<tags:button cssClass="btnPrint2" value="${item.applyid}">
-							補印<i class="fas fa-download"></i>
+							補印
 							</tags:button>
 						</c:if>
                       	</td>
-                      	<td>
-                      		<tags:button cssClass="btnDetail2" value="${item.applyid}">
-								臨時取消<i class="fas fa-eraser"></i>
-							</tags:button>
-                      	</td>
+	                      	<c:choose>
+	                      		<c:when test="${item.carprocess_status eq '9'}">
+	                      			<td>Y</td>
+	                      			<td></td>
+	                      		</c:when>
+	                      		<c:otherwise>
+	                      			<td>
+			                      		<tags:button cssClass="btnDetail2" value="${item.applyid}">
+											臨時取消
+										</tags:button>
+									</td>
+									<td>
+	                    				<tags:button cssClass="btnChangeCar" value="${item.applyid}">
+											改派他車
+										</tags:button>
+									</td>
+	                      		</c:otherwise>
+	                      	</c:choose>
+
                       </tr>
                       </c:forEach>
                       </tbody>
@@ -270,6 +285,11 @@
             
             $('#btnSearch').click(function() {
             	$('#eip07w040Form').attr('action', '<c:url value="/Eip07w040_search.action" />').submit();
+            });
+            
+            $('.btnChangeCar').click(function() {
+            	$('#applyid').val($(this).val());
+            	$('#eip07w040Form').attr('action', '<c:url value="/Eip07w040_changecar.action" />').submit();
             });
             
             //全選的切換

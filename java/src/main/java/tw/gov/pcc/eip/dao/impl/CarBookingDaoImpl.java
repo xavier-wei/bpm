@@ -439,7 +439,7 @@ public class CarBookingDaoImpl extends BaseDao<CarBooking> implements CarBooking
 		Map<String, String> map = new HashMap<>();
 		
 		sql.append(" select (select dept_name from DEPTS where dept_id= apply_dept )apply_deptStr,c.* from CAR_BOOKING c ");
-		sql.append(" Where carprocess_status in ('3','4','6','7') ");
+		sql.append(" Where carprocess_status in ('3','4','6','7','9') ");
 		
 		if("default".equals(type)) {
 			setUsingdate(caseData,map);				
@@ -482,6 +482,7 @@ public class CarBookingDaoImpl extends BaseDao<CarBooking> implements CarBooking
 	
 	public Map<String,String> setUsingdate(Eip07w040Case caseData, Map<String,String> map){
 		// 若用車日期起日有值，但迄日沒值=>迄日帶入系統日
+		String sysdate = DateUtility.getNowWestDate();
 		if (StringUtils.isNotEmpty(caseData.getUsing_time_s()) && StringUtils.isEmpty(caseData.getUsing_time_e())) {
 			map.put("using_date_s", DateUtility.changeDateType(caseData.getUsing_time_s()));
 			map.put("using_date_e", "99991231");
@@ -490,9 +491,8 @@ public class CarBookingDaoImpl extends BaseDao<CarBooking> implements CarBooking
 			map.put("using_date_s", DateUtility.changeDateType(caseData.getUsing_time_s()));
 			map.put("using_date_e", DateUtility.changeDateType(caseData.getUsing_time_e()));
 		} else {
-			map.put("using_date_s", DateUtility.getNowWestYearMonth()+"01");
-			int lastDay = DateUtility.lastDay(DateUtility.getNowWestDate(),false);
-			map.put("using_date_e", DateUtility.getNowWestYearMonth()+String.valueOf(lastDay));
+			map.put("using_date_s", sysdate);
+			map.put("using_date_e", DateUtility.calDay(sysdate,14));
 		}
 		
 		return map;
