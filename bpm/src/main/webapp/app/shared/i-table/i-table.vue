@@ -11,7 +11,6 @@
           @picked="handlePicked"
           class="float-right"
           ref="fieldsPickerComponent"
-          label-for="float-right"
         />
         <font-awesome-icon
           v-if="exportExcelProp"
@@ -21,7 +20,7 @@
           @click.stop="onExportExcelClick"
         ></font-awesome-icon>
       </h5>
-      <div style="margin-left: -20px" v-else label-for="22">
+      <div style="margin-left: -20px" v-else>
         <b-form-group
           class="col-4 pl-0 mb-0 float-left"
           label="篩選："
@@ -92,6 +91,7 @@
         :filter="state.filter"
         :filter-included-fields="state.filterOn"
         :filter-ignored-fields="state.ignoredFields"
+        :isShowDetail="state.isShowDetail"
         @filtered="state.filtered"
         @sort-changed="handleSortChanged"
         @row-clicked="rowClickForMobileModal($event)"
@@ -119,6 +119,7 @@
         <b-col v-if="!simpleCardFooter" md="5" xl="3" order="2" order-md="1" order-xl="1" class="pt-1 pt-md-0 per-page-select">
           <b-input-group prepend="每頁" append="筆" :size="size" label-for="perpage">
             <b-form-select
+              label-for="選擇每頁比數"
               aria-label="perpage"
               id="perpage"
               v-model="state.pagination.perPage"
@@ -156,9 +157,15 @@
         </b-col>
         <b-col v-if="!simpleCardFooter" md="4" xl="3" order="3" order-md="3" order-xl="4" class="pt-1 pt-xl-0">
           <b-input-group prepend="前往頁數" :size="size" label-for="gotoPage">
-            <b-form-input aria-label="gotoPage" id="gotoPage" v-model="state.pagination.gotoPage" @keydown.enter.prevent="handleGotoPage" />
+            <b-form-input
+              aria-label="gotoPage"
+              id="gotoPage"
+              v-model="state.pagination.gotoPage"
+              @keydown.enter.prevent="handleGotoPage"
+              label-for="輸入要前往的頁數"
+            />
             <b-input-group-append>
-              <b-button variant="outline-success" @click="handleGotoPage">GO</b-button>
+              <b-button variant="outline-success" @click="handleGotoPage" label-for="前往">GO</b-button>
             </b-input-group-append>
           </b-input-group>
         </b-col>
@@ -176,8 +183,8 @@
     >
       <b-table-simple class="i-table">
         <b-tr v-for="modalItem in modalData" :key="modalItem.key">
-          <b-th v-if="modalItem.key !== 'action'">{{ modalItem.label }}</b-th>
-          <b-td v-if="modalItem.key !== 'action'">{{ modalItem.value }}</b-td>
+          <b-th>{{ modalItem.label }}</b-th>
+          <b-td>{{ modalItem.value }}</b-td>
         </b-tr>
       </b-table-simple>
     </b-modal>
@@ -321,7 +328,7 @@ export default {
       required: false,
       default: false,
     },
-    // 隱藏card-footer(為什麼要加這個，這樣用b-table不就好？？？)
+    // 隱藏card-footer
     hideCardFooter: {
       type: Boolean,
       required: false,
@@ -333,10 +340,26 @@ export default {
       required: false,
       default: false,
     },
+    // 是否顯示手機板Detail
+    isShowDetail: {
+      type: Boolean,
+      required: false,
+      default: true,
+    },
     exportExcel: {
       type: Boolean,
       required: false,
       default: false,
+    },
+    exportExcelFileName: {
+      type: String,
+      required: false,
+      default: '',
+    },
+    exportExcelFileExtension: {
+      type: String,
+      required: false,
+      default: '',
     },
     customPerPageOptions: {
       type: Array,
@@ -460,7 +483,6 @@ export default {
     const handleSortChanged = ctx => {
       if (ctx.sortBy) {
         pagination.sortBy = [ctx.sortBy];
-        // state.pagination.sortDirection = ctx.sortDesc ? 'DESC' : 'ASC';
         pagination.sortDirection = ctx.sortDesc ? 'DESC' : 'ASC';
         emitPagination();
       }
@@ -486,7 +508,6 @@ export default {
       if (props.isServerSidePaging) {
         if (isSearchQueryEqual !== undefined && !isSearchQueryEqual) state.pagination.currentPage = 1;
         pagination.currentPage = state.pagination.currentPage - 1;
-        // if (!!state.pagination.sortDirection) pagination.sortDirection = state.pagination.sortDirection;
         const param = Object.assign({}, pagination);
         context.emit('changePagination', param);
       }
@@ -519,7 +540,6 @@ export default {
       });
       return arr;
     };
-
     const buildTransferData = (item, value) => {
       const method = item.transfer.method;
       if (method === 'formatDate') value = formatDate(new Date(value), '/');
@@ -528,7 +548,6 @@ export default {
       else if (method === 'commaFormatter') value = commaFormatter(value, item.transfer.num);
       return value;
     };
-
     const onExportExcelClick = () => {
       if (!exportExcelProp.value) return;
       const excel = new ExcelJs.Workbook();
@@ -541,13 +560,17 @@ export default {
         const blobData = new Blob([content], {
           type: 'application/vnd.ms-excel;charset=utf-8;',
         });
-        link.download = '公告事項.xlsx';
+        link.download = props.exportExcelFileName + '.' + props.exportExcelFileExtension;
+        // link.download = props.exportExcelFileName;
         link.href = URL.createObjectURL(blobData);
         link.click();
       });
     };
 
     const rowClickForMobileModal = item => {
+      if (!props.isShowDetail) {
+        return;
+      }
       if (deskTopDevice.value) return;
       if (
         padDevice.value &&
@@ -652,9 +675,6 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.i-table {
-  white-space: pre-line;
-}
 @media screen and (max-width: 768px) {
   .modal-row {
     .modal-label,

@@ -218,7 +218,7 @@ export default defineComponent({
       fields: [
         {
           key: 'action',
-          label: '',
+          label: ' ',
           sortable: false,
           thClass: 'text-center',
           tdClass: 'text-center align-middle',
