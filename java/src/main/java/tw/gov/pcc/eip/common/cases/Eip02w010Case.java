@@ -55,7 +55,6 @@ public class Eip02w010Case implements Serializable {
     }
 
     private String on_off; // 進階查詢的開關
-    private String copyStr; // 複製的文字
     private String groupStr; // 若查詢結果為同一部門時顯示
     private boolean checkAll = false; // 全選
 }

@@ -165,7 +165,7 @@ public class UsersDaoImpl extends BaseDao<Users> implements UsersDao {
     }
 
     @Override
-    public List<addressBook> getEip02wUsers(String dept_id, String user_name, String user_id, String ename,
+    public List<addressBook> getEip02wUsers(String dept_id, String sort, String user_name, String user_id, String ename,
             String email, String titlename) {
         StringBuilder sql = new StringBuilder();
         sql.append(" SELECT A.USER_ID, "); // 員工編號
@@ -188,7 +188,11 @@ public class UsersDaoImpl extends BaseDao<Users> implements UsersDao {
         sql.append("    AND A.DEPT_ID = B.DEPT_ID ");
         sql.append("    AND A.TITLE_ID = C.CODENO ");
         sql.append("    AND A.ORG_ID = D.CODENO ");
-        sql.append("    AND A.DEPT_ID in (SELECT DEPT_ID FROM DEPTS WHERE DEPT_ID_P = ISNULL(:dept_id, A.DEPT_ID) or DEPT_ID = ISNULL(:dept_id, A.DEPT_ID)) ");
+        if ("2".equals(sort)) { // 2:查單一部門
+            sql.append("    AND A.DEPT_ID = ISNULL(:dept_id, A.DEPT_ID) ");
+        } else { // 1:查全處
+            sql.append("    AND A.DEPT_ID in (SELECT DEPT_ID FROM DEPTS WHERE DEPT_ID_P = ISNULL(:dept_id, A.DEPT_ID) or DEPT_ID = ISNULL(:dept_id, A.DEPT_ID)) ");
+        }
         sql.append("    AND A.TITLE_ID = ISNULL(:titlename, A.TITLE_ID) ");
         sql.append("    AND A.USER_NAME LIKE '%' + ISNULL(:user_name, A.USER_NAME) + '%' ");
         sql.append("    AND A.USER_ID = ISNULL(:user_id, A.USER_ID) ");

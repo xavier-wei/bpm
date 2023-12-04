@@ -176,7 +176,7 @@
                     if (copyStr !== '') {
                         copyStr = copyStr.substring(0, copyStr.length - 1);
                         showMessageByMessageType('複製成功');
-                        copyToClipboard(copyStr); // '${caseData.copyStr }'
+                        copyToClipboard(copyStr);
                     }
                 });
                 // 清除

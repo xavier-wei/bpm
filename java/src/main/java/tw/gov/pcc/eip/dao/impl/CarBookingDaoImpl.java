@@ -267,7 +267,7 @@ public class CarBookingDaoImpl extends BaseDao<CarBooking> implements CarBooking
 	public List<CarBooking> getDataByCarnoAndUsing_date(CarBooking carBooking) {
 		StringBuffer sql = new StringBuffer();
 
-		sql.append(" Select r.APPLYid, r.using_rec, c.destination ,  ");
+		sql.append(" Select r.APPLYid, r.using_rec, c.destination ,c.approve_using_time_s,c.approve_using_time_e , c.destination ,  ");
 		sql.append(" (select top(1)c.apply_user from car_booking c Where c.applyid=r.applyid ) apply_user,  ");
 		sql.append(" (select top(1)c.apply_dept from car_booking c Where c.applyid=r.applyid ) apply_dept,  ");
 		sql.append(" (select top(1)c.apply_memo from car_booking c Where c.applyid=r.applyid ) apply_memo  ");

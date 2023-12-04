@@ -198,4 +198,6 @@ public class Eip07w040Case implements Serializable {
 	private String approve_using_time_e;
 	private String approve_using_timeStr;
 	private String fillmk;//補單註記
+	private String nocardispatched;//不派車
+	private Integer car_max_num;
 }

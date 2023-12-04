@@ -35,6 +35,7 @@ public interface UsersDao {
      * 通訊錄查詢
      * 
      * @param dept_id
+     * @param sort 1:查全處 2:查單一部門
      * @param user_name
      * @param user_id
      * @param ename
@@ -42,7 +43,7 @@ public interface UsersDao {
      * @param titlename 職稱
      * @return
      */
-    public List<addressBook> getEip02wUsers(String dept_id, String user_name, String user_id, String ename,
+    public List<addressBook> getEip02wUsers(String dept_id, String sort, String user_name, String user_id, String ename,
             String email, String titlename);
 
     public List<Users> getEip03wUsers(List<String> deptID);

@@ -38,6 +38,7 @@
             	<div class="col-4 col-md-4">
 	            	<tags:text-item label="車輛種類">
 	            		<c:out value="${caseData.carBookingDetailData.apply_car_type}"/>
+	            		<input type="hidden" id="car_max_num" value="${caseData.car_max_num}"/>
 	            	</tags:text-item>
             	</div>
             </tags:form-row>
@@ -86,6 +87,14 @@
             		</tags:text-item>
             	</div>
             </tags:form-row>
+            <tags:form-row>
+	            <tags:text-item label="不派車(若不派車請此按鈕)">
+	            	    <tags:button id="btnNoCar">
+					    	本單不派車
+					    </tags:button>(點不派車，可不需輸入車號。)
+	            </tags:text-item>
+            </tags:form-row>
+            
 
 		    <tags:form-row>
 		    <div class="d-flex align-items-center col-4  col-md-7 col-sm-8">
@@ -125,12 +134,8 @@
 		            <form:hidden path="approve_using_time_e" cssClass="form-control" maxlength="4" readOnly="true" size="3"/>
             		</tags:text-item>
             		</div>
-
-       
-
             </tags:form-row> 
 
-            
             <tags:form-row>
             <div class="col-4 col-md-4 d-flex  align-items-center">
             <form:label path="carno" cssClass="col-form-label star">派車車號：</form:label>
@@ -169,7 +174,8 @@
             			<th style="width: 10%">派車單號</th>
             			<th style="width: 10%">申請人</th>
             			<th style="width: 10%">申請單位</th>
-            			<th style="width: 10%">用車區間</th>
+            			<th style="width: 10%">核定用車時間</th>
+            			<th style="width: 10%">核定用車區間</th>
             			<th style="width: 30%">用車事由</th>
             			<th style="width: 30%">目的地</th>
             		</tr>
@@ -180,7 +186,8 @@
 		                 <td><c:out value="${item.applyid }"/></td>
 		                 <td class="text-left"><func:username userid="${item.apply_user}"/></td>
 		                 <td class="text-left"><func:dept deptid="${item.apply_dept}"/></td>
-		                 <td><c:out value="${item.using_time_s}"/>〜<c:out value="${item.using_time_e}"/></td>
+		                 <td><c:out value="${item.approve_using_time_s}"/>〜<c:out value="${item.approve_using_time_e}"/></td>
+		                 <td><func:timeconvert value="${item.using_time_s}"/>〜<func:timeconvert value="${item.using_time_e}"/></td>
 		                 <td class="text-left">
 						<span class="ellipsisStr">
 	                 		<c:out value="${item.apply_memo}"/>
@@ -308,16 +315,19 @@
 		            <label class="col-form-label mergeReason">併單原因：</label>
 	            	<form:input path="mergeReason" cssClass="add form-control mergeReason" maxlength="100" />
 				</div>
-            	<div class="row vertical-align-center d-flex">
-            	<label class="col-form-label">派車結果選項：</label>
-	        	<form:select path="status" cssClass="form-control">
+				<div class="row vertical-align-center d-flex status">
+            	<label class="col-form-label status">派車結果選項：</label>
+	        	<form:select path="status" cssClass="form-control status">
 					<form:option value="">請選擇</form:option>
 						<c:forEach items="${caseData.carprostsList}" var="item" varStatus="status">
 							<form:option value="${item.codeno}">${item.codeno}-${item.codename}</form:option>
 						</c:forEach>
 				</form:select>
 	           	</div>
-	         </c:if>   	
+				</c:if>
+				
+
+
  		</fieldset>
         </form:form>
 </jsp:attribute>
@@ -370,7 +380,7 @@
         		$("#status").val('');
         		num.forEach(e => $("#status>option").eq(e).show());
         		
-        		if($('#num_of_people').val()>4){
+        		if(parseInt($('#num_of_people').val())>parseInt($("#car_max_num").val())){
         			num = [1,2,3,4,5,7];
         		} else {
 	        		if(timeMK=='Y' && merge=='N'){num = [1,2,4,5,6,7];}
@@ -459,6 +469,14 @@
 	        	});
        		 }
         });
+        
+        $("#btnNoCar").click(function(e){
+        	showConfirm('確定不派車?本單派車狀態將改為：5-公務車已滿請改其他大眾運輸工具',doCancel);
+        });
+        
+        function doCancel(){
+        	$('#eip07w040Form').attr('action', '<c:url value="/Eip07w040_nocar.action" />').submit();
+        }
 
 </script>
 </jsp:attribute>

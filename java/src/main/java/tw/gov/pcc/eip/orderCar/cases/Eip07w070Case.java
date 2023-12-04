@@ -37,6 +37,7 @@ public class Eip07w070Case implements Serializable {
 	private List<Eip07w070Case>dataList;
     private String using_time_s;
     private String using_time_e;
+    private String fillmk;
     
     
 	@AssertTrue(message = "用車日期起日不得大於迄日", groups = {Query.class})

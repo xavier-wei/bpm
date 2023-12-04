@@ -3,8 +3,14 @@ package tw.gov.pcc.eip.services;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.http.conn.ssl.NoopHostnameVerifier;
+import org.apache.http.conn.ssl.SSLConnectionSocketFactory;
+import org.apache.http.conn.ssl.TrustStrategy;
+import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.impl.client.HttpClients;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.*;
+import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.util.PropertyPlaceholderHelper;
 import org.springframework.web.client.RestTemplate;
@@ -18,6 +24,7 @@ import tw.gov.pcc.eip.util.BeanUtility;
 import tw.gov.pcc.eip.util.ExceptionUtility;
 import tw.gov.pcc.eip.util.ObjectUtility;
 
+import javax.net.ssl.SSLContext;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -40,6 +47,7 @@ import java.util.stream.Collectors;
 public class Eip0aw010Service {
 
     private static final PropertyPlaceholderHelper helper = new PropertyPlaceholderHelper("${", "}");
+    private static final RestTemplate restTemplate = restTemplate();
     private final Eip0aw020Service eip0aw020Service;
     private final Eip0aw030Service eip0aw030Service;
     private final Eip0aw040Service eip0aw040Service;
@@ -50,6 +58,31 @@ public class Eip0aw010Service {
     private final UserBean userData;
     private final EipcodeDao eipcodeDao;
     private final WEBITR_View_flowDao viewFlowDao;
+
+    /**
+     * 20231201 工程會團隊要求永遠信任目的端https憑證
+      * @return
+     */ 
+    private static RestTemplate restTemplate() {
+        try {
+            final TrustStrategy strategy = (var1, var2) -> true;
+            final SSLContext sslContext = org.apache.http.ssl.SSLContexts.custom()
+                    .loadTrustMaterial(null, strategy)
+                    .build();
+
+            final SSLConnectionSocketFactory csf = new SSLConnectionSocketFactory(sslContext, new NoopHostnameVerifier());
+            final CloseableHttpClient httpClient = HttpClients.custom()
+                    .setSSLSocketFactory(csf)
+                    .build();
+
+            final HttpComponentsClientHttpRequestFactory requestFactory = new HttpComponentsClientHttpRequestFactory();
+            requestFactory.setHttpClient(httpClient);
+            return new RestTemplate(requestFactory);
+        } catch (Exception e) {
+            log.error("restTemplate error: {}", ExceptionUtility.getStackTrace(e));
+        }
+        return new RestTemplate();
+    }
 
     public void syncFromLdapAndItr() {
         eip0aw060Service.replaceAllView_cpape05m();
@@ -131,9 +164,7 @@ public class Eip0aw010Service {
         try {
             apiResult.setClick_url(helper.replacePlaceholders(apiParams.getClick_url(), x -> Objects.requireNonNull(BeanUtility.getBeanProperty(userData, x))
                     .toString()));
-
-            RestTemplate restTemplate = new RestTemplate();
-
+            
             apiParams.setReq(helper.replacePlaceholders(StringUtils.substringAfter(apiParams.getUrl(), ","), x -> Objects.requireNonNull(BeanUtility.getBeanProperty(userData, x))
                     .toString()));
 
@@ -155,10 +186,9 @@ public class Eip0aw010Service {
                     .get(apiParams.getRes())), "0"));
         } catch (Exception e) {
             apiResult.setCnt("0");
-            log.error("SYS_API 呼叫{} 傳回{} 錯誤", ObjectUtility.normalizeObject(apiParams), Objects.toString(response, StringUtils.EMPTY));
+            log.error("SYS_API 呼叫{} 傳回{} 錯誤 {}", ObjectUtility.normalizeObject(apiParams), Objects.toString(response, StringUtils.EMPTY), ObjectUtility.normalizeObject(e.getMessage()));
         }
         return apiResult;
     }
-
 
 }

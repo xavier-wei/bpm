@@ -224,4 +224,15 @@ public class DeptsDaoImpl extends BaseDao<Depts> implements DeptsDao {
 
         return CollectionUtils.isEmpty(list) ? null : list;
 	}
+
+    @Override
+    public List<Depts> getEip02w010DeptIdList() {
+        StringBuilder sql = new StringBuilder();
+        sql.append(" SELECT DEPT_ID + '2' DEPT_ID, DEPT_NAME FROM DEPTS WHERE IS_VALID ='Y' ");
+        sql.append(" UNION ");
+        sql.append(" SELECT DEPT_ID + '1', DEPT_NAME + '全處' FROM DEPTS WHERE IS_VALID = 'Y' AND DEPT_ID IN ");
+        sql.append(" ( SELECT DEPT_ID_P FROM DEPTS WHERE IS_VALID = 'Y' GROUP BY DEPT_ID_P HAVING COUNT(1) > 1 ) ");
+        return getNamedParameterJdbcTemplate().query(sql.toString(), 
+                BeanPropertyRowMapper.newInstance(Depts.class));
+    }
 }

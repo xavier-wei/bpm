@@ -44,8 +44,8 @@ public class Eip02w010Service {
      */
     public void initOptions(Eip02w010Case caseData) {
         // 部門
-        List<Eip02w010Case.Option> contactunits = deptsDao.getEip01wDepts().stream()
-                .filter(f -> !"00".equals(f.getDept_id())).map(m -> {
+        List<Eip02w010Case.Option> contactunits = deptsDao.getEip02w010DeptIdList().stream()
+                .map(m -> {
                     Eip02w010Case.Option option = new Eip02w010Case.Option();
                     option.setCodeno(m.getDept_id());
                     option.setCodename(m.getDept_name());
@@ -71,10 +71,7 @@ public class Eip02w010Service {
      * @param caseData
      */
     public void initQuery(Eip02w010Case caseData, String deptId) {
-        List<addressBook> addressBook = usersDao.getEip02wUsers(deptId, null, null, null, null, null);
-        String copyStr = addressBook.stream().map(m -> {
-            return String.format("%s<%s>", m.getUser_name(), m.getEmail());
-        }).collect(Collectors.joining(";"));
+        List<addressBook> addressBook = usersDao.getEip02wUsers(deptId, "2", null, null, null, null, null);
         String deptName = "";
         Optional<Depts> opt = Optional.ofNullable(deptsDao.findByPk(deptId));
         if (opt.isPresent()) {
@@ -82,7 +79,6 @@ public class Eip02w010Service {
         }
         String groupStr = deptId + "：" + deptName;
         caseData.setQryList(addressBook); // 查詢結果
-        caseData.setCopyStr(copyStr); // 複製按鈕
         caseData.setGroupStr(groupStr); // 查詢結果為同一部門時顯示
     }
 
@@ -93,18 +89,20 @@ public class Eip02w010Service {
      */
     public void query(Eip02w010Case caseData) {
         boolean onOff = StringUtils.equals(" ", caseData.getOn_off()) ? true : false; // 有展開進階查詢才加條件
-        String deptId = trimToNull(caseData.getDept_id());
+        String optionValue = caseData.getDept_id();
+        String deptId = "";
+        String sort = "";
+        if (!StringUtils.isEmpty(optionValue)) {
+            deptId = StringUtils.substring(optionValue, 0, optionValue.length() - 1);
+            sort = StringUtils.substring(optionValue, optionValue.length() - 1, optionValue.length());
+        }
         String userId = onOff ? trimToNull(caseData.getUser_id()) : null;
         String userEname = onOff ? trimToNull(caseData.getUser_ename()) : null;
         String email = onOff ? trimToNull(caseData.getEmail()) : null;
         String titlename = onOff ? trimToNull(caseData.getTitlename()) : null;
-        List<addressBook> addressBook = usersDao.getEip02wUsers(deptId, trimToNull(caseData.getUser_name()), userId,
+        List<addressBook> addressBook = usersDao.getEip02wUsers(deptId, sort, trimToNull(caseData.getUser_name()), userId,
                 userEname, email, titlename);
-        String copyStr = addressBook.stream().map(m -> {
-            return String.format("%s<%s>", m.getUser_name(), m.getEmail());
-        }).collect(Collectors.joining(";"));
         caseData.setQryList(addressBook); // 查詢結果
-        caseData.setCopyStr(copyStr); // 複製按鈕
         if (deptId != null) {
             String deptName = "";
             Optional<Depts> opt = Optional.ofNullable(deptsDao.findByPk(deptId));

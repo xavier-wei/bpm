@@ -194,7 +194,7 @@ public class CarBaseDaoImpl extends BaseDao<CarBase> implements CarBaseDao {
 	@Override
 	public CarBase selectByCarno1Plus2(String carno) {
         StringBuilder sql = new StringBuilder();
-        sql.append(" select   *  from  "+ TABLE_NAME + " carno1+carno2= :carno ");
+        sql.append(" select   *  from  "+ TABLE_NAME + " where  carno1+carno2= :carno ");
 
         SqlParameterSource params = new MapSqlParameterSource("carno",carno);
         List<CarBase> list = getNamedParameterJdbcTemplate().query(sql.toString(),params, BeanPropertyRowMapper.newInstance(CarBase.class));

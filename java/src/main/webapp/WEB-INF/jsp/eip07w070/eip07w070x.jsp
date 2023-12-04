@@ -38,7 +38,6 @@
 	                    <th class="align-middle"  style="width: 25%">用車事由</th>
 	                    <th class="align-middle"  style="width: 20%">目的地</th>
 	                    <th class="align-middle"  style="width: 10%">派車單號</th>
-	                    <th class="align-middle"  style="width: 5%">補單註記</th>
 	                </thead>
 	                <tbody>
 	                <c:forEach items="${caseData.dataList}" var="item" varStatus="status">
@@ -50,9 +49,6 @@
 	                 		<td class="text-left"><span class="ellipsisStr"><c:out value="${item.apply_memo}"/></span></td>
 	                 		<td class="text-left"><c:out value="${item.destination}"/></td>
 	                 		<td><c:out value="${item.applyid}"/></td>
-	                 		<td>
-	                 			<c:out value="${item.fillmk}"/>
-	                 		</td>
 	                 	</tr>
 	                </c:forEach>
 	                </tbody>

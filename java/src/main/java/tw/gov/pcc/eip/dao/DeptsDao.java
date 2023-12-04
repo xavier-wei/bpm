@@ -67,4 +67,11 @@ public interface DeptsDao {
 	 * */
 	public List<Depts> findAllDeptId(String dept_id);
 
+    /**
+     *  通訊錄查詢 部門選單
+     *  
+     * @return
+     */
+    public List<Depts> getEip02w010DeptIdList();
+
 }

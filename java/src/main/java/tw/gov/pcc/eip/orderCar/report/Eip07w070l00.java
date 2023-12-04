@@ -89,9 +89,9 @@ public class Eip07w070l00 extends PdfReportBase {
             addCellAssignVAlignmentAndAllPadding(table, 12, 1, DateUtility.formatChineseDateString(DateUtility.changeDateType(item.getUsingdate()) ,false), subTitleFontSizeMid, 1, CENTER, MIDDLE, 0, 3);
             addCellAssignVAlignmentAndAllPadding(table, 16, 1, item.getApprove_using_time_s()
             		+"~"+item.getApprove_using_time_e(), subTitleFontSizeMid, 1, CENTER, MIDDLE, 0, 3);
-            addCellAssignVAlignmentAndAllPadding(table, 28, 1, item.getApply_memo(), subTitleFontSizeMid, 1, LEFT, MIDDLE, 0, 3);
+            addCellAssignVAlignmentAndAllPadding(table, 18, 1, item.getApply_memo(), subTitleFontSizeMid, 1, LEFT, MIDDLE, 0, 3);
             addCellAssignVAlignmentAndAllPadding(table, 26, 1, item.getDestination(), subTitleFontSizeMid, 1, LEFT, MIDDLE, 0, 3);
-            addCellAssignVAlignmentAndAllPadding(table, 18, 1, item.getApplyid(), subTitleFontSizeMid, 1, CENTER, MIDDLE, 0, 3);
+            addCellAssignVAlignmentAndAllPadding(table, 28, 1, item.getApplyid(), subTitleFontSizeMid, 1, CENTER, MIDDLE, 0, 3);
     	}
     }
     

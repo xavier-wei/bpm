@@ -337,4 +337,26 @@ public class Eip07w040Controller extends BaseController {
 		
 		return QUERY_PAGE;
 	}
+	
+	
+	/**
+	 * 秘書處進行派車作業 不派車
+	 *
+	 * @param caseData
+	 * @param result
+	 * @return
+	 */
+	@RequestMapping("/Eip07w040_nocar.action")
+	public ModelAndView nocartouse(@ModelAttribute(CASE_KEY) Eip07w040Case caseData, BindingResult result) {
+		log.debug("導向   Eip07w040  秘書處進行派車作業：更新資料 ");
+		try {
+			eip07w040Service.nocartouse(caseData);
+			eip07w040Service.getDefaultData(caseData);
+		} catch (Exception e) {
+			log.error("Eip07W040Controller不派車處理失敗" + ExceptionUtils.getStackTrace(e));
+		}
+		setSystemMessage("不派車成功");
+		
+		return new ModelAndView(QUERY_PAGE);
+	}
 }
