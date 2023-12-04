@@ -536,15 +536,15 @@
                 <div v-if="userData.isSupervisor && formStatusRef === FormStatusEnum.VERIFY">
                   <!--除了申請者的上級會有同意跟不同意，其餘只會有送出按鈕-->
                   <b-button class="ml-2" style="background-color: #17a2b8; color: white"
-                            @click="reviewStart('同意',true)">同意
+                            @click="reviewStart('同意')">同意
                   </b-button>
                   <b-button class="ml-2" style="background-color: #17a2b8; color: white"
-                            @click="reviewStart('不同意',true)">不同意
+                            @click="reviewStart('不同意')">不同意
                   </b-button>
                 </div>
                 <div v-else-if="formStatusRef === FormStatusEnum.VERIFY">
                   <b-button class="ml-2" style="background-color: #17a2b8; color: white"
-                            @click="reviewStart('審核',true)">送出
+                            @click="reviewStart('審核')">送出
                   </b-button>
                 </div>
 
@@ -552,7 +552,7 @@
                           v-show="formStatusRef === FormStatusEnum.VERIFY && isSignatureRef">加簽
                 </b-button>
                 <b-button class="ml-2" style="background-color: #17a2b8; color: white"
-                          @click="reviewStart('補件',true)"
+                          @click="reviewStart('補件')"
                           v-show="configTitleName(userData.titleName) && formStatusRef === FormStatusEnum.VERIFY">補件
                 </b-button>
                 <b-button class="ml-2" style="background-color: #17a2b8; color: white"
@@ -991,7 +991,7 @@ export default {
         .get(`/eip/bpm-l410-apply-manages`)
         .then(({data}) => {
           data.forEach(i => {
-            formToCheckbox(i, formData, taskDataRef.value.taskName.replace('加簽-', ''), userData.userName,formStatusRef.value,FormStatusEnum)
+            formToCheckbox(i, formData, taskDataRef.value.taskName.replace('加簽-', ''), userData.userName, formStatusRef.value, FormStatusEnum)
           })
           table.data = data
           if (formData.processInstanceId !== null && formData.processInstanceId !== undefined) {
@@ -1060,11 +1060,10 @@ export default {
             .then(({data}) => {
               if (isSubmit === '1') {
                 $bvModal.msgBoxOk('表單已送出');
-                navigateByNameAndParams('pending', {isReload: false, isNotKeepAlive: true,query:queryRef.value});
-                // reviewStart(isSubmit, false);
+                navigateByNameAndParams('pending', {isReload: false, isNotKeepAlive: true, query: queryRef.value});
               } else {
                 $bvModal.msgBoxOk('表單更新完畢');
-                navigateByNameAndParams('pending', {isReload: false, isNotKeepAlive: true,query:queryRef.value});
+                navigateByNameAndParams('pending', {isReload: false, isNotKeepAlive: true, query: queryRef.value});
               }
             })
             .catch(notificationErrorHandler(notificationService));
@@ -1075,15 +1074,11 @@ export default {
     }
 
     //根據畫面點選的按送出，同意 不同意 審核(除了申請者的上級會有同意跟不同意，其餘只會有送出按鈕) 補件
-    async function reviewStart(item, i) {
+    async function reviewStart(item) {
       let variables = {};
       let l410Variables = [];
 
-      let isOK = true;
-
-      if (i === true) {
-        isOK = await $bvModal.msgBoxConfirm('是否送出' + item + '?');
-      }
+      let isOK = await $bvModal.msgBoxConfirm('是否送出' + item + '?');
 
       //判斷審核者需要填寫的欄位,需要回傳的array都是true 才能繼續往下
       let confirmOK = await Promise.all(table.data.map(data => confirmAllData(data, userData.deptId, taskDataRef.value.taskName.replace('加簽-', ''), notificationService)));
@@ -1154,10 +1149,10 @@ export default {
           .then(({data}) => {
             if (item === '1') {
               $bvModal.msgBoxOk('表單儲存完畢');
-              navigateByNameAndParams('pending', {isReload: false, isNotKeepAlive: true,query:queryRef.value});
+              navigateByNameAndParams('pending', {isReload: false, isNotKeepAlive: true, query: queryRef.value});
             } else {
               $bvModal.msgBoxOk('表單審核完畢');
-              navigateByNameAndParams('pending', {isReload: false, isNotKeepAlive: true,query:queryRef.value});
+              navigateByNameAndParams('pending', {isReload: false, isNotKeepAlive: true, query: queryRef.value});
             }
           })
           .catch(notificationErrorHandler(notificationService));
@@ -1180,12 +1175,12 @@ export default {
       if (isOK) {
         let request = {
           processInstanceId: form.processInstanceId,
-          key:'L410'
+          key: 'L410'
         }
         axios.post(`/process/deleteProcessInstance`, request)
           .then(({data}) => {
             $bvModal.msgBoxOk('表單流程撤銷完畢');
-            handleBack({isReload: false, isNotKeepAlive: false,query:queryRef.value});
+            handleBack({isReload: false, isNotKeepAlive: false, query: queryRef.value});
           })
           .catch(notificationErrorHandler(notificationService))
       }
@@ -1193,7 +1188,7 @@ export default {
 
     //返回上一頁
     function toQueryView() {
-      handleBack({isReload: true, isNotKeepAlive: true,query:queryRef.value});
+      handleBack({isReload: true, isNotKeepAlive: true, query: queryRef.value});
     }
 
     const getItem = (item: string) => {
