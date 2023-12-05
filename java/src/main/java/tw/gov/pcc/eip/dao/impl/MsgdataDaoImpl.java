@@ -224,12 +224,10 @@ public class MsgdataDaoImpl extends BaseDao<Msgdata> implements MsgdataDao {
         sql.append("        ISNULL(C.UPDDT, C.CREATDT) UPDDT ");
         sql.append("   FROM MSGDATA C ");
         sql.append("  WHERE C.FSEQ IN ");
-        sql.append("         (SELECT A.FSEQ   ");
-        sql.append("            FROM MSGDEPOSIT A, ");
-        sql.append("                 MSGAVAILDEP B ");
-        sql.append("           WHERE A.FSEQ = B.FSEQ ");
-        sql.append("             AND (CASE WHEN TRIM(B.AVAILABLEDEP) = '00' THEN :dept ELSE TRIM(B.AVAILABLEDEP) END) = :dept ");
-        sql.append("             AND C.ATTRIBUTYPE  = '4') ");
+        sql.append("         (SELECT B.FSEQ   ");
+        sql.append("            FROM MSGAVAILDEP B ");
+        sql.append("           WHERE (CASE WHEN TRIM(B.AVAILABLEDEP) = '00' THEN :dept ELSE TRIM(B.AVAILABLEDEP) END) = :dept ) ");
+        sql.append("    AND C.ATTRIBUTYPE  = '4' ");
         sql.append("    AND C.INDIR = :path ");
         sql.append("    AND C.STATUS = '4' ");
         sql.append("    AND C.ATTRIBUTYPE = '4' ");

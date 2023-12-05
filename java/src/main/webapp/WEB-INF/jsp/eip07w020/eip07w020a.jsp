@@ -52,18 +52,19 @@
 			</tags:form-row>
 			<tags:form-row>
 					<div class="col-md-4 d-flex">
-					   <form:label cssClass="col-form-label" path="carTy">車輛種類：</form:label>
+					   <form:label cssClass="col-form-label star" path="carTy">車輛種類：</form:label>
 					   <form:select id="carTy"  name="carTy"  path="insterList[0].carTy" cssClass="form-control">
-	                    	<form:option value="1">4人座</form:option>
+	                    	<form:option value="">請選擇</form:option>
 	                        <c:forEach var="item" items="${caseData.carTyList}" varStatus="status">
 	                            <form:option value="${item.codeno}"><c:out value="${item.codename}"/></form:option>
 	                        </c:forEach>
 	                    </form:select>
 				   </div>
-					<div class="col-md-4 d-flex">
+					<div class="col-md-8 d-flex align-items-center">
 						<form:label cssClass="col-form-label star" path="number">人數：</form:label>
 						<form:input id="number" name="number" path="insterList[0].number" cssClass="form-control num_only"   size="3"
 									maxlength="3" />
+					<div class="alert_numberStr text-danger"></div>
 					</div>
 			</tags:form-row>
 			<tags:form-row>
@@ -116,6 +117,21 @@
 <script>
 
         $(function() {
+        	//一進來若人數有值則進行判斷
+    		if($("#number").val()>4){
+    			$(".alert_numberStr").text('建議乘坐上限4人，如超過4人，建請另增加申請派車或搭乘大眾運輸工具');
+    		}else{
+    			$(".alert_numberStr").text('');
+    		}
+        	//輸入完人數進行判斷
+        	$('#number').blur(function(){
+        		if($("#number").val()>4){
+        			$(".alert_numberStr").text('建議乘坐上限4人，如超過4人，建請另增加申請派車或搭乘大眾運輸工具');
+        		}else{
+        			$(".alert_numberStr").text('');
+        		}
+        	});
+        	
 			var workTy=$("#workTy").val();
             $('#btnSelect').click(function() {
 				$('#eip07w020Form').attr('action', '<c:url value="/Eip07w020_inster.action" />').submit();

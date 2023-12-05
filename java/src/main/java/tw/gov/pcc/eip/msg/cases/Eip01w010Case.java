@@ -7,9 +7,8 @@ import java.util.Map;
 
 import javax.validation.constraints.AssertTrue;
 
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
-
-import com.cronutils.utils.StringUtils;
 
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -117,6 +116,8 @@ public class Eip01w010Case implements Serializable {
     private String creatid; // 建立人員：(帶入首次建入人員)
 
     private String creatdt; // 建立時間：(帶入首次建入系統時間) (註12)
+    private String creatDeptid; // 建立者部門id
+    private String userDeptid; // 使用者部門id
 
     private String updid; // 更新人員：(執行更新人員)
 
@@ -218,7 +219,7 @@ public class Eip01w010Case implements Serializable {
         private List<String> treeList;
     }
 
-    @AssertTrue(message = "請至少勾選一筆", groups = Check.class)
+    @AssertTrue(message = "請至少勾選一筆", groups = { Check.class })
     public boolean isChecked() {
         if ("I".equals(mode) || "D".equals(mode)) {
             return true;
@@ -229,9 +230,17 @@ public class Eip01w010Case implements Serializable {
         return false;
     }
 
-    @AssertTrue(message = "狀態改為註銷時，「下架原因」為必填", groups = Update.class)
+    @AssertTrue(message = "狀態改為註銷時，「下架原因」為必填", groups = { Update.class })
     public boolean isOff() {
         if ("X".equals(status) && StringUtils.isEmpty(offreason)) {
+            return false;
+        }
+        return true;
+    }
+
+    @AssertTrue(message = "「存放目錄」為必填", groups = { Update.class })
+    public boolean isDownloadAttributype() {
+        if ("4".equals(attributype) && StringUtils.isEmpty(indir)) {
             return false;
         }
         return true;

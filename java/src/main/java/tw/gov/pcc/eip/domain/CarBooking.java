@@ -397,4 +397,5 @@ public class CarBooking implements Serializable {
     private String usingTimeList;//eip07w040用於畫面顯示今日該車輛已派出的時間
     private String fillmk;//補單註記
     private Integer car_max_num;//乘車人數上限：抓車輛種類的第一碼，例如7人座：就抓7
+	private String carprocess_statusStr;// 派車狀態中文 for eip07w040q
 }

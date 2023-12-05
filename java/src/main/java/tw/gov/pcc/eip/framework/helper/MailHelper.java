@@ -64,7 +64,11 @@ public class MailHelper {
     }
 
     private String getDefaultSender() {
-        return mailSender.getUsername();
+        if(StringUtils.contains(mailSender.getUsername(),"@")){
+            return mailSender.getUsername();
+        }else{
+            return mailSender.getUsername()+"@mail.pcc.gov.tw"; 
+        }
     }
 
     /**

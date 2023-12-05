@@ -109,18 +109,19 @@
                      <table id="qryListTable" class="table">
                        <thead data-orderable="true">
                         <tr>
-                            <th class="align-middle" style="width: 5%">全選<input type="checkbox" id="handledListTabcheckAllP" name="handledListTabcheckAllP"></th>
-                            <th class="align-middle" style="width: 10%">派車單號</th>
+                            <th class="align-middle" style="width: 4%">全選<input type="checkbox" id="handledListTabcheckAllP" name="handledListTabcheckAllP"></th>
+                            <th class="align-middle" style="width: 8%">派車單號</th>
                             <th class="align-middle" style="width: 10%">申請人</th>
-                            <th class="align-middle" style="width: 10%">申請單位</th>
-                            <th class="align-middle" style="width: 7%">用車日期</th>
-                            <th class="align-middle" style="width: 8%">核定用車時間起迄</th>
-                            <th class="align-middle" style="width: 11%">用車事由</th>
-                            <th class="align-middle" style="width: 6%">已列印派車單註記</th>
-                            <th class="align-middle" style="width: 8%">車號</th>
-                            <th class="align-middle" style="width: 7%">補印</th>
-                            <th class="align-middle" style="width: 8%">臨時取消</th>
-                            <th class="align-middle" style="width: 10%">改派他車</th>
+                            <th class="align-middle" style="width: 9%">申請單位</th>
+                            <th class="align-middle" style="width: 5%">用車日期</th>
+                            <th class="align-middle" style="width: 7%">核定用車<br>時間起迄</th>
+                            <th class="align-middle" style="width: 14%">用車事由</th>
+                            <th class="align-middle" style="width: 11%">狀態</th>
+                            <th class="align-middle" style="width: 6%">已列印<br>派車單註記</th>
+                            <th class="align-middle" style="width: 7%">車號</th>
+                            <th class="align-middle" style="width: 5%">補印</th>
+                            <th class="align-middle" style="width: 7%">臨時取消</th>
+                            <th class="align-middle" style="width: 7%">改派他車</th>
                         </tr>
                        </thead>
                       <tbody>
@@ -128,9 +129,10 @@
                       <c:forEach items="${caseData.handledList}" var="item" varStatus="status">
                       <tr>
                       	<td>
-                      	<c:if test="${empty item.print_mk}">
+                      	<c:if test="${ item.carprocess_status ne '9' && empty item.print_mk && item.carprocess_status ne '5' && item.carprocess_status ne '8' }">
                       		<form:checkbox path="applyids" name="applyids" value="${item.applyid}"/>
                       	</c:if>
+                      	
                       	</td>
                       	<td><c:out value="${item.applyid}"/></td>
                       	<td><c:out value="${item.apply_user}"/>
@@ -141,14 +143,17 @@
                       	<td><func:minguo value="${item.using_date}"/></td>
                       	<td>
                     	    <c:choose>
-                      		<c:when test="${item.using ne item.approve_using}">
+                      		<c:when test="${item.using ne item.approve_using && item.approve_using_time_s ne ''}">
                       			<font color="red">
                       			<c:out value="${item.approve_using_time_s}"/>~
                        			<c:out value="${item.approve_using_time_e}"/></font>
 	                       	</c:when>
+	                       	<c:when test="${item.using eq item.approve_using && item.approve_using_time_s ne ''}">
+                      			<c:out value="${item.approve_using_time_s}"/>~
+                       			<c:out value="${item.approve_using_time_e}"/>
+	                       	</c:when>
 	                       	<c:otherwise>
-	                        	<c:out value="${item.approve_using_time_s}"/>~
-	                        	<c:out value="${item.approve_using_time_e}"/>
+	                        	
 	                       	</c:otherwise>
 	                       	</c:choose>                      	
                       	</td>
@@ -157,14 +162,22 @@
                  		<c:out value="${item.apply_memo}"/>
                  	</span>
                       	</td>
+                      	<td class="text-left"><c:out value="${item.carprocess_statusStr}"/></td>
                       	<td>
                       		<c:out value="${item.print_mk}"/>
                       	</td>
                       	<td>
-                      		<c:out value="${item.carno1}"/>-<c:out value="${item.carno2}"/>
+                      	<c:choose>
+                      		<c:when test="${ item.carprocess_status eq '5' || item.carprocess_status eq '8'  }">
+                      		 
+                      		</c:when>
+                      		<c:otherwise>
+                      			<c:out value="${item.carno1}"/>-<c:out value="${item.carno2}"/>
+                      		</c:otherwise>
+                      	</c:choose>
                       	</td>
                       	<td>
-                      	<c:if test="${item.print_mk eq 'Y'}">
+                      	<c:if test="${ item.carprocess_status ne '9' &&  item.print_mk  eq 'Y' && item.carprocess_status ne '5' && item.carprocess_status ne '8' }">
                       		<tags:button cssClass="btnPrint2" value="${item.applyid}">
 							補印
 							</tags:button>
@@ -173,6 +186,10 @@
 	                      	<c:choose>
 	                      		<c:when test="${item.carprocess_status eq '9'}">
 	                      			<td>Y</td>
+	                      			<td></td>
+	                      		</c:when>
+	                      		<c:when test="${item.carprocess_status eq '5' || item.carprocess_status eq '8'}">
+	                      			<td></td>
 	                      			<td></td>
 	                      		</c:when>
 	                      		<c:otherwise>

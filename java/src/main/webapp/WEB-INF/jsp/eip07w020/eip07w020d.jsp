@@ -339,17 +339,18 @@
 
 				<tags:form-row>
 						<div  class="col-md-4 d-flex">
-							<form:label cssClass="col-form-label" path="lable">車輛種類：</form:label>
+							<form:label cssClass="col-form-label star" path="lable">車輛種類：</form:label>
 							<form:select id="mkCartype"  name="mkCartype"  path="changeMkList[0].apply_car_type" cssClass="form-control" disabled="true">
-							<form:option value="1">4人座</form:option>
+							<form:option value="">請選擇</form:option>
 							<c:forEach var="item" items="${caseData.carTyList}" varStatus="status">
 								<form:option value="${item.codeno}"><c:out value="${item.codename}"/></form:option>
 							</c:forEach>
 						</form:select>
 					</div>
-					<div class="col-md-4 d-flex">
+					<div class="ol-md-8 d-flex align-items-center">
 						<form:label cssClass="col-form-label star" path="lable">人數：</form:label>
 						<form:input id="rmNum_of_people" name="rmNum_of_people" path="changeMkList[0].num_of_people" cssClass="form-control num_only"    size="3" maxlength="3" disabled="true"/>
+					<div class="alert_numberStr text-danger"></div>
 					</div>
 				</tags:form-row>
 				<tags:form-row>
@@ -407,6 +408,22 @@
 <script>
 
         $(function() {
+        	
+        	//一進來若人數有值則進行判斷
+    		if($("#rmNum_of_people").val()>4){
+    			$(".alert_numberStr").text('建議乘坐上限4人，如超過4人，建請另增加申請派車或搭乘大眾運輸工具');
+    		}else{
+    			$(".alert_numberStr").text('');
+    		}
+        	//輸入完人數進行判斷
+        	$('#rmNum_of_people').blur(function(){
+        		if($("#rmNum_of_people").val()>4){
+        			$(".alert_numberStr").text('建議乘坐上限4人，如超過4人，建請另增加申請派車或搭乘大眾運輸工具');
+        		}else{
+        			$(".alert_numberStr").text('');
+        		}
+        	});
+        	
 			var isSecretarial=$("#isSecretarial").val();
 			controlDiv();
 			controlcheckMk();

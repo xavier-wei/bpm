@@ -19,10 +19,8 @@ import tw.gov.pcc.eip.framework.spring.support.FileOutputView;
 import tw.gov.pcc.eip.orderCar.Validator.Eip07w020Validator;
 import tw.gov.pcc.eip.orderCar.cases.Eip07w020Case;
 import tw.gov.pcc.eip.services.Eip07w020Service;
-import tw.gov.pcc.eip.util.BeanUtility;
-import tw.gov.pcc.eip.util.DateUtility;
-import tw.gov.pcc.eip.util.ExceptionUtility;
-import tw.gov.pcc.eip.util.ObjectUtility;
+import tw.gov.pcc.eip.util.*;
+
 import java.io.ByteArrayOutputStream;
 import java.util.ArrayList;
 import java.util.List;
@@ -101,7 +99,7 @@ public class Eip07w020Controller extends BaseController {
         BeanUtility.copyProperties(caseData, newCase);// 進來時清除caseData
         caseData.setWorkTy("A");
         caseData.setApplyName(userData.getUserId());
-        caseData.setApplyUnit(userData.getDeptId());
+        caseData.setApplyUnit(userData.getDeptId().trim());
         caseData.setApplyUnitNm(userData.getDeptName());
         caseData.setUserName(userData.getUserName());
         caseData.setApplyDate(DateUtil.getNowChineseDate());
@@ -116,8 +114,6 @@ public class Eip07w020Controller extends BaseController {
         caseData.setApplyDateEnd("");
         caseData.setCheckMk("false");
     }
-
-
     /**
      * 派車預約暨派車新增畫面
      *
@@ -182,6 +178,7 @@ public class Eip07w020Controller extends BaseController {
         }
         try {
             List<Eip07w020Case> data =new ArrayList<>();
+            log.info("登入人員部門代號為"+caseData.getApplyId()+caseData.getRpApplyNm());
             eip07w020Service.secretarialLogin(caseData);
             data= eip07w020Service.quaryData(caseData);
             caseData.setApplyDateStar(DateUtility.changeDateType(caseData.getApplyDateStar()));

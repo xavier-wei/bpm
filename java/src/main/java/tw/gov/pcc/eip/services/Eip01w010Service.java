@@ -193,7 +193,7 @@ public class Eip01w010Service {
     public Map<String, String> getMsgtype(String attr) {
         // 訊息類別
         Map<String, String> map = eipCodeDao.findByCodekindScodekindOrderByCodeno("MESSAGETYPE", attr).stream()
-                .collect(Collectors.toMap(Eipcode::getCodeno, Eipcode::getCodename));
+                .collect(Collectors.toMap(Eipcode::getCodeno, Eipcode::getCodename, (n, o) -> n, LinkedHashMap::new));
         return ObjectUtility.normalizeObject(map);
     }
 
@@ -205,7 +205,7 @@ public class Eip01w010Service {
      */
     public Map<String, String> getUsers(String dept) {
         Map<String, String> map = usersDao.getDeptUsers(dept).stream()
-                .collect(Collectors.toMap(Users::getUser_id, Users::getUser_name));
+                .collect(Collectors.toMap(Users::getUser_id, Users::getUser_name, (n, o) -> n, LinkedHashMap::new));
         return ObjectUtility.normalizeObject(map);
     }
 
@@ -282,7 +282,7 @@ public class Eip01w010Service {
      * 
      * @param caseData
      */
-    public void getOne(Eip01w010Case caseData) {
+    public void getOne(Eip01w010Case caseData, String deptid) {
         String fseq = caseData.getFseq();
         Msgdata msgdata = msgdataDao.findbyfseq(fseq);
         caseData.setFseq(msgdata.getFseq()); // 項次
@@ -329,6 +329,11 @@ public class Eip01w010Service {
 
         caseData.setCreatid(userName.apply(trim(msgdata.getCreatid()))); // 建立人員
         caseData.setCreatdt(msgdata.getCreatdt() == null ? "" : msgdata.getCreatdt().format(minguoDateTimeformatter)); // 建立時間
+        Users user = usersDao.selectByKey(msgdata.getCreatid());
+        if (user != null) {
+            caseData.setCreatDeptid(user.getDept_id()); // 建立者部門id
+        }
+        caseData.setUserDeptid(deptid); // 使用者部門id
         caseData.setUpdid(userName.apply(trim(msgdata.getUpdid()))); // 更新人員
         caseData.setUpddt(msgdata.getUpddt() == null ? "" : msgdata.getUpddt().format(minguoDateTimeformatter)); // 更新時間
         // 取得附檔清單
@@ -480,7 +485,7 @@ public class Eip01w010Service {
         m.setSubject(caseData.getSubject()); // 主旨/連結網址
         m.setMcontent("A".equals(caseData.getPagetype()) ? caseData.getMcontent() : caseData.getMlink()); // 內文
         m.setOplink(caseData.getOplink()); // 是否需要另開視窗
-        if ("A".equals(caseData.getPagetype()) && "4".equals(caseData.getAttributype())) {
+        if ("4".equals(caseData.getAttributype())) {
             m.setIndir(caseData.getIndir()); // 存放目錄
             // 存放目錄
             insertMsgdepositdir(caseData.getAttributype(), caseData.getTmpPath(), caseData.getIndir());
@@ -623,7 +628,6 @@ public class Eip01w010Service {
         m.setSubject(caseData.getSubject()); // 主旨/連結網址
         if ("B".equals(caseData.getPagetype())) {
             m.setMcontent(caseData.getMlink()); // 內文
-            m.setIndir(null); // 存放目錄
 
             if ("A".equals(m.getPagetype())) {
                 List<Msgdeposit> files = msgdepositDao.findbyfseq(Arrays.asList(fseq));

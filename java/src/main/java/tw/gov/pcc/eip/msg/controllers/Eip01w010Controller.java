@@ -137,7 +137,7 @@ public class Eip01w010Controller extends BaseController {
         log.debug("導向 Eip01w010_enter 訊息上稿 查詢");
         eip01w010Service.initOptions(caseData);
         try {
-            eip01w010Service.getOne(caseData);
+            eip01w010Service.getOne(caseData, userData.getDeptId());
             return new ModelAndView(EDIT_PAGE);
         } catch (Exception e) {
             log.error("訊息上稿 - " + ExceptionUtility.getStackTrace(e));
@@ -294,7 +294,7 @@ public class Eip01w010Controller extends BaseController {
         eip01w010Service.initOptions(caseData);
         try {
             eip01w010Service.deleteFile(caseData.getFseq(), caseData.getSeq());
-            eip01w010Service.getOne(caseData);
+            eip01w010Service.getOne(caseData, userData.getDeptId());
         } catch (Exception e) {
             log.error("訊息上稿 - " + ExceptionUtility.getStackTrace(e));
             setSystemMessage(getDeleteFailMessage());

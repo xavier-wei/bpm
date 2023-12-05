@@ -1,6 +1,5 @@
 package tw.gov.pcc.eip.services;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -47,7 +46,7 @@ public class Eip01w060Service {
     public void initOptions(Eip01w060Case caseData, String deptId) {
         // 分眾
         Map<String, String> resultMap = deptsDao.getRelevantDeptByAttr("6", deptId).stream()
-                .collect(Collectors.toMap(Depts::getDept_id, Depts::getDept_name));
+                .collect(Collectors.toMap(Depts::getDept_id, Depts::getDept_name, (n, o) -> n, LinkedHashMap::new));
         caseData.setDepts(resultMap);
     }
 

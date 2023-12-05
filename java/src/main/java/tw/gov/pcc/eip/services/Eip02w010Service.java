@@ -100,7 +100,7 @@ public class Eip02w010Service {
         String userEname = onOff ? trimToNull(caseData.getUser_ename()) : null;
         String email = onOff ? trimToNull(caseData.getEmail()) : null;
         String titlename = onOff ? trimToNull(caseData.getTitlename()) : null;
-        List<addressBook> addressBook = usersDao.getEip02wUsers(deptId, sort, trimToNull(caseData.getUser_name()), userId,
+        List<addressBook> addressBook = usersDao.getEip02wUsers(trimToNull(deptId), sort, trimToNull(caseData.getUser_name()), userId,
                 userEname, email, titlename);
         caseData.setQryList(addressBook); // 查詢結果
         if (deptId != null) {

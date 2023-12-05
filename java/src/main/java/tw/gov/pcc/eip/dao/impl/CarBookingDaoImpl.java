@@ -439,7 +439,7 @@ public class CarBookingDaoImpl extends BaseDao<CarBooking> implements CarBooking
 		Map<String, String> map = new HashMap<>();
 		
 		sql.append(" select (select dept_name from DEPTS where dept_id= apply_dept )apply_deptStr,c.* from CAR_BOOKING c ");
-		sql.append(" Where carprocess_status in ('3','4','6','7','9') ");
+		sql.append(" Where carprocess_status in ('3','4','5','6','7','8','9') ");
 		
 		if("default".equals(type)) {
 			setUsingdate(caseData,map);				

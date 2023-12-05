@@ -174,7 +174,7 @@
             			<th style="width: 10%">派車單號</th>
             			<th style="width: 10%">申請人</th>
             			<th style="width: 10%">申請單位</th>
-            			<th style="width: 10%">核定用車時間</th>
+            			<th style="width: 10%">核定用車時間起迄</th>
             			<th style="width: 10%">核定用車區間</th>
             			<th style="width: 30%">用車事由</th>
             			<th style="width: 30%">目的地</th>

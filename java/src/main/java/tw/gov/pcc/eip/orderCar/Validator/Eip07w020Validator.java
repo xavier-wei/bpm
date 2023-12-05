@@ -100,6 +100,9 @@ public class Eip07w020Validator implements Validator {
 		) {
 			errors.reject(null, "用車時間必需輸入");
 		}
+		if (StringUtils.isBlank(validate.getCarTy())) {
+			errors.reject(null, "車輛種類必須選擇");
+		}
 		try {
 
 			Date timeSart = format.parse(validate.getStarH()+validate.getStarM());
@@ -154,6 +157,9 @@ public class Eip07w020Validator implements Validator {
 			if (timeSart.compareTo(timeEnd)>0){
 				errors.reject(null, "用車時間起始時間不可小於結束時間");
 			}
+			if (StringUtils.isBlank(rmData.getApply_car_type())) {
+				errors.reject(null, "尚未選取車輛種類");
+			}
 	}catch (Exception e){
 		log.error("驗證失敗，原因:{}", ExceptionUtility.getStackTrace(e));
 	}
@@ -183,6 +189,7 @@ public class Eip07w020Validator implements Validator {
 		if (timeSart.compareTo(timeEnd)>0){
 			errors.reject(null, "用車時間起始時間不可小於結束時間");
 		}
+		
 		}catch (Exception e){
 			log.error("驗證失敗，原因:{}", ExceptionUtility.getStackTrace(e));
 		}

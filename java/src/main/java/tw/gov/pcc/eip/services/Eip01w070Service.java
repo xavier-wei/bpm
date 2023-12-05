@@ -46,7 +46,7 @@ public class Eip01w070Service {
     public void initOptions(Eip01w070Case caseData, String deptId) {
         // 分眾
         Map<String, String> resultMap = deptsDao.getRelevantDeptByAttr("7", deptId).stream()
-                .collect(Collectors.toMap(Depts::getDept_id, Depts::getDept_name));
+                .collect(Collectors.toMap(Depts::getDept_id, Depts::getDept_name, (n, o) -> n, LinkedHashMap::new));
         caseData.setDepts(resultMap);
     }
 

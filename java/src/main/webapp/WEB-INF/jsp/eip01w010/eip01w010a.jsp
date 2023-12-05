@@ -336,7 +336,7 @@
                     </tags:form-row>
                 </c:if>
                 <tags:form-row cssClass="indir-row">
-                    <form:label cssClass="col-form-label" path="indir">存放目錄：</form:label>
+                    <form:label cssClass="col-form-label star" path="indir">存放目錄：</form:label>
                     <div class="col-sm-6 d-flex">
                         <form:input path="indir" cssClass="form-control" maxlength="0" style="width:70%;" />
                         <tags:button cssClass="ml-2" id="btnPath">選取目錄</tags:button>
@@ -626,12 +626,16 @@
                 $('#btnPath').click(function() {
                     $('#popModal').modal('show');
                 });
+                let creatDeptid = '<c:out value="${caseData.creatDeptid}" />';
+                let userDeptid = '<c:out value="${caseData.userDeptid}" />';
                 // 存檔
                 $("#btnSave").click(function(e) {
                     e.preventDefault();
-                    $('input:radio[name="locatearea"]').prop('disabled', false);
-                    $('#eip01w010Form').attr('action', '<c:url value="/Eip01w010_save.action" />')
-                        .submit();
+                    //$('input:radio[name="locatearea"]').prop('disabled', false);
+                    if (creatDeptid === userDeptid) {
+                        $('#eip01w010Form').attr('action', '<c:url value="/Eip01w010_save.action" />')
+                            .submit();
+                    }
                 });
                 // 預覽
                 $("#btnPreview").click(function(e) {
@@ -642,10 +646,12 @@
                             'fseq': $('#fseq').val()
                         },
                         timeout: 100000,
-                        success: function(${"data"}) {
-                            if (data === '') {
+                        success: function(${"content"}) {
+                            if (content === '') {
                                 showAlert('查無資料!');
                             } else {
+                                var jsonStr = content.replace(/&#34;/g, '\"');
+                                let data = JSON.parse(jsonStr);
                                 var fileList = '';
                                 var bodyContent = '';
                                 $.each(data.file, function(i, e) {
@@ -690,17 +696,21 @@
                 });
                 // 上稿
                 $("#btnUpload").click(function(e) {
-                    $('input:radio[name="locatearea"]').prop('disabled', false);
-                    $('#eip01w010Form').attr('action', '<c:url value="/Eip01w010_msg.action" />')
-                        .submit();
+                    //$('input:radio[name="locatearea"]').prop('disabled', false);
+                    if (creatDeptid === userDeptid) {
+                        $('#eip01w010Form').attr('action', '<c:url value="/Eip01w010_msg.action" />')
+                            .submit();
+                    }
                 });
                 // 刪除
                 $('#btnDelete').click(function(e) {
-                    showConfirm('確定要刪除資料？', () => {
-                        $('#eip01w010Form').attr('action',
-                                '<c:url value="/Eip01w010_btndel.action" />')
-                            .submit();
-                    });
+                    if (creatDeptid === userDeptid) {
+                        showConfirm('確定要刪除資料？', () => {
+                            $('#eip01w010Form').attr('action',
+                                    '<c:url value="/Eip01w010_btndel.action" />')
+                                .submit();
+                        });
+                    }
                 });
                 $('input:radio[name="locatearea"]:eq(2)').prop('checked', true);
                 // 清除
@@ -714,7 +724,7 @@
                     $('#pagetype option:eq(0)').prop('selected', true);
                     $('#attributype option:eq(0)').prop('selected', true);
                     $('#contactunit option[value="${caseData.tmpContactunit}"]').prop('selected', true);
-                    $('#contactperson option[value="${caseData.userId}"]').prop('selected', true);
+                    getUsersOptions('<c:out value="${caseData.tmpContactunit}" />', '<c:out value="${caseData.userId}" />');
                     $('#msgtype').empty();
                     $('#msgtype').append("<option>請先選擇屬性</option>");
                     $('input:checkbox').prop('checked', false);
@@ -722,6 +732,7 @@
                     $('input:radio[name="istop"],[name="isfront"]:eq(1)').prop('checked', true);
                     $('#word-count').css('visibility', 'hidden');
                     $('#contacttel').val('${caseData.tmpContacttel}');
+                    $('#offtime, #releasedt').val(''); // 時間欄位 特別處理
                     showhide('');
                 });
                 // 返回
@@ -749,7 +760,7 @@
 	                    $('input:radio[name="oplink"]').prop('checked', false);
 	                    $('.subject-label-name').html('主旨：');
 	                } else if (pagetype === 'B') { // 連結
-	                    $("#images, #files, #indir").val('');
+	                    $("#images, #files").val('');
 	                    $('.imgblock').html('');
 	                    $('#files').next('.custom-file-label').html('Choose files');
 	                    $('#images').next('.custom-file-label').html('Choose images');
@@ -766,7 +777,7 @@
 	                    $('#images').next('.custom-file-label').html('Choose images');
 	                    $('.mcontent-row, .content-link-row, .images-row, .imgblock, .files-row, .oplink-row, .indir-row, #btnLink, .textblock').hide();
 	                }
-                    if ($('#attributype').val() === '4' && pagetype === 'A') {
+                    if ($('#attributype').val() === '4') {
                         $('.indir-row').show();
                     } else {
                         $('.indir-row').hide();
@@ -830,12 +841,12 @@
                         }
                     });
                 }
-                function getUsersOptions(selectValue) {
+                function getUsersOptions(deptId, userId) {
                     $.ajax({
                         type: "POST",
                         url: '<c:url value="/Eip01w010_getUsersData.action" />',
                         data: {
-                            'deptid': selectValue
+                            'deptid': deptId
                         },
                         timeout: 100000,
                         success: function(data) {
@@ -845,9 +856,8 @@
                                         "'>" + e + "</option>");
                                 });
                             }
-                            let reportNo = '<c:out value="${caseData.contactperson}"/>';
-                            if (reportNo !== '') {
-                                $("#contactperson option[value=" + reportNo + "]").prop(
+                            if (userId !== '') {
+                                $("#contactperson option[value=" + userId + "]").prop(
                                     'selected', 'selected');
                             }
                         },
@@ -865,7 +875,7 @@
                     // 清空存放目錄 帶預設部門
                     getMsgtypeOptions(selectValue);
                     getAllNode(selectValue, false);
-                    if (selectValue === '4' && $('#pagetype').val() === 'A') {
+                    if (selectValue === '4') {
                         $('.indir-row').show();
                     } else {
                         $('.indir-row').hide();
@@ -874,12 +884,13 @@
                 $('#contactunit').on('change', function(){
                     var selectValue = $(this).val();
                     $('#contactperson').empty();
-                	getUsersOptions(selectValue);
+                    getUsersOptions(selectValue);
                 });
-                var attribute = $('#attributype').val();
-                getMsgtypeOptions(attribute);
-                var contactunit = $('#contactunit').val();
-                getUsersOptions(contactunit);
+                var attribute = '<c:out value="${caseData.attributype}" />';
+                getMsgtypeOptions(attribute); // 取得訊息類別選單(屬性)
+                var contactunit = '<c:out value="${caseData.contactunit}" />';
+                var contactperson = '<c:out value="${caseData.contactperson}" />';
+                getUsersOptions(contactunit, contactperson); // 取得使用者選單(聯絡單位, 聯絡人)
                 getAllNode(attribute, true);
                 // 選擇檔案
                 $("#files").on("change", function() {
@@ -947,12 +958,14 @@
                 }
                 // 附檔清單 X按鈕
                 $('.text-remove').click(function() {
-                    showConfirm('確定要刪除附檔？', () => {
-                        $('#seq').val(this.id);
-                        $('#eip01w010Form').attr('action',
-                                '<c:url value="/Eip01w010_delFile.action" />')
-                            .submit();
-                    });
+                    if (creatDeptid === userDeptid) {
+                        showConfirm('確定要刪除附檔？', () => {
+                            $('#seq').val(this.id);
+                            $('#eip01w010Form').attr('action',
+                                    '<c:url value="/Eip01w010_delFile.action" />')
+                                .submit();
+                        });
+                    }
                 });
             });
             // 檔案下載連結
