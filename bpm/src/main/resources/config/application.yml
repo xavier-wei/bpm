@@ -22,15 +22,15 @@ spring:
       on-profile: '!api-docs'
 
   mail:
-    host: smtp.gmail.com
-    port: 587
-    username: shzerokimo
-    password: fuzsrdjmghbxlzbw
+    host:
+    port:
+    username:
+    password:
     properties:
       mail:
         smtp:
           starttls:
-            enable: true
+            enable:
 springdoc:
   api-docs:
     enabled: false

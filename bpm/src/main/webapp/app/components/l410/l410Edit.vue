@@ -1075,7 +1075,9 @@ export default {
 
     //根據畫面點選的按送出，同意 不同意 審核(除了申請者的上級會有同意跟不同意，其餘只會有送出按鈕) 補件
     async function reviewStart(item) {
+      //定義給flowable的xml
       let variables = {};
+      //flowable起流程用的
       let l410Variables = [];
 
       let isOK = await $bvModal.msgBoxConfirm('是否送出' + item + '?');
