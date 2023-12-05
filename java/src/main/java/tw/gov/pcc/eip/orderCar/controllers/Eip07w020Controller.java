@@ -81,6 +81,7 @@ public class Eip07w020Controller extends BaseController {
         caseData.setApplyUnitNm(userData.getDeptName());
         caseData.setUserName(userData.getUserName());
         caseData.setApplyDate(DateUtil.getNowChineseDate());
+        log.info("登入人員部門代號為1"+"員編"+caseData.getApplyId()+"部門ID"+caseData.getApplyUnit()+"部門名稱"+caseData.getRpApplyNm());
         eip07w020Service.secretarialLogin(caseData);
         if ("Y".equals(caseData.getIsSecretarial())){
             caseData.setUseDateStar(DateUtil.getNowChineseDate());
@@ -178,7 +179,7 @@ public class Eip07w020Controller extends BaseController {
         }
         try {
             List<Eip07w020Case> data =new ArrayList<>();
-            log.info("登入人員部門代號為"+caseData.getApplyId()+caseData.getRpApplyNm());
+            log.info("登入人員部門代號為2"+"員編"+caseData.getApplyId()+"部門ID"+caseData.getApplyUnit()+"部門名稱"+caseData.getRpApplyNm());
             eip07w020Service.secretarialLogin(caseData);
             data= eip07w020Service.quaryData(caseData);
             caseData.setApplyDateStar(DateUtility.changeDateType(caseData.getApplyDateStar()));
