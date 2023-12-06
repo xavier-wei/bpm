@@ -4,11 +4,13 @@ import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
+import tw.gov.pcc.eip.dao.User_rolesDao;
 import tw.gov.pcc.eip.dao.UsersDao;
 import tw.gov.pcc.eip.dao.View_cpape05mDao;
 import tw.gov.pcc.eip.domain.Users;
 import tw.gov.pcc.eip.domain.View_cpape05m;
 import tw.gov.pcc.eip.util.BeanUtility;
+import tw.gov.pcc.eip.util.DateUtility;
 import tw.gov.pcc.eip.util.ExceptionUtility;
 import tw.gov.pcc.eip.util.ObjectUtility;
 
@@ -28,6 +30,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 public class Eip0aw030Service {
 
     private final UsersDao usersDao;
+    private final User_rolesDao user_rolesDao;
     private final View_cpape05mDao view_cpape05mDao;
 
     public void updateAllUsersFromView_cpape05m() {
@@ -38,28 +41,39 @@ public class Eip0aw030Service {
     public void updateUsersFromView_cpape05m(List<Users> list) {
         AtomicInteger passCnt = new AtomicInteger();
         AtomicInteger updateCnt = new AtomicInteger();
+        AtomicInteger deleteCnt = new AtomicInteger();
         AtomicInteger errCnt = new AtomicInteger();
         list.forEach(x -> {
             try {
                 View_cpape05m itrUser = view_cpape05mDao.selectMaxPeupdateRecordByPecard(x.getUser_id());
                 Optional.ofNullable(itrUser).ifPresentOrElse(r -> {
                     Users u = (Users) BeanUtility.cloneBean(x);
-                    x.setFrom_hr("Y");
                     x.setOrg_id(r.getPeorg());
                     x.setDept_id(r.getPeunit());
                     x.setEmail(r.getEmail());
                     x.setUser_name(r.getPename());
                     x.setEmp_id(r.getPecard());
-                    x.setTel1( r.getCt_tel());
+                    x.setTel1(r.getCt_tel());
                     x.setTel2(r.getCt_mobile());
                     x.setTitle_id(r.getPetit());
 
+                    //20231206 將離職日期轉西元，若離職日期不是空值，且離職日期<系統日期，DELETE USERS
+                    boolean isLeave = StringUtils.isNotBlank(r.getPelevdate()) &&
+                            Integer.parseInt(DateUtility.changeDateTypeToWestDate(r.getPelevdate())) < Integer.parseInt(DateUtility.getNowWestDate());
+
                     assert u != null;
-                    if (x.equals(u)) {
+                    if (isLeave) {
+                        //先判斷離職人員刪除
+                        log.info("VIEW_CPAPE05M使用者{}於{}已離職，刪除使用者及授權資料。", ObjectUtility.normalizeObject(x.getUser_id()), DateUtility.changeDateTypeToWestDate(r.getPelevdate()));
+                        usersDao.deleteByKey(x);
+                        user_rolesDao.selectDataByUserId(x.getUser_id()).forEach(user_rolesDao::deleteByKey);
+                        deleteCnt.getAndIncrement();
+                    } else if (x.equals(u)) {
                         log.info("VIEW_CPAPE05M使用者{}資料無異動", ObjectUtility.normalizeObject(x.getUser_id()));
                         passCnt.getAndIncrement();
                     } else {
                         log.info("VIEW_CPAPE05M使用者{}資料異動", ObjectUtility.normalizeObject(x.getUser_id()));
+                        x.setFrom_hr("Y");
                         x.setModify_timestamp(LocalDateTime.now());
                         x.setModify_user_id("SYS");
                         usersDao.updateByKey(x);
@@ -74,6 +88,6 @@ public class Eip0aw030Service {
                 errCnt.getAndIncrement();
             }
         });
-        log.info("USERS更新資料結束，更新{}筆，無更新{}筆，失敗{}筆。", updateCnt.get(), passCnt.get(), errCnt.get());
+        log.info("USERS更新資料結束，更新{}筆，刪除{}筆，無更新{}筆，失敗{}筆。", updateCnt.get(), deleteCnt.get(), passCnt.get(), errCnt.get());
     }
 }
