@@ -452,23 +452,23 @@ export default {
       {immediate: true}
     )
 
-    //監聽所有props內的物件，根據父層傳的模式，顯示不同的畫面
-    watch(props, newValue => {
-        if (formStatusRef.value === FormStatusEnum.CREATE) {
+    //監聽所有props.formStatus內的物件，根據父層傳的模式，顯示不同的畫面
+    watch(() => props.formStatus, (newValue) => {
+        if (newValue === FormStatusEnum.CREATE) {
           applyAppendix.value = true;
           doQuery();
-        } else if (formStatusRef.value === FormStatusEnum.READONLY) {
+        } else if (newValue === FormStatusEnum.READONLY) {
           doReadonly();
           readAppendix.value = true;
-        } else if (formStatusRef.value === FormStatusEnum.MODIFY || formStatusRef.value === FormStatusEnum.VERIFY) {
+        } else if (newValue === FormStatusEnum.MODIFY || newValue === FormStatusEnum.VERIFY) {
           applyAppendix.value = true;
           readAppendix.value = true;
           doQuery();
           doReadonly();
         }
-      },
+    },
       {immediate: true}
-    );
+    )
 
     return {
       appendixData,
