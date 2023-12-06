@@ -159,7 +159,7 @@ import {navigateByNameAndParams} from "@/router/router";
 import {l410NameToFormUnit} from "@/shared/word/l410NameToFormUnit";
 
 export default {
-  name: "signatureBmodel",
+  name: "signatureBmodel",//加簽共用模組
   props: {
     formData: {
       required: false,

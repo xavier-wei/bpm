@@ -270,7 +270,7 @@ import {useBvModal} from "@/shared/modal";
 
 
 export default {
-  name: "supervisorAdmin",
+  name: "supervisorAdmin",//表單簽核上級管理
   components: {
     IFormGroupCheck,
     ITable,

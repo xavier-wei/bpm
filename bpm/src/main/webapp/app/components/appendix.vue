@@ -131,7 +131,7 @@ import ITable from "@/shared/i-table/i-table.vue";
 
 
 export default {
-  name: "appendix",
+  name: "appendix",//新增附件共用模組
   components: {
     IButton,
     IPdfViewer,
