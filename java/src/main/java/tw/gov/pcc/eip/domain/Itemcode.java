@@ -5,6 +5,7 @@ import java.io.Serializable;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import tw.gov.pcc.common.annotation.LogField;
+import tw.gov.pcc.common.annotation.PkeyField;
 import tw.gov.pcc.common.annotation.Table;
 import tw.gov.pcc.eip.dao.ItemcodeDao;
 
@@ -25,6 +26,7 @@ public class Itemcode implements Serializable {
      * itemkind
      */
     @LogField
+    @PkeyField
     private String itemkind; 
     
     /**

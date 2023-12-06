@@ -5,6 +5,7 @@ import java.io.Serializable;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import tw.gov.pcc.common.annotation.LogField;
+import tw.gov.pcc.common.annotation.PkeyField;
 import tw.gov.pcc.common.annotation.Table;
 import tw.gov.pcc.eip.dao.CarBookingDao;
 
@@ -25,6 +26,7 @@ public class CarBooking implements Serializable {
      *主鍵值(如:DC20230629001)
      */
     @LogField
+    @PkeyField
     private String applyid;
 
 
