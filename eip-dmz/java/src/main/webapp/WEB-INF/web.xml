@@ -61,6 +61,20 @@
     </filter-mapping>
     <!-- ] -->
 
+    <filter>
+        <filter-name>Keycloak Filter</filter-name>
+        <filter-class>org.keycloak.adapters.servlet.KeycloakOIDCFilter</filter-class>
+        <init-param>
+            <param-name>keycloak.config.skipPattern</param-name>
+            <param-value>^/(unauthorized.jsp|redirect.jsp).*</param-value>
+        </init-param>
+        <!-- 由於工程會端要求修改，這裡不分區，移除所有PROFILE，分區由工程會端處理 -->
+    </filter>
+    <filter-mapping>
+        <filter-name>Keycloak Filter</filter-name>
+        <url-pattern>*.action</url-pattern>
+    </filter-mapping>
+
     <!-- Framework Authorize Filter -->
     <!-- [ -->
     <filter>
@@ -159,6 +173,10 @@
         <listener-class>tw.gov.pcc.common.listener.FrameworkHttpSessionListener</listener-class>
     </listener>
     <!-- ] -->
+
+    <listener>
+        <listener-class>tw.gov.pcc.eip.framework.listener.InitialListener</listener-class>
+    </listener>
 
     <servlet>
         <servlet-name>dispatcher</servlet-name>

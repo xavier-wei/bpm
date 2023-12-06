@@ -69,7 +69,7 @@ public class Users implements Serializable {
      * 上次LOGIN日期
      */
     @LogField
-    private String last_login_date;
+    private LocalDateTime last_login_date;
 
     /**
      * 上次LOGIN IP
@@ -137,6 +137,7 @@ public class Users implements Serializable {
     private String org_id;
     
     private boolean checkbox;
+    private String dept_cname;//部門中文名稱
     
     
 

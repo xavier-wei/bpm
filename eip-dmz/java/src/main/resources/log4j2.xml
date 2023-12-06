@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Configuration status="ERROR">
     <Properties>
-        <Property name="fileName">/apdata/aplog/eip_eip_${hostName}.log</Property>
+        <Property name="fileName">/apdata/aplog/eip_eip-dmz_${hostName}.log</Property>
         <Property name="jndiName">java:comp/env/jdbc/eipDS</Property>
     </Properties>
     <Appenders>

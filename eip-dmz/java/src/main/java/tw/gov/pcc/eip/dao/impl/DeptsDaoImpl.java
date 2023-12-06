@@ -1,7 +1,5 @@
 package tw.gov.pcc.eip.dao.impl;
 
-import java.util.List;
-
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
@@ -9,13 +7,14 @@ import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.stereotype.Repository;
 import org.springframework.util.CollectionUtils;
-
 import tw.gov.pcc.common.annotation.DaoTable;
 import tw.gov.pcc.common.framework.dao.BaseDao;
 import tw.gov.pcc.eip.dao.DeptsDao;
 import tw.gov.pcc.eip.domain.Depts;
-import tw.gov.pcc.eip.domain.Items;
-import tw.gov.pcc.eip.domain.Users;
+
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * 選單項目資料 DaoImpl
@@ -102,5 +101,100 @@ public class DeptsDaoImpl extends BaseDao<Depts> implements DeptsDao {
         return getNamedParameterJdbcTemplate().update(" DELETE FROM " + TABLE_NAME +
                         " WHERE DEPT_ID = :dept_id ",
                 new BeanPropertySqlParameterSource(depts));
+    }
+
+    
+    @Override
+    public Depts findByPk(String dept_id) {
+        Depts d = new Depts();
+        d.setDept_id(dept_id);
+        return this.selectDataByPrimaryKey(d);
+    }
+
+    @Override
+    public List<Depts> getEip01wDepts() {
+        StringBuilder sql = new StringBuilder();
+        sql.append(" SELECT '00' DEPT_ID, '全會人員' DEPT_NAME ");
+        sql.append(" UNION ");
+        sql.append(" SELECT DEPT_ID,DEPT_NAME FROM DEPTS WHERE IS_VALID ='Y' ");
+        return getNamedParameterJdbcTemplate().query(sql.toString(), 
+                BeanPropertyRowMapper.newInstance(Depts.class));
+    }
+
+    @Override
+    public List<Depts> getRelevantDeptByAttr(String attr, String deptId) {
+        StringBuilder sql = new StringBuilder();
+        sql.append(" SELECT DEPT_ID, ");
+        sql.append("        DEPT_NAME ");
+        sql.append("   FROM DEPTS C ");
+        sql.append("  WHERE IS_VALID ='Y' ");
+        sql.append("    AND DEPT_ID IN (SELECT DISTINCT A.CONTACTUNIT ");
+        sql.append("                      FROM MSGDATA A, ");
+        sql.append("                           MSGAVAILDEP B ");
+        sql.append("                     WHERE A.FSEQ = B.FSEQ ");
+        sql.append("                       AND A.STATUS = '4' ");
+        sql.append("                       AND A.ATTRIBUTYPE = :attr ");
+        sql.append("                       AND (CASE WHEN TRIM(B.AVAILABLEDEP) = '00' THEN :deptId ELSE TRIM(B.AVAILABLEDEP) END) = :deptId ) ");
+        sql.append("  ORDER BY DEPT_ID ");
+        Map<String, Object> params = new HashMap<>();
+        params.put("attr", attr);
+        params.put("deptId", deptId);
+
+        return getNamedParameterJdbcTemplate().query(sql.toString(), params,
+                BeanPropertyRowMapper.newInstance(Depts.class));
+    }
+        
+    public List<Depts> getEip03wDepts(String level, String trkObj) {
+        StringBuilder sql = new StringBuilder();
+        sql.append("   SELECT ");
+        sql.append(ALL_COLUMNS_SQL);
+        sql.append("     FROM DEPTS T");
+        sql.append("    WHERE DEPT_ID_P = CASE :level WHEN '1' THEN DEPT_ID "); //根部門
+        sql.append("                                  WHEN '2' THEN :trkObj END ");  //改成畫面入trkobj
+        sql.append("      AND IS_VALID = 'Y'  ");
+        sql.append(" ORDER BY SORT_ORDER, DEPT_ID  ");
+
+        Map<String, Object> params = new HashMap<>();
+        params.put("level", level);
+        params.put("trkObj", trkObj);
+
+        return getNamedParameterJdbcTemplate().query(sql.toString(), params,
+                BeanPropertyRowMapper.newInstance(Depts.class));
+    }
+
+    @Override
+    public List<Depts> findNameByMultiID(List<String> deptIDs) {
+        StringBuilder sql = new StringBuilder();
+        sql.append("   SELECT ");
+        sql.append(ALL_COLUMNS_SQL);
+        sql.append("     FROM DEPTS t");
+        sql.append("    WHERE DEPT_ID in (:deptIDs) ");
+        sql.append(" ORDER BY DEPT_ID  ");
+
+        Map<String, Object> params = new HashMap<>();
+        params.put("deptIDs", deptIDs);
+
+        return getNamedParameterJdbcTemplate().query(sql.toString(), params,
+                BeanPropertyRowMapper.newInstance(Depts.class));
+    }
+    
+    @Override
+    public List<Depts> findByLikeDeptname(String dept_name) {
+        String sql = "SELECT " + ALL_COLUMNS_SQL + " FROM " + TABLE_NAME 
+        		      + " t WHERE t.DEPT_NAME like  '%' + ISNULL(:dept_name, T.DEPT_NAME) + '%' ";
+        SqlParameterSource params = new MapSqlParameterSource("dept_name", StringUtils.isNotBlank(dept_name)?dept_name:null);
+        List<Depts> list = getNamedParameterJdbcTemplate().query(sql, params,
+                BeanPropertyRowMapper.newInstance(Depts.class));
+        return list;
+    }
+    
+    @Override
+    public List<Depts> findByLikeDeptid(String dept_id) {
+        String sql = "SELECT " + ALL_COLUMNS_SQL + " FROM " + TABLE_NAME 
+        		      + " t WHERE LOWER(t.DEPT_ID) like  '%' + LOWER(ISNULL(:dept_id, t.DEPT_ID)) + '%' ";
+        SqlParameterSource params = new MapSqlParameterSource("dept_id", StringUtils.isNotBlank(dept_id)?dept_id:null);
+        List<Depts> list = getNamedParameterJdbcTemplate().query(sql, params,
+                BeanPropertyRowMapper.newInstance(Depts.class));
+        return list;
     }
 }

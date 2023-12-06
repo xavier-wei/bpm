@@ -1,15 +1,15 @@
 package tw.gov.pcc.common.domain;
 
-import java.io.Serializable;
-import java.util.List;
-import java.util.Map;
-
+import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import tw.gov.pcc.common.helper.EnvFacadeHelper;
 import tw.gov.pcc.common.util.DateUtil;
+
+import java.io.Serializable;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Domain Object for 使用者<br>
@@ -33,6 +33,10 @@ public class FrameworkUserInfoBean implements UserInfo, Serializable {
      * 部門代碼
      */
     private String deptId;
+    /**
+     * 部門名稱
+     */
+    private String deptName;
     /**
      * 員工編號
      */
@@ -150,7 +154,7 @@ public class FrameworkUserInfoBean implements UserInfo, Serializable {
      * @return 登入日期格式化字串
      */
     public String getLoginDateString() {
-        return DateUtil.formatChineseDateString(loginDate, true);
+        return DateUtil.formatChineseDateString(loginDate, false);
     }
 
     /**

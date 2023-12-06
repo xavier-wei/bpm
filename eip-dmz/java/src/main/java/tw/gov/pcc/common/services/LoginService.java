@@ -1,6 +1,7 @@
 package tw.gov.pcc.common.services;
 
 import org.apache.commons.lang3.StringUtils;
+import org.keycloak.KeycloakSecurityContext;
 import org.springframework.stereotype.Service;
 import tw.gov.pcc.common.dao.PortalDao;
 import tw.gov.pcc.common.dao.PortalLogDao;
@@ -11,10 +12,15 @@ import tw.gov.pcc.common.util.DateUtil;
 import tw.gov.pcc.common.util.FrameworkLogUtil;
 import tw.gov.pcc.common.util.HttpUtil;
 import tw.gov.pcc.common.util.StrUtil;
+import tw.gov.pcc.eip.dao.DeptsDao;
 import tw.gov.pcc.eip.dao.User_rolesDao;
+import tw.gov.pcc.eip.dao.UsersDao;
+import tw.gov.pcc.eip.domain.Depts;
+import tw.gov.pcc.eip.domain.Users;
 
 import javax.servlet.http.HttpServletRequest;
 import java.sql.Timestamp;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -32,12 +38,16 @@ public class LoginService {
     private final PortalLogDao portalLogDao;
     private final SysfuncService sysfuncService;
     private final User_rolesDao user_rolesDao;
+    private final UsersDao usersDao;
+    private final DeptsDao deptsDao;
 
-    public LoginService(PortalDao portalDao, PortalLogDao portalLogDao, SysfuncService sysfuncService, User_rolesDao userRolesDao) {
+    public LoginService(PortalDao portalDao, PortalLogDao portalLogDao, SysfuncService sysfuncService, User_rolesDao userRolesDao, UsersDao usersDao, DeptsDao deptsDao) {
         this.portalDao = portalDao;
         this.portalLogDao = portalLogDao;
         this.sysfuncService = sysfuncService;
         user_rolesDao = userRolesDao;
+        this.usersDao = usersDao;
+        this.deptsDao = deptsDao;
     }
 
     /**
@@ -54,6 +64,7 @@ public class LoginService {
         String userId; // 使用者代碼
         String userName; // 使用者名稱
         String deptId; // 部門代碼
+        String deptName; //部門名稱
         String empId; // 員工編號
         String loginIP; // 使用者 IP
         String token; // 檢查資訊 Token
@@ -64,14 +75,23 @@ public class LoginService {
         String lineToken;
         String orgId;
 
-        //todo 這裡要介接工程會的行動自然人元件
-        userId = getUserIdFromFido();
+        if (request.getAttribute(KeycloakSecurityContext.class.getName()) != null) {
 
+            KeycloakSecurityContext keycloakSecurityContext = (KeycloakSecurityContext) request.getAttribute(KeycloakSecurityContext.class.getName());
+            log.info("User Greeting for {}", keycloakSecurityContext.getToken()
+                    .getPreferredUsername());
+
+            userId = keycloakSecurityContext.getToken()
+                    .getPreferredUsername();
+        } else {
+            userId = StringUtils.EMPTY;
+        }
         if (StringUtils.isBlank(userId)) return false;
         User user = portalDao.selectUser(userId);
         if (user == null) return false;
         userName = StringUtils.defaultString(user.getUserName()); // 使用者名稱
         deptId = StringUtils.defaultString(user.getDeptId()); // 部門代碼
+        deptName = Optional.ofNullable(deptsDao.findByPk(deptId)).map(Depts::getDept_name).orElse(StringUtils.EMPTY);
         empId = StringUtils.defaultString(user.getEmpId()); // 員工編號
         loginIP = StringUtils.defaultString(HttpUtil.getClientIP(request)); // 使用者 IP
         token = userId + DateUtil.getNowWestDateTime(true); // 檢查資訊 Token
@@ -95,11 +115,13 @@ public class LoginService {
                 .ifPresent(x -> {
                     log.info("系統管理者登入：{}", userId);
                 });
+
         // 設定 Framework 使用者資料
         FrameworkUserInfoBean frameworkUserInfoBean = new FrameworkUserInfoBean();
         frameworkUserInfoBean.setUserId(userId);
         frameworkUserInfoBean.setUserName(userName);
         frameworkUserInfoBean.setDeptId(deptId);
+        frameworkUserInfoBean.setDeptName(deptName);
         frameworkUserInfoBean.setEmpId(empId);
         frameworkUserInfoBean.setLoginIP(loginIP);
         frameworkUserInfoBean.setEmail(email);
@@ -117,6 +139,7 @@ public class LoginService {
         userData.setUserId(userId);
         userData.setUserName(userName);
         userData.setDeptId(deptId);
+        userData.setDeptName(deptName);
         userData.setEmpId(empId);
         userData.setLoginIP(loginIP);
         userData.setEmail(email);
@@ -130,6 +153,11 @@ public class LoginService {
         if (log.isDebugEnabled()) {
             log.debug("設定使用者資料完成, 使用者代碼: {}", StrUtil.safeLog(userId));
         }
+
+        Users users = usersDao.selectByKey(userId);
+        users.setLast_login_ip(frameworkUserInfoBean.getLoginIP());
+        users.setLast_login_date(LocalDateTime.now());
+        usersDao.updateByKey(users);
 
         // 取得使用者可執行之所有系統項目代碼 (ITEMS.ITEM_ID)
         List<String> itemIdList = portalDao.selectUserItemList(EnvFacadeHelper.getSystemId(), userId, deptId);
@@ -177,10 +205,6 @@ public class LoginService {
         // 表示使用者沒有執行本系統任何功能的權限
         return frameworkUserInfoBean.getItemIdList() != null && frameworkUserInfoBean.getItemIdList()
                 .size() != 0;
-    }
-
-    public String getUserIdFromFido() {
-        return "70002"; //TODO 這裡應該要接工程會fido元件取得登入者帳號!!!!!!!!!!!!!
     }
 
     /**

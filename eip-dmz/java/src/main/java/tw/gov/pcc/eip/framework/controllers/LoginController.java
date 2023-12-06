@@ -1,37 +1,32 @@
 package tw.gov.pcc.eip.framework.controllers;
 
 import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
+import org.keycloak.KeycloakSecurityContext;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import tw.gov.pcc.common.helper.UserSessionHelper;
 import tw.gov.pcc.common.services.LoginService;
-import tw.gov.pcc.eip.dao.EipcodeDao;
-import tw.gov.pcc.eip.dao.MsgdataDao;
-import tw.gov.pcc.eip.domain.Eipcode;
 import tw.gov.pcc.eip.framework.domain.UserBean;
 import tw.gov.pcc.eip.framework.spring.controllers.BaseController;
-import tw.gov.pcc.eip.msg.cases.Eip01w040Case;
-import tw.gov.pcc.eip.msg.cases.Eip01wPopCase;
-import tw.gov.pcc.eip.services.Eip01w040Service;
 import tw.gov.pcc.eip.util.DateUtility;
 import tw.gov.pcc.eip.util.ExceptionUtility;
-import tw.gov.pcc.eip.util.ObjectUtility;
 
 import javax.servlet.http.HttpServletRequest;
-import java.util.List;
-import java.util.stream.Collectors;
+import javax.servlet.http.HttpSession;
 
 /**
  * 使用者登入
+ * 顯示首頁相關資料
  *
- * @author Goston
+ * @author swho
  */
 @Controller
 @AllArgsConstructor
+@Slf4j
 public class LoginController extends BaseController {
-    private static final org.slf4j.Logger log = org.slf4j.LoggerFactory.getLogger(LoginController.class);
+    public static final String CASE_KEY = "_login_caseData";
     private static final String INDEX_PAGE = "/index";
     private static final String ERROR = "/unauthorized";
     private static final String LOGOUT_PAGE = "/logout";
@@ -40,7 +35,7 @@ public class LoginController extends BaseController {
     private final UserBean userData;
 
 
-    @RequestMapping("/Login.action")
+    @RequestMapping({"/Login.action", "/"})
     public String login(HttpServletRequest request) {
         try {
             if (loginService.getUserLoginData(userData, request)) {
@@ -73,10 +68,15 @@ public class LoginController extends BaseController {
     }
 
     @RequestMapping("/Logout.action")
-    public String logout(HttpServletRequest request) {
+    public String logout(HttpServletRequest request, HttpSession session) {
         try {
+            KeycloakSecurityContext attribute = (KeycloakSecurityContext) session.getAttribute(KeycloakSecurityContext.class.getName());
+            String keycloakLogoutUrl = attribute
+                    .getIdToken()
+                    .getIssuer() + "/protocol/openid-connect/logout";
+
             UserSessionHelper.logoutUser(request);
-            return LOGOUT_PAGE;
+            return "redirect:" + keycloakLogoutUrl;
         } catch (Exception e) {
             log.error("使用者登出失敗 - {}", ExceptionUtility.getStackTrace(e));
             return LOGOUT_PAGE;

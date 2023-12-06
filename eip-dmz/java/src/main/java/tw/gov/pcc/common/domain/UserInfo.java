@@ -70,4 +70,8 @@ public interface UserInfo extends Serializable {
     
     void setOrgId(String orgId);
     
+    String getDeptName();
+    
+    void setDeptName(String deptName);
+    
 }

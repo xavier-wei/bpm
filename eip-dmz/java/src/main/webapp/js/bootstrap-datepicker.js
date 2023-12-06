@@ -163,6 +163,8 @@
         if (this.isInline){
             this.show();
         }
+
+        this.xup(); //配合EIP 顯示 xxx/xx/xx
     };
 
     Datepicker.prototype = {
@@ -498,18 +500,23 @@
             //if (this.o.forceParse && this.inputField.val())
             //	this.setValue();
 
-            this._trigger('hide');
-
+            
             // EDIT 轉民國
             if(this.inputField.val().length == 10){
                 var inputFieldAry = this.inputField.val().split("/");
                 var inputYear = leftPad(inputFieldAry[0] -1911, 3, '0');
                 var inputMon = inputFieldAry[1];
                 var inputDay = inputFieldAry[2];
-                this.inputField.val(inputYear + inputMon + inputDay);
-                //console.log('inputField:' + inputYear + inputMon + inputDay);
+                this.inputField.val(inputYear +"/"+ inputMon+"/" + inputDay);
             }
 
+            this._trigger('hide');
+            
+            return this;
+        },
+
+        xup: function(){
+            convertDate(this.inputField);
             return this;
         },
 
@@ -991,6 +998,17 @@
                 before;
             if (isNaN(year) || isNaN(month))
                 return;
+            startYear=1912;
+            startMonth=0;
+            endYear=2111;
+            endMonth=11;
+            // //為EIP設定邊界避免破表
+            if(year < 1){
+                year = 1912;
+            }else if(year < 1912){
+                year += 1911;
+            }
+            
             this.picker.find('.datepicker-days .datepicker-switch')
                 //.text(DPGlobal.formatDate(d, titleFormat, this.o.language));
                 .text('民國' + (year - (this.o.language == "zh-TW" ? 1911 : 0)) + '年' + dates[this.o.language].monthsShort[month]); //EDIT
@@ -1476,7 +1494,7 @@
                     }
                     if (newViewDate){
                         this.focusDate = this.viewDate = newViewDate;
-                        this.setValue();
+                        // this.setValue();
                         this.fill();
                         e.preventDefault();
                     }
@@ -1715,7 +1733,7 @@
         keyboardNavigation: true,
         language: 'en',
         minViewMode: 0,
-        maxViewMode: 4,
+        maxViewMode: 2,
         multidate: false,
         multidateSeparator: ',',
         orientation: "auto",
@@ -2062,5 +2080,4 @@
     $(function(){
         datepickerPlugin.call($('[data-provide="datepicker-inline"]'));
     });
-
 }));

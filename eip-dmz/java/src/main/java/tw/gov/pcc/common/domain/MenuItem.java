@@ -3,7 +3,6 @@ package tw.gov.pcc.common.domain;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 
 /**
  * 使用者功能選單項目
@@ -17,6 +16,11 @@ public class MenuItem implements Serializable {
     private String url; // URL
     private List<MenuItem> sub; // 子選單項目
 
+    public void addSub(MenuItem menuItem) {
+        if (sub == null) sub = new ArrayList<MenuItem>();
+        sub.add(menuItem);
+    }
+
     public MenuItem() {
     }
 
@@ -26,37 +30,32 @@ public class MenuItem implements Serializable {
         this.url = url;
     }
 
-    public void addSub(MenuItem menuItem) {
-        if (sub == null) sub = new ArrayList<MenuItem>();
-        sub.add(menuItem);
-    }
-
     public String getLevelNo() {
         return this.levelNo;
-    }
-
-    public void setLevelNo(final String levelNo) {
-        this.levelNo = levelNo;
     }
 
     public String getFunctionName() {
         return this.functionName;
     }
 
-    public void setFunctionName(final String functionName) {
-        this.functionName = functionName;
-    }
-
     public String getUrl() {
         return this.url;
     }
 
-    public void setUrl(final String url) {
-        this.url = url;
-    }
-
     public List<MenuItem> getSub() {
         return this.sub;
+    }
+
+    public void setLevelNo(final String levelNo) {
+        this.levelNo = levelNo;
+    }
+
+    public void setFunctionName(final String functionName) {
+        this.functionName = functionName;
+    }
+
+    public void setUrl(final String url) {
+        this.url = url;
     }
 
     public void setSub(final List<MenuItem> sub) {
@@ -68,20 +67,20 @@ public class MenuItem implements Serializable {
         if (o == this) return true;
         if (!(o instanceof MenuItem)) return false;
         final MenuItem other = (MenuItem) o;
-        if (!other.canEqual(this)) return false;
+        if (!other.canEqual((Object) this)) return false;
         final Object this$levelNo = this.getLevelNo();
         final Object other$levelNo = other.getLevelNo();
-        if (!Objects.equals(this$levelNo, other$levelNo)) return false;
+        if (this$levelNo == null ? other$levelNo != null : !this$levelNo.equals(other$levelNo)) return false;
         final Object this$functionName = this.getFunctionName();
         final Object other$functionName = other.getFunctionName();
-        if (!Objects.equals(this$functionName, other$functionName))
-            return false;
+        if (this$functionName == null ? other$functionName != null : !this$functionName.equals(other$functionName)) return false;
         final Object this$url = this.getUrl();
         final Object other$url = other.getUrl();
-        if (!Objects.equals(this$url, other$url)) return false;
+        if (this$url == null ? other$url != null : !this$url.equals(other$url)) return false;
         final Object this$sub = this.getSub();
         final Object other$sub = other.getSub();
-        return Objects.equals(this$sub, other$sub);
+        if (this$sub == null ? other$sub != null : !this$sub.equals(other$sub)) return false;
+        return true;
     }
 
     protected boolean canEqual(final Object other) {
