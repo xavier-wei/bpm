@@ -211,11 +211,9 @@
         </dependency>
 
         <dependency>
-            <groupId>com.iisigroup</groupId>
-            <artifactId>easyreport</artifactId>
-            <version>${easyreport.version}</version>
-            <systemPath>${basedir}/lib/easyreport-openpdf-1.0.jar</systemPath>
-            <scope>system</scope>
+            <groupId>com.microsoft.sqlserver</groupId>
+            <artifactId>mssql-jdbc</artifactId>
+            <version>12.4.1.jre11</version>
         </dependency>
 
         <!--Apache POI-->
@@ -285,13 +283,6 @@
             <version>${commons-net.version}</version>
         </dependency>
 
-        <dependency>
-            <groupId>gov.pcc.pwc</groupId>
-            <artifactId>report-fonts</artifactId>
-            <version>${report-fonts.version}</version>
-            <systemPath>${basedir}/lib/report-fonts-1.0.0.jar</systemPath>
-            <scope>system</scope>
-        </dependency>
 
     </dependencies>
 

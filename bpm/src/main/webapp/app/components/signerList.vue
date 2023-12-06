@@ -73,7 +73,7 @@ import {notificationErrorHandler} from "@/shared/http/http-response-helper";
 import {useNotification} from "@/shared/notification";
 
 export default {
-  name: "signerList",
+  name: "signerList",//簽核流程資訊共用模組
   props: {
     formId: {
       type: String,

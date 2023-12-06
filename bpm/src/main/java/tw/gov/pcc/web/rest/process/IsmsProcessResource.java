@@ -261,33 +261,30 @@ public class IsmsProcessResource {
             }
         }
 
-        HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.APPLICATION_JSON);
-        HttpEntity<String> requestEntity = new HttpEntity<>(gson.toJson(completeReqDTO), headers);
+
+        int i = formId.indexOf("-");
+        String key = formId.substring(0, i);
+        BpmIsmsService service = (BpmIsmsService) applicationContext.getBean(Objects.requireNonNull(BpmIsmsServiceBeanNameEnum.getServiceBeanNameByKey(key)));
 
         //判斷是否是資推或機房的，如果是就去更新資料
         if (Objects.equals(completeReqDTO.getIpt(), true)) {
-            int i = formId.indexOf("-");
-            String key = formId.substring(0, i);
-            BpmIsmsService service = (BpmIsmsService) applicationContext.getBean(Objects.requireNonNull(BpmIsmsServiceBeanNameEnum.getServiceBeanNameByKey(key)));
+
             service.saveBpmByPatch(completeReqDTO.getForm().get(key));
         }
 
         // 判斷variables裡的value，2代表前端送補件過來，需要把表單的IS_SUBMIT改回0 補件的人才能編輯
         if (completeReqDTO.getVariables() != null && completeReqDTO.getVariables().containsValue("2")) {
-            int i = formId.indexOf("-");
-            String key = formId.substring(0, i);
-            BpmIsmsService service = (BpmIsmsService) applicationContext.getBean(Objects.requireNonNull(BpmIsmsServiceBeanNameEnum.getServiceBeanNameByKey(key)));
             service.saveBpmByPatchToIsSubmit(completeReqDTO.getProcessInstanceId());
         }
 
         // 簽核過程或加簽時，都有需要讓簽核人員可以上傳檔案。
         if (appendixFiles != null) {
-            int i = formId.indexOf("-");
-            String key = formId.substring(0, i);
-            BpmIsmsService service = (BpmIsmsService) applicationContext.getBean(Objects.requireNonNull(BpmIsmsServiceBeanNameEnum.getServiceBeanNameByKey(key)));
             service.saveAppendixFiles(appendixFiles, dto, formId);
         }
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+        HttpEntity<String> requestEntity = new HttpEntity<>(gson.toJson(completeReqDTO), headers);
 
         // 送出request dto
         ResponseEntity<String> exchange = restTemplate.exchange(flowableProcessUrl + "/completeTask", HttpMethod.POST, requestEntity, String.class);

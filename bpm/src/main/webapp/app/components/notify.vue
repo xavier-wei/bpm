@@ -148,7 +148,7 @@ import userSys from "@/components/userSys.vue";
 import IDualDatePicker from '@/shared/i-date-picker/i-dual-date-picker.vue';
 
 export default defineComponent({
-  name: 'notify',
+  name: 'notify',//表單查詢
   methods: { changeSubject},
   components: {
     IDatePicker,

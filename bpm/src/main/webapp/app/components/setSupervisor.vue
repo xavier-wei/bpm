@@ -395,7 +395,7 @@ import {useBvModal} from "@/shared/modal";
 
 
 export default {
-  name: "setSupervisor",
+  name: "setSupervisor",//表單特例管理
   components: {
     IFormGroupCheck,
     ITable,

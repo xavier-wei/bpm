@@ -124,7 +124,7 @@ import IFormGroupCheck from '@/shared/form/i-form-group-check.vue';
 import {useGetters} from "@u3u/vue-hooks";
 
 export default {
-  name: "errandBmodel",
+  name: "errandBmodel",//申請人選擇器
   props: {
     formData: {
       required: false,

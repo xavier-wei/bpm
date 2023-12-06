@@ -132,7 +132,7 @@ import {superiorFilter} from "@/shared/word/superiorFilter";
 
 
 export default defineComponent({
-  name: 'pending',
+  name: 'pending',//待處理表單
   methods: {changeSubject, configRoleToBpmIpt},
   props: {
     query: {

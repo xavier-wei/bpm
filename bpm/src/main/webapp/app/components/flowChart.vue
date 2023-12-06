@@ -22,7 +22,7 @@ import IDatePicker from "@/shared/i-date-picker/i-date-picker.vue";
 import {onMounted, reactive, ref, onUnmounted} from "@vue/composition-api";
 
 export default {
-  name: "flowChart",
+  name: "flowChart",//流程圖共用模組
   components: {
     'i-dual-date-picker': IDualDatePicker,
     'i-date-picker': IDatePicker,

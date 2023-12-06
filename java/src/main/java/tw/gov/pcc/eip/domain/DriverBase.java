@@ -3,6 +3,7 @@ package tw.gov.pcc.eip.domain;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import tw.gov.pcc.common.annotation.LogField;
+import tw.gov.pcc.common.annotation.PkeyField;
 import tw.gov.pcc.common.annotation.Table;
 import tw.gov.pcc.eip.dao.DriverBaseDao;
 
@@ -25,6 +26,7 @@ public class DriverBase implements Serializable {
      *主鍵值
      */
     @LogField
+    @PkeyField
     private String driverid;
 
     /**
