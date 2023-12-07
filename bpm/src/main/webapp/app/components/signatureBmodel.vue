@@ -176,10 +176,10 @@ export default {
     IFormGroupCheck,
   },
   setup(props) {
-    //接收與傳送值給父層
+    //父層傳來的表單資訊，用來組出送加簽時的表單資訊
     const formDataProp = reactive(props.formData);
 
-    //傳進來的taskData{processInstanceId、taskId、taskName、decisionRole、additional}
+    //父層傳進來的taskData{processInstanceId、taskId、taskName、decisionRole、additional}
     const taskDataProp = reactive(props.taskData);
 
     //登入者資訊
@@ -302,7 +302,7 @@ export default {
       dialogIsVisible.step = isVisible;
     }
 
-    //把從子層選到的資訊用formDataProp傳給父層
+    //把iTable選擇的值賦值給form
     function choose(i) {
       form.chooseId = i.pecard;
       form.chooseName = i.pename;
