@@ -104,7 +104,7 @@ export default {
     //接收父層傳過來的表單的模式
     const formStatusRef = toRef(props, 'formStatus');
 
-    //傳進來的表單處理狀態 0處理中 1已完成 2註銷
+    //傳進來的表單處理狀態 0處理中 1已完成 2補件 3撤銷
     const processInstanceStatusRef = toRef(props, 'processInstanceStatus');
 
     //接收父層傳過來的處理意見物件

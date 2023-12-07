@@ -678,7 +678,7 @@ export default {
     //顯示加簽按鈕判斷
     const isSignatureRef = toRef(props, 'isSignature');
 
-    //傳進來的表單處理狀態 0處理中 1已完成 2註銷
+    //傳進來的表單處理狀態 0處理中 1已完成 2補件 3撤銷
     const processInstanceStatusRef = toRef(props, 'processInstanceStatus');
 
     //單位下拉選單資訊
