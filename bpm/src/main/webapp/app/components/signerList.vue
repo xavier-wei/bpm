@@ -21,6 +21,8 @@
       </div>
 
       <div class="m-2">
+
+        <!--表單簽核紀錄-->
         <b-table :items="signStatusTable.data" :fields="signStatusTable.fields" bordered responsive="sm">
           <template #cell(situation)="row">
             <div v-if="row.item.taskName === '申請人確認'">
