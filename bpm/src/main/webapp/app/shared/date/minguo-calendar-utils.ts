@@ -162,24 +162,38 @@ function unwrap(value: Ref<Date> | Date | null): Date | null {
     return date;
 }
 
+/**
+ * 將日期或日期字符串格式化為指定的字符串格式。
+ * @param value - 日期、日期字符串、或 Ref 對象。
+ * @param delimiter - 字符串分隔符，可選參數。
+ * @param splitStr - 字符串分隔符，用於拆分日期字符串，可選參數。
+ * @param isMinguo - 是否使用民國年份，默認為 true。
+ * @returns 格式化後的日期字符串。
+ */
 export function formatToString(value: Ref<Date> | Date | string | null, delimiter?: string, splitStr?: string, isMinguo = true): string {
     let year: string;
     let month: string;
     let day: string;
     if (typeof value !== 'string') {
+        // 如果 value 不是字符串，假設它是 Ref 對象
         const date: Date | null = unref(value);
         if (date) {
+            // 格式化日期
             year = isMinguo ? (date.getFullYear() - 1911).toString().padStart(3, '0') : date.getFullYear().toString().padStart(4, '0');
             month = (date.getMonth() + 1).toString().padStart(2, '0');
             day = date.getDate().toString().padStart(2, '0');
         } else {
+            // 如果日期為空，返回空字符串
             return '';
         }
     } else {
+        // 如果 value 是字符串，假設它是日期字符串
         const valueArr = value.split(splitStr);
         if (valueArr[0].length === 4 && isMinguo) {
+            // 如果是民國年，進行轉換
             valueArr[0] = (Number(valueArr[0]) - 1911).toString();
         } else if (valueArr[0].length !== 4 && !isMinguo) {
+            // 如果是西元年，進行轉換
             valueArr[0] = (Number(valueArr[0]) + 1911).toString();
         }
         year = valueArr[0];
@@ -188,8 +202,10 @@ export function formatToString(value: Ref<Date> | Date | string | null, delimite
     }
 
     if (delimiter) {
+        // 如果有指定分隔符，返回帶分隔符的日期字符串
         return `${year}${delimiter}${month}${delimiter}${day}`;
     }
+    // 如果沒有指定分隔符，返回沒有分隔符的日期字符串
     return `${year}${month}${day}`;
 }
 
@@ -269,11 +285,16 @@ export function parseStringDate(date, isCh = false): string {
 
 }
 
-
-//bpm時間轉換器 12小時制
+/**
+ * bpm時間轉換器 12小時制
+ * 將日期或日期 Ref 對象格式化為包含年月日和時間的字符串。
+ * @param value - 日期、日期 Ref 對象、或 null。
+ * @param delimiter - 字符串分隔符，可選參數。
+ * @returns 格式化後的日期和時間字符串。
+ */
 export function newformatDate(value: Ref<Date> | Date | null, delimiter?: string): string {
   const colon = ':'
-  const date: Date | null = unwrap(value);
+  const date: Date | null = unwrap(value);// 如果是 Ref 對象，使用 unwrap 取得其值
   if (date) {
     const year =
       date.getFullYear() < 1911
@@ -295,10 +316,13 @@ export function newformatDate(value: Ref<Date> | Date | null, delimiter?: string
     }
 
     if (delimiter) {
+      // 如果有指定分隔符，返回帶分隔符的日期和時間字符串
       return `${year}${delimiter}${month}${delimiter}${day}` + ' ' + `${timeValue}` + ' ' + `${hours.toString().padStart(2, '0')}${colon}${minutes}${colon}${seconds}`;
     }
+    // 如果沒有指定分隔符，返回沒有分隔符的日期字符串
     return `${year}${month}${day}`;
   }
+  // 如果日期為空，返回空字符串
   return '';
 }
 
