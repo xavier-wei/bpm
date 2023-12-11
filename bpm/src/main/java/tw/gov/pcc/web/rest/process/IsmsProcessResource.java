@@ -21,7 +21,10 @@ import tw.gov.pcc.domain.entity.BpmSignStatus;
 import tw.gov.pcc.eip.impl.EipcodeDaoImpl;
 import tw.gov.pcc.repository.BpmIsmsAdditionalRepository;
 import tw.gov.pcc.repository.BpmIsmsL410Repository;
-import tw.gov.pcc.service.*;
+import tw.gov.pcc.service.BpmIsmsService;
+import tw.gov.pcc.service.BpmSignStatusService;
+import tw.gov.pcc.service.BpmSignerListService;
+import tw.gov.pcc.service.SubordinateTaskService;
 import tw.gov.pcc.service.dto.*;
 import tw.gov.pcc.service.mapper.BpmIsmsL410Mapper;
 import tw.gov.pcc.service.mapper.BpmSignStatusMapper;
@@ -32,7 +35,6 @@ import tw.gov.pcc.web.rest.io.FileMediaType;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
-import java.io.IOException;
 import java.lang.reflect.Type;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -48,6 +50,7 @@ public class IsmsProcessResource {
     private static final String TASK_ID = "taskId";
     private final ApplicationContext applicationContext;
     private final Gson gson = new Gson();
+    private static final HttpHeaders HTTP_HEADERS = new HttpHeaders();
 
     @Value("${flowable.url}")
     private String flowableProcessUrl;
@@ -93,22 +96,17 @@ public class IsmsProcessResource {
         @PathVariable String key,
         @Valid @RequestPart(name = "fileDto", required = false) List<BpmUploadFileDTO> dto,
         @RequestPart(name = "appendixFiles", required = false) List<MultipartFile> appendixFiles,
-        @RequestPart(name = "bpmIsmsL410", required = false) BpmIsmsL410DTO bpmIsmsL410DTO) throws IOException {
+        @RequestPart(name = "bpmIsmsL410", required = false) BpmIsmsL410DTO bpmIsmsL410DTO) {
         log.info("IsmsProcessResource.java - start - 70 :: " + bpmIsmsL410DTO);
         log.info("IsmsProcessResource.java - start - 71 :: " + form);
         log.info("IsmsProcessResource.java - start - 72 :: " + key);
         log.info("IsmsProcessResource.java - start - 73 :: " + dto);
         log.info("IsmsProcessResource.java - start - 74 :: " + appendixFiles);
 
-        //驗證上傳檔案的大小與格式
-        if (!Objects.equals(appendixFiles,null)) {
-            for (MultipartFile file : appendixFiles) {
-                CommonUtils.checkFile(file,  1024 * 1024, fileTypeLimit);
-            }
-        }
+        validateAppendixFilesSize(appendixFiles);
 
         // 取得存在HttpSession的user資訊
-        User userInfo = getUserInfo(); // 取得存在HttpSession的user資訊
+        User userInfo = getUserInfo();
 
         // 產生要送給流程引擎的request dto
         ProcessReqDTO processReqDTO = new ProcessReqDTO();
@@ -124,10 +122,7 @@ public class IsmsProcessResource {
         processReqDTO.setVariables(variables);
 
         // 送出request dto
-        HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.APPLICATION_JSON);
-        HttpEntity<String> requestEntity = new HttpEntity<>(gson.toJson(processReqDTO), headers);
-        ResponseEntity<String> exchange = restTemplate.exchange(flowableProcessUrl + "/startProcess", HttpMethod.POST, requestEntity, String.class);
+        ResponseEntity<String> exchange = sendRequestEntity(gson.toJson(processReqDTO), "/startProcess", HttpMethod.POST);
 
         String processInstanceId;
         TaskDTO taskDTO;
@@ -168,19 +163,16 @@ public class IsmsProcessResource {
 
     }
 
+
     @PatchMapping(path = "/patch/{key}", consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
     public String patch(
         @PathVariable String key,
         @Valid @RequestPart("form") Map<String, String> form,
         @Valid @RequestPart(name = "fileDto", required = false) List<BpmUploadFileDTO> dto,
-        @RequestPart(name = "appendixFiles", required = false) List<MultipartFile> appendixFiles)  {
+        @RequestPart(name = "appendixFiles", required = false) List<MultipartFile> appendixFiles) {
 
         //驗證上傳檔案的大小與格式
-        if (!Objects.equals(appendixFiles,null)) {
-            for (MultipartFile file : appendixFiles) {
-                CommonUtils.checkFile(file,  1024 * 1024, fileTypeLimit);
-            }
-        }
+        validateAppendixFilesSize(appendixFiles);
 
         BpmIsmsService service = (BpmIsmsService) applicationContext.getBean(Objects.requireNonNull(BpmIsmsServiceBeanNameEnum.getServiceBeanNameByKey(key)));
 
@@ -197,11 +189,7 @@ public class IsmsProcessResource {
         @RequestPart(name = "appendixFiles", required = false) List<MultipartFile> appendixFiles
     ) {
         //驗證上傳檔案的大小與格式
-        if (!Objects.equals(appendixFiles,null)) {
-            for (MultipartFile file : appendixFiles) {
-                CommonUtils.checkFile(file,  1024 * 1024, fileTypeLimit);
-            }
-        }
+        validateAppendixFilesSize(appendixFiles);
 
         BpmIsmsL410DTO bpmIsmsL410DTO = gson.fromJson(form.get(key), BpmIsmsL410DTO.class);
         User userInfo = getUserInfo();
@@ -212,10 +200,9 @@ public class IsmsProcessResource {
         UUID uuid = service.setVariables(variables, form.get(key), userInfo);
         processReqDTO.setFormName(key);
         processReqDTO.setVariables(variables);
-        HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.APPLICATION_JSON);
-        HttpEntity<String> requestEntity = new HttpEntity<>(gson.toJson(processReqDTO), headers);
-        ResponseEntity<String> exchange = restTemplate.exchange(flowableProcessUrl + "/startProcess", HttpMethod.POST, requestEntity, String.class);
+
+        ResponseEntity<String> exchange = sendRequestEntity(gson.toJson(processReqDTO), "/startProcess", HttpMethod.POST);
+
         String processInstanceId;
         TaskDTO taskDTO;
         if (exchange.getStatusCodeValue() == 200) {
@@ -255,11 +242,7 @@ public class IsmsProcessResource {
         @RequestPart(name = "appendixFiles", required = false) List<MultipartFile> appendixFiles) {
 
         //驗證上傳檔案的大小與格式
-        if (!Objects.equals(appendixFiles,null)) {
-            for (MultipartFile file : appendixFiles) {
-                CommonUtils.checkFile(file,  1024 * 1024, fileTypeLimit);
-            }
-        }
+        validateAppendixFilesSize(appendixFiles);
 
 
         int i = formId.indexOf("-");
@@ -282,12 +265,9 @@ public class IsmsProcessResource {
             service.saveAppendixFiles(appendixFiles, dto, formId);
         }
 
-        HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.APPLICATION_JSON);
-        HttpEntity<String> requestEntity = new HttpEntity<>(gson.toJson(completeReqDTO), headers);
 
         // 送出request dto
-        ResponseEntity<String> exchange = restTemplate.exchange(flowableProcessUrl + "/completeTask", HttpMethod.POST, requestEntity, String.class);
+        ResponseEntity<String> exchange = sendRequestEntity(gson.toJson(completeReqDTO), "/completeTask", HttpMethod.POST);
 
         // 如果流程引擎回傳200，代表成功，將簽核狀態存入資料庫
         if (exchange.getStatusCodeValue() == 200) {
@@ -314,24 +294,6 @@ public class IsmsProcessResource {
     }
 
 
-    /**
-     * Delete processInstance when Bpm insert failed
-     *
-     * @param processInstanceId the id of the processInstance.
-     */
-    public void deleteProcessWhenSaveBpmFailed(String processInstanceId) {
-        log.info("ProcessL414Resource.java - deleteProcessWhenSaveBpmFailed - 206 :: " + processInstanceId);
-        HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.APPLICATION_JSON);
-
-        HashMap<String, String> deleteRequest = new HashMap<>();
-        deleteRequest.put(PROCESS_INSTANCE_ID, processInstanceId);
-        deleteRequest.put("token", token);
-        HttpEntity<String> requestEntity = new HttpEntity<>(gson.toJson(deleteRequest), headers);
-        restTemplate.exchange(flowableProcessUrl + "/deleteProcess", HttpMethod.POST, requestEntity, String.class);
-
-    }
-
     @PostMapping("/getIsms/{key}/{formId}")
     public Map<String, Object> getIsms(
         @PathVariable String key,
@@ -344,11 +306,10 @@ public class IsmsProcessResource {
 
     @GetMapping("/flowImage/{processInstanceId}")
     public String getImage(@PathVariable String processInstanceId) {
-        HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.APPLICATION_JSON);
-        HttpEntity<String> requestEntity = new HttpEntity<>(gson.toJson(processInstanceId), headers);
-        ResponseEntity<String> exchange = restTemplate.exchange(flowableProcessUrl + "/pic?processId=" + processInstanceId, HttpMethod.GET, requestEntity, String.class);
+
+        ResponseEntity<String> exchange = sendRequestEntity(gson.toJson(processInstanceId), "/pic?processId=" + processInstanceId, HttpMethod.GET);
         return exchange.getBody();
+
     }
 
     @RequestMapping("/queryTask")
@@ -357,11 +318,7 @@ public class IsmsProcessResource {
         log.info("ProcessL414Resource.java - queryTask - 193 :: " + userInfo.getUserId());
         log.info("ProcessL414Resource.java - queryTask - 194 :: " + bpmFormQueryDto);
 
-        HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.APPLICATION_JSON);
-        HttpEntity<String> requestEntity = new HttpEntity<>(userInfo.getUserId(), headers);
-
-        ResponseEntity<String> exchange = restTemplate.exchange(flowableProcessUrl + "/queryProcessingTask", HttpMethod.POST, requestEntity, String.class);
+        ResponseEntity<String> exchange = sendRequestEntity(gson.toJson(userInfo.getUserId()), "/queryProcessingTask", HttpMethod.POST);
 
         if (exchange.getStatusCodeValue() == 200) {
             String body = exchange.getBody();
@@ -378,23 +335,21 @@ public class IsmsProcessResource {
 
     @PostMapping("/queryProcessingTaskNumbers")
     public Integer queryProcessingTaskNumbers(@RequestBody String id) {
-        HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.APPLICATION_JSON);
-        HttpEntity<String> requestEntity = new HttpEntity<>(id, headers);
 
-        ResponseEntity<String> exchange = restTemplate.exchange(flowableProcessUrl + "/queryProcessingTaskNumbers", HttpMethod.POST, requestEntity, String.class);
+
+        ResponseEntity<String> exchange = sendRequestEntity(gson.toJson(id), "/queryProcessingTaskNumbers", HttpMethod.POST);
 
         if (exchange.getStatusCodeValue() == 200) {
             return Integer.parseInt(Objects.requireNonNull(exchange.getBody()));
         }
+
         return 0;
+
     }
 
     @RequestMapping("/deleteProcessInstance")
     public void deleteProcessInstance(@RequestBody ProcessInstanceIdRequestDTO request) {
         log.info("ProcessL414Resource.java - deleteProcessInstance - 206 :: " + request.getProcessInstanceId());
-        HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.APPLICATION_JSON);
 
         HashMap<String, String> deleteRequest = new HashMap<>();
         deleteRequest.put(PROCESS_INSTANCE_ID, request.getProcessInstanceId());
@@ -407,8 +362,7 @@ public class IsmsProcessResource {
                 deleteRequest.put("additionalProcessInstanceId", bpmIsmsAdditional.getProcessInstanceId())
             );
 
-        HttpEntity<String> requestEntity = new HttpEntity<>(gson.toJson(deleteRequest), headers);
-        restTemplate.exchange(flowableProcessUrl + "/deleteProcess", HttpMethod.POST, requestEntity, String.class);
+        sendRequestEntity(gson.toJson(deleteRequest), "/deleteProcess", HttpMethod.POST);
         BpmIsmsService service = (BpmIsmsService) applicationContext.getBean(Objects.requireNonNull(BpmIsmsServiceBeanNameEnum.getServiceBeanNameByKey(request.getKey())));
 
         //註銷流程後，需要把表單內的ProcessInstanceStatus改成3,來判斷此表單已註銷
@@ -421,12 +375,9 @@ public class IsmsProcessResource {
         String titleName = user.getTitleName();
         if ("處長".equals(titleName) || "副處長".equals(titleName) || "主任".equals(titleName)) {
             List<String> allSubordinate = subordinateTaskService.findAllSubordinate(user.getUserId());
-            HttpHeaders headers = new HttpHeaders();
-            headers.setContentType(MediaType.APPLICATION_JSON);
-            HttpEntity<String> requestEntity = new HttpEntity<>(gson.toJson(allSubordinate), headers);
-            ResponseEntity<String> response = restTemplate.exchange(flowableProcessUrl + "/getAllSubordinateTask", HttpMethod.POST, requestEntity, String.class);
-            if (response.getStatusCodeValue() == 200) {
-                String body = response.getBody();
+            ResponseEntity<String> exchange = sendRequestEntity(gson.toJson(allSubordinate), "/getAllSubordinateTask", HttpMethod.POST);
+            if (exchange.getStatusCodeValue() == 200) {
+                String body = exchange.getBody();
                 Type listType = new TypeToken<ArrayList<TaskDTO>>() {
                 }.getType();
                 List<TaskDTO> taskDTOS = gson.fromJson(body, listType);
@@ -441,11 +392,8 @@ public class IsmsProcessResource {
     @RequestMapping("/notify/queryTask")
     public List<Map<String, Object>> notifyQueryTask(@RequestBody BpmFormQueryDto bpmFormQueryDto) {
         User userInfo = getUserInfo();
-        HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.APPLICATION_JSON);
-        HttpEntity<String> requestEntity = new HttpEntity<>(userInfo.getUserId(), headers);
 
-        ResponseEntity<String> exchange = restTemplate.exchange(flowableProcessUrl + "/getAllTask", HttpMethod.POST, requestEntity, String.class);
+        ResponseEntity<String> exchange = sendRequestEntity(gson.toJson(userInfo.getUserId()), "/getAllTask", HttpMethod.POST);
 
         if (exchange.getStatusCodeValue() == 200) {
             String body = exchange.getBody();
@@ -485,8 +433,9 @@ public class IsmsProcessResource {
         return Collections.emptyList();
     }
 
+
     @Nullable
-    private List<Map<String, Object>> getMaps(@RequestPart(required = false) @Valid BpmFormQueryDto bpmFormQueryDto, List<TaskDTO> taskDTOS) {
+    private List<Map<String, Object>> getMaps(BpmFormQueryDto bpmFormQueryDto, List<TaskDTO> taskDTOS) {
         return taskDTOS.isEmpty() ? null :
             taskDTOS.stream()
                 .map(taskDTO -> {
@@ -545,6 +494,52 @@ public class IsmsProcessResource {
 
     private User getUserInfo() {
         return (User) httpSession.getAttribute("userInfo");
+    }
+
+    /**
+     * 驗證上傳檔案的大小與格式
+     *
+     * @param appendixFiles file list
+     */
+    private void validateAppendixFilesSize(List<MultipartFile> appendixFiles) {
+        if (!Objects.equals(appendixFiles, null)) {
+            for (MultipartFile file : appendixFiles) {
+                CommonUtils.checkFile(file, 1024 * 1024L, fileTypeLimit);
+            }
+        }
+    }
+
+
+    /**
+     * Delete processInstance when Bpm insert failed
+     *
+     * @param processInstanceId the id of the processInstance.
+     */
+    private void deleteProcessWhenSaveBpmFailed(String processInstanceId) {
+
+        log.info("ProcessL414Resource.java - deleteProcessWhenSaveBpmFailed - 206 :: " + processInstanceId);
+        HashMap<String, String> deleteRequest = new HashMap<>();
+        deleteRequest.put(PROCESS_INSTANCE_ID, processInstanceId);
+        deleteRequest.put("token", token);
+        sendRequestEntity(gson.toJson(deleteRequest), "/deleteProcess", HttpMethod.POST);
+
+    }
+
+    /**
+     * 建立HttpHeaders，及設定ContentType為application/json
+     * 利用RestTemplate送出requestEntity，並取得responseEntity
+     *
+     * @param json   要送出請求的json
+     * @param path   要送出請求的路徑
+     * @param method 要送出請求的方法
+     * @return ResponseEntity<String>
+     */
+    private ResponseEntity<String> sendRequestEntity(String json, String path, HttpMethod method) {
+
+        HTTP_HEADERS.setContentType(MediaType.APPLICATION_JSON);
+        HttpEntity<String> requestEntity = new HttpEntity<>(json, HTTP_HEADERS);
+        return restTemplate.exchange(flowableProcessUrl + path, method, requestEntity, String.class);
+
     }
 
 }
