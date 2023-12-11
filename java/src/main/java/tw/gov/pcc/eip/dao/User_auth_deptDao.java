@@ -14,8 +14,14 @@ import tw.gov.pcc.eip.domain.User_auth_dept;
 @Repository
 public interface User_auth_deptDao {
 
-    public String TABLE_NAME = "User_auth_dept";
+    public String TABLE_NAME = "user_auth_dept";
 
     public List<User_auth_dept> selectByUser_id(String user_id);
+
+    public List<User_auth_dept> selectByUser_id_OR_Dept_id(String user_id, String dept_id);
+
+    public int insert(User_auth_dept user_auth_dept);
+
+    public int deleteByKey(User_auth_dept user_auth_dept);
 
 }
