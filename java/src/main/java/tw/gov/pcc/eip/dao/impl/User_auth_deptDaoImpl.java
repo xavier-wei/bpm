@@ -61,5 +61,61 @@ public class User_auth_deptDaoImpl extends BaseDao<User_auth_dept> implements Us
 
     }
 
+    /**
+     * 根據user_id、dept_id選取資料
+     *
+     * @param user_id 員工編號
+     * @param dept_id 部門代號
+     * @return 唯一值
+     */
+    @Override
+    public List<User_auth_dept> selectByUser_id_OR_Dept_id(String user_id, String dept_id) {
+
+        String sql = "SELECT " +
+                ALL_COLUMNS_SQL + ", USERS.USER_NAME , DEPTS.DEPT_NAME" +
+                " FROM " + TABLE_NAME + " t " +
+                " LEFT JOIN USERS on USERS.USER_ID = t.USER_ID " +
+                " LEFT JOIN DEPTS on DEPTS.DEPT_ID = t.DEPT_ID " +
+                " WHERE LOWER(t.USER_ID) like '%' + LOWER(ISNULL(:user_id ,t.USER_ID)) +'%' AND LOWER(t.DEPT_ID) like '%' + LOWER(ISNULL(:dept_id ,t.DEPT_ID)) +'%' ";
+
+        User_auth_dept user_auth_dept = new User_auth_dept();
+        user_auth_dept.setUser_id(user_id);
+        user_auth_dept.setDept_id(dept_id);
+
+        List<User_auth_dept> list = getNamedParameterJdbcTemplate().query(sql, new BeanPropertySqlParameterSource(user_auth_dept), BeanPropertyRowMapper.newInstance(User_auth_dept.class));
+        return CollectionUtils.isEmpty(list) ? null : list;
+
+    }
+
+    /**
+     * 新增一筆資料
+     *
+     * @param user_auth_dept 新增資料
+     */
+    @Override
+    public int insert(User_auth_dept user_auth_dept) {
+        return getNamedParameterJdbcTemplate().update(" INSERT INTO " + TABLE_NAME +
+                        "(" +
+                        " USER_ID, DEPT_ID " +
+                        ")" +
+                        " VALUES ( " +
+                        " :user_id, :dept_id " +
+                        ")",
+                new BeanPropertySqlParameterSource(user_auth_dept));
+    }
+
+    /**
+     * 根據key刪除資料
+     *
+     * @param user_auth_dept 條件
+     * @return 異動筆數
+     */
+    @Override
+    public int deleteByKey(User_auth_dept user_auth_dept) {
+        return getNamedParameterJdbcTemplate().update(" DELETE FROM " + TABLE_NAME +
+                        " WHERE USER_ID = :user_id and DEPT_ID = :dept_id ",
+                new BeanPropertySqlParameterSource(user_auth_dept));
+    }
+
 
 }

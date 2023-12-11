@@ -29,6 +29,7 @@ public class User_auth_dept implements Serializable {
     @LogField
     private String user_id;
 
+    private String user_name;
 
     /**
      * 部門代號
@@ -36,5 +37,8 @@ public class User_auth_dept implements Serializable {
     @PkeyField
     @LogField
     private String dept_id;
+
+    private String dept_name;
+
 
 }
