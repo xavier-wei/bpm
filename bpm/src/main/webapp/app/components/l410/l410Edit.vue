@@ -437,7 +437,7 @@
                 <!--管理單位-->
                 <template #cell(managementUnit)="row">
                   <div v-if="!!row.item.admUnit" v-model="row.item.admUnit">
-                    {{ changeDealWithUnit(row.item.admUnit, bpmDeptsOptions) }}
+                    {{ changeCodeNoToCh(row.item.admUnit, bpmDeptsOptions) }}
                   </div>
                 </template>
 
@@ -608,7 +608,7 @@ import {checkboxToMapAndForm} from "@/shared/word/checkboxToMapAndForm";
 import {formToCheckbox} from "@/shared/word/formToCheckbox";
 import signatureBmodel from "@/components/signatureBmodel.vue";
 import signerList from "@/components/signerList.vue";
-import {changeDealWithUnit} from "@/shared/word/directions";
+import {changeCodeNoToCh} from "@/shared/word/directions";
 import {confirmAllData} from "@/shared/word/confirm-iTable";
 import {configTitleName} from '@/shared/word/configRole';
 
@@ -720,6 +720,7 @@ export default {
     const $bvModal = useBvModal();
     const notificationService = useNotification();
 
+    //列舉型別
     enum FormStatusEnum {
       CREATE = '新增',
       MODIFY = '編輯',
@@ -1279,7 +1280,7 @@ export default {
       opinion,
       l410Data,
       taskDataRef,
-      changeDealWithUnit,
+      changeCodeNoToCh,
       processInstanceStatusRef,
       toCancel,
       isCancelRef,

@@ -114,7 +114,7 @@
 <script lang="ts">
 import {reactive, ref} from "@vue/composition-api";
 import {useValidation} from "@/shared/form";
-import {changeDealWithUnit} from "@/shared/word/directions";
+import {changeCodeNoToCh} from "@/shared/word/directions";
 import axios from "axios";
 import {notificationErrorHandler} from "@/shared/http/http-response-helper";
 import {useNotification} from "@/shared/notification";
@@ -279,7 +279,7 @@ export default {
       queryStatus,
       choose,
       bpmDeptsOptions,
-      changeDealWithUnit,
+      changeCodeNoToCh,
       signatureOptions,
     }
   }

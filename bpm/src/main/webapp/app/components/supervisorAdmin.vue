@@ -167,7 +167,7 @@
           </b-form-select>
         </div>
         <div v-else>
-          {{ changeDealWithUnit(row.item.appUnit, bpmDeptsOptions) }}
+          {{ changeCodeNoToCh(row.item.appUnit, bpmDeptsOptions) }}
         </div>
       </template>
 
@@ -180,7 +180,7 @@
           </b-form-select>
         </div>
         <div v-else>
-          {{ changeDealWithUnit(row.item.appTitle, bpmTitleOptions) }}
+          {{ changeCodeNoToCh(row.item.appTitle, bpmTitleOptions) }}
         </div>
       </template>
 
@@ -193,7 +193,7 @@
           </b-form-select>
         </div>
         <div v-else>
-          {{ changeDealWithUnit(row.item.firstLayerUnit, bpmDeptsOptions) }}
+          {{ changeCodeNoToCh(row.item.firstLayerUnit, bpmDeptsOptions) }}
         </div>
       </template>
 
@@ -206,7 +206,7 @@
           </b-form-select>
         </div>
         <div v-else>
-          {{ changeDealWithUnit(row.item.firstLayerSupervisor, bpmTitleOptions) }}
+          {{ changeCodeNoToCh(row.item.firstLayerSupervisor, bpmTitleOptions) }}
         </div>
       </template>
 
@@ -219,7 +219,7 @@
           </b-form-select>
         </div>
         <div v-else>
-          {{ changeDealWithUnit(row.item.secondLayerUnit, bpmDeptsOptions) }}
+          {{ changeCodeNoToCh(row.item.secondLayerUnit, bpmDeptsOptions) }}
         </div>
       </template>
 
@@ -232,7 +232,7 @@
           </b-form-select>
         </div>
         <div v-else>
-          {{ changeDealWithUnit(row.item.secondLayerSupervisor, bpmTitleOptions) }}
+          {{ changeCodeNoToCh(row.item.secondLayerSupervisor, bpmTitleOptions) }}
         </div>
       </template>
 
@@ -265,7 +265,7 @@ import {useGetters} from "@u3u/vue-hooks";
 import IFormGroupCheck from '@/shared/form/i-form-group-check.vue';
 import {useValidation} from '@/shared/form';
 import ITable from '@/shared/i-table/i-table.vue';
-import {changeDealWithUnit} from "@/shared/word/directions";
+import {changeCodeNoToCh} from "@/shared/word/directions";
 import {useBvModal} from "@/shared/modal";
 
 
@@ -302,6 +302,7 @@ export default {
     const $bvModal = useBvModal();
     const notificationService = useNotification();
 
+    //列舉型別
     enum FormStatusEnum {
       CREATE = '新增',
       MODIFY = '編輯',
@@ -342,7 +343,7 @@ export default {
           sortable: false,
           thClass: 'text-center',
           tdClass: 'text-center align-middle',
-          formatter: value => (value == undefined ? '' : changeDealWithUnit(value, bpmDeptsOptions)),
+          formatter: value => (value == undefined ? '' : changeCodeNoToCh(value, bpmDeptsOptions)),
         },
         {
           key: 'appTitle',
@@ -357,7 +358,7 @@ export default {
           sortable: false,
           thClass: 'text-center',
           tdClass: 'text-center align-middle',
-          formatter: value => (value == undefined ? '' : changeDealWithUnit(value, bpmDeptsOptions)),
+          formatter: value => (value == undefined ? '' : changeCodeNoToCh(value, bpmDeptsOptions)),
         },
         {
           key: 'firstLayerSupervisor',
@@ -372,7 +373,7 @@ export default {
           sortable: false,
           thClass: 'text-center',
           tdClass: 'text-center align-middle',
-          formatter: value => (value == undefined ? '' : changeDealWithUnit(value, bpmDeptsOptions)),
+          formatter: value => (value == undefined ? '' : changeCodeNoToCh(value, bpmDeptsOptions)),
         },
         {
           key: 'secondLayerSupervisor',
@@ -514,7 +515,7 @@ export default {
       toEdit,
       FormStatusEnum,
       formStatus,
-      changeDealWithUnit,
+      changeCodeNoToCh,
       bpmDeptsOptions,
       submitForm,
       changeEdit,

@@ -181,6 +181,7 @@ export default {
     const notificationService = useNotification();
     const $bvModal = useBvModal();
 
+    //列舉型別
     enum FormStatusEnum {
       CREATE = '新增',
       READONLY = '檢視',

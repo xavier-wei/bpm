@@ -106,7 +106,7 @@
           </i-form-group-check>
           <i-form-group-check class="col-sm-12" label-cols="2" content-cols="8" :label="'單位 : '"
                               :item="$v.chooseUnit">
-            <div>{{ changeDealWithUnit($v.chooseUnit.$model, bpmDeptsOptions) }}</div>
+            <div>{{ changeCodeNoToCh($v.chooseUnit.$model, bpmDeptsOptions) }}</div>
           </i-form-group-check>
 
         </b-form-row>
@@ -146,7 +146,7 @@
 <script lang="ts">
 import {reactive, ref} from "@vue/composition-api";
 import {useValidation} from "@/shared/form";
-import {changeDealWithUnit} from "@/shared/word/directions";
+import {changeCodeNoToCh} from "@/shared/word/directions";
 import axios from "axios";
 import {notificationErrorHandler} from "@/shared/http/http-response-helper";
 import {useNotification} from "@/shared/notification";
@@ -308,6 +308,8 @@ export default {
       form.chooseName = i.pename;
       form.chooseUnit = i.peunit;
       form.chooseTitle = i.title;
+
+      //只有在加簽l410時會進來這裡面，L410需要再加簽的時候去更新表單，讓畫面的單位跟著變更
       if (formDataProp.formId.substring(0, 4) === 'L410') {
         l410Form.value = l410NameToFormUnit(taskDataProp.taskName, formDataProp, i.peunit);
       }
@@ -377,7 +379,7 @@ export default {
       choose,
       signature,
       bpmDeptsOptions,
-      changeDealWithUnit,
+      changeCodeNoToCh,
       signatureOptions
     }
   }

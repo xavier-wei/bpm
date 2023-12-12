@@ -1,5 +1,10 @@
-//把l410畫面有打勾的checkbox 轉成後端需要的Map跟Form
-// import {Object} from 'typescript/lib/lib.es2019.object.d.ts';
+/**
+ * 把l410畫面有打勾的checkbox 轉成後端需要的Map跟Form
+ * @param data 包含畫面上的數據
+ * @param form 是要填充的後端表單數據
+ * @param variables 一個陣列，用於存儲轉換後的數據
+ * @returns  Map<string, object>()
+ */
 export function checkboxToMapAndForm(data: any, form: any, variables: any): any {
 
   if (data.checkbox === '1' && data.systemApplyName === '人事差勤系統') {

@@ -1,4 +1,17 @@
-//把l410的form去轉成畫面checkbox內的值
+/**
+ * 把l410的form去轉成畫面checkbox內的值
+ *
+ * if(formStatusRef === FormStatusEnum.VERIFY) 在判斷如果進入的模式是審核，就會依照申請項目跟當前任務名稱有無一致，如果一致就會幫畫面填上登入者的名稱，不一致就要判斷使否已經審核過，審核過就用原本的名稱帶入，上述都不成立直接給空
+ *
+ * @param data 是要填充畫面上的數據物件
+ * @param form 後端表單數據
+ * @param taskName 任務名稱
+ * @param userName 登入者名稱
+ * @param formStatusRef 進入表單的模式
+ * @param FormStatusEnum 列舉型別，用於表示表單的狀態
+ * @returns data 把form的資料都賦值給data回傳給畫面，此date會在賦值給table.data
+ * 讓前端的iTable得以顯示資料。
+ */
 export function formToCheckbox(data: any, form: any, taskName: any, userName: any, formStatusRef: any, FormStatusEnum: any): any {
   if (data.systemApplyName === '人事差勤系統') {
 

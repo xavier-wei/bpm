@@ -244,7 +244,7 @@
           </b-form-select>
         </div>
         <div v-else>
-          {{ changeDealWithUnit(row.item.unitName, bpmDeptsOptions) }}
+          {{ changeCodeNoToCh(row.item.unitName, bpmDeptsOptions) }}
         </div>
       </template>
 
@@ -266,7 +266,7 @@
           </b-form-select>
         </div>
         <div v-else>
-          {{ changeDealWithUnit(row.item.posname, bpmTitleOptions) }}
+          {{ changeCodeNoToCh(row.item.posname, bpmTitleOptions) }}
         </div>
       </template>
 
@@ -288,7 +288,7 @@
           </b-form-select>
         </div>
         <div v-else>
-          {{ changeDealWithUnit(row.item.f1UnitName, bpmDeptsOptions) }}
+          {{ changeCodeNoToCh(row.item.f1UnitName, bpmDeptsOptions) }}
         </div>
       </template>
 
@@ -310,7 +310,7 @@
           </b-form-select>
         </div>
         <div v-else>
-          {{ changeDealWithUnit(row.item.f1Posname, bpmTitleOptions) }}
+          {{ changeCodeNoToCh(row.item.f1Posname, bpmTitleOptions) }}
         </div>
       </template>
 
@@ -332,7 +332,7 @@
           </b-form-select>
         </div>
         <div v-else>
-          {{ changeDealWithUnit(row.item.f2UnitName, bpmDeptsOptions) }}
+          {{ changeCodeNoToCh(row.item.f2UnitName, bpmDeptsOptions) }}
         </div>
       </template>
 
@@ -354,7 +354,7 @@
           </b-form-select>
         </div>
         <div v-else>
-          {{ changeDealWithUnit(row.item.f2Posname, bpmTitleOptions) }}
+          {{ changeCodeNoToCh(row.item.f2Posname, bpmTitleOptions) }}
         </div>
       </template>
 
@@ -390,7 +390,7 @@ import {useGetters} from "@u3u/vue-hooks";
 import IFormGroupCheck from '@/shared/form/i-form-group-check.vue';
 import {useValidation} from '@/shared/form';
 import ITable from '@/shared/i-table/i-table.vue';
-import {changeDealWithUnit} from "@/shared/word/directions";
+import {changeCodeNoToCh} from "@/shared/word/directions";
 import {useBvModal} from "@/shared/modal";
 
 
@@ -427,6 +427,7 @@ export default {
     const iTable = ref(null);
     const notificationService = useNotification();
 
+    //列舉型別
     enum FormStatusEnum {
       CREATE = '新增',
       MODIFY = '編輯',
@@ -486,7 +487,7 @@ export default {
           sortable: false,
           thClass: 'text-center',
           tdClass: 'text-center align-middle',
-          formatter: value => (value == undefined ? '' : changeDealWithUnit(value, bpmDeptsOptions)),
+          formatter: value => (value == undefined ? '' : changeCodeNoToCh(value, bpmDeptsOptions)),
         },
         {
           key: 'pename',
@@ -515,7 +516,7 @@ export default {
           sortable: false,
           thClass: 'text-center',
           tdClass: 'text-center align-middle',
-          formatter: value => (value == undefined ? '' : changeDealWithUnit(value, bpmDeptsOptions)),
+          formatter: value => (value == undefined ? '' : changeCodeNoToCh(value, bpmDeptsOptions)),
         },
 
         {
@@ -545,7 +546,7 @@ export default {
           sortable: false,
           thClass: 'text-center',
           tdClass: 'text-center align-middle',
-          formatter: value => (value == undefined ? '' : changeDealWithUnit(value, bpmDeptsOptions)),
+          formatter: value => (value == undefined ? '' : changeCodeNoToCh(value, bpmDeptsOptions)),
         },
         {
           key: 'f2Pename',
@@ -725,7 +726,7 @@ export default {
       toEdit,
       FormStatusEnum,
       formStatus,
-      changeDealWithUnit,
+      changeCodeNoToCh,
       bpmDeptsOptions,
       submitForm,
       changeEdit,
