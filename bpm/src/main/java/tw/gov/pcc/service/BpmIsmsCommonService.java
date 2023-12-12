@@ -2,6 +2,7 @@ package tw.gov.pcc.service;
 
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
+import tw.gov.pcc.domain.MailInfo;
 import tw.gov.pcc.domain.User;
 import tw.gov.pcc.service.dto.BpmUploadFileDTO;
 import tw.gov.pcc.service.dto.EndEventDTO;
@@ -21,7 +22,7 @@ public interface BpmIsmsCommonService {
 
     Map<String, Object> getBpm(String formId);
 
-    void endForm(EndEventDTO endEventDTO);
+    MailInfo endForm(EndEventDTO endEventDTO);
 
     void cancel(String processInstanceId);
 
