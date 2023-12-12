@@ -27,7 +27,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 @Service("L414Service")
-public class BpmIsmsL414ServiceNew implements BpmIsmsService {
+public class BpmIsmsL414ServiceNew implements BpmIsmsCommonService, BpmIsmsPatchService {
     private static final String REVIEWER = "BPM_CR_Reviewer";
     private static final String[] ROLE_IDS = {"BPM_IPT_Operator", "BPM_IPT_Mgr", "BPM_CR_Operator", REVIEWER, "BPM_CR_Mgr"};
 
@@ -51,6 +51,36 @@ public class BpmIsmsL414ServiceNew implements BpmIsmsService {
         this.bpmSignStatusService = bpmSignStatusService;
         this.userRoleRepository = userRoleRepository;
         this.bpmSignerListService = bpmSignerListService;
+    }
+
+    @Override
+    public UUID setVariables(HashMap<String, Object> variables, String form, User userInfo) {
+        BpmIsmsL414DTO bpmIsmsL414DTO = gson.fromJson(form, BpmIsmsL414DTO.class);
+        UUID uuid = UUID.randomUUID();
+        DTO_HOLDER.put(uuid, bpmIsmsL414DTO);
+        variables.put("applier", bpmIsmsL414DTO.getAppEmpid());
+        variables.put("isSubmit", bpmIsmsL414DTO.getIsSubmit());
+
+        // 填入上級
+
+        List<UserRole> userRoles = userRoleRepository.findByRoleIdIn(List.of(ROLE_IDS));
+        supervisorService.setSupervisor(variables, bpmIsmsL414DTO.getAppEmpid());
+
+        HashMap<String, String> signerIds = new HashMap<>();
+        Arrays.stream(ROLE_IDS).forEach(s -> {
+            List<String> userIds = userRoles.stream().filter(userRole -> userRole.getRoleId().equals(s)).map(UserRole::getUserId).collect(Collectors.toList());
+
+            signerIds.put(s, String.join(",", userIds));
+        });
+
+        variables.put("infoGroup", signerIds.get("BPM_IPT_Operator"));
+        variables.put("seniorTechSpecialist", signerIds.get("BPM_IPT_Mgr"));
+        variables.put("serverRoomOperator", signerIds.get("BPM_CR_Operator"));
+        variables.put("reviewStaff", signerIds.get(REVIEWER));
+        variables.put("serverRoomManager", signerIds.get("BPM_CR_Mgr"));
+
+        VARIABLES_HOLDER.put(uuid, variables);
+        return uuid;
     }
 
     @Override
@@ -117,41 +147,6 @@ public class BpmIsmsL414ServiceNew implements BpmIsmsService {
         return gson.toJson(bpmIsmsL414Mapper.toDto(bpmIsmsL414Repository.save(bpmIsmsL414Mapper.toEntity(bpmIsmsL414DTO))));
     }
 
-    @Override
-    public HashMap<String, Object> saveBpmByPatch(HashMap<String, Object> variables, String form, List<BpmUploadFileDTO> dto, List<MultipartFile> appendixFiles, User userInfo) {
-        return new HashMap<>();
-    }
-
-
-    @Override
-    public UUID setVariables(HashMap<String, Object> variables, String form, User userInfo) {
-        BpmIsmsL414DTO bpmIsmsL414DTO = gson.fromJson(form, BpmIsmsL414DTO.class);
-        UUID uuid = UUID.randomUUID();
-        DTO_HOLDER.put(uuid, bpmIsmsL414DTO);
-        variables.put("applier", bpmIsmsL414DTO.getAppEmpid());
-        variables.put("isSubmit", bpmIsmsL414DTO.getIsSubmit());
-
-        // 填入上級
-
-        List<UserRole> userRoles = userRoleRepository.findByRoleIdIn(List.of(ROLE_IDS));
-        supervisorService.setSupervisor(variables, bpmIsmsL414DTO.getAppEmpid());
-
-        HashMap<String, String> signerIds = new HashMap<>();
-        Arrays.stream(ROLE_IDS).forEach(s -> {
-            List<String> userIds = userRoles.stream().filter(userRole -> userRole.getRoleId().equals(s)).map(UserRole::getUserId).collect(Collectors.toList());
-
-            signerIds.put(s, String.join(",", userIds));
-        });
-
-        variables.put("infoGroup", signerIds.get("BPM_IPT_Operator"));
-        variables.put("seniorTechSpecialist", signerIds.get("BPM_IPT_Mgr"));
-        variables.put("serverRoomOperator", signerIds.get("BPM_CR_Operator"));
-        variables.put("reviewStaff", signerIds.get(REVIEWER));
-        variables.put("serverRoomManager", signerIds.get("BPM_CR_Mgr"));
-
-        VARIABLES_HOLDER.put(uuid, variables);
-        return uuid;
-    }
 
     @Override
     public Map<String, Object> getBpm(String formId) {
@@ -189,12 +184,6 @@ public class BpmIsmsL414ServiceNew implements BpmIsmsService {
         bpmIsmsL414.setUpdateTime(Timestamp.valueOf(LocalDateTime.now()));
         bpmIsmsL414Repository.save(bpmIsmsL414);
         saveSignStatus(bpmIsmsL414);
-    }
-
-    @Override
-    public void saveAppendixFiles(List<MultipartFile> appendixFiles, List<BpmUploadFileDTO> dto, String formId) {
-        //儲存照片
-        bpmUploadFileService.savePhoto(dto, appendixFiles, formId);
     }
 
     @Override

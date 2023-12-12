@@ -13,27 +13,18 @@ import java.util.Map;
 import java.util.UUID;
 
 @Service
-public interface BpmIsmsService {
-
-    void saveBpm(UUID uuid, String processInstanceId, TaskDTO taskDTO, List<BpmUploadFileDTO> dto, List<MultipartFile> appendixFiles);
-
-    void saveBpmByPatch(String form);
-
-    String saveBpmByPatch(String form, List<BpmUploadFileDTO> dto, List<MultipartFile> appendixFiles);
-
-    HashMap<String, Object> saveBpmByPatch(HashMap<String, Object> variables, String form, List<BpmUploadFileDTO> dto, List<MultipartFile> appendixFiles,User userInfo);
+public interface BpmIsmsCommonService {
 
     UUID setVariables(HashMap<String, Object> variables, String form, User user);
+
+    void saveBpm(UUID uuid, String processInstanceId, TaskDTO taskDTO, List<BpmUploadFileDTO> dto, List<MultipartFile> appendixFiles);
 
     Map<String, Object> getBpm(String formId);
 
     void endForm(EndEventDTO endEventDTO);
 
-    void saveBpmByPatchToIsSubmit(String processInstanceId);
-
     void cancel(String processInstanceId);
 
-    void saveAppendixFiles(List<MultipartFile> appendixFiles,List<BpmUploadFileDTO> dto, String formId);
 
     void removeHolder(UUID uuid);
 }

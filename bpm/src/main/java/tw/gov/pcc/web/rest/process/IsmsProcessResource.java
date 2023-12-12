@@ -12,24 +12,18 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
-import tw.gov.pcc.domain.BpmIsmsL410;
 import tw.gov.pcc.domain.BpmIsmsServiceBeanNameEnum;
 import tw.gov.pcc.domain.SingerDecisionEnum;
 import tw.gov.pcc.domain.User;
 import tw.gov.pcc.domain.entity.BpmIsmsAdditional;
 import tw.gov.pcc.domain.entity.BpmSignStatus;
-import tw.gov.pcc.eip.impl.EipcodeDaoImpl;
 import tw.gov.pcc.repository.BpmIsmsAdditionalRepository;
-import tw.gov.pcc.repository.BpmIsmsL410Repository;
-import tw.gov.pcc.service.BpmIsmsService;
-import tw.gov.pcc.service.BpmSignStatusService;
-import tw.gov.pcc.service.BpmSignerListService;
-import tw.gov.pcc.service.SubordinateTaskService;
+import tw.gov.pcc.service.*;
 import tw.gov.pcc.service.dto.*;
-import tw.gov.pcc.service.mapper.BpmIsmsL410Mapper;
 import tw.gov.pcc.service.mapper.BpmSignStatusMapper;
 import tw.gov.pcc.utils.CommonUtils;
 import tw.gov.pcc.utils.MapUtils;
+import tw.gov.pcc.utils.ParameterUtil;
 import tw.gov.pcc.web.rest.io.FileMediaType;
 
 import javax.servlet.http.HttpServletRequest;
@@ -44,8 +38,6 @@ import java.util.stream.Collectors;
 public class IsmsProcessResource {
 
     private static final Logger log = LoggerFactory.getLogger(IsmsProcessResource.class);
-
-    private final String token;
     private static final String PROCESS_INSTANCE_ID = "processInstanceId";
     private static final String TASK_ID = "taskId";
     private final ApplicationContext applicationContext;
@@ -59,10 +51,10 @@ public class IsmsProcessResource {
     private final BpmSignStatusService bpmSignStatusService;
     private final BpmSignStatusMapper bpmSignStatusMapper;
     private final BpmIsmsAdditionalRepository bpmIsmsAdditionalRepository;
-    private final BpmIsmsL410Mapper bpmIsmsL410Mapper;
-    private final BpmIsmsL410Repository bpmIsmsL410Repository;
     private final BpmSignerListService bpmSignerListService;
     private final SubordinateTaskService subordinateTaskService;
+
+    private final BpmUploadFileService bpmUploadFileService;
 
     private final String[] fileTypeLimit = {
         FileMediaType.IMAGE_JPEG_VALUE,
@@ -77,17 +69,15 @@ public class IsmsProcessResource {
         FileMediaType.APPLICATION_ODS_VALUE,
     };
 
-    public IsmsProcessResource(HttpSession httpSession, BpmSignStatusService bpmSignStatusService, BpmSignStatusMapper bpmSignStatusMapper, BpmIsmsAdditionalRepository bpmIsmsAdditionalRepository, BpmIsmsL410Mapper bpmIsmsL410Mapper, BpmIsmsL410Repository bpmIsmsL410Repository, SubordinateTaskService subordinateTaskService, EipcodeDaoImpl eipcodeDao, BpmSignerListService bpmSignerListService, ApplicationContext applicationContext) {
+    public IsmsProcessResource(HttpSession httpSession, BpmSignStatusService bpmSignStatusService, BpmSignStatusMapper bpmSignStatusMapper, BpmIsmsAdditionalRepository bpmIsmsAdditionalRepository, SubordinateTaskService subordinateTaskService, BpmSignerListService bpmSignerListService, ApplicationContext applicationContext, BpmUploadFileService bpmUploadFileService) {
         this.httpSession = httpSession;
         this.bpmSignStatusService = bpmSignStatusService;
         this.bpmSignStatusMapper = bpmSignStatusMapper;
         this.bpmIsmsAdditionalRepository = bpmIsmsAdditionalRepository;
-        this.bpmIsmsL410Mapper = bpmIsmsL410Mapper;
-        this.bpmIsmsL410Repository = bpmIsmsL410Repository;
         this.subordinateTaskService = subordinateTaskService;
-        this.token = eipcodeDao.findByCodeKindOrderByScodeno("BPM_TOKEN").get(0).getCodename();
         this.bpmSignerListService = bpmSignerListService;
         this.applicationContext = applicationContext;
+        this.bpmUploadFileService = bpmUploadFileService;
     }
 
     @PostMapping(path = "/start/{key}", consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
@@ -95,9 +85,7 @@ public class IsmsProcessResource {
         @Valid @RequestPart("form") Map<String, String> form,
         @PathVariable String key,
         @Valid @RequestPart(name = "fileDto", required = false) List<BpmUploadFileDTO> dto,
-        @RequestPart(name = "appendixFiles", required = false) List<MultipartFile> appendixFiles,
-        @RequestPart(name = "bpmIsmsL410", required = false) BpmIsmsL410DTO bpmIsmsL410DTO) {
-        log.info("IsmsProcessResource.java - start - 70 :: " + bpmIsmsL410DTO);
+        @RequestPart(name = "appendixFiles", required = false) List<MultipartFile> appendixFiles) {
         log.info("IsmsProcessResource.java - start - 71 :: " + form);
         log.info("IsmsProcessResource.java - start - 72 :: " + key);
         log.info("IsmsProcessResource.java - start - 73 :: " + dto);
@@ -113,7 +101,7 @@ public class IsmsProcessResource {
         // 產生要送給流程引擎的variables(解析成流程定義的各種參數用)
         HashMap<String, Object> variables = new HashMap<>();
         // 由前端傳來的key，取得對應的service
-        BpmIsmsService service = (BpmIsmsService) applicationContext.getBean(Objects.requireNonNull(BpmIsmsServiceBeanNameEnum.getServiceBeanNameByKey(key)));
+        BpmIsmsCommonService service = (BpmIsmsCommonService) applicationContext.getBean(Objects.requireNonNull(BpmIsmsServiceBeanNameEnum.getServiceBeanNameByKey(key)));
 
         // 產生一個UUID，用來當作key，存放在DTO_HOLDER裡，等待流程引擎回傳task dto時，再取出來用
         UUID uuid = service.setVariables(variables, form.get(key), userInfo);
@@ -142,10 +130,6 @@ public class IsmsProcessResource {
         // 如果流程引擎回傳200，代表成功，將表單資料存入資料庫
         try {
 
-            if (!Objects.equals(bpmIsmsL410DTO, null)) {
-                BpmIsmsL410 bpmIsmsL410 = bpmIsmsL410Mapper.toEntity(bpmIsmsL410DTO);
-                bpmIsmsL410Repository.save(bpmIsmsL410);
-            }
             service.saveBpm(uuid, processInstanceId, taskDTO, dto, appendixFiles);
 
         } catch (ResponseStatusException e) {
@@ -174,9 +158,10 @@ public class IsmsProcessResource {
         //驗證上傳檔案的大小與格式
         validateAppendixFilesSize(appendixFiles);
 
-        BpmIsmsService service = (BpmIsmsService) applicationContext.getBean(Objects.requireNonNull(BpmIsmsServiceBeanNameEnum.getServiceBeanNameByKey(key)));
+        BpmIsmsPatchService service = (BpmIsmsPatchService) applicationContext.getBean(Objects.requireNonNull(BpmIsmsServiceBeanNameEnum.getServiceBeanNameByKey(key)));
 
         return service.saveBpmByPatch(form.get(key), dto, appendixFiles);
+
     }
 
 
@@ -196,7 +181,7 @@ public class IsmsProcessResource {
 
         ProcessReqDTO processReqDTO = new ProcessReqDTO();
         HashMap<String, Object> variables = new HashMap<>();
-        BpmIsmsService service = (BpmIsmsService) applicationContext.getBean(Objects.requireNonNull(BpmIsmsServiceBeanNameEnum.getServiceBeanNameByKey(key)));
+        BpmIsmsCommonService service = (BpmIsmsCommonService) applicationContext.getBean(Objects.requireNonNull(BpmIsmsServiceBeanNameEnum.getServiceBeanNameByKey(key)));
         UUID uuid = service.setVariables(variables, form.get(key), userInfo);
         processReqDTO.setFormName(key);
         processReqDTO.setVariables(variables);
@@ -247,7 +232,7 @@ public class IsmsProcessResource {
 
         int i = formId.indexOf("-");
         String key = formId.substring(0, i);
-        BpmIsmsService service = (BpmIsmsService) applicationContext.getBean(Objects.requireNonNull(BpmIsmsServiceBeanNameEnum.getServiceBeanNameByKey(key)));
+        BpmIsmsPatchService service = (BpmIsmsPatchService) applicationContext.getBean(Objects.requireNonNull(BpmIsmsServiceBeanNameEnum.getServiceBeanNameByKey(key)));
 
         //判斷是否是資推或機房的，如果是就去更新資料
         if (Objects.equals(completeReqDTO.getIpt(), true)) {
@@ -262,7 +247,7 @@ public class IsmsProcessResource {
 
         // 簽核過程或加簽時，都有需要讓簽核人員可以上傳檔案。
         if (appendixFiles != null) {
-            service.saveAppendixFiles(appendixFiles, dto, formId);
+            bpmUploadFileService.savePhoto(dto, appendixFiles, formId);
         }
 
 
@@ -282,8 +267,8 @@ public class IsmsProcessResource {
     @RequestMapping("/receiveEndEvent")
     public void receiveEndEvent(@RequestBody EndEventDTO endEventDTO, HttpServletRequest request) {
         log.info("ProcessL414Resource.java - receiveEndEvent - 196 :: " + endEventDTO.getProcessInstanceId());
-        if (token.equals(request.getHeader("flowableToken"))) {
-            BpmIsmsService service = (BpmIsmsService) applicationContext.getBean(Objects.requireNonNull(BpmIsmsServiceBeanNameEnum.getServiceBeanNameByKey(endEventDTO.getFormName())));
+        if (ParameterUtil.getToken().equals(request.getHeader("flowableToken"))) {
+            BpmIsmsCommonService service = (BpmIsmsCommonService) applicationContext.getBean(Objects.requireNonNull(BpmIsmsServiceBeanNameEnum.getServiceBeanNameByKey(endEventDTO.getFormName())));
             service.endForm(endEventDTO);
 
             return;
@@ -299,7 +284,7 @@ public class IsmsProcessResource {
         @PathVariable String key,
         @PathVariable String formId
     ) {
-        BpmIsmsService service = (BpmIsmsService) applicationContext.getBean(Objects.requireNonNull(BpmIsmsServiceBeanNameEnum.getServiceBeanNameByKey(key)));
+        BpmIsmsCommonService service = (BpmIsmsCommonService) applicationContext.getBean(Objects.requireNonNull(BpmIsmsServiceBeanNameEnum.getServiceBeanNameByKey(key)));
 
         return new MapUtils().getNewMap(service.getBpm(formId));
     }
@@ -318,7 +303,7 @@ public class IsmsProcessResource {
         log.info("ProcessL414Resource.java - queryTask - 193 :: " + userInfo.getUserId());
         log.info("ProcessL414Resource.java - queryTask - 194 :: " + bpmFormQueryDto);
 
-        ResponseEntity<String> exchange = sendRequestEntity(gson.toJson(userInfo.getUserId()), "/queryProcessingTask", HttpMethod.POST);
+        ResponseEntity<String> exchange = sendRequestEntity(userInfo.getUserId(), "/queryProcessingTask", HttpMethod.POST);
 
         if (exchange.getStatusCodeValue() == 200) {
             String body = exchange.getBody();
@@ -353,17 +338,17 @@ public class IsmsProcessResource {
 
         HashMap<String, String> deleteRequest = new HashMap<>();
         deleteRequest.put(PROCESS_INSTANCE_ID, request.getProcessInstanceId());
-        deleteRequest.put("token", token);
+        deleteRequest.put("token", ParameterUtil.getToken());
 
         // 查看是否此任務在加簽中，若是，則把加簽的processInstance也一併刪除
+
         bpmIsmsAdditionalRepository
-            .findFirstByMainFormIdAndProcessInstanceStatus(request.getProcessInstanceId(), "0")
+            .findFirstByMainProcessInstanceId(request.getProcessInstanceId())
             .ifPresent(bpmIsmsAdditional ->
                 deleteRequest.put("additionalProcessInstanceId", bpmIsmsAdditional.getProcessInstanceId())
             );
-
         sendRequestEntity(gson.toJson(deleteRequest), "/deleteProcess", HttpMethod.POST);
-        BpmIsmsService service = (BpmIsmsService) applicationContext.getBean(Objects.requireNonNull(BpmIsmsServiceBeanNameEnum.getServiceBeanNameByKey(request.getKey())));
+        BpmIsmsCommonService service = (BpmIsmsCommonService) applicationContext.getBean(Objects.requireNonNull(BpmIsmsServiceBeanNameEnum.getServiceBeanNameByKey(request.getKey())));
 
         //註銷流程後，需要把表單內的ProcessInstanceStatus改成3,來判斷此表單已註銷
         service.cancel(request.getProcessInstanceId());
@@ -371,10 +356,10 @@ public class IsmsProcessResource {
 
     @PostMapping("/getAllSubordinateTask")
     public List<Map<String, Object>> getAllSubordinateTask(@Valid @RequestBody(required = false) BpmFormQueryDto bpmFormQueryDto) {
-        User user = getUserInfo();
-        String titleName = user.getTitleName();
+        User userInfo = getUserInfo();
+        String titleName = userInfo.getTitleName();
         if ("處長".equals(titleName) || "副處長".equals(titleName) || "主任".equals(titleName)) {
-            List<String> allSubordinate = subordinateTaskService.findAllSubordinate(user.getUserId());
+            List<String> allSubordinate = subordinateTaskService.findAllSubordinate(userInfo.getUserId());
             ResponseEntity<String> exchange = sendRequestEntity(gson.toJson(allSubordinate), "/getAllSubordinateTask", HttpMethod.POST);
             if (exchange.getStatusCodeValue() == 200) {
                 String body = exchange.getBody();
@@ -393,7 +378,7 @@ public class IsmsProcessResource {
     public List<Map<String, Object>> notifyQueryTask(@RequestBody BpmFormQueryDto bpmFormQueryDto) {
         User userInfo = getUserInfo();
 
-        ResponseEntity<String> exchange = sendRequestEntity(gson.toJson(userInfo.getUserId()), "/getAllTask", HttpMethod.POST);
+        ResponseEntity<String> exchange = sendRequestEntity(userInfo.getUserId(), "/getAllTask", HttpMethod.POST);
 
         if (exchange.getStatusCodeValue() == 200) {
             String body = exchange.getBody();
@@ -520,7 +505,7 @@ public class IsmsProcessResource {
         log.info("ProcessL414Resource.java - deleteProcessWhenSaveBpmFailed - 206 :: " + processInstanceId);
         HashMap<String, String> deleteRequest = new HashMap<>();
         deleteRequest.put(PROCESS_INSTANCE_ID, processInstanceId);
-        deleteRequest.put("token", token);
+        deleteRequest.put("token", ParameterUtil.getToken());
         sendRequestEntity(gson.toJson(deleteRequest), "/deleteProcess", HttpMethod.POST);
 
     }

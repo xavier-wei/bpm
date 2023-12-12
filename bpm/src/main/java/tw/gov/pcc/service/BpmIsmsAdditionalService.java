@@ -14,7 +14,6 @@ import tw.gov.pcc.service.dto.BpmUploadFileDTO;
 import tw.gov.pcc.service.dto.EndEventDTO;
 import tw.gov.pcc.service.dto.TaskDTO;
 import tw.gov.pcc.service.mapper.BpmIsmsAdditionalMapper;
-import tw.gov.pcc.service.mapper.BpmSignStatusMapper;
 import tw.gov.pcc.utils.SeqNumber;
 
 import java.sql.SQLException;
@@ -26,13 +25,12 @@ import java.util.Map;
 import java.util.UUID;
 
 @Service("AdditionalService")
-public class BpmIsmsAdditionalService implements BpmIsmsService{
+public class BpmIsmsAdditionalService implements BpmIsmsCommonService {
 
     private final Logger log = LoggerFactory.getLogger(BpmIsmsAdditionalService.class);
     private static final Map<UUID, BpmIsmsAdditionalDTO> DTO_HOLDER = new HashMap<>();
 
     private final BpmIsmsAdditionalMapper bpmIsmsAdditionalMapper;
-    private final BpmSignStatusMapper bpmSignStatusMapper;
     private final BpmSignStatusService bpmSignStatusService;
     private final BpmIsmsAdditionalRepository bpmIsmsAdditionalRepository;
 
@@ -40,11 +38,21 @@ public class BpmIsmsAdditionalService implements BpmIsmsService{
     private final Gson gson = new Gson();
 
 
-    public BpmIsmsAdditionalService(BpmIsmsAdditionalMapper bpmIsmsAdditionalMapper, BpmSignStatusMapper bpmSignStatusMapper, BpmSignStatusService bpmSignStatusService, BpmIsmsAdditionalRepository bpmIsmsAdditionalRepository) {
+    public BpmIsmsAdditionalService(BpmIsmsAdditionalMapper bpmIsmsAdditionalMapper, BpmSignStatusService bpmSignStatusService, BpmIsmsAdditionalRepository bpmIsmsAdditionalRepository) {
         this.bpmIsmsAdditionalMapper = bpmIsmsAdditionalMapper;
-        this.bpmSignStatusMapper = bpmSignStatusMapper;
         this.bpmSignStatusService = bpmSignStatusService;
         this.bpmIsmsAdditionalRepository = bpmIsmsAdditionalRepository;
+    }
+
+    @Override
+    public UUID setVariables(HashMap<String, Object> variables, String form, User userInfo) {
+        BpmIsmsAdditionalDTO bpmIsmsAdditionalDTO = gson.fromJson(form, BpmIsmsAdditionalDTO.class);
+        UUID uuid = UUID.randomUUID();
+        DTO_HOLDER.put(uuid, bpmIsmsAdditionalDTO);
+        variables.put("additionalSigner", bpmIsmsAdditionalDTO.getAdditionalSignerId());
+        variables.put("mainProcessInstanceId", bpmIsmsAdditionalDTO.getMainProcessInstanceId());
+        variables.put("mainProcessTaskId", bpmIsmsAdditionalDTO.getMainProcessTaskId());
+        return uuid;
     }
 
     @Override
@@ -68,38 +76,10 @@ public class BpmIsmsAdditionalService implements BpmIsmsService{
     }
 
     @Override
-    public void saveBpmByPatch(String form) {
-    }
-
-    @Override
-    public String saveBpmByPatch(String form, List<BpmUploadFileDTO> dto, List<MultipartFile> appendixFiles) {
-        return null;
-    }
-
-    @Override
-    public HashMap<String, Object> saveBpmByPatch(HashMap<String, Object> variables, String form, List<BpmUploadFileDTO> dto, List<MultipartFile> appendixFiles,User user) {
-        return null;
-    }
-
-    @Override
-    public UUID setVariables(HashMap<String, Object> variables, String form, User userInfo) {
-        BpmIsmsAdditionalDTO bpmIsmsAdditionalDTO = gson.fromJson(form, BpmIsmsAdditionalDTO.class);
-        UUID uuid = UUID.randomUUID();
-        DTO_HOLDER.put(uuid, bpmIsmsAdditionalDTO);
-//        DirectorTester
-        variables.put("additionalSigner", bpmIsmsAdditionalDTO.getAdditionalSignerId());
-//        variables.put("additionalSigner", "DirectorTester");
-        variables.put("mainProcessInstanceId", bpmIsmsAdditionalDTO.getMainProcessInstanceId());
-        variables.put("mainProcessTaskId", bpmIsmsAdditionalDTO.getMainProcessTaskId());
-        return uuid;
-    }
-
-    @Override
     public void endForm(EndEventDTO endEventDTO) {
         BpmIsmsAdditional bpmIsmsAdditional = bpmIsmsAdditionalRepository.findFirstByProcessInstanceId(endEventDTO.getProcessInstanceId());
         bpmIsmsAdditional.setProcessInstanceStatus(endEventDTO.getProcessStatus());
         bpmIsmsAdditionalRepository.save(bpmIsmsAdditional);
-
     }
 
     @Override
@@ -111,14 +91,8 @@ public class BpmIsmsAdditionalService implements BpmIsmsService{
     }
 
     @Override
-    public void saveBpmByPatchToIsSubmit(String formId) {
-    }
-
-    @Override
     public void removeHolder(UUID uuid) {
         DTO_HOLDER.remove(uuid);
     }
 
-    @Override
-    public void saveAppendixFiles( List<MultipartFile> appendixFiles,List<BpmUploadFileDTO> dto,String formId) {}
 }

@@ -4,17 +4,16 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.SystemUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.http.MediaType;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.server.ResponseStatusException;
 import tw.gov.pcc.domain.BpmUploadFile;
 import tw.gov.pcc.repository.BpmUploadFileRepository;
 import tw.gov.pcc.service.dto.BpmUploadFileDTO;
 import tw.gov.pcc.service.mapper.BpmUploadFileMapper;
-import tw.gov.pcc.utils.CommonUtils;
 import tw.gov.pcc.web.rest.errors.BadRequestAlertException;
-import tw.gov.pcc.web.rest.io.FileMediaType;
 
 import java.io.File;
 import java.io.IOException;
@@ -25,9 +24,11 @@ import java.nio.file.attribute.FileAttribute;
 import java.nio.file.attribute.PosixFilePermission;
 import java.nio.file.attribute.PosixFilePermissions;
 import java.time.Instant;
-import java.util.*;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+import java.util.UUID;
 import java.util.regex.Matcher;
-import java.util.stream.Collectors;
 
 /**
  * Service Implementation for managing {@link BpmUploadFile}.
@@ -153,7 +154,8 @@ public class BpmUploadFileService {
                 try {
                     bpmUploadFile(bpmUploadFileMapper.toEntity(dto.get(i)), appendixFiles.get(i));
                 } catch (IOException e) {
-                    throw new RuntimeException(e);
+                    log.error("檔案存取失敗 :{}", e.getMessage());
+                    throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "檔案儲存失敗");
                 }
             }
         }
