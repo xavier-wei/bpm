@@ -140,8 +140,8 @@ import {useGetters} from '@u3u/vue-hooks';
 import {notificationErrorHandler} from "@/shared/http/http-response-helper";
 import {useNotification} from "@/shared/notification";
 import {newformatDate} from "@/shared/date/minguo-calendar-utils";
-import {changeFormId, changeSubject} from "@/shared/word/change-word-utils";
-import {changeDealWithUnit} from "@/shared/word/directions";
+import {changeSubject} from "@/shared/word/change-word-utils";
+import {changeCodeNoToCh} from "@/shared/word/directions";
 import {currentProcessingUnit} from "@/shared/word/iTable-convert-unit";
 import {navigateByNameAndParams} from "@/router/router";
 import userSys from "@/components/userSys.vue";
@@ -182,6 +182,7 @@ export default defineComponent({
       toQuery();
     });
 
+    //列舉型別
     enum FormStatusEnum {
       CREATE = '新增',
       MODIFY = '編輯',
@@ -236,7 +237,7 @@ export default defineComponent({
           sortable: false,
           thClass: 'text-center',
           tdClass: 'text-center align-middle',
-          formatter: value => (value == undefined ? '' : changeFormId(value)),
+          formatter: value => (value == undefined ? '' : changeSubject(value,null,null,false)),
         },
         {
           key: 'applyDate',
@@ -332,7 +333,7 @@ export default defineComponent({
 
         //過濾table.data所有物件 要把畫面要顯示的值都先塞進table.data內 不然iTable內的b-modal會沒有值
         table.data.forEach(i => {
-          i.subject = changeSubject(i, true)
+          i.subject = changeSubject(i.formId,i.taskName,i.applyDate, true)
           i.filAndApp = (i.appEmpid === i.filEmpid) ? i.appName : i.appName + '/' + i.filName
         });
         table.totalItems = data.length;
@@ -389,7 +390,7 @@ export default defineComponent({
       toEdit,
       queryStatus,
       bpmDeptsOptions,
-      changeDealWithUnit,
+      changeCodeNoToCh,
       toReset,
     };
   },

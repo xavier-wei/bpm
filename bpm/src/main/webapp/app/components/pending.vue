@@ -162,6 +162,7 @@ export default defineComponent({
     const iTable = ref(null);
     const notificationService = useNotification();
 
+    //列舉型別
     enum FormStatusEnum {
       CREATE = '新增',
       MODIFY = '編輯',
@@ -275,7 +276,7 @@ export default defineComponent({
 
         //過濾table.data所有物件 要把畫面要顯示的值都先塞進table.data內 不然iTable內的b-modal會沒有值
         table.data.forEach(i => {
-          i.subject = changeSubject(i, true)
+          i.subject = changeSubject(i.formId,i.taskName,i.applyDate, true)
           i.filAndApp = (i.appEmpid === i.filEmpid) ? i.appName : i.appName + '/' + i.filName
         });
 
@@ -300,7 +301,7 @@ export default defineComponent({
 
         //過濾table.data所有物件 要把畫面要顯示的值都先塞進table.data內 不然iTable內的b-modal會沒有值
         table.data.forEach(i => {
-          i.subject = changeSubject(i, true)
+          i.subject = changeSubject(i.formId,i.taskName,i.applyDate, true)
           i.filAndApp = (i.appEmpid === i.filEmpid) ? i.appName : i.appName + '/' + i.filName
         });
 

@@ -84,7 +84,7 @@ import {formatToString, newformatDate} from "@/shared/date/minguo-calendar-utils
 import {notificationErrorHandler} from "@/shared/http/http-response-helper";
 import {useNotification} from "@/shared/notification";
 import {changeProject} from "@/shared/word/project-conversion";
-import {changeDealWithUnit} from "@/shared/word/directions";
+import {changeCodeNoToCh} from "@/shared/word/directions";
 import {applicationReasonUnit,appNameUnit,filNameUnit} from "@/shared/word/iTable-convert-unit";
 
 export default defineComponent({
@@ -105,6 +105,7 @@ export default defineComponent({
     const iTable = ref(null);
     const notificationService = useNotification();
 
+    //列舉型別
     enum FormStatusEnum {
       CREATE = '新增',
       MODIFY = '編輯',
@@ -167,7 +168,7 @@ export default defineComponent({
           thStyle: 'width:10%',
           thClass: 'text-center',
           tdClass: 'text-center align-middle',
-          formatter: value => (value == undefined ? '' : changeDealWithUnit(value, bpmDeptsOptions)),
+          formatter: value => (value == undefined ? '' : changeCodeNoToCh(value, bpmDeptsOptions)),
         },
         {
           key: 'applicationReason',

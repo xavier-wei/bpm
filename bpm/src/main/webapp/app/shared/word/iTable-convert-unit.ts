@@ -1,8 +1,15 @@
-import {changeDealWithUnit} from "@/shared/word/directions";
+import {changeCodeNoToCh} from "@/shared/word/directions";
 import {formatToString, newformatDate} from "@/shared/date/minguo-calendar-utils";
 
 
-//目前處理單位的轉換元件
+/**
+ * 目前處理單位的轉換元件
+ * 根據提供的用戶數據、部門列表和用戶所有數據，找到共同處理的部門信息，並返回特定格式的字符串。
+ * @param {any} user - 後端組出來的目前處理人員編，可以是多人 [1234,5678]
+ * @param {any} unitList - 部門列表。
+ * @param {any} userAllData - 所有 ACNT_IS_VALID=Y 的使用者
+ * @returns {string} 返回特定格式的字符串，用於前端顯示。 單人: 王Ｏ明(秘書處文書科) 多人: 王Ｏ明(資訊推動小組)、王Ｏ衛(資訊推動小組)
+ */
 export function currentProcessingUnit(user: any, unitList: any, userAllData: any) {
 
   if (user == null) return '';
@@ -22,7 +29,7 @@ export function currentProcessingUnit(user: any, unitList: any, userAllData: any
 
   //組合出前端顯示參數
   commonObjects.forEach(data => {
-    pendingUserId += data.userName + '(' + changeDealWithUnit(data.deptId, unitList) + ')' + delimiter
+    pendingUserId += data.userName + '(' + changeCodeNoToCh(data.deptId, unitList) + ')' + delimiter
   });
 
   //如果commonObjects兩個以上就把最後一個標點符號去掉
@@ -33,12 +40,25 @@ export function currentProcessingUnit(user: any, unitList: any, userAllData: any
   return pendingUserId;
 }
 
-//用user那張表的userId 跟傳進來的user做比較，找出重複的users 物件
+/**
+ * 用user那張表的userId 跟傳進來的user做比較，找出重複的users 物件
+ * 根據提供的兩個數組，找到它們共同的對象。
+ * @param {any} arr1 - 數組1。
+ * @param {any} arr2 - 數組2。
+ * @returns {any} 返回共同的對象。
+ */
 function findCommonObjects(arr1, arr2) {
   return arr1.filter(item1 => arr2.some(item2 => item1.userId === item2.userId));
 }
 
-//申請事由轉換元件
+/**
+ * 申請事由轉換元件
+ *
+ * <br> 為了讓iTable內的參數能夠換行
+ *
+ * @param data 表單資訊
+ * @returns  {string}  會依照傳進來的表單資訊組合出特定的reason字串
+ */
 export function applicationReasonUnit(data) {
 
   let reason = '';
@@ -59,7 +79,14 @@ export function applicationReasonUnit(data) {
   return reason;
 }
 
-//申請人+員編元件
+/**
+ * 申請人+員編元件
+ *
+ * <br> 為了讓iTable內的參數能夠換行
+ *
+ * @param data 表單資訊
+ * @returns  {string} 會依照傳進來的表單資訊組合出特定的appName字串
+ */
 export function appNameUnit(data) {
 
   let appName = '';
@@ -75,11 +102,18 @@ export function appNameUnit(data) {
   return appName;
 }
 
-//填表人+員編元件
+/**
+ * 填表人+員編元件
+ *
+ * <br> 為了讓iTable內的參數能夠換行
+ *
+ * @param data 表單資訊
+ * @returns  {string} 會依照傳進來的表單資訊組合出特定的filName字串
+ */
 export function filNameUnit(data) {
 
   let filName = '';
-  if (!!data.appName) {
+  if (!!data.filName) {
     filName += data.filName
   }
 
@@ -90,7 +124,14 @@ export function filNameUnit(data) {
   return filName;
 }
 
-//需求說明轉換元件
+/**
+ * 需求說明轉換元件
+ *
+ * <br> 為了讓iTable內的參數能夠換行
+ *
+ * @param data 表單資訊
+ * @returns  {string} 會依照傳進來的表單資訊組合出特定的needNarrative字串
+ */
 export function needNarrativeUnit(data) {
 
   let needNarrative = '';
@@ -124,6 +165,7 @@ export function needNarrativeUnit(data) {
     needNarrative += '用途說明： ' + data.instructions + ',' + '<br>';
   }
 
+  //去除最後面的逗點跟<br>
   return needNarrative.substring(0, needNarrative.length - 5);
 }
 

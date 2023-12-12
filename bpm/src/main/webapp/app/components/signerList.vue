@@ -42,7 +42,7 @@
           <template #cell(signUnit)="row">
             <b-input-group>
               <div v-if="!!row.item.signUnit">
-                {{ changeDealWithUnit(row.item.signUnit, bpmDeptsOptions) }}
+                {{ changeCodeNoToCh(row.item.signUnit, bpmDeptsOptions) }}
               </div>
               <div v-if="!!row.item.signUnit">/</div>
               <div v-if="!!row.item.signer">
@@ -67,7 +67,7 @@
 
 <script lang="ts">
 import {reactive, ref, toRef, watch} from '@vue/composition-api';
-import {changeDealWithUnit} from "@/shared/word/directions";
+import {changeCodeNoToCh} from "@/shared/word/directions";
 import {newformatDate} from '@/shared/date/minguo-calendar-utils';
 import {useGetters} from "@u3u/vue-hooks";
 import axios from "axios";
@@ -115,6 +115,7 @@ export default {
 
     const notificationService = useNotification();
 
+    //列舉型別
     enum FormStatusEnum {
       CREATE = '新增',
       MODIFY = '編輯',
@@ -255,7 +256,7 @@ export default {
       formStatusRef,
       opinionProp,
       signerList,
-      changeDealWithUnit,
+      changeCodeNoToCh,
       bpmDeptsOptions,
       signerListTable,
     }

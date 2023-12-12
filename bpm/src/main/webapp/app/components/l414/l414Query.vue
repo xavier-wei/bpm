@@ -76,7 +76,7 @@ import {notificationErrorHandler} from "@/shared/http/http-response-helper";
 import {useNotification} from "@/shared/notification";
 import {newformatDate} from '@/shared/date/minguo-calendar-utils';
 import {useGetters} from "@u3u/vue-hooks";
-import {changeDealWithUnit} from "@/shared/word/directions";
+import {changeCodeNoToCh} from "@/shared/word/directions";
 import { appNameUnit, filNameUnit, needNarrativeUnit} from "@/shared/word/iTable-convert-unit";
 
 export default {
@@ -95,6 +95,8 @@ export default {
 
     const iTable = ref(null);
     const notificationService = useNotification();
+
+    //列舉型別
     enum FormStatusEnum {
       CREATE = '新增',
       MODIFY = '編輯',
@@ -157,7 +159,7 @@ export default {
           thStyle: 'width:10%',
           thClass: 'text-center',
           tdClass: 'text-center align-middle',
-          formatter: value => (value == undefined ? '' : changeDealWithUnit(value, bpmDeptsOptions)),
+          formatter: value => (value == undefined ? '' : changeCodeNoToCh(value, bpmDeptsOptions)),
         },
         {
           key: 'isEnable',

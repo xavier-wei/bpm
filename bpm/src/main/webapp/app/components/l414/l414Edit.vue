@@ -85,7 +85,9 @@
                       <!--申請人員工編號 : appEmpid-->
                       <b-form-input v-model="$v.appEmpid.$model"
                                     :disabled="formStatusRef === FormStatusEnum.READONLY  || isEdit"/>
-                      <b-button class="ml-2" v-show="formStatusRef === FormStatusEnum.MODIFY  && isEdit" variant="outline-dark" @click="showErrandModel()">選擇人員</b-button>
+                      <b-button class="ml-2" v-show="formStatusRef === FormStatusEnum.MODIFY  && isEdit"
+                                variant="outline-dark" @click="showErrandModel()">選擇人員
+                      </b-button>
                     </b-input-group>
 
                   </i-form-group-check>
@@ -489,7 +491,7 @@ import axios from "axios";
 import {notificationErrorHandler} from "@/shared/http/http-response-helper";
 import {changeDirections} from "@/shared/word/directions";
 import signatureBmodel from "@/components/signatureBmodel.vue";
-import {configRoleToBpmIpt,configRoleToBpmCrOperator,configTitleName} from '@/shared/word/configRole';
+import {configRoleToBpmIpt, configRoleToBpmCrOperator, configTitleName} from '@/shared/word/configRole';
 import errandBmodel from "@/components/errandBmodel.vue";
 
 const appendix = () => import('@/components/appendix.vue');
@@ -607,6 +609,8 @@ export default {
 
     const notificationService = useNotification();
     const $bvModal = useBvModal();
+
+    //列舉型別
     enum FormStatusEnum {
       CREATE = '新增',
       MODIFY = '編輯',
@@ -770,7 +774,7 @@ export default {
                 reviewStart(isSubmit, false);
               } else {
                 $bvModal.msgBoxOk('表單更新完畢');
-                navigateByNameAndParams('pending', {isReload: false, isNotKeepAlive: true,query:queryRef.value});
+                navigateByNameAndParams('pending', {isReload: false, isNotKeepAlive: true, query: queryRef.value});
               }
 
             })
@@ -799,28 +803,28 @@ export default {
         //判斷是否是資推的人跟畫面必填欄位是否為空
         if (configRoleToBpmIpt(userData.userRole) && form.agreeType === '') {
           isOK = false;
-          notificationService.makeModalComfirmCallback('未選擇處理意見', 'danger');
+          return notificationService.makeModalComfirmCallback('未選擇處理意見', 'danger');
         }
 
         //判斷是否是資推的人跟畫面必填欄位是否為空
         if (configRoleToBpmIpt(userData.userRole) && form.partialAgreeReason === '' && form.notAgreeReason === '' && form.scheduleDate === null) {
           isOK = false;
-          notificationService.makeModalComfirmCallback('未填寫預定完成日期或說明原因', 'danger');
+          return notificationService.makeModalComfirmCallback('未填寫預定完成日期或說明原因', 'danger');
         }
 
         //判斷是否是機房操作的人跟畫面必填欄位是否為空
         if (configRoleToBpmCrOperator(userData.userRole)) {
           if (form.isExternalFirewall === '' && form.isInternalFirewall === '') {
             isOK = false;
-            notificationService.makeModalComfirmCallback('未選擇變更設備', 'danger');
+            return notificationService.makeModalComfirmCallback('未選擇變更設備', 'danger');
           }
           if (form.firewallContent === '') {
             isOK = false;
-            notificationService.makeModalComfirmCallback('未填寫設定內容', 'danger');
+            return notificationService.makeModalComfirmCallback('未填寫設定內容', 'danger');
           }
           if (form.finishDatetime === null) {
             isOK = false;
-            notificationService.makeModalComfirmCallback('未選擇實際完成日期', 'danger');
+            return notificationService.makeModalComfirmCallback('未選擇實際完成日期', 'danger');
           }
         }
       }
@@ -888,10 +892,10 @@ export default {
           .then(({data}) => {
             if (item === '1') {
               $bvModal.msgBoxOk('表單儲存完畢');
-              navigateByNameAndParams('pending', {isReload: false, isNotKeepAlive: true,query:queryRef.value,});
+              navigateByNameAndParams('pending', {isReload: false, isNotKeepAlive: true, query: queryRef.value,});
             } else {
               $bvModal.msgBoxOk('表單審核完畢');
-              navigateByNameAndParams('pending', {isReload: false, isNotKeepAlive: true,query:queryRef.value,});
+              navigateByNameAndParams('pending', {isReload: false, isNotKeepAlive: true, query: queryRef.value,});
             }
 
           })
@@ -970,12 +974,12 @@ export default {
       if (isOK) {
         let request = {
           processInstanceId: form.processInstanceId,
-          key:'L414'
+          key: 'L414'
         }
         axios.post(`/process/deleteProcessInstance`, request)
           .then(({data}) => {
             $bvModal.msgBoxOk('表單流程撤銷完畢');
-            handleBack({isReload: true, isNotKeepAlive: false,query:queryRef.value,});
+            handleBack({isReload: true, isNotKeepAlive: false, query: queryRef.value,});
           })
           .catch(notificationErrorHandler(notificationService))
       }
@@ -983,7 +987,7 @@ export default {
 
     //返回上一頁
     function toQueryView() {
-      handleBack({isReload: true, isNotKeepAlive: false,query:queryRef.value,});
+      handleBack({isReload: true, isNotKeepAlive: false, query: queryRef.value,});
     }
 
     //開啟加簽的彈出視窗
