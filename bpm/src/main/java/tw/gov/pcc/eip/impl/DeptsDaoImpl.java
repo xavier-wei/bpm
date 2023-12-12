@@ -8,12 +8,13 @@ import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.stereotype.Repository;
 import org.springframework.util.CollectionUtils;
 import tw.gov.pcc.domain.Depts;
+import tw.gov.pcc.eip.annotation.DaoTable;
 import tw.gov.pcc.eip.dao.BaseDao;
 import tw.gov.pcc.eip.dao.DeptsDao;
+
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import tw.gov.pcc.eip.annotation.DaoTable;
 
 /**
  * 選單項目資料 DaoImpl
@@ -115,7 +116,7 @@ public class DeptsDaoImpl extends BaseDao<Depts> implements DeptsDao {
         StringBuilder sql = new StringBuilder();
 //        sql.append(" SELECT '00' DEPT_ID, '全會人員' DEPT_NAME ");
 //        sql.append(" UNION ");
-        sql.append(" SELECT DEPT_ID,DEPT_NAME FROM DEPTS WHERE IS_VALID ='Y' ");
+        sql.append("SELECT DEPT_ID,DEPT_NAME FROM DEPTS WHERE IS_VALID ='Y' ORDER BY SORT_ORDER ");
         return getNamedParameterJdbcTemplate().query(sql.toString(),
                 BeanPropertyRowMapper.newInstance(Depts.class));
     }
