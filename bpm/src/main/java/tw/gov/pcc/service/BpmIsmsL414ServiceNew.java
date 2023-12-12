@@ -7,9 +7,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
-import tw.gov.pcc.domain.BpmIsmsL414;
-import tw.gov.pcc.domain.User;
-import tw.gov.pcc.domain.UserRole;
+import tw.gov.pcc.domain.*;
 import tw.gov.pcc.domain.entity.BpmSignStatus;
 import tw.gov.pcc.repository.BpmIsmsL414Repository;
 import tw.gov.pcc.repository.UserRoleRepository;
@@ -161,11 +159,14 @@ public class BpmIsmsL414ServiceNew implements BpmIsmsCommonService, BpmIsmsPatch
 
     @Override
     @Transactional(rollbackFor = SQLException.class)
-    public void endForm(EndEventDTO endEventDTO) {
+    public MailInfo endForm(EndEventDTO endEventDTO) {
         BpmIsmsL414 bpmIsmsL414 = bpmIsmsL414Repository.findFirstByProcessInstanceId(endEventDTO.getProcessInstanceId());
         bpmIsmsL414.setProcessInstanceStatus(endEventDTO.getProcessStatus());
         bpmIsmsL414.setUpdateTime(Timestamp.valueOf(LocalDateTime.now()));
-        bpmIsmsL414Repository.save(bpmIsmsL414);
+        BpmIsmsL414 save = bpmIsmsL414Repository.save(bpmIsmsL414);
+        String fullName= IsmsFullNameEnum.getFullNameBySimpleName(save.getFormId().split("-")[0]);
+        return new MailInfo(fullName,save.getFormId() , save.getAppName(),save.getAppEmpid(), save.getProcessInstanceStatus().equals("1")?"處理完成":"退件", true);
+
     }
 
     @Override

@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <definitions xmlns="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:flowable="http://flowable.org/bpmn" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:omgdc="http://www.omg.org/spec/DD/20100524/DC" xmlns:omgdi="http://www.omg.org/spec/DD/20100524/DI" typeLanguage="http://www.w3.org/2001/XMLSchema" expressionLanguage="http://www.w3.org/1999/XPath" targetNamespace="http://www.flowable.org/processdef">
-  <process id="AdditionalProcess" name="AdditionalProcess" isExecutable="true" flowable:class="tw.gov.pcc.flowable.act.ProcessEndServiceTask">
+  <process id="AdditionalProcess" name="AdditionalProcess" isExecutable="true" flowable:class="tw.gov.pcc.flowable.service_task.ProcessEndAct">
     <startEvent id="AdditionalProcessStart" />
     <userTask id="AdditionalSigner" name="加簽" flowable:assignee="${additionalSigner}"/>
     <sequenceFlow id="sid-1bd85708-e5c9-44bd-af0f-fa66aee3f24e" sourceRef="AdditionalProcessStart" targetRef="AdditionalSigner"/>
-    <serviceTask id="BeforeEndService" flowable:exclusive="true" flowable:class="tw.gov.pcc.flowable.act.ProcessEndServiceTask"/>
+    <serviceTask id="BeforeEndService" flowable:exclusive="true" flowable:class="tw.gov.pcc.flowable.service_task.ProcessEndAct"/>
     <sequenceFlow id="sid-1b578c15-fdde-412e-b040-55e32fe59211" sourceRef="AdditionalSigner" targetRef="BeforeEndService"/>
     <endEvent id="AdditionalProcessEnd"/>
     <sequenceFlow id="sid-762067a3-694c-446d-96bc-e2bcf55bfcaa" sourceRef="BeforeEndService" targetRef="AdditionalProcessEnd"/>

@@ -7,9 +7,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
-import tw.gov.pcc.domain.BpmIsmsL410;
-import tw.gov.pcc.domain.User;
-import tw.gov.pcc.domain.UserRole;
+import tw.gov.pcc.domain.*;
 import tw.gov.pcc.domain.entity.BpmSignStatus;
 import tw.gov.pcc.repository.BpmIsmsL410Repository;
 import tw.gov.pcc.repository.UserRoleRepository;
@@ -193,11 +191,13 @@ public class BpmIsmsL410ServiceNew implements BpmIsmsCommonService, BpmIsmsPatch
     }
 
     @Override
-    public void endForm(EndEventDTO endEventDTO) {
+    public MailInfo endForm(EndEventDTO endEventDTO) {
         BpmIsmsL410 bpmIsmsL410 = bpmIsmsL410Repository.findFirstByProcessInstanceId(endEventDTO.getProcessInstanceId());
         bpmIsmsL410.setProcessInstanceStatus(endEventDTO.getProcessStatus());
         bpmIsmsL410.setUpdateTime(Timestamp.valueOf(LocalDateTime.now()));
-        bpmIsmsL410Repository.save(bpmIsmsL410);
+        BpmIsmsL410 save = bpmIsmsL410Repository.save(bpmIsmsL410);
+        String fullName= IsmsFullNameEnum.getFullNameBySimpleName(save.getFormId().split("-")[0]);
+        return new MailInfo(fullName,save.getFormId() , save.getAppName(),save.getAppEmpid(), save.getProcessInstanceStatus().equals("1")?"處理完成":"退件", true);
     }
 
     @Override

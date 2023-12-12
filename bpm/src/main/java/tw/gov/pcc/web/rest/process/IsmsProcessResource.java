@@ -13,6 +13,7 @@ import org.springframework.web.client.RestTemplate;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
 import tw.gov.pcc.domain.BpmIsmsServiceBeanNameEnum;
+import tw.gov.pcc.domain.MailInfo;
 import tw.gov.pcc.domain.SingerDecisionEnum;
 import tw.gov.pcc.domain.User;
 import tw.gov.pcc.domain.entity.BpmIsmsAdditional;
@@ -55,6 +56,7 @@ public class IsmsProcessResource {
     private final SubordinateTaskService subordinateTaskService;
 
     private final BpmUploadFileService bpmUploadFileService;
+    private final MailService mailService;
 
     private final String[] fileTypeLimit = {
         FileMediaType.IMAGE_JPEG_VALUE,
@@ -69,7 +71,7 @@ public class IsmsProcessResource {
         FileMediaType.APPLICATION_ODS_VALUE,
     };
 
-    public IsmsProcessResource(HttpSession httpSession, BpmSignStatusService bpmSignStatusService, BpmSignStatusMapper bpmSignStatusMapper, BpmIsmsAdditionalRepository bpmIsmsAdditionalRepository, SubordinateTaskService subordinateTaskService, BpmSignerListService bpmSignerListService, ApplicationContext applicationContext, BpmUploadFileService bpmUploadFileService) {
+    public IsmsProcessResource(HttpSession httpSession, BpmSignStatusService bpmSignStatusService, BpmSignStatusMapper bpmSignStatusMapper, BpmIsmsAdditionalRepository bpmIsmsAdditionalRepository, SubordinateTaskService subordinateTaskService, BpmSignerListService bpmSignerListService, ApplicationContext applicationContext, BpmUploadFileService bpmUploadFileService, MailService mailService) {
         this.httpSession = httpSession;
         this.bpmSignStatusService = bpmSignStatusService;
         this.bpmSignStatusMapper = bpmSignStatusMapper;
@@ -78,6 +80,7 @@ public class IsmsProcessResource {
         this.bpmSignerListService = bpmSignerListService;
         this.applicationContext = applicationContext;
         this.bpmUploadFileService = bpmUploadFileService;
+        this.mailService = mailService;
     }
 
     @PostMapping(path = "/start/{key}", consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
@@ -269,8 +272,8 @@ public class IsmsProcessResource {
         log.info("ProcessL414Resource.java - receiveEndEvent - 196 :: " + endEventDTO.getProcessInstanceId());
         if (ParameterUtil.getToken().equals(request.getHeader("flowableToken"))) {
             BpmIsmsCommonService service = (BpmIsmsCommonService) applicationContext.getBean(Objects.requireNonNull(BpmIsmsServiceBeanNameEnum.getServiceBeanNameByKey(endEventDTO.getFormName())));
-            service.endForm(endEventDTO);
-
+            MailInfo mailInfo = service.endForm(endEventDTO);
+            mailService.sendMail(mailInfo);
             return;
         }
         log.warn("ProcessL414Resource.java - receiveEndEvent - 203 ::{} ", "流程發生意外終止");

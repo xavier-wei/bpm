@@ -6,6 +6,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
+import tw.gov.pcc.domain.MailInfo;
 import tw.gov.pcc.domain.User;
 import tw.gov.pcc.domain.entity.BpmIsmsAdditional;
 import tw.gov.pcc.repository.BpmIsmsAdditionalRepository;
@@ -76,16 +77,18 @@ public class BpmIsmsAdditionalService implements BpmIsmsCommonService {
     }
 
     @Override
-    public void endForm(EndEventDTO endEventDTO) {
+    public MailInfo endForm(EndEventDTO endEventDTO) {
         BpmIsmsAdditional bpmIsmsAdditional = bpmIsmsAdditionalRepository.findFirstByProcessInstanceId(endEventDTO.getProcessInstanceId());
         bpmIsmsAdditional.setProcessInstanceStatus(endEventDTO.getProcessStatus());
         bpmIsmsAdditionalRepository.save(bpmIsmsAdditional);
+        return new MailInfo(null, null, null, null,null, false);
     }
 
     @Override
     public Map<String, Object> getBpm(String formId) {
         return null;
     }
+
     @Override
     public void cancel(String formId) {
     }
