@@ -1,6 +1,7 @@
 package tw.gov.pcc.service;
 
 import com.google.gson.Gson;
+import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -10,10 +11,7 @@ import tw.gov.pcc.domain.MailInfo;
 import tw.gov.pcc.domain.User;
 import tw.gov.pcc.domain.entity.BpmIsmsAdditional;
 import tw.gov.pcc.repository.BpmIsmsAdditionalRepository;
-import tw.gov.pcc.service.dto.BpmIsmsAdditionalDTO;
-import tw.gov.pcc.service.dto.BpmUploadFileDTO;
-import tw.gov.pcc.service.dto.EndEventDTO;
-import tw.gov.pcc.service.dto.TaskDTO;
+import tw.gov.pcc.service.dto.*;
 import tw.gov.pcc.service.mapper.BpmIsmsAdditionalMapper;
 import tw.gov.pcc.utils.SeqNumber;
 
@@ -81,12 +79,12 @@ public class BpmIsmsAdditionalService implements BpmIsmsCommonService {
         BpmIsmsAdditional bpmIsmsAdditional = bpmIsmsAdditionalRepository.findFirstByProcessInstanceId(endEventDTO.getProcessInstanceId());
         bpmIsmsAdditional.setProcessInstanceStatus(endEventDTO.getProcessStatus());
         bpmIsmsAdditionalRepository.save(bpmIsmsAdditional);
-        return new MailInfo(null, null, null, null,null, false);
+        return new MailInfo(null, null, null, null, null, false);
     }
 
     @Override
     public Map<String, Object> getBpm(String formId) {
-        return null;
+        return Map.of();
     }
 
     @Override
@@ -96,6 +94,31 @@ public class BpmIsmsAdditionalService implements BpmIsmsCommonService {
     @Override
     public void removeHolder(UUID uuid) {
         DTO_HOLDER.remove(uuid);
+    }
+
+    public List<Map<String, Object>> findAllByProcessInstanceId(String processInstanceId, @NotNull BpmFormQueryDto bpmFormQueryDto) {
+
+        return bpmIsmsAdditionalRepository.findAllByProcessInstanceId(
+            processInstanceId,
+            bpmFormQueryDto.getFormId(),
+            bpmFormQueryDto.getProcessInstanceStatus(),
+            bpmFormQueryDto.getUnit(),
+            bpmFormQueryDto.getAppName(),
+            bpmFormQueryDto.getDateStart(),
+            bpmFormQueryDto.getDateEnd()
+        );
+    }
+
+    public void setDeleteRequestIfInAdditional(Map<String, String> deleteRequest, String mainProcessInstanceId) {
+        bpmIsmsAdditionalRepository
+            .findFirstByMainProcessInstanceId(mainProcessInstanceId)
+            .ifPresent(bpmIsmsAdditional ->
+                deleteRequest.put("additionalProcessInstanceId", bpmIsmsAdditional.getProcessInstanceId())
+            );
+    }
+
+    public BpmIsmsAdditional findByProcessInstanceId(String processInstanceId) {
+        return bpmIsmsAdditionalRepository.findByProcessInstanceId(processInstanceId);
     }
 
 }

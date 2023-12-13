@@ -6,6 +6,7 @@ import tw.gov.pcc.domain.entity.BpmSignStatus;
 import tw.gov.pcc.repository.BpmSignStatusRepository;
 import tw.gov.pcc.service.dto.BpmIsmsAdditionalDTO;
 import tw.gov.pcc.service.dto.BpmSignStatusDTO;
+import tw.gov.pcc.service.dto.CompleteReqDTO;
 import tw.gov.pcc.service.dto.TaskDTO;
 import tw.gov.pcc.service.mapper.BpmSignStatusMapper;
 
@@ -32,7 +33,9 @@ public class BpmSignStatusService {
         return bpmSignStatusRepository.findByProcessInstanceId(processInstanceId);
     }
 
-    public void saveBpmSignStatus(BpmSignStatus bpmSignStatus) {
+    public void saveBpmSignStatus(CompleteReqDTO completeReqDTO,String formId) {
+        BpmSignStatusDTO bpmSignStatusDTO=new BpmSignStatusDTO(completeReqDTO,formId);
+        BpmSignStatus bpmSignStatus = bpmSignStatusMapper.toEntity(bpmSignStatusDTO);
         if ("申請人確認".equals(bpmSignStatus.getTaskName())) {
             bpmSignStatus.setOpinion("(送審)");
         }

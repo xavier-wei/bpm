@@ -14,14 +14,11 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
 import tw.gov.pcc.domain.BpmIsmsServiceBeanNameEnum;
 import tw.gov.pcc.domain.MailInfo;
-import tw.gov.pcc.domain.SingerDecisionEnum;
+import tw.gov.pcc.domain.SignerDecisionEnum;
 import tw.gov.pcc.domain.User;
 import tw.gov.pcc.domain.entity.BpmIsmsAdditional;
-import tw.gov.pcc.domain.entity.BpmSignStatus;
-import tw.gov.pcc.repository.BpmIsmsAdditionalRepository;
 import tw.gov.pcc.service.*;
 import tw.gov.pcc.service.dto.*;
-import tw.gov.pcc.service.mapper.BpmSignStatusMapper;
 import tw.gov.pcc.utils.CommonUtils;
 import tw.gov.pcc.utils.MapUtils;
 import tw.gov.pcc.utils.ParameterUtil;
@@ -48,15 +45,17 @@ public class IsmsProcessResource {
     @Value("${flowable.url}")
     private String flowableProcessUrl;
     private final RestTemplate restTemplate = new RestTemplate();
+
+
     private final HttpSession httpSession;
     private final BpmSignStatusService bpmSignStatusService;
-    private final BpmSignStatusMapper bpmSignStatusMapper;
-    private final BpmIsmsAdditionalRepository bpmIsmsAdditionalRepository;
     private final BpmSignerListService bpmSignerListService;
     private final SubordinateTaskService subordinateTaskService;
 
     private final BpmUploadFileService bpmUploadFileService;
     private final MailService mailService;
+
+    private final BpmIsmsAdditionalService bpmIsmsAdditionalService;
 
     private final String[] fileTypeLimit = {
         FileMediaType.IMAGE_JPEG_VALUE,
@@ -71,16 +70,15 @@ public class IsmsProcessResource {
         FileMediaType.APPLICATION_ODS_VALUE,
     };
 
-    public IsmsProcessResource(HttpSession httpSession, BpmSignStatusService bpmSignStatusService, BpmSignStatusMapper bpmSignStatusMapper, BpmIsmsAdditionalRepository bpmIsmsAdditionalRepository, SubordinateTaskService subordinateTaskService, BpmSignerListService bpmSignerListService, ApplicationContext applicationContext, BpmUploadFileService bpmUploadFileService, MailService mailService) {
+    public IsmsProcessResource(HttpSession httpSession, BpmSignStatusService bpmSignStatusService, SubordinateTaskService subordinateTaskService, BpmSignerListService bpmSignerListService, ApplicationContext applicationContext, BpmUploadFileService bpmUploadFileService, MailService mailService, BpmIsmsAdditionalService bpmIsmsAdditionalService) {
         this.httpSession = httpSession;
         this.bpmSignStatusService = bpmSignStatusService;
-        this.bpmSignStatusMapper = bpmSignStatusMapper;
-        this.bpmIsmsAdditionalRepository = bpmIsmsAdditionalRepository;
         this.subordinateTaskService = subordinateTaskService;
         this.bpmSignerListService = bpmSignerListService;
         this.applicationContext = applicationContext;
         this.bpmUploadFileService = bpmUploadFileService;
         this.mailService = mailService;
+        this.bpmIsmsAdditionalService = bpmIsmsAdditionalService;
     }
 
     @PostMapping(path = "/start/{key}", consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
@@ -232,7 +230,6 @@ public class IsmsProcessResource {
         //驗證上傳檔案的大小與格式
         validateAppendixFilesSize(appendixFiles);
 
-
         int i = formId.indexOf("-");
         String key = formId.substring(0, i);
         BpmIsmsPatchService service = (BpmIsmsPatchService) applicationContext.getBean(Objects.requireNonNull(BpmIsmsServiceBeanNameEnum.getServiceBeanNameByKey(key)));
@@ -253,14 +250,12 @@ public class IsmsProcessResource {
             bpmUploadFileService.savePhoto(dto, appendixFiles, formId);
         }
 
-
         // 送出request dto
         ResponseEntity<String> exchange = sendRequestEntity(gson.toJson(completeReqDTO), "/completeTask", HttpMethod.POST);
 
         // 如果流程引擎回傳200，代表成功，將簽核狀態存入資料庫
         if (exchange.getStatusCodeValue() == 200) {
-            BpmSignStatus bpmSignStatus = bpmSignStatusMapper.toEntity(new BpmSignStatusDTO(completeReqDTO, formId));
-            bpmSignStatusService.saveBpmSignStatus(bpmSignStatus);
+            bpmSignStatusService.saveBpmSignStatus(completeReqDTO, formId);
             return ResponseEntity.ok(exchange.getBody());
         }
         log.error("flowableProcess - startProcess - 90 :: {} ", "flowableConnectionError");
@@ -288,7 +283,6 @@ public class IsmsProcessResource {
         @PathVariable String formId
     ) {
         BpmIsmsCommonService service = (BpmIsmsCommonService) applicationContext.getBean(Objects.requireNonNull(BpmIsmsServiceBeanNameEnum.getServiceBeanNameByKey(key)));
-
         return new MapUtils().getNewMap(service.getBpm(formId));
     }
 
@@ -339,17 +333,13 @@ public class IsmsProcessResource {
     public void deleteProcessInstance(@RequestBody ProcessInstanceIdRequestDTO request) {
         log.info("ProcessL414Resource.java - deleteProcessInstance - 206 :: " + request.getProcessInstanceId());
 
-        HashMap<String, String> deleteRequest = new HashMap<>();
+        Map<String, String> deleteRequest = new HashMap<>();
         deleteRequest.put(PROCESS_INSTANCE_ID, request.getProcessInstanceId());
         deleteRequest.put("token", ParameterUtil.getToken());
 
         // 查看是否此任務在加簽中，若是，則把加簽的processInstance也一併刪除
+        bpmIsmsAdditionalService.setDeleteRequestIfInAdditional(deleteRequest, request.getProcessInstanceId());
 
-        bpmIsmsAdditionalRepository
-            .findFirstByMainProcessInstanceId(request.getProcessInstanceId())
-            .ifPresent(bpmIsmsAdditional ->
-                deleteRequest.put("additionalProcessInstanceId", bpmIsmsAdditional.getProcessInstanceId())
-            );
         sendRequestEntity(gson.toJson(deleteRequest), "/deleteProcess", HttpMethod.POST);
         BpmIsmsCommonService service = (BpmIsmsCommonService) applicationContext.getBean(Objects.requireNonNull(BpmIsmsServiceBeanNameEnum.getServiceBeanNameByKey(request.getKey())));
 
@@ -393,20 +383,12 @@ public class IsmsProcessResource {
             return taskDTOS.isEmpty() ? null :
                 taskDTOS.stream()
                     .map(taskDTO -> {
-                        List<Map<String, Object>> mapList = bpmIsmsAdditionalRepository.findAllByProcessInstanceId(
-                            taskDTO.getProcessInstanceId(),
-                            bpmFormQueryDto.getFormId(),
-                            bpmFormQueryDto.getProcessInstanceStatus(),
-                            bpmFormQueryDto.getUnit(),
-                            bpmFormQueryDto.getAppName(),
-                            bpmFormQueryDto.getDateStart(),
-                            bpmFormQueryDto.getDateEnd()
-                        );
+                        List<Map<String, Object>> mapList = bpmIsmsAdditionalService.findAllByProcessInstanceId(taskDTO.getProcessInstanceId(), bpmFormQueryDto);
                         if (!mapList.isEmpty()) {
                             Map<String, Object> map = new HashMap<>(new MapUtils().getNewMap(mapList.get(0)));
                             map.put(TASK_ID, taskDTO.getTaskId());
                             map.put("taskName", taskDTO.getTaskName());
-                            map.put("decisionRole", SingerDecisionEnum.getDecisionByName(taskDTO.getTaskName()));
+                            map.put("decisionRole", SignerDecisionEnum.getDecisionByName(taskDTO.getTaskName()));
                             map.put("additional", false);
                             map.put("pendingUserId", taskDTO.getPendingUserId());
                             return map;
@@ -421,53 +403,41 @@ public class IsmsProcessResource {
         return Collections.emptyList();
     }
 
-
+    /**
+     * Retrieves the list of maps representing the task information based on the given query and task list.
+     *
+     * @param bpmFormQueryDto The query parameters used to filter the tasks.
+     * @param taskDTOS        The list of tasks to retrieve the information from.
+     * @return The list of maps representing the task information, or null if the task list is empty.
+     */
     @Nullable
     private List<Map<String, Object>> getMaps(BpmFormQueryDto bpmFormQueryDto, List<TaskDTO> taskDTOS) {
         return taskDTOS.isEmpty() ? null :
             taskDTOS.stream()
                 .map(taskDTO -> {
                     if (taskDTO.getFormName().equals("Additional")) {
-                        BpmIsmsAdditional bpmIsmsAdditional = bpmIsmsAdditionalRepository.findByProcessInstanceId(taskDTO.getProcessInstanceId());
-                        List<Map<String, Object>> mapList = bpmIsmsAdditionalRepository.findAllByProcessInstanceId(
-                            bpmIsmsAdditional.getMainProcessInstanceId(),
-                            bpmFormQueryDto.getFormId(),
-                            bpmFormQueryDto.getProcessInstanceStatus(),
-                            bpmFormQueryDto.getUnit(),
-                            bpmFormQueryDto.getAppName(),
-                            bpmFormQueryDto.getDateStart(),
-                            bpmFormQueryDto.getDateEnd()
-                        );
-
+                        BpmIsmsAdditional bpmIsmsAdditional = bpmIsmsAdditionalService.findByProcessInstanceId(taskDTO.getProcessInstanceId());
+                        List<Map<String, Object>> mapList = bpmIsmsAdditionalService.findAllByProcessInstanceId(bpmIsmsAdditional.getMainProcessInstanceId(), bpmFormQueryDto);
                         if (!mapList.isEmpty()) {
                             Map<String, Object> map = new HashMap<>(new MapUtils().getNewMap(mapList.get(0)));
                             map.put(PROCESS_INSTANCE_ID, taskDTO.getProcessInstanceId());
                             map.put(TASK_ID, taskDTO.getTaskId());
                             map.put("taskName", "加簽-" + bpmIsmsAdditional.getTaskName());
-                            String decisionByName = SingerDecisionEnum.getDecisionByName(taskDTO.getTaskName());
-                            map.put("decisionRole", decisionByName);
+                            map.put("decisionRole", SignerDecisionEnum.getDecisionByName(taskDTO.getTaskName()));
                             map.put("additional", true);
                             return map;
                         } else {
                             return null;
                         }
                     } else {
-                        List<Map<String, Object>> mapList = bpmIsmsAdditionalRepository.findAllByProcessInstanceId(
-                            taskDTO.getProcessInstanceId(),
-                            bpmFormQueryDto.getFormId(),
-                            bpmFormQueryDto.getProcessInstanceStatus(),
-                            bpmFormQueryDto.getUnit(),
-                            bpmFormQueryDto.getAppName(),
-                            bpmFormQueryDto.getDateStart(),
-                            bpmFormQueryDto.getDateEnd()
-                        );
+
+                        List<Map<String, Object>> mapList = bpmIsmsAdditionalService.findAllByProcessInstanceId(taskDTO.getProcessInstanceId(), bpmFormQueryDto);
 
                         if (!mapList.isEmpty()) {
                             Map<String, Object> map = new HashMap<>(new MapUtils().getNewMap(mapList.get(0)));
                             map.put(TASK_ID, taskDTO.getTaskId());
                             map.put("taskName", taskDTO.getTaskName());
-                            String decisionByName = SingerDecisionEnum.getDecisionByName(taskDTO.getTaskName());
-                            map.put("decisionRole", decisionByName);
+                            map.put("decisionRole", SignerDecisionEnum.getDecisionByName(taskDTO.getTaskName()));
                             map.put("additional", false);
                             return map;
                         } else {
@@ -480,6 +450,11 @@ public class IsmsProcessResource {
                 .collect(Collectors.toList());
     }
 
+    /**
+     * Retrieves the user information stored in the httpSession.
+     *
+     * @return the User object representing the user information stored in the httpSession or null if no user information is found
+     */
     private User getUserInfo() {
         return (User) httpSession.getAttribute("userInfo");
     }
@@ -516,18 +491,15 @@ public class IsmsProcessResource {
     /**
      * 建立HttpHeaders，及設定ContentType為application/json
      * 利用RestTemplate送出requestEntity，並取得responseEntity
-     *
      * @param json   要送出請求的json
      * @param path   要送出請求的路徑
      * @param method 要送出請求的方法
-     * @return ResponseEntity<String>
+     * @return ResponseEntity<String> 回傳responseEntity
      */
     private ResponseEntity<String> sendRequestEntity(String json, String path, HttpMethod method) {
-
         HTTP_HEADERS.setContentType(MediaType.APPLICATION_JSON);
         HttpEntity<String> requestEntity = new HttpEntity<>(json, HTTP_HEADERS);
         return restTemplate.exchange(flowableProcessUrl + path, method, requestEntity, String.class);
-
     }
 
 }

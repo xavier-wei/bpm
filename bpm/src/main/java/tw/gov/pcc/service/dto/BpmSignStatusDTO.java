@@ -50,7 +50,6 @@ public class BpmSignStatusDTO implements Serializable {
     }
 
     public BpmSignStatusDTO(CompleteReqDTO completeReqDTO, String formId) {
-        BpmSignStatusDTO bpmSignStatusDTO = new BpmSignStatusDTO();
         this.formId = formId;
         this.processInstanceId = completeReqDTO.getProcessInstanceId();
         this.taskId = completeReqDTO.getTaskId();
