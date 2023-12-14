@@ -181,7 +181,11 @@ public class Eip01w010Case implements Serializable {
 
         private String attributypeText; // 屬性中文
 
-        private String creatname;
+        private String creatName;
+
+        private String creatDeptId; // 建立者部門
+
+        private String userDeptId;
     }
 
     @Data

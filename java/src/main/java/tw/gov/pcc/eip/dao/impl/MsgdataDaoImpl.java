@@ -67,12 +67,17 @@ public class MsgdataDaoImpl extends BaseDao<Msgdata> implements MsgdataDao {
     public List<Msgdata> findbyCreatidPagetype(String creatid, String pagetype, String subject, String status,
             String attributype) {
         StringBuilder sql = new StringBuilder();
-        sql.append(" SELECT A.CREATID, A.FSEQ, A.PAGETYPE, A.SUBJECT, A.ISFRONT, A.RELEASEDT, ");
-        sql.append("        A.OFFTIME, A.STATUS,A.ATTRIBUTYPE, U.USER_NAME CREATNAME ");
-        sql.append("   FROM " + TABLE_NAME + " A, USERS U ");
+        sql.append(" SELECT A.FSEQ, A.PAGETYPE, A.SUBJECT, A.ISFRONT, A.RELEASEDT, A.OFFTIME, ");
+        sql.append("        A.STATUS, S.CODENAME STATUSTEXT, A.ATTRIBUTYPE, T.CODENAME ATTRIBUTYPETEXT, ");
+        sql.append("        A.CREATID, U.USER_NAME CREATNAME, U.DEPT_ID CREATDEPTID ");
+        sql.append("   FROM " + TABLE_NAME + " A, USERS U, ");
+        sql.append("        (SELECT CODENO, CODENAME FROM EIPCODE WHERE CODEKIND = 'ATTRIBUTYPE') T, ");
+        sql.append("        (SELECT CODENO, CODENAME FROM EIPCODE WHERE CODEKIND = 'MSGSTATUS') S ");
         sql.append("  WHERE U.ACNT_IS_VALID = 'Y' ");
         sql.append("    AND U.USER_ID = A.CREATID ");
         sql.append("    AND A.STATUS IN ('0','1','4') ");
+        sql.append("    AND A.STATUS = S.CODENO ");
+        sql.append("    AND A.ATTRIBUTYPE = T.CODENO ");
         if (StringUtils.isNotEmpty(pagetype)) {
             sql.append("    AND A.PAGETYPE = isnull(:pagetype,  A.PAGETYPE) ");
         }

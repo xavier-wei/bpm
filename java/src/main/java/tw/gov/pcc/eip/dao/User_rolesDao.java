@@ -31,4 +31,6 @@ public interface User_rolesDao {
 
 	List<User_roles> selectDataByUserId(String user_id);
 
+    List<User_roles> judgeSecretarialLogin(String user_id,String roleId);
+
 }

@@ -115,9 +115,10 @@ public class DeptsDaoImpl extends BaseDao<Depts> implements DeptsDao {
     @Override
     public List<Depts> getEip01wDepts() {
         StringBuilder sql = new StringBuilder();
-        sql.append(" SELECT '00' DEPT_ID, '全會人員' DEPT_NAME ");
+        sql.append(" SELECT '00' DEPT_ID, '全會人員' DEPT_NAME, '0' SORT_ORDER ");
         sql.append(" UNION ");
-        sql.append(" SELECT DEPT_ID,DEPT_NAME FROM DEPTS WHERE IS_VALID ='Y' ");
+        sql.append(" SELECT DEPT_ID, DEPT_NAME, SORT_ORDER FROM DEPTS WHERE IS_VALID = 'Y' ");
+        sql.append(" ORDER BY SORT_ORDER ");
         return getNamedParameterJdbcTemplate().query(sql.toString(), 
                 BeanPropertyRowMapper.newInstance(Depts.class));
     }
@@ -228,10 +229,11 @@ public class DeptsDaoImpl extends BaseDao<Depts> implements DeptsDao {
     @Override
     public List<Depts> getEip02w010DeptIdList() {
         StringBuilder sql = new StringBuilder();
-        sql.append(" SELECT DEPT_ID + '2' DEPT_ID, DEPT_NAME FROM DEPTS WHERE IS_VALID ='Y' ");
+        sql.append(" SELECT DEPT_ID + '2' DEPT_ID, DEPT_NAME, SORT_ORDER FROM DEPTS WHERE IS_VALID ='Y' ");
         sql.append(" UNION ");
-        sql.append(" SELECT DEPT_ID + '1', DEPT_NAME + '全處' FROM DEPTS WHERE IS_VALID = 'Y' AND DEPT_ID IN ");
+        sql.append(" SELECT DEPT_ID + '1', DEPT_NAME + '全處', SORT_ORDER FROM DEPTS WHERE IS_VALID = 'Y' AND DEPT_ID IN ");
         sql.append(" ( SELECT DEPT_ID_P FROM DEPTS WHERE IS_VALID = 'Y' GROUP BY DEPT_ID_P HAVING COUNT(1) > 1 ) ");
+        sql.append(" ORDER BY SORT_ORDER ");
         return getNamedParameterJdbcTemplate().query(sql.toString(), 
                 BeanPropertyRowMapper.newInstance(Depts.class));
     }

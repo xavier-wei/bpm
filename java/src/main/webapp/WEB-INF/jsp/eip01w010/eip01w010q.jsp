@@ -117,6 +117,9 @@
                                     <tr data-seq="${status.index + 1 }">
                                         <td class="text-center">
                                             <c:choose>
+                                                <c:when test="${item.creatDeptId ne item.userDeptId }">
+                                                
+                                                </c:when>
                                                 <c:when test="${item.status != '4' }">
                                                     <input type="checkbox" value="${item.fseq }">
                                                 </c:when>
@@ -148,10 +151,12 @@
                                             <c:out value="${item.statusText}" />
                                         </td>
                                         <td class="text-left">
-                                            <c:out value="${item.creatname}" />
+                                            <c:out value="${item.creatName}" />
                                         </td>
-                                        <td class="text-center" data-fseq="${item.fseq}">
-                                            <tags:button id="btnDetail">修改</tags:button>
+                                        <td class="text-center" data-fseq="${item.fseq}" data-deptid="${item.creatDeptId }">
+                                            <c:if test="${item.creatDeptId eq item.userDeptId }">
+                                                <tags:button id="btnDetail">修改</tags:button>
+                                            </c:if>
                                             <tags:button id="btnPreview">預覽</tags:button>
                                         </td>
                                     </tr>
@@ -295,8 +300,9 @@
 
                 function btnShowHide() {
                     var all = $('tbody tr:not(:hidden)').length;
+                    var empty = $('tbody tr:not(:hidden):not(:has(input:checkbox))').length;
                     var dis = $('tbody tr:not(:hidden) td input:checkbox:disabled').length;
-                    if (all != dis) {
+                    if ((all - empty) != dis) {
                         $('#btnUpload, #btnDelete').show();
                     } else {
                         $('#btnUpload, #btnDelete').hide();

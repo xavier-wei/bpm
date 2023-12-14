@@ -63,10 +63,10 @@ public class Eip0aw030Service {
 
                     assert u != null;
                     if (isLeave) {
-                        //先判斷離職人員刪除
-                        log.info("VIEW_CPAPE05M使用者{}於{}已離職，刪除使用者及授權資料。", ObjectUtility.normalizeObject(x.getUser_id()), DateUtility.changeDateTypeToWestDate(r.getPelevdate()));
-                        usersDao.deleteByKey(x);
-                        user_rolesDao.selectDataByUserId(x.getUser_id()).forEach(user_rolesDao::deleteByKey);
+                        //先判斷離職人員註銷
+                        log.info("VIEW_CPAPE05M使用者{}於{}已離職，註銷使用者資料。", ObjectUtility.normalizeObject(x.getUser_id()), DateUtility.changeDateTypeToWestDate(r.getPelevdate()));
+                        x.setAcnt_is_valid("N");
+                        usersDao.updateByKey(x);
                         deleteCnt.getAndIncrement();
                     } else if (x.equals(u)) {
                         log.info("VIEW_CPAPE05M使用者{}資料無異動", ObjectUtility.normalizeObject(x.getUser_id()));
@@ -88,6 +88,6 @@ public class Eip0aw030Service {
                 errCnt.getAndIncrement();
             }
         });
-        log.info("USERS更新資料結束，更新{}筆，刪除{}筆，無更新{}筆，失敗{}筆。", updateCnt.get(), deleteCnt.get(), passCnt.get(), errCnt.get());
+        log.info("USERS更新資料結束，更新{}筆，註銷{}筆，無更新{}筆，失敗{}筆。", updateCnt.get(), deleteCnt.get(), passCnt.get(), errCnt.get());
     }
 }

@@ -122,8 +122,10 @@
                             </div>
                         </tags:form-row>
                         <tags:form-row>
-                            <div class="col">
+                            <div class="col-1.5">
                                 <form:label cssClass="col-form-label " path="rptCont">辦理情形：</form:label>
+                            </div>
+                            <div class="col pt-2">
                                 <c:out value="${item.value['rptCont']}" escapeXml="false"/>
                             </div>
                         </tags:form-row>

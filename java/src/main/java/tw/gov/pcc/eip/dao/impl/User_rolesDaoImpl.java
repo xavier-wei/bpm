@@ -144,4 +144,24 @@ public class User_rolesDaoImpl extends BaseDao<User_roles> implements User_roles
         List<User_roles> list = getNamedParameterJdbcTemplate().query(sql.toString(), new BeanPropertySqlParameterSource(userroles), BeanPropertyRowMapper.newInstance(User_roles.class));
         return list;
     }
+
+    /**
+     * 根據user_id及roleId選取資料
+     *
+     * @param role_id 條件
+     * @return
+     */
+    @Override
+    public List<User_roles> judgeSecretarialLogin(String user_id,String roleId) {
+        User_roles userroles = new User_roles();
+        userroles.setUser_id(user_id);
+        userroles.setRole_id(roleId);
+        StringBuilder sql = new StringBuilder();
+        sql.append("SELECT ");
+        sql.append(ALL_COLUMNS_SQL);
+        sql.append(" FROM " + TABLE_NAME + " t WHERE t.USER_ID = :user_id ");
+        sql.append(" and upper(t.role_id) = :role_id ");
+        List<User_roles> list = getNamedParameterJdbcTemplate().query(sql.toString(), new BeanPropertySqlParameterSource(userroles), BeanPropertyRowMapper.newInstance(User_roles.class));
+        return list;
+    }
 }

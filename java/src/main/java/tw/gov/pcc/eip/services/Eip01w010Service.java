@@ -1,6 +1,6 @@
 package tw.gov.pcc.eip.services;
 
-import static org.apache.commons.lang3.StringUtils.trim;
+import static org.apache.commons.lang3.StringUtils.trimToEmpty;
 import static org.apache.commons.lang3.StringUtils.trimToNull;
 
 import java.io.File;
@@ -224,11 +224,11 @@ public class Eip01w010Service {
         } else if ("I".equals(mode)) {
             caseData.setStatus("0");
             caseData.setStatusText("0-處理中");
-            caseData.setLocatearea("");
+//            caseData.setLocatearea("");
             caseData.setAvailabledep("");
-            caseData.setIssearch("2");
+//            caseData.setIssearch("2");
             caseData.setIstop("2");
-            caseData.setIsfront("2");
+//            caseData.setIsfront("2");
             caseData.setContactunit(userData.getDeptId());
             caseData.setContactperson(userData.getUserId());
             caseData.setContacttel(userData.getTel2());
@@ -243,7 +243,7 @@ public class Eip01w010Service {
      * 
      * @param caseData
      */
-    public void getQueryList(Eip01w010Case caseData) {
+    public void getQueryList(Eip01w010Case caseData, String deptId) {
         String p1id = caseData.getP1id();
         String p1page = StringUtils.trimToEmpty(caseData.getP1page());
         String p1title = caseData.getP1title();
@@ -262,13 +262,12 @@ public class Eip01w010Service {
                 detail.setReleasedt(m.getReleasedt());
                 detail.setOfftime(m.getOfftime());
                 detail.setStatus(m.getStatus());
-                detail.setStatusText(changeStatusText(m.getStatus(), false));
+                detail.setStatusText(m.getStatusText());
                 detail.setAttributype(m.getAttributype());
-                Optional<Eipcode> opt = eipCodeDao.findByCodeKindCodeNo("ATTRIBUTYPE", m.getAttributype());
-                if (opt.isPresent()) {
-                    detail.setAttributypeText(opt.get().getCodename());
-                }
-                detail.setCreatname(m.getCreatname());
+                detail.setAttributypeText(m.getAttributypeText());
+                detail.setCreatName(m.getCreatName());
+                detail.setCreatDeptId(m.getCreatDeptId());
+                detail.setUserDeptId(deptId);
                 return detail;
             }).collect(Collectors.toCollection(ArrayList::new));
             caseData.setQueryList(details);
@@ -311,14 +310,14 @@ public class Eip01w010Service {
         caseData.setOplink(msgdata.getOplink()); // 是否需要另開視窗
         caseData.setReleasedt(DateUtility.changeDateTypeToChineseDate(StringUtils.trimToNull(msgdata.getReleasedt()))); // 上架日期
         caseData.setOfftime(DateUtility.changeDateTypeToChineseDate(StringUtils.trimToNull(msgdata.getOfftime()))); // 下架日期
-        caseData.setContactunit(trim(msgdata.getContactunit())); // 連絡單位
-        caseData.setContactperson(trim(msgdata.getContactperson())); // 聯絡人
-        caseData.setContacttel(trim(msgdata.getContacttel())); // 連絡電話
+        caseData.setContactunit(trimToEmpty(msgdata.getContactunit())); // 連絡單位
+        caseData.setContactperson(trimToEmpty(msgdata.getContactperson())); // 聯絡人
+        caseData.setContacttel(trimToEmpty(msgdata.getContacttel())); // 連絡電話
         caseData.setMemo(msgdata.getMemo()); // 備註
         caseData.setOffreason(msgdata.getOffreason()); // 下架原因
 
         Function<String, String> userName = (userId) -> {
-            if (userId != "") {
+            if (!StringUtils.isEmpty(userId)) {
                 Optional<Users> opt = Optional.ofNullable(usersDao.selectByKey(userId));
                 if (opt.isPresent()) {
                     return opt.get().getUser_name();
@@ -327,14 +326,14 @@ public class Eip01w010Service {
             return "";
         };
 
-        caseData.setCreatid(userName.apply(trim(msgdata.getCreatid()))); // 建立人員
+        caseData.setCreatid(userName.apply(trimToEmpty(msgdata.getCreatid()))); // 建立人員
         caseData.setCreatdt(msgdata.getCreatdt() == null ? "" : msgdata.getCreatdt().format(minguoDateTimeformatter)); // 建立時間
         Users user = usersDao.selectByKey(msgdata.getCreatid());
         if (user != null) {
             caseData.setCreatDeptid(user.getDept_id()); // 建立者部門id
         }
         caseData.setUserDeptid(deptid); // 使用者部門id
-        caseData.setUpdid(userName.apply(trim(msgdata.getUpdid()))); // 更新人員
+        caseData.setUpdid(userName.apply(trimToEmpty(msgdata.getUpdid()))); // 更新人員
         caseData.setUpddt(msgdata.getUpddt() == null ? "" : msgdata.getUpddt().format(minguoDateTimeformatter)); // 更新時間
         // 取得附檔清單
         List<Msgdeposit> fileList = msgdepositDao.findbyfseq(Arrays.asList(msgdata.getFseq()));
@@ -356,7 +355,7 @@ public class Eip01w010Service {
         Eip01w010Case.Tree newTree = new Eip01w010Case.Tree();
         Msgdepositdir dir = msgdepositdirDao.getDefaultPath(attr, deptId);
         if (dir != null) {
-            newTree.setDefaultKey(trim(dir.getExisthier()));
+            newTree.setDefaultKey(trimToEmpty(dir.getExisthier()));
             newTree.setDefaultPath(dir.getFilepath());
         }
         List<Msgdepositdir> tree = msgdepositdirDao.getTreeByAttr(attr, "");
@@ -433,7 +432,7 @@ public class Eip01w010Service {
             }
         } else {
             Msgdata m = msgdataDao.findbyfseq(fseq);
-            boolean isOwn = (m != null && StringUtils.equals(contactunit, trim(m.getContactunit())) && cnt == 1) ? true
+            boolean isOwn = (m != null && StringUtils.equals(contactunit, trimToEmpty(m.getContactunit())) && cnt == 1) ? true
                     : false;
             if ("6".equals(attr)) {
                 if (cnt != 0 && !isOwn) {
@@ -478,10 +477,10 @@ public class Eip01w010Service {
                 msgavaildepDao.insert(a);
             }
         }
-//        m.setIssearch(caseData.getIssearch()); // 是否提供外部查詢
+        m.setIssearch("1"); // 是否提供外部查詢
 //        m.setShoworder(caseData.getShoworder()); // 顯示順序
-//        m.setIstop(caseData.getIstop()); // 是否置頂
-        m.setIsfront(caseData.getIsfront()); // 前台是否顯示
+        m.setIstop(caseData.getIstop()); // 是否置頂
+//        m.setIsfront(caseData.getIsfront()); // 前台是否顯示
         m.setSubject(caseData.getSubject()); // 主旨/連結網址
         m.setMcontent("A".equals(caseData.getPagetype()) ? caseData.getMcontent() : caseData.getMlink()); // 內文
         m.setOplink(caseData.getOplink()); // 是否需要另開視窗
@@ -667,10 +666,6 @@ public class Eip01w010Service {
         Users user = usersDao.selectByKey(userId);
         caseData.setUpdid(user == null ? "" : user.getUser_name());
         caseData.setUpddt(ldt.format(minguoDateTimeformatter));
-        if ("D".equals(caseData.getMode())) {
-            getQueryList(caseData);
-            caseData.setKeep((caseData.getQueryList() != null && caseData.getQueryList().size() == 1) ? true : false);
-        }
     }
 
     /**
@@ -693,11 +688,7 @@ public class Eip01w010Service {
             // 實體刪除
             deleteData(fseqs);
         }
-        // 返回
-        getQueryList(caseData);
-        caseData.setKeep((caseData.getQueryList() != null && caseData.getQueryList().size() == 1) ? true : false);
-        caseData.setStatus(status);
-        caseData.setStatusText(changeStatusText(status, true));
+        caseData.setFseqs("");
     }
 
     /**
@@ -736,7 +727,14 @@ public class Eip01w010Service {
         });
     }
 
-    private String changeStatusText(String status, boolean addNum) {
+    /**
+     * 中文狀態說明
+     * 
+     * @param status 狀態代碼
+     * @param addNum true:有加代號 ; false:無代號
+     * @return
+     */
+    public String changeStatusText(String status, boolean addNum) {
         String statusText = "";
         switch (status) {
         case "0":
@@ -871,12 +869,12 @@ public class Eip01w010Service {
             detail.setAttributype(attr);
             detail.setSubject(m.getSubject());
             detail.setMcontent(StringUtils.replace(m.getMcontent(), "\r\n", "<br>"));
-            Depts dept = deptsDao.findByPk(trim(m.getContactunit()));
+            Depts dept = deptsDao.findByPk(trimToEmpty(m.getContactunit()));
             detail.setContactunit(dept == null ? "" : dept.getDept_name());
             detail.setUpddt(m.getUpddt() == null ? "" : m.getUpddt().format(minguoDateformatter));
-            Users user = usersDao.selectByKey(trim(m.getContactperson()));
+            Users user = usersDao.selectByKey(trimToEmpty(m.getContactperson()));
             detail.setContactperson(user == null ? "" : user.getUser_name());
-            detail.setContacttel(trim(m.getContacttel()));
+            detail.setContacttel(trimToEmpty(m.getContacttel()));
             // 附檔
             List<Msgdeposit> files = msgdepositDao.findbyfseq(Arrays.asList(fseq));
             if (!CollectionUtils.isEmpty(files)) {

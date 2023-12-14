@@ -171,9 +171,11 @@
                             <%-- 檢視，隱藏儲存按鈕。--%>
                             <c:otherwise>
                                 <tags:form-row>
-                                    <div class="col">
+                                    <div class="col-1.5">
                                         <form:label cssClass="col-form-label " path="rptCont">辦理情形：</form:label>
-                                        <c:out value="${item.value['rptCont']}" escapeXml="false"/>
+                                    </div>
+                                    <div class="col pt-2">
+                                         <c:out value="${item.value['rptCont']}" escapeXml="false"/>
                                     </div>
                                 </tags:form-row>
                                 <tags:form-row>
@@ -358,7 +360,7 @@
             var prcSts = $(this).data('prc');
             var trkObj = $(this).data('obj');
 
-            if(prcSts !== "已解列" && $('#currentDept').val() === trkObj){
+            if(prcSts !== "已解列" && $('#currentDept').val() === trkObj.toString()){
                 $('#btnSave').show()
             }else {
                 $('#btnSave').hide()

@@ -342,7 +342,7 @@ public class Eip06w010Service {
         /** 顯示位置 */
         ms.setLocatearea("3"); // 1:登入前 2:登入後 3:各處室資訊網
         /** 是否提供外部查詢 */
-        ms.setIssearch("2"); // 1:是 2:否
+        ms.setIssearch("1"); // 1:是 2:否
         /** 顯示順序 */
         ms.setShoworder("0"); // 1~99，數字愈小，優先序愈高-  (順序怎麼定義)
         /** 是否置頂 */

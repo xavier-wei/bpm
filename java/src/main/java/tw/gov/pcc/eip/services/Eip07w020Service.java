@@ -41,6 +41,8 @@ public class Eip07w020Service {
     @Autowired
     private Car_booking_recDao car_booking_recDao;
     @Autowired
+    private User_rolesDao user_rolesDao;
+    @Autowired
     private  TimeConversionService timeConversionService;
     @Autowired
     private  MailService mailService;
@@ -279,13 +281,14 @@ public class Eip07w020Service {
     //判斷是否為秘書室人員登入
     public void secretarialLogin(Eip07w020Case data) {
         //判斷登入user是否為秘書室
-        if ("600023".equals(data.getApplyUnit())||"600024".equals(data.getApplyUnit())||"600025".equals(data.getApplyUnit())&&
-                "600026".equals(data.getApplyUnit())||"600027".equals(data.getApplyUnit()) ){
-            data.setIsSecretarial("Y");
-        }else {
-            data.setIsSecretarial("N");
+        List<User_roles> role=user_rolesDao.judgeSecretarialLogin(userData.getUserId(),"EIP07W010");
+        if(!role.isEmpty()){
+                data.setIsSecretarial("Y");
+            }else {
+                data.setIsSecretarial("N");
+            }
         }
-    }
+
 
     //判斷秘書室人員是否查詢自己的表單
     public void secretarialChoseApplyid(Eip07w020Case data) {

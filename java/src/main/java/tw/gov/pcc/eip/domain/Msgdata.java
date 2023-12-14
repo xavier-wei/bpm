@@ -101,5 +101,8 @@ public class Msgdata implements Serializable {
     @LogField("UPDDT")
     private LocalDateTime upddt;
     
-    private String creatname;
+    private String statusText;
+    private String attributypeText;
+    private String creatName;
+    private String creatDeptId;
 }

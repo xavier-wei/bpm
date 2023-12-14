@@ -825,6 +825,7 @@
                         timeout: 100000,
                         success: function(data) {
                             if (data != null) {
+                            	$('#msgtype').empty();
                                 $.each(data, function(i, e) {
                                     $('#msgtype').append("<option value='" + i +
                                         "'>" + e + "</option>");
@@ -887,7 +888,9 @@
                     getUsersOptions(selectValue);
                 });
                 var attribute = '<c:out value="${caseData.attributype}" />';
-                getMsgtypeOptions(attribute); // 取得訊息類別選單(屬性)
+                if (attribute !== '') {
+                    getMsgtypeOptions(attribute); // 取得訊息類別選單(屬性)
+                }
                 var contactunit = '<c:out value="${caseData.contactunit}" />';
                 var contactperson = '<c:out value="${caseData.contactperson}" />';
                 getUsersOptions(contactunit, contactperson); // 取得使用者選單(聯絡單位, 聯絡人)

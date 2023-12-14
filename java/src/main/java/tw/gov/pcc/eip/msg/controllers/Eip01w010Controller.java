@@ -113,7 +113,7 @@ public class Eip01w010Controller extends BaseController {
     public ModelAndView queryList(@ModelAttribute(CASE_KEY) Eip01w010Case caseData) {
         log.debug("導向 Eip01w010_enter 訊息上稿 新增/修改");
         eip01w010Service.initOptions(caseData);
-        eip01w010Service.getQueryList(caseData);
+        eip01w010Service.getQueryList(caseData, userData.getDeptId());
         List<Detail> result = caseData.getQueryList();
         if (CollectionUtils.isEmpty(result)) {
             setSystemMessage(getQueryEmptyMessage());
@@ -235,6 +235,10 @@ public class Eip01w010Controller extends BaseController {
         try {
             eip01w010Service.updStatus(caseData, "1");
             eip01w010Service.callSp_Eip01w010();
+            eip01w010Service.getQueryList(caseData, userData.getDeptId());
+            caseData.setKeep((caseData.getQueryList() != null && caseData.getQueryList().size() == 1) ? true : false);
+//            caseData.setStatus("1");
+//            caseData.setStatusText(eip01w010Service.changeStatusText("1", true));
             setSystemMessage(getUpdateSuccessMessage());
             return new ModelAndView(MAIN_PAGE);
         } catch (Exception e) {
@@ -263,6 +267,10 @@ public class Eip01w010Controller extends BaseController {
         }
         try {
             eip01w010Service.updStatus(caseData, "X"); // 邏輯註銷
+            eip01w010Service.getQueryList(caseData, userData.getDeptId());
+            caseData.setKeep((caseData.getQueryList() != null && caseData.getQueryList().size() == 1) ? true : false);
+//            caseData.setStatus("X");
+//            caseData.setStatusText(eip01w010Service.changeStatusText("X", true));
             setSystemMessage(getUpdateSuccessMessage());
             if ("".equals(caseData.getFseq())) {
                 return new ModelAndView(MAIN_PAGE); // 列表

@@ -185,65 +185,57 @@ public class Eip03w020Service {
             String trkObjNo = a.getTrkObj().split("-")[0];
             List<KeepTrkDtl> list = keepTrkDtlDao.selectDataByTrkIDAndTrkObj(a.getTrkID(), trkObjNo);
             Map<String,String> innerMap = new HashMap<>();
-            innerMap.put("trkID", list.get(0).getTrkID());      //列管事項編號
-            innerMap.put("trkObj", list.get(0).getTrkObj());     //列管對象 (處室)
-            innerMap.put("trkObjRoot", deptsDao.findByPk(list.get(0).getTrkObj()).getDept_id_p());     //列管對象 (處室)
-            innerMap.put("trkObjName", deptsDao.findByPk(list.get(0).getTrkObj()).getDept_name());     //列管對象 (處室)
-            innerMap.put("prcSts", eipcodeDao.findByCodeKindCodeNo("TRKPRCSTS", list.get(0).getPrcSts()).get().getCodename());    //處理狀態：1-待處理 2-待解列 3-已解列
-            innerMap.put("stDt", list.get(0).getStDt());   //列管起日
-            innerMap.put("endDt", list.get(0).getEndDt());     //列管迄日
-            if (list.get(0).getRptCont() != null){
-                list.get(0).setRptCont(list.get(0).getRptCont().replaceAll("\r\n","<br>"));
+            KeepTrkDtl ktdItem = list.get(0);
+            innerMap.put("trkID", ktdItem.getTrkID());      //列管事項編號
+            innerMap.put("trkObj", ktdItem.getTrkObj());     //列管對象 (處室)
+            innerMap.put("trkObjRoot", deptsDao.findByPk(ktdItem.getTrkObj()).getDept_id_p());     //列管對象 (處室)
+            innerMap.put("trkObjName", deptsDao.findByPk(ktdItem.getTrkObj()).getDept_name());     //列管對象 (處室)
+            innerMap.put("prcSts", eipcodeDao.findByCodeKindCodeNo("TRKPRCSTS", ktdItem.getPrcSts()).get().getCodename());    //處理狀態：1-待處理 2-待解列 3-已解列
+            innerMap.put("stDt", ktdItem.getStDt());   //列管起日
+            innerMap.put("endDt", ktdItem.getEndDt());     //列管迄日
+            // 辦理情形: 當狀態為不可編輯時才需替換，textarea 無須替換
+            // 若為[KeepTrkDtl.Prcsts!=3(已解列)且KeepTrkDtl.TrkObj為登入者部室]，則綠字欄位開放編輯
+            boolean isEditable = (!Objects.equals(ktdItem.getPrcSts(), "3")) && ktdItem.getTrkObj().equals(userData.getDeptId());
+            if (ktdItem.getRptCont() != null && !isEditable){
+                innerMap.put("rptCont", ktdItem.getRptCont().replaceAll("\r\n","<br>"));
+            }else {
+                innerMap.put("rptCont", ktdItem.getRptCont());
             }
-            innerMap.put("rptCont", list.get(0).getRptCont());    //辦理情形
-            innerMap.put("rptRate", String.valueOf(list.get(0).getRptRate()));    //辦理完成進度(0-100)
-//            innerMap.put("rptAskEnd", StringUtils.equals(list.get(0).getRptAskEnd(), "Y")? "是" : "否");  //是否要求解列(Y/N)
-            innerMap.put("rptAskEnd", list.get(0).getRptAskEnd());  //是否要求解列(Y/N)
-            innerMap.put("rptDept", list.get(0).getRptDept());   //指定填報單位
-            innerMap.put("rptUser", list.get(0).getRptUser());    //指定填報人員
-            List<Depts> rptDeptNameList = new ArrayList<>();
-            List<Users> rptUserNameList = new ArrayList<>();
-            if (list.get(0).getRptDept() != null){
-                rptDeptNameList = deptsDao.findNameByMultiID(Arrays.stream(list.get(0).getRptDept().split(";")).collect(Collectors.toList()));
+            innerMap.put("rptRate", String.valueOf(ktdItem.getRptRate()));    //辦理完成進度(0-100)
+            innerMap.put("rptAskEnd", ktdItem.getRptAskEnd());  //是否要求解列(Y/N)
+            innerMap.put("rptDept", ktdItem.getRptDept());   //指定填報單位
+            innerMap.put("rptUser", ktdItem.getRptUser());    //指定填報人員
+
+            if (ktdItem.getRptDept() != null){  //指定填報單位
+                innerMap.put("rptDeptName", deptsDao.findNameByMultiID(Arrays.stream(ktdItem.getRptDept().split(";")).collect(Collectors.toList())).stream()
+                        .filter(Objects::nonNull)
+                        .map(Depts::getDept_name)
+                        .collect(Collectors.joining(";")));
             }
-            if (list.get(0).getRptUser() != null && !list.get(0).getRptUser().equals("")){
-                rptUserNameList = usersDao.findNameByMultiID(Arrays.stream(list.get(0).getRptUser().split(";")).collect(Collectors.toList()));
-            }
-            StringBuilder rptDeptName = new StringBuilder();
-            for (Depts depts : rptDeptNameList) {
-                if(depts != null){
-                    rptDeptName.append(depts.getDept_name()).append(";");
-                }
+            if (ktdItem.getRptUser() != null && !ktdItem.getRptUser().equals("")){ //指定填報人員
+                innerMap.put("rptUserName", usersDao.findNameByMultiID(Arrays.stream(ktdItem.getRptUser().split(";")).collect(Collectors.toList())).stream()
+                        .filter(Objects::nonNull)
+                        .map(Users::getUser_name)
+                        .collect(Collectors.joining(";")));
             }
 
-            StringBuilder rptUserName = new StringBuilder();
-            for (Users users : rptUserNameList) {
-                if(users != null){
-                    rptUserName.append(users.getUser_name()).append(";");
-                }
-            }
-
-            innerMap.put("rptDeptName", rptDeptName.toString());   //指定填報單位
-            innerMap.put("rptUserName", rptUserName.toString());    //指定填報人員
-            innerMap.put("rptUpdUser", list.get(0).getRptUpdUser() != null? getUserName(list.get(0).getRptUpdUser()) : ""); //填報更新人員
-            String rptUpdDt = DateUtility.parseLocalDateTimeToChineseDateTime(list.get(0).getRptUpdDt(), true);
+            innerMap.put("rptUpdUser", ktdItem.getRptUpdUser() != null? getUserName(ktdItem.getRptUpdUser()) : ""); //填報更新人員
+            String rptUpdDt = DateUtility.parseLocalDateTimeToChineseDateTime(ktdItem.getRptUpdDt(), true);
             if(StringUtils.isNotBlank(rptUpdDt)){
                 rptUpdDt = rptUpdDt.substring(0,3) + "/" + rptUpdDt.substring(3,5) + "/" + rptUpdDt.substring(5,7) + "  " + rptUpdDt.substring(7,9) + ":" + rptUpdDt.substring(9,11) + ":" + rptUpdDt.substring(11);
             }
 
             innerMap.put("rptUpdDt", rptUpdDt);   //填報更新日期時間
-            innerMap.put("supCont", list.get(0).getSupCont());    //回應內容
-            innerMap.put("supAgree", list.get(0).getSupAgree());   //是否同意解列(Y/N)
-            innerMap.put("supDept", list.get(0).getSupDept() != null? deptsDao.findByPk(list.get(0).getSupDept()).getDept_name():"");    //回應人員所屬部門
-            innerMap.put("supUser", list.get(0).getSupUser()!= null? getUserName(list.get(0).getSupUser()):"");    //回應人員
+            innerMap.put("supCont", ktdItem.getSupCont());    //回應內容
+            innerMap.put("supAgree", ktdItem.getSupAgree());   //是否同意解列(Y/N)
+            innerMap.put("supDept", ktdItem.getSupDept() != null? deptsDao.findByPk(ktdItem.getSupDept()).getDept_name():"");    //回應人員所屬部門
+            innerMap.put("supUser", ktdItem.getSupUser()!= null? getUserName(ktdItem.getSupUser()):"");    //回應人員
 
-            String supDt = DateUtility.parseLocalDateTimeToChineseDateTime(list.get(0).getSupDt(), true);
+            String supDt = DateUtility.parseLocalDateTimeToChineseDateTime(ktdItem.getSupDt(), true);
             if(StringUtils.isNotBlank(supDt)){
                 supDt = supDt.substring(0,3) + "/" + supDt.substring(3,5) + "/" + supDt.substring(5,7) + "  " + supDt.substring(7,9) + ":" + supDt.substring(9,11) + ":" + supDt.substring(11);
             }
             innerMap.put("supDt", supDt);      //回應日期時間
-//            innerMap.put("isSameDept", trkObjNo.equals(userData.getDeptId())? "Y" : "N");      //TrkObj為登入者部室
-//            a.setTrkObj(a.getTrkObj() + "-" + eipcodeDao.findByCodeKindCodeNo("TRKOBJ",trkObjNo).get().getCodename());
             a.setTrkObj(a.getTrkObj() + "-" + deptsDao.findByPk(trkObjNo).getDept_name());
             doubleMap.put(a.getTrkObj().split("-")[0], innerMap);
         });
