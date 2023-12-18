@@ -16,7 +16,7 @@ import java.util.Objects;
  */
 @Entity
 @Table(name = "BPM_ISMS_L410")
-public class BpmIsmsL410 implements Serializable {
+public class BpmIsmsL410  implements Serializable, BpmIsms {
 
     private static final long serialVersionUID = 1L;
 

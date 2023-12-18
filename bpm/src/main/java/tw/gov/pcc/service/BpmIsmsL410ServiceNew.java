@@ -8,7 +8,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 import tw.gov.pcc.domain.*;
-import tw.gov.pcc.domain.entity.BpmSignStatus;
 import tw.gov.pcc.repository.BpmIsmsL410Repository;
 import tw.gov.pcc.repository.UserRoleRepository;
 import tw.gov.pcc.service.dto.BpmIsmsL410DTO;
@@ -25,7 +24,7 @@ import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
 
-@Service("L410Service")
+@Service("l410Service")
 public class BpmIsmsL410ServiceNew implements BpmIsmsCommonService, BpmIsmsPatchService {
 
     // BPM_IPT_Operator 資推小組承辦人、 BPM_IPT_Mgr 簡任技正/科長 、 BPM_PR_Operator 人事室、BPM_SEC_Operator 秘書處
@@ -142,12 +141,6 @@ public class BpmIsmsL410ServiceNew implements BpmIsmsCommonService, BpmIsmsPatch
         return null;
     }
 
-
-    public void save(BpmIsmsL410 bpmIsmsL410) {
-        bpmIsmsL410Repository.save(bpmIsmsL410);
-    }
-
-
     @NotNull
     private HashMap<String, String> getSignerIdsHashMap(HashMap<String, Object> variables) {
         // 設定取得所有簽核者的Id
@@ -162,7 +155,6 @@ public class BpmIsmsL410ServiceNew implements BpmIsmsCommonService, BpmIsmsPatch
         // BPM_IPT_Operator 資推小組承辦人、 BPM_IPT_Mgr 簡任技正/科長 、 BPM_PR_Operator 人事室、BPM_SEC_Operator 秘書處
         return signerIds;
     }
-
 
     // 設定需要申請的Task及各task的Signer
     private static void setSys(HashMap<String, Object> variables, BpmIsmsL410DTO bpmIsmsL410DTO, HashMap<String, String> signerIds) {
@@ -183,7 +175,7 @@ public class BpmIsmsL410ServiceNew implements BpmIsmsCommonService, BpmIsmsPatch
             .filter(s -> "1".equals(variables.get(s)))
             .forEach(s -> {
                 String siner = s.replaceFirst("is", "") + "Signer";
-                signerMapTemp.put(siner, signerIds.get(SysSignerEnum.getSinerUnitBySigner(siner)));
+                signerMapTemp.put(siner, signerIds.get(SysSignerEnum.getSignerUnitBySigner(siner)));
             });
         signerMapTemp.keySet().forEach(s -> variables.put(s, signerMapTemp.get(s)));
         signerMapTemp.clear();
@@ -202,11 +194,8 @@ public class BpmIsmsL410ServiceNew implements BpmIsmsCommonService, BpmIsmsPatch
 
     @Override
     public Map<String, Object> getBpm(String formId) {
-
         List<Map<String, Object>> bpmIsmsL410 = bpmIsmsL410Repository.findByFormId(formId);
-
         if (!bpmIsmsL410.isEmpty()) return bpmIsmsL410Repository.findByFormId(formId).get(0);
-
         return Map.of();
     }
 
@@ -225,19 +214,7 @@ public class BpmIsmsL410ServiceNew implements BpmIsmsCommonService, BpmIsmsPatch
         bpmIsmsL410.setProcessInstanceStatus("3");
         bpmIsmsL410.setUpdateTime(Timestamp.valueOf(LocalDateTime.now()));
         bpmIsmsL410Repository.save(bpmIsmsL410);
-        saveSignStatus(bpmIsmsL410);
-    }
-
-    private void saveSignStatus(BpmIsmsL410 bpmIsmsL410) {
-        BpmSignStatus bpmSignStatus = new BpmSignStatus();
-        bpmSignStatus.setFormId(bpmIsmsL410.getFormId());
-        bpmSignStatus.setTaskId("cancel process");
-        bpmSignStatus.setTaskName("cancel process");
-        bpmSignStatus.setProcessInstanceId(bpmIsmsL410.getProcessInstanceId());
-        bpmSignStatus.setSignerId(bpmIsmsL410.getAppEmpid());
-        bpmSignStatus.setSignUnit(bpmIsmsL410.getAppUnit());
-        bpmSignStatus.setSigner(bpmIsmsL410.getAppName());
-        bpmSignStatusService.saveBpmSignStatus(bpmSignStatus, bpmIsmsL410.getFormId());
+        bpmSignStatusService.saveCancelBpmSignStatus(bpmIsmsL410);
     }
 
     @Override
@@ -245,7 +222,6 @@ public class BpmIsmsL410ServiceNew implements BpmIsmsCommonService, BpmIsmsPatch
         DTO_HOLDER.remove(uuid);
         VARIABLES_HOLDER.remove(uuid);
     }
-
 
 }
 
@@ -274,7 +250,7 @@ enum SysSignerEnum {
         this.signerUnit = signerUnit;
     }
 
-    public static String getSinerUnitBySigner(String signer) {
+    public static String getSignerUnitBySigner(String signer) {
         for (SysSignerEnum sysSignerEnum : SysSignerEnum.values()) {
             if (sysSignerEnum.signer.equals(signer)) {
                 return sysSignerEnum.signerUnit;

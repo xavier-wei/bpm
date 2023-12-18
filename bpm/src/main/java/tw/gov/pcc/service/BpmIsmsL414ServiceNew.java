@@ -8,7 +8,6 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
 import tw.gov.pcc.domain.*;
-import tw.gov.pcc.domain.entity.BpmSignStatus;
 import tw.gov.pcc.repository.BpmIsmsL414Repository;
 import tw.gov.pcc.repository.UserRoleRepository;
 import tw.gov.pcc.service.dto.BpmIsmsL414DTO;
@@ -24,7 +23,7 @@ import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
 
-@Service("L414Service")
+@Service("l414Service")
 public class BpmIsmsL414ServiceNew implements BpmIsmsCommonService, BpmIsmsPatchService {
     private static final String REVIEWER = "BPM_CR_Reviewer";
     private static final String[] ROLE_IDS = {"BPM_IPT_Operator", "BPM_IPT_Mgr", "BPM_CR_Operator", REVIEWER, "BPM_CR_Mgr"};
@@ -184,7 +183,7 @@ public class BpmIsmsL414ServiceNew implements BpmIsmsCommonService, BpmIsmsPatch
         bpmIsmsL414.setProcessInstanceStatus("3");
         bpmIsmsL414.setUpdateTime(Timestamp.valueOf(LocalDateTime.now()));
         bpmIsmsL414Repository.save(bpmIsmsL414);
-        saveSignStatus(bpmIsmsL414);
+        bpmSignStatusService.saveCancelBpmSignStatus(bpmIsmsL414);
     }
 
     @Override
@@ -192,18 +191,5 @@ public class BpmIsmsL414ServiceNew implements BpmIsmsCommonService, BpmIsmsPatch
         DTO_HOLDER.remove(uuid);
         VARIABLES_HOLDER.remove(uuid);
     }
-
-    private void saveSignStatus(BpmIsmsL414 bpmIsmsL414) {
-        BpmSignStatus bpmSignStatus = new BpmSignStatus();
-        bpmSignStatus.setFormId(bpmIsmsL414.getFormId());
-        bpmSignStatus.setTaskId("cancel process");
-        bpmSignStatus.setTaskName("cancel process");
-        bpmSignStatus.setProcessInstanceId(bpmIsmsL414.getProcessInstanceId());
-        bpmSignStatus.setSignerId(bpmIsmsL414.getAppEmpid());
-        bpmSignStatus.setSignUnit(bpmIsmsL414.getAppUnit());
-        bpmSignStatus.setSigner(bpmIsmsL414.getAppName());
-        bpmSignStatusService.saveBpmSignStatus(bpmSignStatus, bpmIsmsL414.getFormId());
-    }
-
 
 }

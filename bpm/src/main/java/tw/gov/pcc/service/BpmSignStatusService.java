@@ -1,6 +1,7 @@
 package tw.gov.pcc.service;
 
 import org.springframework.stereotype.Service;
+import tw.gov.pcc.domain.BpmIsms;
 import tw.gov.pcc.domain.User;
 import tw.gov.pcc.domain.entity.BpmSignStatus;
 import tw.gov.pcc.repository.BpmSignStatusRepository;
@@ -13,7 +14,6 @@ import tw.gov.pcc.service.mapper.BpmSignStatusMapper;
 import javax.servlet.http.HttpSession;
 import java.sql.Timestamp;
 import java.time.Instant;
-import java.util.List;
 
 @Service
 public class BpmSignStatusService {
@@ -29,9 +29,6 @@ public class BpmSignStatusService {
         this.session = session;
     }
 
-    public List<BpmSignStatus> updateSignStatus(String processInstanceId) {
-        return bpmSignStatusRepository.findByProcessInstanceId(processInstanceId);
-    }
 
     public void saveBpmSignStatus(CompleteReqDTO completeReqDTO,String formId) {
         BpmSignStatusDTO bpmSignStatusDTO=new BpmSignStatusDTO(completeReqDTO,formId);
@@ -78,13 +75,13 @@ public class BpmSignStatusService {
         bpmSignStatusRepository.save(bpmSignStatus);
     }
 
-    // ID用不到，純粹用來overload方法
-    public void saveBpmSignStatus(BpmSignStatus bpmSignStatus,String Id) {
-
+    public void saveCancelBpmSignStatus(BpmIsms bpmIsms) {
+        BpmSignStatus bpmSignStatus = new BpmSignStatus(bpmIsms);
+        bpmSignStatus.setTaskId("cancel process");
+        bpmSignStatus.setTaskName("cancel process");
         bpmSignStatus.setSignResult("9");
         bpmSignStatus.setDirections("申請者");
         bpmSignStatus.setOpinion("(撤銷)");
-        bpmSignStatus.setSigningDatetime(Timestamp.from(Instant.now()));
         bpmSignStatusRepository.save(bpmSignStatus);
     }
     private User getUserInfo() {
