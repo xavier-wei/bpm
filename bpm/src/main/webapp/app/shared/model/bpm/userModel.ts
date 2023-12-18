@@ -1,5 +1,6 @@
-import {Cpape05mModel} from "@/shared/model/bpm/cpape05mModel";
-
+/**
+ * 登入者物件
+ */
 export interface IUserModel {
   acntIsValid: string | null;
   createTimestamp?: string | null;

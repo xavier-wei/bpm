@@ -1,3 +1,6 @@
+/**
+ * 差勤物件
+ */
 export interface ICpape05mModel {
     crkcodName?: string | null;
     ctAreaCode?: string | null;

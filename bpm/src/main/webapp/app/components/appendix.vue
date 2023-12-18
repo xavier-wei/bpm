@@ -1,10 +1,10 @@
 <template>
   <div>
 
-    <div class="card" style="background-color: #d3ede8" v-show="applyAppendix">
+    <div class="bpm_background" v-show="applyAppendix">
 
       <!-- 新增附件 -->
-      <div class="card context" style="background-color: #d3ede8">
+      <div class="card-body bpm_background">
 
         <i-table
           ref="iTable"
@@ -73,7 +73,7 @@
 
     </div>
 
-    <div class="card" style="background-color: #d3ede8" v-show="readAppendix">
+    <div class="bpm_background" v-show="readAppendix">
       <div class="card-body">
 
         <i-table
@@ -117,7 +117,7 @@
 <script lang="ts">
 
 import IButton from '@/shared/buttons/i-button.vue';
-import {onMounted, reactive, ref, toRef, watch} from "@vue/composition-api";
+import {onMounted, reactive, ref, toRef, watch,onActivated} from "@vue/composition-api";
 import {FileModel} from "@/shared/model/bpm/fileModel";
 import {formatToString} from "@/shared/date/minguo-calendar-utils";
 import {useGetters} from "@u3u/vue-hooks";
@@ -192,8 +192,8 @@ export default {
     onMounted(() => {
       //表單的模式是CREATE，只會顯示新增的元件
       if (formStatusRef.value === FormStatusEnum.CREATE) {
-        applyAppendix.value = true;
         doQuery();
+        applyAppendix.value = true;
 
         //表單的模式是READONLY，只會顯示查看當前表單的所有附件
       } else if (formStatusRef.value === FormStatusEnum.READONLY) {
@@ -202,10 +202,10 @@ export default {
 
         //表單的模式是MODIFY或VERIFY，新增元件跟查看元件都會顯示
       } else if (formStatusRef.value === FormStatusEnum.MODIFY || formStatusRef.value === FormStatusEnum.VERIFY) {
-        applyAppendix.value = true;
-        readAppendix.value = true;
         doQuery();
         doReadonly();
+        applyAppendix.value = true;
+        readAppendix.value = true;
       }
     });
 

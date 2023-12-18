@@ -1,10 +1,10 @@
 <template>
   <div>
     <b-card-body>
-      <b-tabs>
+      <b-tabs v-model="tabIndex">
         <b-tab title="表單" :active="activeTab(0)" @click="changeTabIndex(0)">
 
-          <div style="background-color: #b0ded4;padding-top: 10px;">
+          <div class="bpm_form_header">
             <b-row class=" d-flex">
               <p class="ml-4" style="color: white">
                 L410-共用系統使用者帳號申請單
@@ -14,7 +14,7 @@
             </b-row>
           </div>
 
-          <div class="card" style="background-color: #d3ede8 ">
+          <div class="card-body bpm_background">
 
             <b-form-row>
               <i-form-group-check class="col-sm-5" label-cols="5" content-cols="7" :label="'申請日期:'"
@@ -576,7 +576,7 @@
           </appendix>
 
         </b-tab>
-        <b-tab title="流程圖" :active="activeTab(2)" @click="changeTabIndex(3)">
+        <b-tab title="流程圖" :active="activeTab(2)" @click="changeTabIndex(2)">
           <flowChart :filePathName="filePathData">
 
           </flowChart>
@@ -1002,8 +1002,6 @@ export default {
           formData.applyDate = formData.applyDate != null ? new Date(formData.applyDate) : null
           formData.enableDate = formData.enableDate != null ? new Date(formData.enableDate) : null
 
-          //用現在表單編號直接給file模組去自動取值
-          fileDataId.fileId = formData.formId;
           Object.assign(formDefault, formData);
           Object.assign(form, formDefault);
           reset();
@@ -1245,7 +1243,9 @@ export default {
       signatureBmodel.value.isShowDia(true);
     }
 
-    watch(formIdProp, () => {
+    watch(formIdProp, (value) => {
+        //用現在表單編號直接給file模組去自動取值
+        fileDataId.fileId = value;
         handleQuery();
       },
       {immediate: true}
@@ -1285,6 +1285,7 @@ export default {
       toCancel,
       isCancelRef,
       configTitleName,
+      tabIndex,
     }
   }
 }

@@ -2,41 +2,35 @@ import {Module} from "vuex";
 import {EipCodeDataModel} from "@/shared/model/bpm/eipCodeDataModel";
 
 
-interface IEipCodeData {
-  eipCodeData?: EipCodeDataModel[] | null;
-  eipCodeDataPromise?: Promise<EipCodeDataModel[]> | null;
+interface IBpmTitleOptions {
   bpmTitleOptions: [];
+  bpmTitleOptionsPromise?: Promise<EipCodeDataModel[]> | null;
 }
 
-export const bpmTitleOptionsStore: Module<IEipCodeData, any> = {
+export const bpmTitleOptionsStore: Module<IBpmTitleOptions, any> = {
   state: {
-    eipCodeData: [],
-    eipCodeDataPromise: Promise.resolve([]),
     bpmTitleOptions: [],
+    bpmTitleOptionsPromise: Promise.resolve([]),
   },
   actions: {
-    eipCodeData({commit}, data) {
-      commit('SET_EIP_CODE_DATA', data);
+    handleBpmTitleOptions({commit}, data) {
+      commit('BPM_TITLE_OPTIONS', data);
     },
-    eipCodeDataPromise({commit}, data) {
-      commit('SET_EIP_CODE_DATA_PROMISE', data);
+    handleBpmTitleOptionsPromise({commit}, data) {
+      commit('BPM_TITLE_OPTIONS_PROMISE', data);
+    },
+  },
+  mutations: {
+
+    BPM_TITLE_OPTIONS(state, data) {
+      state.bpmTitleOptions = data;
+    },
+    BPM_TITLE_OPTIONS_PROMISE(state, data) {
+      state.bpmTitleOptionsPromise = data;
     },
   },
   getters: {
-    eipCodeData: state => state.eipCodeData,
-    eipCodeDataPromise: state => state.eipCodeDataPromise,
     getBpmTitleOptions: state => state.bpmTitleOptions,
+    getBpmTitleOptionsPromise: state => state.bpmTitleOptionsPromise,
   },
-  mutations: {
-    SET_EIP_CODE_DATA(state, data) {
-      state.eipCodeData = data;
-    },
-    SET_EIP_CODE_DATA_PROMISE(state, data) {
-      state.eipCodeDataPromise = data;
-    },
-    setBpmTitleOptions(state, data) {
-      state.bpmTitleOptions = data;
-    },
-  },
-
 };

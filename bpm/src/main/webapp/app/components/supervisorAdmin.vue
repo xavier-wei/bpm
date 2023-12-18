@@ -1,7 +1,7 @@
 <template>
   <div>
     <div>
-      <div style="background-color: #b0ded4; padding-top: 10px">
+      <div class="bpm_form_header">
         <b-row class="d-flex">
           <p class="ml-4" style="color: white">表單簽核上級管理</p>
         </b-row>
@@ -284,6 +284,7 @@ export default {
     const newDataStatus = ref(false);
 
     //職稱下拉選單資訊
+
     const bpmTitleOptions = ref(useGetters(['getBpmTitleOptions']).getBpmTitleOptions).value;
 
     //單位下拉選單資訊

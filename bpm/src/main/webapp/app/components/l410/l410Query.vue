@@ -1,7 +1,7 @@
 <template>
   <div>
 
-    <div style="background-color: #b0ded4;padding-top: 10px;">
+    <div class="bpm_form_header">
       <b-row class=" d-flex">
         <p class="ml-4" style="color: white">
           L410-共用系統使用者帳號申請單
@@ -11,7 +11,7 @@
       </b-row>
     </div>
 
-    <div class="card-body clo-12" style="background-color: #d3ede8">
+    <div class="card-body bpm_background">
       <b-form-row>
         <i-form-group-check
           class="col-sm-4 mb-0"

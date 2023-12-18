@@ -1,3 +1,6 @@
+/**
+ * 單位物件
+ */
 export interface IDeptsModel {
     DEPT_ID?: string | null;
     DEPT_NAME?: string | null;

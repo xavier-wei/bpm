@@ -1,3 +1,6 @@
+/**
+ * 附件上傳物件
+ */
 export interface IFileModel {
     formId?: string | null;           //表單編號
     fileName?: string | null;         //附件名稱

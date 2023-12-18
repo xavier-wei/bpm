@@ -12,7 +12,7 @@
         @close="closeModal"
       >
 
-        <div class="card-body clo-12" style="background-color: #d3ede8">
+        <div class="card-body bpm_background clo-12" >
           <b-form-row>
 
 

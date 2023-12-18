@@ -1,3 +1,6 @@
+/**
+ * 職稱物件
+ */
 export interface IEipCodeDataModel {
     codekind  ?: string | null; //主代號類別
     codeno    ?: string | null; //主代號
