@@ -11,7 +11,7 @@ import java.sql.Timestamp;
  */
 @Entity
 @Table(name = "BPM_ISMS_L414")
-public class BpmIsmsL414 implements Serializable {
+public class BpmIsmsL414  implements Serializable, BpmIsms {
 
     private static final long serialVersionUID = 1L;
 

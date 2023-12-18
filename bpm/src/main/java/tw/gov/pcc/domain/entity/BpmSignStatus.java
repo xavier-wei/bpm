@@ -1,8 +1,11 @@
 package tw.gov.pcc.domain.entity;
 
+import tw.gov.pcc.domain.BpmIsms;
+
 import javax.persistence.*;
 import java.io.Serializable;
 import java.sql.Timestamp;
+import java.time.Instant;
 import java.util.Objects;
 import java.util.UUID;
 
@@ -50,18 +53,13 @@ public class BpmSignStatus implements Serializable {
     public BpmSignStatus() {
     }
 
-    public BpmSignStatus(UUID uuid, String formId, String processInstanceId, String taskId, String signerId, String signer, String signUnit, String signResult, String opinion, String directions, Timestamp signingDatetime) {
-        this.uuid = uuid;
-        this.formId = formId;
-        this.processInstanceId = processInstanceId;
-        this.taskId = taskId;
-        this.signerId = signerId;
-        this.signer = signer;
-        this.signUnit = signUnit;
-        this.signResult = signResult;
-        this.opinion = opinion;
-        this.directions = directions;
-        this.signingDatetime = signingDatetime;
+    public BpmSignStatus(BpmIsms bpmIsms) {
+        this.formId = bpmIsms.getFormId();
+        this.processInstanceId = bpmIsms.getProcessInstanceId();
+        this.signerId = bpmIsms.getAppEmpid();
+        this.signer = bpmIsms.getAppName();
+        this.signUnit = bpmIsms.getAppUnit();
+        this.signingDatetime = Timestamp.from(Instant.now());
     }
 
     @Override

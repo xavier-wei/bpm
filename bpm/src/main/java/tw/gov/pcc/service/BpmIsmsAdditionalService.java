@@ -2,8 +2,6 @@ package tw.gov.pcc.service;
 
 import com.google.gson.Gson;
 import org.jetbrains.annotations.NotNull;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -23,10 +21,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
-@Service("AdditionalService")
+@Service("additionalService")
 public class BpmIsmsAdditionalService implements BpmIsmsCommonService {
 
-    private final Logger log = LoggerFactory.getLogger(BpmIsmsAdditionalService.class);
     private static final Map<UUID, BpmIsmsAdditionalDTO> DTO_HOLDER = new HashMap<>();
 
     private final BpmIsmsAdditionalMapper bpmIsmsAdditionalMapper;

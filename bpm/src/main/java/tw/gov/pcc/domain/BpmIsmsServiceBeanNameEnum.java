@@ -1,9 +1,9 @@
 package tw.gov.pcc.domain;
 
 public enum BpmIsmsServiceBeanNameEnum {
-    L410("L410","L410Service"),
-    L414("L414", "L414Service"),
-    Additional("Additional","AdditionalService");
+    L410("L410","l410Service"),
+    L414("L414", "l414Service"),
+    Additional("Additional","additionalService");
 
 
     private final String key;

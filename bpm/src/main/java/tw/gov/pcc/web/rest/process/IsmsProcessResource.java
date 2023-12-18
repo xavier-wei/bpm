@@ -41,12 +41,11 @@ public class IsmsProcessResource {
     private final ApplicationContext applicationContext;
     private final Gson gson = new Gson();
     private static final HttpHeaders HTTP_HEADERS = new HttpHeaders();
-
     @Value("${flowable.url}")
     private String flowableProcessUrl;
     private final RestTemplate restTemplate = new RestTemplate();
-
-
+    private final Type taskDTOListType = new TypeToken<ArrayList<TaskDTO>>() {
+    }.getType();
     private final HttpSession httpSession;
     private final BpmSignStatusService bpmSignStatusService;
     private final BpmSignerListService bpmSignerListService;
@@ -128,9 +127,8 @@ public class IsmsProcessResource {
 
         }
 
-        // 如果流程引擎回傳200，代表成功，將表單資料存入資料庫
         try {
-
+            // 如果流程引擎回傳200，代表成功，將表單資料存入資料庫
             service.saveBpm(uuid, processInstanceId, taskDTO, dto, appendixFiles);
 
         } catch (ResponseStatusException e) {
@@ -158,9 +156,7 @@ public class IsmsProcessResource {
 
         //驗證上傳檔案的大小與格式
         validateAppendixFilesSize(appendixFiles);
-
         BpmIsmsPatchService service = (BpmIsmsPatchService) applicationContext.getBean(Objects.requireNonNull(BpmIsmsServiceBeanNameEnum.getServiceBeanNameByKey(key)));
-
         return service.saveBpmByPatch(form.get(key), dto, appendixFiles);
 
     }
@@ -215,7 +211,6 @@ public class IsmsProcessResource {
 
     }
 
-
     /*
      * @param formId 流程實例ID
      * @param CompleteReqDTO 完成任務的request dto
@@ -236,7 +231,6 @@ public class IsmsProcessResource {
 
         //判斷是否是資推或機房的，如果是就去更新資料
         if (Objects.equals(completeReqDTO.getIpt(), true)) {
-
             service.saveBpmByPatch(completeReqDTO.getForm().get(key));
         }
 
@@ -271,9 +265,9 @@ public class IsmsProcessResource {
             mailService.sendMail(mailInfo);
             return;
         }
-        log.warn("ProcessL414Resource.java - receiveEndEvent - 203 ::{} ", "流程發生意外終止");
-
-        throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "流程發生意外終止");
+        String message = "流程發生意外終止";
+        log.warn("ProcessL414Resource.java - receiveEndEvent - 203 ::{} ",message);
+        throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, message);
     }
 
 
@@ -288,10 +282,8 @@ public class IsmsProcessResource {
 
     @GetMapping("/flowImage/{processInstanceId}")
     public String getImage(@PathVariable String processInstanceId) {
-
         ResponseEntity<String> exchange = sendRequestEntity(gson.toJson(processInstanceId), "/pic?processId=" + processInstanceId, HttpMethod.GET);
         return exchange.getBody();
-
     }
 
     @RequestMapping("/queryTask")
@@ -304,29 +296,25 @@ public class IsmsProcessResource {
 
         if (exchange.getStatusCodeValue() == 200) {
             String body = exchange.getBody();
-            Type listType = new TypeToken<ArrayList<TaskDTO>>() {
-            }.getType();
-            List<TaskDTO> taskDTOS = new Gson().fromJson(body, listType);
-            assert taskDTOS != null;
-            return getMaps(bpmFormQueryDto, taskDTOS);
+            List<TaskDTO> taskDTOS = new Gson().fromJson(body, taskDTOListType);
+            return getMaps(bpmFormQueryDto, taskDTOS==null?Collections.emptyList():taskDTOS);
         }
 
         return Collections.emptyList();
     }
 
-
+    /**
+     * 查詢使用者未處理之任務數量
+     * @param id 使用者ID
+     * @return 使用者未處理的任務數量
+     */
     @PostMapping("/queryProcessingTaskNumbers")
     public Integer queryProcessingTaskNumbers(@RequestBody String id) {
-
-
         ResponseEntity<String> exchange = sendRequestEntity(gson.toJson(id), "/queryProcessingTaskNumbers", HttpMethod.POST);
-
         if (exchange.getStatusCodeValue() == 200) {
             return Integer.parseInt(Objects.requireNonNull(exchange.getBody()));
         }
-
         return 0;
-
     }
 
     @RequestMapping("/deleteProcessInstance")
@@ -339,7 +327,6 @@ public class IsmsProcessResource {
 
         // 查看是否此任務在加簽中，若是，則把加簽的processInstance也一併刪除
         bpmIsmsAdditionalService.setDeleteRequestIfInAdditional(deleteRequest, request.getProcessInstanceId());
-
         sendRequestEntity(gson.toJson(deleteRequest), "/deleteProcess", HttpMethod.POST);
         BpmIsmsCommonService service = (BpmIsmsCommonService) applicationContext.getBean(Objects.requireNonNull(BpmIsmsServiceBeanNameEnum.getServiceBeanNameByKey(request.getKey())));
 
@@ -356,11 +343,8 @@ public class IsmsProcessResource {
             ResponseEntity<String> exchange = sendRequestEntity(gson.toJson(allSubordinate), "/getAllSubordinateTask", HttpMethod.POST);
             if (exchange.getStatusCodeValue() == 200) {
                 String body = exchange.getBody();
-                Type listType = new TypeToken<ArrayList<TaskDTO>>() {
-                }.getType();
-                List<TaskDTO> taskDTOS = gson.fromJson(body, listType);
-                assert taskDTOS != null;
-                return getMaps(bpmFormQueryDto, taskDTOS);
+                List<TaskDTO> taskDTOS = gson.fromJson(body, taskDTOListType);
+                return getMaps(bpmFormQueryDto,  taskDTOS==null?Collections.emptyList():taskDTOS);
             }
         }
         throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "權限不足");
@@ -375,12 +359,10 @@ public class IsmsProcessResource {
 
         if (exchange.getStatusCodeValue() == 200) {
             String body = exchange.getBody();
-            Type listType = new TypeToken<ArrayList<TaskDTO>>() {
-            }.getType();
-            List<TaskDTO> taskDTOS = new Gson().fromJson(body, listType);
 
-            assert taskDTOS != null;
-            return taskDTOS.isEmpty() ? null :
+            List<TaskDTO> taskDTOS = new Gson().fromJson(body, taskDTOListType);
+            taskDTOS=taskDTOS==null?Collections.emptyList():taskDTOS;
+            return taskDTOS.isEmpty() ? Collections.emptyList() :
                 taskDTOS.stream()
                     .map(taskDTO -> {
                         List<Map<String, Object>> mapList = bpmIsmsAdditionalService.findAllByProcessInstanceId(taskDTO.getProcessInstanceId(), bpmFormQueryDto);
@@ -444,7 +426,6 @@ public class IsmsProcessResource {
                             return null;
                         }
                     }
-
                 })
                 .filter(Objects::nonNull)
                 .collect(Collectors.toList());
@@ -501,5 +482,4 @@ public class IsmsProcessResource {
         HttpEntity<String> requestEntity = new HttpEntity<>(json, HTTP_HEADERS);
         return restTemplate.exchange(flowableProcessUrl + path, method, requestEntity, String.class);
     }
-
 }
