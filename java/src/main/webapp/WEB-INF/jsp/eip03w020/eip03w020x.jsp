@@ -96,7 +96,7 @@
                         <c:forEach items="${mixData.kdList}" var="item" varStatus="status">
                             <tr class="text-left">
                                 <td class="text-center"><c:out value='${status.count}'/></td>
-                                <td class="text-center"><a class="clickDept" href="#" data-obj="${item.trkObj.split('-')[0]}" data-prc="${item.prcSts}"><c:out value="${item.trkObj.split('-')[1]}" /></a></td>
+                                <td class="text-center"><a class="clickDept" href="#" data-obj="${item.trkObj}" data-prc="${item.prcSts}"><c:out value="${item.trkObj.split('-')[1]}" /></a></td>
                                 <td class="text-center"><c:out value='${item.prcSts}'/></td>
                                 <td class="text-center"><func:minguo value="${item.stDt}"/></td>
                                 <td class="text-center"><func:minguo value="${item.endDt}"/></td>
@@ -127,7 +127,7 @@
                         <c:choose>
                             <%--開放編輯，顯示儲存按鈕。--%>
 <%--                            <c:when test="${item.value['prcSts'] != '已解列' && item.value['isSameDept'] == 'Y'  }">--%>
-                            <c:when test="${item.value['prcSts'] != '已解列' && item.value['trkObj'] == mixData.currentDept  }">
+                            <c:when test="${item.value['prcSts'] != '已解列' && item.value['trkObjRoot'] == mixData.currentRoot  }">
                                 <tags:form-row>
                                     <div class="col d-flex">
                                         <form:label cssClass="col-form-label star" path="rptCont">辦理情形：</form:label>
@@ -221,6 +221,7 @@
                     </div>
                 </c:forEach>
                 <form:hidden path="currentDept"/>
+                <form:hidden path="currentRoot"/>
                 <form:hidden path="usersCodes"/>
                 <form:hidden path="deptCodes"/>
                 <form:hidden path="selectedTrkID" value="${caseData.selectedTrkID}"/>
@@ -341,7 +342,7 @@
         let obj;
         $('.clickDept').css('text-decoration', 'underline').click(function(e){
             e.preventDefault();
-            $('#trkObj').val($(this).data('obj'));
+            $('#trkObj').val($(this).data('obj').split('-')[0]);
 
             // 點擊框框示框框
             $('#progressBox, #releasedBox').css('display','block');
@@ -352,15 +353,15 @@
                 $('#'+child+'1').hide();
             })
             // 顯示此次點擊需出現資料
-            obj = $(this).data('obj');
+            obj = $(this).data('obj').split('-')[0];
             $('#'+obj).show();
             $('#'+obj+'1').show();
 
             //若為[KeepTrkDtl.Prcsts!=3(已解列)且KeepTrkDtl.TrkObj為登入者部室]，則綠字欄位開放編輯，顯示儲存按鈕。
             var prcSts = $(this).data('prc');
-            var trkObj = $(this).data('obj');
+            var trkObjRoot = $(this).data('obj').split('-')[2];
 
-            if(prcSts !== "已解列" && $('#currentDept').val() === trkObj.toString()){
+            if(prcSts !== "已解列" && $('#currentRoot').val() === trkObjRoot){
                 $('#btnSave').show()
             }else {
                 $('#btnSave').hide()

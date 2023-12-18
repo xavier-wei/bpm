@@ -172,7 +172,7 @@ public class Eip03w020Service {
         kdList.forEach( a-> {
             a.setPrcSts(String.valueOf(eipcodeDao.findByCodeKindCodeNo("TRKPRCSTS",a.getPrcSts()).get().getCodename()));
             String nn = deptsDao.findByPk(a.getTrkObj()).getDept_name();
-            a.setTrkObj(a.getTrkObj() + "-" + deptsDao.findByPk(a.getTrkObj()).getDept_name());
+            a.setTrkObj(a.getTrkObj() + "-" + deptsDao.findByPk(a.getTrkObj()).getDept_name() + "-" + deptsDao.findByPk(a.getTrkObj()).getDept_id_p());
 
 //            取得所有列管對象
             mixCase.getTrkObjList().add(a.getTrkObj());
@@ -236,7 +236,7 @@ public class Eip03w020Service {
                 supDt = supDt.substring(0,3) + "/" + supDt.substring(3,5) + "/" + supDt.substring(5,7) + "  " + supDt.substring(7,9) + ":" + supDt.substring(9,11) + ":" + supDt.substring(11);
             }
             innerMap.put("supDt", supDt);      //回應日期時間
-            a.setTrkObj(a.getTrkObj() + "-" + deptsDao.findByPk(trkObjNo).getDept_name());
+//            a.setTrkObj(a.getTrkObj() + "-" + deptsDao.findByPk(trkObjNo).getDept_name());
             doubleMap.put(a.getTrkObj().split("-")[0], innerMap);
         });
 

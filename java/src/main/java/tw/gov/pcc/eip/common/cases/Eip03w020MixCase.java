@@ -67,7 +67,7 @@ public class Eip03w020MixCase implements Serializable {
 
     @AssertTrue(message="「辦理情形」為必填")
     private boolean isValidRptCont() {
-        if (doubleMap.get(getCurrentDept()).get("rptCont") == null || StringUtils.isBlank(doubleMap.get(getCurrentDept()).get("rptCont").toString())){
+        if (doubleMap.get(getCurrentRoot()).get("rptCont") == null || StringUtils.isBlank(doubleMap.get(getCurrentRoot()).get("rptCont").toString())){
             return false;
         }
         return true;
@@ -75,7 +75,7 @@ public class Eip03w020MixCase implements Serializable {
 
     @AssertTrue(message="「是否要求解列」為必選")
     private boolean isValidRptAskEnd() {
-        if (doubleMap.get(getCurrentDept()).get("rptAskEnd") == null){
+        if (doubleMap.get(getCurrentRoot()).get("rptAskEnd") == null){
             return false;
         }
         return true;
