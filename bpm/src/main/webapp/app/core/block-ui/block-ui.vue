@@ -17,7 +17,7 @@ export default {
       required: true,
     },
   },
-  name: 'blockUI',
+  name: 'blockUI', //Loading畫面用
 };
 </script>
 <style>

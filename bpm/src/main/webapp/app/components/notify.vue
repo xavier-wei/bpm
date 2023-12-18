@@ -160,7 +160,7 @@ export default defineComponent({
   setup() {
 
     //取得所有ACNT_IS_VALID=Y 的使用者
-    const userAllData = ref(useGetters(['getUserAllData']).getUserAllData)
+    const userAllData = ref(useGetters(['getUserAllData']).getUserAllData).value;
 
     //登入者資訊
     const userData = ref(useGetters(['getUserData']).getUserData).value;
@@ -254,7 +254,7 @@ export default defineComponent({
           sortable: false,
           thClass: 'text-center',
           tdClass: 'text-center align-middle',
-          formatter: value => (value == undefined ? '' : currentProcessingUnit(value, bpmDeptsOptions, userAllData.value)),
+          formatter: value => (value == undefined ? '' : currentProcessingUnit(value, bpmDeptsOptions, userAllData)),
         },
         {
           key: 'processInstanceStatus',

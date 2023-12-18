@@ -3,9 +3,9 @@
 
     <div>
       <b-card-body>
-        <b-tabs>
+        <b-tabs v-model="tabIndex">
           <b-tab title="表單" :active="activeTab(0)" @click="changeTabIndex(0)">
-            <div style="background-color: #b0ded4; padding-top: 10px">
+            <div class="bpm_form_header">
               <b-row class="d-flex">
                 <p class="ml-4" style="color: white">L414-網路服務連結申請單</p>
 
@@ -13,104 +13,103 @@
               </b-row>
             </div>
 
-            <div style="background-color: #d3ede8">
-              <div style="background-color: #d3ede8">
-                <b-form-row>
-                  <i-form-group-check class="col-sm-5" label-cols="5" content-cols="7" :label="'申請日期:'"
-                                      :item="$v.applyDate">
-                    <!--申請日期 : applyDate-->
-                    <i-date-picker
-                      placeholder="yyy/MM/dd"
-                      v-model="$v.applyDate.$model"
-                      :state="validateState($v.applyDate)"
-                      lazy
-                      trim
-                      disabled
-                    ></i-date-picker>
-                  </i-form-group-check>
+            <div class="card-body bpm_background">
 
-                  <i-form-group-check class="col-sm-4" label-cols="4" content-cols="8" :label="`表單編號：`"
-                                      :item="$v.formId">
-                    <!--表單編號 : formId -->
-                    <b-form-input v-model="$v.formId.$model" disabled/>
-                  </i-form-group-check>
+              <b-form-row>
+                <i-form-group-check class="col-sm-5" label-cols="5" content-cols="7" :label="'申請日期:'"
+                                    :item="$v.applyDate">
+                  <!--申請日期 : applyDate-->
+                  <i-date-picker
+                    placeholder="yyy/MM/dd"
+                    v-model="$v.applyDate.$model"
+                    :state="validateState($v.applyDate)"
+                    lazy
+                    trim
+                    disabled
+                  ></i-date-picker>
+                </i-form-group-check>
 
-                  <i-form-group-check class="col-sm-3" label-cols="3" content-cols="7" :label="`註：`">
-                    <span class="text-danger">*</span>
-                    <p style="margin-top: 10px">為申請必填欄位</p>
-                  </i-form-group-check>
-                </b-form-row>
+                <i-form-group-check class="col-sm-4" label-cols="4" content-cols="8" :label="`表單編號：`"
+                                    :item="$v.formId">
+                  <!--表單編號 : formId -->
+                  <b-form-input v-model="$v.formId.$model" disabled/>
+                </i-form-group-check>
 
-                <b-form-row>
-                  <i-form-group-check
-                    class="col-sm-5"
-                    label-cols="5"
-                    content-cols="7"
-                    :label="'填表人：員工編號：'"
-                    :item="$v.filEmpid"
-                  >
-                    <!--填表人員工編號 : filEmpid-->
-                    <b-form-input v-model="$v.filEmpid.$model"
+                <i-form-group-check class="col-sm-3" label-cols="3" content-cols="7" :label="`註：`">
+                  <span class="text-danger">*</span>
+                  <p style="margin-top: 10px">為申請必填欄位</p>
+                </i-form-group-check>
+              </b-form-row>
+
+              <b-form-row>
+                <i-form-group-check
+                  class="col-sm-5"
+                  label-cols="5"
+                  content-cols="7"
+                  :label="'填表人：員工編號：'"
+                  :item="$v.filEmpid"
+                >
+                  <!--填表人員工編號 : filEmpid-->
+                  <b-form-input v-model="$v.filEmpid.$model"
+                                :disabled="formStatusRef === FormStatusEnum.READONLY  || isEdit"/>
+                </i-form-group-check>
+
+                <i-form-group-check class="col-sm-4" label-cols="4" content-cols="8" :label="`姓名：`"
+                                    :item="$v.filName">
+                  <!--填表人姓名 :　filName-->
+                  <b-form-input v-model="$v.filName.$model"
+                                :disabled="formStatusRef === FormStatusEnum.READONLY  || isEdit "/>
+                </i-form-group-check>
+
+                <i-form-group-check class="col-sm-3" label-cols="3" content-cols="7" :label="`單位：`"
+                                    :item="$v.filUnit">
+                  <!--填表人單位名稱　: filUnit-->
+                  <b-form-select v-model="$v.filUnit.$model" :options="bpmDeptsOptions"
+                                 :disabled="formStatusRef === FormStatusEnum.READONLY  || isEdit">
+                    <template #first>
+                      <b-form-select-option value="" disabled>請選擇</b-form-select-option>
+                    </template>
+                  </b-form-select>
+                </i-form-group-check>
+              </b-form-row>
+
+              <b-form-row>
+                <i-form-group-check
+                  class="col-sm-5"
+                  label-cols="5"
+                  content-cols="7"
+                  :label="'申請人：員工編號：'"
+                  :item="$v.appEmpid"
+                >
+                  <b-input-group>
+                    <!--申請人員工編號 : appEmpid-->
+                    <b-form-input v-model="$v.appEmpid.$model"
                                   :disabled="formStatusRef === FormStatusEnum.READONLY  || isEdit"/>
-                  </i-form-group-check>
+                    <b-button class="ml-2" v-show="formStatusRef === FormStatusEnum.MODIFY  && isEdit"
+                              variant="outline-dark" @click="showErrandModel()">選擇人員
+                    </b-button>
+                  </b-input-group>
 
-                  <i-form-group-check class="col-sm-4" label-cols="4" content-cols="8" :label="`姓名：`"
-                                      :item="$v.filName">
-                    <!--填表人姓名 :　filName-->
-                    <b-form-input v-model="$v.filName.$model"
-                                  :disabled="formStatusRef === FormStatusEnum.READONLY  || isEdit "/>
-                  </i-form-group-check>
+                </i-form-group-check>
 
-                  <i-form-group-check class="col-sm-3" label-cols="3" content-cols="7" :label="`單位：`"
-                                      :item="$v.filUnit">
-                    <!--填表人單位名稱　: filUnit-->
-                    <b-form-select v-model="$v.filUnit.$model" :options="bpmDeptsOptions"
-                                   :disabled="formStatusRef === FormStatusEnum.READONLY  || isEdit">
-                      <template #first>
-                        <b-form-select-option value="" disabled>請選擇</b-form-select-option>
-                      </template>
-                    </b-form-select>
-                  </i-form-group-check>
-                </b-form-row>
+                <i-form-group-check class="col-sm-4" label-cols="4" content-cols="8" :label="`姓名：`"
+                                    :item="$v.appName">
+                  <!--申請人姓名 :　appName-->
+                  <b-form-input v-model="$v.appName.$model"
+                                :disabled="formStatusRef === FormStatusEnum.READONLY  || isEdit"/>
+                </i-form-group-check>
 
-                <b-form-row>
-                  <i-form-group-check
-                    class="col-sm-5"
-                    label-cols="5"
-                    content-cols="7"
-                    :label="'申請人：員工編號：'"
-                    :item="$v.appEmpid"
-                  >
-                    <b-input-group>
-                      <!--申請人員工編號 : appEmpid-->
-                      <b-form-input v-model="$v.appEmpid.$model"
-                                    :disabled="formStatusRef === FormStatusEnum.READONLY  || isEdit"/>
-                      <b-button class="ml-2" v-show="formStatusRef === FormStatusEnum.MODIFY  && isEdit"
-                                variant="outline-dark" @click="showErrandModel()">選擇人員
-                      </b-button>
-                    </b-input-group>
-
-                  </i-form-group-check>
-
-                  <i-form-group-check class="col-sm-4" label-cols="4" content-cols="8" :label="`姓名：`"
-                                      :item="$v.appName">
-                    <!--申請人姓名 :　appName-->
-                    <b-form-input v-model="$v.appName.$model"
-                                  :disabled="formStatusRef === FormStatusEnum.READONLY  || isEdit"/>
-                  </i-form-group-check>
-
-                  <i-form-group-check class="col-sm-3" label-cols="3" content-cols="7" :label="`單位：`"
-                                      :item="$v.appUnit">
-                    <!--申請人單位名稱 : appUnit-->
-                    <b-form-select v-model="$v.appUnit.$model" :options="bpmDeptsOptions"
-                                   :disabled="formStatusRef === FormStatusEnum.READONLY  || isEdit">
-                      <template #first>
-                        <b-form-select-option value="" disabled>請選擇</b-form-select-option>
-                      </template>
-                    </b-form-select>
-                  </i-form-group-check>
-                </b-form-row>
-              </div>
+                <i-form-group-check class="col-sm-3" label-cols="3" content-cols="7" :label="`單位：`"
+                                    :item="$v.appUnit">
+                  <!--申請人單位名稱 : appUnit-->
+                  <b-form-select v-model="$v.appUnit.$model" :options="bpmDeptsOptions"
+                                 :disabled="formStatusRef === FormStatusEnum.READONLY  || isEdit">
+                    <template #first>
+                      <b-form-select-option value="" disabled>請選擇</b-form-select-option>
+                    </template>
+                  </b-form-select>
+                </i-form-group-check>
+              </b-form-row>
 
               <div class="card m-3" style="background-color: white">
                 <b-row>
@@ -462,7 +461,7 @@
             </appendix>
 
           </b-tab>
-          <b-tab title="流程圖" :active="activeTab(2)" @click="changeTabIndex(3)">
+          <b-tab title="流程圖" :active="activeTab(2)" @click="changeTabIndex(2)">
             <flowChart :filePathName="filePathData"></flowChart>
           </b-tab>
         </b-tabs>
@@ -479,7 +478,7 @@
 
 
 import IDualDatePicker from '@/shared/i-date-picker/i-dual-date-picker.vue';
-import {reactive, ref, toRef, watch} from '@vue/composition-api';
+import {onActivated, reactive, ref, toRef, watch} from '@vue/composition-api';
 import {useValidation, validateState} from '@/shared/form';
 import IFormGroupCheck from '@/shared/form/i-form-group-check.vue';
 import IDatePicker from '@/shared/i-date-picker/i-date-picker.vue';
@@ -699,7 +698,6 @@ export default {
 
     //根據傳來的formId去後端查出哪個表單
     function handleQuery() {
-
       axios
         .post(`/process/getIsms/L414/${formIdProp.value}`)
         .then(({data}) => {
@@ -714,9 +712,6 @@ export default {
           data.delEnableDate = data.delEnableDate != null ? new Date(data.delEnableDate) : null
           data.scheduleDate = data.scheduleDate != null ? new Date(data.scheduleDate) : null
           data.finishDatetime = data.finishDatetime != null ? new Date(data.finishDatetime) : null
-
-          //用現在表單編號直接給file模組去自動取值
-          fileDataId.fileId = data.formId;
 
           //判斷暫存還是已送出申請(畫面開啟編輯 需要登入者跟申請者一致 且isSubmit是0)
           isEdit.value = userData.userName !== data.appName || data.isSubmit !== '0'
@@ -1000,7 +995,9 @@ export default {
       errandBmodel.value.isShowDia(true);
     }
 
-    watch(formIdProp, () => {
+    watch(formIdProp, (value) => {
+        //用現在表單編號直接給file模組去自動取值
+        fileDataId.fileId = value;
         handleQuery();
       },
       {immediate: true}
@@ -1044,6 +1041,7 @@ export default {
       configTitleName,
       errandBmodel,
       showErrandModel,
+      tabIndex,
     }
   }
 }

@@ -10,7 +10,7 @@ import {notificationErrorHandler} from "@/shared/http/http-response-helper";
 import {useNotification} from "@/shared/notification";
 
 export default {
-  name: "userSys",
+  name: "userSys",////取得所有ACNT_IS_VALID=Y 的使用者
   setup() {
     const userAllData = ref(useGetters(['getUserAllData']).getUserAllData).value
     const notificationService = useNotification();
@@ -22,7 +22,7 @@ export default {
           useStore().value.commit('setUserAllData', data);
         })
         .catch(notificationErrorHandler(notificationService))
-    };
+    }
 
     watch(userAllData, () => {
         if (userAllData.length === 0) {

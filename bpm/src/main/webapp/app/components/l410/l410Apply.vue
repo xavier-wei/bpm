@@ -1,10 +1,10 @@
 <template>
   <div>
     <b-card-body>
-      <b-tabs>
+      <b-tabs v-model="tabIndex">
         <b-tab title="表單" :active="activeTab(0)" @click="changeTabIndex(0)">
 
-          <div style="background-color: #b0ded4;padding-top: 10px;">
+          <div class="bpm_form_header">
             <b-row class=" d-flex">
               <p class="ml-4" style="color: white">
                 L410-共用系統使用者帳號申請單
@@ -14,7 +14,8 @@
             </b-row>
           </div>
 
-          <div class="card" style="background-color: #d3ede8 ">
+
+          <div class="card-body bpm_background">
 
             <b-form-row>
               <i-form-group-check class="col-sm-5" label-cols="5" content-cols="7" :label="'申請日期:'"
@@ -482,7 +483,7 @@
           </appendix>
 
         </b-tab>
-        <b-tab title="流程圖" :active="activeTab(2)" @click="changeTabIndex(3)">
+        <b-tab title="流程圖" :active="activeTab(2)" @click="changeTabIndex(2)">
           <flowChart :filePathName="filePathData">
 
           </flowChart>
@@ -935,7 +936,8 @@ export default {
       resetValue,
       resetCheckboxValue,
       resetAll,
-      fileDataId
+      fileDataId,
+      tabIndex
     }
   }
 }
@@ -958,7 +960,7 @@ export default {
 
 .nav-tabs .nav-link.active, .nav-tabs .nav-item.show .nav-link {
   color: black;
-  background-color: #d3ede8;
+  background-color: #b0ded4;
   border-color: #dee2e6 #dee2e6 #e4e5e6;
 }
 

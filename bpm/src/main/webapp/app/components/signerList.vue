@@ -265,8 +265,5 @@ export default {
 </script>
 
 <style>
-.table-bordered thead th, .table-bordered thead td {
-  border-bottom-width: 2px;
-  background-color: #b0ded4;
-}
+
 </style>

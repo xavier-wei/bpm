@@ -5,10 +5,11 @@
         :src="filePathNameProp.filePathName"
         :style="{ transform: `scale(${scale}) translate(${translateX}px, ${translateY}px)` }"
         @wheel="handleWheel"
-        @mousedown="startDrag($event)"
-        @mousemove="handleDrag"
-        @mouseup="stopDrag"
-        @mouseleave="stopDrag"
+        @mousedown.stop="startDrag($event)"
+        @mousemove.stop="handleDrag"
+        @mouseup.stop="stopDrag"
+        @mouseleave.stop="stopDrag"
+        @click.stop="handleClick"
         alt=""
       />
     </div>
@@ -72,6 +73,29 @@ export default {
       }
     };
 
+    //點擊次數
+    let clickCount = 0;
+    // 設定最大點擊間隔時間
+    const MAX_CLICK_INTERVAL = 500;
+
+    const handleClick = () => {
+      clickCount++;
+      if (clickCount === 1) {
+        setTimeout(() => {
+          if (clickCount === 1) {
+            // 單擊事件 不做事
+          } else {
+            // 雙擊事件
+            translateX.value = 0;
+            translateY.value = 0;
+            scale.value = 1;
+          }
+          clickCount = 0;
+        }, MAX_CLICK_INTERVAL);
+      }
+    };
+
+
     const stopDrag = () => {
       drag.value = false;
     };
@@ -94,6 +118,7 @@ export default {
       translateX,
       translateY,
       handleWheel,
+      handleClick,
     }
 
   }

@@ -15,33 +15,25 @@ import * as bootstrapVueConfig from './shared/config/config-bootstrap-vue';
 import JhiItemCountComponent from './shared/jhi-item-count.vue';
 import JhiSortIndicatorComponent from './shared/sort/jhi-sort-indicator.vue';
 import InfiniteLoading from 'vue-infinite-loading';
-import AlertService from './shared/alert/alert.service';
 import VueCompositionAPI from '@vue/composition-api'
 import Hooks, {useStore} from '@u3u/vue-hooks'
 import {BootstrapVueIcons, ModalPlugin, VBTooltipPlugin} from 'bootstrap-vue';
 import axios from 'axios';
-import MenuService from './core/menu/menu-service';
+//bpm側邊攔，目前已由eip那邊控制，所以先註解
+// import MenuService from './core/menu/menu-service';
 import {trim as _trim, size as _size, keys as _keys, cloneDeep as _cloneDeep, clone as _clone} from 'lodash';
-
 import '../content/scss/global.scss';
 import '../content/scss/vendor.scss';
-// import BpmTitleOptionsService from "@/shared/config/service/bpm-unit-options.service";
 import BpmDeptsOptionsService from "@/shared/config/service/bpm-depts-options.service";
 import BpmTitleOptionsService from "@/shared/config/service/bpm-title-options.service";
-
-import {notificationErrorHandler} from "@/shared/http/http-response-helper";
-import {useNotification} from "@/shared/notification";
 import BpmUserDataService from "@/shared/config/service/bpm-user-data-service";
-/* tslint:disable */
-
-// jhipster-needle-add-entity-service-to-main-import - JHipster will import entities services here
 
 /* tslint:enable */
-library.add(fas);
 Vue.config.productionTip = false;
 config.initVueApp(Vue);
 config.initFortAwesome(Vue);
 bootstrapVueConfig.initBootstrapVue(Vue);
+library.add(fas);
 Vue.use(BootstrapVue);
 Vue.use(Hooks);
 Vue.use(Vue2Filters);
@@ -64,8 +56,6 @@ const serviceUrlList: string[] = ['/login', '/service/', '/home'];
 const paramMap = {};
 
 router.beforeEach(async (to, from, next) => {
-
-    // no authorities, so just proceed
     const routeData = {
       fromPath: from.path,
       toPath: to.path,
@@ -78,8 +68,6 @@ router.beforeEach(async (to, from, next) => {
     to.meta.title = '工程會EIP_表單流程管理';
     document.title = to.meta.title;
     next();
-
-
 });
 
 function routeGuard(to, from, next) {
@@ -90,15 +78,12 @@ function routeGuard(to, from, next) {
   if (!to.matched.length) {
     next('/not-found');
   }
-
   //處理keep alive,之前是寫在if(authenticated)後才會加到keep alive,改成不管是否有auth都會keep alive
   if (to.params.isNotKeepAlive) {
     store.commit('removeKeepAlivePage', from.name);
   } else if (from.name) {
     store.commit('addKeepAlivePage', from.name);
   }
-
-
 }
 
 function recordProps(to) {
@@ -113,21 +98,16 @@ function recordProps(to) {
   }
 }
 
-
-
-
 /* tslint:disable */
-const vue = new Vue({
+new Vue({
   el: '#app',
   components: {App},
   template: '<App/>',
   router,
-  provide: {
-
-    menuService: () => new MenuService,
-    // jhipster-needle-add-entity-service-to-main - JHipster will import entities services here
-    alertService: () => new AlertService(),
-  },
+  //bpm側邊攔，目前已由eip那邊控制，所以先註解
+  // provide: {
+  //   menuService: () => new MenuService,
+  // },
   store,
 });
 

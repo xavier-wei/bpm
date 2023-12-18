@@ -1,18 +1,58 @@
-const l414Apply =() => import('@/components/l414/l414Apply.vue');
-const l410Apply =() => import('@/components/l410/l410Apply.vue');
-const appendix =() => import('@/components/appendix.vue');
-const flowChart =() => import('@/components/flowChart.vue');
-const signatureBmodel =() => import('@/components/signatureBmodel.vue');
-const signerList =() => import('@/components/signerList.vue');
-const userSys =() => import('@/components/userSys.vue');
-const breadcrumb =() => import('@/core/menu/breadcrumb.vue');
-const l414Edit =() => import('@/components/l414/l414Edit.vue');
-const l410Edit =() => import('@/components/l410/l410Edit.vue');
-const errandBmodel =() => import('@/components/errandBmodel.vue');
-const setSupervisor =() => import('@/components/setSupervisor.vue');
-const supervisorAdmin =() => import('@/components/supervisorAdmin.vue');
+const Pending = () => import('@/components/pending.vue');
+const Notify = () => import('@/components/notify.vue');
+const L414Query = () => import('@/components/l414/l414Query.vue');
+const L410Query = () => import('@/components/l410/l410Query.vue');
+const l414Apply = () => import('@/components/l414/l414Apply.vue');
+const l410Apply = () => import('@/components/l410/l410Apply.vue');
+const appendix = () => import('@/components/appendix.vue');
+const flowChart = () => import('@/components/flowChart.vue');
+const signatureBmodel = () => import('@/components/signatureBmodel.vue');
+const signerList = () => import('@/components/signerList.vue');
+const userSys = () => import('@/components/userSys.vue');
+const breadcrumb = () => import('@/core/menu/breadcrumb.vue');
+const l414Edit = () => import('@/components/l414/l414Edit.vue');
+const l410Edit = () => import('@/components/l410/l410Edit.vue');
+const errandBmodel = () => import('@/components/errandBmodel.vue');
+const setSupervisor = () => import('@/components/setSupervisor.vue');
+const supervisorAdmin = () => import('@/components/supervisorAdmin.vue');
 
 export default [
+  {
+    path: '/pending',
+    name: 'pending',
+    component: Pending,
+    meta: {
+      functionId: 'pending',
+    },
+    props: true
+  },
+  {
+    path: '/notify',
+    name: 'notify',
+    component: Notify,
+    meta: {
+      functionId: 'notify',
+    },
+    props: true
+  },
+  {
+    path: '/l414Query',
+    name: 'l414Query',
+    component: L414Query,
+    meta: {
+      functionId: 'l414Query',
+    },
+    props: true
+  },
+  {
+    path: '/l410Query',
+    name: 'l410Query',
+    component: L410Query,
+    meta: {
+      functionId: 'l410Query',
+    },
+    props: true
+  },
   {
     path: '/l410Apply',
     name: 'l410Apply',
@@ -77,6 +117,15 @@ export default [
     props: true,
   },
   {
+    path: '/signerList',
+    name: 'signerList',
+    component: signerList,
+    meta: {
+      functionId: 'signerList',
+    },
+    props: true,
+  },
+  {
     path: '/signatureBmodel',
     name: 'signatureBmodel',
     component: signatureBmodel,
@@ -122,3 +171,4 @@ export default [
     props: true,
   },
 ];
+

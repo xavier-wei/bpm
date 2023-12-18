@@ -1,6 +1,6 @@
 <template>
   <div>
-    <div class="card-header py-1 text-left" style="background-color: #b0ded4">
+    <div class="card-header py-1 text-left " style="background-color: #66bfab">
       <div class="row align-items-center">
         <div class="col-sm-11 p-0">
           <h5 class="m-0">
@@ -10,7 +10,7 @@
         </div>
       </div>
     </div>
-    <div class="card-body clo-12" style="background-color: #d3ede8">
+    <div class="card-body bpm_background clo-12">
       <b-form-row>
         <i-form-group-check
           class="col-sm-4 mb-0"

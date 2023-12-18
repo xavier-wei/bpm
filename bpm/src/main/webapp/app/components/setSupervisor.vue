@@ -1,7 +1,7 @@
 <template>
   <div>
     <div>
-      <div style="background-color: #b0ded4; padding-top: 10px">
+      <div class="bpm_form_header">
         <b-row class="d-flex">
           <p class="ml-4" style="color: white">表單特例管理</p>
         </b-row>
