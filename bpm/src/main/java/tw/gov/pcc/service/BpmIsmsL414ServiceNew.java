@@ -83,7 +83,7 @@ public class BpmIsmsL414ServiceNew implements BpmIsmsCommonService, BpmIsmsPatch
 
     @Override
     @Transactional(rollbackFor = SQLException.class)
-    public synchronized void saveBpm(UUID uuid, String processInstanceId, TaskDTO taskDTO, List<BpmUploadFileDTO> dto, List<MultipartFile> appendixFiles) throws ResponseStatusException {
+    public  void saveBpm(UUID uuid, String processInstanceId, TaskDTO taskDTO, List<BpmUploadFileDTO> dto, List<MultipartFile> appendixFiles) throws ResponseStatusException {
         BpmIsmsL414DTO bpmIsmsL414DTO = DTO_HOLDER.get(uuid);
         String formId;
 //        List<BpmIsmsL414> maxFormId = bpmIsmsL414Repository.getMaxFormId();
