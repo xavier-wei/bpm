@@ -135,7 +135,7 @@ public class Eip07w030Service {
 	        
 	        String using_date = DateUtility.formatChineseDateString(updateData.getUsing_date(),false);
 	        String using_time = updateData.getUsing_time_s().substring(0,2)+updateData.getUsing_time_s().substring(2,4)+"~"
-	    	        +updateData.getUsing_time_e().substring(0,2)+updateData.getUsing_time_e().substring(2,3);
+	    	        +updateData.getUsing_time_e().substring(0,2)+updateData.getUsing_time_e().substring(2,4);
 	        
 	        sb.append("派車單號：" + applyId +"\r\n");
 	        sb.append("申請人:"+ getUserNameOrDeptName(updateData.getApply_user(),true)+"\r\n");

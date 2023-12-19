@@ -13,7 +13,6 @@ import tw.gov.pcc.eip.domain.*;
 import tw.gov.pcc.eip.framework.domain.UserBean;
 import tw.gov.pcc.eip.util.DateUtility;
 
-import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -141,7 +140,6 @@ public class Eip03w020Service {
         KeepTrkMst km = new KeepTrkMst();
         km.setTrkID(caseData.getSelectedTrkID());
         km = keepTrkMstDao.selectDataByPrimaryKey(km);
-        DateTimeFormatter fmt = DateTimeFormatter.ISO_LOCAL_DATE;
 
 //        列管事項 列管對象
         mixCase.setTrkID(km.getTrkID());
@@ -152,15 +150,19 @@ public class Eip03w020Service {
         mixCase.setTrkFrom(km.getTrkFrom());
         mixCase.setAllStDt(km.getAllStDt()); //全案列管日期
         mixCase.setClsDt(km.getClsDt()); //結案日期
-        mixCase.setCreDept(km.getCreDept() != null? deptsDao.findByPk(km.getCreDept()).getDept_name() : "");
+//        km.getCreDept(), km.getUpdDept()
+
+        Map<String, String> deptsNameMap = deptsDao.findNameByMultiID(Arrays.asList(km.getCreDept(), km.getUpdDept()))
+                                                    .stream()
+                                                    .collect(Collectors.toMap(Depts::getDept_id, Depts::getDept_name));
+        mixCase.setCreDept(km.getCreDept() != null? deptsNameMap.get(km.getCreDept()) : "");
         mixCase.setCreUser(km.getCreUser() != null? getUserName(km.getCreUser()) : "");
-//        mixCase.setCreDt(km.getCreDt() == null? "": km.getCreDt().format(fmt).replaceAll("-",""));
         String creDt = DateUtility.parseLocalDateTimeToChineseDateTime(km.getCreDt(),true);
         creDt = DateUtility.formatChineseDateTimeString(creDt,false);
         mixCase.setCreDt(creDt);
 //        mixCase.setUpdDt(km.getUpdDt() == null? "": km.getUpdDt().format(fmt).replaceAll("-",""));
         if (km.getUpdDt() != null){
-            mixCase.setUpdDept(deptsDao.findByPk(km.getUpdDept()).getDept_name());
+            mixCase.setUpdDept(deptsNameMap.get(km.getUpdDept()));
             mixCase.setUpdUser(getUserName(km.getUpdUser()));
             String updDt = DateUtility.parseLocalDateTimeToChineseDateTime(km.getUpdDt(),true);
             updDt = DateUtility.formatChineseDateTimeString(updDt,false);
@@ -171,7 +173,6 @@ public class Eip03w020Service {
 
         kdList.forEach( a-> {
             a.setPrcSts(String.valueOf(eipcodeDao.findByCodeKindCodeNo("TRKPRCSTS",a.getPrcSts()).get().getCodename()));
-            String nn = deptsDao.findByPk(a.getTrkObj()).getDept_name();
             a.setTrkObj(a.getTrkObj() + "-" + deptsDao.findByPk(a.getTrkObj()).getDept_name() + "-" + deptsDao.findByPk(a.getTrkObj()).getDept_id_p());
 
 //            取得所有列管對象
@@ -188,8 +189,15 @@ public class Eip03w020Service {
             KeepTrkDtl ktdItem = list.get(0);
             innerMap.put("trkID", ktdItem.getTrkID());      //列管事項編號
             innerMap.put("trkObj", ktdItem.getTrkObj());     //列管對象 (處室)
-            innerMap.put("trkObjRoot", deptsDao.findByPk(ktdItem.getTrkObj()).getDept_id_p());     //列管對象 (處室)
-            innerMap.put("trkObjName", deptsDao.findByPk(ktdItem.getTrkObj()).getDept_name());     //列管對象 (處室)
+
+//            Depts depts = deptsDao.findByPk();
+//            caseData.setResultList(resultList.stream().map(Eip06w010Case::new).collect(Collectors.toList()));
+
+            Map<String, Depts> deptsMap = deptsDao.findNameByMultiID(Arrays.asList(ktdItem.getTrkObj(), ktdItem.getSupDept()))
+                                                    .stream().collect(Collectors.toMap(Depts::getDept_id, a1 -> a1));
+
+            innerMap.put("trkObjRoot", deptsMap.get(ktdItem.getTrkObj()).getDept_id_p());     //列管對象 (上層部門)
+            innerMap.put("trkObjName", deptsMap.get(ktdItem.getTrkObj()).getDept_name());     //列管對象 (處室)
             innerMap.put("prcSts", eipcodeDao.findByCodeKindCodeNo("TRKPRCSTS", ktdItem.getPrcSts()).get().getCodename());    //處理狀態：1-待處理 2-待解列 3-已解列
             innerMap.put("stDt", ktdItem.getStDt());   //列管起日
             innerMap.put("endDt", ktdItem.getEndDt());     //列管迄日
@@ -228,7 +236,7 @@ public class Eip03w020Service {
             innerMap.put("rptUpdDt", rptUpdDt);   //填報更新日期時間
             innerMap.put("supCont", ktdItem.getSupCont());    //回應內容
             innerMap.put("supAgree", ktdItem.getSupAgree());   //是否同意解列(Y/N)
-            innerMap.put("supDept", ktdItem.getSupDept() != null? deptsDao.findByPk(ktdItem.getSupDept()).getDept_name():"");    //回應人員所屬部門
+            innerMap.put("supDept", ktdItem.getSupDept() != null? deptsMap.get(ktdItem.getSupDept()).getDept_name():"");    //回應人員所屬部門
             innerMap.put("supUser", ktdItem.getSupUser()!= null? getUserName(ktdItem.getSupUser()):"");    //回應人員
 
             String supDt = DateUtility.parseLocalDateTimeToChineseDateTime(ktdItem.getSupDt(), true);
