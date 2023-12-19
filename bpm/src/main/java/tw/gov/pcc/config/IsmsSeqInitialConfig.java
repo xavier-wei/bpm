@@ -1,13 +1,15 @@
 package tw.gov.pcc.config;
 
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
 import tw.gov.pcc.repository.BpmIsmsL410Repository;
 import tw.gov.pcc.repository.BpmIsmsL414Repository;
-import tw.gov.pcc.utils.SeqTemp;
+import tw.gov.pcc.cache.BpmSeqCache;
 
 @Component
+@Slf4j
 public class IsmsSeqInitialConfig implements CommandLineRunner {
 
     private final BpmIsmsL410Repository bpmIsmsL410Repository;
@@ -22,8 +24,9 @@ public class IsmsSeqInitialConfig implements CommandLineRunner {
 
     @Override
     public void run(String... args) throws Exception {
-        SeqTemp.setL414Seq(!bpmIsmsL414Repository.getMaxFormId().isEmpty() ? bpmIsmsL414Repository.getMaxFormId().get(0).getFormId() : null);
-        SeqTemp.setL410Seq(!bpmIsmsL410Repository.getMaxFormId().isEmpty() ? bpmIsmsL410Repository.getMaxFormId().get(0).getFormId() : null);
+        BpmSeqCache.setL414Seq((!bpmIsmsL414Repository.getMaxFormId().isEmpty()) ? bpmIsmsL414Repository.getMaxFormId().get(0).getFormId() : null);
+        BpmSeqCache.setL410Seq((!bpmIsmsL410Repository.getMaxFormId().isEmpty() )? bpmIsmsL410Repository.getMaxFormId().get(0).getFormId() : null);
+        log.info("init isms seq success");
     }
 
 }

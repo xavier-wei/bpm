@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
+import tw.gov.pcc.cache.BpmSeqCache;
 import tw.gov.pcc.domain.*;
 import tw.gov.pcc.repository.BpmIsmsL414Repository;
 import tw.gov.pcc.repository.UserRoleRepository;
@@ -84,10 +85,15 @@ public class BpmIsmsL414ServiceNew implements BpmIsmsCommonService, BpmIsmsPatch
     @Transactional(rollbackFor = SQLException.class)
     public synchronized void saveBpm(UUID uuid, String processInstanceId, TaskDTO taskDTO, List<BpmUploadFileDTO> dto, List<MultipartFile> appendixFiles) throws ResponseStatusException {
         BpmIsmsL414DTO bpmIsmsL414DTO = DTO_HOLDER.get(uuid);
-        List<BpmIsmsL414> maxFormId = bpmIsmsL414Repository.getMaxFormId();
+        String formId;
+//        List<BpmIsmsL414> maxFormId = bpmIsmsL414Repository.getMaxFormId();
+        synchronized (this) {
+            String lastFormId = BpmSeqCache.getL414Seq();
+            formId = bpmIsmsL414DTO.getFormName() + "-" + new SeqNumber().getNewSeq(lastFormId);
+            BpmSeqCache.setL414Seq(formId);
+        }
         //取得表單最後的流水號
-        String lastFormId = !maxFormId.isEmpty() ? maxFormId.get(0).getFormId() : null;
-        String formId = bpmIsmsL414DTO.getFormName() + "-" + new SeqNumber().getNewSeq(lastFormId);
+
         bpmIsmsL414DTO.setFormId(formId);
         bpmIsmsL414DTO.setProcessInstanceId(processInstanceId);
         bpmIsmsL414DTO.setProcessInstanceStatus("0");
@@ -163,8 +169,8 @@ public class BpmIsmsL414ServiceNew implements BpmIsmsCommonService, BpmIsmsPatch
         bpmIsmsL414.setProcessInstanceStatus(endEventDTO.getProcessStatus());
         bpmIsmsL414.setUpdateTime(Timestamp.valueOf(LocalDateTime.now()));
         BpmIsmsL414 save = bpmIsmsL414Repository.save(bpmIsmsL414);
-        String fullName= IsmsFullNameEnum.getFullNameBySimpleName(save.getFormId().split("-")[0]);
-        return new MailInfo(fullName,save.getFormId() , save.getAppName(),save.getAppEmpid(), save.getProcessInstanceStatus().equals("1")?"處理完成":"退件", true);
+        String fullName = IsmsFullNameEnum.getFullNameBySimpleName(save.getFormId().split("-")[0]);
+        return new MailInfo(fullName, save.getFormId(), save.getAppName(), save.getAppEmpid(), save.getProcessInstanceStatus().equals("1") ? "處理完成" : "退件", true);
 
     }
 

@@ -7,6 +7,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
+import tw.gov.pcc.cache.BpmSeqCache;
 import tw.gov.pcc.domain.*;
 import tw.gov.pcc.repository.BpmIsmsL410Repository;
 import tw.gov.pcc.repository.UserRoleRepository;
@@ -62,7 +63,7 @@ public class BpmIsmsL410ServiceNew implements BpmIsmsCommonService, BpmIsmsPatch
     }
 
     @Override
-    public synchronized UUID setVariables(HashMap<String, Object> variables, String form, User userInfo) {
+    public UUID setVariables(HashMap<String, Object> variables, String form, User userInfo) {
         BpmIsmsL410DTO bpmIsmsL410DTO = gson.fromJson(form, BpmIsmsL410DTO.class);
         UUID uuid = UUID.randomUUID();
         DTO_HOLDER.put(uuid, bpmIsmsL410DTO);
@@ -81,19 +82,22 @@ public class BpmIsmsL410ServiceNew implements BpmIsmsCommonService, BpmIsmsPatch
 
     @Override
     @Transactional(rollbackFor = SQLException.class)
-    public synchronized void saveBpm(UUID uuid, String processInstanceId, TaskDTO taskDTO, List<BpmUploadFileDTO> dto, List<MultipartFile> appendixFiles) {
+    public  void saveBpm(UUID uuid, String processInstanceId, TaskDTO taskDTO, List<BpmUploadFileDTO> dto, List<MultipartFile> appendixFiles) {
 
         BpmIsmsL410DTO bpmIsmsL410DTO = DTO_HOLDER.get(uuid);
         String formId;
-        if (bpmIsmsL410DTO.getFormId() == null || bpmIsmsL410DTO.getFormId().isEmpty()) {
-            List<BpmIsmsL410> maxFormId = bpmIsmsL410Repository.getMaxFormId();
-            //取得表單最後的流水號
-            String lastFormId = !maxFormId.isEmpty() ? maxFormId.get(0).getFormId() : null;
-            formId = bpmIsmsL410DTO.getFormName() + "-" + new SeqNumber().getNewSeq(lastFormId);
 
-        } else {
-            formId = bpmIsmsL410DTO.getFormId();
-        }
+            if (bpmIsmsL410DTO.getFormId() == null || bpmIsmsL410DTO.getFormId().isEmpty()) {
+                synchronized (this) {
+                    //取得表單最後的流水號
+                    String lastFormId = BpmSeqCache.getL410Seq();
+                    formId = bpmIsmsL410DTO.getFormName() + "-" + new SeqNumber().getNewSeq(lastFormId);
+                    BpmSeqCache.setL410Seq(formId);
+                }
+            } else {
+                formId = bpmIsmsL410DTO.getFormId();
+            }
+
         bpmIsmsL410DTO.setFormId(formId);
         //取得表單最後的流水號
 
