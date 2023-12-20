@@ -22,10 +22,10 @@
         @mousemove.stop="handleDrag"
         @mouseup.stop="stopDrag"
         @mouseleave.stop="stopDrag"
+        @click.stop="handleClick"
         @touchstart.stop="startTouch"
         @touchmove.stop="handleTouch"
         @touchend.stop="stopTouch"
-        @click.stop="handleClick"
         alt=""
       />
     </div>
@@ -67,6 +67,7 @@ export default {
     const translateX = ref(0);
     const translateY = ref(0);
 
+    //畫面縮放
     const handleWheel = (event) => {
       const isCtrlPressed = (event.ctrlKey && !event.metaKey) || (!event.ctrlKey && event.metaKey);
       if (isCtrlPressed) { // 检查是否按下了Ctrl键
@@ -76,6 +77,7 @@ export default {
       }
     };
 
+    //按下滑鼠
     const startDrag = (event) => {
       if (event.button === 0) {
         event.preventDefault(); //阻止瀏覽器默認行為 舉例:不加這個 瀏覽器預設是點下左鍵 要先移動一段距離 才會觸發
@@ -85,11 +87,17 @@ export default {
       }
     };
 
+    //移動滑鼠
     const handleDrag = (event) => {
       if (drag.value) {
         translateX.value = event.clientX - startX.value;
         translateY.value = event.clientY - startY.value;
       }
+    };
+
+    //離開滑鼠
+    const stopDrag = () => {
+      drag.value = false;
     };
 
     //點擊次數
@@ -114,26 +122,26 @@ export default {
       }
     };
 
-
-    const stopDrag = () => {
-      drag.value = false;
-    };
-
+    //放大圖片
     const zoomIn = () => {
       scale.value = Math.min(scale.value + 0.1, 2);
     };
 
+    //縮小圖片
     const zoomOut = () => {
       scale.value = Math.max(scale.value - 0.1, 0.1);
     };
+
+    //重置圖片位與大小
     const recover = () => {
       translateX.value = 0;
       translateY.value = 0;
       scale.value = 1;
     };
 
-    //手機平板觸發的事件
+    //觸摸開始
     const startTouch = (event) => {
+      //檢查事件中觸摸的數量是否為 1，確保只有一個觸摸點。這樣可以排除多點觸控的情況。
       if (event.touches.length === 1) {
         event.preventDefault();
         drag.value = true;
@@ -143,8 +151,9 @@ export default {
       }
     };
 
-    //手機平板觸發的事件
+    //觸摸移動
     const handleTouch = (event) => {
+      //這確保只有在拖動時才處理觸摸移動。
       if (drag.value && event.touches.length === 1) {
         const touch = event.touches[0];
         translateX.value = touch.clientX - startX.value;
@@ -152,7 +161,7 @@ export default {
       }
     };
 
-    //手機平板觸發的事件
+    //觸摸結束
     const stopTouch = () => {
       drag.value = false;
     };
