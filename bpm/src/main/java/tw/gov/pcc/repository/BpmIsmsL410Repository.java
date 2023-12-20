@@ -8,6 +8,7 @@ import tw.gov.pcc.domain.BpmIsmsL410;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 /**
  * Spring Data SQL repository for the BpmIsmsL410 entity.
@@ -28,7 +29,7 @@ public interface BpmIsmsL410Repository extends JpaRepository<BpmIsmsL410, String
     @Query(value = "SELECT * FROM BPM_ISMS_L410 WHERE FORM_ID = :formId ", nativeQuery = true)
     List<Map<String,Object>> findByFormId(@Param("formId") String formId);
 
-    BpmIsmsL410 findFirstByProcessInstanceId(String processInstanceId);
+    Optional<BpmIsmsL410> findFirstByProcessInstanceId(String processInstanceId);
 
 
 }

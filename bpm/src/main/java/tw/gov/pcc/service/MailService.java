@@ -15,8 +15,8 @@ public class MailService {
     private final EipMailDataRepository eipMailDataRepository;
     private final UserService userService;
     private final NamedParameterJdbcTemplate namedParameterJdbcTemplate;
-    private final String mailTitle = "ISMS表單處理完畢通知：%s( %s, %s) %s)"; // 表單名稱，申請人，申請人ID，狀態
-    private final String mailContent = "%s \n" +
+    private static final String MAIL_TITLE = "ISMS表單處理完畢通知：%s( %s, %s) %s)"; // 表單名稱，申請人，申請人ID，狀態
+    private static final String MAIL_CONTENT = "%s \n" +
         "表單單號: %s \n" +
         "申請人： %s, %s\n" +
         "狀態：  %s，詳情請參閱表單查詢之簽核狀態\n" ; // 表單名稱，表單編號，申請人，申請人ID，狀態
@@ -28,7 +28,7 @@ public class MailService {
     }
 
     public void sendMail(MailInfo mailInfo) {
-        if (mailInfo.getIsSend()) {
+        if (Boolean.TRUE.equals(mailInfo.getIsSend())) {
             User userInfo = userService.getUserInfo(mailInfo.getApplierId());
             EipMailData eipMailData = new EipMailData();
             eipMailData.setMailId(getNewMailId());
@@ -36,8 +36,8 @@ public class MailService {
             eipMailData.setIsMailed("");
             eipMailData.setFilePath("");
             eipMailData.setAttachFileName("");
-            eipMailData.setSubject(String.format(mailTitle, mailInfo.getFormName(), mailInfo.getApplier(), mailInfo.getApplierId(), mailInfo.getStatus()));
-            eipMailData.setMessage(String.format(mailContent, mailInfo.getFormName(), mailInfo.getFormId(), mailInfo.getApplier(), mailInfo.getApplierId(), mailInfo.getStatus()));
+            eipMailData.setSubject(String.format(MAIL_TITLE, mailInfo.getFormName(), mailInfo.getApplier(), mailInfo.getApplierId(), mailInfo.getStatus()));
+            eipMailData.setMessage(String.format(MAIL_CONTENT, mailInfo.getFormName(), mailInfo.getFormId(), mailInfo.getApplier(), mailInfo.getApplierId(), mailInfo.getStatus()));
             eipMailDataRepository.save(eipMailData);
         }
     }

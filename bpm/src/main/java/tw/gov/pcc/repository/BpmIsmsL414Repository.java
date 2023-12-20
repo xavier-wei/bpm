@@ -10,6 +10,7 @@ import tw.gov.pcc.repository.custom.BpmIsmsL414RepositoryCustom;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 /**
  * Spring Data SQL repository for the BpmIsmsL414 entity.
@@ -22,7 +23,7 @@ public interface BpmIsmsL414Repository extends JpaRepository<BpmIsmsL414, String
     @Query(value = " select top 1 * from BPM_ISMS_L414 order by CREATE_TIME desc  ", nativeQuery = true)
     List<BpmIsmsL414> getMaxFormId();
 
-    BpmIsmsL414 findFirstByProcessInstanceId(String processInstanceId);
+    Optional<BpmIsmsL414> findFirstByProcessInstanceId(String processInstanceId);
 
     @Query("SELECT l414 FROM BpmIsmsL414 l414 " +
             "WHERE (LENGTH(COALESCE(:word,'')) = 0 OR l414.formId LIKE CONCAT('%', :word, '%')) " +

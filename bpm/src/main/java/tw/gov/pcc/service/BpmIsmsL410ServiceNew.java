@@ -16,7 +16,6 @@ import tw.gov.pcc.service.dto.BpmUploadFileDTO;
 import tw.gov.pcc.service.dto.EndEventDTO;
 import tw.gov.pcc.service.dto.TaskDTO;
 import tw.gov.pcc.service.mapper.BpmIsmsL410Mapper;
-import tw.gov.pcc.service.mapper.BpmUploadFileMapper;
 import tw.gov.pcc.utils.SeqNumber;
 
 import java.sql.SQLException;
@@ -41,8 +40,6 @@ public class BpmIsmsL410ServiceNew implements BpmIsmsCommonService, BpmIsmsPatch
 
     private final BpmUploadFileService bpmUploadFileService;
 
-    private final BpmUploadFileMapper bpmUploadFileMapper;
-
     private final BpmSignStatusService bpmSignStatusService;
 
     private final BpmSignerListService bpmSignerListService;
@@ -51,10 +48,9 @@ public class BpmIsmsL410ServiceNew implements BpmIsmsCommonService, BpmIsmsPatch
     private final UserRoleRepository userRoleRepository;
 
 
-    public BpmIsmsL410ServiceNew(BpmIsmsL410Repository bpmIsmsL410Repository, BpmUploadFileService bpmUploadFileService, BpmUploadFileMapper bpmUploadFileMapper, BpmSignStatusService bpmSignStatusService, BpmSignerListService bpmSignerListService, BpmIsmsL410Mapper bpmIsmsL410Mapper, SupervisorService supervisorService, UserRoleRepository userRoleRepository) {
+    public BpmIsmsL410ServiceNew(BpmIsmsL410Repository bpmIsmsL410Repository, BpmUploadFileService bpmUploadFileService, BpmSignStatusService bpmSignStatusService, BpmSignerListService bpmSignerListService, BpmIsmsL410Mapper bpmIsmsL410Mapper, SupervisorService supervisorService, UserRoleRepository userRoleRepository) {
         this.bpmIsmsL410Repository = bpmIsmsL410Repository;
         this.bpmUploadFileService = bpmUploadFileService;
-        this.bpmUploadFileMapper = bpmUploadFileMapper;
         this.bpmSignStatusService = bpmSignStatusService;
         this.bpmSignerListService = bpmSignerListService;
         this.bpmIsmsL410Mapper = bpmIsmsL410Mapper;
@@ -82,21 +78,21 @@ public class BpmIsmsL410ServiceNew implements BpmIsmsCommonService, BpmIsmsPatch
 
     @Override
     @Transactional(rollbackFor = SQLException.class)
-    public  void saveBpm(UUID uuid, String processInstanceId, TaskDTO taskDTO, List<BpmUploadFileDTO> dto, List<MultipartFile> appendixFiles) {
+    public void saveBpm(UUID uuid, String processInstanceId, TaskDTO taskDTO, List<BpmUploadFileDTO> dto, List<MultipartFile> appendixFiles) {
 
         BpmIsmsL410DTO bpmIsmsL410DTO = DTO_HOLDER.get(uuid);
         String formId;
 
-            if (bpmIsmsL410DTO.getFormId() == null || bpmIsmsL410DTO.getFormId().isEmpty()) {
-                synchronized (this) {
-                    //取得表單最後的流水號
-                    String lastFormId = BpmSeqCache.getL410Seq();
-                    formId = bpmIsmsL410DTO.getFormName() + "-" + new SeqNumber().getNewSeq(lastFormId);
-                    BpmSeqCache.setL410Seq(formId);
-                }
-            } else {
-                formId = bpmIsmsL410DTO.getFormId();
+        if (bpmIsmsL410DTO.getFormId() == null || bpmIsmsL410DTO.getFormId().isEmpty()) {
+            synchronized (this) {
+                //取得表單最後的流水號
+                String lastFormId = BpmSeqCache.getL410Seq();
+                formId = bpmIsmsL410DTO.getFormName() + "-" + new SeqNumber().getNewSeq(lastFormId);
+                BpmSeqCache.setL410Seq(formId);
             }
+        } else {
+            formId = bpmIsmsL410DTO.getFormId();
+        }
 
         bpmIsmsL410DTO.setFormId(formId);
         //取得表單最後的流水號
@@ -161,8 +157,23 @@ public class BpmIsmsL410ServiceNew implements BpmIsmsCommonService, BpmIsmsPatch
     }
 
     // 設定需要申請的Task及各task的Signer
+    @Override
+    public MailInfo endForm(EndEventDTO endEventDTO) {
+        return bpmIsmsL410Repository.findFirstByProcessInstanceId(endEventDTO.getProcessInstanceId())
+            .map(bpmIsmsL410 -> {
+                bpmIsmsL410.setProcessInstanceStatus(endEventDTO.getProcessStatus());
+                bpmIsmsL410.setUpdateTime(Timestamp.valueOf(LocalDateTime.now()));
+                BpmIsmsL410 save = bpmIsmsL410Repository.save(bpmIsmsL410);
+                String fullName = IsmsFullNameEnum.getFullNameBySimpleName(save.getFormId().split("-")[0]);
+                return new MailInfo(fullName, save.getFormId(), save.getAppName(), save.getAppEmpid(), save.getProcessInstanceStatus().equals("1") ? "處理完成" : "退件", true);
+            }).orElseGet(() -> {
+                log.error("找不到對應的表單");
+                return null;
+            });
+    }
+
     private static void setSys(HashMap<String, Object> variables, BpmIsmsL410DTO bpmIsmsL410DTO, HashMap<String, String> signerIds) {
-        HashMap<String, Object> sysNameMap = new HashMap<>();
+        Map<String, Object> sysNameMap = new HashMap<>();
 
         bpmIsmsL410DTO.getL410Variables().forEach(s -> s.keySet().forEach(sysName -> sysNameMap.put(sysName, s.get(sysName))));
         sysNameMap.keySet().forEach(sysName -> {
@@ -172,14 +183,14 @@ public class BpmIsmsL410ServiceNew implements BpmIsmsCommonService, BpmIsmsPatch
                 variables.put(sysName, "1");
             }
         });
-        HashMap<String, String> signerMapTemp = new HashMap<>();
+        Map<String, String> signerMapTemp = new HashMap<>();
         variables.keySet()
             .stream()
             .filter(s -> s.startsWith("is") && !"isSubmit".equals(s))
             .filter(s -> "1".equals(variables.get(s)))
             .forEach(s -> {
-                String siner = s.replaceFirst("is", "") + "Signer";
-                signerMapTemp.put(siner, signerIds.get(SysSignerEnum.getSignerUnitBySigner(siner)));
+                String signer = s.replaceFirst("is", "") + "Signer";
+                signerMapTemp.put(signer, signerIds.get(SysSignerEnum.getSignerUnitBySigner(signer)));
             });
         signerMapTemp.keySet().forEach(s -> variables.put(s, signerMapTemp.get(s)));
         signerMapTemp.clear();
@@ -187,38 +198,29 @@ public class BpmIsmsL410ServiceNew implements BpmIsmsCommonService, BpmIsmsPatch
     }
 
     @Override
-    public MailInfo endForm(EndEventDTO endEventDTO) {
-        BpmIsmsL410 bpmIsmsL410 = bpmIsmsL410Repository.findFirstByProcessInstanceId(endEventDTO.getProcessInstanceId());
-        bpmIsmsL410.setProcessInstanceStatus(endEventDTO.getProcessStatus());
-        bpmIsmsL410.setUpdateTime(Timestamp.valueOf(LocalDateTime.now()));
-        BpmIsmsL410 save = bpmIsmsL410Repository.save(bpmIsmsL410);
-        String fullName= IsmsFullNameEnum.getFullNameBySimpleName(save.getFormId().split("-")[0]);
-        return new MailInfo(fullName,save.getFormId() , save.getAppName(),save.getAppEmpid(), save.getProcessInstanceStatus().equals("1")?"處理完成":"退件", true);
-    }
-
-    @Override
     public Map<String, Object> getBpm(String formId) {
-        List<Map<String, Object>> bpmIsmsL410 = bpmIsmsL410Repository.findByFormId(formId);
-        if (!bpmIsmsL410.isEmpty()) return bpmIsmsL410Repository.findByFormId(formId).get(0);
-        return Map.of();
+        return bpmIsmsL410Repository.findByFormId(formId)
+            .stream().findFirst().orElseGet(Map::of);
     }
 
     @Override
     public void saveBpmByPatchToIsSubmit(String processInstanceId) {
-        BpmIsmsL410 bpmIsmsL410 = bpmIsmsL410Repository.findFirstByProcessInstanceId(processInstanceId);
-        bpmIsmsL410.setIsSubmit("0");
-        bpmIsmsL410.setProcessInstanceStatus("2");
-        bpmIsmsL410.setUpdateTime(Timestamp.valueOf(LocalDateTime.now()));
-        bpmIsmsL410Repository.save(bpmIsmsL410);
+        bpmIsmsL410Repository.findFirstByProcessInstanceId(processInstanceId).ifPresent(bpmIsmsL410 -> {
+            bpmIsmsL410.setIsSubmit("0");
+            bpmIsmsL410.setProcessInstanceStatus("2");
+            bpmIsmsL410.setUpdateTime(Timestamp.valueOf(LocalDateTime.now()));
+            bpmIsmsL410Repository.save(bpmIsmsL410);
+        });
     }
 
     @Override
     public void cancel(String processInstanceId) {
-        BpmIsmsL410 bpmIsmsL410 = bpmIsmsL410Repository.findFirstByProcessInstanceId(processInstanceId);
-        bpmIsmsL410.setProcessInstanceStatus("3");
-        bpmIsmsL410.setUpdateTime(Timestamp.valueOf(LocalDateTime.now()));
-        bpmIsmsL410Repository.save(bpmIsmsL410);
-        bpmSignStatusService.saveCancelBpmSignStatus(bpmIsmsL410);
+        bpmIsmsL410Repository.findFirstByProcessInstanceId(processInstanceId).ifPresent(bpmIsmsL410 -> {
+            bpmIsmsL410.setProcessInstanceStatus("3");
+            bpmIsmsL410.setUpdateTime(Timestamp.valueOf(LocalDateTime.now()));
+            bpmIsmsL410Repository.save(bpmIsmsL410);
+            bpmSignStatusService.saveCancelBpmSignStatus(bpmIsmsL410);
+        });
     }
 
     @Override

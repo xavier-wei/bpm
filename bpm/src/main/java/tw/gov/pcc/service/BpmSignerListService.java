@@ -10,7 +10,6 @@ import tw.gov.pcc.cache.BpmCache;
 import tw.gov.pcc.domain.BpmSignerList;
 import tw.gov.pcc.domain.SinerTaskEnum;
 import tw.gov.pcc.domain.User;
-import tw.gov.pcc.repository.BpmIsmsSignerOrderRepository;
 import tw.gov.pcc.repository.BpmSignerListRepository;
 import tw.gov.pcc.repository.UserRepository;
 
@@ -27,15 +26,23 @@ public class BpmSignerListService {
     private final NamedParameterJdbcTemplate namedParameterJdbcTemplate;
     private final BpmSignerListRepository bpmSignerListRepository;
     private final UserRepository userRepository;
-    private final BpmIsmsSignerOrderRepository bpmIsmsSignerOrderRepository;
 
-    public BpmSignerListService(NamedParameterJdbcTemplate namedParameterJdbcTemplate, BpmSignerListRepository bpmSignerListRepository, UserRepository userRepository, BpmIsmsSignerOrderRepository bpmIsmsSignerOrderRepository) {
+    public BpmSignerListService(NamedParameterJdbcTemplate namedParameterJdbcTemplate, BpmSignerListRepository bpmSignerListRepository, UserRepository userRepository) {
         this.namedParameterJdbcTemplate = namedParameterJdbcTemplate;
         this.bpmSignerListRepository = bpmSignerListRepository;
         this.userRepository = userRepository;
-        this.bpmIsmsSignerOrderRepository = bpmIsmsSignerOrderRepository;
     }
 
+    /**
+     * 儲存 BPM 簽核者列表。
+     * 根據傳入的變數和表單 ID 資訊，方法將處理關於簽核任務的詳細資訊，在這個過程中，我們將過濾掉不需要簽核的欄位，
+     * 以及不在定義中的任務名稱。然後，我們會根據每一個簽核者的 ID 在資料庫中查找對應的使用者資訊，並將這些資訊轉換為 `BpmSignerList` 對象，
+     * 進行相應的排序並最後存入資料庫中。
+     * 在這個過程中，如果查詢不到一個簽核者的相應使用者資訊，會拋出一個 BAD_REQUEST 錯誤。
+     * @param variables 一個包含任務名稱和簽核者 ID 的 Map。
+     * @param formId 表單的 ID。
+     * @throws ResponseStatusException 當無法在 Users 表找到對應的使用者資訊時會拋出此異常。
+     */
     public void saveBpmSignerList(Map<String, Object> variables, String formId) throws ResponseStatusException {
 
         // 取得任務名稱及簽核者ids的對應，如果暫存後申請任務有增減，應該要來檢查這段， 如果有需要也可把filter都合併，拆開純粹為了好維護
@@ -46,13 +53,8 @@ public class BpmSignerListService {
             .filter(key -> SinerTaskEnum.getNameByTask(key) != null) // 過濾不在定義中的taskName
             .collect(toMap(key -> key, key -> (String) variables.get(key))); // values應為使用者ids
 
-        // 取得各表單簽核排序依據
-//        List<BpmIsmsSignerOrder> bpmIsmsSignerOrders = bpmIsmsSignerOrderRepository.findByBpmIsmsFormOrderBySortAsc(formId.split("-")[0]);
-
         // 將taskName 及 排序分別放入key 、 value
         Map<String, Integer> sortMap = BpmCache.getBpmIsmsSignerOrderMap().get(formId.split("-")[0]);
-//            .stream()
-//            .collect(toMap(BpmIsmsSignerOrder::getTaskName, BpmIsmsSignerOrder::getSort));
         // 最終要存取的簽核人員名單
         List<BpmSignerList> bpmSignerLists =
             userTaskMap.keySet()
@@ -71,7 +73,6 @@ public class BpmSignerListService {
 
         // 將簽核人員名單存進資料庫
         bpmSignerListRepository.saveAll(bpmSignerLists);
-
     }
 
     // 將上述資訊製成 BpmSignerList並放入List
@@ -89,11 +90,9 @@ public class BpmSignerListService {
     }
 
     @Transactional
-    public int deleteAllByFormId(String id) {
-
+    public void deleteAllByFormId(String id) {
         String deleteAllByIdSQL = "DELETE FROM BPM_SIGNER_LIST WHERE FORM_ID = :id";
-
-        return namedParameterJdbcTemplate.update(deleteAllByIdSQL, Map.of("id", id));
+        namedParameterJdbcTemplate.update(deleteAllByIdSQL, Map.of("id", id));
     }
 
 }
