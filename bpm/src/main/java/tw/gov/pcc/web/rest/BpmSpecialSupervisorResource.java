@@ -65,7 +65,7 @@ public class BpmSpecialSupervisorResource {
     }
 
     @DeleteMapping("/delete/setSupervisor/{id}")
-    public ResponseEntity<Void> deleteBpmUploadFile(@PathVariable String id) {
+    public ResponseEntity<Void> deleteSupervisor(@PathVariable String id) {
         log.info("BpmSpecialSupervisorResource.java - deleteBpmUploadFile - 64 :: " + id );
         bpmSpecialSupervisorService.delete(id);
         return ResponseEntity

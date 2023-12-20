@@ -14,8 +14,6 @@
 
         <div class="card-body clo-12" style="background-color: #d3ede8">
           <b-form-row>
-
-
             <b-form-group
               class="col-sm-4 mb-0"
               label-cols-md="4"
@@ -72,8 +70,8 @@
 
           <b-container class="mt-3">
             <b-row class="justify-content-center">
-              <b-button class="ml-2" style="background-color: #17a2b8" @click="signatureOptions()">查詢</b-button>
-              <b-button class="ml-2" style="background-color: #17a2b8" @click="reset()">清除</b-button>
+              <i-button class="ml-2" type="search"  @click="signatureOptions()"/>
+              <i-button class="ml-2" type="x-circle"  @click="reset"/>
             </b-row>
           </b-container>
         </div>
@@ -92,9 +90,7 @@
           v-show="queryStatus"
         >
           <template #cell(action)="row">
-            <b-button class="ml-1" style="background-color: #17a2b8"
-                      @click="choose(row.item)">選擇
-            </b-button>
+            <i-button class="ml-2" type="record-circle"  @click="choose(row.item)"/>
           </template>
         </i-table>
 
@@ -124,18 +120,10 @@
           </i-form-group-check>
         </b-form-row>
 
-
-
         <b-container class="mt-3">
           <b-row class="justify-content-center">
-
-            <b-button class="ml-2" style="background-color: #17a2b8; color: white"
-                      variant="outline-secondary"
-                      @click="signature" :disabled="$v.chooseId.$model === ''">加簽
-            </b-button>
-            <b-button class="ml-2" style="background-color: #17a2b8; color: white"
-                      variant="outline-secondary" @click="closeModal()">關閉
-            </b-button>
+            <i-button class="ml-2" type="record-circle" :disabled="$v.chooseId.$model === ''" @click="signature"/>
+            <i-button class="ml-2" type="stop" @click="closeModal"/>
           </b-row>
         </b-container>
       </b-modal>
@@ -157,6 +145,7 @@ import {useGetters} from "@u3u/vue-hooks";
 import {useBvModal} from "@/shared/modal";
 import {navigateByNameAndParams} from "@/router/router";
 import {l410NameToFormUnit} from "@/shared/word/l410NameToFormUnit";
+import IButton from '@/shared/buttons/i-button.vue';
 
 export default {
   name: "signatureBmodel",//加簽共用模組
@@ -174,6 +163,7 @@ export default {
     IDatePicker,
     ITable,
     IFormGroupCheck,
+    'i-button': IButton,
   },
   setup(props) {
     //父層傳來的表單資訊，用來組出送加簽時的表單資訊

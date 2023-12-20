@@ -22,10 +22,9 @@
       </b-form-row>
 
       <div class="text-center pt-5">
-
-        <b-button class="ml-2" style="background-color: #17a2b8" @click="toL414Apply()"> 新增</b-button>
-        <b-button class="ml-2" style="background-color: #17a2b8" @click="toQuery()">查詢</b-button>
-        <b-button class="ml-2" style="background-color: #17a2b8" @click="toReset()">清除</b-button>
+        <i-button class="ml-2" type="folder-plus"  @click="toL414Apply()"/>
+        <i-button class="ml-2" type="search"  @click="toQuery()"/>
+        <i-button class="ml-2" type="x-circle"  @click="toReset()"/>
       </div>
     </div>
 
@@ -78,6 +77,7 @@ import {newformatDate} from '@/shared/date/minguo-calendar-utils';
 import {useGetters} from "@u3u/vue-hooks";
 import {changeCodeNoToCh} from "@/shared/word/directions";
 import { appNameUnit, filNameUnit, needNarrativeUnit} from "@/shared/word/iTable-convert-unit";
+import IButton from '@/shared/buttons/i-button.vue';
 
 export default {
   name: 'l414Query',
@@ -85,6 +85,7 @@ export default {
     IDatePicker,
     ITable,
     IFormGroupCheck,
+    'i-button': IButton,
   },
   setup() {
     //是否顯示iTable

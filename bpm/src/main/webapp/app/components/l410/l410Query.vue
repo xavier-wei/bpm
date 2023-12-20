@@ -26,9 +26,9 @@
       </b-form-row>
 
       <div class="text-center pt-5">
-        <b-button class="ml-2" style="background-color: #17a2b8" @click="toL410Apply()"> 新增</b-button>
-        <b-button class="ml-2" style="background-color: #17a2b8" @click="toQuery()">查詢</b-button>
-        <b-button class="ml-2" style="background-color: #17a2b8" @click="toReset()">清除</b-button>
+        <i-button class="ml-2" type="folder-plus"  @click="toL410Apply()"/>
+        <i-button class="ml-2" type="search"  @click="toQuery()"/>
+        <i-button class="ml-2" type="x-circle"  @click="toReset()"/>
       </div>
     </div>
 
@@ -86,6 +86,7 @@ import {useNotification} from "@/shared/notification";
 import {changeProject} from "@/shared/word/project-conversion";
 import {changeCodeNoToCh} from "@/shared/word/directions";
 import {applicationReasonUnit,appNameUnit,filNameUnit} from "@/shared/word/iTable-convert-unit";
+import IButton from '@/shared/buttons/i-button.vue';
 
 export default defineComponent({
   name: 'l410Query',
@@ -93,6 +94,7 @@ export default defineComponent({
     IDatePicker,
     ITable,
     IFormGroupCheck,
+    'i-button': IButton,
   },
   setup() {
 

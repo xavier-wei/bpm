@@ -81,9 +81,9 @@
       </b-form-row>
 
       <div class="text-center pt-5">
-        <b-button class="ml-2" style="background-color: #17a2b8" @click="toQuery()">查詢</b-button>
-        <b-button class="ml-2" style="background-color: #17a2b8" @click="toSubordinateQuery()" v-show="superiorFilter(userData.titleName)">下屬表單查詢</b-button>
-        <b-button class="ml-2" style="background-color: #17a2b8" @click="toReset()">清除</b-button>
+        <i-button class="ml-2" type="search"  @click="toQuery()"/>
+        <i-button class="ml-2" type="diagram-3"  v-show="superiorFilter(userData.titleName)" @click="toSubordinateQuery()"/>
+        <i-button class="ml-2" type="x-circle"  @click="toReset()"/>
       </div>
 
     </div>
@@ -102,12 +102,8 @@
     >
 
       <template #cell(action)="row">
-        <b-button class="ml-1" v-if="userData.userName === row.item.appName && row.item.isSubmit === '0'" style="background-color: #17a2b8"
-                  @click="toEdit(row.item,'0')">編輯
-        </b-button>
-        <b-button class="ml-1" v-else style="background-color: #17a2b8"
-                  @click="toEdit(row.item,'1')">處理
-        </b-button>
+        <i-button class="ml-2" type="pencil-square" @click="toEdit(row.item,'0')" v-if="userData.userName === row.item.appName && row.item.isSubmit === '0'"/>
+        <i-button class="ml-2" v-else type="clipboard-check" @click="toEdit(row.item,'1')"/>
       </template>
     </i-table>
   </div>
@@ -129,7 +125,7 @@ import {configRoleToBpmIpt} from "@/shared/word/configRole";
 import {useGetters} from "@u3u/vue-hooks";
 import {navigateByNameAndParams} from "@/router/router";
 import {superiorFilter} from "@/shared/word/superiorFilter";
-
+import IButton from '@/shared/buttons/i-button.vue';
 
 export default defineComponent({
   name: 'pending',//待處理表單
@@ -145,6 +141,7 @@ export default defineComponent({
     IDatePicker,
     ITable,
     IFormGroupCheck,
+    'i-button': IButton,
   },
   setup(props) {
     //登入者資訊

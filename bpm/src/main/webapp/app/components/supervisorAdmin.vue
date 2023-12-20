@@ -28,11 +28,9 @@
       </b-form-row>
 
       <div class="text-center pt-5">
-        <b-button class="ml-2" style="background-color: #17a2b8; color: white" @click="toggleButton">
-          {{ buttonText }}
-        </b-button>
-        <b-button class="ml-2" style="background-color: #17a2b8" @click="toQuery()">查詢</b-button>
-        <b-button class="ml-2" style="background-color: #17a2b8" @click="toReset()">清除</b-button>
+        <i-button class="ml-2" :type="buttonIcon" @click="toggleButton()"/>
+        <i-button class="ml-2" type="search"  @click="toQuery()"/>
+        <i-button class="ml-2" type="x-circle"  @click="toReset()"/>
       </div>
     </div>
 
@@ -135,12 +133,8 @@
 
       <b-container class="mt-3">
         <b-row class="justify-content-center">
-          <b-button class="ml-2" style="background-color: #17a2b8; color: white"
-                    @click="submitForm()">送出
-          </b-button>
-          <b-button class="ml-2" style="background-color: #17a2b8; color: white"
-                    @click="reset()">清除
-          </b-button>
+          <i-button class="ml-2" type="send-check"  @click="submitForm()"/>
+          <i-button class="ml-2" type="x-circle"  @click="reset()"/>
         </b-row>
       </b-container>
     </div>
@@ -237,18 +231,11 @@
       </template>
 
       <template #cell(action)="row">
-        <b-button class="ml-2" style="background-color: #17a2b8; color: white" variant="outline-secondary"
-                  v-show="formStatus === FormStatusEnum.READONLY" @click="changeEdit(row.item)">編輯
-        </b-button>
+        <i-button class="ml-2" type="pencil-square"  v-show="formStatus === FormStatusEnum.READONLY" @click="changeEdit(row.item)"/>
+
         <b-input-group>
-          <b-button class="ml-2" style="background-color: #17a2b8; color: white" variant="outline-secondary"
-                    v-show="formStatus === FormStatusEnum.MODIFY && row.item.isEdit === 'Y'"
-                    @click="toEdit(row.item) ">送出
-          </b-button>
-          <b-button class="ml-2" style="background-color: #17a2b8; color: white" variant="outline-secondary"
-                    v-show="formStatus === FormStatusEnum.MODIFY && row.item.isEdit === 'Y'"
-                    @click="cancelEdit(row.item) ">取消
-          </b-button>
+          <i-button class="ml-2" type="send-check" v-show="formStatus === FormStatusEnum.MODIFY && row.item.isEdit === 'Y'" @click="toEdit(row.item) "/>
+          <i-button class="ml-2" type="arrow-counterclockwise" v-show="formStatus === FormStatusEnum.MODIFY && row.item.isEdit === 'Y'" @click="cancelEdit(row.item)"/>
         </b-input-group>
       </template>
     </i-table>
@@ -267,13 +254,14 @@ import {useValidation} from '@/shared/form';
 import ITable from '@/shared/i-table/i-table.vue';
 import {changeCodeNoToCh} from "@/shared/word/directions";
 import {useBvModal} from "@/shared/modal";
-
+import IButton from '@/shared/buttons/i-button.vue';
 
 export default {
   name: "supervisorAdmin",//表單簽核上級管理
   components: {
     IFormGroupCheck,
     ITable,
+    'i-button': IButton,
   },
   setup() {
 
@@ -298,6 +286,8 @@ export default {
 
     //切換畫面上的新增按鈕要顯示 新增還是取消
     const buttonText = ref('新增');
+    //切換畫面上的按鈕圖示
+    const buttonIcon = ref('file-earmark-plus');
 
     const iTable = ref(null);
     const $bvModal = useBvModal();
@@ -498,9 +488,10 @@ export default {
       table.data = [];
     }
 
-    //切換新增 取消
+    //切換新增 取消、切換按鈕圖示
     watch(isAdding, () => {
       buttonText.value = isAdding.value ? '新增' : '取消';
+      buttonIcon.value = isAdding.value ? 'file-earmark-plus' : 'arrow-counterclockwise';
       newDataStatus.value = !isAdding.value;
     });
 
@@ -526,6 +517,7 @@ export default {
       isAdding,
       toggleButton,
       buttonText,
+      buttonIcon
     }
   }
 }

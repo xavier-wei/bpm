@@ -1,5 +1,6 @@
 <template>
   <b-button variant="info" v-bind="$attrs" v-on="$listeners">
+    {{ buttonText }}
     <svg
       v-if="type === 'send-check'"
       xmlns="http://www.w3.org/2000/svg"
@@ -25,8 +26,10 @@
       class="bi b-icon bi-x-lg"
       viewBox="0 0 16 16"
     >
-      <path fill-rule="evenodd" d="M13.854 2.146a.5.5 0 0 1 0 .708l-11 11a.5.5 0 0 1-.708-.708l11-11a.5.5 0 0 1 .708 0Z" />
-      <path fill-rule="evenodd" d="M2.146 2.146a.5.5 0 0 0 0 .708l11 11a.5.5 0 0 0 .708-.708l-11-11a.5.5 0 0 0-.708 0Z" />
+      <path fill-rule="evenodd"
+            d="M13.854 2.146a.5.5 0 0 1 0 .708l-11 11a.5.5 0 0 1-.708-.708l11-11a.5.5 0 0 1 .708 0Z"/>
+      <path fill-rule="evenodd"
+            d="M2.146 2.146a.5.5 0 0 0 0 .708l11 11a.5.5 0 0 0 .708-.708l-11-11a.5.5 0 0 0-.708 0Z"/>
     </svg>
     <svg
       v-else-if="type === 'save'"
@@ -50,26 +53,39 @@
       class="bi b-icon bi-arrow-counterclockwise"
       viewBox="0 0 16 16"
     >
-      <path fill-rule="evenodd" d="M8 3a5 5 0 1 1-4.546 2.914.5.5 0 0 0-.908-.417A6 6 0 1 0 8 2v1z" />
-      <path d="M8 4.466V.534a.25.25 0 0 0-.41-.192L5.23 2.308a.25.25 0 0 0 0 .384l2.36 1.966A.25.25 0 0 0 8 4.466z" />
+      <path fill-rule="evenodd" d="M8 3a5 5 0 1 1-4.546 2.914.5.5 0 0 0-.908-.417A6 6 0 1 0 8 2v1z"/>
+      <path d="M8 4.466V.534a.25.25 0 0 0-.41-.192L5.23 2.308a.25.25 0 0 0 0 .384l2.36 1.966A.25.25 0 0 0 8 4.466z"/>
     </svg>
     <b-icon v-else :icon="type"></b-icon>
-    {{ $t('button.' + type) }}
+
   </b-button>
 </template>
 
 <script lang="ts">
-import { BButton, BIcon, BootstrapVueIcons } from 'bootstrap-vue';
+import {BButton, BIcon, BootstrapVueIcons} from 'bootstrap-vue';
+import {computed} from '@vue/composition-api';
+import jsonData from "@/shared/buttons/button-name.json";
 
 export default {
   name: 'i-button',
-  components: { BButton, BIcon },
-  use: { BootstrapVueIcons },
+  components: {BButton, BIcon},
+  use: {BootstrapVueIcons},
   props: {
     type: {
       type: String,
       required: true,
     },
   },
+  setup(props) {
+    //bpm不用i18n，也沒有使用資料庫管理按鈕名稱，所以暫且用 button-name.json 這個json做管理
+    const buttonText = computed(() => {
+      const matchingText = jsonData.find(item => item.code === props.type);
+      return matchingText ? matchingText.text : '';  // 如果找到匹配的文本则返回，否则返回空字符串
+    });
+    return {
+      buttonText
+    }
+
+  }
 };
 </script>

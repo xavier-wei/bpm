@@ -458,18 +458,10 @@
 
             <b-container class="mt-3">
               <b-row class="justify-content-center">
-                <b-button class="ml-2" style="background-color: #17a2b8; color: white"
-                          @click="submitForm('0')">暫存
-                </b-button>
-                <b-button class="ml-2" style="background-color: #17a2b8; color: white"
-                          @click="submitForm('1')">申請
-                </b-button>
-                <b-button class="ml-2" style="background-color: #17a2b8; color: white"
-                          @click="resetAll()">清除
-                </b-button>
-                <b-button class="ml-2" style="background-color: #17a2b8; color: white"
-                          @click="toQueryView">返回
-                </b-button>
+                <i-button class="ml-2" type="tag"  @click="submitForm('0')"/>
+                <i-button class="ml-2" type="node-plus"  @click="submitForm('1')"/>
+                <i-button class="ml-2" type="x-circle"  @click="resetAll()"/>
+                <i-button class="ml-2" type="arrow-left"  @click="toQueryView()"/>
               </b-row>
             </b-container>
 
@@ -510,7 +502,7 @@ import {notificationErrorHandler} from "@/shared/http/http-response-helper";
 import {useNotification} from "@/shared/notification";
 import {useGetters} from "@u3u/vue-hooks";
 import {checkboxToMapAndForm} from "@/shared/word/checkboxToMapAndForm";
-
+import IButton from '@/shared/buttons/i-button.vue';
 const appendix = () => import('@/components/appendix.vue');
 const flowChart = () => import('@/components/flowChart.vue');
 export default {
@@ -527,6 +519,7 @@ export default {
     'i-date-picker': IDatePicker,
     appendix,
     flowChart,
+    'i-button': IButton,
   },
   setup(props) {
 
