@@ -80,7 +80,7 @@ export default {
     //bpm不用i18n，也沒有使用資料庫管理按鈕名稱，所以暫且用 button-name.json 這個json做管理
     const buttonText = computed(() => {
       const matchingText = jsonData.find(item => item.code === props.type);
-      return matchingText ? matchingText.text : '';  // 如果找到匹配的文本则返回，否则返回空字符串
+      return matchingText ? matchingText.text : '';
     });
     return {
       buttonText
