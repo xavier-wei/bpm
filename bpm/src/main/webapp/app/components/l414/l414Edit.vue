@@ -407,48 +407,23 @@
 
               <b-container class="mt-3">
                 <b-row class="justify-content-center">
-                  <b-button class="ml-2" style="background-color: #17a2b8; color: white"
-                            variant="outline-secondary"
-                            @click="submitForm('0')"
-                            v-show="formStatusRef === FormStatusEnum.MODIFY">暫存
-                  </b-button>
-                  <b-button class="ml-2" style="background-color: #17a2b8; color: white"
-                            variant="outline-secondary"
-                            @click="submitForm('1')"
-                            v-show="formStatusRef === FormStatusEnum.MODIFY">送出
-                  </b-button>
+
+                  <i-button class="ml-2" type="tag"  @click="submitForm('0')" v-show="formStatusRef === FormStatusEnum.MODIFY"/>
+                  <i-button class="ml-2" type="send-check"  @click="submitForm('1')" v-show="formStatusRef === FormStatusEnum.MODIFY"/>
 
                   <div v-if="userData.isSupervisor && formStatusRef === FormStatusEnum.VERIFY">
-                    <b-button class="ml-2" style="background-color: #17a2b8; color: white"
-                              @click="reviewStart('同意',true)">同意
-                    </b-button>
-                    <b-button class="ml-2" style="background-color: #17a2b8; color: white"
-                              @click="reviewStart('不同意',true)">不同意
-                    </b-button>
+                    <i-button class="ml-2" type="check"  @click="reviewStart('同意',true)"/>
+                    <i-button class="ml-2" type="x"   @click="reviewStart('不同意',true)"/>
                   </div>
                   <div v-else-if="formStatusRef === FormStatusEnum.VERIFY">
-                    <b-button class="ml-2" style="background-color: #17a2b8; color: white"
-                              @click="reviewStart('審核',true)">送出
-                    </b-button>
+                    <i-button class="ml-2" type="send-check"   @click="reviewStart('審核',true)" />
                   </div>
 
-                  <b-button class="ml-2" style="background-color: #17a2b8" @click="showModel()"
-                            v-show="formStatusRef === FormStatusEnum.VERIFY && isSignatureRef">加簽
-                  </b-button>
-                  <b-button class="ml-2" style="background-color: #17a2b8; color: white"
-                            variant="outline-secondary"
-                            @click="reviewStart('補件',true)"
-                            v-show="configTitleName(userData.titleName) && formStatusRef === FormStatusEnum.VERIFY">補件
-                  </b-button>
-                  <b-button class="ml-2" style="background-color: #17a2b8; color: white"
-                            variant="outline-secondary"
-                            v-show="isCancelRef && userData.userId === form.appEmpid && (form.processInstanceStatus === '0' || form.processInstanceStatus === '2')"
-                            @click="toCancel">撤銷
-                  </b-button>
-                  <b-button class="ml-2" style="background-color: #17a2b8; color: white"
-                            variant="outline-secondary"
-                            @click="toQueryView">返回
-                  </b-button>
+                  <i-button class="ml-2" type="check2-circle"  @click="showModel()" v-show="formStatusRef === FormStatusEnum.VERIFY && isSignatureRef"/>
+                  <i-button class="ml-2" type="upload"  @click="reviewStart('補件',true)" v-show="configTitleName(userData.titleName) && formStatusRef === FormStatusEnum.VERIFY"/>
+                  <i-button class="ml-2" type="reply"  @click="toCancel"  v-show="isCancelRef && userData.userId === form.appEmpid && (form.processInstanceStatus === '0' || form.processInstanceStatus === '2')"/>
+                  <i-button class="ml-2" type="arrow-left"  @click="toQueryView()"/>
+
                 </b-row>
               </b-container>
 
@@ -478,7 +453,7 @@
 
 
 import IDualDatePicker from '@/shared/i-date-picker/i-dual-date-picker.vue';
-import {onActivated, reactive, ref, toRef, watch} from '@vue/composition-api';
+import {reactive, ref, toRef, watch} from '@vue/composition-api';
 import {useValidation, validateState} from '@/shared/form';
 import IFormGroupCheck from '@/shared/form/i-form-group-check.vue';
 import IDatePicker from '@/shared/i-date-picker/i-date-picker.vue';
@@ -492,6 +467,7 @@ import {changeDirections} from "@/shared/word/directions";
 import signatureBmodel from "@/components/signatureBmodel.vue";
 import {configRoleToBpmIpt, configRoleToBpmCrOperator, configTitleName} from '@/shared/word/configRole';
 import errandBmodel from "@/components/errandBmodel.vue";
+import IButton from '@/shared/buttons/i-button.vue';
 
 const appendix = () => import('@/components/appendix.vue');
 const flowChart = () => import('@/components/flowChart.vue');
@@ -540,7 +516,8 @@ export default {
     flowChart,
     signatureBmodel,
     signerList,
-    errandBmodel
+    errandBmodel,
+    'i-button': IButton,
   },
   setup(props) {
     //登入者資訊

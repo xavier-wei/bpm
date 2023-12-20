@@ -51,26 +51,26 @@
 
           <template #cell(action)="row">
 
-            <b-button class="submitFormBon" @click="removeAnnouncement(row.index)"
-                      v-if="appendixData.appendix.length > 1">刪除
-            </b-button>
-            <b-button class="submitFormBon" @click="addAnnouncement"
+            <i-button class="ml-2" type="trash"  @click="removeAnnouncement(row.index)"
+                      v-if="appendixData.appendix.length > 1"/>
+
+            <i-button class="ml-2" type="folder-plus"
                       v-if="row.index == appendixData.appendix.length - 1"
-                      :disabled="row.item.file === undefined || (Array.isArray(row.item.file) && row.item.file.length < 1)">新增
-            </b-button>
+                      :disabled="row.item.file === undefined || (Array.isArray(row.item.file) && row.item.file.length < 1)"
+                      @click="addAnnouncement"/>
           </template>
 
 
         </i-table>
 
+
+        <b-container class="mt-3">
+          <b-row class="justify-content-center">
+            <i-button class="ml-2" type="x-circle"  @click="reset"/>
+          </b-row>
+        </b-container>
+
       </div>
-
-      <b-container class="mt-3">
-        <b-row class="justify-content-center">
-          <b-button class="ml-2" style="background-color: #17a2b8" @click="reset()">清除</b-button>
-        </b-row>
-      </b-container>
-
     </div>
 
     <div class="bpm_background" v-show="readAppendix">
@@ -97,12 +97,8 @@
           </template>
 
           <template #cell(action)="row">
-            <b-button class="ml-2" style="background-color: #17a2b8; color: white"
-                      variant="outline-secondary"
-                      :disabled="formStatusRef !== FormStatusEnum.MODIFY"
-                      @click="deleteFile(row.item.id)"
-            >刪除
-            </b-button>
+            <i-button class="ml-2" type="trash" :disabled="formStatusRef !== FormStatusEnum.MODIFY"
+                      @click="deleteFile(row.item.id)"/>
           </template>
         </i-table>
 
@@ -133,9 +129,9 @@ import ITable from "@/shared/i-table/i-table.vue";
 export default {
   name: "appendix",//新增附件共用模組
   components: {
-    IButton,
     IPdfViewer,
     ITable,
+    'i-button': IButton,
   },
   props: {
     vData: {

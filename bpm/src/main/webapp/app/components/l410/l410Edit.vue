@@ -524,45 +524,23 @@
 
             <b-container class="mt-3">
               <b-row class="justify-content-center">
-                <b-button class="ml-2" style="background-color: #17a2b8; color: white"
-                          @click="submitForm('0')"
-                          v-show="formStatusRef === FormStatusEnum.MODIFY">暫存
-                </b-button>
-                <b-button class="ml-2" style="background-color: #17a2b8; color: white"
-                          @click="submitForm('1')"
-                          v-show="formStatusRef === FormStatusEnum.MODIFY">送出
-                </b-button>
+
+                <i-button class="ml-2" type="tag"  @click="submitForm('0')" v-show="formStatusRef === FormStatusEnum.MODIFY"/>
+                <i-button class="ml-2" type="send-check"  @click="submitForm('1')" v-show="formStatusRef === FormStatusEnum.MODIFY"/>
 
                 <div v-if="userData.isSupervisor && formStatusRef === FormStatusEnum.VERIFY">
                   <!--除了申請者的上級會有同意跟不同意，其餘只會有送出按鈕-->
-                  <b-button class="ml-2" style="background-color: #17a2b8; color: white"
-                            @click="reviewStart('同意')">同意
-                  </b-button>
-                  <b-button class="ml-2" style="background-color: #17a2b8; color: white"
-                            @click="reviewStart('不同意')">不同意
-                  </b-button>
-                </div>
-                <div v-else-if="formStatusRef === FormStatusEnum.VERIFY">
-                  <b-button class="ml-2" style="background-color: #17a2b8; color: white"
-                            @click="reviewStart('審核')">送出
-                  </b-button>
+                  <i-button class="ml-2" type="check"  @click="reviewStart('同意')"/>
+                  <i-button class="ml-2" type="x"   @click="reviewStart('不同意')"/>
                 </div>
 
-                <b-button class="ml-2" style="background-color: #17a2b8" @click="showModel()"
-                          v-show="formStatusRef === FormStatusEnum.VERIFY && isSignatureRef">加簽
-                </b-button>
-                <b-button class="ml-2" style="background-color: #17a2b8; color: white"
-                          @click="reviewStart('補件')"
-                          v-show="configTitleName(userData.titleName) && formStatusRef === FormStatusEnum.VERIFY">補件
-                </b-button>
-                <b-button class="ml-2" style="background-color: #17a2b8; color: white"
-                          variant="outline-secondary"
-                          v-show="isCancelRef && userData.userId === form.appEmpid && (form.processInstanceStatus === '0' || form.processInstanceStatus === '2') "
-                          @click="toCancel">撤銷
-                </b-button>
-                <b-button class="ml-2" style="background-color: #17a2b8; color: white"
-                          @click="toQueryView">返回
-                </b-button>
+                <div v-else-if="formStatusRef === FormStatusEnum.VERIFY">
+                  <i-button class="ml-2" type="send-check"   @click="reviewStart('審核')" />
+                </div>
+                <i-button class="ml-2" type="check2-circle"  @click="showModel()" v-show="formStatusRef === FormStatusEnum.VERIFY && isSignatureRef"/>
+                <i-button class="ml-2" type="upload" @click="reviewStart('補件')" v-show="configTitleName(userData.titleName) && formStatusRef === FormStatusEnum.VERIFY"/>
+                <i-button class="ml-2" type="reply" @click="toCancel" v-show="isCancelRef && userData.userId === form.appEmpid && (form.processInstanceStatus === '0' || form.processInstanceStatus === '2') "/>
+                <i-button class="ml-2" type="arrow-left"  @click="toQueryView()"/>
               </b-row>
             </b-container>
 
@@ -611,7 +589,7 @@ import signerList from "@/components/signerList.vue";
 import {changeCodeNoToCh} from "@/shared/word/directions";
 import {confirmAllData} from "@/shared/word/confirm-iTable";
 import {configTitleName} from '@/shared/word/configRole';
-
+import IButton from '@/shared/buttons/i-button.vue';
 const appendix = () => import('@/components/appendix.vue');
 const flowChart = () => import('@/components/flowChart.vue');
 
@@ -658,6 +636,7 @@ export default {
     flowChart,
     signatureBmodel,
     signerList,
+    'i-button': IButton,
   },
   setup(props) {
     //照片預設物件

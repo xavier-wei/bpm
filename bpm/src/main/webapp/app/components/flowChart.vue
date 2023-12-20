@@ -1,6 +1,19 @@
 <template>
-  <div>
-    <div class="card" style="display: flex; justify-content: center; align-items: center; ">
+  <div >
+
+    <b-button class="transparent-btn" @click="zoomIn()">
+      <b-icon class="icon" icon="zoom-in"></b-icon>
+    </b-button>
+
+    <b-button class="transparent-btn" @click="zoomOut()">
+      <b-icon class="icon" icon="zoom-out"></b-icon>
+    </b-button>
+
+    <b-button class="transparent-btn" @click="recover()">
+      <b-icon class="icon" icon="arrow-clockwise"></b-icon>
+    </b-button>
+
+    <div class="card " style="display: flex; justify-content: center; align-items: center; overflow: hidden; ">
       <img
         :src="filePathNameProp.filePathName"
         :style="{ transform: `scale(${scale}) translate(${translateX}px, ${translateY}px)` }"
@@ -9,6 +22,9 @@
         @mousemove.stop="handleDrag"
         @mouseup.stop="stopDrag"
         @mouseleave.stop="stopDrag"
+        @touchstart.stop="startTouch"
+        @touchmove.stop="handleTouch"
+        @touchend.stop="stopTouch"
         @click.stop="handleClick"
         alt=""
       />
@@ -21,6 +37,7 @@ import IFormGroupCheck from "@/shared/form/i-form-group-check.vue";
 import IDualDatePicker from "@/shared/i-date-picker/i-dual-date-picker.vue";
 import IDatePicker from "@/shared/i-date-picker/i-date-picker.vue";
 import {onMounted, reactive, ref, onUnmounted} from "@vue/composition-api";
+import IButton from '@/shared/buttons/i-button.vue';
 
 export default {
   name: "flowChart",//流程圖共用模組
@@ -28,6 +45,7 @@ export default {
     'i-dual-date-picker': IDualDatePicker,
     'i-date-picker': IDatePicker,
     'i-form-group-check': IFormGroupCheck,
+    'i-button': IButton,
   },
   props: {
     filePathName: {
@@ -50,7 +68,8 @@ export default {
     const translateY = ref(0);
 
     const handleWheel = (event) => {
-      if (event.ctrlKey) { // 检查是否按下了Ctrl键
+      const isCtrlPressed = (event.ctrlKey && !event.metaKey) || (!event.ctrlKey && event.metaKey);
+      if (isCtrlPressed) { // 检查是否按下了Ctrl键
         event.preventDefault(); //阻止頁面整體縮放
         const delta = event.deltaY > 0 ? -0.1 : 0.1; //根據滑鼠滾輪計算縮放
         scale.value = Math.min(Math.max(0.1, scale.value + delta), 2); //限制圖片縮放比例在在0.1到2之間
@@ -100,6 +119,44 @@ export default {
       drag.value = false;
     };
 
+    const zoomIn = () => {
+      scale.value = Math.min(scale.value + 0.1, 2);
+    };
+
+    const zoomOut = () => {
+      scale.value = Math.max(scale.value - 0.1, 0.1);
+    };
+    const recover = () => {
+      translateX.value = 0;
+      translateY.value = 0;
+      scale.value = 1;
+    };
+
+    //手機平板觸發的事件
+    const startTouch = (event) => {
+      if (event.touches.length === 1) {
+        event.preventDefault();
+        drag.value = true;
+        const touch = event.touches[0];
+        startX.value = touch.clientX - translateX.value;
+        startY.value = touch.clientY - translateY.value;
+      }
+    };
+
+    //手機平板觸發的事件
+    const handleTouch = (event) => {
+      if (drag.value && event.touches.length === 1) {
+        const touch = event.touches[0];
+        translateX.value = touch.clientX - startX.value;
+        translateY.value = touch.clientY - startY.value;
+      }
+    };
+
+    //手機平板觸發的事件
+    const stopTouch = () => {
+      drag.value = false;
+    };
+
     onMounted(() => {
       window.addEventListener("wheel", handleWheel, { passive: false });
     });
@@ -119,6 +176,12 @@ export default {
       translateY,
       handleWheel,
       handleClick,
+      zoomIn,
+      zoomOut,
+      recover,
+      startTouch,
+      handleTouch,
+      stopTouch,
     }
 
   }
@@ -126,4 +189,18 @@ export default {
 </script>
 
 <style scoped>
+
+/* 半透明按鈕樣式 */
+.transparent-btn {
+  background-color: rgba(255, 255, 255, 0.5); /* 半透明白色背景 */
+  border: none; /* 移除邊框 */
+  cursor: pointer; /* 鼠標樣式 */
+}
+
+/* 圖示樣式（可根據需要調整大小和颜色） */
+.icon {
+  font-size: 1.5rem; /* 圖示大小 */
+  color: #000; /* 圖示颜色 */
+}
+
 </style>

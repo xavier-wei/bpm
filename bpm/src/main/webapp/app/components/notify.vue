@@ -103,8 +103,8 @@
       </b-form-row>
 
       <div class="text-center pt-5">
-        <b-button class="ml-2" style="background-color: #17a2b8" @click="toQuery()">查詢</b-button>
-        <b-button class="ml-2" style="background-color: #17a2b8" @click="toReset()">清除</b-button>
+        <i-button class="ml-2" type="search"  @click="toQuery()"/>
+        <i-button class="ml-2" type="x-circle"  @click="toReset()"/>
       </div>
     </div>
 
@@ -122,7 +122,7 @@
     >
 
       <template #cell(action)="row">
-        <b-button class="ml-2" style="background-color: #17a2b8" @click="toEdit(row.item)">檢視</b-button>
+        <i-button class="ml-2" type="binoculars"  @click="toEdit(row.item)"/>
       </template>
 
     </i-table>
@@ -146,6 +146,7 @@ import {currentProcessingUnit} from "@/shared/word/iTable-convert-unit";
 import {navigateByNameAndParams} from "@/router/router";
 import userSys from "@/components/userSys.vue";
 import IDualDatePicker from '@/shared/i-date-picker/i-dual-date-picker.vue';
+import IButton from '@/shared/buttons/i-button.vue';
 
 export default defineComponent({
   name: 'notify',//表單查詢
@@ -155,7 +156,8 @@ export default defineComponent({
     ITable,
     IFormGroupCheck,
     'user-sys': userSys,
-    IDualDatePicker
+    IDualDatePicker,
+    'i-button': IButton,
   },
   setup() {
 
@@ -221,6 +223,7 @@ export default defineComponent({
           key: 'action',
           label: ' ',
           sortable: false,
+          thStyle: 'width:10%',
           thClass: 'text-center',
           tdClass: 'text-center align-middle',
         },

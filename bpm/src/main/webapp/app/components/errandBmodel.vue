@@ -72,8 +72,8 @@
 
           <b-container class="mt-3">
             <b-row class="justify-content-center">
-              <b-button class="ml-2" style="background-color: #17a2b8" @click="signatureOptions()">查詢</b-button>
-              <b-button class="ml-2" style="background-color: #17a2b8" @click="reset()">清除</b-button>
+              <i-button class="ml-2" type="search"  @click="signatureOptions()"/>
+              <i-button class="ml-2" type="x-circle"  @click="reset()"/>
             </b-row>
           </b-container>
         </div>
@@ -93,17 +93,14 @@
           v-show="queryStatus"
         >
           <template #cell(action)="row">
-            <b-button class="ml-1" style="background-color: #17a2b8"
-                      @click="choose(row.item)">選擇
-            </b-button>
+            <i-button class="ml-2" type="record-circle"  @click="choose(row.item)"/>
+
           </template>
         </i-table>
 
         <b-container class="mt-3">
           <b-row class="justify-content-center">
-            <b-button class="ml-2" style="background-color: #17a2b8; color: white"
-                      variant="outline-secondary" @click="closeModal()">關閉
-            </b-button>
+            <i-button class="ml-2" type="stop" @click="closeModal()"/>
           </b-row>
         </b-container>
       </b-modal>
@@ -122,6 +119,7 @@ import IDatePicker from "@/shared/i-date-picker/i-date-picker.vue";
 import ITable from '@/shared/i-table/i-table.vue';
 import IFormGroupCheck from '@/shared/form/i-form-group-check.vue';
 import {useGetters} from "@u3u/vue-hooks";
+import IButton from '@/shared/buttons/i-button.vue';
 
 export default {
   name: "errandBmodel",//申請人選擇器
@@ -135,6 +133,7 @@ export default {
     IDatePicker,
     ITable,
     IFormGroupCheck,
+    'i-button': IButton,
   },
   setup(props) {
 
