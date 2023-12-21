@@ -1,19 +1,6 @@
 spring:
   datasource:
-    type: com.zaxxer.hikari.HikariDataSource
     url: jdbc:sqlserver://192.168.3.191:1433;databaseName=eip;encrypt=true;trustServerCertificate=true
-    username: eip
-    password: 2wsx$RFV6yhn
-    hikari:
-      poolName: Hikari
-      auto-commit: false
-      data-source-properties:
-        cachePrepStmts: true
-        prepStmtCacheSize: 250
-        prepStmtCacheSqlLimit: 2048
-        useServerPrepStmts: true
-      connection-timeout: 30000
-      maximum-pool-size: 10
 flowable:
   database-schema-update: true
 server:
@@ -23,3 +10,6 @@ server:
 
 bpm:
   url: http://127.0.0.1
+setting:
+  path: /mnt/stsdat/eip/setting.txt
+  decode: /mnt/stsdat/eip/decode.txt
