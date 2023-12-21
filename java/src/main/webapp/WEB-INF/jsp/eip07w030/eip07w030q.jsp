@@ -73,7 +73,7 @@
 							</td>
 							<td><func:dept deptid="${item.apply_dept}"/></td>
 							<td><func:minguo value="${item.using_date}"/></td>
-							<td><func:timeconvert value="${item.using_time_s}"/>~<func:timeconvert value="${item.using_time_e}"/></td>
+							<td><c:out value="${item.using_time_s}"/>~<c:out value="${item.using_time_e}"/></td>
 							<td><c:out value="${item.destination}"/></td>
 							<td><c:out value="${item.num_of_people}"/></td>
 							<td class="text-left">

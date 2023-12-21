@@ -3,8 +3,11 @@ package tw.gov.pcc.eip.domain;
 import java.io.Serializable;
 
 import lombok.Data;
+import lombok.NoArgsConstructor;
 import tw.gov.pcc.common.annotation.LogField;
 import tw.gov.pcc.common.annotation.PkeyField;
+import tw.gov.pcc.common.annotation.Table;
+import tw.gov.pcc.eip.dao.ApplyitemDao;
 
 /**
  * 領物單作業
@@ -13,6 +16,8 @@ import tw.gov.pcc.common.annotation.PkeyField;
  * @sincr 2023
  *
  */
+@Table(ApplyitemDao.TABLE_NAME)
+@NoArgsConstructor
 @Data
 public class Applyitem implements Serializable {
 

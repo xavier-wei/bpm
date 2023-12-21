@@ -48,7 +48,7 @@ public class ItemcodeService {
 		qItemcode.setItemno(itemcodeno);
 		Itemcode rsItemcode = itemcodeDao.selectDataListByKey(qItemcode).get(0);
 		
-		Integer bookCnt = rsItemcode.getBook_cnt();
+		Integer bookCnt = rsItemcode.getBook_cnt()==null? 0 : rsItemcode.getBook_cnt();
 		if(bookCnt >= takecnt) {
 			return true;
 		}else {
@@ -137,12 +137,12 @@ public class ItemcodeService {
 		//1.更新itemcode
 		Itemcode updItemcode = new Itemcode();
 		BeanUtility.copyProperties(updItemcode, rsItemcode);
-		Integer bookCnt = rsItemcode.getBook_cnt() + purchaseCnt - returnCnt;
-		Integer finalCnt = rsItemcode.getFinal_cnt() + purchaseCnt - returnCnt;
-		updItemcode.setPurchase_cnt(purchaseCnt);
-		updItemcode.setReturn_cnt(returnCnt);
-		updItemcode.setBook_cnt(bookCnt);
-		updItemcode.setFinal_cnt(finalCnt);
+		Integer bookCnt = Nvl(rsItemcode.getBook_cnt()) + Nvl(purchaseCnt) - Nvl(returnCnt);
+		Integer finalCnt = Nvl(rsItemcode.getFinal_cnt()) + Nvl(purchaseCnt) - Nvl(returnCnt);
+		updItemcode.setPurchase_cnt(Nvl(purchaseCnt));
+		updItemcode.setReturn_cnt(Nvl(returnCnt));
+		updItemcode.setBook_cnt(Nvl(bookCnt));
+		updItemcode.setFinal_cnt(Nvl(finalCnt));
 		updItemcode.setUpd_user(userData.getUserId());
 		updItemcode.setUpd_datetime(nowTimeString);
 		itemcodeDao.updateByKey(updItemcode);
@@ -254,6 +254,12 @@ public class ItemcodeService {
 		insItemcodeu.setU_user(userData.getUserId());
 		itemcodeuDao.insert(insItemcodeu);
 	}
-	
-}
 
+	public Integer Nvl(Integer num) {
+		if(num==null) {
+			return 0 ;
+		} else {
+			return num;
+		}
+	}
+}

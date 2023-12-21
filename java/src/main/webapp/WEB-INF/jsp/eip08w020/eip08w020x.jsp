@@ -114,7 +114,7 @@
                 			eachStr += '庫存為零，請調整品項、';
                 		}
                 		
-                		if($(".apply_cnt").eq(index).val()=='' && $(".book_cnt").eq(index).val()!=='' ){
+                		if(($(".apply_cnt").eq(index).val()==''||$(".apply_cnt").eq(index).val()=='0') && $(".book_cnt").eq(index).val()!=='' ){
                 			eachStr += '數量未填寫';
                 		}
                 		
@@ -272,8 +272,6 @@
    					   
    					   for (var a = 0; a < countyList.length; a++) {
    							$(".itemno").eq(index).append(countyList[a]);
-   							
-   							
    					   }
    					   
    					   

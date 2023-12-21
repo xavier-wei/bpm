@@ -43,10 +43,13 @@ public class Eip08w060Service {
 	 * @param caseData
 	 */
 	public void add(Eip08w060Case caseData) throws Exception{
-
-
 		int itemNO =0;
-		String itemid ="RO"+caseData.getApply_date()+String.format("%3s", roitemDao.getEip_08w060NoSeq()).replace(' ', '0');
+		String itemid;
+		if ("U".equals(caseData.getProcessTy())){
+			itemid=caseData.getExItemId();
+		}else {
+			 itemid ="RO"+caseData.getApply_date()+String.format("%3s", roitemDao.getEip_08w060NoSeq()).replace(' ', '0');
+		}
 		for (Eip08w060Case eip08W060Case :caseData.getEip08w060CaseList()) {
 			if ("".equals(eip08W060Case.getItem())){
 				break;
@@ -114,7 +117,9 @@ public class Eip08w060Service {
 	 * @param updateData
 	 */
 	public void update(Eip08w060Case updateData) throws Exception{
-		roitemDao.updateRoitem(updateData);
+		roitemDao.delete(updateData);
+		add(updateData);
+//		roitemDao.updateRoitem(updateData);
 	}
 
 	/**

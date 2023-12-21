@@ -66,13 +66,6 @@
            		$('#eip08w040Form').attr('action', '<c:url value="/Eip08w040_enter.action" />').submit();
             });
             
-            $('.provide_num').change(function(){
-            	var index = $('.provide_num').index(this);
-            	if($('.provide_num').eq(index).val()>$('.apply_cnt').eq(index).val()){
-            		showAlert('核發數量需小於等於申請數量');
-            	}
-            });
-            
             $('#btnBack').click(function(){
            		$('#eip08w040Form').attr('action', '<c:url value="/Eip08w040_query.action" />').submit();
             });

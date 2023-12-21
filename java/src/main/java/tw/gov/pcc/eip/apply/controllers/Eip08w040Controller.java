@@ -1,6 +1,7 @@
 package tw.gov.pcc.eip.apply.controllers;
 
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
@@ -9,8 +10,6 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.SessionAttributes;
 import org.springframework.web.servlet.ModelAndView;
-
-import com.cronutils.utils.StringUtils;
 
 import tw.gov.pcc.eip.apply.cases.Eip08w040Case;
 import tw.gov.pcc.eip.framework.domain.UserBean;
@@ -122,12 +121,15 @@ public class Eip08w040Controller extends BaseController {
 	 * @return
 	 */
 	@RequestMapping("/Eip08w040_update.action")
-	public String update(@Validated @ModelAttribute(CASE_KEY) Eip08w040Case caseData, BindingResult result) {
-		log.debug("導向 Eip08w040 秘書處進行領物單核發作業-查詢更正作業");
-		if (result.hasErrors()) {
-			return LIST_APGE;
-		}
+	public String update(@Validated(Eip08w040Case.Insert.class) @ModelAttribute(CASE_KEY) Eip08w040Case caseData, BindingResult result) {
+		log.debug("導向 Eip08w040 秘書處進行領物單核發作業-核發作業");
 
+		String validateStr = validateData(caseData);
+		if(StringUtils.isNotEmpty(validateStr)) {
+			setSystemMessage(validateStr,true);
+			return DETAIL_PAGE;
+		}
+		
 		try {
 			eip08w040Service.updateAll(caseData, userData);
 		} catch (Exception e) {
@@ -147,4 +149,17 @@ public class Eip08w040Controller extends BaseController {
 
 	}
 
+	public String validateData(Eip08w040Case caseData) {
+		StringBuffer zerosb = new StringBuffer();
+		int index = 1;
+		for(Eip08w040Case data : caseData.getDetailList()) {
+			if(data.getProvide_num()==null) {
+				zerosb.append("序號"+index+"核發數量不得為空\r\n");
+			}else if (data.getProvide_num()>data.getApply_cnt()) {
+				zerosb.append("序號"+index+"核發數量不得大於申請數量\r\n");
+			}
+			index++;
+		}
+		return zerosb==null? "" : zerosb.toString();
+	}
 }

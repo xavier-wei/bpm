@@ -76,7 +76,7 @@ public class Eip08w020Controller extends BaseController {
 		caseData.setApplydateEnd(DateUtility.getNowChineseDate());
 		return new ModelAndView(QUERY_PAGE);
 	}
-	
+
 	private void resetData(Eip08w020Case caseData) {
 		Eip08w020Case newCase = new Eip08w020Case();
 		BeanUtility.copyProperties(caseData, newCase);// 進來時清除caseData
@@ -96,7 +96,8 @@ public class Eip08w020Controller extends BaseController {
 	 * @return
 	 */
 	@RequestMapping("/Eip08w020_add.action")
-	public String add(@Validated(Eip08w020Case.Apply.class) @ModelAttribute(CASE_KEY) Eip08w020Case caseData, BindingResult result) {
+	public String add(@Validated(Eip08w020Case.Apply.class) @ModelAttribute(CASE_KEY) Eip08w020Case caseData,
+			BindingResult result) {
 		log.debug("導向   Eip08w020   領物單申請作業畫面-新增作業");
 		if (result.hasErrors()) {
 			return QUERY_PAGE;
@@ -148,28 +149,26 @@ public class Eip08w020Controller extends BaseController {
 	public String insertData(@Validated(Eip08w020Case.Insert.class) @ModelAttribute(CASE_KEY) Eip08w020Case caseData,
 			BindingResult result) {
 		log.debug("導向   Eip08w020 ");
-		if(result.hasErrors()) {
+		if (result.hasErrors()) {
 			return ADD_APGE;
 		}
 		
-		String returnStr = "";//畫面資料驗證
 		try {
-			returnStr = eip08w020Service.validateAllData(caseData);
+			String returnStr = eip08w020Service.validateAllData(caseData);
+			if (StringUtils.isNotBlank(returnStr)) {
+				setSystemMessage(returnStr, true);
+				return ADD_APGE;
+			}
+			String validateCnt = eip08w020Service.validateCnt(caseData);
+			if (StringUtils.isNotBlank(validateCnt)) {
+				setSystemMessage(validateCnt, true);
+				return ADD_APGE;
+			}
 		} catch (Exception e1) {
-			log.error("Eip08w020Controller" + ExceptionUtility.getStackTrace(e1));
-		}
-		
-		if(StringUtils.isNotBlank(returnStr)) {
-			setSystemMessage(returnStr,true);
+			setSystemMessage("申請資料檢核錯誤，請重新檢視申請資料");
+			log.error("Eip08w020Controller申請資料檢核錯誤：" + "caseData="+ caseData +ExceptionUtility.getStackTrace(e1));
 			return ADD_APGE;
 		}
-		
-		String validateCnt = eip08w020Service.validateCnt(caseData);
-		if(StringUtils.isNotBlank(validateCnt)) {
-			setSystemMessage(validateCnt, true);
-			return ADD_APGE;
-		}
-		
 
 		try {
 			eip08w020Service.insertApplyItem(caseData);
@@ -192,8 +191,10 @@ public class Eip08w020Controller extends BaseController {
 	 * @return
 	 */
 	@RequestMapping("/Eip08w020_query.action")
-	public String queryAndCorrect(@Validated(Eip08w020Case.Query.class) @ModelAttribute(CASE_KEY) Eip08w020Case caseData, BindingResult result) {
-		log.debug("導向   Eip08w020   領物單申請作業畫面-查詢更正作業");
+	public String queryAndCorrect(
+			@Validated(Eip08w020Case.Query.class) @ModelAttribute(CASE_KEY) Eip08w020Case caseData,
+			BindingResult result) {
+		log.debug("導向 Eip08w020 領物單申請作業畫面-查詢更正作業");
 		if (result.hasErrors()) {
 			return QUERY_PAGE;
 		}
@@ -209,7 +210,7 @@ public class Eip08w020Controller extends BaseController {
 
 				return DETAIL_PAGE;
 			}
-			
+
 		} catch (Exception e) {
 			log.error("Eip08w020Controller查詢Applyitem失敗" + ExceptionUtility.getStackTrace(e));
 			setSystemMessage("查詢失敗");
@@ -264,12 +265,12 @@ public class Eip08w020Controller extends BaseController {
 			log.error("Eip08w020Controller刪除Applyitem失敗" + ExceptionUtility.getStackTrace(e));
 			setSystemMessage("刪除失敗");
 		}
-		
+
 		setSystemMessage("刪除成功");
 		resetData(caseData);
 		return QUERY_PAGE;
 	}
-	
+
 	/**
 	 * 領物單申請作業畫面 - 明細畫面返回按鈕
 	 *
@@ -288,15 +289,15 @@ public class Eip08w020Controller extends BaseController {
 			eip08w020Service.getApplyItem(caseData);
 			if (CollectionUtils.isEmpty(caseData.getApplyitemList()) || caseData.getApplyitemList().size() == 1) {
 				return QUERY_PAGE;
-			} 
-			
+			}
+
 		} catch (Exception e) {
 			log.error("Eip08w020Controller查詢Applyitem失敗" + ExceptionUtility.getStackTrace(e));
 			setSystemMessage("查詢失敗");
 			return QUERY_PAGE;
 		}
 
-		return DATA_PAGE;//若有多筆則返回多筆選擇畫面
+		return DATA_PAGE;// 若有多筆則返回多筆選擇畫面
 
 	}
 

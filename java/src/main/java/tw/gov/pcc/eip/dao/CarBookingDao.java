@@ -18,7 +18,7 @@ public interface CarBookingDao {
 
     String TABLE_NAME = "CAR_BOOKING";
 
-    public int insert(Eip07w020Case eip07w020Case);
+    public int insert(CarBooking car_booking);
 
     public List<CarBooking> getApplyId();
 

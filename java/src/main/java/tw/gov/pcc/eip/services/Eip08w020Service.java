@@ -32,7 +32,7 @@ import tw.gov.pcc.eip.util.DateUtility;
  * @since 20230626
  */
 @Service
-public class Eip08w020Service{
+public class Eip08w020Service {
 
 	@Autowired
 	UserBean userData;
@@ -51,10 +51,10 @@ public class Eip08w020Service{
 
 	@Autowired
 	EipcodeDao eipcodeDao;
-	
+
 	@Autowired
 	private DeptsDao deptsDao;
-	
+
 	@Autowired
 	private UsersDao usersDao;
 
@@ -102,7 +102,6 @@ public class Eip08w020Service{
 		return data;
 	}
 
-
 	/**
 	 * 新增申請資料
 	 * 
@@ -113,11 +112,11 @@ public class Eip08w020Service{
 		String nowDate = DateUtility.getNowWestDate();
 		String nowDatetime = DateUtility.getNowWestDateTime(true);
 		Integer index = 1;
-		String applyno = nowDate+StringUtils.leftPad(applyitemDao.getApplynoSeq(), 3, '0');
-		
+		String applyno = nowDate + StringUtils.leftPad(applyitemDao.getApplynoSeq(), 3, '0');
+
 		for (Eip08w020Case data : caseData.getAllData()) {
-			if (!StringUtils.isAnyEmpty(data.getItemkind(), data.getItemno())
-					&& data.getBook_cnt() != null && data.getBook_cnt() > 0) {
+			if (!StringUtils.isAnyEmpty(data.getItemkind(), data.getItemno()) && data.getBook_cnt() != null
+					&& data.getBook_cnt() > 0) {
 
 				// 1.insert Applyitem
 				Applyitem applyitem = new Applyitem();
@@ -129,12 +128,12 @@ public class Eip08w020Service{
 				applyitem.setApply_date(nowDate); // 申請日期
 				applyitem.setApply_dept(caseData.getOriApply_dept()); // 申請部門
 				applyitem.setApply_memo(caseData.getApply_memo()); // 申請用途
-				applyitem.setWithhold_cnt_b(data.getWithhold_cnt());// 申請前預扣數量
-				applyitem.setWithhold_cnt_a(data.getWithhold_cnt() + data.getApply_cnt());// 申請前預扣數量+[畫面].申請數量
-				applyitem.setBook_cnt_b(data.getBook_cnt()); // 申請前帳面數量
-				applyitem.setBook_cnt_a(data.getBook_cnt() - data.getApply_cnt());// 申請前帳面數量-[畫面].申請數量
-				applyitem.setApply_cnt(data.getApply_cnt()); // [畫面].申請數量
-				applyitem.setUnit(StringUtils.isEmpty(data.getUnit())? "" : data.getUnit()); // [畫面].單位單位
+				applyitem.setWithhold_cnt_b(Nvl(data.getWithhold_cnt()));// 申請前預扣數量
+				applyitem.setWithhold_cnt_a(Nvl(data.getWithhold_cnt()) + Nvl(data.getApply_cnt()));// 申請前預扣數量+[畫面].申請數量
+				applyitem.setBook_cnt_b(Nvl(data.getBook_cnt())); // 申請前帳面數量
+				applyitem.setBook_cnt_a(Nvl(data.getBook_cnt()) - Nvl(data.getApply_cnt()));// 申請前帳面數量-[畫面].申請數量
+				applyitem.setApply_cnt(Nvl(data.getApply_cnt())); // [畫面].申請數量
+				applyitem.setUnit(StringUtils.isEmpty(data.getUnit()) ? "" : data.getUnit()); // [畫面].單位單位
 				applyitem.setProcess_status("1");
 				applyitem.setCre_user(caseData.getOriApply_user()); // [畫面輸入].申請人
 				applyitem.setCre_datetime(nowDatetime); // 系統日期時間
@@ -155,30 +154,34 @@ public class Eip08w020Service{
 	 * 查詢ApplyItem
 	 * 
 	 * @param caseData
-	 * @return 
+	 * @return
 	 */
-	public void getApplyItem(Eip08w020Case caseData) throws Exception{
-		
-		List<Applyitem>list = applyitemDao.selectByApplyUserAndApply_deptAndapplyDate(caseData.getOriApply_user(), userData.getDeptId(), 
-				StringUtils.isNotEmpty(caseData.getApplydateStart())? DateUtility.changeDateType(caseData.getApplydateStart()) : "",
-						StringUtils.isNotEmpty(caseData.getApplydateEnd())? DateUtility.changeDateType(caseData.getApplydateEnd()) : "",caseData.getItemnoStr()	
-				);
+	public void getApplyItem(Eip08w020Case caseData) throws Exception {
 
-		if(CollectionUtils.isNotEmpty(list)){			
-			list.stream().map(
-					e -> {
-						Eipcode code = new Eipcode();
-						code.setCodekind("APPLYSTATUS");
-						code.setCodeno(e.getProcess_status());
-						Eipcode process_status_nm = eipcodeDao.selectDataByPrimaryKey(code);
-						e.setProcess_status(e.getProcess_status()+"-" + process_status_nm.getCodename());
-						if(StringUtils.isNotEmpty(e.getReconfirm_user())) {							
-							Users user = usersDao.selectByKey(e.getReconfirm_user());
-							e.setReconfirm_user(user.getUser_name());
-						}
-						
-						return e;
-					}).collect(Collectors.toList());
+		List<Applyitem> list = applyitemDao.selectByApplyUserAndApply_deptAndapplyDate(caseData.getOriApply_user(),
+				userData.getDeptId(),
+				StringUtils.isNotEmpty(caseData.getApplydateStart())
+						? DateUtility.changeDateType(caseData.getApplydateStart())
+						: "",
+				StringUtils.isNotEmpty(caseData.getApplydateEnd())
+						? DateUtility.changeDateType(caseData.getApplydateEnd())
+						: "",
+				caseData.getItemnoStr());
+
+		if (CollectionUtils.isNotEmpty(list)) {
+			list.stream().map(e -> {
+				Eipcode code = new Eipcode();
+				code.setCodekind("APPLYSTATUS");
+				code.setCodeno(e.getProcess_status());
+				Eipcode process_status_nm = eipcodeDao.selectDataByPrimaryKey(code);
+				e.setProcess_status(e.getProcess_status() + "-" + process_status_nm.getCodename());
+				if (StringUtils.isNotEmpty(e.getReconfirm_user())) {
+					Users user = usersDao.selectByKey(e.getReconfirm_user());
+					e.setReconfirm_user(user.getUser_name());
+				}
+
+				return e;
+			}).collect(Collectors.toList());
 			caseData.setApplyitemList(list);
 		}
 	}
@@ -206,24 +209,24 @@ public class Eip08w020Service{
 				code.setCodekind("APPLYSTATUS");
 				code.setCodeno(item.getProcess_status());
 				Eipcode process_status_nm = eipcodeDao.selectDataByPrimaryKey(code);
-				data.setProcess_status(item.getProcess_status() +"-"+ process_status_nm.getCodename());
-				data.setApprove_cnt(item.getApprove_cnt() == null? 0 : item.getApprove_cnt());
+				data.setProcess_status(item.getProcess_status() + "-" + process_status_nm.getCodename());
+				data.setApprove_cnt(item.getApprove_cnt() == null ? 0 : item.getApprove_cnt());
 
-				if(StringUtils.isNotEmpty(item.getReconfirm_user())) {
+				if (StringUtils.isNotEmpty(item.getReconfirm_user())) {
 					Users reconfirm_user = usersDao.selectByKey(item.getReconfirm_user());
 					data.setReconfirm_user(reconfirm_user.getUser_name());
 				} else {
 					data.setReconfirm_user("");
 				}
-				
+
 				data.setApply_date(item.getApply_date());
-				
+
 				Depts dept = deptsDao.findByPk(item.getApply_dept());
 				data.setApply_dept(dept.getDept_name());
-				
+
 				Users user = usersDao.selectByKey(item.getApply_user());
 				data.setApply_user(user.getUser_name());
-				
+
 				dataList.add(data);
 			}
 		}
@@ -246,78 +249,76 @@ public class Eip08w020Service{
 			applyitemDao.deleteByKey(item);
 		}
 	}
-	
-	public String validateAllData(Eip08w020Case caseData) throws Exception{
+
+	public String validateAllData(Eip08w020Case caseData) throws Exception {
 		StringBuffer sb = new StringBuffer();
-		if(StringUtils.isEmpty(caseData.getApply_memo())) {
+		if (StringUtils.isEmpty(caseData.getApply_memo())) {
 			sb.append("「申請用途」必須輸入\r\n");
 		}
-		
 
-		for(int i=0; i<caseData.getAllData().size() ; i++) {
+		for (int i = 0; i < caseData.getAllData().size(); i++) {
 			Eip08w020Case data = caseData.getAllData().get(i);
 			StringBuffer each = new StringBuffer();
-			
-			if(StringUtils.isNotEmpty(data.getItemkind()) ){
-				
-				if(StringUtils.isEmpty(data.getItemno())) {
+
+			if (StringUtils.isNotEmpty(data.getItemkind())) {
+
+				if (StringUtils.isEmpty(data.getItemno())) {
 					each.append("品名、");
 				}
-				
-				if(StringUtils.isNotEmpty(data.getItemno()) && (data.getBook_cnt()==null || data.getBook_cnt()==0)) {
-					sb.append("序號"+(i+1)+"：庫存為零，請調整品項\r\n");
+
+				if (StringUtils.isNotEmpty(data.getItemno())
+						&& (data.getBook_cnt() == 0 || data.getBook_cnt() == null)) {
+					sb.append("序號" + (i + 1) + "：庫存為零，請調整品項\r\n");
 				}
-				
-				if(data.getApply_cnt()==null && data.getBook_cnt()!=null) {
+
+				if ((data.getApply_cnt() == null || data.getApply_cnt() == 0) && data.getBook_cnt() != null) {
 					each.append("數量、");
 				}
-				
-				if(StringUtils.isNotBlank(each.toString())) {
-					sb.append("序號"+(i+1)+"："+ StringUtils.removeEnd(each.toString(),"、")+"未填寫\r\n");
-				}
-				
 
+				if (StringUtils.isNotBlank(each.toString())) {
+					sb.append("序號" + (i + 1) + "：" + StringUtils.removeEnd(each.toString(), "、") + "未填寫\r\n");
+				}
 			}
-			
-			if(data.getApply_cnt()!=null && data.getBook_cnt()!=null && data.getApply_cnt()>data.getBook_cnt()) {
-				sb.append("序號"+(i+1)+"："+"申請數量不得大於庫存數量\r\n");
+
+			if (data.getApply_cnt() != null && data.getBook_cnt() != null && data.getApply_cnt() > data.getBook_cnt()) {
+				sb.append("序號" + (i + 1) + "：" + "申請數量不得大於庫存數量\r\n");
 			}
-			
+
 		}
-		if(StringUtils.isEmpty(sb.toString())) {
-			List<String>itemkindList = new ArrayList<>();
-			List<String>itemnoList = new ArrayList<>();
-			List<Integer>bookCntList = new ArrayList<>();
-			for(Eip08w020Case each : caseData.getAllData()) {
-				
-				if(StringUtils.isNotBlank(each.getItemkind())) {
+		if (StringUtils.isEmpty(sb.toString())) {
+			List<String> itemkindList = new ArrayList<>();
+			List<String> itemnoList = new ArrayList<>();
+			List<Integer> bookCntList = new ArrayList<>();
+			for (Eip08w020Case each : caseData.getAllData()) {
+
+				if (StringUtils.isNotBlank(each.getItemkind())) {
 					itemkindList.add(each.getItemkind());
 				}
-				
-				if(StringUtils.isNotBlank(each.getItemno())) {
+
+				if (StringUtils.isNotBlank(each.getItemno())) {
 					itemnoList.add(each.getItemno());
 				}
-				
-				if(each.getBook_cnt()!=null) {
+
+				if (each.getBook_cnt() != null) {
 					bookCntList.add(each.getBook_cnt());
 				}
 			}
-			
-			if(CollectionUtils.isEmpty(itemkindList)|| CollectionUtils.isEmpty(bookCntList) || CollectionUtils.isEmpty(itemnoList) ) {
+
+			if (CollectionUtils.isEmpty(itemkindList) || CollectionUtils.isEmpty(bookCntList)
+					|| CollectionUtils.isEmpty(itemnoList)) {
 				sb.append("請至少申請一項");
 			}
 		}
 
-		
 		return sb.toString();
 	}
-	
+
 	public String validateCnt(Eip08w020Case caseData) {
 		StringBuffer sb = new StringBuffer();
-		
-		for(Eip08w020Case data : caseData.getAllData()) {
-			if (!StringUtils.isAnyEmpty(data.getItemkind(), data.getItemno())
-					&& data.getBook_cnt() != null && data.getBook_cnt() > 0) {
+
+		for (Eip08w020Case data : caseData.getAllData()) {
+			if (!StringUtils.isAnyEmpty(data.getItemkind(), data.getItemno()) && data.getBook_cnt() != null
+					&& data.getBook_cnt() > 0) {
 				if (!itemcodeService.validItemTakeCnt(data.getItemkind(), data.getItemno(), data.getApply_cnt())) {
 					Itemcode code = new Itemcode();
 					code.setItemkind(data.getItemkind());
@@ -332,17 +333,25 @@ public class Eip08w020Service{
 	}
 
 	public String alert0Cnt(Eip08w020Case caseData) {
-		for(int i=0; i<caseData.getAllData().size() ; i++) {
+		for (int i = 0; i < caseData.getAllData().size(); i++) {
 			Eip08w020Case data = caseData.getAllData().get(i);
 			StringBuffer sb = new StringBuffer();
-			if(!StringUtils.isAnyEmpty(data.getItemkind(), data.getItemno())
-					&& data.getBook_cnt() != null && data.getBook_cnt() == 0) {
-				sb.append(i+1+",");
+			if (!StringUtils.isAnyEmpty(data.getItemkind(), data.getItemno()) && data.getBook_cnt() != null
+					&& data.getBook_cnt() == 0) {
+				sb.append(i + 1 + ",");
 			}
-			if(StringUtils.isNotBlank(sb.toString())){
-				return StringUtils.removeEnd(sb.toString(),",");
+			if (StringUtils.isNotBlank(sb.toString())) {
+				return StringUtils.removeEnd(sb.toString(), ",");
 			}
 		}
 		return null;
+	}
+
+	public Integer Nvl(Integer num) {
+		if (num == null) {
+			return 0;
+		} else {
+			return num;
+		}
 	}
 }

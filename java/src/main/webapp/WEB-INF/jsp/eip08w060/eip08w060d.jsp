@@ -62,15 +62,43 @@
 			 	</c:forEach>
 			</c:if>
 			<c:if test="${caseData.save == 'Y'}">
-				<c:forEach items="${caseData.eip08w060CaseList}" var="caseData" varStatus="status">
+
 					<tr>
-						 <td class="text-center align-middle"><c:out value="${status.index+1}" /></td>
-						 <td cssClass="text-center align-middle"><form:input id="item" path="eip08w060CaseList[${status.index}].item" cssClass="form-control"    size="18" maxlength="100" /></td>
-						 <td cssClass="text-center align-middle"><form:input id="desc_memo"  path="eip08w060CaseList[${status.index}].desc_memo" cssClass="form-control"    size="18" maxlength="200" /></td>
-				 		 <td cssClass="text-center align-middle"><form:input id="cnt"  path="eip08w060CaseList[${status.index}].cnt" cssClass="form-control"    size="18" maxlength="18" onkeyup="value=value.replace(/[^(\d)]/g,'')" /></td>
-						 <td cssClass="text-center align-middle"><form:input id="unit"  path="eip08w060CaseList[${status.index}].unit" cssClass="form-control"    size="7" maxlength="7" /></td>
+						<td cssClass="text-center align-middle"><c:out value="1" /></td>
+						<td cssClass="text-center align-middle"><form:input path="eip08w060CaseList[0].item" cssClass="form-control"  size="75" maxlength="40" /></td>
+						<td cssClass="text-center align-middle"><form:input path="eip08w060CaseList[0].desc_memo" cssClass="form-control"  size="75" maxlength="40"/></td>
+						<td cssClass="text-center align-middle"><form:input path="eip08w060CaseList[0].cnt"  cssClass="form-control"  size="3" maxlength="3" onkeyup="value=value.replace(/[^(\d)]/g,'')" /></td>
+						<td cssClass="text-center align-middle"><form:input path="eip08w060CaseList[0].unit"  cssClass="form-control" size="7" maxlength="7"/></td>
 					</tr>
-				 </c:forEach>
+					<tr>
+						<td cssClass="text-center align-middle"><c:out value="2"/></td>
+						<td cssClass="text-center align-middle"><form:input path="eip08w060CaseList[1].item" cssClass="form-control"  size="75" maxlength="40"/></td>
+						<td cssClass="text-center align-middle"><form:input path="eip08w060CaseList[1].desc_memo" cssClass="form-control"  size="75" maxlength="40"/></td>
+						<td cssClass="text-center align-middle"><form:input path="eip08w060CaseList[1].cnt" cssClass="form-control" size="3" maxlength="3" onkeyup="value=value.replace(/[^(\d)]/g,'')" /></td>
+						<td cssClass="text-center align-middle"><form:input path="eip08w060CaseList[1].unit" cssClass="form-control"   size="7" maxlength="7"/></td>
+					</tr>
+					<tr>
+						<td cssClass="text-center align-middle"><c:out value="3"/></td>
+						<td cssClass="text-center align-middle"><form:input path="eip08w060CaseList[2].item" cssClass="form-control"  size="75" maxlength="40"/></td>
+						<td cssClass="text-center align-middle"><form:input path="eip08w060CaseList[2].desc_memo" cssClass="form-control"  size="75" maxlength="40"/></td>
+						<td cssClass="text-center align-middle"><form:input path="eip08w060CaseList[2].cnt" cssClass="form-control"  size="3" maxlength="3" onkeyup="value=value.replace(/[^(\d)]/g,'')" /></td>
+						<td cssClass="text-center align-middle"><form:input path="eip08w060CaseList[2].unit" cssClass="form-control"  size="7" maxlength="7"/></td>
+					</tr>
+					<tr>
+						<td cssClass="text-center align-middle"><c:out value="4"/></td>
+						<td cssClass="text-center align-middle"><form:input path="eip08w060CaseList[3].item" cssClass="form-control"   size="75" maxlength="40"/></td>
+						<td cssClass="text-center align-middle"><form:input path="eip08w060CaseList[3].desc_memo" cssClass="form-control"   size="75" maxlength="40"/></td>
+						<td cssClass="text-center align-middle"><form:input path="eip08w060CaseList[3].cnt" cssClass="form-control"  size="3" maxlength="3" onkeyup="value=value.replace(/[^(\d)]/g,'')" /></td>
+						<td cssClass="text-center align-middle"><form:input path="eip08w060CaseList[3].unit" cssClass="form-control"  size="7" maxlength="7"/></td>
+					</tr>
+					<tr>
+						<td cssClass="text-center align-middle"><c:out value="5"/></td>
+						<td cssClass="text-center align-middle"><form:input path="eip08w060CaseList[4].item" cssClass="form-control"   size="75" maxlength="40"/></td>
+						<td cssClass="text-center align-middle"><form:input path="eip08w060CaseList[4].desc_memo" cssClass="form-control"   size="75" maxlength="40"/></td>
+						<td cssClass="text-center align-middle"><form:input path="eip08w060CaseList[4].cnt" cssClass="form-control"   size="3" maxlength="3" onkeyup="value=value.replace(/[^(\d)]/g,'')" /></td>
+						<td cssClass="text-center align-middle"><form:input path="eip08w060CaseList[4].unit" cssClass="form-control"   size="7" maxlength="7"/></td>
+					</tr>
+
 			</c:if>
 
 			 </tbody>

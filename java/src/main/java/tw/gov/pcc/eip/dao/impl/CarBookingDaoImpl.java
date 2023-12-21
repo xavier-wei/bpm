@@ -46,8 +46,7 @@ public class CarBookingDaoImpl extends BaseDao<CarBooking> implements CarBooking
 	 */
 	@Override
 	public CarBooking selectDataByPrimaryKey(CarBooking carBooking) {
-		String sql = "SELECT " + ALL_COLUMNS_SQL + " FROM " + TABLE_NAME + " t WHERE t.carno1 = :carno1 "
-				+ " AND t.carno2 = :carno2 ";
+		String sql = "SELECT " + ALL_COLUMNS_SQL + " FROM " + TABLE_NAME + " t WHERE t.applyid = :applyid ";
 		List<CarBooking> list = getNamedParameterJdbcTemplate().query(sql,
 				new BeanPropertySqlParameterSource(carBooking), BeanPropertyRowMapper.newInstance(CarBooking.class));
 		return CollectionUtils.isEmpty(list) ? null : list.get(0);
@@ -59,16 +58,16 @@ public class CarBookingDaoImpl extends BaseDao<CarBooking> implements CarBooking
 	 * @param CarBooking 新增資料
 	 */
 	@Override
-	public int insert(Eip07w020Case eip07w020Case) {
+	public int insert(CarBooking car_booking) {
 		return getNamedParameterJdbcTemplate().update(" INSERT INTO " + TABLE_NAME + "("
 				+ " apply_user,apply_dept,applyid,using,carprocess_status,apply_date,apply_memo,destination ,apply_car_type ,num_of_people ,using_date ,using_time_s ,using_time_e ,cre_user ,  "
 				+ " cre_datetime,upd_user,upd_datetime " +
 
 				")" + " VALUES ( "
-				+ " :applyName,:applyUnit,:applyId, :using,:processStaus,:applyDate, :useCarMemo,:destination, :carTy, :number, :useDate, :applyTimeS, :applyTimeE, :creUser, "
-				+ " :creDatetime, :updUser,:updDatetime " + ")",
+				+ " :apply_user, :apply_dept, :applyid, :using, :carprocess_status, :apply_date, :apply_memo, :destination , :apply_car_type , :num_of_people , :using_date , :using_time_s , :using_time_e , :cre_user , "
+				+ " :cre_datetime, :upd_user, :upd_datetime " + ")",
 
-				new BeanPropertySqlParameterSource(eip07w020Case));
+				new BeanPropertySqlParameterSource(car_booking));
 	}
 
 	public List<CarBooking> getApplyId() {

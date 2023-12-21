@@ -6,6 +6,7 @@ import java.util.List;
 import javax.validation.constraints.AssertTrue;
 import javax.validation.groups.Default;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 
 import lombok.Data;
@@ -21,6 +22,7 @@ import tw.gov.pcc.eip.framework.validation.ChineseDate;
 @NoArgsConstructor
 public class Eip08w040Case implements Serializable {
 	public interface Query extends Default {}
+	public interface Insert extends Default {}
 
 	private static final long serialVersionUID = 1L;
 
@@ -45,7 +47,6 @@ public class Eip08w040Case implements Serializable {
 		}
 		return true;
 	}
-	
 	
 	/**
 	 * 資料列表

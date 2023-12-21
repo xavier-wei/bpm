@@ -83,7 +83,8 @@ public class Eip07w020Service {
         insterData.setApplyUnit(caseData.getApplyUnit());
         insterData.setApplyDate(DateUtility.changeDateType(caseData.getApplyDate()));
         insterData.setUseDate(DateUtility.changeDateType(insterData.getUseDate()));
-        carBookingDao.insert(insterData);
+        CarBooking carBooking =setCarBooking(insterData);
+        carBookingDao.insert(carBooking);
         caseData.setApplyId(applyId);
     }
 
@@ -375,6 +376,28 @@ public class Eip07w020Service {
         pdf.createEip07w020DataPdf(caseData.getDetailsList().get(0),caseData);
         return pdf.getOutputStream();
     };
+
+    public  CarBooking setCarBooking(Eip07w020Case book) {
+        CarBooking carBooking =new CarBooking();
+        carBooking.setApply_user(book.getApplyName());
+        carBooking.setApply_dept(book.getApplyUnit());
+        carBooking.setApplyid(book.getApplyId());
+        carBooking.setUsing(book.getUsing());
+        carBooking.setCarprocess_status(book.getProcessStaus());
+        carBooking.setApply_date(book.getApplyDate());
+        carBooking.setApply_memo(book.getUseCarMemo());
+        carBooking.setDestination(book.getDestination());
+        carBooking.setApply_car_type(book.getCarTy());
+        carBooking.setNum_of_people(book.getNumber());
+        carBooking.setUsing_date(book.getUseDate());
+        carBooking.setUsing_time_s(book.getApplyTimeS());
+        carBooking.setUsing_time_e(book.getApplyTimeE());
+        carBooking.setCre_user(book.getCreUser());
+        carBooking.setCre_datetime(book.getCreDatetime());
+        carBooking.setUpd_user(book.getUpdUser());
+        carBooking.setUpd_datetime(book.getUpdDatetime());
+        return carBooking;
+    }
 
 
 

@@ -38,33 +38,34 @@ public class Eip07w030Service {
 	private EipcodeDao eipcodeDao;
 	@Autowired
 	private CarBookingDao carBookingDao;
-    @Autowired
-    private  MailService mailService;
-    @Autowired
-    private UsersDao usersDao;
-    @Autowired
-    private DeptsDao deptsDao;
-    @Autowired
-    private User_auth_deptDao user_auth_deptDao;
-	
+	@Autowired
+	private MailService mailService;
+	@Autowired
+	private UsersDao usersDao;
+	@Autowired
+	private DeptsDao deptsDao;
+	@Autowired
+	private User_auth_deptDao user_auth_deptDao;
+
 	/**
 	 * 依照申請日期起迄搜尋審核資料
 	 *
 	 * @param caseData
 	 */
 	public void getData(Eip07w030Case caseData) throws Exception {
-		//2023.11.28
-		//1.除自己部門外，審核者若為上層單位，則要可以看到下層單位提出的申請
-		List<String>dept = deptsDao.findAllDeptId(userData.getDeptId()).stream().map(e->e.getDept_id()).collect(Collectors.toList());
-		//2.提供部分使用者可以跨部門審核用，若有值，則表示該使用者還要同時審核到別部門的資料。
-		List<User_auth_dept>otherdept = user_auth_deptDao.selectByUser_id(userData.getUserId());
-		if(CollectionUtils.isNotEmpty(otherdept)){
-			for(User_auth_dept de : otherdept) {
+		// 2023.11.28
+		// 1.除自己部門外，審核者若為上層單位，則要可以看到下層單位提出的申請
+		List<String> dept = deptsDao.findAllDeptId(userData.getDeptId()).stream().map(e -> e.getDept_id())
+				.collect(Collectors.toList());
+		// 2.提供部分使用者可以跨部門審核用，若有值，則表示該使用者還要同時審核到別部門的資料。
+		List<User_auth_dept> otherdept = user_auth_deptDao.selectByUser_id(userData.getUserId());
+		if (CollectionUtils.isNotEmpty(otherdept)) {
+			for (User_auth_dept de : otherdept) {
 				dept.add(de.getDept_id());
 			}
 		}
 		List<CarBooking> list = carBookingDao.selectByApplydate(caseData.getApplydateStart(),
-				caseData.getApplydateEnd(),"eip07w030",dept);
+				caseData.getApplydateEnd(), "eip07w030", dept);
 		List<Eip07w030Case> dataList = new ArrayList<>();
 		if (CollectionUtils.isNotEmpty(list)) {
 			for (CarBooking car : list) {
@@ -73,8 +74,8 @@ public class Eip07w030Service {
 				data.setApply_user(car.getApply_user());
 				data.setApply_dept(car.getApply_dept());
 				data.setUsing_date(car.getUsing_date());
-				data.setUsing_time_s(car.getUsing_time_s());
-				data.setUsing_time_e(car.getUsing_time_e());
+				data.setUsing_time_s(car.getUsing_time_s().substring(0,2)+":"+car.getUsing_time_s().substring(2,4));
+				data.setUsing_time_e(car.getUsing_time_e().substring(0,2)+":"+car.getUsing_time_e().substring(2,4));
 				data.setApply_memo(car.getApply_memo());
 				data.setNum_of_people(car.getNum_of_people());
 				data.setDestination(car.getDestination());
@@ -83,7 +84,7 @@ public class Eip07w030Service {
 				eipcode.setCodeno(car.getCarprocess_status());
 				Eipcode code = eipcodeDao.selectDataByPrimaryKey(eipcode);
 				data.setCarprocess_status(code.getCodeno() + "-" + code.getCodename());
-				if(Integer.valueOf(car.getUsing_date())<Integer.valueOf(car.getCre_datetime().substring(0,8))) {
+				if (Integer.valueOf(car.getUsing_date()) < Integer.valueOf(car.getCre_datetime().substring(0, 8))) {
 					data.setFillmk("Y");
 				}
 				dataList.add(data);
@@ -102,7 +103,7 @@ public class Eip07w030Service {
 		String nowdatetime = DateUtility.getNowWestDateTime(true);
 
 		for (String applyId : caseData.getApplyIdList()) {
-			
+
 			CarBooking updateData = carBookingDao.selectByApplyId(applyId);
 			if ("agree".equals(caseData.getAgree())) {
 				updateData.setCarprocess_status("2");
@@ -114,55 +115,58 @@ public class Eip07w030Service {
 				updateData.setReconfirm_mk("N");
 			}
 			updateData.setReconfirm_user(userData.getUserId());
-			updateData.setReconfirm_date(nowdatetime.substring(0,8));
+			updateData.setReconfirm_date(nowdatetime.substring(0, 8));
 			updateData.setUpd_user(userData.getUserId());
 			updateData.setUpd_datetime(nowdatetime);
 			carBookingDao.updateByKey(updateData);
-			
-			//處理完畢，寄mail給秘書室
-			//		@複核後，發email通知秘書處進行派
-			//		信件標題:有派車預約申請，請秘書處進行派車處理
-			//		信件內容:
-			//		派車單號:
-			//		申請人:             申請單位:
-			//		用車日期
-			//		用車時間起:         迄:
-			//		用車事由:
-	        
-	        Optional<Eipcode> codeName= eipcodeDao.findByCodeKindCodeNo("CARPROCESSSTATUSMAIL","1");
-	        String mail=codeName.get().getCodename();
-	        StringBuffer sb = new StringBuffer();
-	        
-	        String using_date = DateUtility.formatChineseDateString(updateData.getUsing_date(),false);
-	        String using_time = updateData.getUsing_time_s().substring(0,2)+updateData.getUsing_time_s().substring(2,4)+"~"
-	    	        +updateData.getUsing_time_e().substring(0,2)+updateData.getUsing_time_e().substring(2,4);
-	        
-	        sb.append("派車單號：" + applyId +"\r\n");
-	        sb.append("申請人:"+ getUserNameOrDeptName(updateData.getApply_user(),true)+"\r\n");
-	        sb.append("申請單位:"+ getUserNameOrDeptName(updateData.getApply_dept(),false)+"\r\n");
-	        sb.append("用車日期" + using_date +"\r\n");
-	        sb.append("用車時間" + using_time +"\r\n");
-	        sb.append("用車事由" + updateData.getApply_memo());
-	        mailService.sendEmailNow("【有派車預約申請】請秘書處進行派車處理，用車時間："+using_date+"，"+using_time ,mail,sb.toString());
+
+			if ("agree".equals(caseData.getAgree())) {
+				// 處理完畢，寄mail給秘書室
+				// @複核後，發email通知秘書處進行派
+				// 信件標題:有派車預約申請，請秘書處進行派車處理
+				// 信件內容:
+				// 派車單號:
+				// 申請人: 申請單位:
+				// 用車日期
+				// 用車時間起: 迄:
+				// 用車事由:
+
+				Optional<Eipcode> codeName = eipcodeDao.findByCodeKindCodeNo("CARPROCESSSTATUSMAIL", "1");
+				String mail = codeName.get().getCodename();
+				StringBuffer sb = new StringBuffer();
+
+				String using_date = DateUtility.formatChineseDateString(updateData.getUsing_date(), false);
+				String using_time = updateData.getUsing_time_s().substring(0, 2)
+						+ updateData.getUsing_time_s().substring(2, 4) + "~"
+						+ updateData.getUsing_time_e().substring(0, 2) + updateData.getUsing_time_e().substring(2, 4);
+
+				sb.append("派車單號：" + applyId + "\r\n");
+				sb.append("申請人:" + getUserNameOrDeptName(updateData.getApply_user(), true) + "\r\n");
+				sb.append("申請單位:" + getUserNameOrDeptName(updateData.getApply_dept(), false) + "\r\n");
+				sb.append("用車日期" + using_date + "\r\n");
+				sb.append("用車時間" + using_time + "\r\n");
+				sb.append("用車事由" + updateData.getApply_memo());
+				mailService.sendEmailNow("【有派車預約申請】請秘書處進行派車處理，用車時間：" + using_date + "，" + using_time, mail,
+						sb.toString());
+			}
 		}
-		
 
 	}
 
-	public String getUserNameOrDeptName(String id , boolean getUserData) {
-		
-		if(getUserData) {
+	public String getUserNameOrDeptName(String id, boolean getUserData) {
+
+		if (getUserData) {
 			Users user = usersDao.selectByKey(id);
-			if(user != null) {
+			if (user != null) {
 				return StringUtils.isEmpty(user.getUser_name()) ? "" : user.getUser_name();
 			}
 		} else {
 			Depts dept = deptsDao.findByPk(id);
-			if(dept != null) {
+			if (dept != null) {
 				return StringUtils.isEmpty(dept.getDept_name()) ? "" : dept.getDept_name();
 			}
 		}
-		
+
 		return "";
 	}
 

@@ -212,11 +212,8 @@ public class Eip08w060Controller extends BaseController {
         }
         log.debug("導向   eip08W060Q   物品請購/修繕申請修改作業");
         try {
-            for (Eip08w060Case upData:caseData.getEip08w060CaseList()) {
-                upData.setUpd_datetime(DateUtil.getNowWestDateTime(true));
-                upData.setUpd_user(userData.getUserId());
-                eip08W060Service.update(upData);
-            }
+            caseData.setExItemId(caseData.getItemId());
+            eip08W060Service.update(caseData);
             setSystemMessage(getUpdateSuccessMessage());
         }catch (Exception e){
             setSystemMessage(getUpdateFailMessage());
