@@ -1,9 +1,9 @@
 package tw.gov.pcc.eip.dao;
 
+import tw.gov.pcc.eip.domain.Eipcode;
+
 import java.util.List;
 import java.util.Optional;
-
-import tw.gov.pcc.eip.domain.Eipcode;
 
 /**
  * @author Weith
@@ -75,6 +75,8 @@ public interface EipcodeDao {
      * @return
      */
     public List<Eipcode> findLikeCodeKind(String codekind);
+
+    public List<Eipcode> findCodeKindLike(String codekind);
 
     /**
      * 依傳入codekind與list搜尋

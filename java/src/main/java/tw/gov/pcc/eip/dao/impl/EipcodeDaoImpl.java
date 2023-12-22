@@ -1,6 +1,5 @@
 package tw.gov.pcc.eip.dao.impl;
 
-import org.apache.xmlbeans.impl.xb.xsdschema.All;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
@@ -241,6 +240,17 @@ public class EipcodeDaoImpl extends BaseDao<Eipcode> implements EipcodeDao {
 
         SqlParameterSource params = new MapSqlParameterSource("codekind", codekind);
 
+        return getNamedParameterJdbcTemplate()
+                .query(sql.toString(), params,BeanPropertyRowMapper.newInstance(Eipcode.class));
+    }
+
+    @Override
+    public List<Eipcode> findCodeKindLike(String codekind) {
+        StringBuilder sql = new StringBuilder();
+        sql.append(" SELECT ");
+        sql.append(ALL_COLUMNS_SQL);
+        sql.append(" FROM " + TABLE_NAME + " T where T.CODEKIND like :codekind order by codeno ");
+        SqlParameterSource params = new MapSqlParameterSource("codekind", codekind);
         return getNamedParameterJdbcTemplate()
                 .query(sql.toString(), params,BeanPropertyRowMapper.newInstance(Eipcode.class));
     }

@@ -1,6 +1,5 @@
 package tw.gov.pcc.eip.dao.impl;
 
-import org.apache.commons.lang3.ObjectUtils;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.SqlParameter;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
@@ -80,7 +79,14 @@ public class StoredProcedureDaoImpl extends BaseDao<Object> implements StoredPro
 
     @Override
     public Object callProcedure(String procedureName, SqlParameterSource param) {
+
         SimpleJdbcCall jdbcSpCall = new SimpleJdbcCall(getJdbcTemplate()).withProcedureName(procedureName);
+        return jdbcSpCall.execute(param);
+    }
+
+    @Override
+    public Object callProcedure(String procedureName, SqlParameterSource param, SqlParameter[] sqlParameters) {
+        SimpleJdbcCall jdbcSpCall = new SimpleJdbcCall(getJdbcTemplate()).withProcedureName(procedureName).declareParameters(sqlParameters);
         return jdbcSpCall.execute(param);
     }
 
@@ -88,7 +94,7 @@ public class StoredProcedureDaoImpl extends BaseDao<Object> implements StoredPro
     public Map<String, Object> callProcedureWithoutMetaData(String catalogName, String procedureName,
             SqlParameterSource param, SqlParameter... sqlParameters) {
 
-        SimpleJdbcCall jdbcSpCall = new SimpleJdbcCall(getJdbcTemplate()).withCatalogName(catalogName)
+        SimpleJdbcCall jdbcSpCall = new SimpleJdbcCall(getJdbcTemplate())
                 .withProcedureName(procedureName).declareParameters(sqlParameters);
         jdbcSpCall.setAccessCallParameterMetaData(false);
 

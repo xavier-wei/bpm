@@ -1,14 +1,11 @@
 package tw.gov.pcc.eip.dao;
 
+import org.springframework.jdbc.core.SqlParameter;
+import org.springframework.jdbc.core.namedparam.SqlParameterSource;
+import tw.gov.pcc.eip.domain.Eipcode;
+
 import java.util.List;
 import java.util.Map;
-
-import org.springframework.jdbc.core.BeanPropertyRowMapper;
-import org.springframework.jdbc.core.SqlParameter;
-import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
-import org.springframework.jdbc.core.namedparam.SqlParameterSource;
-import tw.gov.pcc.common.annotation.SkipLog;
-import tw.gov.pcc.eip.domain.Eipcode;
 
 
 public interface StoredProcedureDao {
@@ -60,6 +57,7 @@ public interface StoredProcedureDao {
      * @return 執行結果
      */
     Object callProcedure(String procedureName, SqlParameterSource param);
+    Object callProcedure(String procedureName, SqlParameterSource param, SqlParameter[] sqlParameters);
 
 
     /**

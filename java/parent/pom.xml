@@ -48,7 +48,7 @@
         <jstl.version>1.2</jstl.version>
         <spring-data-jpa.version>2.6.3</spring-data-jpa.version>
         <report-fonts.version>1.0.0</report-fonts.version>
-
+        <jsch.version>0.1.55</jsch.version>
     </properties>
 
 
@@ -311,7 +311,13 @@
             <artifactId>mssql-jdbc</artifactId>
             <version>12.4.1.jre11</version>
         </dependency>
+        <!--jsch -->
 
+        <dependency>
+            <groupId>com.jcraft</groupId>
+            <artifactId>jsch</artifactId>
+            <version>${jsch.version}</version>
+        </dependency>
     </dependencies>
 
     <build>

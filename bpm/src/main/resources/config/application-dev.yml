@@ -33,11 +33,8 @@ spring:
   datasource:
     type: com.zaxxer.hikari.HikariDataSource
     url: jdbc:sqlserver://192.168.57.201:9981;databaseName=eip;encrypt=true;trustServerCertificate=true
-#    url: jdbc:sqlserver://localhost:1433;database=eip;encrypt=false
     username: eip
-#    username: sa
     password: iisi@12345
-#    password: iisi@123
     hikari:
       poolName: Hikari
       auto-commit: true
