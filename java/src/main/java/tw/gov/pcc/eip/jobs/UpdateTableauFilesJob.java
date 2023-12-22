@@ -6,33 +6,23 @@ import org.quartz.DisallowConcurrentExecution;
 import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
 import org.springframework.beans.factory.annotation.Autowired;
-import tw.gov.pcc.eip.services.MailService;
 import tw.gov.pcc.eip.tableau.service.UpdateTableauFilesService;
 import tw.gov.pcc.eip.util.ExceptionUtility;
 
-/**
- * 處理 Bemaildata 批次信件
- *
- * @author tunhao.hsu
- */
 @Slf4j
 @Setter
 @DisallowConcurrentExecution
-public class SendMailsJob extends QuartzJob {
-
-    @Autowired
-    private MailService mailService;
+public class UpdateTableauFilesJob extends QuartzJob {
     @Autowired
     private UpdateTableauFilesService updateTableauFilesService;
+
     @Override
     protected void handler(JobExecutionContext context) throws JobExecutionException {
-
         try {
-            mailService.sendBatchEmail();
-        } catch (Exception e) {
-            log.error("SendMailsJob 處理失敗 - {}", ExceptionUtility.getStackTrace(e));
+            log.info("UpdateTableauFilesJob 處理開始");
+            updateTableauFilesService.updateTableauFiles();
+        }catch (Exception e){
+            log.error("UpdateTableauFilesJob 處理失敗 - {}", ExceptionUtility.getStackTrace(e));
         }
     }
-
-
 }
