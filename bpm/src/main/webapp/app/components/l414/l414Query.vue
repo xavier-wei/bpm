@@ -21,10 +21,10 @@
         </i-form-group-check>
       </b-form-row>
 
-      <div class="text-center pt-5">
-        <i-button class="ml-2" type="folder-plus"  @click="toL414Apply()"/>
-        <i-button class="ml-2" type="search"  @click="toQuery()"/>
-        <i-button class="ml-2" type="x-circle"  @click="toReset()"/>
+      <div class="text-center mt-1 mb-1">
+        <i-button class="ml-2 mb-1" type="folder-plus"  @click="toL414Apply()"/>
+        <i-button class="ml-2 mb-1" type="search"  @click="toQuery()"/>
+        <i-button class="ml-2 mb-1" type="x-circle"  @click="toReset()"/>
       </div>
     </div>
 

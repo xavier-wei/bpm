@@ -43,7 +43,7 @@
             </b-form-row>
 
             <b-form-row>
-              <p class="test1">申請者資訊</p>
+              <p class="text1">申請者資訊</p>
             </b-form-row>
 
             <b-form-row>
@@ -74,7 +74,7 @@
             </b-form-row>
 
             <b-form-row>
-              <p class="test1">一、個人基本資料：</p>
+              <p class="text1">一、個人基本資料：</p>
             </b-form-row>
 
             <b-form-row>
@@ -135,7 +135,7 @@
             </b-form-row>
 
             <b-form-row>
-              <p class="test1">二、 <span class="text-danger">*</span>申請事由：</p>
+              <p class="text1">二、 <span class="text-danger">*</span>申請事由：</p>
             </b-form-row>
 
             <b-form-row>
@@ -192,7 +192,7 @@
                     lazy
                     trim
                   ></i-date-picker>
-                  <div class="text-danger text1"
+                  <div class="text-danger text2"
                        v-if="$v.enableDate.$model === null && $v.isEnableDate.$model === '1'">請輸入值
                   </div>
 
@@ -211,7 +211,7 @@
                   <!--其他說明 : otherReason-->
                   <b-form-input v-model="$v.otherReason.$model"
                                 :disabled="form.isSubmit === '1'   || formStatusRef !== FormStatusEnum.MODIFY"/>
-                  <div class="text-danger text1" v-if="$v.otherReason.$model === '' && $v.isOther.$model === '1'">
+                  <div class="text-danger text2" v-if="$v.otherReason.$model === '' && $v.isOther.$model === '1'">
                     請輸入值
                   </div>
                 </b-form-group>
@@ -222,7 +222,7 @@
             <hr/>
 
             <b-form-row>
-              <p class="test1">三、系統申請/異動/停用項目：</p>
+              <p class="text1">三、系統申請/異動/停用項目：</p>
             </b-form-row>
 
 
@@ -446,7 +446,7 @@
                   <b-form-input maxlength="200" v-model="row.item.admStatus"
                                 :disabled="userData.deptId !== row.item.admUnit || taskDataRef.taskName.replace('加簽-', '') !== row.item.systemApplyName ||
                                 row.item.checkbox !== '1'  || formStatusRef !== FormStatusEnum.VERIFY"/>
-                  <div class="text-danger text1 mx-1"
+                  <div class="text-danger text2 mx-1"
                        v-if="userData.deptId === row.item.admUnit &&
                        taskDataRef.taskName.replace('加簽-', '') === row.item.systemApplyName &&
                        row.item.checkbox === '1'  &&
@@ -464,7 +464,7 @@
                     row.item.checkbox !== '1'  ||
                     formStatusRef !== FormStatusEnum.VERIFY"
                   ></i-date-picker>
-                  <div class="text-danger text1 mx-1"
+                  <div class="text-danger text2 mx-1"
                        v-if="userData.deptId === row.item.admUnit &&
                        taskDataRef.taskName.replace('加簽-', '') === row.item.systemApplyName &&
                        row.item.checkbox === '1'  &&
@@ -479,7 +479,7 @@
                   <b-form-input maxlength="200" v-model="row.item.admName"
                                 :disabled=" userData.deptId !== row.item.admUnit ||taskDataRef.taskName.replace('加簽-', '') !== row.item.systemApplyName ||
                                 row.item.checkbox !== '1'  || formStatusRef !== FormStatusEnum.VERIFY"/>
-                  <div class="text-danger text1 mx-1"
+                  <div class="text-danger text2 mx-1"
                        v-if="userData.deptId === row.item.admUnit &&
                        taskDataRef.taskName.replace('加簽-', '') === row.item.systemApplyName &&
                        row.item.checkbox === '1'  &&
@@ -1272,7 +1272,7 @@ export default {
 
 <style>
 
-.test1 {
+.text1 {
   font-family: 'Arial Negreta', 'Arial';
   font-weight: 700;
   font-style: normal;
@@ -1280,7 +1280,7 @@ export default {
   margin-left: 20px;
 }
 
-.text1 {
+.text2 {
   margin-top: 0.25rem;
   font-size: 80%;
 }

@@ -41,6 +41,9 @@ import account from './account';
 import chEnNameNotBlank from './ch-en-name-not-blank';
 import fax from './fax';
 import confNumber from './conf-number';
+import cofTransmission from './conf-transmission'
+import confIp from './conf-ip'
+import confPort from './conf-port'
 
 export * from './vuelidate';
 export {
@@ -87,4 +90,7 @@ export {
   chEnNameNotBlank,
   fax,
   confNumber,
+  cofTransmission,
+  confIp,
+  confPort,
 };

@@ -42,6 +42,7 @@
 
             <b-form-row>
               <i-form-group-check
+                labelStar
                 class="col-sm-5"
                 label-cols="5"
                 content-cols="7"
@@ -71,6 +72,7 @@
 
             <b-form-row>
               <i-form-group-check
+                labelStar
                 class="col-sm-5"
                 label-cols="5"
                 content-cols="7"
@@ -80,7 +82,7 @@
                 <b-input-group>
                   <!--申請人員工編號 : appEmpid-->
                   <b-form-input v-model="$v.appEmpid.$model"/>
-                  <b-button class="ml-2"  variant="outline-dark" @click="showErrandModel()">選擇人員</b-button>
+                  <b-button class="ml-2" variant="outline-dark" @click="showErrandModel()">選擇人員</b-button>
                 </b-input-group>
               </i-form-group-check>
 
@@ -105,7 +107,7 @@
               <b-form-row>
 
                 <b-col class="col-sm-5">
-                  <i-form-group-check class="col-12" label-cols="3" content-cols="7" :label="`規則：`"
+                  <i-form-group-check labelStar class="col-12" label-cols="3" content-cols="7" :label="`規則：`"
                                       :item="$v.isEnable">
                     <!--規則 : isEnable-->
                     <b-form-radio-group
@@ -117,7 +119,7 @@
                     />
                   </i-form-group-check>
 
-                  <i-form-group-check class="col-12" label-cols="3" content-cols="7" :label="`使用時段：`"
+                  <i-form-group-check labelStar class="col-12" label-cols="3" content-cols="7" :label="`使用時段：`"
                                       :item="$v.enableTime">
                     <!--使用時段 : enableTime-->
                     <b-form-radio-group v-model="$v.enableTime.$model" @change="changeEnableTime">
@@ -145,6 +147,7 @@
                 </b-col>
                 <b-col>
                   <i-form-group-check
+                    labelStar
                     class="col-sm-12"
                     label-cols="3"
                     content-cols="7"
@@ -203,36 +206,37 @@
               </b-form-row>
 
               <b-form-row>
-                <i-form-group-check class="col-sm-5" label-cols="3" content-cols="7" :label="'來源IP ：'"
+                <i-form-group-check class="col-sm-5" labelStar label-cols="3" content-cols="7" :label="'來源IP ：'"
                                     :item="$v.sourceIp">
                   <!--來源IP : sourceIp-->
-                  <b-form-textarea v-model="$v.sourceIp.$model" rows="3" maxlength="2000" lazy/>
+                  <b-form-textarea v-model="$v.sourceIp.$model" rows="3" maxlength="2000" lazy trim/>
                 </i-form-group-check>
 
-                <i-form-group-check class="col-sm-7" label-cols="3" content-cols="7" :label="`目的IP ：`"
+                <i-form-group-check class="col-sm-7" labelStar label-cols="3" content-cols="7" :label="`目的IP ：`"
                                     :item="$v.targetIp">
                   <!--目的IP : targetIp-->
-                  <b-form-textarea v-model="$v.targetIp.$model" rows="3" maxlength="2000" lazy/>
+                  <b-form-textarea v-model="$v.targetIp.$model" rows="3" maxlength="2000" lazy trim/>
                 </i-form-group-check>
               </b-form-row>
 
               <b-form-row>
-                <i-form-group-check class="col-sm-5" label-cols="3" content-cols="7" :label="'使用協定(port) ：'"
+                <i-form-group-check class="col-sm-5" labelStar label-cols="3" content-cols="7" :label="'使用協定(port) ：'"
                                     :item="$v.port">
                   <!--使用協定(port) : port-->
                   <b-form-input v-model="$v.port.$model"/>
                 </i-form-group-check>
 
-                <i-form-group-check class="col-sm-7" label-cols="3" content-cols="7" :label="`傳輸模式 ：`">
+                <i-form-group-check class="col-sm-7" labelStar label-cols="3" content-cols="7" :label="`傳輸模式 ：`" :item="[$v.isTcp,$v.isUdp]">
                   <b-input-group>
                     <!--傳輸模式是否為tcp: isTcp-->
-                    <b-form-checkbox class="col-6" v-model="$v.isTcp.$model" value="Y" unchecked-value="N"> TCP
+                    <b-form-checkbox class="col-6" v-model="$v.isTcp.$model" value="Y" unchecked-value=""> TCP
                     </b-form-checkbox>
                     <!--傳輸模式是否為udp: isUdp-->
-                    <b-form-checkbox class="col-6" v-model="$v.isUdp.$model" value="Y" unchecked-value="N"> UDP
+                    <b-form-checkbox class="col-6" v-model="$v.isUdp.$model" value="Y" unchecked-value=""> UDP
                     </b-form-checkbox>
                   </b-input-group>
                 </i-form-group-check>
+
               </b-form-row>
 
               <b-form-row>
@@ -375,10 +379,10 @@
 
             <b-container class="mt-3">
               <b-row class="justify-content-center">
-                <i-button class="ml-2" type="tag"  @click="submitForm('0')"/>
-                <i-button class="ml-2" type="node-plus"  @click="submitForm('1')"/>
-                <i-button class="ml-2" type="x-circle"  @click="reset()"/>
-                <i-button class="ml-2" type="arrow-left"  @click="toQueryView()"/>
+                <i-button class="ml-2" type="tag" @click="submitForm('0')"/>
+                <i-button class="ml-2" type="node-plus" @click="submitForm('1')"/>
+                <i-button class="ml-2" type="x-circle" @click="reset()"/>
+                <i-button class="ml-2" type="arrow-left" @click="toQueryView()"/>
               </b-row>
             </b-container>
 
@@ -408,10 +412,10 @@
 <script lang="ts">
 
 import IDualDatePicker from '@/shared/i-date-picker/i-dual-date-picker.vue';
-import {reactive, ref, toRef} from '@vue/composition-api';
+import {reactive, ref, toRef, watch,computed} from '@vue/composition-api';
 import {useValidation, validateState} from '@/shared/form';
 import IFormGroupCheck from '@/shared/form/i-form-group-check.vue';
-import {required} from '@/shared/validators';
+import {required,cofTransmission,confPort,confIp} from '@/shared/validators';
 import IDatePicker from '@/shared/i-date-picker/i-date-picker.vue';
 import {useBvModal} from '@/shared/modal';
 import {notificationErrorHandler} from '@/shared/http/http-response-helper';
@@ -422,6 +426,7 @@ import {navigateByNameAndParams} from "@/router/router";
 import {handleBack} from '@/router/router';
 import errandBmodel from "@/components/errandBmodel.vue";
 import IButton from '@/shared/buttons/i-button.vue';
+
 const appendix = () => import('@/components/appendix.vue');
 const flowChart = () => import('@/components/flowChart.vue');
 
@@ -535,11 +540,11 @@ export default {
       edate: {},
       othereEdate: {},
       delEnableDate: {},
-      sourceIp: {},
-      targetIp: {},
-      port: {},
-      isTcp: {},
-      isUdp: {},
+      sourceIp: {required,confIp},
+      targetIp: {required,confIp},
+      port: {required,confPort},
+      isTcp: {cofTransmission},
+      isUdp: {cofTransmission},
       instructions: {},
       agreeType: {},
       scheduleDate: {},
@@ -554,7 +559,9 @@ export default {
 
     //送出申請  狀態: 暫存0 申請1
     async function submitForm(isSubmit) {
+
       checkValidity().then((isValid: boolean) => {
+
         if (isValid) {
           $bvModal.msgBoxConfirm('是否確認送出修改內容？').then((isOK: boolean) => {
             if (isOK) {
@@ -591,6 +598,7 @@ export default {
         }
       });
     }
+
     //b-tab分頁用
     const changeTabIndex = (index: number) => {
       tabIndex.value = index;
@@ -632,8 +640,6 @@ export default {
       submitForm,
       changeTabIndex,
       activeTab,
-      // dual1,
-      // dual2,
       filePathData,
       userData,
       appendixData,
@@ -676,6 +682,14 @@ export default {
 
 .fixedWidth .custom-control-label {
   width: 100%;
+}
+
+.text-danger {
+  font-weight: bold;
+  width: 100%;
+  margin-top: 0.25rem;
+  font-size: 80%;
+  color: #dc3545;
 }
 
 </style>
