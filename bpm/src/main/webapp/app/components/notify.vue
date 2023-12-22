@@ -102,9 +102,9 @@
         </i-form-group-check>
       </b-form-row>
 
-      <div class="text-center pt-5">
-        <i-button class="ml-2" type="search"  @click="toQuery()"/>
-        <i-button class="ml-2" type="x-circle"  @click="toReset()"/>
+      <div class="text-center mt-1 mb-1">
+        <i-button class="ml-2 mb-1" type="search"  @click="toQuery()"/>
+        <i-button class="ml-2 mb-1" type="x-circle"  @click="toReset()"/>
       </div>
     </div>
 
@@ -162,8 +162,8 @@ export default defineComponent({
   setup() {
 
     //取得所有ACNT_IS_VALID=Y 的使用者
-    const userAllData = ref(useGetters(['getUserAllData']).getUserAllData).value;
-
+    const userAllData = ref(useGetters(['getUserAllData']).getUserAllData);
+    console.log('userAllData',userAllData)
     //登入者資訊
     const userData = ref(useGetters(['getUserData']).getUserData).value;
 
@@ -257,7 +257,7 @@ export default defineComponent({
           sortable: false,
           thClass: 'text-center',
           tdClass: 'text-center align-middle',
-          formatter: value => (value == undefined ? '' : currentProcessingUnit(value, bpmDeptsOptions, userAllData)),
+          formatter: value => (value == undefined ? '' : currentProcessingUnit(value, bpmDeptsOptions, userAllData.value)),
         },
         {
           key: 'processInstanceStatus',
@@ -326,7 +326,7 @@ export default defineComponent({
         queryStatus.value = true;
         table.data = [];
         if (data.length <= 0) return;
-
+        console.log('table.data',table.data)
         // 最新的日期到最舊的日期排序
         table.data = data.sort((a, b) => {
           const dateA: any = new Date(a.signingDatetime);

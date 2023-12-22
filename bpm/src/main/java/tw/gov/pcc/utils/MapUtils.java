@@ -5,8 +5,14 @@ import java.util.Map;
 
 public class MapUtils {
 
+    /**
+     * 將給定的Map中的所有鍵轉換為駝峰式（Camel Case）並返回新的Map。
+     *
+     * @param map 要轉換的原始Map。
+     * @return 包含駝峰式鍵的新Map。
+     */
     public  Map<String, Object> getNewMap( Map<String, Object> map) {
-
+        // 創建新的Map來存儲駝峰式鍵值對
         Map<String, Object> camelCaseMap = new HashMap<>();
 
         //過濾所有key
@@ -27,21 +33,30 @@ public class MapUtils {
         return camelCaseMap;
     }
 
-    //將有底線分割字母轉成駝峰
+    /**
+     * 將具有底線分隔的字母組轉換為駝峰式表示法。
+     *
+     * @param input 要轉換的字串。
+     * @return 駝峰式表示法的字串。
+     */
     public static String toCamelCase(String input) {
         StringBuilder camelCase = new StringBuilder();
         boolean nextUpperCase = false;
 
+        // 遍歷輸入字串的每個字符
         for (int i = 0; i < input.length(); i++) {
             char currentChar = input.charAt(i);
 
+            // 如果是底線，則設置下一個字符為大寫
             if (currentChar == '_') {
                 nextUpperCase = true;
             } else {
+                // 如果下一個字符應該是大寫，則將當前字符轉換為大寫
                 if (nextUpperCase) {
                     camelCase.append(Character.toUpperCase(currentChar));
                     nextUpperCase = false;
                 } else {
+                    // 否則將字符轉換為小寫
                     camelCase.append(Character.toLowerCase(currentChar));
                 }
             }

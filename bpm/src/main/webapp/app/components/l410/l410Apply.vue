@@ -493,7 +493,7 @@ import IDualDatePicker from '@/shared/i-date-picker/i-dual-date-picker.vue';
 import {onMounted, reactive, ref, toRef} from '@vue/composition-api';
 import {useValidation, validateState} from '@/shared/form';
 import IFormGroupCheck from '@/shared/form/i-form-group-check.vue';
-import {required} from '@/shared/validators';
+import {required,chEnNameNotBlank,enName} from '@/shared/validators';
 import IDatePicker from '@/shared/i-date-picker/i-date-picker.vue';
 import {useBvModal} from '@/shared/modal';
 import {handleBack, navigateByNameAndParams} from "@/router/router";
@@ -721,7 +721,7 @@ export default {
       filUnit: {required},
       appName: {required},
       isSubmit: {required},
-      appEngName: {required},
+      appEngName: {required: required, enName: enName},
       appEmpid: {required},
       extNum: {},
       appUnit: {required},

@@ -19,8 +19,7 @@
         <dual-form-invalid-feedback :dualInvalidFeedback="[dual1Prop.$errors, dual2Prop.$errors]"></dual-form-invalid-feedback>
       </div>
       <div v-else-if="itemProp != null">
-        <b-form-invalid-feedback :force-show="true" v-if="marginCheck">
-          {{ itemErrorsMessage() }}
+        <b-form-invalid-feedback :force-show="true" v-if="marginCheck"  v-html="itemErrorsMessage()">
         </b-form-invalid-feedback>
       </div>
     </div>
@@ -117,6 +116,7 @@ export default defineComponent({
     }
 
     function itemErrorsMessage(): string {
+
       if (!!itemProp.value && itemProp.value instanceof Array) {
         const itemError = itemProp.value.find(item => item.$error);
         return itemError ? itemError.$errors[0].$message : '';

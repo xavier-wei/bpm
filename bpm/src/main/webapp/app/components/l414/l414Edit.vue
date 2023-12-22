@@ -408,21 +408,26 @@
               <b-container class="mt-3">
                 <b-row class="justify-content-center">
 
-                  <i-button class="ml-2" type="tag"  @click="submitForm('0')" v-show="formStatusRef === FormStatusEnum.MODIFY"/>
-                  <i-button class="ml-2" type="send-check"  @click="submitForm('1')" v-show="formStatusRef === FormStatusEnum.MODIFY"/>
+                  <i-button class="ml-2" type="tag" @click="submitForm('0')"
+                            v-show="formStatusRef === FormStatusEnum.MODIFY"/>
+                  <i-button class="ml-2" type="node-plus" @click="submitForm('1')"
+                            v-show="formStatusRef === FormStatusEnum.MODIFY"/>
 
                   <div v-if="userData.isSupervisor && formStatusRef === FormStatusEnum.VERIFY">
-                    <i-button class="ml-2" type="check"  @click="reviewStart('同意',true)"/>
-                    <i-button class="ml-2" type="x"   @click="reviewStart('不同意',true)"/>
+                    <i-button class="ml-2" type="check" @click="reviewStart('同意',true)"/>
+                    <i-button class="ml-2" type="x" @click="reviewStart('不同意',true)"/>
                   </div>
                   <div v-else-if="formStatusRef === FormStatusEnum.VERIFY">
-                    <i-button class="ml-2" type="send-check"   @click="reviewStart('審核',true)" />
+                    <i-button class="ml-2" type="send-check" @click="reviewStart('審核',true)"/>
                   </div>
 
-                  <i-button class="ml-2" type="check2-circle"  @click="showModel()" v-show="formStatusRef === FormStatusEnum.VERIFY && isSignatureRef"/>
-                  <i-button class="ml-2" type="upload"  @click="reviewStart('補件',true)" v-show="configTitleName(userData.titleName) && formStatusRef === FormStatusEnum.VERIFY"/>
-                  <i-button class="ml-2" type="reply"  @click="toCancel"  v-show="isCancelRef && userData.userId === form.appEmpid && (form.processInstanceStatus === '0' || form.processInstanceStatus === '2')"/>
-                  <i-button class="ml-2" type="arrow-left"  @click="toQueryView()"/>
+                  <i-button class="ml-2" type="check2-circle" @click="showModel()"
+                            v-show="formStatusRef === FormStatusEnum.VERIFY && isSignatureRef"/>
+                  <i-button class="ml-2" type="upload" @click="reviewStart('補件',true)"
+                            v-show="configTitleName(userData.titleName) && formStatusRef === FormStatusEnum.VERIFY"/>
+                  <i-button class="ml-2" type="reply" @click="toCancel"
+                            v-show="isCancelRef && userData.userId === form.appEmpid && (form.processInstanceStatus === '0' || form.processInstanceStatus === '2')"/>
+                  <i-button class="ml-2" type="arrow-left" @click="toQueryView()"/>
 
                 </b-row>
               </b-container>
@@ -468,6 +473,7 @@ import signatureBmodel from "@/components/signatureBmodel.vue";
 import {configRoleToBpmIpt, configRoleToBpmCrOperator, configTitleName} from '@/shared/word/configRole';
 import errandBmodel from "@/components/errandBmodel.vue";
 import IButton from '@/shared/buttons/i-button.vue';
+import {required,cofTransmission,confPort,confIp} from '@/shared/validators';
 
 const appendix = () => import('@/components/appendix.vue');
 const flowChart = () => import('@/components/flowChart.vue');
@@ -577,12 +583,6 @@ export default {
       opinionData: ''
     });
 
-    //啟用期間結束時間 <i-dual-date-picker> 需要接收的參數
-    const dual1 = ref(null);
-
-    //啟用期間開始時間 <i-dual-date-picker> 需要接收的參數
-    const dual2 = ref(null);
-
     const notificationService = useNotification();
     const $bvModal = useBvModal();
 
@@ -638,28 +638,28 @@ export default {
     const form = reactive(Object.assign({}, formDefault));
     const rules = {
       formId: {},
-      applyDate: {},
-      filEmpid: {},
-      filName: {},
-      filUnit: {},
-      appEmpid: {},
-      appName: {},
-      appUnit: {},
+      applyDate: {required},
+      filEmpid: {required},
+      filName: {required},
+      filUnit: {required},
+      appEmpid: {required},
+      appName: {required},
+      appUnit: {required},
       isSubmit: {},
-      isEnable: {},
-      enableTime: {},
+      isEnable: {required},
+      enableTime: {required},
       workingTime: {},
       otherEnableTime: {},
-      selecteEdateType: {},
+      selecteEdateType: {required},
       sdate: {},
       edate: {},
       othereEdate: {},
       delEnableDate: {},
-      sourceIp: {},
-      targetIp: {},
-      port: {},
-      isTcp: {},
-      isUdp: {},
+      sourceIp: {required,confIp},
+      targetIp: {required,confIp},
+      port: {required,confPort},
+      isTcp: {cofTransmission},
+      isUdp: {cofTransmission},
       instructions: {},
       agreeType: {},
       scheduleDate: {},
@@ -719,41 +719,44 @@ export default {
 
     //送出申請  狀態: 暫存0 申請1
     async function submitForm(isSubmit) {
+      checkValidity().then((isValid: boolean) => {
+        if (isValid) {
+          $bvModal.msgBoxConfirm('是否確認送出修改內容?').then((isOK: boolean) => {
+            if (isOK) {
+              const formData = new FormData();
 
-      $bvModal.msgBoxConfirm('是否確認送出修改內容?').then((isOK: boolean) => {
-        if (isOK) {
-          const formData = new FormData();
+              form.isSubmit = isSubmit;
 
-          form.isSubmit = isSubmit;
-
-          let body = {
-            "L414": JSON.stringify(form)
-          }
-
-          formData.append('form', new Blob([JSON.stringify(body)], {type: 'application/json'}));
-
-          if (JSON.stringify(appendixData.value) !== '[]') {
-            for (let i in appendixData.value) {
-              formData.append('appendixFiles', appendixData.value[i].file[0]);
-            }
-            formData.append('fileDto', new Blob([JSON.stringify(appendixData.value)], {type: 'application/json'}));
-          }
-
-          axios
-            .patch(`/process/patch/L414`, formData, headers)
-            .then(({data}) => {
-              if (isSubmit === '1') {
-                reviewStart(isSubmit, false);
-              } else {
-                $bvModal.msgBoxOk('表單更新完畢');
-                navigateByNameAndParams('pending', {isReload: false, isNotKeepAlive: true, query: queryRef.value});
+              let body = {
+                "L414": JSON.stringify(form)
               }
 
-            })
-            .catch(notificationErrorHandler(notificationService));
+              formData.append('form', new Blob([JSON.stringify(body)], {type: 'application/json'}));
 
+              if (JSON.stringify(appendixData.value) !== '[]') {
+                for (let i in appendixData.value) {
+                  formData.append('appendixFiles', appendixData.value[i].file[0]);
+                }
+                formData.append('fileDto', new Blob([JSON.stringify(appendixData.value)], {type: 'application/json'}));
+              }
+
+              axios
+                .patch(`/process/patch/L414`, formData, headers)
+                .then(({data}) => {
+                  if (isSubmit === '1') {
+                    reviewStart(isSubmit, false);
+                  } else {
+                    $bvModal.msgBoxOk('表單更新完畢');
+                    navigateByNameAndParams('pending', {isReload: false, isNotKeepAlive: true, query: queryRef.value});
+                  }
+                })
+                .catch(notificationErrorHandler(notificationService));
+            }
+          });
+        }else {
+          $bvModal.msgBoxOk('欄位尚未填寫完畢，請於輸入完畢後再行送出。');
         }
-      });
+      })
     }
 
     //根據畫面點選的按送出，同意 不同意 審核(除了申請者的上級會有同意跟不同意，其餘只會有送出按鈕) 補件
@@ -988,8 +991,6 @@ export default {
       submitForm,
       changeTabIndex,
       activeTab,
-      dual1,
-      dual2,
       filePathData,
       userData,
       appendixData,

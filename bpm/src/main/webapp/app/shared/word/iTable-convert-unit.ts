@@ -11,7 +11,6 @@ import {formatToString, newformatDate} from "@/shared/date/minguo-calendar-utils
  * @returns {string} 返回特定格式的字符串，用於前端顯示。 單人: 王Ｏ明(秘書處文書科) 多人: 王Ｏ明(資訊推動小組)、王Ｏ衛(資訊推動小組)
  */
 export function currentProcessingUnit(user: any, unitList: any, userAllData: any) {
-
   if (user == null) return '';
 
   //把後端傳來的user轉成 { userId: xxx }
