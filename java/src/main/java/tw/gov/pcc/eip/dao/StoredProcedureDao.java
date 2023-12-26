@@ -57,6 +57,14 @@ public interface StoredProcedureDao {
      * @return 執行結果
      */
     Object callProcedure(String procedureName, SqlParameterSource param);
+
+    /**
+     * call SP
+     * @param procedureName
+     * @param param         執行參數
+     * @param sqlParameters 指定傳入的參數
+     * @return 執行結果
+     */
     Object callProcedure(String procedureName, SqlParameterSource param, SqlParameter[] sqlParameters);
 
 

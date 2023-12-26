@@ -21,7 +21,7 @@ import java.util.stream.Collectors;
 public class UpdateTableauFilesService {
     private static final String CODE_KIND = "TABLEAU%";
     private static final String IP = "ip";
-    private static final String PORT = "port";
+    private static final int PORT = 22;
     private static final String USERNAME = "username";
     private static final String PASSWORD = "password";
     private static final String FOLDER = "folder";
@@ -41,8 +41,6 @@ public class UpdateTableauFilesService {
         // 從資料庫中取出Eipcode的相關訊息，並存到Map中
         Map<String, String> sftpServerInfo = eipcodeDao.findCodeKindLike(CODE_KIND).stream().filter(e->"TABLEAUFIG_SFTP".equals(e.getCodekind())).collect(Collectors.toMap(Eipcode::getCodeno, Eipcode::getCodename));
         // 從Map中取出host、port、username的值
-        sftpServerInfo.keySet().forEach(System.out::println);
-        sftpServerInfo.values().forEach(System.out::println);
         String host = sftpServerInfo.get(IP);
         remoteDir =sftpServerInfo.get(FOLDER);
         String password = sftpServerInfo.get(PASSWORD);
@@ -51,7 +49,7 @@ public class UpdateTableauFilesService {
         Session session;
         try {
             // 使用JSch與遠端主機建立Session
-            session = jsch.getSession(username, host, 22);
+            session = jsch.getSession(username, host, PORT);
             session.setPassword(password); // 設定連線密碼
             Properties prop = new Properties();
             // SSH服務器會在連接的時候檢查主機的公鑰，如果服務器的公鑰已存在於客戶端，那麼連線將繼續；如果不存在，則進行StrictHostKeyChecking
