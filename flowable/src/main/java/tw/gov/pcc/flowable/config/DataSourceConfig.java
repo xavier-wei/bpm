@@ -14,10 +14,7 @@ import javax.crypto.Cipher;
 import javax.crypto.spec.IvParameterSpec;
 import javax.crypto.spec.SecretKeySpec;
 import javax.sql.DataSource;
-import java.io.BufferedReader;
-import java.io.FileReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
+import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.util.Base64;
 import java.util.Properties;
@@ -46,7 +43,7 @@ public class DataSourceConfig {
     }
 
     private String getSettingWildfly() {
-        try (BufferedReader reader = new BufferedReader(new FileReader(settingPath))) {
+        try (BufferedReader reader = new BufferedReader(new InputStreamReader(new FileInputStream(settingPath), StandardCharsets.UTF_8))) {
             return decode(reader.readLine().trim());
         } catch (IOException e) {
             return null;
@@ -58,6 +55,8 @@ public class DataSourceConfig {
     @Bean
     @Profile("dev")
     public DataSource dataSourceDev() {
+        log.info("profile:{}", System.getProperty("spring.profiles.active"));
+        log.info("dbUrl:{}",dbUrl);
         HikariConfig config = getHikariConfig(getSettingDev());
 
         return new HikariDataSource(config);
@@ -66,6 +65,8 @@ public class DataSourceConfig {
     @Bean
     @Profile("prod || prod_dr || prod_pra")
     public DataSource dataSourceWildfly() {
+        log.info("profile:{}", System.getProperty("spring.profiles.active"));
+        log.info("dbUrl:{}",dbUrl);
         HikariConfig config = getHikariConfig(getSettingWildfly());
 
         return new HikariDataSource(config);
@@ -98,6 +99,8 @@ public class DataSourceConfig {
         String[] decodeInfo;
         try (BufferedReader reader = new BufferedReader(new FileReader(decodePath))) {
             decodeInfo = reader.readLine().trim().split(",");
+            log.info("decodeInfo:{}",decodeInfo[0]);
+            log.info("decodeInfo:{}",decodeInfo[1]);
         } catch (IOException e) {
             return null;
         }
