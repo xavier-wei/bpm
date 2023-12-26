@@ -38,6 +38,10 @@
 			<tags:form-row>
              <label class="col-form-label text-left col-3"><c:out value="${fn:substring(caseData.applyTpNm, 2,-1)}：${caseData.itemId}"/></label>
             </tags:form-row>
+			<tags:form-row>
+			<font class="red">※注意事項：</font>
+			請完成後，請務必列印報表出來跑蓋章簽核流程。
+			</tags:form-row>
      <div class="table-responsive" id="div1">
 		 <table class="table" id="tb1">
 			 <thead data-orderable="true">

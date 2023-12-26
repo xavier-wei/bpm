@@ -208,7 +208,7 @@ public class KeepTrkMstDaoImpl extends BaseDao<KeepTrkMst> implements KeepTrkMst
         sql_2.append("           AND EXISTS( ");
         sql_2.append("                    SELECT 1 FROM KeepTrkDtl c ");
         sql_2.append("                     WHERE c.TrkID = a.TrkID ");
-        sql_2.append("                       AND :deptID IN (a.CreDept, b.TrkObj) ");  //操作者之部室代碼
+        sql_2.append("                       AND :deptID IN (a.CreDept, c.TrkObj) ");  //操作者之部室代碼
         sql_2.append("                     ) ");
         if(StringUtils.isNotBlank(trkID)){
             sql_2.append("       AND a.TrkID like '%' + :trkID + '%'  ");     // 畫面輸入[列管編號]

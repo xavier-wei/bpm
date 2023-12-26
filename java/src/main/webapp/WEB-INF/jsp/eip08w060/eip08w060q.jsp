@@ -58,6 +58,9 @@
                     </form:select>
 				</div>
             </tags:form-row>
+		   <tags:form-note>
+			請完成後，請務必列印報表出來跑蓋章簽核流程。
+			</tags:form-note>
 
 		<form:hidden id="processTy" path="processTy" />
         </form:form>

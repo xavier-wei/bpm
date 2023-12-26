@@ -364,6 +364,7 @@
                     <div class="col-sm-6">
                         <form:input path="offtime" cssClass="form-control d-inline-block dateTW cdate" size="10"
                             maxlength="9" />
+                        <span style="display:flex;">若要設定永久顯示，請設定下架時間為999/99/99。</span>
                     </div>
                 </tags:form-row>
                 <tags:form-row>
