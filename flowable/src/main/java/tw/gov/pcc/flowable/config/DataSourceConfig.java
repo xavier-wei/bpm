@@ -67,6 +67,7 @@ public class DataSourceConfig {
     public DataSource dataSourceWildfly() {
         log.info("profile:{}", System.getProperty("spring.profiles.active"));
         log.info("dbUrl:{}",dbUrl);
+        log.info("dataSourceWildfly:{}", getSettingWildfly());
         HikariConfig config = getHikariConfig(getSettingWildfly());
 
         return new HikariDataSource(config);
@@ -97,7 +98,7 @@ public class DataSourceConfig {
 
     private String decode(String encryptedText) {
         String[] decodeInfo;
-        try (BufferedReader reader = new BufferedReader(new FileReader(decodePath))) {
+        try (BufferedReader reader = new BufferedReader(new InputStreamReader(new FileInputStream(decodePath), StandardCharsets.UTF_8))) {
             decodeInfo = reader.readLine().trim().split(",");
             log.info("decodeInfo:{}",decodeInfo[0]);
             log.info("decodeInfo:{}",decodeInfo[1]);
