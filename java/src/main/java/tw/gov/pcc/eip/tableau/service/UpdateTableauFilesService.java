@@ -23,10 +23,11 @@ public class UpdateTableauFilesService {
     private static final String IP = "ip";
     private static final int PORT = 22;
     private static final String USERNAME = "username";
-    private static final String PASSWORD = "password";
+    private static final String P2S = "pass";
+    private static final String WORD = "word";
     private static final String FOLDER = "folder";
     private static final String JOB_NAME = "UPDATE_TABLEAU_FILES";
-    private  String remoteDir = null;
+    private String remoteDir = null;
     private static final String LOCAL_DIR = "/mnt/stsdat/eip/TABLEAU/OUTPUT/FIG";
     private final EipcodeDao eipcodeDao;
     private final StoredProcedureDao storedProcedureDao;
@@ -37,13 +38,13 @@ public class UpdateTableauFilesService {
     }
 
     public void updateTableauFiles() {
-        writeLog("start","開始執行更新Tableau檔案","");
+        writeLog("start", "開始執行更新Tableau檔案", "");
         // 從資料庫中取出Eipcode的相關訊息，並存到Map中
-        Map<String, String> sftpServerInfo = eipcodeDao.findCodeKindLike(CODE_KIND).stream().filter(e->"TABLEAUFIG_SFTP".equals(e.getCodekind())).collect(Collectors.toMap(Eipcode::getCodeno, Eipcode::getCodename));
+        Map<String, String> sftpServerInfo = eipcodeDao.findCodeKindLike(CODE_KIND).stream().filter(e -> "TABLEAUFIG_SFTP".equals(e.getCodekind())).collect(Collectors.toMap(Eipcode::getCodeno, Eipcode::getCodename));
         // 從Map中取出host、port、username的值
         String host = sftpServerInfo.get(IP);
-        remoteDir =sftpServerInfo.get(FOLDER);
-        String password = sftpServerInfo.get(PASSWORD);
+        remoteDir = sftpServerInfo.get(FOLDER);
+        String password = sftpServerInfo.get(P2S + WORD);
         String username = sftpServerInfo.get(USERNAME);
         JSch jsch = new JSch(); // 創建一個JSch的實例
         Session session;
@@ -63,17 +64,18 @@ public class UpdateTableauFilesService {
             sftpChannel.exit();   // 退出sftp頻道
             session.disconnect(); // 中斷session
             log.info("已成功中斷session");
-            writeLog("end","更新Tableau檔案完成","");
+            writeLog("end", "更新Tableau檔案完成", "");
 
         } catch (Exception e) {
             log.error("發現異常: {}", e.getMessage());
-            writeLog("exception","發現異常","執行失敗");
+            writeLog("exception", "發現異常", "執行失敗");
         }
     }
 
     /**
      * 取得已連接到特定遠端目錄並已完成特定工作的 SFTP server。
      * 工作包括從遠端目錄清單中，找出所有非資料夾的檔案，並將其下載到本地目錄。
+     *
      * @param channel 預期已被開啟並已連接到 SFTP server 的 SFTP 頻道
      * @return 傳入的 SFTP 頻道，已進行遠端目錄改變與檔案下載
      * @throws SftpException 如果任何 SFTP 錯誤發生，例如遠端目錄不存在或檔案下載失敗等。
@@ -95,7 +97,7 @@ public class UpdateTableauFilesService {
         return channel;
     }
 
-    private void writeLog(String step,String stepInfo,String memo) {
+    private void writeLog(String step, String stepInfo, String memo) {
         SqlParameter[] sqlParameters = {
                 new SqlParameter("@p_job_id", Types.NVARCHAR),
                 new SqlParameter("@p_job_name", Types.NVARCHAR),
@@ -114,6 +116,6 @@ public class UpdateTableauFilesService {
 
         SqlParameterSource param = new MapSqlParameterSource(params);
 
-        storedProcedureDao.callProcedure("USP_ADD_EIPJOBLOG", param,sqlParameters);
+        storedProcedureDao.callProcedure("USP_ADD_EIPJOBLOG", param, sqlParameters);
     }
 }

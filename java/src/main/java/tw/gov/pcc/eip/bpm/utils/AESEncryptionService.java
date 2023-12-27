@@ -8,6 +8,7 @@ import javax.crypto.spec.IvParameterSpec;
 import javax.crypto.spec.SecretKeySpec;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
+import java.util.Arrays;
 import java.util.Base64;
 
 @Service
@@ -21,7 +22,8 @@ public class AESEncryptionService {
 
     public String encrypt(String id) throws Exception {
         String key = getKey();
-        SecretKeySpec secretKey = new SecretKeySpec(key.getBytes(StandardCharsets.UTF_8), "AES");
+        byte[] keyBytes = Arrays.copyOf(key.getBytes(StandardCharsets.UTF_8), 32);
+        SecretKeySpec secretKey = new SecretKeySpec(keyBytes, "AES");
         String cipherInstance = aesService.getBpmCipher();
         Cipher cipher = Cipher.getInstance(cipherInstance);
         cipher.init(Cipher.ENCRYPT_MODE, secretKey, new IvParameterSpec(new byte[16]));
@@ -30,8 +32,8 @@ public class AESEncryptionService {
     }
 
     public String getKey() {
-
-        return aesService.getAESCode();
+        String key = aesService.getAESCode();
+        return key+key;
 
     }
 }

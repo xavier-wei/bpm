@@ -4,6 +4,7 @@ import javax.crypto.Cipher;
 import javax.crypto.spec.IvParameterSpec;
 import javax.crypto.spec.SecretKeySpec;
 import java.nio.charset.StandardCharsets;
+import java.util.Arrays;
 import java.util.Base64;
 
 public class AESDecryption {
@@ -12,7 +13,9 @@ public class AESDecryption {
 
     public static String decrypt(String encryptedText) throws Exception {
         String key = ParameterUtil.getAesKey();
-        SecretKeySpec secretKey = new SecretKeySpec(key.getBytes(StandardCharsets.UTF_8), "AES");
+        key=key+key;
+        byte[] keyBytes = Arrays.copyOf(key.getBytes(StandardCharsets.UTF_8), 32);
+        SecretKeySpec secretKey = new SecretKeySpec(keyBytes, "AES");
         String cipherInstance = ParameterUtil.getBpmCipher();
         Cipher cipher = Cipher.getInstance(cipherInstance);
         cipher.init(Cipher.DECRYPT_MODE, secretKey, new IvParameterSpec(new byte[16]));
