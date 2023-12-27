@@ -23,7 +23,7 @@ public class UpdateTableauFilesService {
     private static final String IP = "ip";
     private static final int PORT = 22;
     private static final String USERNAME = "username";
-    private static final String PASSWORD = "password";
+    private static final String ACCESS_CODE  = "password";
     private static final String FOLDER = "folder";
     private static final String JOB_NAME = "UPDATE_TABLEAU_FILES";
     private  String remoteDir = null;
@@ -43,7 +43,7 @@ public class UpdateTableauFilesService {
         // 從Map中取出host、port、username的值
         String host = sftpServerInfo.get(IP);
         remoteDir =sftpServerInfo.get(FOLDER);
-        String password = sftpServerInfo.get(PASSWORD);
+        String password = sftpServerInfo.get(ACCESS_CODE);
         String username = sftpServerInfo.get(USERNAME);
         JSch jsch = new JSch(); // 創建一個JSch的實例
         Session session;
