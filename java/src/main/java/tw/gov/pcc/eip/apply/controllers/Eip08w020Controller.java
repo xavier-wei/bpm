@@ -71,8 +71,8 @@ public class Eip08w020Controller extends BaseController {
 		String deptname = deptsDao.findByPk(userData.getDeptId()).getDept_name();
 		caseData.setApply_dept(deptname);// 申請單位
 		caseData.setApply_user(userData.getUserName());// 申請人
-		caseData.setOriApply_dept(userData.getDeptId());
-		caseData.setOriApply_user(userData.getUserId());
+//		caseData.setOriApply_dept(userData.getDeptId());
+//		caseData.setOriApply_user(userData.getUserId());
 		caseData.setApplydateEnd(DateUtility.getNowChineseDate());
 		return new ModelAndView(QUERY_PAGE);
 	}
@@ -83,8 +83,8 @@ public class Eip08w020Controller extends BaseController {
 		String deptname = deptsDao.findByPk(userData.getDeptId()).getDept_name();
 		caseData.setApply_dept(deptname);// 申請單位
 		caseData.setApply_user(userData.getUserName());// 申請人
-		caseData.setOriApply_dept(userData.getDeptId());
-		caseData.setOriApply_user(userData.getUserId());
+//		caseData.setOriApply_dept(userData.getDeptId());
+//		caseData.setOriApply_user(userData.getUserId());
 		caseData.setApplydateEnd(DateUtility.getNowChineseDate());
 	}
 
@@ -171,7 +171,7 @@ public class Eip08w020Controller extends BaseController {
 		}
 
 		try {
-			eip08w020Service.insertApplyItem(caseData);
+			eip08w020Service.insertApplyItem(caseData,userData);
 			setSystemMessage("申請成功");
 			resetData(caseData);
 		} catch (Exception e) {
@@ -200,7 +200,7 @@ public class Eip08w020Controller extends BaseController {
 		}
 
 		try {
-			eip08w020Service.getApplyItem(caseData);
+			eip08w020Service.getApplyItem(caseData,userData);
 			if (CollectionUtils.isEmpty(caseData.getApplyitemList())) {
 				setSystemMessage("查無資料");
 				return QUERY_PAGE;
@@ -286,7 +286,7 @@ public class Eip08w020Controller extends BaseController {
 		}
 
 		try {
-			eip08w020Service.getApplyItem(caseData);
+			eip08w020Service.getApplyItem(caseData,userData);
 			if (CollectionUtils.isEmpty(caseData.getApplyitemList()) || caseData.getApplyitemList().size() == 1) {
 				return QUERY_PAGE;
 			}

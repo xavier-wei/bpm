@@ -46,8 +46,8 @@
                     <form:input path="itemnoStr" cssClass="add form-control" maxlength="20"/>
                 </div>
             </tags:form-row>
-            <form:hidden path="oriApply_user"/>
-            <form:hidden path="oriApply_dept"/>
+<%--             <form:hidden path="oriApply_user"/> --%>
+<%--             <form:hidden path="oriApply_dept"/> --%>
         </form:form>
     </fieldset>
 </jsp:attribute>

@@ -108,7 +108,7 @@ public class Eip08w020Service {
 	 * @param caseData
 	 * 
 	 */
-	public int insertApplyItem(Eip08w020Case caseData) throws Exception {
+	public int insertApplyItem(Eip08w020Case caseData,UserBean userData) throws Exception {
 		String nowDate = DateUtility.getNowWestDate();
 		String nowDatetime = DateUtility.getNowWestDateTime(true);
 		Integer index = 1;
@@ -124,9 +124,9 @@ public class Eip08w020Service {
 				applyitem.setSeqno(String.valueOf(index)); // 序號
 				applyitem.setItemkind(data.getItemkind()); // 品名大類
 				applyitem.setItemno(data.getItemno()); // 品名
-				applyitem.setApply_user(caseData.getOriApply_user()); // 申請人
+				applyitem.setApply_user(userData.getUserId()); // 申請人
 				applyitem.setApply_date(nowDate); // 申請日期
-				applyitem.setApply_dept(caseData.getOriApply_dept()); // 申請部門
+				applyitem.setApply_dept(userData.getDeptId()); // 申請部門
 				applyitem.setApply_memo(caseData.getApply_memo()); // 申請用途
 				applyitem.setWithhold_cnt_b(Nvl(data.getWithhold_cnt()));// 申請前預扣數量
 				applyitem.setWithhold_cnt_a(Nvl(data.getWithhold_cnt()) + Nvl(data.getApply_cnt()));// 申請前預扣數量+[畫面].申請數量
@@ -135,9 +135,9 @@ public class Eip08w020Service {
 				applyitem.setApply_cnt(Nvl(data.getApply_cnt())); // [畫面].申請數量
 				applyitem.setUnit(StringUtils.isEmpty(data.getUnit()) ? "" : data.getUnit()); // [畫面].單位單位
 				applyitem.setProcess_status("1");
-				applyitem.setCre_user(caseData.getOriApply_user()); // [畫面輸入].申請人
+				applyitem.setCre_user(userData.getUserId()); // [畫面輸入].申請人
 				applyitem.setCre_datetime(nowDatetime); // 系統日期時間
-				applyitem.setUpd_user(caseData.getOriApply_user()); // =[畫面輸入].申請人
+				applyitem.setUpd_user(userData.getUserId()); // =[畫面輸入].申請人
 				applyitem.setUpd_datetime(nowDatetime); // 同cre_datetime
 				applyitemDao.insert(applyitem);
 				index++;
@@ -156,16 +156,12 @@ public class Eip08w020Service {
 	 * @param caseData
 	 * @return
 	 */
-	public void getApplyItem(Eip08w020Case caseData) throws Exception {
+	public void getApplyItem(Eip08w020Case caseData,UserBean userData) throws Exception {
 
-		List<Applyitem> list = applyitemDao.selectByApplyUserAndApply_deptAndapplyDate(caseData.getOriApply_user(),
-				userData.getDeptId(),
+		List<Applyitem> list = applyitemDao.selectByApplyUserAndApply_deptAndapplyDate(userData.getUserId(),userData.getDeptId(),
 				StringUtils.isNotEmpty(caseData.getApplydateStart())
-						? DateUtility.changeDateType(caseData.getApplydateStart())
-						: "",
-				StringUtils.isNotEmpty(caseData.getApplydateEnd())
-						? DateUtility.changeDateType(caseData.getApplydateEnd())
-						: "",
+						? DateUtility.changeDateType(caseData.getApplydateStart()): "",
+				StringUtils.isNotEmpty(caseData.getApplydateEnd())? DateUtility.changeDateType(caseData.getApplydateEnd()): "",
 				caseData.getItemnoStr());
 
 		if (CollectionUtils.isNotEmpty(list)) {
