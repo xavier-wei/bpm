@@ -6,7 +6,7 @@
       <div class="m-2">
         <P> 簽核流程資訊： </P>
 
-        <b-table :items="signerListTable.data" :fields="signerListTable.fields" bordered responsive="sm">
+        <b-table :items="signerListTable.data" :fields="signerListTable.fields" bordered responsive="sm" v-show="queryStatus">
 
           <template #cell(idAndName)="row">
             <template v-for="(staffList, index) in row.item.empIds">
@@ -113,6 +113,9 @@ export default {
     //暫存所有簽核流程資訊，在查完後端後會把所有data整理完附值給signerListTable，在給畫面的 b-table
     const signerList = ref([]);
 
+    //是否顯示bTable
+    const queryStatus = ref(false);
+
     const notificationService = useNotification();
 
     //列舉型別
@@ -195,6 +198,7 @@ export default {
       axios
         .get(`/eip/getBpmSignStatus/${id}`)
         .then(({data}) => {
+
           if (data.length === 0) return;
 
           signStatusTable.data = data;
@@ -210,6 +214,10 @@ export default {
               signingDatetime: ''
             });
           }
+
+          if (processInstanceStatusRef.value !== '1' && processInstanceStatusRef.value !== '3') {
+            getFindByBpmSignerList(id);
+          }
         })
         .catch(notificationErrorHandler(notificationService));
     }
@@ -223,6 +231,9 @@ export default {
         .get(`/eip/getBpmSignerList/${id}`)
         .then(({data}) => {
           if (data.length <= 0) return;
+
+          queryStatus.value = true;
+
           data.forEach(i => {
             let signer = {
               taskName: '',
@@ -244,7 +255,6 @@ export default {
     //監聽父層傳來的formId，有變就會去後端取資料給前端
     watch(formIdProp, (value) => {
         getBpmSignStatus(value);
-        getFindByBpmSignerList(value);
       },
       {immediate: true}
     )
@@ -259,6 +269,7 @@ export default {
       changeCodeNoToCh,
       bpmDeptsOptions,
       signerListTable,
+      queryStatus
     }
   }
 }

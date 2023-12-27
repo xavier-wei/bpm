@@ -590,7 +590,7 @@ export default {
         .map((field: { key: string; label: string; formatter: Function }) => ({
           key: field.key,
           label: `${field.label}：`,
-          value: field.formatter ? field.formatter(item[field.key], field.key, item) : item[field.key],
+          value: field.formatter ? field.formatter(item[field.key], field.key, item).replace(/<br>/g, '\n') : item[field.key].replace(/<br>/g, '\n'),
         }));
     };
 

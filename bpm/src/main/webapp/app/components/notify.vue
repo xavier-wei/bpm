@@ -163,7 +163,7 @@ export default defineComponent({
 
     //取得所有ACNT_IS_VALID=Y 的使用者
     const userAllData = ref(useGetters(['getUserAllData']).getUserAllData);
-    console.log('userAllData',userAllData)
+
     //登入者資訊
     const userData = ref(useGetters(['getUserData']).getUserData).value;
 
@@ -326,7 +326,6 @@ export default defineComponent({
         queryStatus.value = true;
         table.data = [];
         if (data.length <= 0) return;
-        console.log('table.data',table.data)
         // 最新的日期到最舊的日期排序
         table.data = data.sort((a, b) => {
           const dateA: any = new Date(a.signingDatetime);
