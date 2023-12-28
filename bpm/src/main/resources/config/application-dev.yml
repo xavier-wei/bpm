@@ -31,18 +31,7 @@ spring:
     serialization:
       indent-output: true
   datasource:
-    type: com.zaxxer.hikari.HikariDataSource
-    url: jdbc:sqlserver://192.168.57.201:9981;databaseName=eip;encrypt=true;trustServerCertificate=true
-    username: eip
-    password: iisi@12345
-    hikari:
-      poolName: Hikari
-      auto-commit: true
-      data-source-properties:
-        cachePrepStmts: true
-        prepStmtCacheSize: 250
-        prepStmtCacheSqlLimit: 2048
-        useServerPrepStmts: true
+    jndi-name: java:comp/env/jdbc/eipDS
   jpa:
   liquibase:
     # Remove 'faker' if you do not want the sample data to be loaded automatically
