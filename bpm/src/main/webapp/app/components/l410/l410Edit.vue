@@ -539,7 +539,7 @@
                 </div>
                 <i-button class="ml-2" type="check2-circle"  @click="showModel()" v-show="formStatusRef === FormStatusEnum.VERIFY && isSignatureRef"/>
                 <i-button class="ml-2" type="upload" @click="reviewStart('補件')" v-show="configTitleName(userData.titleName) && formStatusRef === FormStatusEnum.VERIFY"/>
-                <i-button class="ml-2" type="reply" @click="toCancel" v-show="isCancelRef && userData.userId === form.appEmpid && (form.processInstanceStatus === '0' || form.processInstanceStatus === '2') "/>
+                <i-button class="ml-2" type="reply" @click="toCancel" v-show="isCancelRef && userData.userId === form.appEmpid && form.processInstanceStatus === '0'"/>
                 <i-button class="ml-2" type="arrow-left"  @click="toQueryView()"/>
               </b-row>
             </b-container>

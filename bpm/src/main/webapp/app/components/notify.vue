@@ -276,6 +276,8 @@ export default defineComponent({
                   return '補件';
                 case '3':
                   return '撤銷';
+                case '4':
+                  return '不同意';
                 default:
                   return '';
               }
