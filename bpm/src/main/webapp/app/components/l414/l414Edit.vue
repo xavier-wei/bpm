@@ -400,7 +400,6 @@
                 </P>
               </div>
 
-
               <!--簽核流程資訊模組-->
               <signerList :formId="formIdProp" :formStatus="formStatusRef" :opinion="opinion"
                           :processInstanceStatus="processInstanceStatusRef"></signerList>
@@ -426,7 +425,7 @@
                   <i-button class="ml-2" type="upload" @click="reviewStart('補件',true)"
                             v-show="configTitleName(userData.titleName) && formStatusRef === FormStatusEnum.VERIFY"/>
                   <i-button class="ml-2" type="reply" @click="toCancel"
-                            v-show="isCancelRef && userData.userId === form.appEmpid && (form.processInstanceStatus === '0' || form.processInstanceStatus === '2')"/>
+                            v-show="isCancelRef && userData.userId === form.appEmpid && form.processInstanceStatus === '0'"/>
                   <i-button class="ml-2" type="arrow-left" @click="toQueryView()"/>
 
                 </b-row>
@@ -585,6 +584,7 @@ export default {
 
     const notificationService = useNotification();
     const $bvModal = useBvModal();
+
 
     //列舉型別
     enum FormStatusEnum {
@@ -803,7 +803,6 @@ export default {
           }
         }
       }
-
 
       if (isOK) {
 
