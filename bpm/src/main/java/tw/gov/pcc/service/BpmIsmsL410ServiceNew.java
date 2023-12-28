@@ -165,6 +165,7 @@ public class BpmIsmsL410ServiceNew implements BpmIsmsCommonService, BpmIsmsPatch
                 bpmIsmsL410.setUpdateTime(Timestamp.valueOf(LocalDateTime.now()));
                 BpmIsmsL410 save = bpmIsmsL410Repository.save(bpmIsmsL410);
                 String fullName = IsmsFullNameEnum.getFullNameBySimpleName(save.getFormId().split("-")[0]);
+                bpmSignerListService.deleteAllByFormId(bpmIsmsL410.getFormId());
                 return new MailInfo(fullName, save.getFormId(), save.getAppName(), save.getAppEmpid(), save.getProcessInstanceStatus().equals("1") ? "處理完成" : "退件", true);
             }).orElseGet(() -> {
                 log.error("找不到對應的表單");
@@ -220,6 +221,7 @@ public class BpmIsmsL410ServiceNew implements BpmIsmsCommonService, BpmIsmsPatch
             bpmIsmsL410.setUpdateTime(Timestamp.valueOf(LocalDateTime.now()));
             bpmIsmsL410Repository.save(bpmIsmsL410);
             bpmSignStatusService.saveCancelBpmSignStatus(bpmIsmsL410);
+            bpmSignerListService.deleteAllByFormId(bpmIsmsL410.getFormId());
         });
     }
 
