@@ -18,7 +18,7 @@ public class ProcessDisagreeAct implements JavaDelegate {
         // get processDefinitionKey
         String processDefinitionKey = execution.getProcessDefinitionId().split(":")[0];
 
-        EndEventDTO endEventDTO = new EndEventDTO(execution.getProcessInstanceId(), BpmSetting.getToken(), ProcessEnum.getFormNameByProcessKey(processDefinitionKey), "2");
+        EndEventDTO endEventDTO = new EndEventDTO(execution.getProcessInstanceId(), BpmSetting.getToken(), ProcessEnum.getFormNameByProcessKey(processDefinitionKey), "4");
 
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
